@@ -37,7 +37,8 @@ odd = NickPattern.odd
 instead of :const:`origami_rectangle.NickPattern.odd`."""
 
 
-def create(num_helices: int, num_cols: int, nick_pattern: NickPattern = NickPattern.staggered,
+def create(num_helices: int, num_cols: int, assign_seq: bool = True,
+           nick_pattern: NickPattern = NickPattern.staggered,
            twist_correction_deletion_spacing: int = 0, num_flanking_columns: int = 1,
            custom_scaffold: str = None) -> sc.DNADesign:
     """
@@ -172,8 +173,9 @@ def create(num_helices: int, num_cols: int, nick_pattern: NickPattern = NickPatt
     if twist_correction_deletion_spacing > 0:
         add_twist_correction_deletions(design, twist_correction_deletion_spacing, num_cols, offset_start)
 
-    scaffold_seq = sc.m13_sequence if custom_scaffold is None else custom_scaffold
-    design.assign_dna(scaffold, scaffold_seq)
+    if assign_seq:
+        scaffold_seq = sc.m13_sequence if custom_scaffold is None else custom_scaffold
+        design.assign_dna(scaffold, scaffold_seq)
 
     return design
 
@@ -325,17 +327,25 @@ def _create_inner_staples(offset_start: int, offset_end: int, offset_mid: int, n
 
 def add_deletion_in_range(design: sc.DNADesign, helix_idx: int, start: int, end: int):
     for substrand in design.helix_substrand_map[helix_idx]:
-        
+        if not substrand.contains_offset(start):
+            continue
+        deletion_offset = start
+        while deletion_offset in substrand.deletions and deletion_offset < end:
+            deletion_offset += 1
+        if deletion_offset == end:
+            raise ValueError("nowhere to put the deletion on the substrand; "
+                             "all offsets are already in the deletion list")
+        substrand.deletions.append(deletion_offset)
 
 
-def add_twist_correction_deletions(design: sc.DNADesign, twist_correct_deletion_spacing: int, num_cols: int,
-                                   offset_start: int):
+def add_twist_correction_deletions(design: sc.DNADesign, twist_correct_deletion_spacing: int,
+                                   num_cols: int, offset_start: int):
     for col in range(num_cols):
         col_start = offset_start + col * BASES_PER_COLUMN
         col_end = offset_start + (col + 1) * BASES_PER_COLUMN
         if col % twist_correct_deletion_spacing == twist_correct_deletion_spacing - 1:
-            for helix_idx in design.used_helices:
-                add_deletion_in_range(design, helix_idx, col_start + 1, col_end - 1)
+            for helix in design.used_helices():
+                add_deletion_in_range(design, helix.idx, col_start + 1, col_end - 1)
 
 
 # here's an example of using `origami_rectangle.create` to create a 16-helix rectangle

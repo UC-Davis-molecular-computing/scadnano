@@ -1,5 +1,4 @@
 {
-  "version": "0.0.1",
   "grid": "square",
   "major_tick_distance": 8,
   "helices": [

@@ -519,25 +519,26 @@ class DNADesign(JSONSerializable):
                 self.major_tick_distance = 7
         self._build_helix_substrand_map()
 
+    def used_helices(self):
+        return [helix for helix in self.helices if helix.used]
+
     def _build_helix_substrand_map(self):
         self.helix_substrand_map = defaultdict(list)
         for strand in self.strands:
             for substrand in strand.substrands:
-                helix_substrand_map[substrand.helix_idx].append(substrand)
+                self.helix_substrand_map[substrand.helix_idx].append(substrand)
 
     def write_to_file(self, filename):
         with open(filename, 'w') as out_file:
             out_file.write(json_encode(self))
 
-    def add_deletion(helix_idx: int, offset: int):
-        """
-        Adds a deletion to the strand(s) (if they exist) at the given helix and base offset.
-        """
-        for substrand in self._helix_substrand_map[helix_idx]:
+    def add_deletion(self, helix_idx: int, offset: int):
+        """ Adds a deletion to the strand(s) (if they exist) at the given helix and base offset. """
+        for substrand in self.helix_substrand_map[helix_idx]:
             if substrand.contains_offset(offset):
                 substrand.deletions.append(offset)
 
-    def assign_dna(self, strand, sequence):
+    def assign_dna(self, strand: Strand, sequence: str):
         """
         Assigns `sequence` as DNA sequence of `strand`.
 
