@@ -326,16 +326,40 @@ def _create_inner_staples(offset_start: int, offset_end: int, offset_mid: int, n
 
 
 def add_deletion_in_range(design: sc.DNADesign, helix_idx: int, start: int, end: int):
-    for substrand in design.helix_substrand_map[helix_idx]:
-        if not substrand.contains_offset(start):
-            continue
-        deletion_offset = start
-        while deletion_offset in substrand.deletions and deletion_offset < end:
-            deletion_offset += 1
-        if deletion_offset == end:
-            raise ValueError("nowhere to put the deletion on the substrand; "
-                             "all offsets are already in the deletion list")
-        substrand.deletions.append(deletion_offset)
+    """Inserts deletion somewhere in given range.
+
+    Tries to put in the the middlemost position where two Substrands exist, and there are
+    no deletions or insertions already."""
+    candidate_offsets = []
+    for deletion_offset in range(start, end):
+        if valid_deletion_offset(design, helix_idx, deletion_offset):
+            candidate_offsets.append(deletion_offset)
+    if len(candidate_offsets) == 0:
+        raise ValueError(f"no pair of Substrands found overlapping interval [{start},{end})")
+    # # pick offset furthest from edges of interval
+    # candidate_offsets.sort(key=lambda offset: min(offset - start, end - offset))
+    offset_middle = candidate_offsets[0]
+    design.add_deletion(helix_idx, offset_middle)
+
+
+def valid_deletion_offset(design: sc.DNADesign, helix_idx: int, offset: int):
+    substrands_at_offset = design.substrands_at(helix_idx, offset)
+    if len(substrands_at_offset) > 2:
+        raise ValueError(f'Invalid DNADesign; more than two Substrands found at '
+                         f'helix {helix_idx} and offset {offset}: '
+                         f'{substrands_at_offset}')
+    elif len(substrands_at_offset) != 2:
+        return False
+    for ss in substrands_at_offset:
+        if offset in ss.deletions:
+            return False  # already a deletion there
+        if offset in (insertion[0] for insertion in ss.insertions):
+            return False  # already an insertion there
+        if offset == ss.start:
+            return False  # no 5' end
+        if offset == ss.end-1:
+            return False # no 3' end
+    return True
 
 
 def add_twist_correction_deletions(design: sc.DNADesign, twist_correct_deletion_spacing: int,

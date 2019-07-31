@@ -379,7 +379,7 @@ class Strand(JSONSerializable):
     a color is assigned by cycling through a list of defaults given by 
     :meth:`ColorCycler.colors`"""
 
-    # not serialized; efficient way to see a list of all substrands on a given helix
+    # not serialized; efficient way to see a list of all substrands on a given helix in this Strand
     _helix_idx_substrand_map: Dict[int, List[Substrand]] = field(
         init=False, repr=False, compare=False, default=None)
 
@@ -443,7 +443,6 @@ class Strand(JSONSerializable):
         # if not self.overlaps(other):
         #     raise ValueError(f"{self} and {other} do not overlap, "
         #                      f"so DNA cannot be assigned to the former from the latter")
-        # TODO: this has a bug and is not assigning properly; add some unit tests and get it working
         strand_complement_builder = []
         for helix_idx, substrands_on_helix_self in self._helix_idx_substrand_map.items():
             substrands_on_helix_other = other._helix_idx_substrand_map[helix_idx]
@@ -490,7 +489,7 @@ class DNADesign(JSONSerializable):
     """All of the strands in this DNADesign."""
 
     grid: Grid = None
-    """TODO explain this."""
+    """TODO: explain this."""
 
     major_tick_distance: int = -1
     """Distance between major ticks (bold) delimiting boundaries between bases.
@@ -520,7 +519,16 @@ class DNADesign(JSONSerializable):
         self._build_helix_substrand_map()
 
     def used_helices(self):
+        """Return list of all helices that are used."""
         return [helix for helix in self.helices if helix.used]
+
+    def substrands_at(self, helix_idx, offset):
+        """Return list of substrands that overlap `offset` on helix with idx `helix_idx`.
+
+        If constructed properly, this list should have 0, 1, or 2 elements, but no such check is done."""
+        substrands_on_helix = self.helix_substrand_map[helix_idx]
+        # TODO: replace this with a more clever algorithm using binary search
+        return [substrand for substrand in substrands_on_helix if substrand.contains_offset(offset)]
 
     def _build_helix_substrand_map(self):
         self.helix_substrand_map = defaultdict(list)
@@ -529,19 +537,18 @@ class DNADesign(JSONSerializable):
                 self.helix_substrand_map[substrand.helix_idx].append(substrand)
 
     def write_to_file(self, filename):
+        """Write ``.dna`` file representing this DNADesign, suitable for reading by scadnano."""
         with open(filename, 'w') as out_file:
             out_file.write(json_encode(self))
 
     def add_deletion(self, helix_idx: int, offset: int):
         """ Adds a deletion to the strand(s) (if they exist) at the given helix and base offset. """
-        for substrand in self.helix_substrand_map[helix_idx]:
-            if substrand.contains_offset(offset):
-                substrand.deletions.append(offset)
+        for substrand in self.substrands_at(helix_idx, offset):
+            substrand.deletions.append(offset)
 
     def assign_dna(self, strand: Strand, sequence: str):
         """
         Assigns `sequence` as DNA sequence of `strand`.
-
 
         If any :class:`scadnano.Strand` is bound to `strand`,
         it is assigned the reverse Watson-Crick complement of the relevant portion,
@@ -564,12 +571,6 @@ class DNADesign(JSONSerializable):
                 continue
             if other_strand.overlaps(strand):
                 other_strand.assign_dna_complement_from(strand)
-
-
-# def _read_m13():
-#     with open('M13_seq_from5588.txt', 'r') as infile:
-#         seq = infile.read().strip()
-#     return seq
 
 
 if __name__ == "__main__":
