@@ -1,0 +1,205 @@
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+/************************************************
+** BEGIN menu layout
+************************************************/
+
+.top-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.menu-separator {
+    height: 0.5%;
+    background: black;
+    position: relative;
+    cursor: col-resize;
+}
+
+/************************************************
+** END menu layout
+************************************************/
+
+/************************************************
+** BEGIN split pane layout
+************************************************/
+.panes-container {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+.left-pane {
+    width: 10%;
+    background: white;
+}
+
+.panes-separator {
+    width: 0.5%;
+    background: lightgray;
+    position: relative;
+    cursor: col-resize;
+}
+
+.right-pane {
+    flex: auto;
+    background: white;
+}
+
+.panes-container,
+.panes-separator,
+.left-pane,
+.right-pane {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/************************************************
+** END split pane layout
+************************************************/
+
+/************************************************
+** BEGIN SVG layout
+************************************************/
+
+.panzoomable {
+    cursor: move; /* fallback: no `url()` support or images disabled */
+    cursor: url(images/grab.png), auto; /* fallback: Internet Explorer */
+    cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+    cursor: -moz-grab; /* Firefox 1.5-26 */
+    cursor: grab; /* W3C standards syntax, should come least */
+}
+
+.panzoomable.dragging {
+    cursor: url(images/grabbing.png), auto;
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
+}
+
+.helix-lines {
+    stroke: lightgray;
+}
+
+.helix-horz-line, .helix-vert-minor-line {
+    stroke-width: 0.5;
+}
+
+.helix-vert-end-line, .helix-vert-major-line {
+    stroke-width: 3;
+}
+
+.five-prime-end {
+    stroke: black;
+    stroke-width: 0.5px;
+    /*rx: 1.5;*/
+    /*ry: 1.5;*/
+    /*width: 6px;*/
+    /*height: 6px;*/
+}
+
+.three-prime-end {
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+.deletion-cross-outer {
+    stroke: black;
+    stroke-width: 1.5px;
+}
+
+.deletion-cross-inner {
+    stroke: red;
+    stroke-width: 1px;
+}
+
+.dna-base {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    font-size: 5px;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+}
+
+.dna-seq {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    font-size: 5px;
+    text-anchor: start;
+    dominant-baseline: hanging;
+    /*letter-spacing: 10px;*/
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+}
+
+.substrand-line {
+    stroke-width: 2;
+}
+
+.crossover-adjacent {
+    stroke-width: 2;
+    stroke-dasharray: 2;
+}
+
+.crossover-nonadjacent {
+    stroke-width: 3;
+    stroke-dasharray: 2;
+}
+
+.main-view-helix-circle {
+    /*stroke: saddlebrown;*/
+    stroke: goldenrod;
+    stroke-width: 0.5px;
+    fill: goldenrod;
+}
+
+.main-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 36pt;
+    fill: DarkBlue;
+    stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+
+.side-view-helix-circle {
+    /*stroke: #e0e0e0;*/
+    /*stroke: saddlebrown;*/
+    stroke-width: 1px;
+    fill: #f0f0f0;
+}
+
+.used {
+    /*stroke: saddlebrown;*/
+    fill: goldenrod;
+}
+
+.side-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 24pt;
+    fill: DarkBlue;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+
+/************************************************
+** END SVG layout
+************************************************/

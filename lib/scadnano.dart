@@ -1,0 +1,2 @@
+export "src/app.dart";
+

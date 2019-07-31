@@ -1,0 +1,115 @@
+{
+  "grid": "square",
+  "numHelicesXaxis": 3,
+  "numHelicesYaxis": 5,
+  "basesPerHelix": 50,
+  "majorTickDistance": 8,
+  "helices": [
+    {
+      "idx": 0,
+      "gridPosition": [
+        0,
+        0
+      ]
+    },
+    {
+      "idx": 3,
+      "gridPosition": [
+        0,
+        1
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        0,
+        2
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        0,
+        3
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        0,
+        4
+      ]
+    },
+    {
+      "idx": 1,
+      "gridPosition": [
+        1,
+        0
+      ]
+    },
+    {
+      "idx": 2,
+      "gridPosition": [
+        1,
+        1
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        1,
+        2
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        1,
+        3
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        1,
+        4
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        2,
+        0
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        2,
+        1
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        2,
+        2
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        2,
+        3
+      ]
+    },
+    {
+      "idx": -1,
+      "gridPosition": [
+        2,
+        4
+      ]
+    }
+  ],
+  "strands": []
+}

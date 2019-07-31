@@ -1,0 +1,37 @@
+var leftPane = document.getElementById('left-pane');
+var rightPane = document.getElementById('right-pane');
+var paneSep = document.getElementById('panes-separator');
+
+// The script below constrains the target to move horizontally between a left and a right virtual boundaries.
+// - the left limit is positioned at 0% of the screen width
+// - the right limit is positioned at 100% of the screen width
+var leftLimit = 0;
+var rightLimit = 100;
+
+paneSep.sdrag(function (el, pageX, startX, pageY, startY, fix) {
+
+    fix.skipX = true;
+
+    if (pageX < window.innerWidth * leftLimit / 100) {
+        pageX = window.innerWidth * leftLimit / 100;
+        fix.pageX = pageX;
+    }
+    if (pageX > window.innerWidth * rightLimit / 100) {
+        pageX = window.innerWidth * rightLimit / 100;
+        fix.pageX = pageX;
+    }
+
+    var cur = pageX / window.innerWidth * 100;
+    if (cur < 0) {
+        cur = 0;
+    }
+    if (cur > window.innerWidth) {
+        cur = window.innerWidth;
+    }
+
+
+    var right = (100-cur-1);
+    leftPane.style.width = cur + '%';
+    rightPane.style.width = right + '%';
+
+}, null, 'horizontal');

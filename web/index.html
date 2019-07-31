@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>s-cadnano</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="images/favicon.ico">
+</head>
+
+<body>
+
+
+  <div class="top-container" width="100%" height="100%">
+    <div id="menu"></div>
+    <div class="menu-separator" id="menu-separator"></div>
+    <div class="panes-container">
+      <div class="left-pane" id="left-pane"></div>
+      <div class="panes-separator" id="panes-separator"></div>
+      <div class="right-pane" id="right-pane"></div>
+    </div>
+  </div>
+
+  <!--<script src="packages/react/react.js"></script>-->
+  <!--<script src="packages/react/react_dom.js"></script>-->
+  <!--<script src="packages/react/react.min.js"></script>-->
+  <!--<script src="packages/react/react_dom.min.js"></script>-->
+
+  <script src="external-libs/simpledrag.min.js"></script>
+
+  <script defer src="main.dart.js"></script>
+
+  <!--next uses simpledrag.js but needs to be executed after declaration of div panes above-->
+  <script src="splitpane.js"></script>
+
+  <!--Useful for temporarily rendering nodes to query info; e.g., width of an element-->
+  <div id="temp-div"></div>
+
+</body>
+
+</html>
