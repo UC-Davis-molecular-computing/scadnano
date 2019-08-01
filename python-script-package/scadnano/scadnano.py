@@ -247,6 +247,14 @@ class Substrand(JSONSerializable):
         # total number of insertions in this Substrand
         return sum(insertion[1] for insertion in self.insertions)
 
+    def contains_offset(self, offset: int):
+        """Indicates if `offset` is the offset of a base on this substrand.
+
+        Note that offsets refer to visual portions of the displayed grid for the Helix.
+        If for example, this Substrand starts at position 0 and ends at 10, and it has 5 deletions,
+        then it contains the offset 7 even though there is no base 7 positions from the start."""
+        return self.start <= offset < self.end
+
     def dna_sequence(self):
         return self.dna_sequence_in(0, len(self))
 
@@ -261,7 +269,7 @@ class Substrand(JSONSerializable):
             return None
         str_idx_left = self.offset_to_str_idx(interval_left)
         str_idx_right = self.offset_to_str_idx(interval_right)
-        if self.direction == Direction.left: # these will be out of order if strand is pointing left
+        if self.direction == Direction.left:  # these will be out of order if strand is pointing left
             str_idx_left, str_idx_right = str_idx_right, str_idx_left
         subseq = strand_seq[str_idx_left:str_idx_right]
         # if self.direction == Direction.left:
@@ -282,20 +290,40 @@ class Substrand(JSONSerializable):
         return self_seq_idx_start
 
     def offset_to_str_idx(self, offset: int) -> int:
-        """Convert from offset on :any:`Substrand`'s :any:`Helix`
+        """Convert from offset on this :any:`Substrand`'s :any:`Helix`
         to string index on the parent :any:`Strand`'s DNA sequence."""
+
+        # TODO: this is not accounting for deletions or insertions, nor is next method
 
         # first pretend this Substrand starts at offset 0
         offset -= self.start
 
         # then get string index assuming this Substrand is first on Strand and starts at offset 0
         if self.direction == Direction.right:
+            # account for insertions and deletions
+            offset += self._net_ins_del_length_increase_from_5p_to(offset)
             ss_str_idx = offset
         else:
-            ss_str_idx = len(self) - offset
+            # account for insertions and deletions
+            offset -= self._net_ins_del_length_increase_from_5p_to(offset)
+            ss_str_idx = self.visual_length() - offset
 
         # finally correct for existence of previous Substrands on this Strand
         return ss_str_idx + self.get_seq_start_idx()
+
+    def _net_ins_del_length_increase_from_5p_to(self, offset_edge: int) -> int:
+        length_increase = 0
+        for deletion in self.deletions:
+            if self._between_5p_and_offset(deletion, offset_edge):
+                length_increase -= 1
+        for (insertion_offset, insertion_length) in self.insertions:
+            if self._between_5p_and_offset(insertion_offset, offset_edge):
+                length_increase += insertion_length
+        return length_increase
+
+    def _between_5p_and_offset(self, offset_to_test: int, offset_edge: int) -> bool:
+        return ((self.direction == Direction.right and self.start <= offset_to_test <= offset_edge) or
+                (self.direction == Direction.left and offset_edge <= offset_to_test < self.end))
 
     def str_idx_to_offset(self, str_idx: int) -> int:
         """Convert from string index on parent :any:`Strand`
@@ -307,8 +335,12 @@ class Substrand(JSONSerializable):
         # then get offset assuming this Substrand is first on Strand, and starts at offset 0
         if self.direction == Direction.right:
             offset = ss_str_idx
+            # account for insertions and deletions
+            offset -= self._net_ins_del_length_increase_from_5p_to(offset)
         else:
-            offset = len(self) - ss_str_idx
+            offset = self.visual_length() - ss_str_idx
+            # account for insertions and deletions
+            offset += self._net_ins_del_length_increase_from_5p_to(offset)
 
         # finally correct for true starting offset of this Substrand
         return offset + self.start
@@ -356,7 +388,7 @@ class Substrand(JSONSerializable):
                 self.compute_overlap(other) is not None)
 
     def compute_overlap(self, other: 'Substrand'):
-        """Return (left,right) offset indicating overlap between this Substrand and `other`.
+        """Return [left,right) offset indicating overlap between this Substrand and `other`.
 
         Return ``None`` if they do not overlap (different helices, or non-overlapping regions
         of the same helix)."""
@@ -365,9 +397,12 @@ class Substrand(JSONSerializable):
         # have_overlap = (self.helix_idx == other.helix_idx and (
         #         self.start <= other.end and
         #         other.start <= self.end))
-        if overlap_start > overlap_end:  # overlap is empty
+        if overlap_start >= overlap_end:  # overlap is empty
             return None
         return overlap_start, overlap_end
+
+    def visual_length(self):
+        return self.end - self.start
 
 
 _wctable = str.maketrans('ACGTacgt', 'TGCAtgca')
@@ -539,6 +574,10 @@ class DNADesign(JSONSerializable):
     If :any:`DNADesign.grid` = :any:`Grid.square` then `major_tick_distance` is set to 8.
     If :any:`DNADesign.grid` = :any:`Grid.hex` then `major_tick_distance` is set to 7."""
 
+    helix_substrand_map: Dict[int, List[Substrand]] = None
+
+    # for optimization; maps helix index to list of substrands on that Helix
+
     def to_json_serializable(self):
         dct = OrderedDict()
         dct['version'] = CURRENT_VERSION
@@ -554,7 +593,12 @@ class DNADesign(JSONSerializable):
                 self.major_tick_distance = 8
             elif self.grid == Grid.hexagonal:
                 self.major_tick_distance = 7
+        self._build_helix_substrand_map()
         self._check_legal_design()
+
+    def used_helices(self):
+        """Return list of all helices that are used."""
+        return [helix for helix in self.helices if helix.used]
 
     def _check_legal_design(self):
         self._check_helix_indices()
@@ -576,7 +620,7 @@ class DNADesign(JSONSerializable):
     def _check_strands_overlap_legally(self):
         def err_msg(ss1, ss2, h_idx):
             return f"two substrands overlap on helix {h_idx}:" \
-                f"{ss1} and {ss2} but have the same direction"
+                   f"{ss1} and {ss2} but have the same direction"
 
         # ensure that if two strands overlap on the same helix,
         # they point in opposite directions
@@ -620,11 +664,35 @@ class DNADesign(JSONSerializable):
                     err_msg = f"substrand {substrand} refers to nonexistent Helix index {substrand.helix_idx}"
                     raise IllegalDNADesignError(err_msg)
 
+    def substrands_at(self, helix_idx, offset):
+        """Return list of substrands that overlap `offset` on helix with idx `helix_idx`.
+
+        If constructed properly, this list should have 0, 1, or 2 elements, but no such check is done."""
+        substrands_on_helix = self.helix_substrand_map[helix_idx]
+        # TODO: replace this with a more clever algorithm using binary search
+        return [substrand for substrand in substrands_on_helix if substrand.contains_offset(offset)]
+
+    def _build_helix_substrand_map(self):
+        self.helix_substrand_map = defaultdict(list)
+        for strand in self.strands:
+            for substrand in strand.substrands:
+                self.helix_substrand_map[substrand.helix_idx].append(substrand)
+
     def write_to_file(self, filename):
+        """Write ``.dna`` file representing this DNADesign, suitable for reading by scadnano."""
         with open(filename, 'w') as out_file:
             out_file.write(json_encode(self))
 
-    def assign_dna(self, strand, sequence):
+    def add_deletion(self, helix_idx: int, offset: int):
+        """ Adds a deletion to the strand(s) (if they exist) at the given helix and base offset. """
+        substrands = self.substrands_at(helix_idx, offset)
+        if len(substrands) == 0:
+            raise IllegalDNADesignError(f"no substrands are at helix {helix_idx} offset {offset}")
+        for substrand in substrands:
+            if substrand.contains_offset(offset):
+                substrand.deletions.append(offset)
+
+    def assign_dna(self, strand: Strand, sequence: str):
         """
         Assigns `sequence` as DNA sequence of `strand`.
 

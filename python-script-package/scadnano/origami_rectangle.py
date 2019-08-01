@@ -37,7 +37,8 @@ odd = NickPattern.odd
 instead of :const:`origami_rectangle.NickPattern.odd`."""
 
 
-def create(num_helices: int, num_cols: int, nick_pattern: NickPattern = NickPattern.staggered,
+def create(num_helices: int, num_cols: int, assign_seq: bool = True,
+           nick_pattern: NickPattern = NickPattern.staggered,
            twist_correction_deletion_spacing: int = 0, num_flanking_columns: int = 1,
            custom_scaffold: str = None) -> sc.DNADesign:
     """
@@ -167,13 +168,14 @@ def create(num_helices: int, num_cols: int, nick_pattern: NickPattern = NickPatt
     scaffold = _create_scaffold(offset_start, offset_end, offset_mid, num_helices)
     staples = _create_staples(offset_start, offset_end, offset_mid, num_helices, num_cols, nick_pattern)
 
-    if twist_correction_deletion_spacing > 0:
-        raise NotImplementedError()
-
     design = sc.DNADesign(helices=helices, strands=[scaffold] + staples, grid=sc.square)
 
-    scaffold_seq = sc.m13_sequence if custom_scaffold is None else custom_scaffold
-    design.assign_dna(scaffold, scaffold_seq)
+    if twist_correction_deletion_spacing > 0:
+        add_twist_correction_deletions(design, twist_correction_deletion_spacing, num_cols, offset_start)
+
+    if assign_seq:
+        scaffold_seq = sc.m13_sequence if custom_scaffold is None else custom_scaffold
+        design.assign_dna(scaffold, scaffold_seq)
 
     return design
 
@@ -317,7 +319,62 @@ def _create_inner_staples(offset_start, offset_end, offset_mid, num_helices, num
                 staple = sc.Strand(substrands=[ss_helix_ip2, ss_helix_ip1, ss_helix_i])
                 staples.append(staple)
 
-
     return staples
 
 
+def add_deletion_in_range(design: sc.DNADesign, helix_idx: int, start: int, end: int):
+    """Inserts deletion somewhere in given range.
+
+    Tries to put in the the middlemost position where two Substrands exist, and there are
+    no deletions or insertions already."""
+    candidate_offsets = []
+    for deletion_offset in range(start, end):
+        if valid_deletion_offset(design, helix_idx, deletion_offset):
+            candidate_offsets.append(deletion_offset)
+    if len(candidate_offsets) == 0:
+        raise ValueError(f"no pair of Substrands found overlapping interval [{start},{end})")
+    # # pick offset furthest from edges of interval
+    # candidate_offsets.sort(key=lambda offset: min(offset - start, end - offset))
+    offset_middle = candidate_offsets[0]
+    design.add_deletion(helix_idx, offset_middle)
+
+
+def valid_deletion_offset(design: sc.DNADesign, helix_idx: int, offset: int):
+    substrands_at_offset = design.substrands_at(helix_idx, offset)
+    if len(substrands_at_offset) > 2:
+        raise ValueError(f'Invalid DNADesign; more than two Substrands found at '
+                         f'helix {helix_idx} and offset {offset}: '
+                         f'{substrands_at_offset}')
+    elif len(substrands_at_offset) != 2:
+        return False
+    for ss in substrands_at_offset:
+        if offset in ss.deletions:
+            return False  # already a deletion there
+        if offset in (insertion[0] for insertion in ss.insertions):
+            return False  # already an insertion there
+        if offset == ss.start:
+            return False  # no 5' end
+        if offset == ss.end-1:
+            return False # no 3' end
+    return True
+
+
+def add_twist_correction_deletions(design: sc.DNADesign, twist_correct_deletion_spacing: int,
+                                   num_cols: int, offset_start: int):
+    for col in range(num_cols):
+        col_start = offset_start + col * BASES_PER_COLUMN
+        col_end = offset_start + (col + 1) * BASES_PER_COLUMN
+        if col % twist_correct_deletion_spacing == twist_correct_deletion_spacing - 1:
+            for helix in design.used_helices():
+                add_deletion_in_range(design, helix.idx, col_start + 1, col_end - 1)
+
+
+# here's an example of using `origami_rectangle.create` to create a 16-helix rectangle
+if __name__ == "__main__":
+    rect_num_helices = 16
+    rect_num_cols = 24  # XXX: ensure num_cols is even since we divide it by 2
+    rect_design = create(num_helices=rect_num_helices, num_cols=rect_num_cols, nick_pattern=staggered)
+    rect_design.write_to_file("16_helix_rectangle.dna")
+    # TODO: for debugging; set back to 16 helix when done
+    # small_design = create(num_helices=6, num_cols=12, nick_pattern=staggered, custom_scaffold='T' * 1200)
+    # small_design.write_to_file("6_helix_rectangle.dna")
