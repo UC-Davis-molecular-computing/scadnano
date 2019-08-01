@@ -106,14 +106,12 @@ class AlertFileSavedAction implements Action {
 
   @override
   Model apply(Model model) {
-    print("Applying AlertFileSavedAction; this.changed_since_last_save = ${changed_since_last_save}");
     model.changed_since_last_save = changed_since_last_save;
     app.controller.notifier_model_changed_since_save.add(changed_since_last_save);
     return model;
   }
 
   @override
-
   Action reverse() {
     var action = AlertFileSavedAction();
     action.changed_since_last_save = true;

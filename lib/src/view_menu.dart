@@ -15,7 +15,7 @@ class MenuViewElement {
   MenuViewElement();
 
   render() {
-    print("rendering menu view. stack trace: ${StackTrace.current}");
+//    print("rendering menu view. stack trace: ${StackTrace.current}");
     this.menu_elt.children.clear();
     this.menu_elt.children.add(this.file_buttons_elt);
     this.menu_elt.children.add(this.show_dna_elt);
@@ -41,11 +41,11 @@ class MenuViewElement {
 
   render_file_buttons() {
     this.file_buttons_elt.children.clear();
+
     // save button
     file_buttons_elt.children.add(save_button);
     this.save_button.text = "Save";
     this.save_button.disabled = !app.model.changed_since_last_save;
-    print("save button disabled in render? ${save_button.disabled}");
 
     // load button
     this.file_buttons_elt.children.add(new LabelElement()..text = "Load:");

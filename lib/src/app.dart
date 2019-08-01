@@ -29,7 +29,7 @@ class App {
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
     this.action_notifier.stream.listen((Action action) {
-      this._apply(action);
+      this.undo_redo.apply(action);
     });
 
     app.controller = Controller();
@@ -43,32 +43,25 @@ class App {
     this.action_notifier.sink.add(action);
   }
 
-  ///XXX: only call internally; clients should put action in the stream by calling send_action
-  _apply(Action action) {
-    this.undo_redo.apply(action);
-  }
-
   setup_warning_before_unload() {
     //TODO: change check for undo stack empty to check for changes since last save
     // (set "unsaved work" flag in UIModel)
     window.onBeforeUnload.listen((Event event) {
       if (this.undo_redo.undo_stack.isNotEmpty) {
         BeforeUnloadEvent e = event;
-        e.returnValue =
-            'You have unsaved work. Are you sure you want to leave?';
+        e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }
     });
   }
 
   /// This should only be called when loading a brand new DNADesign from a file.
   /// For changes to the existing model, Actions should be dispatched via
-  /// app.sendAction(the_action);
+  /// app.send_action(the_action);
+  /// TODO: this is the only part of App that is specific to this application; refactor into Controller
   set_new_design(DNADesign new_design) {
     this.model.changed_since_last_save = false;
     this.model.dna_design = new_design;
     this.undo_redo.reset();
-    this
-        .view
-        .render(); // crucially does not re-render menu since new model is being loaded
+    this.view.render();
   }
 }

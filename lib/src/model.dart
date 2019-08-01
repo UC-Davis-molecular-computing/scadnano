@@ -353,8 +353,8 @@ class Helix {
   Helix.fromJson(Map<String, dynamic> parsedJson)
       : this(
             idx: get_value(parsedJson, 'idx'),
-            grid_position:
-                Point<int>(get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
+            grid_position: Point<int>(
+                get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
             max_bases: get_value(parsedJson, 'max_bases'));
 }
 
@@ -433,24 +433,90 @@ class Substrand {
   /// 3' end, INCLUSIVE
   int get offset_3p => direction == Direction.left ? start : end - 1;
 
-  int get length => (end - start) - deletions.length + num_insertions();
+  int get length => (this.end - this.start) - this.deletions.length + this.num_insertions();
+
+  int get visual_length => (this.end - this.start);
+
+  /// Total length increase (can be negative) from deletions and insertions between 5' end and `offset`.
+  int net_ins_del_length_increase_from_5p_to(int offset_edge) {
+    int length_increase = 0;
+    for (int deletion in this.deletions) {
+      if (between_5p_and_offset(deletion, offset_edge)) {
+        length_increase--;
+      }
+    }
+    for (Tuple2<int, int> insertion in this.insertions) {
+      int insertion_offset = insertion.item1;
+      int insertion_length = insertion.item2;
+      if (between_5p_and_offset(insertion_offset, offset_edge)) {
+        length_increase += insertion_length;
+      }
+    }
+    return length_increase;
+  }
+
+  bool between_5p_and_offset(int offset_to_test, int offset_edge) {
+    return (this.direction == Direction.right && this.start <= offset_to_test && offset_to_test <= offset_edge) ||
+        (this.direction == Direction.left && offset_edge <= offset_to_test && offset_to_test < this.end);
+  }
+
+  /// List of offsets (inclusive at each end) in 5' - 3' order, from 5' to `offset_stop`.
+  List<int> offsets_from_5p_to(int offset_stop) {
+    List<int> offsets = [];
+    if (this.direction == Direction.right) {
+      for (int offset = this.start; offset <= offset_stop; offset++) {
+        offsets.add(offset);
+      }
+    } else {
+      for (int offset = this.end - 1; offset >= offset_stop; offset--) {
+        offsets.add(offset);
+      }
+    }
+    return offsets;
+  }
+
+  /// List of offsets (inclusive at each end) in 5' - 3' order.
+  List<int> offsets_in_5p_3p_order() {
+    List<int> offsets = [];
+    if (this.direction == Direction.right) {
+      for (int offset = this.start; offset < this.end; offset++) {
+        offsets.add(offset);
+      }
+    } else {
+      for (int offset = this.end - 1; offset >= this.start; offset--) {
+        offsets.add(offset);
+      }
+    }
+    return offsets;
+  }
 
   String get dna_sequence {
     if (this._strand.dna_sequence == null) {
       return null;
     } else {
-      int start_dna_index = this.offset_to_strand_dna_idx(this.start);
-      int end_dna_index = this.offset_to_strand_dna_idx(this.end);
-      String subseq = this._strand.dna_sequence.substring(start_dna_index, end_dna_index);
+      if (this.start >= 384 && this.helix_idx == 15) {
+        print(this._strand.dna_sequence);
+        var x=0;
+      }
+      int start_dna_index = this.offset_to_strand_dna_idx(this.offset_5p);
+      int end_dna_index_inclusive = this.offset_to_strand_dna_idx(this.offset_3p);
+      String subseq = this._strand.dna_sequence.substring(start_dna_index, end_dna_index_inclusive + 1);
       return subseq;
     }
   }
 
   /// Convert from offset on Substrand's Helix to string index
   /// on the parent Strand's DNA sequence.
-  int offset_to_strand_dna_idx(offset) {
+  int offset_to_strand_dna_idx(int offset) {
+    //TODO: this logic is broken; copy algorithm from offset_to_str_idx in scadnano.py
     var self_seq_idx_start = this.get_seq_start_idx();
-    var str_idx = (offset - this.start) + self_seq_idx_start;
+    int str_idx;
+    if (this.direction == Direction.right) {
+      str_idx = (offset - this.start) + self_seq_idx_start;
+    } else {
+      str_idx = (this.end - offset - 1) + self_seq_idx_start;
+    }
+    str_idx += this.net_ins_del_length_increase_from_5p_to(offset);
     return str_idx;
   }
 

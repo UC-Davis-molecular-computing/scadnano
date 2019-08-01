@@ -248,7 +248,7 @@ class StrandElement {
     draw_strand_lines();
     draw_5p_end();
     draw_3p_end();
-    for (var substrand in strand.substrands) {
+    for (var substrand in this.strand.substrands) {
       if (substrand.dna_sequence != null && app.model.show_dna) {
         draw_dna_sequence(substrand);
       }
@@ -264,28 +264,36 @@ class StrandElement {
     element.children.add(seq_group);
     var seq_elt = svg.TextElement();
 
-    seq_elt.innerHtml = substrand.dna_sequence;
+    var seq_idx = 0;
+    List<int> dna_bases_with_spaces = [];
+    var deletions_set = substrand.deletions.toSet();
+    for (int offset in substrand.offsets_in_5p_3p_order()) {
+      if (deletions_set.contains(offset)) {
+        dna_bases_with_spaces.add(' '.codeUnitAt(0));
+      } else {
+        dna_bases_with_spaces.add(substrand.dna_sequence.codeUnitAt(seq_idx));
+        seq_idx++;
+      }
+    }
+//    seq_elt.innerHtml = substrand.dna_sequence;
+    seq_elt.innerHtml = String.fromCharCodes(dna_bases_with_spaces);
+
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
     Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
-    // this is needed to make complementary DNA bases line up perfectly
+    // this is needed to make complementary DNA bases line up more nicely (still not perfect)
     var x_adjust = -BASE_WIDTH_SVG * 0.1;
     if (substrand.direction == Direction.left) {
       rotate_degrees = 180;
-//      x_adjust = -x_adjust;
     }
     var dy = '0.75px';
     if (browser.isFirefox) {
       dy = '0px';
     }
 
-    var text_length = BASE_WIDTH_SVG * (substrand.length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
-//    print("width_svg_text('A') = ${width_svg_text('A')}");
-//    print("width_svg_text('C') = ${width_svg_text('C')}");
-//    print("width_svg_text('G') = ${width_svg_text('G')}");
-//    print("width_svg_text('T') = ${width_svg_text('T')}");
+    var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
       'class': 'dna-seq',
       'x': '${pos.x + x_adjust}',
