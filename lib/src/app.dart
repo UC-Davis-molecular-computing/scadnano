@@ -32,11 +32,12 @@ class App {
       this.undo_redo.apply(action);
     });
 
-    app.controller = Controller();
+    this.controller = Controller();
 
     //XXX: Controller must be created before the first render since views must
     // register as listeners to the notifiers of the Controller.
-    app.view = View();
+    this.view = View();
+    this.view.render();
   }
 
   send_action(Action action) {

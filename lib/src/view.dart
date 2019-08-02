@@ -14,9 +14,7 @@ class View {
   SideViewElement side_view;
   MainViewElement main_view;
 
-  View() {
-    this.render();
-  }
+  View();
 
   /// This should be called whenever app.model is set to a new object,
   /// to redraw the entire app. It should NOT be called when the model changes

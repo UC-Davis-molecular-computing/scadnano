@@ -441,21 +441,21 @@ class Substrand {
   int net_ins_del_length_increase_from_5p_to(int offset_edge) {
     int length_increase = 0;
     for (int deletion in this.deletions) {
-      if (between_5p_and_offset(deletion, offset_edge)) {
+      if (this._between_5p_and_offset(deletion, offset_edge)) {
         length_increase--;
       }
     }
     for (Tuple2<int, int> insertion in this.insertions) {
       int insertion_offset = insertion.item1;
       int insertion_length = insertion.item2;
-      if (between_5p_and_offset(insertion_offset, offset_edge)) {
+      if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
         length_increase += insertion_length;
       }
     }
     return length_increase;
   }
 
-  bool between_5p_and_offset(int offset_to_test, int offset_edge) {
+  bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
     return (this.direction == Direction.right && this.start <= offset_to_test && offset_to_test <= offset_edge) ||
         (this.direction == Direction.left && offset_edge <= offset_to_test && offset_to_test < this.end);
   }
@@ -494,10 +494,11 @@ class Substrand {
     if (this._strand.dna_sequence == null) {
       return null;
     } else {
-      if (this.start >= 384 && this.helix_idx == 15) {
-        print(this._strand.dna_sequence);
-        var x=0;
-      }
+//      for debugging
+//      if (this.start >= 384 && this.helix_idx == 15) {
+//        print(this._strand.dna_sequence);
+//        var x=0;
+//      }
       int start_dna_index = this.offset_to_strand_dna_idx(this.offset_5p);
       int end_dna_index_inclusive = this.offset_to_strand_dna_idx(this.offset_3p);
       String subseq = this._strand.dna_sequence.substring(start_dna_index, end_dna_index_inclusive + 1);
@@ -508,16 +509,38 @@ class Substrand {
   /// Convert from offset on Substrand's Helix to string index
   /// on the parent Strand's DNA sequence.
   int offset_to_strand_dna_idx(int offset) {
-    //TODO: this logic is broken; copy algorithm from offset_to_str_idx in scadnano.py
-    var self_seq_idx_start = this.get_seq_start_idx();
-    int str_idx;
+    int ss_str_idx = null;
     if (this.direction == Direction.right) {
-      str_idx = (offset - this.start) + self_seq_idx_start;
+      //account for insertions and deletions
+      offset += this._net_ins_del_length_increase_from_5p_to(offset);
+      ss_str_idx = offset - this.start;
     } else {
-      str_idx = (this.end - offset - 1) + self_seq_idx_start;
+      // account for insertions and deletions
+      offset -= this._net_ins_del_length_increase_from_5p_to(offset);
+      ss_str_idx = this.end - 1 - offset;
     }
-    str_idx += this.net_ins_del_length_increase_from_5p_to(offset);
-    return str_idx;
+    // correct for existence of previous Substrands on this Strand
+    return ss_str_idx + this.get_seq_start_idx();
+  }
+
+  /// Net number of insertions from 5' end to offset_edge.
+  /// Check is inclusive on the left and exclusive on the right (which is 5' depends on direction).
+  int _net_ins_del_length_increase_from_5p_to(int offset_edge) {
+    int length_increase = 0;
+    for (int deletion in this.deletions) {
+        if (this._between_5p_and_offset(deletion, offset_edge)) {
+            length_increase -= 1;
+        }
+    }
+    for (Tuple2<int,int> insertion in this.insertions) {
+        int insertion_offset = insertion.item1;
+        int insertion_length = insertion.item2;
+        if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
+            length_increase += insertion_length;
+        }
+    }
+    return length_increase;
+
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its
@@ -588,6 +611,8 @@ class Substrand {
     return List<Tuple2<int, int>>.from(
         json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
   }
+
+
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
