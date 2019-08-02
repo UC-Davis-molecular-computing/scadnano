@@ -1,9 +1,0 @@
-{
-  "grid": "square",
-  "major_tick_distance": 8,
-  "helices": [
-    {"idx": 0, "max_bases": 24, "grid_position": [0, 0], "position": [0, 0], "used": true},
-    {"idx": 1, "max_bases": 24, "grid_position": [0, 1], "position": [0, 30], "used": true}
-  ],
-  "strands": []
-}
