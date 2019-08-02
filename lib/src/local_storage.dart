@@ -1,6 +1,6 @@
 import 'dart:html';
 
-//TODO: put whole model in here
+//TODO: put whole DNADesign (and maybe parts of the *UIModels) in here
 
 /// Aspects of model that can be stored in localStorage.
 /// This constitutes more than is saved in jsonStorage, including things like

@@ -7,7 +7,7 @@ import 'view_menu.dart';
 import 'panzoom.dart';
 import 'app.dart';
 
-//TODO: put code editor in browser and let user execute Python script creating DNADesign
+//TODO: put code editor in browser and let user execute Python script creating DNADesign (consider Brython, Transcypt, or Skulpt)
 
 class View {
   MenuViewElement menu_view;
