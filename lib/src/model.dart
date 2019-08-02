@@ -456,7 +456,7 @@ class Substrand {
   }
 
   bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
-    return (this.direction == Direction.right && this.start <= offset_to_test && offset_to_test <= offset_edge) ||
+    return (this.direction == Direction.right && this.start <= offset_to_test && offset_to_test < offset_edge) ||
         (this.direction == Direction.left && offset_edge <= offset_to_test && offset_to_test < this.end);
   }
 
