@@ -1,3 +1,0 @@
-echo "Warning: this only uploads files at the top level of build/"
-echo "To upload all files use the script up_all"
-scp build/* $d:public_html/scadnano/
