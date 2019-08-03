@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:html' as html;
 import 'dart:svg' hide Point;
 
 import 'model.dart';
@@ -24,6 +25,9 @@ class SideViewElement {
   /// Redraw elements in place
   //TODO: handle changed number of total helices
   render() {
+    var pane = html.querySelector('#side-view-svg-viewport');
+    pane.children.clear();
+    pane.children.add(element);
     for (var helix_side_view_elt in helix_elts_map.values) {
       helix_side_view_elt.render();
     }

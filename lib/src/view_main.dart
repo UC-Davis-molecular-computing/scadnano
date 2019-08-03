@@ -52,6 +52,9 @@ class MainViewElement {
 
   /// Redraw elements
   render() {
+    var pane = html.querySelector('#main-view-svg-viewport');
+//    pane.children.clear();
+    pane.children.add(element);
     for (var helix_elt in helix_elts_map.values) {
       helix_elt.render();
     }
@@ -258,7 +261,7 @@ class StrandElement {
   }
 
   draw_dna_sequence(Substrand substrand) {
-    //TODO: handle rendering of bases respecting deletions and insertions
+    //TODO: draw DNA bases on insertions
     var seq_group = svg.GElement();
     seq_group.attributes = {'class': 'dna-subsequence'};
     element.children.add(seq_group);
@@ -493,6 +496,6 @@ class StrandElement {
   }
 
   draw_insertions(Substrand substrand) {
-    //TODO: implement drawing of insertions
+    //TODO: implement drawing of insertion loops
   }
 }

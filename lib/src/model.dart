@@ -7,11 +7,6 @@ import 'package:tuple/tuple.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
 
-//TODO: allow deletions and insertions on only one strand, but default option for user is to put
-// on both strands if both are bound, and to add to new strand when drawn bound to an existing
-// strand with an insertion or deletion; alternately... change model to associate deletions
-// and insertions to a helix position rather than to a substrand
-
 const String CURRENT_VERSION = "0.0.1";
 
 const int BASE_WIDTH_SVG = 10;
@@ -29,8 +24,6 @@ final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 
 /// Represents parts of the Model to serialize
 class DNADesign {
-  //TODO: add version number (e.g., "0.0.2") to model and store in JSON
-
   String version = CURRENT_VERSION;
 
   Grid grid;
@@ -353,8 +346,8 @@ class Helix {
   Helix.fromJson(Map<String, dynamic> parsedJson)
       : this(
             idx: get_value(parsedJson, 'idx'),
-            grid_position: Point<int>(
-                get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
+            grid_position:
+                Point<int>(get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
             max_bases: get_value(parsedJson, 'max_bases'));
 }
 
@@ -528,19 +521,18 @@ class Substrand {
   int _net_ins_del_length_increase_from_5p_to(int offset_edge) {
     int length_increase = 0;
     for (int deletion in this.deletions) {
-        if (this._between_5p_and_offset(deletion, offset_edge)) {
-            length_increase -= 1;
-        }
+      if (this._between_5p_and_offset(deletion, offset_edge)) {
+        length_increase -= 1;
+      }
     }
-    for (Tuple2<int,int> insertion in this.insertions) {
-        int insertion_offset = insertion.item1;
-        int insertion_length = insertion.item2;
-        if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
-            length_increase += insertion_length;
-        }
+    for (Tuple2<int, int> insertion in this.insertions) {
+      int insertion_offset = insertion.item1;
+      int insertion_length = insertion.item2;
+      if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
+        length_increase += insertion_length;
+      }
     }
     return length_increase;
-
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its
@@ -611,8 +603,6 @@ class Substrand {
     return List<Tuple2<int, int>>.from(
         json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
   }
-
-
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.

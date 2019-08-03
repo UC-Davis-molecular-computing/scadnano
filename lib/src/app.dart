@@ -23,7 +23,7 @@ class App {
 
   start() async {
     this.model = Model.default_model();
-    // this.model = await Model.from_url('examples/output_designs/few-small-helices.dna');
+//    this.model = await Model.from_url('examples/output_designs/few-small-helices.dna');
 //    this.model = await Model.from_url('examples/output_designs/16_helix_rectangle_no_seq.dna');
 
     local_storage.restore_all_local_storage();
