@@ -71,18 +71,21 @@
     window.onload = function () {
         svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
-            zoomScaleSensitivity: 0.5,
+            zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
         });
-        // removeDummy("dummy-elt-side-view");
         svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
-            zoomScaleSensitivity: 0.5,
+            zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
         });
+        // attempting to remove the dummy node here causes a race condition with the Dart code that clears out
+        // DOM children before rendering, so we just leave it in.
+        // removeDummy("dummy-elt-side-view");
         // removeDummy("dummy-elt-main-view");
+
         // Split(['#left-pane', '#right-pane'], {
         //   minSize: 0,
         // });
