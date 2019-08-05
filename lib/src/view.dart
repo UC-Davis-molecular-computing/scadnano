@@ -8,7 +8,7 @@ import 'app.dart';
 class View {
   MenuViewElement menu_view;
   SideViewElement side_view;
-  MainViewElement main_view;
+  MainViewComponent main_view;
 
   View();
 
@@ -38,7 +38,7 @@ class View {
   }
 
   render_main_view() {
-    this.main_view = MainViewElement();
+    this.main_view = MainViewComponent();
     // This uses a strange starting translation because the upper left of helix 0 is the origin.
 //    var panzoomable_element = PanzoomableSvgElement(this.main_view.element, 'main-view-svg',
 //        init_translation: Point<num>(100, 30));

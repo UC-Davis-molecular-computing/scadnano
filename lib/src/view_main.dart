@@ -25,17 +25,17 @@ num width_svg_text(String string) {
   return bbox.width;
 }
 
-class MainViewElement {
+class MainViewComponent {
   final svg.GElement element = svg.GElement();
-  final Map<Strand, StrandElement> strand_elts_map = {};
-  final Map<Point<int>, HelixMainViewElement> helix_elts_map = {};
-  final List<HelixMainViewElement> used_helix_elts =
-  List<HelixMainViewElement>(app.model.dna_design.used_helices.length);
+  final Map<Strand, StrandComponent> strand_elts_map = {};
+  final Map<Point<int>, HelixMainViewComponent> helix_elts_map = {};
+  final List<HelixMainViewComponent> used_helix_elts =
+      List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
 
-  MainViewElement() {
+  MainViewComponent() {
     // draw helices
     for (var helix in app.model.dna_design.helices) {
-      helix_elts_map[helix.grid_position] = HelixMainViewElement(this.element, helix);
+      helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.element, helix);
     }
     for (var helix in app.model.dna_design.used_helices) {
       var helix_elt = helix_elts_map[helix.grid_position];
@@ -44,7 +44,7 @@ class MainViewElement {
     }
     // draw strands
     for (var strand in app.model.dna_design.strands) {
-      var strand_elt = StrandElement(strand);
+      var strand_elt = StrandComponent(strand);
       element.children.add(strand_elt.element);
       strand_elts_map[strand] = strand_elt;
     }
@@ -64,12 +64,12 @@ class MainViewElement {
   }
 }
 
-class HelixMainViewElement {
+class HelixMainViewComponent {
   final svg.GElement parent;
   final svg.GElement element = svg.GElement();
   final Helix helix;
 
-  HelixMainViewElement(this.parent, this.helix) {
+  HelixMainViewComponent(this.parent, this.helix) {
     element.setAttribute("class", "helix-lines");
   }
 
@@ -235,12 +235,14 @@ class HelixMainViewElement {
 //  }
 }
 
-class StrandElement {
+class StrandComponent {
   final Strand strand;
   svg.GElement element = svg.GElement();
+  DNASequenceComponent dna_sequence_component;
 
-  StrandElement(Strand this.strand) {
-    element.attributes = {
+  StrandComponent(Strand this.strand) {
+    this.dna_sequence_component = DNASequenceComponent(this.strand);
+    this.element.attributes = {
       'class': 'strand',
     };
   }
@@ -251,109 +253,51 @@ class StrandElement {
     render_strand_lines();
     render_5p_end();
     render_3p_end();
-    render_dna_sequences();
     for (var substrand in this.strand.substrands) {
       render_deletions(substrand);
       render_insertions(substrand);
     }
-  }
 
-  static const classname_dna_sequence = 'dna-seq';
-  
-  render_dna_sequences() {
-    bool is_dna_seq_text_elt(elt) {
-      // the type of className is not String. This purports to give a workaround:
-      // https://github.com/dart-lang/sdk/issues/15787
-      // but it didn't work for me
-      var s = elt.className;
-      String elt_classname = s is svg.AnimatedString ? (s as svg.AnimatedString).animVal : s;
-      return elt_classname == classname_dna_sequence;
-    }
-    var list_dna_seq_children = [for (var elt in this.element.children) if (is_dna_seq_text_elt(elt)) elt];
-    for (var dna_seq_elt in list_dna_seq_children) {
-      this.element.children.remove(dna_seq_elt);
-    }
-
-    if (strand.dna_sequence == null || !app.model.show_dna) {
-      return;
-    }
-
-    for (var substrand in this.strand.substrands) {
-      this._draw_dna_sequence(substrand);
-    }
-  }
-
-  // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
-  _draw_dna_sequence(Substrand substrand) {
-    //TODO: draw DNA bases on insertions
-    var seq_elt = svg.TextElement();
-    seq_elt.innerHtml = substrand.dna_sequence_deletions_insertions_to_spaces();
-
-    var rotate_degrees = 0;
-    int offset = substrand.offset_5p;
-    Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
-    var rotate_x = pos.x;
-    var rotate_y = pos.y;
-    // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -BASE_WIDTH_SVG * 0.1;
-    if (substrand.direction == Direction.left) {
-      rotate_degrees = 180;
-    }
-    var dy = '0.75px';
-    if (browser.isFirefox) {
-      dy = '0px';
-    }
-
-    var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
-    seq_elt.attributes = {
-      'class': classname_dna_sequence,
-      'x': '${pos.x + x_adjust}',
-      'y': '${pos.y}',
-      'textLength': '$text_length',
-      'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
-      'dy': dy,
-    };
-
-    this.element.children.add(seq_elt);
-//    seq_group.children.add(seq_elt);
+    this.element.children.add(this.dna_sequence_component.element);
+    this.dna_sequence_component.render();
   }
 
   // keep this around in case this is how we want to export to an SVG file
-  draw_dna_sequence_old(Substrand substrand) {
-    var seq_group = svg.GElement();
-    seq_group.attributes = {'class': 'dna-subsequence'};
-    element.children.add(seq_group);
-    String dna_sequence = substrand.dna_sequence();
-    for (int i = 0; i < substrand.dna_length && i < dna_sequence.length; i++) {
-      String base = dna_sequence[i];
-      var base_elt = svg.TextElement();
-      base_elt.innerHtml = base;
-      var offset_from_start = i;
-      var rotate_degrees = 0;
-      if (substrand.direction == Direction.left) {
-        offset_from_start = -i;
-      }
-      int offset = substrand.offset_5p + offset_from_start;
-      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
-      var rotate_x = pos.x;
-      var rotate_y = pos.y;
-      if (substrand.direction == Direction.left) {
-        rotate_degrees = 180;
-      }
-      var dy = '0.75px';
-      if (browser.isFirefox) {
-        dy = '0px';
-      }
-      base_elt.attributes = {
-        'class': 'dna-base',
-        'x': '${pos.x}',
-        'y': '${pos.y}',
-        'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
-        'dy': dy,
-      };
-      seq_group.children.add(base_elt);
-    }
-  }
+//  draw_dna_sequence_old(Substrand substrand) {
+//    var seq_group = svg.GElement();
+//    seq_group.attributes = {'class': 'dna-subsequence'};
+//    element.children.add(seq_group);
+//    String dna_sequence = substrand.dna_sequence();
+//    for (int i = 0; i < substrand.dna_length && i < dna_sequence.length; i++) {
+//      String base = dna_sequence[i];
+//      var base_elt = svg.TextElement();
+//      base_elt.innerHtml = base;
+//      var offset_from_start = i;
+//      var rotate_degrees = 0;
+//      if (substrand.direction == Direction.left) {
+//        offset_from_start = -i;
+//      }
+//      int offset = substrand.offset_5p + offset_from_start;
+//      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+//      var rotate_x = pos.x;
+//      var rotate_y = pos.y;
+//      if (substrand.direction == Direction.left) {
+//        rotate_degrees = 180;
+//      }
+//      var dy = '0.75px';
+//      if (browser.isFirefox) {
+//        dy = '0px';
+//      }
+//      base_elt.attributes = {
+//        'class': 'dna-base',
+//        'x': '${pos.x}',
+//        'y': '${pos.y}',
+//        'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
+//        'dy': dy,
+//      };
+//      seq_group.children.add(base_elt);
+//    }
+//  }
 
   render_strand_lines() {
     if (this.strand.substrands.length == 0) {
@@ -507,5 +451,61 @@ class StrandElement {
 
   render_insertions(Substrand substrand) {
     //TODO: implement drawing of insertion loops
+  }
+}
+
+class DNASequenceComponent {
+  svg.GElement element = svg.GElement();
+  Strand strand;
+  static const classname_dna_sequence = 'dna-seq';
+
+  DNASequenceComponent(this.strand) {
+    this.element.attributes = {
+      'class': 'dna-sequence-elts',
+    };
+  }
+
+  render() {
+    element.children.clear();
+    if (app.model.show_dna && this.strand.dna_sequence != null) {
+      for (var substrand in this.strand.substrands) {
+        this._draw_dna_sequence(substrand);
+      }
+    }
+  }
+
+  // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
+  _draw_dna_sequence(Substrand substrand) {
+    var seq_elt = svg.TextElement();
+    seq_elt.innerHtml = substrand.dna_sequence_deletions_insertions_to_spaces();
+
+    var rotate_degrees = 0;
+    int offset = substrand.offset_5p;
+    Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+    var rotate_x = pos.x;
+    var rotate_y = pos.y;
+    // this is needed to make complementary DNA bases line up more nicely (still not perfect)
+    var x_adjust = -BASE_WIDTH_SVG * 0.1;
+    if (substrand.direction == Direction.left) {
+      rotate_degrees = 180;
+    }
+    var dy = '0.75px';
+    if (browser.isFirefox) {
+      dy = '0px';
+    }
+
+    var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
+    seq_elt.attributes = {
+      'class': classname_dna_sequence,
+      'x': '${pos.x + x_adjust}',
+      'y': '${pos.y}',
+      'textLength': '$text_length',
+      'transform': 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})',
+      'dy': dy,
+    };
+
+    this.element.children.add(seq_elt);
+
+    //TODO: draw DNA bases on insertions
   }
 }

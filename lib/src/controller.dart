@@ -16,7 +16,7 @@ import 'actions.dart';
 class Controller {
   MenuViewElement menu_view;
   SideViewElement side_view;
-  MainViewElement main_view;
+  MainViewComponent main_view;
 
   ////////////////////////////////////////////////////////////////////////////
   // Notifiers that fire when Model is updated by an Action
@@ -39,7 +39,7 @@ class Controller {
 
   Controller();
 
-  set_view_elements(MenuViewElement new_menu_view, SideViewElement new_side_view, MainViewElement new_main_view) {
+  set_view_elements(MenuViewElement new_menu_view, SideViewElement new_side_view, MainViewComponent new_main_view) {
     this.menu_view = new_menu_view;
     this.side_view = new_side_view;
     this.main_view = new_main_view;
@@ -70,7 +70,7 @@ class Controller {
   subscribe_to_show_dna() {
     this.notifier_show_dna_change.stream.listen((_) {
       for (var strand_elt in main_view.strand_elts_map.values) {
-        strand_elt.render_dna_sequences();
+        strand_elt.dna_sequence_component.render();
       }
     });
   }
