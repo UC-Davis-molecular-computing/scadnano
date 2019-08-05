@@ -1,5 +1,5 @@
 name: scadnano
-description: A web-based simplified implementation of cadnano (https://cadnano.org/).
+description: A web-based scriptable implementation of cadnano (https://cadnano.org/).
 # version: 0.0.1
 #homepage: https://web.cs.ucdavis.edu/~doty/scadnano/
 #author: David Doty <doty@ucdavis.edu>

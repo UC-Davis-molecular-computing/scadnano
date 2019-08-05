@@ -116,11 +116,13 @@ html, body {
 .deletion-cross-outer {
     stroke: black;
     stroke-width: 1.5px;
+    /*stroke-linecap: round;*/
 }
 
 .deletion-cross-inner {
     stroke: red;
     stroke-width: 1px;
+    /*stroke-linecap: round;*/
 }
 
 .dna-base {

@@ -70,7 +70,7 @@ class Controller {
   subscribe_to_show_dna() {
     this.notifier_show_dna_change.stream.listen((_) {
       for (var strand_elt in main_view.strand_elts_map.values) {
-        strand_elt.render();
+        strand_elt.render_dna_sequences();
       }
     });
   }

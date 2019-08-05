@@ -30,7 +30,7 @@ class MainViewElement {
   final Map<Strand, StrandElement> strand_elts_map = {};
   final Map<Point<int>, HelixMainViewElement> helix_elts_map = {};
   final List<HelixMainViewElement> used_helix_elts =
-      List<HelixMainViewElement>(app.model.dna_design.used_helices.length);
+  List<HelixMainViewElement>(app.model.dna_design.used_helices.length);
 
   MainViewElement() {
     // draw helices
@@ -53,7 +53,7 @@ class MainViewElement {
   /// Redraw elements
   render() {
     var pane = html.querySelector('#main-view-svg-viewport');
-//    pane.children.clear();
+    pane.children.clear();
     pane.children.add(element);
     for (var helix_elt in helix_elts_map.values) {
       helix_elt.render();
@@ -248,38 +248,46 @@ class StrandElement {
   render() {
     //TODO: figure out how to layer SVG elements so these are drawn on top of Helix elements and in proper order relative to each other (e.g., DNA bases on top)
     this.element.children.clear();
-    draw_strand_lines();
-    draw_5p_end();
-    draw_3p_end();
+    render_strand_lines();
+    render_5p_end();
+    render_3p_end();
+    render_dna_sequences();
     for (var substrand in this.strand.substrands) {
-      if (substrand.dna_sequence != null && app.model.show_dna) {
-        draw_dna_sequence(substrand);
-      }
-      draw_deletions(substrand);
-      draw_insertions(substrand);
+      render_deletions(substrand);
+      render_insertions(substrand);
     }
   }
 
-  draw_dna_sequence(Substrand substrand) {
-    //TODO: draw DNA bases on insertions
-    var seq_group = svg.GElement();
-    seq_group.attributes = {'class': 'dna-subsequence'};
-    element.children.add(seq_group);
-    var seq_elt = svg.TextElement();
-
-    var seq_idx = 0;
-    List<int> dna_bases_with_spaces = [];
-    var deletions_set = substrand.deletions.toSet();
-    for (int offset in substrand.offsets_in_5p_3p_order()) {
-      if (deletions_set.contains(offset)) {
-        dna_bases_with_spaces.add(' '.codeUnitAt(0));
-      } else {
-        dna_bases_with_spaces.add(substrand.dna_sequence.codeUnitAt(seq_idx));
-        seq_idx++;
-      }
+  static const classname_dna_sequence = 'dna-seq';
+  
+  render_dna_sequences() {
+    bool is_dna_seq_text_elt(elt) {
+      // the type of className is not String. This purports to give a workaround:
+      // https://github.com/dart-lang/sdk/issues/15787
+      // but it didn't work for me
+      var s = elt.className;
+      String elt_classname = s is svg.AnimatedString ? (s as svg.AnimatedString).animVal : s;
+      return elt_classname == classname_dna_sequence;
     }
-//    seq_elt.innerHtml = substrand.dna_sequence;
-    seq_elt.innerHtml = String.fromCharCodes(dna_bases_with_spaces);
+    var list_dna_seq_children = [for (var elt in this.element.children) if (is_dna_seq_text_elt(elt)) elt];
+    for (var dna_seq_elt in list_dna_seq_children) {
+      this.element.children.remove(dna_seq_elt);
+    }
+
+    if (strand.dna_sequence == null || !app.model.show_dna) {
+      return;
+    }
+
+    for (var substrand in this.strand.substrands) {
+      this._draw_dna_sequence(substrand);
+    }
+  }
+
+  // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
+  _draw_dna_sequence(Substrand substrand) {
+    //TODO: draw DNA bases on insertions
+    var seq_elt = svg.TextElement();
+    seq_elt.innerHtml = substrand.dna_sequence_deletions_insertions_to_spaces();
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
@@ -298,7 +306,7 @@ class StrandElement {
 
     var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
-      'class': 'dna-seq',
+      'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
       'y': '${pos.y}',
       'textLength': '$text_length',
@@ -306,7 +314,8 @@ class StrandElement {
       'dy': dy,
     };
 
-    seq_group.children.add(seq_elt);
+    this.element.children.add(seq_elt);
+//    seq_group.children.add(seq_elt);
   }
 
   // keep this around in case this is how we want to export to an SVG file
@@ -314,8 +323,9 @@ class StrandElement {
     var seq_group = svg.GElement();
     seq_group.attributes = {'class': 'dna-subsequence'};
     element.children.add(seq_group);
-    for (int i = 0; i < substrand.length && i < substrand.dna_sequence.length; i++) {
-      String base = substrand.dna_sequence[i];
+    String dna_sequence = substrand.dna_sequence();
+    for (int i = 0; i < substrand.dna_length && i < dna_sequence.length; i++) {
+      String base = dna_sequence[i];
       var base_elt = svg.TextElement();
       base_elt.innerHtml = base;
       var offset_from_start = i;
@@ -345,7 +355,7 @@ class StrandElement {
     }
   }
 
-  draw_strand_lines() {
+  render_strand_lines() {
     if (this.strand.substrands.length == 0) {
       return;
     }
@@ -401,7 +411,7 @@ class StrandElement {
     return control;
   }
 
-  draw_5p_end() {
+  render_5p_end() {
     var helix_idx = strand.substrands.first.helix_idx;
     var offset = strand.substrands.first.offset_5p;
     var direction = strand.substrands.first.direction;
@@ -422,7 +432,7 @@ class StrandElement {
     element.children.add(box);
   }
 
-  draw_3p_end() {
+  render_3p_end() {
     var helix_idx = strand.substrands.last.helix_idx;
     var offset = strand.substrands.last.offset_3p;
     var direction = strand.substrands.last.direction;
@@ -447,7 +457,7 @@ class StrandElement {
     element.children.add(triangle);
   }
 
-  draw_deletions(Substrand substrand) {
+  render_deletions(Substrand substrand) {
     for (var deletion in substrand.deletions) {
       Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, deletion, substrand.direction);
 
@@ -495,7 +505,7 @@ class StrandElement {
     }
   }
 
-  draw_insertions(Substrand substrand) {
+  render_insertions(Substrand substrand) {
     //TODO: implement drawing of insertion loops
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:html';
 import 'dart:math';
 
 import 'package:color/color.dart';
@@ -174,23 +172,27 @@ class Model {
     this.dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
   }
 
-  /// Used with from_url
-  Model.empty();
-
-  static Future<Model> from_url(String url) async {
-    Model model = Model.empty();
-    var dna_design = await _dna_design_from_url(url);
-    model.dna_design = dna_design;
-    return model;
-  }
-
-  static Future<DNADesign> _dna_design_from_url(String url) async {
-    return await HttpRequest.getString(url).then((content) {
-      Map<String, dynamic> parsed_json = jsonDecode(content);
-      var dna_design = DNADesign.from_json(parsed_json);
-      return dna_design;
-    });
-  }
+  //TODO: is there a reason this is defined here? It requires the html library, which in turn
+  // makes it hard to test since tests must be done "in the browser", which is slow to compile
+  // and doesn't even let us use print statements or the debugger to see what's going wrong.
+  // If this is needed in the future, move it out of model.dart to enable easier unit testing.
+//  /// Used with from_url
+//  Model.empty();
+//
+//  static Future<Model> from_url(String url) async {
+//    Model model = Model.empty();
+//    var dna_design = await _dna_design_from_url(url);
+//    model.dna_design = dna_design;
+//    return model;
+//  }
+//
+//  static Future<DNADesign> _dna_design_from_url(String url) async {
+//    return await HttpRequest.getString(url).then((content) {
+//      Map<String, dynamic> parsed_json = jsonDecode(content);
+//      var dna_design = DNADesign.from_json(parsed_json);
+//      return dna_design;
+//    });
+//  }
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
@@ -346,8 +348,8 @@ class Helix {
   Helix.fromJson(Map<String, dynamic> parsedJson)
       : this(
             idx: get_value(parsedJson, 'idx'),
-            grid_position:
-                Point<int>(get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
+            grid_position: Point<int>(
+                get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
             max_bases: get_value(parsedJson, 'max_bases'));
 }
 
@@ -368,7 +370,7 @@ class Strand {
   int get length {
     int num = 0;
     for (var substrand in substrands) {
-      num += substrand.length;
+      num += substrand.dna_length;
     }
     return num;
   }
@@ -411,47 +413,15 @@ class Substrand {
   List<int> deletions = [];
   List<Tuple2<int, int>> insertions = []; // elt: Pair(offset, num insertions)
 
-//  int get hashCode =>
-//      quiver.hash4(this.helix_idx, this.direction, this.start, this.end);
-//
-//  bool operator ==(other) =>
-//      (this.helix_idx == other.helix_idx
-//          && this.direction == other.direction
-//          && this.start == other.start
-//          && this.end == other.end);
-
   /// 5' end, INCLUSIVE
   int get offset_5p => direction == Direction.left ? end - 1 : start;
 
   /// 3' end, INCLUSIVE
   int get offset_3p => direction == Direction.left ? start : end - 1;
 
-  int get length => (this.end - this.start) - this.deletions.length + this.num_insertions();
+  int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
   int get visual_length => (this.end - this.start);
-
-  /// Total length increase (can be negative) from deletions and insertions between 5' end and `offset`.
-  int net_ins_del_length_increase_from_5p_to(int offset_edge) {
-    int length_increase = 0;
-    for (int deletion in this.deletions) {
-      if (this._between_5p_and_offset(deletion, offset_edge)) {
-        length_increase--;
-      }
-    }
-    for (Tuple2<int, int> insertion in this.insertions) {
-      int insertion_offset = insertion.item1;
-      int insertion_length = insertion.item2;
-      if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
-        length_increase += insertion_length;
-      }
-    }
-    return length_increase;
-  }
-
-  bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
-    return (this.direction == Direction.right && this.start <= offset_to_test && offset_to_test < offset_edge) ||
-        (this.direction == Direction.left && offset_edge <= offset_to_test && offset_to_test < this.end);
-  }
 
   /// List of offsets (inclusive at each end) in 5' - 3' order, from 5' to `offset_stop`.
   List<int> offsets_from_5p_to(int offset_stop) {
@@ -483,7 +453,7 @@ class Substrand {
     return offsets;
   }
 
-  String get dna_sequence {
+  String dna_sequence() {
     if (this._strand.dna_sequence == null) {
       return null;
     } else {
@@ -492,33 +462,127 @@ class Substrand {
 //        print(this._strand.dna_sequence);
 //        var x=0;
 //      }
-      int start_dna_index = this.offset_to_strand_dna_idx(this.offset_5p);
-      int end_dna_index_inclusive = this.offset_to_strand_dna_idx(this.offset_3p);
-      String subseq = this._strand.dna_sequence.substring(start_dna_index, end_dna_index_inclusive + 1);
-      return subseq;
+      return this.dna_sequence_in(this.start, this.end - 1);
     }
   }
 
-  /// Convert from offset on Substrand's Helix to string index
-  /// on the parent Strand's DNA sequence.
-  int offset_to_strand_dna_idx(int offset) {
+  /// Return DNA sequence of this Substrand in the interval of offsets given by
+  //  [`left`, `right`], INCLUSIVE.
+  //
+  //  WARNING: This is inclusive on both ends,
+  //  unlike other parts of this API where the right endpoint is exclusive.
+  //  This is to make the notion well-defined when one of the endpoints is on an offset with a
+  //  deletion or insertion.
+  String dna_sequence_in(int offset_left, int offset_right) {
+    String strand_seq = this._strand.dna_sequence;
+    if (strand_seq == null) {
+      return null;
+    }
+    // if on a deletion, move inward until we are off of it
+    while (this.deletions.contains(offset_left)) {
+      offset_left += 1;
+    }
+    while (this.deletions.contains(offset_right)) {
+      offset_right -= 1;
+    }
+
+    if (offset_left > offset_right) {
+      return '';
+    }
+    if (offset_left >= this.end) {
+      return '';
+    }
+    if (offset_right < 0) {
+      return '';
+    }
+
+    bool five_p_on_left = this.direction == Direction.right;
+    int str_idx_left = this.offset_to_strand_dna_idx(offset_left, five_p_on_left);
+    int str_idx_right = this.offset_to_strand_dna_idx(offset_right, !five_p_on_left);
+    if (this.direction == Direction.left) {
+      // these will be out of order if strand is left
+      int swap = str_idx_left;
+      str_idx_left = str_idx_right;
+      str_idx_right = swap;
+    }
+
+    String subseq = this._strand.dna_sequence.substring(str_idx_left, str_idx_right + 1);
+    return subseq;
+  }
+
+  /// This is suitable for rendering along the helix lines.
+  /// For deletions, spaces are added where a base would be.
+  /// For insertions, all bases corresponding to the insertion
+  /// (including the first one that would be represented even if there were no insertion)
+  /// are replaced with a single space.
+  String dna_sequence_deletions_insertions_to_spaces() {
+    String seq = this.dna_sequence();
+    List<int> codeunits = [];
+
+    var deletions_set = this.deletions.toSet();
+    var insertions_map = Map<int, int>.fromIterable(
+      this.insertions,
+      key: (insertion) => insertion.item1,
+      value: (insertion) => insertion.item2,
+    );
+
+    int seq_idx = 0;
+    int offset = this.offset_5p;
+    bool going_right = this.direction == Direction.right;
+    int space_codeunit = ' '.codeUnitAt(0);
+    int forward = going_right ? 1 : -1;
+    bool offset_out_of_bounds(offset) =>
+        going_right ? offset >= this.offset_3p + forward : offset <= this.offset_3p + forward;
+    while (!offset_out_of_bounds(offset)) {
+      if (deletions_set.contains(offset)) {
+        codeunits.add(space_codeunit);
+        offset += forward;
+      } else if (insertions_map.containsKey(offset)) {
+        codeunits.add(space_codeunit);
+        int insertion_length = insertions_map[offset];
+        int forward_insertion = insertion_length + 1;
+        seq_idx += forward_insertion;
+        offset += forward;
+      } else {
+        int base_codeunit = seq.codeUnitAt(seq_idx);
+        codeunits.add(base_codeunit);
+        seq_idx++;
+        offset += forward;
+      }
+    }
+
+    var seq_modified = String.fromCharCodes(codeunits);
+    return seq_modified;
+  }
+
+  /// Convert from offset on Substrand's Helix to string index on the parent Strand's DNA sequence.
+  int offset_to_strand_dna_idx(int offset, bool offset_closer_to_5p) {
+    if (this.deletions.contains(offset)) {
+      throw ArgumentError('offset {offset} illegally contains a deletion from {self.deletions}');
+    }
+
+    // length adjustment for insertions depends on whether this is a left or right offset
+    int len_adjust = this._net_ins_del_length_increase_from_5p_to(offset, offset_closer_to_5p);
+
+    // get string index assuming this Substrand is first on Strand
     int ss_str_idx = null;
     if (this.direction == Direction.right) {
       //account for insertions and deletions
-      offset += this._net_ins_del_length_increase_from_5p_to(offset);
+      offset += len_adjust;
       ss_str_idx = offset - this.start;
     } else {
       // account for insertions and deletions
-      offset -= this._net_ins_del_length_increase_from_5p_to(offset);
+      offset -= len_adjust;
       ss_str_idx = this.end - 1 - offset;
     }
+
     // correct for existence of previous Substrands on this Strand
     return ss_str_idx + this.get_seq_start_idx();
   }
 
   /// Net number of insertions from 5' end to offset_edge.
   /// Check is inclusive on the left and exclusive on the right (which is 5' depends on direction).
-  int _net_ins_del_length_increase_from_5p_to(int offset_edge) {
+  int _net_ins_del_length_increase_from_5p_to(int offset_edge, bool offset_closer_to_5p) {
     int length_increase = 0;
     for (int deletion in this.deletions) {
       if (this._between_5p_and_offset(deletion, offset_edge)) {
@@ -532,7 +596,29 @@ class Substrand {
         length_increase += insertion_length;
       }
     }
+
+    // special case for when offset_edge is an endpoint closer to the 3' end,
+    // we add its extra insertions also in this case
+    if (!offset_closer_to_5p) {
+      var insertion_map = Map<int, int>.fromIterable(
+        this.insertions,
+        key: (insertion) => insertion.item1,
+        value: (insertion) => insertion.item2,
+      );
+      if (insertion_map.containsKey(offset_edge)) {
+        int insertion_length = insertion_map[offset_edge];
+        length_increase += insertion_length;
+      }
+    }
+
     return length_increase;
+  }
+
+  bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
+    return (this.direction == Direction.right &&
+            this.start <= offset_to_test &&
+            offset_to_test < offset_edge) ||
+        (this.direction == Direction.left && offset_edge < offset_to_test && offset_to_test < this.end);
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its
@@ -544,7 +630,7 @@ class Substrand {
     // index of self's position within the DNA sequence of parent strand
     int self_seq_idx_start = 0;
     for (var prev_substrand in substrands.getRange(0, self_substrand_idx)) {
-      self_seq_idx_start += prev_substrand.length;
+      self_seq_idx_start += prev_substrand.dna_length;
     }
     return self_seq_idx_start;
   }
@@ -553,6 +639,10 @@ class Substrand {
   Strand _strand;
 
   Strand get strand => this._strand;
+
+  void set strand(Strand new_strand) {
+    this._strand = new_strand;
+  }
 
   int num_insertions() {
     int num = 0;

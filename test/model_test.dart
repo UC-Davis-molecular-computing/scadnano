@@ -1,5 +1,4 @@
-@TestOn("browser")
-
+//@TestOn("browser")  // uncomment this to test stuff in files that require importing 'dart:html'
 import 'dart:math';
 import 'dart:convert';
 
@@ -8,6 +7,7 @@ import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/model.dart';
+
 
 main() {
   test("serialize then deserialize", () {
@@ -29,17 +29,24 @@ main() {
     var hp21 = Point<int>(2, 1);
     var h20 = Helix(idx: -1, grid_position: hp20, max_bases: max_bases);
     var h21 = Helix(idx: -1, grid_position: hp21, max_bases: max_bases);
-    design.helices = [h00, h01, h10, h11, h20, h21,];
+    design.helices = [
+      h00,
+      h01,
+      h10,
+      h11,
+      h20,
+      h21,
+    ];
     design.used_helices = [h00, h01];
 
     Substrand ss00 = Substrand()
       ..helix_idx = 0
       ..direction = Direction.left
       ..start = 2
-      ..end = 5
+      ..end = 8
       ..deletions = [3]
-      ..insertions = [Tuple2<int, int>(4, 1), Tuple2<int, int>(5, 2)];
-//      ..dna_sequence = 'GGGGGG';
+      ..insertions = [Tuple2<int, int>(4, 1), Tuple2<int, int>(6, 2)];
+//      ..dna_sequence = 'GGGGGGCT';
 
     Substrand ss01 = Substrand()
       ..helix_idx = 1
@@ -48,12 +55,12 @@ main() {
       ..end = 6
       ..deletions = []
       ..insertions = [];
-//      ..dna_sequence = 'AAAAAA';
+//      ..dna_sequence = 'TAAAC';
 
     Strand s0 = Strand()
       ..substrands = [ss00, ss01]
       ..color = RgbColor.name('red')
-      ..dna_sequence = 'GGGGGGAAAAAA';
+      ..dna_sequence = 'GGGGGGCTTAAAC';
 
     Substrand ss10 = Substrand()
       ..helix_idx = 1
@@ -62,7 +69,7 @@ main() {
       ..end = 15
       ..deletions = []
       ..insertions = [];
-//      ..dna_sequence = 'TTTTT';
+//      ..dna_sequence = 'TTTG';
 
     Substrand ss11 = Substrand()
       ..helix_idx = 0
@@ -71,12 +78,12 @@ main() {
       ..end = 16
       ..deletions = []
       ..insertions = [];
-//      ..dna_sequence = 'CCCC';
+//      ..dna_sequence = 'CCA';
 
     Strand s1 = Strand()
       ..substrands = [ss10, ss11]
       ..color = RgbColor.name('green')
-      ..dna_sequence = 'TTTTTCCCC';
+      ..dna_sequence = 'TTTGCCA';
 
     design.strands = [s0, s1];
 
@@ -94,12 +101,12 @@ main() {
     expect(decoded_model.major_tick_distance, equals(7));
 
     expect(decoded_model.helices.length, equals(6));
-    expect(decoded_model.helices, equals(h00));
-    expect(decoded_model.helices, equals(h01));
-    expect(decoded_model.helices, equals(h10));
-    expect(decoded_model.helices, equals(h11));
-    expect(decoded_model.helices, equals(h20));
-    expect(decoded_model.helices, equals(h21));
+    expect(decoded_model.helices[0], equals(h00));
+    expect(decoded_model.helices[1], equals(h01));
+    expect(decoded_model.helices[2], equals(h10));
+    expect(decoded_model.helices[3], equals(h11));
+    expect(decoded_model.helices[4], equals(h20));
+    expect(decoded_model.helices[5], equals(h21));
 
     expect(decoded_model.used_helices.length, equals(2));
     expect(decoded_model.used_helices[0], equals(h00));
@@ -110,21 +117,21 @@ main() {
     Strand parsed_strand0 = decoded_model.strands[0];
     expect(parsed_strand0.color, equals(RgbColor.name('red')));
     expect(parsed_strand0.substrands.length, equals(2));
-    expect(parsed_strand0.length, equals(12));
-    expect(parsed_strand0.dna_sequence, equals('GGGGGGAAAAAA'));
+    expect(parsed_strand0.length, equals(13));
+    expect(parsed_strand0.dna_sequence, equals('GGGGGGCTTAAAC'));
 
     Substrand parsed_substrand00 = parsed_strand0.substrands[0];
     expect(parsed_substrand00.helix_idx, equals(0));
     expect(parsed_substrand00.direction, equals(Direction.left));
     expect(parsed_substrand00.start, equals(2));
-    expect(parsed_substrand00.end, equals(5));
+    expect(parsed_substrand00.end, equals(8));
     expect(parsed_substrand00.deletions.length, equals(1));
     expect(parsed_substrand00.deletions[0], equals(3));
     expect(parsed_substrand00.insertions.length, equals(2));
     expect(parsed_substrand00.insertions[0], equals(Tuple2<int, int>(4, 1)));
-    expect(parsed_substrand00.insertions[1], equals(Tuple2<int, int>(5, 2)));
-    expect(parsed_substrand00.dna_sequence, equals('GGGGGG'));
-    expect(parsed_substrand00.length, equals(6));
+    expect(parsed_substrand00.insertions[1], equals(Tuple2<int, int>(6, 2)));
+    expect(parsed_substrand00.dna_sequence(), equals('GGGGGGCT'));
+    expect(parsed_substrand00.dna_length, equals(8));
 
     Substrand parsed_substrand01 = parsed_strand0.substrands[1];
     expect(parsed_substrand01.helix_idx, equals(1));
@@ -133,14 +140,14 @@ main() {
     expect(parsed_substrand01.end, equals(6));
     expect(parsed_substrand01.deletions.length, equals(0));
     expect(parsed_substrand01.insertions.length, equals(0));
-    expect(parsed_substrand01.dna_sequence, equals('AAAAAA'));
-    expect(parsed_substrand01.length, equals(6));
+    expect(parsed_substrand01.dna_sequence(), equals('TAAAC'));
+    expect(parsed_substrand01.dna_length, equals(5));
 
     Strand parsed_strand1 = decoded_model.strands[1];
     expect(parsed_strand1.color, equals(RgbColor.name('green')));
     expect(parsed_strand1.substrands.length, equals(2));
-    expect(parsed_strand1.length, equals(9));
-    expect(parsed_strand1.dna_sequence, equals('TTTTTCCCC'));
+    expect(parsed_strand1.length, equals(7));
+    expect(parsed_strand1.dna_sequence, equals('TTTGCCA'));
 
     Substrand parsed_substrand10 = parsed_strand1.substrands[0];
     expect(parsed_substrand10.helix_idx, equals(1));
@@ -149,8 +156,8 @@ main() {
     expect(parsed_substrand10.end, equals(15));
     expect(parsed_substrand10.deletions.length, equals(0));
     expect(parsed_substrand10.insertions.length, equals(0));
-    expect(parsed_substrand10.dna_sequence, equals('TTTTT'));
-    expect(parsed_substrand10.length, equals(5));
+    expect(parsed_substrand10.dna_sequence(), equals('TTTG'));
+    expect(parsed_substrand10.dna_length, equals(4));
 
     Substrand parsed_substrand11 = parsed_strand1.substrands[1];
     expect(parsed_substrand11.helix_idx, equals(0));
@@ -159,8 +166,91 @@ main() {
     expect(parsed_substrand11.end, equals(16));
     expect(parsed_substrand11.deletions.length, equals(0));
     expect(parsed_substrand11.insertions.length, equals(0));
-    expect(parsed_substrand11.dna_sequence, equals('CCCC'));
-    expect(parsed_substrand11.length, equals(4));
+    expect(parsed_substrand11.dna_sequence(), equals('CCA'));
+    expect(parsed_substrand11.dna_length, equals(3));
+  });
+
+  test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
+    var ss = Substrand()
+      ..helix_idx = 0
+      ..direction = Direction.right
+      ..start = 0
+      ..end = 10;
+    var strand = Strand()
+      ..substrands = [ss]
+      ..dna_sequence = "ACGTACGTAC";
+    ss.strand = strand;
+    expect(ss.dna_sequence_deletions_insertions_to_spaces(), "ACGTACGTAC");
+  });
+
+  test("dna_sequence_deletions_insertions_to_spaces__with_deletions_no_insertions", () {
+    var ss = Substrand()
+      ..helix_idx = 0
+      ..direction = Direction.right
+      ..start = 0
+      ..end = 10
+      ..deletions = [2, 3, 7];
+    var strand = Strand()
+      ..substrands = [ss]
+      ..dna_sequence = "ACGTACG";
+    ss.strand = strand;
+    expect(ss.dna_sequence_deletions_insertions_to_spaces(), "AC  GTA CG");
+//                                                            0123456789
+  });
+
+  test("dna_sequence_deletions_insertions_to_spaces__no_deletions_with_insertions", () {
+    var ss = Substrand()
+      ..helix_idx = 0
+      ..direction = Direction.right
+      ..start = 0
+      ..end = 10
+      ..insertions = [Tuple2<int, int>(2, 1), Tuple2<int, int>(5, 4), Tuple2<int, int>(7, 1)];
+    var strand = Strand()
+      ..substrands = [ss]
+      ..dna_sequence = "ACGTACGTACAACCGG";
+//                      012 345    67 89
+    ss.strand = strand;
+    expect(ss.dna_sequence_deletions_insertions_to_spaces(), "AC AC A GG");
+//                                                            0123456789
+  });
+
+  test("dna_sequence_deletions_insertions_to_spaces__with_deletions_with_insertions", () {
+    var ss = Substrand()
+      ..helix_idx = 0
+      ..direction = Direction.right
+      ..start = 0
+      ..end = 10
+      ..deletions=[4,8]
+      ..insertions = [Tuple2<int, int>(2, 1), Tuple2<int, int>(5, 4), Tuple2<int, int>(7, 1)];
+    var strand = Strand()
+      ..substrands = [ss]
+      ..dna_sequence = "ACGTAGTACAACCG";
+//                      012 35    67 9
+    ss.strand = strand;
+    expect(ss.dna_sequence_deletions_insertions_to_spaces(), "AC A  A  G");
+//                                                            0123456789
+  });
+
+
+  test("dna_sequence_deletions_insertions_to_spaces__going_left__with_deletions_with_insertions", () {
+//    print("starting test");
+    var ss = Substrand()
+      ..helix_idx = 0
+      ..direction = Direction.left
+      ..start = 0
+      ..end = 10
+      ..deletions=[4,8]
+      ..insertions = [Tuple2<int, int>(2, 1), Tuple2<int, int>(5, 4), Tuple2<int, int>(7, 1)];
+    var strand = Strand()
+      ..substrands = [ss]
+      ..dna_sequence = "ACGTAGTACAACCG";
+//                      GCCAACATGATGCA
+//                      012 35    67 9
+    ss.strand = strand;
+//    print("calling dna_sequence_deletions_insertions_to_spaces");
+    expect(ss.dna_sequence_deletions_insertions_to_spaces(), "A  T  A CG");
+//                                                            9876543210
+//                    (as it appears with offsets in order)  "GC A  T  A"
   });
 }
 
