@@ -574,15 +574,22 @@ class DNASequenceComponent {
     var subseq = substrand.dna_sequence_in(offset, offset);
     textpath_elt.setInnerHtml(subseq);
 
-    //TODO: make these constants calculated once when program starts
-    var dy = '-${0.5 * BASE_WIDTH_SVG}px';
     // hard to read, but this uses space nicely no matter how many insertions there are,
-    // when there are more bases, it starts earlier and ends later on the arc
-    var start_offset = '${(1.0 - min(1.0, (length-1)*0.25)) * BASE_WIDTH_SVG}px';
-    var text_length = '${(0.5 + min(2.0, 2*(length-1)*0.25))* BASE_WIDTH_SVG}';
+    // when there are more bases, it starts earlier and ends later on the arc.
+    // I don't know why I need to multiple by base_factor instead of just num_bases, but I suspect
+    // it's because the Bezier curves are not uniform speed so the offset is not going to a predictable
+    // place along the curve.
+    int num_bases = length + 1;
+    num base_factor = num_bases-2;
+    var spacing_coef = 0.1; // small is less space between letters
+    var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
+    var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
+
+    var dy = '-${0.5 * BASE_WIDTH_SVG}';
     var side = 'right';
     if (browser.isFirefox) {
-      dy = '-${0.55 * BASE_WIDTH_SVG}px';
+      // le sigh
+      dy = '-${0.55 * BASE_WIDTH_SVG}';
       side = 'left';
     }
 
@@ -606,8 +613,6 @@ class DNASequenceComponent {
       // ??
       text_elt.setAttribute('textLength', text_length);
     }
-
-
 
     this.element.children.add(text_elt);
   }

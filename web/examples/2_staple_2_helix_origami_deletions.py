@@ -19,4 +19,4 @@ if __name__ == "__main__":
     design.add_deletion(helix_idx=1, offset=12)
     design.add_deletion(helix_idx=1, offset=24)
     design.assign_dna(scaf, 'AACT'*16)
-    design.write_to_file("output_designs/2_staple_2_helix_origami.dna")
+    design.write_to_file("output_designs/2_staple_2_helix_origami_deletions.dna")
