@@ -405,6 +405,7 @@ class StrandComponent {
     for (var deletion in substrand.deletions) {
       Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, deletion, substrand.direction);
 
+      //TODO: make this a single SVG path for efficiency
       num inner_len = 4.0;
       num outer_len = 4.2;
       var top_cross_outer = svg.LineElement();
@@ -445,13 +446,43 @@ class StrandComponent {
       deletion_group.children.add(bot_cross_outer);
       deletion_group.children.add(top_cross_inner);
       deletion_group.children.add(bot_cross_inner);
-      element.children.add(deletion_group);
+      this.element.children.add(deletion_group);
     }
   }
 
   render_insertions(Substrand substrand) {
-    //TODO: implement drawing of insertion loops
+    for (var insertion in substrand.insertions) {
+      int offset = insertion.item1;
+
+      bool going_right = substrand.direction == Direction.right;
+      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+      num x0 = pos.x;
+      num y0 = pos.y;
+      num dx = BASE_WIDTH_SVG;
+      num dy = 1.4 * BASE_HEIGHT_SVG;
+      if (going_right) {
+        dy = -dy;
+        dx = -dx;
+      }
+      var x1 = (x0 + dx).toStringAsFixed(2);
+      var x2 = (x0 - dx).toStringAsFixed(2);
+      var y1 = (y0 + dy).toStringAsFixed(2);
+      var y2 = (y0 + dy).toStringAsFixed(2);
+      var path_insertion = svg.PathElement();
+      path_insertion.attributes = {
+        'id': insertion_id(substrand, offset, substrand.direction),
+        'class': 'strand',
+        'stroke': this.strand.color.toRgbColor().toCssString(),
+        'fill': 'none',
+        'd': 'M $x0 $y0 C $x1 $y1, $x2 $y2, $x0 $y0',
+      };
+
+      this.element.children.add(path_insertion);
+    }
   }
+
+  static String insertion_id(Substrand substrand, int offset, Direction direction) =>
+      'insertion-H${substrand.helix_idx}-O${offset}-$direction';
 }
 
 class DNASequenceComponent {
@@ -470,6 +501,11 @@ class DNASequenceComponent {
     if (app.model.show_dna && this.strand.dna_sequence != null) {
       for (var substrand in this.strand.substrands) {
         this._draw_dna_sequence(substrand);
+        for (var insertion in substrand.insertions) {
+          int offset = insertion.item1;
+          int length = insertion.item2;
+          this._draw_insertion_dna_sequence(substrand, offset, length);
+        }
       }
     }
   }
@@ -505,7 +541,40 @@ class DNASequenceComponent {
     };
 
     this.element.children.add(seq_elt);
+  }
 
-    //TODO: draw DNA bases on insertions
+  _draw_insertion_dna_sequence(Substrand substrand, int offset, int length) {
+    bool going_right = substrand.direction == Direction.right;
+    svg.TextPathElement textpath_elt;
+    // I can't find documentation for a constructor that can be called for TextPathElement:
+    // https://api.dartlang.org/stable/2.4.0/dart-svg/TextPathElement-class.html
+    // so instead we look it up by the tag name
+//    seq_elt = svg.TextPathElement();
+    // Got this from https://stackoverflow.com/questions/3492322/javascript-createelement-and-svg
+    var xmlns = "http://www.w3.org/2000/svg";
+    textpath_elt = html.document.createElementNS(xmlns, 'textPath');
+
+//    seq_elt = html.document.createElement('textPath');
+    var subseq = substrand.dna_sequence_in(offset, offset);
+    textpath_elt.setInnerHtml(subseq);
+
+    var dy = '10.0px';
+//    if (browser.isFirefox) {
+//      dy = '0px';
+//    }
+
+    var text_length = 1.5 * BASE_WIDTH_SVG;
+    textpath_elt.attributes = {
+      'class': classname_dna_sequence,
+      'href': '#${StrandComponent.insertion_id(substrand, offset, substrand.direction)}',
+      'textLength': '$text_length',
+      'startOffset': '${BASE_WIDTH_SVG / 2.0}',
+      'side': 'right',
+//      'dy': dy,
+    };
+
+    var text_elt = svg.TextElement();
+    text_elt.children.add(textpath_elt);
+    this.element.children.add(text_elt);
   }
 }
