@@ -15,7 +15,7 @@ import 'actions.dart';
 /// and for dispatching actions to change the model (coming from View interactions, for example).
 class Controller {
   MenuViewElement menu_view;
-  SideViewElement side_view;
+  SideViewComponent side_view;
   MainViewComponent main_view;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ class Controller {
 
   Controller();
 
-  set_view_elements(MenuViewElement new_menu_view, SideViewElement new_side_view, MainViewComponent new_main_view) {
+  set_view_elements(MenuViewElement new_menu_view, SideViewComponent new_side_view, MainViewComponent new_main_view) {
     this.menu_view = new_menu_view;
     this.side_view = new_side_view;
     this.main_view = new_main_view;
@@ -107,7 +107,7 @@ class Controller {
     }
   }
 
-  handle_click_side_view(HelixSideViewElement helix_side_view_elt) {
+  handle_click_side_view(HelixSideViewComponent helix_side_view_elt) {
     //TODO: detect if any strands are on this helix and disable deletion and give warning
     var helix = helix_side_view_elt.helix;
     var use = !helix.used;

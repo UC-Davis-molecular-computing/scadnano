@@ -9,13 +9,15 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 
 /// Holds side view of grid of helices in this.element as a SVG group element
 /// (<g> in html; GElement in dart:html)
-class SideViewElement {
+class SideViewComponent {
   final GElement element = GElement();
-  final Map<Point<int>, HelixSideViewElement> helix_elts_map = {};
+  final Map<Point<int>, HelixSideViewComponent> helix_elts_map = {};
 
-  SideViewElement() {
+  //TODO: add dummy element as in MainViewComponent in case no helices are rendered
+
+  SideViewComponent() {
     for (var helix in app.model.dna_design.helices) {
-      var helix_side_view_elt = HelixSideViewElement(helix);
+      var helix_side_view_elt = HelixSideViewComponent(helix);
       element.children.add(helix_side_view_elt.element);
       var grid_pos = helix.grid_position;
       helix_elts_map[grid_pos] = helix_side_view_elt;
@@ -37,7 +39,7 @@ class SideViewElement {
 const String HELIX_EMPTY_COLOR = 'lightgoldenrodyellow';
 const String HELIX_NONEMPTY_COLOR = 'goldenrod';
 
-class HelixSideViewElement {
+class HelixSideViewComponent {
   final Helix helix;
   final GElement element;
   final CircleElement circle;
@@ -47,7 +49,7 @@ class HelixSideViewElement {
 
   g2c(num gCoordinate) => 2 * RADIUS * (gCoordinate + 1);
 
-  HelixSideViewElement(Helix this.helix)
+  HelixSideViewComponent(Helix this.helix)
       : element = GElement(),
         circle = CircleElement(),
         text = TextElement() {

@@ -39,7 +39,7 @@
         <div class="right-pane" id="right-pane">
             <svg id="main-view-svg" width="100%" height="100%" style="touch-action: none;">
                 <g id="main-view-svg-viewport">
-                    <circle id="dummy-elt-main-view" r="500" cx="0" cy="0" fill="white">
+                    <circle id="dummy-elt-main-view" r="300" cx="0" cy="0" fill="white">
                         dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height
                     </circle>
                 </g>
@@ -62,12 +62,6 @@
 <script src="splitpane.js"></script>
 
 <script>
-    function removeDummy(id) {
-        dummyElt = document.getElementById(id);
-        dummyEltPar = dummyElt.parentElement;
-        dummyEltPar.removeChild(dummyElt);
-    }
-
     window.onload = function () {
         svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",

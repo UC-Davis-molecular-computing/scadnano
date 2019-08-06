@@ -7,7 +7,7 @@ import 'app.dart';
 
 class View {
   MenuViewElement menu_view;
-  SideViewElement side_view;
+  SideViewComponent side_view;
   MainViewComponent main_view;
 
   View();
@@ -29,7 +29,7 @@ class View {
   }
 
   render_side_view() {
-    this.side_view = SideViewElement();
+    this.side_view = SideViewComponent();
 //    var panzoomable_element = PanzoomableSvgElement(this.side_view.element, 'side-view-svg');
 //    var pane = html.querySelector('#left-pane');
 //    pane.children.clear();

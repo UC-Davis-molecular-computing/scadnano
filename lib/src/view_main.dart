@@ -30,7 +30,15 @@ class MainViewComponent {
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<Point<int>, HelixMainViewComponent> helix_elts_map = {};
   final List<HelixMainViewComponent> used_helix_elts =
-      List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+  List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+  final svg.CircleElement _dummy_elt = svg.CircleElement()
+    ..setAttribute('id', 'dummy-elt-main-view')
+    ..setAttribute('fill', 'white')
+    ..setAttribute('fill-opacity', '0.0') // transparent so it doesn't hide other elts
+    ..setAttribute('cx', '0')
+    ..setAttribute('cy', '0')
+    ..setAttribute('r', '300')
+    ..setInnerHtml('dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
 
   MainViewComponent() {
     // draw helices
@@ -48,6 +56,14 @@ class MainViewComponent {
       element.children.add(strand_elt.element);
       strand_elts_map[strand] = strand_elt;
     }
+
+    // Adds a dummy SVG element (white circle that can't be seen)
+    // to prevent the svg-pan-zoom library from dividing by 0 if there are no elements.
+    // The dummy element placed here in index.html is sufficient to prevent the divide-by-0 error
+    // in the local web server, but that element is removed dynamically once we render the main view.
+    // For some reason the deployed server has the error unless we maintain that a dummy element is
+    // always there.
+    this.element.children.add(_dummy_elt);
   }
 
   /// Redraw elements
@@ -62,6 +78,7 @@ class MainViewComponent {
       strand_elt.render();
     }
   }
+
 }
 
 class HelixMainViewComponent {
