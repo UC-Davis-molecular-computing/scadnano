@@ -30,7 +30,7 @@ class MainViewComponent {
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<Point<int>, HelixMainViewComponent> helix_elts_map = {};
   final List<HelixMainViewComponent> used_helix_elts =
-  List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+      List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
   final svg.CircleElement _dummy_elt = svg.CircleElement()
     ..setAttribute('id', 'dummy-elt-main-view')
     ..setAttribute('fill', 'white')
@@ -78,7 +78,6 @@ class MainViewComponent {
       strand_elt.render();
     }
   }
-
 }
 
 class HelixMainViewComponent {
@@ -499,7 +498,7 @@ class StrandComponent {
   }
 
   static String insertion_id(Substrand substrand, int offset, Direction direction) =>
-      'insertion-H${substrand.helix_idx}-O${offset}-$direction';
+      'insertion-H${substrand.helix_idx}-O${offset}-${direction_to_json(direction)}';
 }
 
 class DNASequenceComponent {
@@ -575,23 +574,31 @@ class DNASequenceComponent {
     var subseq = substrand.dna_sequence_in(offset, offset);
     textpath_elt.setInnerHtml(subseq);
 
-    var dy = '10.0px';
-//    if (browser.isFirefox) {
-//      dy = '0px';
-//    }
-
-    var text_length = 1.5 * BASE_WIDTH_SVG;
-    textpath_elt.attributes = {
-      'class': classname_dna_sequence,
-      'href': '#${StrandComponent.insertion_id(substrand, offset, substrand.direction)}',
-      'textLength': '$text_length',
-      'startOffset': '${BASE_WIDTH_SVG / 2.0}',
-      'side': 'right',
-//      'dy': dy,
-    };
+    //TODO: make these constants calculated once when program starts
+    var dy = '-${0.5 * BASE_WIDTH_SVG}px';
+    var start_offset = '${0.5 * BASE_WIDTH_SVG}px';
+    var text_length = '${1.5 * BASE_WIDTH_SVG}';
+    var side = 'right';
+    if (browser.isFirefox) {
+      dy = '-${0.55 * BASE_WIDTH_SVG}px';
+      side = 'left';
+    }
 
     var text_elt = svg.TextElement();
     text_elt.children.add(textpath_elt);
+    textpath_elt.attributes = {
+      'class': classname_dna_sequence,
+      'href': '#${StrandComponent.insertion_id(substrand, offset, substrand.direction)}',
+      'textLength': text_length, // works for Chrome, not Firefox
+      'startOffset': start_offset,
+      'side': side,
+    };
+
+    text_elt.attributes = {
+      'dy': dy,
+      'textLength': text_length, // works for Firefox, not Chrome
+    };
+
     this.element.children.add(text_elt);
   }
 }
