@@ -576,8 +576,10 @@ class DNASequenceComponent {
 
     //TODO: make these constants calculated once when program starts
     var dy = '-${0.5 * BASE_WIDTH_SVG}px';
-    var start_offset = '${0.5 * BASE_WIDTH_SVG}px';
-    var text_length = '${1.5 * BASE_WIDTH_SVG}';
+    // hard to read, but this uses space nicely no matter how many insertions there are,
+    // when there are more bases, it starts earlier and ends later on the arc
+    var start_offset = '${(1.0 - min(1.0, (length-1)*0.25)) * BASE_WIDTH_SVG}px';
+    var text_length = '${(0.5 + min(2.0, 2*(length-1)*0.25))* BASE_WIDTH_SVG}';
     var side = 'right';
     if (browser.isFirefox) {
       dy = '-${0.55 * BASE_WIDTH_SVG}px';
@@ -589,15 +591,23 @@ class DNASequenceComponent {
     textpath_elt.attributes = {
       'class': classname_dna_sequence,
       'href': '#${StrandComponent.insertion_id(substrand, offset, substrand.direction)}',
-      'textLength': text_length, // works for Chrome, not Firefox
       'startOffset': start_offset,
       'side': side,
     };
-
     text_elt.attributes = {
       'dy': dy,
-      'textLength': text_length, // works for Firefox, not Chrome
     };
+
+    if (browser.isChrome) {
+      textpath_elt.setAttribute('textLength', text_length);
+    } else if (browser.isFirefox) {
+      text_elt.setAttribute('textLength', text_length);
+    } else {
+      // ??
+      text_elt.setAttribute('textLength', text_length);
+    }
+
+
 
     this.element.children.add(text_elt);
   }

@@ -5,6 +5,8 @@ import 'app.dart';
 
 //TODO: put code editor in browser and let user execute Python script creating DNADesign (consider Brython, Transcypt, or Skulpt)
 
+//TODO: display message while app is loading so it looks like something is happening
+
 class View {
   MenuViewElement menu_view;
   SideViewComponent side_view;
