@@ -3,6 +3,7 @@ import 'dart:html';
 
 import 'controller.dart';
 import 'model.dart';
+import 'util.dart';
 import 'undo_redo.dart';
 import 'view.dart';
 import 'local_storage.dart' as local_storage;
@@ -22,9 +23,10 @@ class App {
   StreamController<Action> action_notifier = StreamController<Action>();
 
   start() async {
-    this.model = Model.default_model();
+//    this.model = Model.default_model();
 //    this.model = await Model.from_url('examples/output_designs/few-small-helices.dna');
 //    this.model = await Model.from_url('examples/output_designs/16_helix_rectangle_no_seq.dna');
+    this.model = await model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();

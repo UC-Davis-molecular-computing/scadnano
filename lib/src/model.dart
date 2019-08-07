@@ -176,23 +176,10 @@ class Model {
   // makes it hard to test since tests must be done "in the browser", which is slow to compile
   // and doesn't even let us use print statements or the debugger to see what's going wrong.
   // If this is needed in the future, move it out of model.dart to enable easier unit testing.
-//  /// Used with from_url
-//  Model.empty();
-//
-//  static Future<Model> from_url(String url) async {
-//    Model model = Model.empty();
-//    var dna_design = await _dna_design_from_url(url);
-//    model.dna_design = dna_design;
-//    return model;
-//  }
-//
-//  static Future<DNADesign> _dna_design_from_url(String url) async {
-//    return await HttpRequest.getString(url).then((content) {
-//      Map<String, dynamic> parsed_json = jsonDecode(content);
-//      var dna_design = DNADesign.from_json(parsed_json);
-//      return dna_design;
-//    });
-//  }
+  /// Used with model_from_url
+  Model.empty();
+
+
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {

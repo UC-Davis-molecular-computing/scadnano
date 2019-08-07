@@ -27,6 +27,10 @@ num width_svg_text(String string) {
 
 class MainViewComponent {
   final svg.GElement element = svg.GElement();
+  // There's no layering in SVG, so we need to make sure we draw DNA sequences last so they are on top.
+  // So the component is stored with the strand, but it is not rendered into the same group as
+  // the various other SVG elements representing the strands.
+  final svg.GElement dna_sequences_element = svg.GElement();
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<Point<int>, HelixMainViewComponent> helix_elts_map = {};
   final List<HelixMainViewComponent> used_helix_elts =
@@ -41,20 +45,22 @@ class MainViewComponent {
     ..setInnerHtml('dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
 
   MainViewComponent() {
+    this.element.attributes = {'id': 'main-view-design'};
+    this.dna_sequences_element.attributes = {'id': 'main-view-sequences'};
     // draw helices
     for (var helix in app.model.dna_design.helices) {
-      helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.element, helix);
+      this.helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.element, helix);
     }
     for (var helix in app.model.dna_design.used_helices) {
       var helix_elt = helix_elts_map[helix.grid_position];
-      element.children.add(helix_elt.element);
-      used_helix_elts[helix.idx] = helix_elt;
+      this.element.children.add(helix_elt.element);
+      this.used_helix_elts[helix.idx] = helix_elt;
     }
     // draw strands
     for (var strand in app.model.dna_design.strands) {
       var strand_elt = StrandComponent(strand);
-      element.children.add(strand_elt.element);
-      strand_elts_map[strand] = strand_elt;
+      this.element.children.add(strand_elt.element);
+      this.strand_elts_map[strand] = strand_elt;
     }
 
     // Adds a dummy SVG element (white circle that can't be seen)
@@ -64,6 +70,7 @@ class MainViewComponent {
     // For some reason the deployed server has the error unless we maintain that a dummy element is
     // always there.
     this.element.children.add(_dummy_elt);
+    this.element.children.add(this.dna_sequences_element);
   }
 
   /// Redraw elements
@@ -76,6 +83,17 @@ class MainViewComponent {
     }
     for (var strand_elt in strand_elts_map.values) {
       strand_elt.render();
+    }
+    this.render_dna_sequences();
+  }
+
+  render_dna_sequences() {
+    this.dna_sequences_element.children.clear();
+    if (app.model.show_dna) {
+      for (var strand_elt in strand_elts_map.values) {
+        this.dna_sequences_element.children.add(strand_elt.dna_sequence_component.element);
+        strand_elt.dna_sequence_component.render();
+      }
     }
   }
 }
@@ -264,7 +282,6 @@ class StrandComponent {
   }
 
   render() {
-    //TODO: figure out how to layer SVG elements so these are drawn on top of Helix elements and in proper order relative to each other (e.g., DNA bases on top)
     this.element.children.clear();
     render_strand_lines();
     render_5p_end();
@@ -273,9 +290,8 @@ class StrandComponent {
       render_deletions(substrand);
       render_insertions(substrand);
     }
-
-    this.element.children.add(this.dna_sequence_component.element);
-    this.dna_sequence_component.render();
+    //XXX: note DNA sequence is not rendered here, or else later-rendered Strands would cover the DNA
+    // Instead all DNA sequences are rendered into their own SVG group after all strands are rendered.
   }
 
   // keep this around in case this is how we want to export to an SVG file
@@ -339,6 +355,7 @@ class StrandComponent {
 
     var path = svg.PathElement();
     path.attributes = {
+      'id': substrand_line_id(substrand),
       'class': 'substrand-line',
       'stroke': strand.color.toRgbColor().toCssString(),
       'fill': 'none',
@@ -457,12 +474,27 @@ class StrandComponent {
         'y2': '${pos.y + inner_len}',
       };
 
+      var width = 0.9 * BASE_WIDTH_SVG;
+      var half_width = 0.5 * width;
+      var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
+          'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
+      var deletion_path = svg.PathElement();
+      deletion_path.attributes = {
+//        'id': substrand_line_id(substrand),
+        'class': 'deletion-cross-inner',
+        'stroke': strand.color.toRgbColor().toCssString(),
+        'fill': 'none',
+        'd': path_cmds,
+      };
+      this.element.children.add(deletion_path);
+
       var deletion_group = svg.GElement();
+      deletion_group.attributes = {'class': 'deletion'};
       deletion_group.children.add(top_cross_outer);
       deletion_group.children.add(bot_cross_outer);
       deletion_group.children.add(top_cross_inner);
       deletion_group.children.add(bot_cross_inner);
-      this.element.children.add(deletion_group);
+//      this.element.children.add(deletion_group);
     }
   }
 
@@ -484,21 +516,24 @@ class StrandComponent {
       var x2 = (x0 - dx).toStringAsFixed(2);
       var y1 = (y0 + dy).toStringAsFixed(2);
       var y2 = (y0 + dy).toStringAsFixed(2);
-      var path_insertion = svg.PathElement();
-      path_insertion.attributes = {
-        'id': insertion_id(substrand, offset, substrand.direction),
+      var insertion_path = svg.PathElement();
+      insertion_path.attributes = {
+        'id': insertion_id(substrand, offset),
         'class': 'strand',
         'stroke': this.strand.color.toRgbColor().toCssString(),
         'fill': 'none',
         'd': 'M $x0 $y0 C $x1 $y1, $x2 $y2, $x0 $y0',
       };
 
-      this.element.children.add(path_insertion);
+      this.element.children.add(insertion_path);
     }
   }
 
-  static String insertion_id(Substrand substrand, int offset, Direction direction) =>
-      'insertion-H${substrand.helix_idx}-O${offset}-${direction_to_json(direction)}';
+  static String substrand_line_id(Substrand substrand) =>
+      'substrand-H${substrand.helix_idx}-O${substrand.start}-${direction_to_json(substrand.direction)}';
+
+  static String insertion_id(Substrand substrand, int offset) =>
+      'insertion-H${substrand.helix_idx}-O${offset}-${direction_to_json(substrand.direction)}';
 }
 
 class DNASequenceComponent {
@@ -546,6 +581,8 @@ class DNASequenceComponent {
       dy = '0px';
     }
 
+    StrandComponent.substrand_line_id(substrand);
+
     var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
       'class': classname_dna_sequence,
@@ -580,8 +617,8 @@ class DNASequenceComponent {
     // it's because the Bezier curves are not uniform speed so the offset is not going to a predictable
     // place along the curve.
     int num_bases = length + 1;
-    num base_factor = num_bases-2;
-    var spacing_coef = 0.1; // small is less space between letters
+    num base_factor = num_bases - 2;
+    num spacing_coef = 0.1; // small is less space between letters
     var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
     var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
 
@@ -597,7 +634,7 @@ class DNASequenceComponent {
     text_elt.children.add(textpath_elt);
     textpath_elt.attributes = {
       'class': classname_dna_sequence,
-      'href': '#${StrandComponent.insertion_id(substrand, offset, substrand.direction)}',
+      'href': '#${StrandComponent.insertion_id(substrand, offset)}',
       'startOffset': start_offset,
       'side': side,
     };

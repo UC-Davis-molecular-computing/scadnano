@@ -15,7 +15,6 @@ class MenuViewElement {
   MenuViewElement();
 
   render() {
-//    print("rendering menu view. stack trace: ${StackTrace.current}");
     this.menu_elt.children.clear();
     this.menu_elt.children.add(this.file_buttons_elt);
     this.menu_elt.children.add(this.show_dna_elt);
@@ -57,17 +56,27 @@ class MenuViewElement {
     // "save to file" Ctrl+S and "open file" Ctrl+O keyboard shortcuts
     // it matters that these are onKeyDown, not onKeyPress:
     // https://stackoverflow.com/questions/11000826/ctrls-preventdefault-in-chrome
-    document.body.onKeyDown.listen((KeyboardEvent event) {
-      if (event.ctrlKey && !event.shiftKey && !event.altKey && (event.code == 'KeyS' || event.code == 'KeyO')) {
-        print('Ctrl + ${event.code} default behavior prevented');
-        event.preventDefault();
-      }
-      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.code == 'KeyS' && !save_button.disabled) {
-        print("save button disabled after Ctrl+S pressed? ${save_button.disabled}");
+//    KeyEvent.keyDownEvent.forTarget(document.body).listen((KeyEvent event) {
+//    document.body.onKeyDown.listen((KeyboardEvent event) {
+    Element.keyDownEvent.forTarget(window, useCapture: true).listen((KeyboardEvent event) {
+      print('key pressed');
+      if (event.ctrlKey &&
+          !event.shiftKey &&
+          !event.altKey &&
+          event.code == 'KeyS' &&
+          !save_button.disabled) {
+        print('Ctrl+${event.code} clicked');
         this.save_button.click();
+        event.preventDefault();
+        event.stopPropagation();
       }
+      //TODO: Chrome clicks more than once on a single Ctrl+O;
+      // Firefox registers both but seems only to open the file dialog once
       if (event.ctrlKey && !event.shiftKey && !event.altKey && event.code == 'KeyO') {
+        print('Ctrl+${event.code} clicked');
         this.file_chooser.click();
+        event.preventDefault();
+        event.stopPropagation();
       }
     });
   }
