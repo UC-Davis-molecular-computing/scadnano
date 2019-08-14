@@ -109,10 +109,12 @@ class DNADesign {
   DNADesign.from_json(Map<String, dynamic> json_map) {
 //    this.menu_view_ui_model.loaded_filename = filename;
 
-    this.version =
-        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
+    this.version = json_map.containsKey(constants.version_key)
+        ? json_map[constants.version_key]
+        : constants.INITIAL_VERSION;
 
-    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+    this.grid =
+        json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -127,7 +129,7 @@ class DNADesign {
     this.helices = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
     for (var helix_json in deserialized_helices_list) {
-      Helix helix = Helix.fromJson(helix_json);
+      Helix helix = Helix.from_json(helix_json);
       this.helices.add(helix);
     }
     this.build_used_helices();
@@ -135,7 +137,7 @@ class DNADesign {
     this.strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
-      Strand strand = Strand.fromJson(strand_json);
+      Strand strand = Strand.from_json(strand_json);
       this.strands.add(strand);
     }
   }
@@ -191,19 +193,6 @@ class Model {
   }
 }
 
-abstract class Action {
-  /// Apply this action to model and return the resulting model.
-  /// This can mutate the model in place or create a new one, but the resulting
-  /// model should be returned in either case.
-  /// WARNING: this should not be called directly.
-  /// Instead, call app.send_action(the_action);, which maintains
-  /// a stack of Actions for undo/redo and always applies to app.model.
-  Model apply(Model model);
-
-  /// Get the Action that, if applied to the model, undoes this Action.
-  Action reverse();
-}
-
 enum Grid { square, hex, honeycomb, none }
 
 String grid_to_json(Grid grid) {
@@ -236,7 +225,7 @@ Grid grid_from_string(String string) {
   }
 }
 
-/// TODO: document this
+/// TODO: document GridPosition class
 class GridPosition {
   final int h;
   final int v;
@@ -251,18 +240,29 @@ class GridPosition {
   static const ORIGIN = GridPosition.origin(); //Point<int>(0, 0);
   static const NONE = GridPosition.origin(); //Point<int>(0, 0);
 
-  GridPosition.fromJson(Map<String, dynamic> json_map)
-      : this(get_value(json_map, 'h'), get_value(json_map, 'v'), json_map.containsKey('b') ? json_map['b'] : 0);
+  GridPosition.from_json(List<dynamic> json_list)
+      : this(json_list[0], json_list[1], json_list.length == 3 ? json_list[2] : 0);
 
-  Map<String, dynamic> toJson() {
-    var map = {
-      'h': this.h,
-      'v': this.v,
-    };
+//  Map<String, dynamic> toJson() {
+//    var map = {
+//      'h': this.h,
+//      'v': this.v,
+//    };
+//    if (this.b != 0) {
+//      map['b'] = this.b;
+//    }
+//    return map;
+//  }
+
+  List<int> toJson() {
+    var list = [
+      this.h,
+      this.v,
+    ];
     if (this.b != 0) {
-      map['b'] = this.b;
+      list.add(this.b);
     }
-    return map;
+    return list;
   }
 
   @override
@@ -284,7 +284,7 @@ class Helix {
   int _idx = -1;
 
   /// position within square/hex/honeycomb integer grid (side view)
-  final GridPosition grid_position;
+  GridPosition grid_position;
 
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
@@ -331,7 +331,8 @@ class Helix {
 
   num get gb => grid_position.b;
 
-  int get hashCode => quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
+  int get hashCode =>
+      quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -350,11 +351,7 @@ class Helix {
     Map<String, dynamic> json_map = {constants.idx_key: this._idx};
 
     if (this.has_grid_position()) {
-      var gp_list = [this.grid_position.h, this.grid_position.v];
-      if (this.grid_position.b != 0) {
-        gp_list.add(this.grid_position.b);
-      }
-      json_map[constants.grid_position_key] = gp_list;
+      json_map[constants.grid_position_key] = this.grid_position;
     }
 
     if (this.has_svg_position()) {
@@ -380,12 +377,20 @@ class Helix {
     return this.max_bases != null;
   }
 
-  Helix.fromJson(Map<String, dynamic> json_map)
-      : this(
-            idx: get_value(json_map, constants.idx_key),
-            grid_position: GridPosition(get_value(json_map, constants.grid_position_key)[0],
-                get_value(json_map, constants.grid_position_key)[1]),
-            max_bases: get_value(json_map, constants.max_bases_key));
+  Helix.from_json(Map<String, dynamic> json_map) {
+    this.idx = get_value(json_map, constants.idx_key);
+
+    if (json_map.containsKey(constants.grid_position_key)) {
+      List<dynamic> gp_list = json_map[constants.grid_position_key];
+      if (!(gp_list.length == 2 || gp_list.length == 3)) {
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+      }
+      this.grid_position = GridPosition.from_json(gp_list);
+    }
+
+    this.max_bases = get_value(json_map, constants.max_bases_key);
+  }
 }
 
 class Strand {
@@ -411,7 +416,8 @@ class Strand {
     var json_map = Map<String, dynamic>();
 
     // need to use List.from because List.map returns Iterable, not List
-    json_map[constants.substrands_key] = List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
+    json_map[constants.substrands_key] =
+        List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
     if (this.color != null) {
       json_map[constants.color_key] = this.color.toRgbColor().toMap();
     }
@@ -422,10 +428,10 @@ class Strand {
     return json_map;
   }
 
-  Strand.fromJson(Map<String, dynamic> json_map) {
+  Strand.from_json(Map<String, dynamic> json_map) {
     // need to use List.from because List.map returns Iterable, not List
-    this.substrands = List<Substrand>.from(
-        get_value(json_map, constants.substrands_key).map((substrandJson) => Substrand.fromJson(substrandJson)));
+    this.substrands = List<Substrand>.from(get_value(json_map, constants.substrands_key)
+        .map((substrandJson) => Substrand.from_json(substrandJson)));
     for (var substrand in this.substrands) {
       substrand._strand = this;
     }
@@ -436,7 +442,8 @@ class Strand {
       this.color = DEFAULT_STRAND_COLOR;
     }
 
-    this.dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    this.dna_sequence =
+        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
   }
 }
 
@@ -705,12 +712,13 @@ class Substrand {
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+      json_map[constants.insertions_key] =
+          List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
     }
     return json_map;
   }
 
-  Substrand.fromJson(Map<String, dynamic> json_map) {
+  Substrand.from_json(Map<String, dynamic> json_map) {
     this.helix_idx = get_value(json_map, constants.helix_idx_key);
     this.right = get_value(json_map, constants.right_key);
     this.start = get_value(json_map, constants.start_key);

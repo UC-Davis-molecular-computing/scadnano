@@ -89,7 +89,7 @@ main() {
 //    print("model = ${model}");
     var encoder = JsonEncoder.withIndent('  ');
     String serialized_model = encoder.convert(design);
-//    print("serializedModel = $serializedModel");
+//    print("serialized_model = $serialized_model");
 
     Map<String, dynamic> deserialized_map = jsonDecode(serialized_model);
     DNADesign decoded_model = DNADesign.from_json(deserialized_map);

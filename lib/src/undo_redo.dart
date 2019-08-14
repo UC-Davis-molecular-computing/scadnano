@@ -1,6 +1,6 @@
 import 'dart:html';
 
-import 'model.dart';
+import 'actions.dart';
 import 'app.dart';
 
 /// Maintains an undo stack and a redo stack of Actions.

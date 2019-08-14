@@ -3,6 +3,21 @@ import 'dart:async';
 import 'app.dart';
 import 'model.dart';
 
+
+abstract class Action {
+  /// Apply this action to model and return the resulting model.
+  /// This can mutate the model in place or create a new one, but the resulting
+  /// model should be returned in either case.
+  /// WARNING: this should not be called directly.
+  /// Instead, call app.send_action(the_action);, which maintains
+  /// a stack of Actions for undo/redo and always applies to app.model.
+  Model apply(Model model);
+
+  /// Get the Action that, if applied to the model, undoes this Action.
+  Action reverse();
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 /// load new DNADesign
 

@@ -3,6 +3,7 @@ import 'dart:html';
 
 import 'controller.dart';
 import 'model.dart';
+import 'actions.dart';
 import 'util.dart';
 import 'undo_redo.dart';
 import 'view.dart';
