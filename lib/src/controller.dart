@@ -22,6 +22,9 @@ class Controller {
   // "Show DNA" boolean value changed (e.g., user clicks on "Show DNA Sequence" check)
   final notifier_show_dna_change = StreamController<bool>.broadcast();
 
+  // "Show Editor" boolean value changed (e.g., user clicks on "Show Editor Sequence" check)
+  final notifier_show_editor_change = StreamController<bool>.broadcast();
+
   // Loaded filename is changed.
   final notifier_loaded_filename = StreamController<String>.broadcast();
 
@@ -66,8 +69,22 @@ class Controller {
   }
 
   subscribe_to_show_editor() {
-    this.notifier_show_dna_change.stream.listen((_) {
-      app.view.main_view.render_dna_sequences();
+    this.notifier_show_editor_change.stream.listen((_) {
+      var old_sizes = app.view.splitter.getSizes();
+      var side_size = old_sizes[0];
+      var new_sizes = [side_size, -1, -1];
+      var size_main_editor = (100 - side_size);
+      //TODO: this shrinks the side view a small amount; correct for it
+      if (app.model.show_editor) {
+        new_sizes[1] = size_main_editor * 5 / 9.0;
+        new_sizes[2] = size_main_editor * 4 / 9.0;
+      } else {
+        new_sizes[1] = size_main_editor;
+        new_sizes[2] = 0;
+      }
+      print('old_sizes: ${old_sizes}');
+      print('new_sizes: ${new_sizes}');
+      app.view.splitter.setSizes(new_sizes);
     });
   }
 
@@ -88,6 +105,7 @@ class Controller {
     //TODO: allow helices to be made longer or shorter
 
     this.subscribe_to_user_clicks_show_dna_checkbox();
+    this.subscribe_to_user_clicks_show_editor_checkbox();
     this.subscribe_to_save_file_button_pressed();
     this.subscribe_to_load_file_button_pressed();
 
@@ -122,6 +140,11 @@ class Controller {
         .listen((_) => app.send_action(ShowDNAAction(app.view.menu_view.show_dna_checkbox.checked)));
   }
 
+  subscribe_to_user_clicks_show_editor_checkbox() {
+    app.view.menu_view.show_editor_checkbox.onChange
+        .listen((_) => app.send_action(ShowEditorAction(app.view.menu_view.show_editor_checkbox.checked)));
+  }
+
   subscribe_to_save_file_button_pressed() {
     app.view.menu_view.save_button.onClick.listen((_) async {
       await save_file();
@@ -140,7 +163,7 @@ class Controller {
   }
 
   subscribe_to_editor_change_events() {
-    var editor =app.view.editor_view.editor;
+    var editor = app.view.editor_view.editor;
     editor.onChange.listen((event) {
       String old_editor_content = app.model.editor_content;
       String new_editor_content = app.view.editor_view.editor.getDoc().getValue();

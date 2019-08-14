@@ -94,6 +94,27 @@ class ShowDNAAction implements Action {
   }
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+/// Change whether to show the DNA sequence of each strand
+class ShowEditorAction implements Action {
+  final bool show_editor;
+
+  ShowEditorAction(this.show_editor);
+
+  @override
+  Model apply(Model model) {
+    model.show_editor = this.show_editor;
+    app.controller.notifier_show_editor_change.add(this.show_editor);
+    return model;
+  }
+
+  @override
+  Action reverse() {
+    return ShowDNAAction(!this.show_editor);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /// Update editor contents.
 class EditorContentAction implements Action {
