@@ -47,7 +47,6 @@ class HelixUseAction implements Action {
     if (this.use) {
       var new_idx = this.idx;
       this.helix.idx = new_idx;
-      this.helix.used = true;
       design.used_helices.insert(new_idx, this.helix);
       for (var helix_after_idx_used in design.used_helices.sublist(new_idx + 1)) {
         helix_after_idx_used.idx++;
@@ -58,7 +57,7 @@ class HelixUseAction implements Action {
       assert(old_idx == this.idx);
       design.used_helices.removeAt(old_idx);
       this.helix.idx = -1;
-      this.helix.used = false;
+//      this.helix.used = false;
       app.controller.notifier_helix_change.add(this.helix);
       for (var helix_after_idx_unused in design.used_helices.sublist(old_idx)) {
         helix_after_idx_unused.idx--;
@@ -93,6 +92,30 @@ class ShowDNAAction implements Action {
   Action reverse() {
     return ShowDNAAction(!this.show_dna);
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+/// Update editor contents.
+class EditorContentAction implements Action {
+
+  final String new_content;
+  final String old_content;
+
+  EditorContentAction(this.new_content, this.old_content);
+
+  @override
+  Model apply(Model model) {
+    print('editor content before change:\n${model.editor_content}\n');
+    model.editor_content = this.new_content;
+    print('editor content after change:\n${model.editor_content}\n');
+    return model;
+  }
+
+  @override
+  Action reverse() {
+    return EditorContentAction(this.old_content, this.new_content);
+  }
+
 }
 
 //TODO: I had trouble thinking about how to incorporate SaveFile as normal action since it

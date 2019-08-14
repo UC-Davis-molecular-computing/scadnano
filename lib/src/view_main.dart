@@ -6,6 +6,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'model.dart';
 import 'app.dart';
+import 'constants.dart' as constants;
 
 const String MAIN_VIEW_PREFIX = 'main-view';
 
@@ -27,12 +28,13 @@ num width_svg_text(String string) {
 
 class MainViewComponent {
   final svg.GElement element = svg.GElement();
+
   // There's no layering in SVG, so we need to make sure we draw DNA sequences last so they are on top.
   // So the component is stored with the strand, but it is not rendered into the same group as
   // the various other SVG elements representing the strands.
   final svg.GElement dna_sequences_element = svg.GElement();
   final Map<Strand, StrandComponent> strand_elts_map = {};
-  final Map<Point<int>, HelixMainViewComponent> helix_elts_map = {};
+  final Map<GridPosition, HelixMainViewComponent> helix_elts_map = {};
   final List<HelixMainViewComponent> used_helix_elts =
       List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
   final svg.CircleElement _dummy_elt = svg.CircleElement()
@@ -116,8 +118,8 @@ class HelixMainViewComponent {
 
   render() {
     element.children.clear();
-    var x = helix.position.x;
-    var y = helix.position.y;
+    var x = helix.svg_position.x;
+    var y = helix.svg_position.y;
     element.setAttribute('transform', 'translate($x $y)');
     if (!helix.used) {
       parent.children.remove(element);
@@ -141,10 +143,10 @@ class HelixMainViewComponent {
   draw_horz_lines(svg.SvgElement lines_group, {bool inline_style = false}) {
     var max_bases = app.model.dna_design.max_bases();
     var x0 = 0;
-    var x1 = BASE_WIDTH_SVG * max_bases;
+    var x1 = constants.BASE_WIDTH_SVG * max_bases;
     var y0 = 0;
-    var y1 = BASE_HEIGHT_SVG;
-    var y2 = 2 * BASE_HEIGHT_SVG;
+    var y1 = constants.BASE_HEIGHT_SVG;
+    var y2 = 2 * constants.BASE_HEIGHT_SVG;
 
     var path_horz = svg.PathElement();
     path_horz.attributes = {
@@ -161,13 +163,13 @@ class HelixMainViewComponent {
     var path_cmds_vert_major = [];
 
     var x = 0;
-    var y = 2 * BASE_HEIGHT_SVG;
+    var y = 2 * constants.BASE_HEIGHT_SVG;
     for (int base = 0; base <= max_bases; base++) {
       var major = major_tick_distance > 0 && base % major_tick_distance == 0;
       var path_cmds = major ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x 0');
       path_cmds.add('v $y');
-      x += BASE_WIDTH_SVG;
+      x += constants.BASE_WIDTH_SVG;
     }
 
     var path_vert_minor = svg.PathElement();
@@ -187,13 +189,13 @@ class HelixMainViewComponent {
   draw_side_helix(svg.GElement side_helix_group) {
     var circle = svg.CircleElement();
     var text = svg.TextElement();
-    var xoffset = '-${2 * BASE_WIDTH_SVG + DISTANCE_BETWEEN_HELICES_SVG / 2}';
-    var yoffset = '${BASE_WIDTH_SVG}';
+    var xoffset = '-${2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_SVG / 2}';
+    var yoffset = '${constants.BASE_WIDTH_SVG}';
     circle.attributes = {
       'class': '$MAIN_VIEW_PREFIX-helix-circle',
       'cx': xoffset,
       'cy': yoffset,
-      'r': '${DISTANCE_BETWEEN_HELICES_SVG / 2}',
+      'r': '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2}',
     };
     text.attributes = {
       'class': '$MAIN_VIEW_PREFIX-helix-text',
@@ -204,69 +206,6 @@ class HelixMainViewComponent {
     side_helix_group.children.add(circle);
     side_helix_group.children.add(text);
   }
-
-//  create_cached_lines() {
-//    //TODO: pull code that creates cached image out of draw_cached_lines; use same image for all helices
-//  }
-//
-//  /// Makes a PNG drawing of a main view of a helix to be used in an SVG <image> element,
-//  /// which renders faster than the SVG lines when the number of vertical lines is in the hundreds.
-//  draw_cached_lines(svg.GElement linesGroup, {double resolution = 100}) {
-////    var image = ImageElement();
-////    image.setAttribute('href', 'helix_main_view.png');
-//////    image.setAttribute('href', 'helix_main_view_hi_res.png');
-////    image.setAttribute('width', '1000');
-////    image.setAttribute('height', '20');
-////    linesGroup.children.add(image);
-//
-//    //TODO: canvas width cannot be too large: https://github.com/jhildenbiddle/canvas-size#test-results
-//    // make the largest png image of
-//    svg.SvgSvgElement svg_elt = svg.SvgSvgElement();
-////    svgElt.setAttribute('width', '100%');
-//    svg.GElement lines_group_internal = svg.GElement();
-//    lines_group_internal.setAttribute(
-//        'transform', 'translate(${0.1 * resolution} ${1.05 * resolution}) scale(${resolution})');
-//    svg_elt.children.add(lines_group_internal);
-//
-//    draw_horz_lines(lines_group_internal, inline_style: true);
-//    draw_vert_lines(lines_group_internal, inline_style: true);
-//
-//    html.CanvasElement canvas = html.CanvasElement()..id = 'canvas-${helix.idx}';
-//    html.SpanElement pngContainer = html.SpanElement()..id = 'png-container-${helix.idx}';
-//
-//    var max_bases = app.model.dna_design.max_bases();
-//    canvas.setAttribute('width', '${1.03 * resolution * max_bases}px');
-//    canvas.setAttribute('height', '${2.1 * resolution}px');
-//    pngContainer.setAttribute('width', '${1.03 * resolution * max_bases}px');
-//    pngContainer.setAttribute('height', '${2.1 * resolution}px');
-//
-////    canvas.setAttribute('width', '103000');
-//
-//    // taken from http://bl.ocks.org/biovisualize/8187844
-//    var xmlSerializer = html.XmlSerializer();
-//    var svgString = xmlSerializer.serializeToString(svg_elt);
-//
-//    var ctx = canvas.context2D;
-//    var svgBlob = html.Blob([svgString], "image/svg+xml;charset=utf-8");
-//    var url = html.Url.createObjectUrl(svgBlob);
-//
-//    var img = html.ImageElement();
-//    img.src = url;
-//    img.onLoad.listen((html.Event e) {
-//      ctx.drawImage(img, 0, 0);
-//      var png = canvas.toDataUrl("image/png", 1.0);
-//      html.ImageElement imgElt = html.ImageElement()..src = png;
-//      pngContainer.children.add(imgElt);
-//
-//      var svgImg = svg.ImageElement();
-//      svgImg.setAttribute('href', png);
-//      svgImg.setAttribute('width', '${BASE_WIDTH_SVG * max_bases}');
-//      svgImg.setAttribute('height', '${2 * BASE_HEIGHT_SVG}');
-//      linesGroup.children.add(svgImg);
-//
-//      html.Url.revokeObjectUrl(png);
-//    });
-//  }
 }
 
 class StrandComponent {
@@ -336,18 +275,18 @@ class StrandComponent {
       return;
     }
     var substrand = this.strand.substrands.first;
-    var start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.direction);
+    var start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
     for (int i = 0; i < this.strand.substrands.length; i++) {
       // substrand line
-      var end_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_3p, substrand.direction);
+      var end_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_3p, substrand.right);
       path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
       // crossover line/arc
       if (i < this.strand.substrands.length - 1) {
         var old_substrand = substrand;
         substrand = this.strand.substrands[i + 1];
-        start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.direction);
+        start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
         var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
@@ -366,8 +305,8 @@ class StrandComponent {
 
   Point<num> control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
     var helix_distance = (from_ss.helix_idx - to_ss.helix_idx).abs();
-    var start_pos = Helix.svg_base_pos(from_ss.helix_idx, from_ss.offset_3p, from_ss.direction);
-    var end_pos = Helix.svg_base_pos(to_ss.helix_idx, to_ss.offset_5p, to_ss.direction);
+    var start_pos = Helix.svg_base_pos(from_ss.helix_idx, from_ss.offset_3p, from_ss.right);
+    var end_pos = Helix.svg_base_pos(to_ss.helix_idx, to_ss.offset_5p, to_ss.right);
     bool from_strand_below = from_ss.helix_idx - to_ss.helix_idx > 0;
     num midX = (start_pos.x + end_pos.x) / 2;
     num midY = (start_pos.y + end_pos.y) / 2;
@@ -375,8 +314,7 @@ class StrandComponent {
     Point<num> control;
     Point<num> vector = end_pos - start_pos;
     Point<num> normal = Point<num>(vector.y, -vector.x);
-    if (from_ss.direction == Direction.left && from_strand_below ||
-        from_ss.direction == Direction.right && !from_strand_below) {
+    if ((!from_ss.right && from_strand_below) || (from_ss.right && !from_strand_below)) {
       normal = Point<num>(-vector.y, vector.x);
     }
     Point<num> unit_normal = normal * (1 / normal.magnitude);
@@ -384,15 +322,15 @@ class StrandComponent {
     // e.g., long_range_crossovers.py in the examples directory.
     double scale = helix_distance * 0.5;
     Point<num> scale_normal = unit_normal * scale;
-    control = mid + scale_normal * (BASE_WIDTH_SVG / 2);
+    control = mid + scale_normal * (constants.BASE_WIDTH_SVG / 2);
     return control;
   }
 
   render_5p_end() {
     var helix_idx = strand.substrands.first.helix_idx;
     var offset = strand.substrands.first.offset_5p;
-    var direction = strand.substrands.first.direction;
-    var pos = Helix.svg_base_pos(helix_idx, offset, direction);
+    var right = strand.substrands.first.right;
+    var pos = Helix.svg_base_pos(helix_idx, offset, right);
     var box = svg.RectElement();
     //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here
@@ -412,12 +350,12 @@ class StrandComponent {
   render_3p_end() {
     var helix_idx = strand.substrands.last.helix_idx;
     var offset = strand.substrands.last.offset_3p;
-    var direction = strand.substrands.last.direction;
+    var direction = strand.substrands.last.right;
     var pos = Helix.svg_base_pos(helix_idx, offset, direction);
     var triangle = svg.PolygonElement();
     var points;
     num scale = 3.5;
-    if (strand.substrands.last.direction == Direction.left) {
+    if (!strand.substrands.last.right) {
       points = '${pos.x - scale * 0.8},${pos.y} '
           '${pos.x + scale},${pos.y + scale} '
           '${pos.x + scale},${pos.y - scale}';
@@ -436,65 +374,20 @@ class StrandComponent {
 
   render_deletions(Substrand substrand) {
     for (var deletion in substrand.deletions) {
-      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, deletion, substrand.direction);
+      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, deletion, substrand.right);
 
-      //TODO: make this a single SVG path for efficiency
-      num inner_len = 4.0;
-      num outer_len = 4.2;
-      var top_cross_outer = svg.LineElement();
-      top_cross_outer.attributes = {
-        'class': 'deletion-cross-outer',
-        'x1': '${pos.x - outer_len}',
-        'y1': '${pos.y + outer_len}',
-        'x2': '${pos.x + outer_len}',
-        'y2': '${pos.y - outer_len}',
-      };
-      var bot_cross_outer = svg.LineElement();
-      bot_cross_outer.attributes = {
-        'class': 'deletion-cross-outer',
-        'x1': '${pos.x - outer_len}',
-        'y1': '${pos.y - outer_len}',
-        'x2': '${pos.x + outer_len}',
-        'y2': '${pos.y + outer_len}',
-      };
-      var top_cross_inner = svg.LineElement();
-      top_cross_inner.attributes = {
-        'class': 'deletion-cross-inner',
-        'x1': '${pos.x - inner_len}',
-        'y1': '${pos.y + inner_len}',
-        'x2': '${pos.x + inner_len}',
-        'y2': '${pos.y - inner_len}',
-      };
-      var bot_cross_inner = svg.LineElement();
-      bot_cross_inner.attributes = {
-        'class': 'deletion-cross-inner',
-        'x1': '${pos.x - inner_len}',
-        'y1': '${pos.y - inner_len}',
-        'x2': '${pos.x + inner_len}',
-        'y2': '${pos.y + inner_len}',
-      };
-
-      var width = 0.9 * BASE_WIDTH_SVG;
+      var width = 0.9 * constants.BASE_WIDTH_SVG;
       var half_width = 0.5 * width;
       var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
           'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
       var deletion_path = svg.PathElement();
       deletion_path.attributes = {
-//        'id': substrand_line_id(substrand),
         'class': 'deletion-cross-inner',
         'stroke': strand.color.toRgbColor().toCssString(),
         'fill': 'none',
         'd': path_cmds,
       };
       this.element.children.add(deletion_path);
-
-      var deletion_group = svg.GElement();
-      deletion_group.attributes = {'class': 'deletion'};
-      deletion_group.children.add(top_cross_outer);
-      deletion_group.children.add(bot_cross_outer);
-      deletion_group.children.add(top_cross_inner);
-      deletion_group.children.add(bot_cross_inner);
-//      this.element.children.add(deletion_group);
     }
   }
 
@@ -502,13 +395,12 @@ class StrandComponent {
     for (var insertion in substrand.insertions) {
       int offset = insertion.item1;
 
-      bool going_right = substrand.direction == Direction.right;
-      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.right);
       num x0 = pos.x;
       num y0 = pos.y;
-      num dx = BASE_WIDTH_SVG;
-      num dy = 1.4 * BASE_HEIGHT_SVG;
-      if (going_right) {
+      num dx = constants.BASE_WIDTH_SVG;
+      num dy = 1.4 * constants.BASE_HEIGHT_SVG;
+      if (substrand.right) {
         dy = -dy;
         dx = -dx;
       }
@@ -525,15 +417,39 @@ class StrandComponent {
         'd': 'M $x0 $y0 C $x1 $y1, $x2 $y2, $x0 $y0',
       };
 
+      // write number of insertions inside insertion loop
+      int length = insertion.item2;
+      var xmlns = "http://www.w3.org/2000/svg";
+      svg.TextPathElement textpath_elt = html.document.createElementNS(xmlns, 'textPath');
+      textpath_elt.setInnerHtml('${length}');
+
+      var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
+      if (browser.isFirefox) {
+        // le sigh
+        dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
+      }
+
+      var text_elt = svg.TextElement();
+      text_elt.children.add(textpath_elt);
+      textpath_elt.attributes = {
+        'class': 'insertion-length',
+        'startOffset': '50%',
+        'href': '#${StrandComponent.insertion_id(substrand, offset)}',
+      };
+      text_elt.attributes = {
+        'dy': dy_text,
+      };
+
+      this.element.children.add(text_elt);
       this.element.children.add(insertion_path);
     }
   }
 
   static String substrand_line_id(Substrand substrand) =>
-      'substrand-H${substrand.helix_idx}-O${substrand.start}-${direction_to_json(substrand.direction)}';
+      'substrand-H${substrand.helix_idx}-O${substrand.start}-${substrand.right ? 'right' : 'left'}';
 
   static String insertion_id(Substrand substrand, int offset) =>
-      'insertion-H${substrand.helix_idx}-O${offset}-${direction_to_json(substrand.direction)}';
+      'insertion-H${substrand.helix_idx}-O${offset}-${substrand.right ? 'right' : 'left'}';
 }
 
 class DNASequenceComponent {
@@ -564,16 +480,17 @@ class DNASequenceComponent {
   // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
   _draw_dna_sequence(Substrand substrand) {
     var seq_elt = svg.TextElement();
-    seq_elt.innerHtml = substrand.dna_sequence_deletions_insertions_to_spaces();
+    var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
+    seq_elt.setInnerHtml(seq_to_draw);
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.direction);
+    Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.right);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -BASE_WIDTH_SVG * 0.1;
-    if (substrand.direction == Direction.left) {
+    var x_adjust = -constants.BASE_WIDTH_SVG * 0.1;
+    if (!substrand.right) {
       rotate_degrees = 180;
     }
     var dy = '0.75px';
@@ -583,7 +500,7 @@ class DNASequenceComponent {
 
     StrandComponent.substrand_line_id(substrand);
 
-    var text_length = BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
+    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
@@ -597,7 +514,6 @@ class DNASequenceComponent {
   }
 
   _draw_insertion_dna_sequence(Substrand substrand, int offset, int length) {
-    bool going_right = substrand.direction == Direction.right;
     svg.TextPathElement textpath_elt;
     // I can't find documentation for a constructor that can be called for TextPathElement:
     // https://api.dartlang.org/stable/2.4.0/dart-svg/TextPathElement-class.html
@@ -619,14 +535,14 @@ class DNASequenceComponent {
     int num_bases = length + 1;
     num base_factor = num_bases - 2;
     num spacing_coef = 0.1; // small is less space between letters
-    var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
-    var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * BASE_WIDTH_SVG}';
+    var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
+    var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
 
-    var dy = '-${0.5 * BASE_WIDTH_SVG}';
+    var dy = '-${0.5 * constants.BASE_WIDTH_SVG}';
     var side = 'right';
     if (browser.isFirefox) {
       // le sigh
-      dy = '-${0.55 * BASE_WIDTH_SVG}';
+      dy = '-${0.55 * constants.BASE_WIDTH_SVG}';
       side = 'left';
     }
 

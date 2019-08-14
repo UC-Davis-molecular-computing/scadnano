@@ -1,6 +1,6 @@
 import scadnano as sc
 
-if __name__ == "__main__":
+def main():
     num_helices = 16
     bases = 48
     helices = [sc.Helix(i, bases) for i in range(num_helices)]
@@ -25,3 +25,6 @@ if __name__ == "__main__":
 
     design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
     design.write_to_file("output_designs/long_range_crossovers.dna")
+
+if __name__ == "__main__":
+    main()

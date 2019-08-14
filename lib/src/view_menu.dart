@@ -8,8 +8,10 @@ class MenuViewElement {
 
   final SpanElement file_buttons_elt = SpanElement();
   final SpanElement show_dna_elt = SpanElement();
+  final SpanElement show_editor_elt = SpanElement();
   final FileUploadInputElement file_chooser = FileUploadInputElement();
   final CheckboxInputElement show_dna_checkbox = CheckboxInputElement();
+  final CheckboxInputElement show_editor_checkbox = CheckboxInputElement();
   final ButtonElement save_button = ButtonElement();
 
   MenuViewElement();
@@ -18,9 +20,11 @@ class MenuViewElement {
     this.menu_elt.children.clear();
     this.menu_elt.children.add(this.file_buttons_elt);
     this.menu_elt.children.add(this.show_dna_elt);
+    this.menu_elt.children.add(this.show_editor_elt);
 
     this.render_file_buttons();
     this.render_show_dna_checkbox();
+    this.render_show_editor_checkbox();
 
     // should do this after file buttons are rendered since they are simulate-clicked
     this.setup_keyboard_shortcuts();
@@ -29,13 +33,25 @@ class MenuViewElement {
   render_show_dna_checkbox() {
     this.show_dna_elt.children.clear();
     this.show_dna_checkbox.checked = app.model.show_dna;
-    var label = LabelElement();
-    var span = SpanElement();
-    show_dna_elt.children.add(span);
-    span.children.add(show_dna_checkbox);
-    span.children.add(label);
-    label.text = "show DNA sequence";
-    label.onClick.listen((_) => show_dna_checkbox.click());
+    var label_show_dna = LabelElement();
+    var span_show_dna = SpanElement();
+    show_dna_elt.children.add(span_show_dna);
+    span_show_dna.children.add(this.show_dna_checkbox);
+    span_show_dna.children.add(label_show_dna);
+    label_show_dna.text = "show DNA sequence";
+    label_show_dna.onClick.listen((_) => this.show_dna_checkbox.click());
+  }
+
+  render_show_editor_checkbox() {
+    this.show_editor_elt.children.clear();
+    this.show_editor_checkbox.checked = app.model.show_editor;
+    var label_show_editor = LabelElement();
+    var span_show_editor = SpanElement();
+    show_dna_elt.children.add(span_show_editor);
+    span_show_editor.children.add(this.show_editor_checkbox);
+    span_show_editor.children.add(label_show_editor);
+    label_show_editor.text = "show editor";
+    label_show_editor.onClick.listen((_) => this.show_editor_checkbox.click());
   }
 
   render_file_buttons() {
@@ -58,25 +74,21 @@ class MenuViewElement {
     // https://stackoverflow.com/questions/11000826/ctrls-preventdefault-in-chrome
 //    KeyEvent.keyDownEvent.forTarget(document.body).listen((KeyEvent event) {
 //    document.body.onKeyDown.listen((KeyboardEvent event) {
-    Element.keyDownEvent.forTarget(window, useCapture: true).listen((KeyboardEvent event) {
+    Element.keyDownEvent.forTarget(window, useCapture: true).listen((KeyboardEvent ev) {
       print('key pressed');
-      if (event.ctrlKey &&
-          !event.shiftKey &&
-          !event.altKey &&
-          event.code == 'KeyS' &&
-          !save_button.disabled) {
-        print('Ctrl+${event.code} clicked');
+      if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && ev.code == 'KeyS' && !save_button.disabled) {
+        print('Ctrl+${ev.code} clicked');
         this.save_button.click();
-        event.preventDefault();
-        event.stopPropagation();
+        ev.preventDefault();
+        ev.stopPropagation();
       }
       //TODO: Chrome clicks more than once on a single Ctrl+O;
       // Firefox registers both but seems only to open the file dialog once
-      if (event.ctrlKey && !event.shiftKey && !event.altKey && event.code == 'KeyO') {
-        print('Ctrl+${event.code} clicked');
+      if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && ev.code == 'KeyO') {
+        print('Ctrl+${ev.code} clicked');
         this.file_chooser.click();
-        event.preventDefault();
-        event.stopPropagation();
+        ev.preventDefault();
+        ev.stopPropagation();
       }
     });
   }

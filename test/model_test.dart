@@ -1,5 +1,4 @@
 //@TestOn("browser")  // uncomment this to test stuff in files that require importing 'dart:html'
-import 'dart:math';
 import 'dart:convert';
 
 import 'package:color/color.dart';
@@ -17,16 +16,16 @@ main() {
     int max_bases = 60;
     design.major_tick_distance = 7;
 
-    var hp00 = Point<int>(0, 0);
-    var hp01 = Point<int>(0, 1);
+    var hp00 = GridPosition(0, 0);
+    var hp01 = GridPosition(0, 1);
     var h00 = Helix(idx: 0, grid_position: hp00, max_bases: max_bases);
     var h01 = Helix(idx: 1, grid_position: hp01, max_bases: max_bases);
-    var hp10 = Point<int>(1, 0);
-    var hp11 = Point<int>(1, 1);
+    var hp10 = GridPosition(1, 0);
+    var hp11 = GridPosition(1, 1);
     var h10 = Helix(idx: -1, grid_position: hp10, max_bases: max_bases);
     var h11 = Helix(idx: -1, grid_position: hp11, max_bases: max_bases);
-    var hp20 = Point<int>(2, 0);
-    var hp21 = Point<int>(2, 1);
+    var hp20 = GridPosition(2, 0);
+    var hp21 = GridPosition(2, 1);
     var h20 = Helix(idx: -1, grid_position: hp20, max_bases: max_bases);
     var h21 = Helix(idx: -1, grid_position: hp21, max_bases: max_bases);
     design.helices = [
@@ -41,7 +40,7 @@ main() {
 
     Substrand ss00 = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.left
+      ..right = false
       ..start = 2
       ..end = 8
       ..deletions = [3]
@@ -50,7 +49,7 @@ main() {
 
     Substrand ss01 = Substrand()
       ..helix_idx = 1
-      ..direction = Direction.right
+      ..right = true
       ..start = 1
       ..end = 6
       ..deletions = []
@@ -64,7 +63,7 @@ main() {
 
     Substrand ss10 = Substrand()
       ..helix_idx = 1
-      ..direction = Direction.right
+      ..right = true
       ..start = 11
       ..end = 15
       ..deletions = []
@@ -73,7 +72,7 @@ main() {
 
     Substrand ss11 = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.left
+      ..right = false
       ..start = 13
       ..end = 16
       ..deletions = []
@@ -122,7 +121,7 @@ main() {
 
     Substrand parsed_substrand00 = parsed_strand0.substrands[0];
     expect(parsed_substrand00.helix_idx, equals(0));
-    expect(parsed_substrand00.direction, equals(Direction.left));
+    expect(parsed_substrand00.right, equals(false));
     expect(parsed_substrand00.start, equals(2));
     expect(parsed_substrand00.end, equals(8));
     expect(parsed_substrand00.deletions.length, equals(1));
@@ -135,7 +134,7 @@ main() {
 
     Substrand parsed_substrand01 = parsed_strand0.substrands[1];
     expect(parsed_substrand01.helix_idx, equals(1));
-    expect(parsed_substrand01.direction, equals(Direction.right));
+    expect(parsed_substrand01.right, equals(true));
     expect(parsed_substrand01.start, equals(1));
     expect(parsed_substrand01.end, equals(6));
     expect(parsed_substrand01.deletions.length, equals(0));
@@ -151,7 +150,7 @@ main() {
 
     Substrand parsed_substrand10 = parsed_strand1.substrands[0];
     expect(parsed_substrand10.helix_idx, equals(1));
-    expect(parsed_substrand10.direction, equals(Direction.right));
+    expect(parsed_substrand10.right, equals(true));
     expect(parsed_substrand10.start, equals(11));
     expect(parsed_substrand10.end, equals(15));
     expect(parsed_substrand10.deletions.length, equals(0));
@@ -161,7 +160,7 @@ main() {
 
     Substrand parsed_substrand11 = parsed_strand1.substrands[1];
     expect(parsed_substrand11.helix_idx, equals(0));
-    expect(parsed_substrand11.direction, equals(Direction.left));
+    expect(parsed_substrand11.right, equals(false));
     expect(parsed_substrand11.start, equals(13));
     expect(parsed_substrand11.end, equals(16));
     expect(parsed_substrand11.deletions.length, equals(0));
@@ -173,7 +172,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.right
+      ..right = true
       ..start = 0
       ..end = 10;
     var strand = Strand()
@@ -186,7 +185,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_no_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.right
+      ..right = true
       ..start = 0
       ..end = 10
       ..deletions = [2, 3, 7];
@@ -201,7 +200,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_with_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.right
+      ..right = true
       ..start = 0
       ..end = 10
       ..insertions = [Tuple2<int, int>(2, 1), Tuple2<int, int>(5, 4), Tuple2<int, int>(7, 1)];
@@ -217,7 +216,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_with_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.right
+      ..right = true
       ..start = 0
       ..end = 10
       ..deletions=[4,8]
@@ -236,7 +235,7 @@ main() {
 //    print("starting test");
     var ss = Substrand()
       ..helix_idx = 0
-      ..direction = Direction.left
+      ..right = false
       ..start = 0
       ..end = 10
       ..deletions=[4,8]

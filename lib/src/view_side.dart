@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:html' as html;
 import 'dart:svg' hide Point;
 
@@ -11,7 +10,7 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 /// (<g> in html; GElement in dart:html)
 class SideViewComponent {
   final GElement element = GElement();
-  final Map<Point<int>, HelixSideViewComponent> helix_elts_map = {};
+  final Map<GridPosition, HelixSideViewComponent> helix_elts_map = {};
 
   //TODO: add dummy element as in MainViewComponent in case no helices are rendered
 
@@ -54,8 +53,8 @@ class HelixSideViewComponent {
         circle = CircleElement(),
         text = TextElement() {
     element.children.add(circle);
-    var cx = g2c(helix.gx);
-    var cy = g2c(helix.gy);
+    var cx = g2c(helix.gh);
+    var cy = g2c(helix.gv);
     element.setAttribute('transform', 'translate($cx $cy)');
     circle.setAttribute('class', '$SIDE_VIEW_PREFIX-helix-circle');
     text.setAttribute('class', '$SIDE_VIEW_PREFIX-helix-text');

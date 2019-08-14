@@ -1,6 +1,6 @@
 import scadnano as sc
 
-if __name__ == "__main__":
+def main():
     width = 6
     width_h = width // 2
     helices = [sc.Helix(0, width), sc.Helix(1, width)]
@@ -22,3 +22,6 @@ if __name__ == "__main__":
     design.add_deletion(helix_idx=1, offset=4)
     design.assign_dna(scaf, 'AACATCGT')
     design.write_to_file("output_designs/2_staple_2_helix_origami_small.dna")
+
+if __name__ == "__main__":
+    main()

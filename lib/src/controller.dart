@@ -4,8 +4,6 @@ import 'dart:convert';
 
 import 'package:path/path.dart' as path;
 
-import 'view_menu.dart';
-import 'view_main.dart';
 import 'model.dart';
 import 'view_side.dart';
 import 'app.dart';
@@ -14,10 +12,6 @@ import 'actions.dart';
 /// Responsible for notifying view listeners of changes to the model,
 /// and for dispatching actions to change the model (coming from View interactions, for example).
 class Controller {
-  MenuViewElement menu_view;
-  SideViewComponent side_view;
-  MainViewComponent main_view;
-
   ////////////////////////////////////////////////////////////////////////////
   // Notifiers that fire when Model is updated by an Action
   // Relevant parts of the view are subscribed to these to know when to re-render.
@@ -39,10 +33,7 @@ class Controller {
 
   Controller();
 
-  set_view_elements(MenuViewElement new_menu_view, SideViewComponent new_side_view, MainViewComponent new_main_view) {
-    this.menu_view = new_menu_view;
-    this.side_view = new_side_view;
-    this.main_view = new_main_view;
+  setup_subscriptions() {
     this.subscribe_to_all_to_model_change_events();
     this.subscribe_to_all_action_causing_events();
   }
@@ -55,23 +46,28 @@ class Controller {
   subscribe_to_all_to_model_change_events() {
     this.subscribe_to_helix();
     this.subscribe_to_show_dna();
+    this.subscribe_to_show_editor();
     this.subscribe_to_model_changed_since_last_save_changed();
   }
 
   subscribe_to_helix() {
     this.notifier_helix_change.stream.listen((Helix helix) {
-      var helix_side_view_elt = this.side_view.helix_elts_map[helix.grid_position];
+      var helix_side_view_elt = app.view.side_view.helix_elts_map[helix.grid_position];
       helix_side_view_elt.render();
-      var helix_main_view_elt = this.main_view.helix_elts_map[helix.grid_position];
+      var helix_main_view_elt = app.view.main_view.helix_elts_map[helix.grid_position];
       helix_main_view_elt.render();
     });
   }
 
   subscribe_to_show_dna() {
     this.notifier_show_dna_change.stream.listen((_) {
-      for (var strand_elt in main_view.strand_elts_map.values) {
-        strand_elt.dna_sequence_component.render();
-      }
+      app.view.main_view.render_dna_sequences();
+    });
+  }
+
+  subscribe_to_show_editor() {
+    this.notifier_show_dna_change.stream.listen((_) {
+      app.view.main_view.render_dna_sequences();
     });
   }
 
@@ -94,10 +90,12 @@ class Controller {
     this.subscribe_to_user_clicks_show_dna_checkbox();
     this.subscribe_to_save_file_button_pressed();
     this.subscribe_to_load_file_button_pressed();
+
+    this.subscribe_to_editor_change_events();
   }
 
   subscribe_to_user_clicks_side_view_helix() {
-    for (var helix_side_view_elt in this.side_view.helix_elts_map.values) {
+    for (var helix_side_view_elt in app.view.side_view.helix_elts_map.values) {
       helix_side_view_elt.circle.onClick.listen((MouseEvent e) {
         if (e.ctrlKey) this.handle_click_side_view(helix_side_view_elt);
       });
@@ -120,15 +118,12 @@ class Controller {
   }
 
   subscribe_to_user_clicks_show_dna_checkbox() {
-    this
-        .menu_view
-        .show_dna_checkbox
-        .onChange
-        .listen((_) => app.send_action(ShowDNAAction(this.menu_view.show_dna_checkbox.checked)));
+    app.view.menu_view.show_dna_checkbox.onChange
+        .listen((_) => app.send_action(ShowDNAAction(app.view.menu_view.show_dna_checkbox.checked)));
   }
 
   subscribe_to_save_file_button_pressed() {
-    this.menu_view.save_button.onClick.listen((_) async {
+    app.view.menu_view.save_button.onClick.listen((_) async {
       await save_file();
       app.send_action(AlertFileSavedAction());
     });
@@ -137,11 +132,21 @@ class Controller {
   subscribe_to_load_file_button_pressed() {
     // this is needed in case the user selects the same filename, to reload the file in case it has changed.
     // If not, then the onChange event won't fire and we won't reload the file.
-    var file_chooser = this.menu_view.file_chooser;
+    var file_chooser = app.view.menu_view.file_chooser;
     file_chooser.onClick.listen((_) {
       file_chooser.value = null;
     });
     file_chooser.onChange.listen((_) => request_load_file_from_file_chooser(file_chooser));
+  }
+
+  subscribe_to_editor_change_events() {
+    var editor =app.view.editor_view.editor;
+    editor.onChange.listen((event) {
+      String old_editor_content = app.model.editor_content;
+      String new_editor_content = app.view.editor_view.editor.getDoc().getValue();
+      var editor_content_action = EditorContentAction(new_editor_content, old_editor_content);
+      app.send_action(editor_content_action);
+    });
   }
 
 // END subscribe controller to events that result in dispatching Actions (e.g., user interaction)
@@ -179,7 +184,6 @@ save_file() async {
   //TODO: figure out how to detect filename user picked and save it as new filename
 }
 
-
 request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
@@ -204,5 +208,10 @@ file_loaded(FileReader file_reader, String filename) {
   Map<String, dynamic> deserialized_map = jsonDecode(json_model_text);
   var new_design = DNADesign.from_json(deserialized_map);
   app.model.menu_view_ui_model.loaded_filename = filename;
-  app.set_new_design(new_design);
+
+  // set new design
+  app.model.changed_since_last_save = false;
+  app.model.dna_design = new_design;
+  app.undo_redo.reset();
+  app.view.render();
 }

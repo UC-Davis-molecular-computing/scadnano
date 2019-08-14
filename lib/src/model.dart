@@ -5,24 +5,14 @@ import 'package:tuple/tuple.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
 
-const String CURRENT_VERSION = "0.0.1";
+import 'constants.dart' as constants;
 
-const int BASE_WIDTH_SVG = 10;
-const int BASE_HEIGHT_SVG = 10;
-
-/// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
-/// to attempt to make the DNA appear to scale in 2D drawings:
-/// The width of one base pair of double-stranded DNA bp is 0.34 nm.
-/// In a DNA origami, AFM images estimate that the average distance between adjacent double helices is 2.5 nm.
-/// (A DNA double-helix is only 2 nm wide, but the helices electrostatically repel each other so the spacing
-/// in a DNA origami or an other DNA nanostructure with many parallel DNA helices---e.g., single-stranded tile
-/// lattices---is larger than 2 nm.)
-/// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
-final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+//TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
+// fields that are not used by scadnano, and write them back out on serialization using toJson
 
 /// Represents parts of the Model to serialize
 class DNADesign {
-  String version = CURRENT_VERSION;
+  String version = constants.CURRENT_VERSION;
 
   Grid grid;
 
@@ -46,15 +36,15 @@ class DNADesign {
   DNADesign.default_design({int num_helices_x = 10, int num_helices_y = 10}) {
     this.grid = Grid.square;
     this.major_tick_distance = 8;
-    this.build_unused_helices(num_helices_x, num_helices_y);
+    this.build_default_unused_helices(num_helices_x, num_helices_y);
     this.strands = [];
   }
 
-  build_unused_helices(int num_helices_x, int num_helices_y) {
+  build_default_unused_helices(int num_helices_x, int num_helices_y) {
     this.helices = [];
     for (int gx = 0; gx < num_helices_x; gx++) {
       for (int gy = 0; gy < num_helices_y; gy++) {
-        var grid_pos = Point<int>(gx, gy);
+        var grid_pos = GridPosition(gx, gy);
         this.helices.add(Helix(idx: -1, grid_position: grid_pos));
       }
     }
@@ -62,30 +52,30 @@ class DNADesign {
     this.build_used_helices();
   }
 
-  factory DNADesign.dna_design_with_used_helices(int numX, int numY, int num_used, int bases_per_helix) {
-    DNADesign design = DNADesign.internal();
-
-    design.grid = Grid.square;
-    design.major_tick_distance = 8;
-
-    design.build_unused_helices(numX, numY);
-
-    int idx_used = 0;
-    for (int gx = 0; gx < numX; gx++) {
-      for (int gy = 0; gy < numY; gy++) {
-        var grid_pos = Point<int>(gx, gy);
-        design.helices.add(Helix(idx: idx_used, grid_position: grid_pos, max_bases: bases_per_helix));
-        idx_used++;
-        if (idx_used == num_used) {
-          design.build_used_helices();
-          return design;
-        }
-      }
-    }
-
-    design.build_used_helices();
-    return design;
-  }
+//  factory DNADesign.dna_design_with_used_helices(int numX, int numY, int num_used, int bases_per_helix) {
+//    DNADesign design = DNADesign.internal();
+//
+//    design.grid = Grid.square;
+//    design.major_tick_distance = 8;
+//
+//    design.build_default_unused_helices(numX, numY);
+//
+//    int idx_used = 0;
+//    for (int gx = 0; gx < numX; gx++) {
+//      for (int gy = 0; gy < numY; gy++) {
+//        var grid_pos = Point<int>(gx, gy);
+//        design.helices.add(Helix(idx: idx_used, grid_position: grid_pos, max_bases: bases_per_helix));
+//        idx_used++;
+//        if (idx_used == num_used) {
+//          design.build_used_helices();
+//          return design;
+//        }
+//      }
+//    }
+//
+//    design.build_used_helices();
+//    return design;
+//  }
 
   /// max number of bases allowed on any Helix in the Model
   int max_bases() {
@@ -100,27 +90,42 @@ class DNADesign {
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    return {
-      'version': this.version,
-      'grid': grid_to_json(this.grid),
-      'major_tick_distance': this.major_tick_distance,
-      'helices': this.helices,
-      'strands': this.strands,
+    Map<String, dynamic> json_map = {
+      constants.version_key: this.version,
+      constants.helices_key: this.helices,
+      constants.strands_key: this.strands,
     };
+    if (this.grid != Grid.none) {
+      json_map[constants.grid_key] = grid_to_json(this.grid);
+    }
+    if ((this.grid == Grid.hex || this.grid == Grid.honeycomb) && this.major_tick_distance != 7) {
+      json_map[constants.major_tick_distance_key] = this.major_tick_distance;
+    } else if (this.major_tick_distance != 8) {
+      json_map[constants.major_tick_distance_key] = this.major_tick_distance;
+    }
+    return json_map;
   }
 
-  DNADesign.from_json(Map<String, dynamic> parsed_json) {
+  DNADesign.from_json(Map<String, dynamic> json_map) {
 //    this.menu_view_ui_model.loaded_filename = filename;
-    if (parsed_json.containsKey('version')) {
-      this.version = parsed_json[version];
-    } else {
-      this.version = "0.0.1";
+
+    this.version =
+        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
+
+    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+
+    if (json_map.containsKey(constants.major_tick_distance_key)) {
+      this.major_tick_distance = json_map[constants.major_tick_distance_key];
+    } else if (json_map.containsKey(constants.grid_key)) {
+      if (this.grid == Grid.hex || this.grid == Grid.honeycomb) {
+        this.major_tick_distance = 7;
+      } else {
+        this.major_tick_distance = 8;
+      }
     }
-    this.grid = grid_from_string(parsed_json['grid']);
-    this.major_tick_distance = parsed_json['major_tick_distance'];
 
     this.helices = [];
-    List<dynamic> deserialized_helices_list = parsed_json['helices'];
+    List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
     for (var helix_json in deserialized_helices_list) {
       Helix helix = Helix.fromJson(helix_json);
       this.helices.add(helix);
@@ -128,7 +133,7 @@ class DNADesign {
     this.build_used_helices();
 
     this.strands = [];
-    List<dynamic> deserialized_strand_list = parsed_json['strands'];
+    List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
       Strand strand = Strand.fromJson(strand_json);
       this.strands.add(strand);
@@ -154,6 +159,8 @@ class DNADesign {
 class Model {
   DNADesign dna_design;
 
+  String editor_content = constants.initial_editor_content;
+
   MenuViewUIModel menu_view_ui_model = MenuViewUIModel();
   MainViewUIModel main_view_ui_model = MainViewUIModel();
   SideViewUIModel side_view_ui_model = SideViewUIModel();
@@ -162,7 +169,10 @@ class Model {
   bool changed_since_last_save = false;
 
   /// disabling this will make it easier to navigate since less SVG needs be rendered
-  bool show_dna = true;
+//  bool show_dna = true;
+  bool show_dna = false;
+
+  bool show_editor = true;
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
@@ -172,15 +182,9 @@ class Model {
     this.dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
   }
 
-  //TODO: is there a reason this is defined here? It requires the html library, which in turn
-  // makes it hard to test since tests must be done "in the browser", which is slow to compile
-  // and doesn't even let us use print statements or the debugger to see what's going wrong.
-  // If this is needed in the future, move it out of model.dart to enable easier unit testing.
-  /// Used with model_from_url
   Model.empty();
 
-
-
+  //TODO: this is crashing when we save; debug it
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
     return this.dna_design.toJson();
@@ -200,7 +204,7 @@ abstract class Action {
   Action reverse();
 }
 
-enum Grid { square, hex }
+enum Grid { square, hex, honeycomb, none }
 
 String grid_to_json(Grid grid) {
   switch (grid) {
@@ -208,6 +212,10 @@ String grid_to_json(Grid grid) {
       return 'square';
     case Grid.hex:
       return 'hex';
+    case Grid.honeycomb:
+      return 'honeycomb';
+    case Grid.none:
+      return 'none';
     default:
       throw UnimplementedError('unrecognized grid: $grid');
   }
@@ -219,36 +227,52 @@ Grid grid_from_string(String string) {
       return Grid.square;
     case 'hex':
       return Grid.hex;
+    case 'honeycomb':
+      return Grid.honeycomb;
+    case 'none':
+      return Grid.none;
     default:
       throw new UnimplementedError('unrecognized grid: $string');
   }
 }
 
-enum Direction { left, right }
+/// TODO: document this
+class GridPosition {
+  final int h;
+  final int v;
+  final int b;
 
-direction_to_json(Direction direction) {
-  switch (direction) {
-    case Direction.left:
-      return 'left';
-    case Direction.right:
-      return 'right';
-    default:
-      throw UnimplementedError('unrecognized direction: $direction');
+  const GridPosition(this.h, this.v, [this.b]);
+
+  const GridPosition.origin() : this(0, 0, 0);
+
+  const GridPosition.none() : this(-1, -1, -1);
+
+  static const ORIGIN = GridPosition.origin(); //Point<int>(0, 0);
+  static const NONE = GridPosition.origin(); //Point<int>(0, 0);
+
+  GridPosition.fromJson(Map<String, dynamic> json_map)
+      : this(get_value(json_map, 'h'), get_value(json_map, 'v'), json_map.containsKey('b') ? json_map['b'] : 0);
+
+  Map<String, dynamic> toJson() {
+    var map = {
+      'h': this.h,
+      'v': this.v,
+    };
+    if (this.b != 0) {
+      map['b'] = this.b;
+    }
+    return map;
+  }
+
+  @override
+  int get hashCode => quiver.hash3(this.h, this.v, this.b);
+
+  @override
+  bool operator ==(other) {
+    return this.h == other.h && this.v == other.v && this.b == other.b;
   }
 }
-
-Direction direction_from_string(String s) {
-  switch (s) {
-    case 'left':
-      return Direction.left;
-    case 'right':
-      return Direction.right;
-    default:
-      throw new UnimplementedError('unrecognized direction: $s');
-  }
-}
-
-enum ViewPanel { side_view, main_view }
 
 /// Represents a used helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a "used" helix doesn't
@@ -257,61 +281,57 @@ class Helix {
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default. This default positioning can be overridden by setting the position field.
-  int _idx = null;
+  int _idx = -1;
 
-  /// If false, this helix has idx = null and appears only
-  /// in the side view, not the main view. If true, it appears in the main
-  /// view and has a positive integer value idx, though it may
-  /// not actually have any Substrand's on it.
-  bool used = false;
+  /// position within square/hex/honeycomb integer grid (side view)
+  final GridPosition grid_position;
 
-  /// position within square/hex integer grid (side view)
-  final Point<int> grid_position;
-
-  /// SVG position of upper-left corner (main view)
-  /// This is only 2D. In the future we'll support an optional third z-coordinate
-  /// (assumed by default to be 0) for drawing in a 3D view. In the 2D SVG view
-  /// the z-coordinate will be ignored.
-  Point<num> position;
+  /// SVG position of upper-left corner (main view). This is only 2D.
+  /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
+  /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
+  /// position in Helix as well, but svg_position will always be 2D.
+  Point<num> svg_position;
 
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
   int max_bases;
 
-  Helix({int idx, this.grid_position, this.max_bases = 128}) {
+  bool get used => this._idx >= 0;
+
+  Helix({int idx = -1, this.grid_position = GridPosition.ORIGIN, this.max_bases = 128}) {
     this._idx = idx;
-    this.position = default_position();
-    if (this._idx >= 0) {
-      this.used = true;
-    }
+    this.svg_position = default_svg_position();
   }
 
-  /// Gets "center of base" (middle of square representing base) given helix idx and offset.
-  static Point<num> svg_base_pos(int helix_idx, int offset, Direction direction) {
-    num x = 5 + offset * 10;
-    num y = 5 + DISTANCE_BETWEEN_HELICES_SVG * helix_idx;
-    if (direction == Direction.left) {
+  /// Gets "center of base" (middle of square representing base) given helix idx and offset, depending on whether
+  /// strand is going right or not.
+  static Point<num> svg_base_pos(int helix_idx, int offset, bool right) {
+    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG;
+    num y = constants.BASE_HEIGHT_SVG / 2 + constants.DISTANCE_BETWEEN_HELICES_SVG * helix_idx;
+    if (!right) {
       y += 10;
     }
     return Point<num>(x, y);
   }
 
-  Point<num> default_position() {
-    return Point<num>(0, DISTANCE_BETWEEN_HELICES_SVG * _idx);
+  Point<num> default_svg_position() {
+    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * _idx);
   }
 
   int get idx => this._idx;
 
   set idx(int new_idx) {
     this._idx = new_idx;
-    this.position = default_position();
-    this.used = true;
+    this.svg_position = default_svg_position();
+//    this.used = true;
   }
 
-  num get gx => grid_position.x;
+  num get gh => grid_position.h;
 
-  num get gy => grid_position.y;
+  num get gv => grid_position.v;
 
-  int get hashCode => quiver.hash3(this._idx, this.grid_position.x, this.grid_position.y);
+  num get gb => grid_position.b;
+
+  int get hashCode => quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -323,36 +343,61 @@ class Helix {
   }
 
   String toString() {
-    return "Helix(idx=$_idx, gx=$gx, gy=$gy, used=$used, max_bases=$max_bases})";
+    return "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_bases=$max_bases})";
   }
 
-  Map<String, dynamic> toJson() => {
-        'idx': this._idx,
-        'grid_position': [this.grid_position.x, this.grid_position.y],
-        'max_bases': this.max_bases,
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json_map = {constants.idx_key: this._idx};
 
-  Helix.fromJson(Map<String, dynamic> parsedJson)
+    if (this.has_grid_position()) {
+      var gp_list = [this.grid_position.h, this.grid_position.v];
+      if (this.grid_position.b != 0) {
+        gp_list.add(this.grid_position.b);
+      }
+      json_map[constants.grid_position_key] = gp_list;
+    }
+
+    if (this.has_svg_position()) {
+      json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
+    }
+
+    if (this.has_max_bases()) {
+      json_map[constants.max_bases_key] = this.max_bases;
+    }
+
+    return json_map;
+  }
+
+  bool has_grid_position() {
+    return this.grid_position != null;
+  }
+
+  bool has_svg_position() {
+    return this.svg_position != null;
+  }
+
+  bool has_max_bases() {
+    return this.max_bases != null;
+  }
+
+  Helix.fromJson(Map<String, dynamic> json_map)
       : this(
-            idx: get_value(parsedJson, 'idx'),
-            grid_position: Point<int>(
-                get_value(parsedJson, 'grid_position')[0], get_value(parsedJson, 'grid_position')[1]),
-            max_bases: get_value(parsedJson, 'max_bases'));
+            idx: get_value(json_map, constants.idx_key),
+            grid_position: GridPosition(get_value(json_map, constants.grid_position_key)[0],
+                get_value(json_map, constants.grid_position_key)[1]),
+            max_bases: get_value(json_map, constants.max_bases_key));
 }
 
 class Strand {
+  static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
+
   /// Is "id" instead of "idx" because they may not be indices 0...len-1 in
   /// case some strands are deleted.
-  Color color = RgbColor.name('blue');
+  Color color = null;
   String dna_sequence = null;
   List<Substrand> substrands = [];
 
   Strand();
-
-//  int get hashCode => quiver.hashObjects(this.substrands);
-//
-//  bool operator ==(other) =>
-//      IterableEquality().equals(this.substrands, other.substrands);
 
   int get length {
     int num = 0;
@@ -362,49 +407,59 @@ class Strand {
     return num;
   }
 
-  Map<String, dynamic> toJson() => {
-        // need to use List.from because List.map returns Iterable, not List
-        'substrands': List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson())),
-        'color': this.color.toRgbColor().toMap(),
-        'dna_sequence': this.dna_sequence
-      };
+  Map<String, dynamic> toJson() {
+    var json_map = Map<String, dynamic>();
 
-  Strand.fromJson(Map<String, dynamic> parsed_json) {
-    this.color = parseJsonColor(get_value(parsed_json, 'color'));
+    // need to use List.from because List.map returns Iterable, not List
+    json_map[constants.substrands_key] = List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
+    if (this.color != null) {
+      json_map[constants.color_key] = this.color.toRgbColor().toMap();
+    }
+    if (this.dna_sequence != null) {
+      json_map[constants.dna_sequence_key] = this.dna_sequence;
+    }
+
+    return json_map;
+  }
+
+  Strand.fromJson(Map<String, dynamic> json_map) {
     // need to use List.from because List.map returns Iterable, not List
     this.substrands = List<Substrand>.from(
-        get_value(parsed_json, 'substrands').map((substrandJson) => Substrand.fromJson(substrandJson)));
+        get_value(json_map, constants.substrands_key).map((substrandJson) => Substrand.fromJson(substrandJson)));
     for (var substrand in this.substrands) {
       substrand._strand = this;
     }
-    if (parsed_json.containsKey('dna_sequence')) {
-      this.dna_sequence = parsed_json['dna_sequence'];
+
+    if (json_map.containsKey(constants.color_key)) {
+      this.color = parse_json_color(json_map[constants.color_key]);
     } else {
-      this.dna_sequence = null;
+      this.color = DEFAULT_STRAND_COLOR;
     }
+
+    this.dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
   }
 }
 
-Color parseJsonColor(Map parsedJsonMap) {
-  int r = parsedJsonMap['r'];
-  int g = parsedJsonMap['g'];
-  int b = parsedJsonMap['b'];
+Color parse_json_color(Map json_map) {
+  int r = json_map['r'];
+  int g = json_map['g'];
+  int b = json_map['b'];
   return RgbColor(r, g, b);
 }
 
 class Substrand {
   int helix_idx = -1;
-  Direction direction = Direction.left;
+  bool right = true;
   int start = null;
   int end = null;
   List<int> deletions = [];
   List<Tuple2<int, int>> insertions = []; // elt: Pair(offset, num insertions)
 
   /// 5' end, INCLUSIVE
-  int get offset_5p => direction == Direction.left ? end - 1 : start;
+  int get offset_5p => right ? start : end - 1;
 
   /// 3' end, INCLUSIVE
-  int get offset_3p => direction == Direction.left ? start : end - 1;
+  int get offset_3p => right ? end - 1 : start;
 
   int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
@@ -413,7 +468,7 @@ class Substrand {
   /// List of offsets (inclusive at each end) in 5' - 3' order, from 5' to `offset_stop`.
   List<int> offsets_from_5p_to(int offset_stop) {
     List<int> offsets = [];
-    if (this.direction == Direction.right) {
+    if (this.right) {
       for (int offset = this.start; offset <= offset_stop; offset++) {
         offsets.add(offset);
       }
@@ -428,7 +483,7 @@ class Substrand {
   /// List of offsets (inclusive at each end) in 5' - 3' order.
   List<int> offsets_in_5p_3p_order() {
     List<int> offsets = [];
-    if (this.direction == Direction.right) {
+    if (this.right) {
       for (int offset = this.start; offset < this.end; offset++) {
         offsets.add(offset);
       }
@@ -483,10 +538,10 @@ class Substrand {
       return '';
     }
 
-    bool five_p_on_left = this.direction == Direction.right;
+    bool five_p_on_left = this.right;
     int str_idx_left = this.offset_to_strand_dna_idx(offset_left, five_p_on_left);
     int str_idx_right = this.offset_to_strand_dna_idx(offset_right, !five_p_on_left);
-    if (this.direction == Direction.left) {
+    if (!this.right) {
       // these will be out of order if strand is left
       int swap = str_idx_left;
       str_idx_left = str_idx_right;
@@ -515,11 +570,10 @@ class Substrand {
 
     int seq_idx = 0;
     int offset = this.offset_5p;
-    bool going_right = this.direction == Direction.right;
     int space_codeunit = ' '.codeUnitAt(0);
-    int forward = going_right ? 1 : -1;
+    int forward = this.right ? 1 : -1;
     bool offset_out_of_bounds(offset) =>
-        going_right ? offset >= this.offset_3p + forward : offset <= this.offset_3p + forward;
+        this.right ? offset >= this.offset_3p + forward : offset <= this.offset_3p + forward;
     while (!offset_out_of_bounds(offset)) {
       if (deletions_set.contains(offset)) {
         codeunits.add(space_codeunit);
@@ -553,7 +607,7 @@ class Substrand {
 
     // get string index assuming this Substrand is first on Strand
     int ss_str_idx = null;
-    if (this.direction == Direction.right) {
+    if (this.right) {
       //account for insertions and deletions
       offset += len_adjust;
       ss_str_idx = offset - this.start;
@@ -602,10 +656,8 @@ class Substrand {
   }
 
   bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
-    return (this.direction == Direction.right &&
-            this.start <= offset_to_test &&
-            offset_to_test < offset_edge) ||
-        (this.direction == Direction.left && offset_edge < offset_to_test && offset_to_test < this.end);
+    return (this.right && this.start <= offset_to_test && offset_to_test < offset_edge) ||
+        (!this.right && offset_edge < offset_to_test && offset_to_test < this.end);
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its
@@ -642,34 +694,34 @@ class Substrand {
   Substrand();
 
   Map<String, dynamic> toJson() {
-    var json_dict = {
-      'helix_idx': this.helix_idx,
-      'direction': direction_to_json(this.direction),
-      'start': this.start,
-      'end': this.end,
+    var json_map = {
+      constants.helix_idx_key: this.helix_idx,
+      constants.right_key: this.right,
+      constants.start_key: this.start,
+      constants.end_key: this.end,
     };
     if (this.deletions.isNotEmpty) {
-      json_dict['deletions'] = this.deletions;
+      json_map[constants.deletions_key] = this.deletions;
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_dict['insertions'] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+      json_map[constants.insertions_key] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
     }
-    return json_dict;
+    return json_map;
   }
 
-  Substrand.fromJson(Map<String, dynamic> parsed_json) {
-    this.helix_idx = get_value(parsed_json, 'helix_idx');
-    this.direction = direction_from_string(get_value(parsed_json, 'direction'));
-    this.start = get_value(parsed_json, 'start');
-    this.end = get_value(parsed_json, 'end');
-    if (parsed_json.containsKey('deletions')) {
-      this.deletions = List<int>.from(parsed_json['deletions']);
+  Substrand.fromJson(Map<String, dynamic> json_map) {
+    this.helix_idx = get_value(json_map, constants.helix_idx_key);
+    this.right = get_value(json_map, constants.right_key);
+    this.start = get_value(json_map, constants.start_key);
+    this.end = get_value(json_map, constants.end_key);
+    if (json_map.containsKey(constants.deletions_key)) {
+      this.deletions = List<int>.from(json_map[constants.deletions_key]);
     } else {
       this.deletions = [];
     }
-    if (parsed_json.containsKey('insertions')) {
-      this.insertions = parse_json_insertions(parsed_json['insertions']);
+    if (json_map.containsKey(constants.insertions_key)) {
+      this.insertions = parse_json_insertions(json_map[constants.insertions_key]);
     } else {
       this.insertions = [];
     }

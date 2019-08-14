@@ -17,3 +17,17 @@ Future<DNADesign> _dna_design_from_url(String url) async {
     return dna_design;
   });
 }
+
+//typedef ProcessFunction<O> = O Function(dynamic input);
+//
+//T identity<T>(T x) => x;
+//
+///// If map contains key, return associated value, otherwise return default_value.
+//O with_default<O>(Map<String, dynamic> map, String key, O default_value,
+//    {ProcessFunction<O> process: identity}) {
+//  if (map.containsKey(key)) {
+//    return process(map[key]);
+//  } else {
+//    return default_value;
+//  }
+//}

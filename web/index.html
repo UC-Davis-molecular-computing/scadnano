@@ -10,56 +10,62 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/favicon.ico">
     <script src="external-libs/svg-pan-zoom.min.js"></script>
-    <!--    <script src="external-libs/svg-pan-zoom.js"></script>-->
+    <script src="packages/split/split.min.js"></script>
+    <link href="packages/codemirror/codemirror.css" rel="stylesheet">
+    <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
+    <script src="packages/codemirror/codemirror.js"></script>
+    <script src="packages/codemirror/mode/python/python.js"></script>
 </head>
 
 <body>
 
 
 <div class="top-container">
-    <!--  <div class="top-container">-->
+
+    <!--    <div class="split" id="noneditor-pane">-->
+
     <div id="menu"></div>
 
     <div class="menu-separator" id="menu-separator"></div>
 
     <div class="panes-container">
 
-        <div class="left-pane" id="left-pane">
+        <div class="split" id="side-pane">
             <svg id="side-view-svg" width="100%" height="100%" style="touch-action: none;">
                 <g id="side-view-svg-viewport">
-                    <circle id="dummy-elt-side-view" r="100" cx="100" cy="300" fill="white">
+                    <circle id="dummy-elt-side-view" r="100" cx="100" cy="50" fill="white">
                         dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height
                     </circle>
                 </g>
             </svg>
         </div>
 
-        <div class="panes-separator" id="panes-separator"></div>
-
-        <div class="right-pane" id="right-pane">
+        <div class="split" id="main-pane">
             <svg id="main-view-svg" width="100%" height="100%" style="touch-action: none;">
                 <g id="main-view-svg-viewport">
-                    <circle id="dummy-elt-main-view" r="300" cx="0" cy="0" fill="white">
+                    <circle id="dummy-elt-main-view" r="200" cx="100" cy="100" fill="white">
                         dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height
                     </circle>
                 </g>
             </svg>
+        </div>
+
+        <!--    </div>-->
+
+        <div class="split" id="editor-pane">
+            <div id="controls">
+                <label for="theme">Theme:</label>
+                <select id="theme"></select>
+            </div>
+            <div id="editor"></div>
+            <p id="footer"></p>
         </div>
 
     </div>
+
 </div>
 
-<!--<script src="packages/react/react.js"></script>-->
-<!--<script src="packages/react/react_dom.js"></script>-->
-<!--<script src="packages/react/react.min.js"></script>-->
-<!--<script src="packages/react/react_dom.min.js"></script>-->
-
-<script src="external-libs/simpledrag.min.js"></script>
-
 <script defer src="main.dart.js"></script>
-
-<!--next uses simpledrag.js but needs to be executed after declaration of div panes above-->
-<script src="splitpane.js"></script>
 
 <script>
     window.onload = function () {
@@ -79,10 +85,6 @@
         // DOM children before rendering, so we just leave it in.
         // removeDummy("dummy-elt-side-view");
         // removeDummy("dummy-elt-main-view");
-
-        // Split(['#left-pane', '#right-pane'], {
-        //   minSize: 0,
-        // });
     }
 </script>
 

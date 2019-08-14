@@ -38,23 +38,6 @@ html, body {
     overflow: hidden;
 }
 
-.left-pane {
-    width: 10%;
-    background: white;
-}
-
-.panes-separator {
-    width: 0.5%;
-    background: lightgray;
-    position: relative;
-    cursor: col-resize;
-}
-
-.right-pane {
-    flex: auto;
-    background: white;
-}
-
 .panes-container,
 .panes-separator,
 .left-pane,
@@ -64,8 +47,46 @@ html, body {
     height: 100%;
 }
 
+.gutter {
+    background-color: #eee;
+}
+
+.split, .gutter.gutter-horizontal {
+    float: left;
+}
+
+.gutter.gutter-horizontal {
+    cursor: ew-resize;
+}
+
 /************************************************
 ** END split pane layout
+************************************************/
+
+/************************************************
+** BEGIN CodeMirror layout
+************************************************/
+
+#controls {
+    margin-bottom: 1em;
+}
+
+#editorContainer,
+.CodeMirror {
+    border: 0;
+    padding: 0;
+    flex: 20;
+    height: 300px;
+    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+#footer {
+    text-align: center;
+    font-size: 0.8em;
+}
+
+/************************************************
+** END CodeMirror layout
 ************************************************/
 
 /************************************************
@@ -123,6 +144,12 @@ html, body {
     stroke: red;
     stroke-width: 1px;
     /*stroke-linecap: round;*/
+}
+
+.insertion-length {
+    font-size: 5px;
+    text-anchor: middle;
+    dominant-baseline: hanging;
 }
 
 .dna-base {

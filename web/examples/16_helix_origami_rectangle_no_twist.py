@@ -1,12 +1,15 @@
 import origami_rectangle as rect
 
-# here's an example of using `origami_rectangle.create` to create a 16-helix rectangle
-if __name__ == "__main__":
+def main():
     rect_num_helices = 16
     rect_num_cols = 24  # XXX: ensure num_cols is even since we divide it by 2
     rect_design = rect.create(num_helices=rect_num_helices, num_cols=rect_num_cols,
                               assign_seq=True, twist_correction_deletion_spacing=3)
     rect_design.write_to_file("output_designs/16_helix_rectangle_no_twist.dna")
+
+# here's an example of using `origami_rectangle.create` to create a 16-helix rectangle
+if __name__ == "__main__":
+    main()
 
 # M13 in on helix 1 is (going left-to-right, which is 3'-to-5')
 # GATTTTGTGAGTAGAA

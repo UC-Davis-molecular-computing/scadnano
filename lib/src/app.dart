@@ -26,7 +26,8 @@ class App {
 //    this.model = Model.default_model();
 //    this.model = await Model.from_url('examples/output_designs/few-small-helices.dna');
 //    this.model = await Model.from_url('examples/output_designs/16_helix_rectangle_no_seq.dna');
-    this.model = await model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+    this.model =
+        await model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
@@ -55,16 +56,5 @@ class App {
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }
     });
-  }
-
-  /// This should only be called when loading a brand new DNADesign from a file.
-  /// For changes to the existing model, Actions should be dispatched via
-  /// app.send_action(the_action);
-  /// TODO: this is the only part of App that is specific to this application; refactor into Controller
-  set_new_design(DNADesign new_design) {
-    this.model.changed_since_last_save = false;
-    this.model.dna_design = new_design;
-    this.undo_redo.reset();
-    this.view.render();
   }
 }
