@@ -253,4 +253,5 @@ main() {
   });
 }
 
-//TODO: add test based on file 16_helix_rectangle_no_twist_causes_crash.dna in Python repo
+//TODO: add test based on file tests/design_causes_crash.dna in Python repo
+// Probably need more error-checking in code that currently assumes .dna file was properly constructed.

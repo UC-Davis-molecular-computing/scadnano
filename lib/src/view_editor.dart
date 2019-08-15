@@ -7,8 +7,6 @@ import 'package:scadnano/src/actions.dart';
 
 import 'app.dart';
 
-//TODO: add Python color scheme (doesn't appear to be included by default in CodeMirror!!)
-
 class EditorViewComponent {
 
   CodeMirror editor;

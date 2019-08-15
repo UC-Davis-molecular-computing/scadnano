@@ -30,8 +30,13 @@ class View {
     var side_pane = querySelector('#side-pane');
     var main_pane = querySelector('#main-pane');
     var editor_pane = querySelector('#editor-pane');
+    var init_sizes = [10,50,40];
+    if (!app.model.show_editor) {
+      init_sizes[1] = 90;
+      init_sizes[2] = 0;
+    }
     this.splitter = split.fixedSplit([side_pane, main_pane, editor_pane],
-        gutterSize: 10, sizes: [10, 50, 40], minSize: [0, 0, 0]);
+        gutterSize: 10, sizes: init_sizes, minSize: [0, 0, 0]);
   }
 
   /// This should be called whenever app.model is set to a new object,

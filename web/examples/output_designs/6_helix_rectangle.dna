@@ -1,7 +1,6 @@
 {
   "version": "0.0.1",
   "grid": "square",
-  "major_tick_distance": 8,
   "helices": [
     {"idx": 0, "max_bases": 224, "grid_position": [0, 0], "svg_position": [0, 0]},
     {"idx": 1, "max_bases": 224, "grid_position": [0, 1], "svg_position": [0, 30]},

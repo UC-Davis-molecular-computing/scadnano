@@ -17,7 +17,7 @@ class Controller {
   // Relevant parts of the view are subscribed to these to know when to re-render.
 
   // Helix is updated in model
-  final notifier_helix_change = StreamController<Helix>.broadcast();
+  final notifier_helix_change_used = StreamController<Helix>.broadcast();
 
   // "Show DNA" boolean value changed (e.g., user clicks on "Show DNA Sequence" check)
   final notifier_show_dna_change = StreamController<bool>.broadcast();
@@ -54,7 +54,7 @@ class Controller {
   }
 
   subscribe_to_helix() {
-    this.notifier_helix_change.stream.listen((Helix helix) {
+    this.notifier_helix_change_used.stream.listen((Helix helix) {
       var helix_side_view_elt = app.view.side_view.helix_elts_map[helix.grid_position];
       helix_side_view_elt.render();
       var helix_main_view_elt = app.view.main_view.helix_elts_map[helix.grid_position];
@@ -74,7 +74,6 @@ class Controller {
       var side_size = old_sizes[0];
       var new_sizes = [side_size, -1, -1];
       var size_main_editor = (100 - side_size);
-      //TODO: this shrinks the side view a small amount; correct for it
       if (app.model.show_editor) {
         new_sizes[1] = size_main_editor * 5 / 9.0;
         new_sizes[2] = size_main_editor * 4 / 9.0;
@@ -82,6 +81,9 @@ class Controller {
         new_sizes[1] = size_main_editor;
         new_sizes[2] = 0;
       }
+
+      //TODO: clicking show editor twice should not change these values but it shrinks the side view
+
       print('old_sizes: ${old_sizes}');
       print('new_sizes: ${new_sizes}');
       app.view.splitter.setSizes(new_sizes);
@@ -124,8 +126,14 @@ class Controller {
   }
 
   handle_click_side_view(HelixSideViewComponent helix_side_view_elt) {
-    //TODO: detect if any strands are on this helix and disable deletion and give warning
+    //TODO: detect if any strands are on this helix and warn before deleting
+    //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
     var helix = helix_side_view_elt.helix;
+    if (helix.used) {
+      if (helix.substrands.isNotEmpty) {
+        // implement this
+      }
+    }
     var use = !helix.used;
     var idx = helix.idx;
     if (idx < 0) {
@@ -165,9 +173,8 @@ class Controller {
   subscribe_to_editor_change_events() {
     var editor = app.view.editor_view.editor;
     editor.onChange.listen((event) {
-      String old_editor_content = app.model.editor_content;
       String new_editor_content = app.view.editor_view.editor.getDoc().getValue();
-      var editor_content_action = EditorContentAction(new_editor_content, old_editor_content);
+      var editor_content_action = EditorContentAction(new_editor_content);
       app.send_action(editor_content_action);
     });
   }

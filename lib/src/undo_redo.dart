@@ -5,8 +5,8 @@ import 'app.dart';
 
 /// Maintains an undo stack and a redo stack of Actions.
 class UndoRedo {
-  List<Action> undo_stack;
-  List<Action> redo_stack;
+  List<ReversibleAction> undo_stack;
+  List<ReversibleAction> redo_stack;
 
   UndoRedo() {
     setup_undo_redo_keyboard_listeners();
@@ -38,13 +38,17 @@ class UndoRedo {
   }
 
   apply(Action action) {
-    if (!app.model.changed_since_last_save) {
-      app.model.changed_since_last_save = true;
-      app.controller.notifier_model_changed_since_save.add(app.model.changed_since_last_save);
+    if (action is ReversibleAction) {
+      if (!app.model.changed_since_last_save) {
+        app.model.changed_since_last_save = true;
+        app.controller.notifier_model_changed_since_save.add(app.model.changed_since_last_save);
+      }
+      app.model = action.apply(app.model);
+      redo_stack.clear();
+      undo_stack.add(action);
+    } else {
+      app.model = action.apply(app.model);
     }
-    app.model = action.apply(app.model);
-    redo_stack.clear();
-    undo_stack.add(action);
   }
 
   undo() {

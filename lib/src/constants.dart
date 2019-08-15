@@ -1,3 +1,5 @@
+import 'model.dart';
+
 const String INITIAL_VERSION = "0.0.1";
 
 const String CURRENT_VERSION = "0.0.1";
@@ -15,6 +17,7 @@ const int BASE_HEIGHT_SVG = 10;
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
 final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 
+const Grid default_grid = Grid.none;
 
 /////////////////////////////////////////////////////////////
 // JSON keys

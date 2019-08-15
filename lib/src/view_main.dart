@@ -32,6 +32,9 @@ class MainViewComponent {
   // There's no layering in SVG, so we need to make sure we draw DNA sequences last so they are on top.
   // So the component is stored with the strand, but it is not rendered into the same group as
   // the various other SVG elements representing the strands.
+  // Similarly we want the helices group to appear before the strands group so helices appear underneath.
+  final svg.GElement helices_element = svg.GElement();
+  final svg.GElement strands_element = svg.GElement();
   final svg.GElement dna_sequences_element = svg.GElement();
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<GridPosition, HelixMainViewComponent> helix_elts_map = {};
@@ -44,27 +47,10 @@ class MainViewComponent {
     ..setAttribute('cx', '0')
     ..setAttribute('cy', '0')
     ..setAttribute('r', '300')
-    ..setInnerHtml('dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
+    ..setInnerHtml(
+        'dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
 
   MainViewComponent() {
-    this.element.attributes = {'id': 'main-view-design'};
-    this.dna_sequences_element.attributes = {'id': 'main-view-sequences'};
-    // draw helices
-    for (var helix in app.model.dna_design.helices) {
-      this.helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.element, helix);
-    }
-    for (var helix in app.model.dna_design.used_helices) {
-      var helix_elt = helix_elts_map[helix.grid_position];
-      this.element.children.add(helix_elt.element);
-      this.used_helix_elts[helix.idx] = helix_elt;
-    }
-    // draw strands
-    for (var strand in app.model.dna_design.strands) {
-      var strand_elt = StrandComponent(strand);
-      this.element.children.add(strand_elt.element);
-      this.strand_elts_map[strand] = strand_elt;
-    }
-
     // Adds a dummy SVG element (white circle that can't be seen)
     // to prevent the svg-pan-zoom library from dividing by 0 if there are no elements.
     // The dummy element placed here in index.html is sufficient to prevent the divide-by-0 error
@@ -72,7 +58,37 @@ class MainViewComponent {
     // For some reason the deployed server has the error unless we maintain that a dummy element is
     // always there.
     this.element.children.add(_dummy_elt);
+
+
+    this.element.attributes = {'id': 'main-view-design'};
+    this.helices_element.attributes = {'id': 'main-view-helices'};
+    this.strands_element.attributes = {'id': 'main-view-strands'};
+    this.dna_sequences_element.attributes = {'id': 'main-view-dna-sequences'};
+
+    // put helix lines in their own group that is always rendered before strands so helices appear underneath
+    this.element.children.add(this.helices_element);
+    this.element.children.add(this.strands_element);
     this.element.children.add(this.dna_sequences_element);
+
+    // draw helices
+    for (var helix in app.model.dna_design.helices) {
+      this.helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.helices_element, helix);
+    }
+
+    for (var helix in app.model.dna_design.used_helices) {
+      var helix_elt = helix_elts_map[helix.grid_position];
+      this.helices_element.children.add(helix_elt.element);
+      this.used_helix_elts[helix.idx] = helix_elt;
+    }
+
+    // draw strands
+
+    for (var strand in app.model.dna_design.strands) {
+      var strand_elt = StrandComponent(strand);
+      this.strands_element.children.add(strand_elt.element);
+      this.strand_elts_map[strand] = strand_elt;
+    }
+
   }
 
   /// Redraw elements
@@ -208,6 +224,7 @@ class HelixMainViewComponent {
   }
 }
 
+
 class StrandComponent {
   final Strand strand;
   svg.GElement element = svg.GElement();
@@ -270,7 +287,45 @@ class StrandComponent {
 //    }
 //  }
 
+
+
   render_strand_lines() {
+    //TODO: go back to rendering each strand with separate paths for substrands, crossovers, etc.
+    // This will be needed to let them each get selected individually.
+
+    if (this.strand.substrands.length == 0) {
+      return;
+    }
+    var substrand = this.strand.substrands.first;
+    var start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
+    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
+    for (int i = 0; i < this.strand.substrands.length; i++) {
+      // substrand line
+      var end_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_3p, substrand.right);
+      path_cmds.add('L ${end_svg.x} ${end_svg.y}');
+
+      // crossover line/arc
+      if (i < this.strand.substrands.length - 1) {
+        var old_substrand = substrand;
+        substrand = this.strand.substrands[i + 1];
+        start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
+        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
+        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
+      }
+    }
+
+    var path = svg.PathElement();
+    path.attributes = {
+      'id': substrand_line_id(substrand),
+      'class': 'substrand-line',
+      'stroke': strand.color.toRgbColor().toCssString(),
+      'fill': 'none',
+      'd': path_cmds.join(' '),
+    };
+    this.element.children.add(path);
+  }
+
+  render_strand_lines_single_path() {
     if (this.strand.substrands.length == 0) {
       return;
     }
@@ -500,7 +555,8 @@ class DNASequenceComponent {
 
     StrandComponent.substrand_line_id(substrand);
 
-    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
+    var text_length =
+        constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
@@ -536,7 +592,8 @@ class DNASequenceComponent {
     num base_factor = num_bases - 2;
     num spacing_coef = 0.1; // small is less space between letters
     var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
-    var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
+    var text_length =
+        '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
 
     var dy = '-${0.5 * constants.BASE_WIDTH_SVG}';
     var side = 'right';

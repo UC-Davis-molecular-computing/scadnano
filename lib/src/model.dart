@@ -6,9 +6,14 @@ import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
 
 import 'constants.dart' as constants;
+import 'app.dart';
 
 //TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
 // fields that are not used by scadnano, and write them back out on serialization using toJson
+
+//TODO: support editing an existing DNADesign so that user can modify strands, etc.
+
+//TODO: import cadnano files
 
 /// Represents parts of the Model to serialize
 class DNADesign {
@@ -28,6 +33,8 @@ class DNADesign {
   // optimization so we can quickly look up a helix given its index. It is
   // maintained in sorted order, so that used_helices[helix.idx] == helix.
   List<Helix> used_helices;
+
+  DNADesign();
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
@@ -52,30 +59,16 @@ class DNADesign {
     this.build_used_helices();
   }
 
-//  factory DNADesign.dna_design_with_used_helices(int numX, int numY, int num_used, int bases_per_helix) {
-//    DNADesign design = DNADesign.internal();
-//
-//    design.grid = Grid.square;
-//    design.major_tick_distance = 8;
-//
-//    design.build_default_unused_helices(numX, numY);
-//
-//    int idx_used = 0;
-//    for (int gx = 0; gx < numX; gx++) {
-//      for (int gy = 0; gy < numY; gy++) {
-//        var grid_pos = Point<int>(gx, gy);
-//        design.helices.add(Helix(idx: idx_used, grid_position: grid_pos, max_bases: bases_per_helix));
-//        idx_used++;
-//        if (idx_used == num_used) {
-//          design.build_used_helices();
-//          return design;
-//        }
-//      }
-//    }
-//
-//    design.build_used_helices();
-//    return design;
-//  }
+  /// Build the list used_helices.
+  build_used_helices() {
+    this.used_helices = [];
+    for (Helix helix in this.helices) {
+      if (helix.used) {
+        this.used_helices.add(helix);
+      }
+    }
+    this.used_helices.sort((h1, h2) => h1._idx - h2._idx);
+  }
 
   /// max number of bases allowed on any Helix in the Model
   int max_bases() {
@@ -90,20 +83,20 @@ class DNADesign {
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json_map = {
-      constants.version_key: this.version,
-      constants.helices_key: this.helices,
-      constants.strands_key: this.strands,
-    };
-    if (this.grid != Grid.none) {
+    Map<String, dynamic> json_map = {constants.version_key: this.version};
+    if (this.grid != constants.default_grid) {
       json_map[constants.grid_key] = grid_to_json(this.grid);
     }
-    if ((this.grid == Grid.hex || this.grid == Grid.honeycomb) && this.major_tick_distance != 7) {
-      json_map[constants.major_tick_distance_key] = this.major_tick_distance;
-    } else if (this.major_tick_distance != 8) {
+    if (this.major_tick_distance != default_major_tick_distance(this.grid)) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
+    json_map[constants.helices_key] = this.helices;
+    json_map[constants.strands_key] = this.strands;
     return json_map;
+  }
+
+  static int default_major_tick_distance(Grid grid) {
+    return grid == Grid.hex || grid == Grid.honeycomb ? 7 : 8;
   }
 
   DNADesign.from_json(Map<String, dynamic> json_map) {
@@ -146,16 +139,50 @@ class DNADesign {
   helices=$helices, 
   strands=$strands)""";
 
-  /// Build the list used_helices from helicesMap.
-  build_used_helices() {
-    this.used_helices = [];
-    for (Helix helix in this.helices) {
-      if (helix.used) {
-        this.used_helices.add(helix);
-      }
-    }
-    this.used_helices.sort((h1, h2) => h1._idx - h2._idx);
-  }
+//  /// Add new Helix.
+//  /// If idx > 0, idx must be < current number of helices.
+//  /// Inserted into middle of used helices if idx is intermediate, and other helces idx's are incremented.
+//  add_helix(Helix helix) {
+//    if (helix.idx >= 0) {
+//      var new_idx = this.idx;
+//      this.helix.idx = new_idx;
+//      design.used_helices.insert(new_idx, this.helix);
+//      for (var helix_after_idx_used in design.used_helices.sublist(new_idx + 1)) {
+//        helix_after_idx_used.idx++;
+//        app.controller.notifier_helix_change_used.add(helix_after_idx_used);
+//      }
+//    } else {
+//      design.used_helices.removeAt(old_idx);
+//      this.helix.idx = -1;
+//      app.controller.notifier_helix_change_used.add(this.helix);
+//      for (var helix_after_idx_unused in design.used_helices.sublist(old_idx)) {
+//        helix_after_idx_unused.idx--;
+//        app.controller.notifier_helix_change_used.add(helix_after_idx_unused);
+//      }
+//    }
+//  }
+
+//  /// Set helix used status to true. idx is new idx to use.
+//  set_helix_used(Helix helix, int new_idx) {
+//    helix.idx = new_idx;
+//    this.used_helices.insert(new_idx, helix);
+//    for (var helix_after_idx_used in this.used_helices.sublist(new_idx + 1)) {
+//      helix_after_idx_used.idx++;
+//      app.controller.notifier_helix_change_used.add(helix_after_idx_used);
+//    }
+//  }
+//
+//  /// Set helix used status to false.
+//  set_helix_unused(Helix helix) {
+//    int old_idx = helix.idx;
+//    this.used_helices.removeAt(old_idx);
+//    helix.idx = -1;
+//    app.controller.notifier_helix_change_used.add(helix);
+//    for (var helix_after_idx_unused in this.used_helices.sublist(old_idx)) {
+//      helix_after_idx_unused.idx--;
+//      app.controller.notifier_helix_change_used.add(helix_after_idx_unused);
+//    }
+//  }
 }
 
 class Model {
@@ -171,10 +198,9 @@ class Model {
   bool changed_since_last_save = false;
 
   /// disabling this will make it easier to navigate since less SVG needs be rendered
-//  bool show_dna = true;
   bool show_dna = false;
 
-  bool show_editor = true;
+  bool show_editor = false;
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
@@ -296,6 +322,8 @@ class Helix {
   int max_bases;
 
   bool get used => this._idx >= 0;
+
+  List<Substrand> substrands = [];
 
   Helix({int idx = -1, this.grid_position = GridPosition.ORIGIN, this.max_bases = 128}) {
     this._idx = idx;
