@@ -19,6 +19,8 @@ final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 
 const Grid default_grid = Grid.none;
 
+const js_function_name_setup_svg_panzoom = 'setup_svg_panzoom';
+
 /////////////////////////////////////////////////////////////
 // JSON keys
 

@@ -1,8 +1,10 @@
 import 'dart:html' as html;
+import 'dart:html';
 import 'dart:math';
 import 'dart:svg' as svg; // hide Point;
 
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/view.dart';
 
 import 'model.dart';
 import 'app.dart';
@@ -27,7 +29,7 @@ num width_svg_text(String string) {
 }
 
 class MainViewComponent {
-  final svg.GElement element = svg.GElement();
+  final svg.GElement element;
 
   // There's no layering in SVG, so we need to make sure we draw DNA sequences last so they are on top.
   // So the component is stored with the strand, but it is not rendered into the same group as
@@ -46,11 +48,11 @@ class MainViewComponent {
     ..setAttribute('fill-opacity', '0.0') // transparent so it doesn't hide other elts
     ..setAttribute('cx', '0')
     ..setAttribute('cy', '0')
-    ..setAttribute('r', '300')
+    ..setAttribute('r', '1')
     ..setInnerHtml(
         'dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
 
-  MainViewComponent() {
+  MainViewComponent(this.element) {
     // Adds a dummy SVG element (white circle that can't be seen)
     // to prevent the svg-pan-zoom library from dividing by 0 if there are no elements.
     // The dummy element placed here in index.html is sufficient to prevent the divide-by-0 error
@@ -59,12 +61,15 @@ class MainViewComponent {
     // always there.
     this.element.children.add(_dummy_elt);
 
-
-    this.element.attributes = {'id': 'main-view-design'};
     this.helices_element.attributes = {'id': 'main-view-helices'};
     this.strands_element.attributes = {'id': 'main-view-strands'};
     this.dna_sequences_element.attributes = {'id': 'main-view-dna-sequences'};
 
+  }
+
+  /// Redraw elements
+  render() {
+    this.element.children.clear();
     // put helix lines in their own group that is always rendered before strands so helices appear underneath
     this.element.children.add(this.helices_element);
     this.element.children.add(this.strands_element);
@@ -82,20 +87,12 @@ class MainViewComponent {
     }
 
     // draw strands
-
     for (var strand in app.model.dna_design.strands) {
       var strand_elt = StrandComponent(strand);
       this.strands_element.children.add(strand_elt.element);
       this.strand_elts_map[strand] = strand_elt;
     }
 
-  }
-
-  /// Redraw elements
-  render() {
-    var pane = html.querySelector('#main-view-svg-viewport');
-    pane.children.clear();
-    pane.children.add(element);
     for (var helix_elt in helix_elts_map.values) {
       helix_elt.render();
     }
@@ -116,21 +113,15 @@ class MainViewComponent {
   }
 }
 
-class HelixMainViewComponent {
+class HelixMainViewComponent extends ReactiveComponent {
   final svg.GElement parent;
   final svg.GElement element = svg.GElement();
   final Helix helix;
 
   HelixMainViewComponent(this.parent, this.helix) {
     element.setAttribute("class", "helix-lines");
+    this.listen(helix);
   }
-
-  //TODO: test whether getting rid of some of these transforms and putting
-  // "absolute coordinates" (other than the top-level transform from panzoom)
-  // speeds up the rendering while panning and zooming
-  // Also look into the idea of defining a "symbol" in SVG and reusing it.
-  // UPDATE: looked into it, looks like it is not faster:
-  //   https://stackoverflow.com/questions/8604999/does-reusing-symbols-improve-svg-performance
 
   render() {
     element.children.clear();
@@ -140,16 +131,15 @@ class HelixMainViewComponent {
     if (!helix.used) {
       parent.children.remove(element);
     } else {
-      var lines_group = svg.GElement();
-      element.children.add(lines_group);
-      draw_horz_lines(lines_group);
-      draw_vert_lines(lines_group);
       var side_helix_group = svg.GElement();
       element.children.add(side_helix_group);
+      var lines_group = svg.GElement();
+      element.children.add(lines_group);
       draw_side_helix(side_helix_group);
+      draw_horz_lines(lines_group);
+      draw_vert_lines(lines_group);
 
-      //TODO: this is ugly, and I need to build in some better assumptions about when/where
-      // elements get created
+      //TODO: this is ugly, and I need to build in some better assumptions about how elements get created
       if (!parent.children.contains(element)) {
         parent.children.add(element);
       }
@@ -239,12 +229,13 @@ class StrandComponent {
 
   render() {
     this.element.children.clear();
-    render_strand_lines();
-    render_5p_end();
-    render_3p_end();
+    this.render_strand_lines();
+//    this.render_strand_lines_single_path();
+    this.render_5p_end();
+    this.render_3p_end();
     for (var substrand in this.strand.substrands) {
-      render_deletions(substrand);
-      render_insertions(substrand);
+      this.render_deletions(substrand);
+      this.render_insertions(substrand);
     }
     //XXX: note DNA sequence is not rendered here, or else later-rendered Strands would cover the DNA
     // Instead all DNA sequences are rendered into their own SVG group after all strands are rendered.
@@ -296,33 +287,45 @@ class StrandComponent {
     if (this.strand.substrands.length == 0) {
       return;
     }
+    List<Element> paths = [];
     var substrand = this.strand.substrands.first;
-    var start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
-    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
+
     for (int i = 0; i < this.strand.substrands.length; i++) {
       // substrand line
-      var end_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_3p, substrand.right);
-      path_cmds.add('L ${end_svg.x} ${end_svg.y}');
+      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.right);
+      var substrand_line = svg.LineElement()..attributes = {
+        'id': substrand_line_id(substrand),
+        'class': 'substrand-line',
+        'stroke': strand.color.toRgbColor().toCssString(),
+        'fill': 'none',
+        'x1': '${start_svg.x}',
+        'y1': '${start_svg.y}',
+        'x2': '${end_svg.x}',
+        'y2': '${end_svg.y}',
+      };
+      paths.add(substrand_line);
 
       // crossover line/arc
       if (i < this.strand.substrands.length - 1) {
         var old_substrand = substrand;
         substrand = this.strand.substrands[i + 1];
-        start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
+        helix = app.model.dna_design.helices[substrand.helix_idx];
+        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
         var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
-        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
+        var crossover_curve = svg.PathElement()..attributes = {
+//          'id': substrand_line_id(substrand),
+          'class': 'crossover-curve',
+          'stroke': strand.color.toRgbColor().toCssString(),
+          'fill': 'none',
+          'd': 'M ${end_svg.x} ${end_svg.y} Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}'
+        };
+        paths.add(crossover_curve);
       }
     }
 
-    var path = svg.PathElement();
-    path.attributes = {
-      'id': substrand_line_id(substrand),
-      'class': 'substrand-line',
-      'stroke': strand.color.toRgbColor().toCssString(),
-      'fill': 'none',
-      'd': path_cmds.join(' '),
-    };
-    this.element.children.add(path);
+    this.element.children.addAll(paths);
   }
 
   render_strand_lines_single_path() {
@@ -330,18 +333,20 @@ class StrandComponent {
       return;
     }
     var substrand = this.strand.substrands.first;
-    var start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
     for (int i = 0; i < this.strand.substrands.length; i++) {
       // substrand line
-      var end_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_3p, substrand.right);
+      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.right);
       path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
       // crossover line/arc
       if (i < this.strand.substrands.length - 1) {
         var old_substrand = substrand;
         substrand = this.strand.substrands[i + 1];
-        start_svg = Helix.svg_base_pos(substrand.helix_idx, substrand.offset_5p, substrand.right);
+        helix = app.model.dna_design.helices[substrand.helix_idx];
+        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
         var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
@@ -360,8 +365,10 @@ class StrandComponent {
 
   Point<num> control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
     var helix_distance = (from_ss.helix_idx - to_ss.helix_idx).abs();
-    var start_pos = Helix.svg_base_pos(from_ss.helix_idx, from_ss.offset_3p, from_ss.right);
-    var end_pos = Helix.svg_base_pos(to_ss.helix_idx, to_ss.offset_5p, to_ss.right);
+    var from_helix = app.model.dna_design.helices[from_ss.helix_idx];
+    var to_helix = app.model.dna_design.helices[to_ss.helix_idx];
+    var start_pos = from_helix.svg_base_pos(from_ss.offset_3p, from_ss.right);
+    var end_pos = to_helix.svg_base_pos(to_ss.offset_5p, to_ss.right);
     bool from_strand_below = from_ss.helix_idx - to_ss.helix_idx > 0;
     num midX = (start_pos.x + end_pos.x) / 2;
     num midY = (start_pos.y + end_pos.y) / 2;
@@ -382,10 +389,11 @@ class StrandComponent {
   }
 
   render_5p_end() {
-    var helix_idx = strand.substrands.first.helix_idx;
+    var substrand = strand.substrands.first;
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
     var offset = strand.substrands.first.offset_5p;
     var right = strand.substrands.first.right;
-    var pos = Helix.svg_base_pos(helix_idx, offset, right);
+    var pos = helix.svg_base_pos(offset, right);
     var box = svg.RectElement();
     //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here
@@ -403,10 +411,11 @@ class StrandComponent {
   }
 
   render_3p_end() {
-    var helix_idx = strand.substrands.last.helix_idx;
-    var offset = strand.substrands.last.offset_3p;
-    var direction = strand.substrands.last.right;
-    var pos = Helix.svg_base_pos(helix_idx, offset, direction);
+    var substrand = strand.substrands.last;
+    var offset = substrand.offset_3p;
+    var direction = substrand.right;
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    var pos = helix.svg_base_pos(offset, direction);
     var triangle = svg.PolygonElement();
     var points;
     num scale = 3.5;
@@ -429,7 +438,8 @@ class StrandComponent {
 
   render_deletions(Substrand substrand) {
     for (var deletion in substrand.deletions) {
-      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, deletion, substrand.right);
+      var helix = app.model.dna_design.helices[substrand.helix_idx];
+      Point<num> pos = helix.svg_base_pos(deletion, substrand.right);
 
       var width = 0.9 * constants.BASE_WIDTH_SVG;
       var half_width = 0.5 * width;
@@ -450,7 +460,8 @@ class StrandComponent {
     for (var insertion in substrand.insertions) {
       int offset = insertion.item1;
 
-      Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.right);
+      var helix = app.model.dna_design.helices[substrand.helix_idx];
+      Point<num> pos = helix.svg_base_pos(offset, substrand.right);
       num x0 = pos.x;
       num y0 = pos.y;
       num dx = constants.BASE_WIDTH_SVG;
@@ -540,7 +551,8 @@ class DNASequenceComponent {
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    Point<num> pos = Helix.svg_base_pos(substrand.helix_idx, offset, substrand.right);
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    Point<num> pos = helix.svg_base_pos(offset, substrand.right);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)

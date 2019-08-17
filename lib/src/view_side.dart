@@ -1,6 +1,8 @@
 import 'dart:html' as html;
 import 'dart:svg' hide Point;
 
+import 'package:scadnano/src/view.dart';
+
 import 'model.dart';
 import 'app.dart';
 
@@ -9,12 +11,12 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 /// Holds side view of grid of helices in this.element as a SVG group element
 /// (<g> in html; GElement in dart:html)
 class SideViewComponent {
-  final GElement element = GElement();
+  final GElement element;
   final Map<GridPosition, HelixSideViewComponent> helix_elts_map = {};
 
   //TODO: add dummy element as in MainViewComponent in case no helices are rendered
 
-  SideViewComponent() {
+  SideViewComponent(this.element) {
     for (var helix in app.model.dna_design.helices) {
       var helix_side_view_elt = HelixSideViewComponent(helix);
       element.children.add(helix_side_view_elt.element);
@@ -26,10 +28,9 @@ class SideViewComponent {
   /// Redraw elements in place
   //TODO: handle changed number of total helices
   render() {
-    var pane = html.querySelector('#side-view-svg-viewport');
-    pane.children.clear();
-    pane.children.add(element);
+    this.element.children.clear();
     for (var helix_side_view_elt in helix_elts_map.values) {
+      this.element.children.add(helix_side_view_elt.element);
       helix_side_view_elt.render();
     }
   }
@@ -38,7 +39,7 @@ class SideViewComponent {
 const String HELIX_EMPTY_COLOR = 'lightgoldenrodyellow';
 const String HELIX_NONEMPTY_COLOR = 'goldenrod';
 
-class HelixSideViewComponent {
+class HelixSideViewComponent extends ReactiveComponent {
   final Helix helix;
   final GElement element;
   final CircleElement circle;
@@ -59,7 +60,7 @@ class HelixSideViewComponent {
     circle.setAttribute('class', '$SIDE_VIEW_PREFIX-helix-circle');
     text.setAttribute('class', '$SIDE_VIEW_PREFIX-helix-text');
     circle.setAttribute('r', '$RADIUS');
-    render();
+    this.listen(helix);
   }
 
   render() {

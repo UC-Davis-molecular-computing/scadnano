@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:core';
 import 'dart:math';
 
 import 'package:color/color.dart';
@@ -6,7 +8,6 @@ import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
 
 import 'constants.dart' as constants;
-import 'app.dart';
 
 //TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
 // fields that are not used by scadnano, and write them back out on serialization using toJson
@@ -200,6 +201,8 @@ class Model {
   /// disabling this will make it easier to navigate since less SVG needs be rendered
   bool show_dna = false;
 
+  //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
+  // Then it's ubambiguous what Ctrl+Z should do
   bool show_editor = false;
 
   //"private" constructor; meta package will warn if it is used outside testing
@@ -300,41 +303,69 @@ class GridPosition {
   }
 }
 
+/// Use this mixin to get listener functionality for when an object changes and listeners need to be notified.
+mixin ChangeNotifier<T> {
+  StreamController<T> notifier = StreamController<T>.broadcast();
+
+  listen_for_change(void Function(T) listener) {
+    this.notifier.stream.listen(listener);
+  }
+
+  notify_changed() {
+    this.notifier.add(this as T);
+  }
+}
+
 /// Represents a used helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a "used" helix doesn't
 /// have to have any strands on it.
-class Helix {
+class Helix with ChangeNotifier<Helix> {
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default. This default positioning can be overridden by setting the position field.
   int _idx = -1;
 
   /// position within square/hex/honeycomb integer grid (side view)
-  GridPosition grid_position;
+  GridPosition _grid_position;
 
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
-  Point<num> svg_position;
+  Point<num> _svg_position;
 
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
-  int max_bases;
+  int _max_bases;
+
+  num get gh => this._grid_position.h;
+
+  num get gv => this._grid_position.v;
+
+  num get gb => this._grid_position.b;
+
+  GridPosition get grid_position => this._grid_position;
+
+  Point<num> get svg_position => this._svg_position;
+
+  int get max_bases => this._max_bases;
 
   bool get used => this._idx >= 0;
 
-  List<Substrand> substrands = [];
+  List<Substrand> _substrands = [];
 
-  Helix({int idx = -1, this.grid_position = GridPosition.ORIGIN, this.max_bases = 128}) {
+  Helix({int idx, grid_position, max_bases}) {
     this._idx = idx;
-    this.svg_position = default_svg_position();
+    this._grid_position = grid_position;
+    this._max_bases = max_bases;
+    this._svg_position = this.default_svg_position();
   }
 
-  /// Gets "center of base" (middle of square representing base) given helix idx and offset, depending on whether
-  /// strand is going right or not.
-  static Point<num> svg_base_pos(int helix_idx, int offset, bool right) {
-    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG;
-    num y = constants.BASE_HEIGHT_SVG / 2 + constants.DISTANCE_BETWEEN_HELICES_SVG * helix_idx;
+  //TODO: make this depend on exact Helix svg_position, not default constants.DISTANCE_BETWEEN_HELICES_SVG
+  /// Gets "center of base" (middle of square representing base) given helix idx and offset,
+  /// depending on whether strand is going right or not.
+  Point<num> svg_base_pos(int offset, bool right) {
+    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this._svg_position.x;
+    num y = constants.BASE_HEIGHT_SVG / 2 + this._svg_position.y;
     if (!right) {
       y += 10;
     }
@@ -342,22 +373,16 @@ class Helix {
   }
 
   Point<num> default_svg_position() {
-    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * _idx);
+    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this._idx);
   }
 
   int get idx => this._idx;
 
   set idx(int new_idx) {
     this._idx = new_idx;
-    this.svg_position = default_svg_position();
-//    this.used = true;
+    this._svg_position = this.default_svg_position();
+    this.notify_changed();
   }
-
-  num get gh => grid_position.h;
-
-  num get gv => grid_position.v;
-
-  num get gb => grid_position.b;
 
   int get hashCode =>
       quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
@@ -393,20 +418,16 @@ class Helix {
     return json_map;
   }
 
-  bool has_grid_position() {
-    return this.grid_position != null;
-  }
+  bool has_substrands() => this._substrands.isNotEmpty;
 
-  bool has_svg_position() {
-    return this.svg_position != null;
-  }
+  bool has_grid_position() => this._grid_position != null;
 
-  bool has_max_bases() {
-    return this.max_bases != null;
-  }
+  bool has_svg_position() => this._svg_position != null;
+
+  bool has_max_bases() => this._max_bases != null;
 
   Helix.from_json(Map<String, dynamic> json_map) {
-    this.idx = get_value(json_map, constants.idx_key);
+    this._idx = get_value(json_map, constants.idx_key);
 
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
@@ -414,10 +435,21 @@ class Helix {
         throw ArgumentError(
             "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
-      this.grid_position = GridPosition.from_json(gp_list);
+      this._grid_position = GridPosition.from_json(gp_list);
     }
 
-    this.max_bases = get_value(json_map, constants.max_bases_key);
+    if (json_map.containsKey(constants.svg_position_key)) {
+      List<dynamic> svg_position_list = json_map[constants.svg_position_key];
+      if (svg_position_list.length != 2) {
+        throw ArgumentError(
+            "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
+      }
+      this._svg_position = Point<int>(svg_position_list[0], svg_position_list[1]);
+    } else {
+      this._svg_position = this.default_svg_position();
+    }
+
+    this._max_bases = get_value(json_map, constants.max_bases_key);
   }
 }
 

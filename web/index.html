@@ -24,142 +24,90 @@
 
 <body>
 
-
-<div class="top-container">
-
-    <!--    <div class="split" id="noneditor-pane">-->
-
-    <div id="menu"></div>
-
-    <div class="menu-separator" id="menu-separator"></div>
-
-    <div class="panes-container">
-
-        <div class="split" id="side-pane">
-            <svg id="side-view-svg" width="100%" height="100%" style="touch-action: none;">
-                <g id="side-view-svg-viewport">
-                    <circle id="dummy-elt-side-view" r="100" cx="100" cy="50" fill="white">
-                        dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height
-                    </circle>
-                </g>
-            </svg>
-        </div>
-
-        <div class="split" id="main-pane">
-            <svg id="main-view-svg" width="100%" height="100%" style="touch-action: none;">
-                <g id="main-view-svg-viewport">
-                    <circle id="dummy-elt-main-view" r="200" cx="100" cy="100" fill="white">
-                        dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height
-                    </circle>
-                </g>
-            </svg>
-        </div>
-
-        <!--    </div>-->
-
-        <div class="split" id="editor-pane">
-            <div id="controls">
-                <label for="theme">Theme:</label>
-                <select id="theme"></select>
-            </div>
-            <div id="editor"></div>
-            <p id="footer"></p>
-        </div>
-
-    </div>
-
-</div>
+<div class="top-container"></div>
 
 <script defer src="main.dart.js"></script>
 
 <script>
-    window.onload = function () {
-
-
-
-
-
+    function setup_svg_panzoom() {
         var eventsHandler;
 
         eventsHandler = {
             haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel']
-            , init: function(options) {
+            , init: function (options) {
                 var instance = options.instance
                     , initialScale = 1
                     , pannedX = 0
-                    , pannedY = 0
+                    , pannedY = 0;
 
                 // Init Hammer
                 // Listen only for pointer and touch events
                 this.hammer = Hammer(options.svgElement, {
                     inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
-                })
+                });
 
                 // Enable pinch
-                this.hammer.get('pinch').set({enable: true})
+                this.hammer.get('pinch').set({enable: true});
 
                 // Handle double tap
-                this.hammer.on('doubletap', function(ev){
-                    instance.zoomIn()
-                })
+                this.hammer.on('doubletap', function (_) {
+                    instance.zoomIn();
+                });
 
                 // Handle pan
-                this.hammer.on('panstart panmove', function(ev){
+                this.hammer.on('panstart panmove', function (ev) {
                     // On pan start reset panned variables
                     if (ev.type === 'panstart') {
-                        pannedX = 0
-                        pannedY = 0
+                        pannedX = 0;
+                        pannedY = 0;
                     }
 
                     // Pan only the difference
-                    instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY})
-                    pannedX = ev.deltaX
-                    pannedY = ev.deltaY
-                })
+                    instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY});
+                    pannedX = ev.deltaX;
+                    pannedY = ev.deltaY;
+                });
 
                 // Handle pinch
-                this.hammer.on('pinchstart pinchmove', function(ev){
+                this.hammer.on('pinchstart pinchmove', function (ev) {
                     // On pinch start remember initial zoom
                     if (ev.type === 'pinchstart') {
-                        initialScale = instance.getZoom()
-                        instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
+                        initialScale = instance.getZoom();
+                        instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y});
                     }
 
-                    instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
-                })
+                    instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y});
+                });
 
                 // Prevent moving the page on some devices when panning over SVG
-                options.svgElement.addEventListener('touchmove', function(e){ e.preventDefault(); });
+                options.svgElement.addEventListener('touchmove', function (e) {
+                    e.preventDefault();
+                });
             }
 
-            , destroy: function(){
+            , destroy: function () {
                 this.hammer.destroy()
             }
-        }
+        };
 
-
-
-
-
-
-
-
-
-
-        svgPanZoom('#side-view-svg', {
+        var side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
             customEventsHandler: eventsHandler,
         });
-        svgPanZoom('#main-view-svg', {
+        // side_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
+
+        var main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
             customEventsHandler: eventsHandler,
         });
+        // main_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
+
         // attempting to remove the dummy node here causes a race condition with the Dart code that clears out
         // DOM children before rendering, so we just leave it in.
         // removeDummy("dummy-elt-side-view");

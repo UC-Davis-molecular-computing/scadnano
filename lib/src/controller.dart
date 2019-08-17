@@ -3,6 +3,7 @@ import 'dart:html';
 import 'dart:convert';
 
 import 'package:path/path.dart' as path;
+import 'package:test/test.dart';
 
 import 'model.dart';
 import 'view_side.dart';
@@ -15,9 +16,6 @@ class Controller {
   ////////////////////////////////////////////////////////////////////////////
   // Notifiers that fire when Model is updated by an Action
   // Relevant parts of the view are subscribed to these to know when to re-render.
-
-  // Helix is updated in model
-  final notifier_helix_change_used = StreamController<Helix>.broadcast();
 
   // "Show DNA" boolean value changed (e.g., user clicks on "Show DNA Sequence" check)
   final notifier_show_dna_change = StreamController<bool>.broadcast();
@@ -47,19 +45,9 @@ class Controller {
   // should consider switching to React to avoid having to do this manually.
 
   subscribe_to_all_to_model_change_events() {
-    this.subscribe_to_helix();
     this.subscribe_to_show_dna();
     this.subscribe_to_show_editor();
     this.subscribe_to_model_changed_since_last_save_changed();
-  }
-
-  subscribe_to_helix() {
-    this.notifier_helix_change_used.stream.listen((Helix helix) {
-      var helix_side_view_elt = app.view.side_view.helix_elts_map[helix.grid_position];
-      helix_side_view_elt.render();
-      var helix_main_view_elt = app.view.main_view.helix_elts_map[helix.grid_position];
-      helix_main_view_elt.render();
-    });
   }
 
   subscribe_to_show_dna() {
@@ -70,23 +58,26 @@ class Controller {
 
   subscribe_to_show_editor() {
     this.notifier_show_editor_change.stream.listen((_) {
-      var old_sizes = app.view.splitter.getSizes();
-      var side_size = old_sizes[0];
-      var new_sizes = [side_size, -1, -1];
-      var size_main_editor = (100 - side_size);
-      if (app.model.show_editor) {
-        new_sizes[1] = size_main_editor * 5 / 9.0;
-        new_sizes[2] = size_main_editor * 4 / 9.0;
-      } else {
-        new_sizes[1] = size_main_editor;
-        new_sizes[2] = 0;
-      }
+        app.view.show_editor(app.model.show_editor);
+//      var old_sizes = app.view.splitter.getSizes();
+//      var side_size = old_sizes[0];
+//      var new_sizes = [side_size, -1, -1];
+//      var size_main_editor = (100 - side_size);
+//      if (app.model.show_editor) {
+//        new_sizes[1] = size_main_editor * 5 / 9.0;
+//        new_sizes[2] = size_main_editor * 4 / 9.0;
+//        app.view.editor_view.editor.setReadOnly(false);
+//      } else {
+//        new_sizes[1] = size_main_editor;
+//        new_sizes[2] = 0;
+//        app.view.editor_view.editor.setReadOnly(true);
+//      }
+//      app.view.splitter.setSizes(new_sizes);
 
-      //TODO: clicking show editor twice should not change these values but it shrinks the side view
+//      TODO: clicking show editor twice should not change these values but it shrinks the side view
+//      print('old_sizes: ${old_sizes}');
+//      print('new_sizes: ${new_sizes}');
 
-      print('old_sizes: ${old_sizes}');
-      print('new_sizes: ${new_sizes}');
-      app.view.splitter.setSizes(new_sizes);
     });
   }
 
@@ -130,7 +121,7 @@ class Controller {
     //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
     var helix = helix_side_view_elt.helix;
     if (helix.used) {
-      if (helix.substrands.isNotEmpty) {
+      if (helix.has_substrands()) {
         // implement this
       }
     }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'app.dart';
 import 'model.dart';
 
@@ -7,7 +5,6 @@ import 'model.dart';
 
 /// A (non-reversible) Action is not added to the undo stack.
 abstract class Action {
-
   /// Apply this action to model and return the resulting model.
   /// This can mutate the model in place or create a new one, but the resulting
   /// model should be returned in either case.
@@ -17,11 +14,9 @@ abstract class Action {
 
 /// A ReversibleAction is added to the undo stack. Its reverse is executed as it is popped.
 abstract class ReversibleAction implements Action {
-
   /// Get the ReversibleAction that, if applied to the model, undoes this ReversibleAction.
   ReversibleAction reverse();
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 /// load new DNADesign
@@ -41,7 +36,6 @@ class LoadedFilenameAction implements Action {
     app.controller.notifier_loaded_filename.add(this.new_filename);
     return model;
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,6 +44,7 @@ class LoadedFilenameAction implements Action {
 class HelixUseAction implements ReversibleAction {
   final bool use;
   final Helix helix;
+
   // idx of Helix when it was used (before if use=true, after if use=false)
   final int idx;
 
@@ -66,20 +61,21 @@ class HelixUseAction implements ReversibleAction {
       design.used_helices.insert(new_idx, this.helix);
       for (var helix_after_idx_used in design.used_helices.sublist(new_idx + 1)) {
         helix_after_idx_used.idx++;
-        app.controller.notifier_helix_change_used.add(helix_after_idx_used);
+//        app.controller.notifier_helix_change_used.add(helix_after_idx_used);
+//        helix_after_idx_used.notify_changed();
       }
     } else {
       int old_idx = this.helix.idx;
       assert(old_idx == this.idx);
       design.used_helices.removeAt(old_idx);
       this.helix.idx = -1;
-      app.controller.notifier_helix_change_used.add(this.helix);
+//      app.controller.notifier_helix_change_used.add(this.helix);
       for (var helix_after_idx_unused in design.used_helices.sublist(old_idx)) {
         helix_after_idx_unused.idx--;
-        app.controller.notifier_helix_change_used.add(helix_after_idx_unused);
+//        app.controller.notifier_helix_change_used.add(helix_after_idx_unused);
       }
     }
-    app.controller.notifier_helix_change_used.add(this.helix);
+//    app.controller.notifier_helix_change_used.add(this.helix);
     return model;
   }
 
@@ -104,7 +100,6 @@ class ShowDNAAction implements Action {
   }
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 /// Change whether to show the DNA sequence of each strand
 class ShowEditorAction implements Action {
@@ -123,7 +118,6 @@ class ShowEditorAction implements Action {
 //////////////////////////////////////////////////////////////////////////////
 /// Update editor contents.
 class EditorContentAction implements Action {
-
   final String new_content;
 
   EditorContentAction(this.new_content);
@@ -145,4 +139,3 @@ class AlertFileSavedAction implements Action {
     return model;
   }
 }
-

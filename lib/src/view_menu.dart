@@ -4,7 +4,7 @@ import 'model.dart';
 import 'app.dart';
 
 class MenuViewElement {
-  final DivElement menu_elt = querySelector('#menu');
+  final DivElement element;
 
   final SpanElement file_buttons_elt = SpanElement();
   final SpanElement show_dna_elt = SpanElement();
@@ -14,13 +14,13 @@ class MenuViewElement {
   final CheckboxInputElement show_editor_checkbox = CheckboxInputElement();
   final ButtonElement save_button = ButtonElement();
 
-  MenuViewElement();
+  MenuViewElement(this.element);
 
   render() {
-    this.menu_elt.children.clear();
-    this.menu_elt.children.add(this.file_buttons_elt);
-    this.menu_elt.children.add(this.show_dna_elt);
-    this.menu_elt.children.add(this.show_editor_elt);
+    this.element.children.clear();
+    this.element.children.add(this.file_buttons_elt);
+    this.element.children.add(this.show_dna_elt);
+    this.element.children.add(this.show_editor_elt);
 
     this.render_file_buttons();
     this.render_show_dna_checkbox();
@@ -75,7 +75,7 @@ class MenuViewElement {
 //    KeyEvent.keyDownEvent.forTarget(document.body).listen((KeyEvent event) {
 //    document.body.onKeyDown.listen((KeyboardEvent event) {
     Element.keyDownEvent.forTarget(window, useCapture: true).listen((KeyboardEvent ev) {
-      print('key pressed');
+//      print('key pressed');
       if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && ev.code == 'KeyS' && !save_button.disabled) {
         print('Ctrl+${ev.code} clicked');
         this.save_button.click();

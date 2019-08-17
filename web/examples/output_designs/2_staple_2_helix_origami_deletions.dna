@@ -2,8 +2,8 @@
   "version": "0.0.1",
   "grid": "square",
   "helices": [
-    {"idx": 0, "max_bases": 32, "grid_position": [0, 0], "svg_position": [0, 0]},
-    {"idx": 1, "max_bases": 32, "grid_position": [0, 1], "svg_position": [0, 30]}
+    {"idx": 0, "max_bases": 32, "grid_position": [0, 0]},
+    {"idx": 1, "max_bases": 32, "grid_position": [0, 1]}
   ],
   "strands": [
     {

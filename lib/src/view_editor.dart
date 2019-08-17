@@ -3,16 +3,41 @@ import 'dart:html';
 
 import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
-import 'package:scadnano/src/actions.dart';
+
+import 'actions.dart';
 
 import 'app.dart';
 
 class EditorViewComponent {
 
+  DivElement element;
+  ParagraphElement footer_element;
   CodeMirror editor;
 
-  EditorViewComponent() {
-    var editor_div_element = querySelector('#editor');
+  /*
+    <div class="split" id="editor-pane">
+        <div id="controls">
+            <label for="theme">Theme:</label>
+            <select id="theme"></select>
+        </div>
+        <div id="editor"></div>
+        <p id="footer"></p>
+    </div>
+   */
+
+  EditorViewComponent(this.element) {
+    var controls_element = DivElement()..attributes = {'id': 'controls'};
+    var theme_label_element = LabelElement()..attributes = {'for': 'theme'};
+    theme_label_element.setInnerHtml('Theme:');
+    var theme_select_element = SelectElement()..attributes = {'id': 'theme'};
+    controls_element.children.addAll([theme_label_element, theme_select_element]);
+    this.element.children.add(controls_element);
+
+    var editor_div_element = DivElement()..attributes = {'id': 'editor'};
+    this.element.children.add(editor_div_element);
+
+    this.footer_element = ParagraphElement()..attributes = {'id': 'footer'};
+    this.element.children.add(footer_element);
 
     Map options = {
       'theme': 'mbo',
@@ -23,22 +48,20 @@ class EditorViewComponent {
       'extraKeys': {'Ctrl-Space': 'autocomplete', 'Cmd-/': 'toggleComment', 'Ctrl-/': 'toggleComment'}
     };
 
-
     this.editor = CodeMirror.fromElement(editor_div_element, options: options);
 
     Hints.registerHintsHelper('dart', _dartCompleter);
     Hints.registerHintsHelperAsync('dart', _dartCompleterAsync);
 
     // Theme control.
-    SelectElement themeSelect = querySelector('#theme');
     for (String theme in CodeMirror.THEMES) {
-      themeSelect.children.add(OptionElement(value: theme)..text = theme);
+      theme_select_element.children.add(OptionElement(value: theme)..text = theme);
       if (theme == editor.getTheme()) {
-        themeSelect.selectedIndex = themeSelect.length - 1;
+        theme_select_element.selectedIndex = theme_select_element.length - 1;
       }
     }
-    themeSelect.onChange.listen((e) {
-      String themeName = themeSelect.options[themeSelect.selectedIndex].value;
+    theme_select_element.onChange.listen((e) {
+      String themeName = theme_select_element.options[theme_select_element.selectedIndex].value;
       editor.setTheme(themeName);
     });
 
@@ -47,7 +70,6 @@ class EditorViewComponent {
     editor.onCursorActivity.listen((_) => _updateFooter(editor));
 
     editor.refresh();
-    editor.focus();
 
     CodeMirror.addCommand('find', (foo) {
       /*LineHandle handle =*/ editor.getDoc().getLineHandle(editor.getCursor().line);
@@ -64,7 +86,7 @@ class EditorViewComponent {
   }
 
   render() {
-
+    //TODO: make editor unfocused somewhen clicking outside of it
   }
 
   void _updateFooter(CodeMirror editor) {
@@ -72,7 +94,8 @@ class EditorViewComponent {
     int off = editor.getDoc().indexFromPos(pos);
     String str = 'line ${pos.line} • column ${pos.ch} • offset ${off}' +
         (editor.getDoc().isClean() ? '' : ' • (modified)');
-    querySelector('#footer').text = str;
+    this.footer_element.text = str;
+//    querySelector('#footer').text = str;
   }
 
   HintResults _dartCompleter(CodeMirror editor, [HintsOptions options]) {
