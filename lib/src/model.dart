@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
+import 'dart:js';
 
 import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
 
+import 'model_ui.dart';
+import 'app.dart';
 import 'constants.dart' as constants;
 
 //TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
@@ -15,6 +18,7 @@ import 'constants.dart' as constants;
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
 //TODO: import cadnano files
+
 
 /// Represents parts of the Model to serialize
 class DNADesign {
@@ -25,15 +29,17 @@ class DNADesign {
   int major_tick_distance;
 
   /// all helices in model
-  List<Helix> helices;
+  List<Helix> helices = [];
 
   /// all strands in model
-  List<Strand> strands;
+  List<Strand> strands = [];
 
   // optimized implementation detail; not serialized
   // optimization so we can quickly look up a helix given its index. It is
   // maintained in sorted order, so that used_helices[helix.idx] == helix.
-  List<Helix> used_helices;
+  List<Helix> used_helices = [];
+
+  Map<int,List<Substrand>> helix_idx_substrands_map = {};
 
   DNADesign();
 
@@ -100,8 +106,48 @@ class DNADesign {
     return grid == Grid.hex || grid == Grid.honeycomb ? 7 : 8;
   }
 
+//  DNADesign.from_js_object(JsObject js_obj) {
+//    if (js_obj.hasProperty(constants.version_key)) {
+//      this.version = js_obj[constants.version_key];
+//    } else {
+//      this.version = constants.INITIAL_VERSION;
+//    }
+////    this.version =
+////        js_obj.hasProperty(constants.version_key) ? js_obj[constants.version_key] : constants.INITIAL_VERSION;
+//
+//    this.grid =
+//        js_obj.hasProperty(constants.grid_key) ? grid_from_string(js_obj[constants.grid_key]) : Grid.none;
+//
+//    if (js_obj.hasProperty(constants.major_tick_distance_key)) {
+//      this.major_tick_distance = js_obj[constants.major_tick_distance_key];
+//    } else if (js_obj.hasProperty(constants.grid_key)) {
+//      if (this.grid == Grid.hex || this.grid == Grid.honeycomb) {
+//        this.major_tick_distance = 7;
+//      } else {
+//        this.major_tick_distance = 8;
+//      }
+//    }
+//
+//    this.helices = [];
+//    List<dynamic> deserialized_helices_list = js_obj[constants.helices_key];
+//    for (var helix_json in deserialized_helices_list) {
+//      Helix helix = Helix.from_js_object(helix_json);
+//      this.helices.add(helix);
+//    }
+//    this.build_used_helices();
+//
+//    this.strands = [];
+//    List<dynamic> deserialized_strand_list = js_obj[constants.strands_key];
+//    for (var strand_json in deserialized_strand_list) {
+//      Strand strand = Strand.from_js_object(strand_json);
+//      this.strands.add(strand);
+//    }
+//  }
+
   DNADesign.from_json(Map<String, dynamic> json_map) {
 //    this.menu_view_ui_model.loaded_filename = filename;
+
+    //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
     this.version = json_map.containsKey(constants.version_key)
         ? json_map[constants.version_key]
@@ -134,11 +180,25 @@ class DNADesign {
       Strand strand = Strand.from_json(strand_json);
       this.strands.add(strand);
     }
+
+    this.build_helix_idx_substrands_map();
   }
 
   String toString() => """DNADesign(grid=$grid, major_tick_distance=$major_tick_distance, 
   helices=$helices, 
   strands=$strands)""";
+
+  build_helix_idx_substrands_map() {
+    this.helix_idx_substrands_map = {};
+    for (Helix helix in this.used_helices) {
+      this.helix_idx_substrands_map[helix.idx] = [];
+    }
+    for (Strand strand in this.strands) {
+      for (Substrand substrand in strand.substrands) {
+        this.helix_idx_substrands_map[substrand.helix_idx].add(substrand);
+      }
+    }
+  }
 
 //  /// Add new Helix.
 //  /// If idx > 0, idx must be < current number of helices.
@@ -186,39 +246,84 @@ class DNADesign {
 //  }
 }
 
-class Model {
-  DNADesign dna_design;
+class Model with ChangeNotifier<Model> {
+  DNADesign _dna_design;
 
-  String editor_content = constants.initial_editor_content;
+  String _editor_content = constants.initial_editor_content;
 
   MenuViewUIModel menu_view_ui_model = MenuViewUIModel();
+  EditorViewUIModel editor_view_ui_model = EditorViewUIModel();
   MainViewUIModel main_view_ui_model = MainViewUIModel();
   SideViewUIModel side_view_ui_model = SideViewUIModel();
 
   /// Save button is enabled iff this is true
   bool changed_since_last_save = false;
 
-  /// disabling this will make it easier to navigate since less SVG needs be rendered
-  bool show_dna = false;
+  //It's handy to have convenience getters and setters for Model, but for things delegated to contained
+  // model parts like MainViewUIModel, we don't fire a changed notification, but let the sub-part do it.
+  bool get show_dna => this.main_view_ui_model.show_dna;
 
-  //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
-  // Then it's ubambiguous what Ctrl+Z should do
-  bool show_editor = false;
+  set show_dna(bool show) {
+    this.main_view_ui_model.show_dna = show;
+  }
+
+  bool get show_editor => this.main_view_ui_model.show_editor;
+
+  set show_editor(bool show) {
+    this.main_view_ui_model.show_editor = show;
+  }
+
+  //TODO: this is still notifying the old MainViewComponent about the show_dna change, which is attempting to draw
+  // DNA sequences while referencing helices that no longer exist in the model. Need to remove the listeners or
+  // come up with some better discipline for how to handle model changes like this, where the MainViewComponent
+  // goes away entirely and is replaced by a new one, while the old Model remains (but with a new DNADesign).
+
+  String _error_message = null;
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
-  Model.internal();
-
-  Model.default_model({int num_helices_x = 10, int num_helices_y = 10}) {
-    this.dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
+  Model.internal() {
+    this._set_change_notifier();
   }
 
-  Model.empty();
+  Model.default_model({int num_helices_x = 10, int num_helices_y = 10}) {
+    this._dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
+    this._set_change_notifier();
+  }
+
+  Model.empty() {
+    this._set_change_notifier();
+  }
+
+  _set_change_notifier() {
+    this.notifier = app.controller.notifier_model_change;
+  }
 
   //TODO: this is crashing when we save; debug it
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    return this.dna_design.toJson();
+    return this._dna_design.toJson();
+  }
+
+  DNADesign get dna_design => this._dna_design;
+
+  String get error_message => this._error_message;
+
+  String get editor_content => this._editor_content;
+
+  set dna_design(DNADesign new_dna_design) {
+    this._dna_design = new_dna_design;
+    this.notify_changed();
+  }
+
+  set error_message(String new_msg) {
+    this._error_message = new_msg;
+    this.notify_changed();
+  }
+
+  set editor_content(String new_content) {
+    this._editor_content = new_content;
+    context[constants.editor_content_js_key] = new_content;
   }
 }
 
@@ -269,19 +374,8 @@ class GridPosition {
   static const ORIGIN = GridPosition.origin(); //Point<int>(0, 0);
   static const NONE = GridPosition.origin(); //Point<int>(0, 0);
 
-  GridPosition.from_json(List<dynamic> json_list)
+  GridPosition.from_list(List<dynamic> json_list)
       : this(json_list[0], json_list[1], json_list.length == 3 ? json_list[2] : 0);
-
-//  Map<String, dynamic> toJson() {
-//    var map = {
-//      'h': this.h,
-//      'v': this.v,
-//    };
-//    if (this.b != 0) {
-//      map['b'] = this.b;
-//    }
-//    return map;
-//  }
 
   List<int> toJson() {
     var list = [
@@ -303,18 +397,6 @@ class GridPosition {
   }
 }
 
-/// Use this mixin to get listener functionality for when an object changes and listeners need to be notified.
-mixin ChangeNotifier<T> {
-  StreamController<T> notifier = StreamController<T>.broadcast();
-
-  listen_for_change(void Function(T) listener) {
-    this.notifier.stream.listen(listener);
-  }
-
-  notify_changed() {
-    this.notifier.add(this as T);
-  }
-}
 
 /// Represents a used helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a "used" helix doesn't
@@ -337,6 +419,28 @@ class Helix with ChangeNotifier<Helix> {
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
   int _max_bases;
 
+  int _major_tick_distance = -1;
+
+  List<int> _major_ticks = null;
+
+  int get major_tick_distance => this._major_tick_distance;
+
+  List<int> get major_ticks => this._major_ticks;
+
+  bool has_major_tick_distance() => this._major_tick_distance >= 0;
+
+  bool has_major_ticks() => this._major_ticks != null;
+
+  set major_tick_distance(int new_dist) {
+    this._major_tick_distance = new_dist;
+    this.notify_changed();
+  }
+
+  set major_ticks(List<int> new_ticks) {
+    this._major_ticks = new_ticks;
+    this.notify_changed();
+  }
+
   num get gh => this._grid_position.h;
 
   num get gv => this._grid_position.v;
@@ -358,6 +462,7 @@ class Helix with ChangeNotifier<Helix> {
     this._grid_position = grid_position;
     this._max_bases = max_bases;
     this._svg_position = this.default_svg_position();
+    _set_change_notifier();
   }
 
   //TODO: make this depend on exact Helix svg_position, not default constants.DISTANCE_BETWEEN_HELICES_SVG
@@ -370,6 +475,14 @@ class Helix with ChangeNotifier<Helix> {
       y += 10;
     }
     return Point<num>(x, y);
+  }
+
+  int svg_x_to_offset(num x) {
+    return ((x - this._svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+  }
+
+  bool svg_y_to_right(num y) {
+    return (y - this._svg_position.y) < 10;
   }
 
   Point<num> default_svg_position() {
@@ -396,9 +509,7 @@ class Helix with ChangeNotifier<Helix> {
     }
   }
 
-  String toString() {
-    return "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_bases=$max_bases})";
-  }
+  String toString() => "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_bases=$max_bases})";
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json_map = {constants.idx_key: this._idx};
@@ -427,7 +538,17 @@ class Helix with ChangeNotifier<Helix> {
   bool has_max_bases() => this._max_bases != null;
 
   Helix.from_json(Map<String, dynamic> json_map) {
+    this._set_change_notifier();
+
     this._idx = get_value(json_map, constants.idx_key);
+
+    if (json_map.containsKey(constants.major_tick_distance_key)) {
+      this._major_tick_distance = json_map[constants.major_tick_distance_key];
+    }
+
+    if (json_map.containsKey(constants.major_ticks_key)) {
+      this._major_ticks = List<int>.from(json_map[constants.major_ticks_key]);
+    }
 
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
@@ -435,7 +556,7 @@ class Helix with ChangeNotifier<Helix> {
         throw ArgumentError(
             "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
-      this._grid_position = GridPosition.from_json(gp_list);
+      this._grid_position = GridPosition.from_list(gp_list);
     }
 
     if (json_map.containsKey(constants.svg_position_key)) {
@@ -451,6 +572,36 @@ class Helix with ChangeNotifier<Helix> {
 
     this._max_bases = get_value(json_map, constants.max_bases_key);
   }
+
+  void _set_change_notifier() {
+    this.notifier = app.controller.notifier_helix_change;
+  }
+
+//  Helix.from_js_object(JsObject js_obj) {
+//    this._idx = js_obj[constants.idx_key];
+//
+//    if (js_obj.hasProperty(constants.grid_position_key)) {
+//      List<dynamic> gp_list = js_obj[constants.grid_position_key];
+//      if (!(gp_list.length == 2 || gp_list.length == 3)) {
+//        throw ArgumentError(
+//            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+//      }
+//      this._grid_position = GridPosition.from_list(gp_list);
+//    }
+//
+//    if (js_obj.hasProperty(constants.svg_position_key)) {
+//      List<dynamic> svg_position_list = js_obj[constants.svg_position_key];
+//      if (svg_position_list.length != 2) {
+//        throw ArgumentError(
+//            "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
+//      }
+//      this._svg_position = Point<int>(svg_position_list[0], svg_position_list[1]);
+//    } else {
+//      this._svg_position = this.default_svg_position();
+//    }
+//
+//    this._max_bases = js_obj[constants.max_bases_key];
+//  }
 }
 
 class Strand {
@@ -463,6 +614,8 @@ class Strand {
   List<Substrand> substrands = [];
 
   Strand();
+
+  String toString() => 'Strand(helix=${substrands[0].helix_idx}, start=${substrands[0].offset_5p})';
 
   int get length {
     int num = 0;
@@ -504,6 +657,48 @@ class Strand {
 
     this.dna_sequence =
         json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    if (this.dna_sequence != null) {
+      if (this.dna_sequence.length != this.length) {
+        var first_substrand = this.substrands.first;
+        var last_substrand = this.substrands.last;
+        throw IllegalDNADesignError('Strand length does not match DNA sequence length:\n'
+            'strand length        =  ${this.length}\n'
+            'DNA length           =  ${this.dna_sequence.length}\n'
+            "strand 5' helix      =  ${first_substrand.helix_idx}\n"
+            "strand 5' end offset =  ${first_substrand.offset_5p}\n"
+            "strand 3' helix      =  ${last_substrand.helix_idx}\n"
+            "strand 3' end offset =  ${last_substrand.offset_3p}\n"
+            'DNA sequence         =  ${this.dna_sequence}');
+      }
+    }
+  }
+
+//  Strand.from_js_object(JsObject js_obj) {
+//    // need to use List.from because List.map returns Iterable, not List
+//    this.substrands = List<Substrand>.from(js_obj[constants.substrands_key]
+//        .map((substrand_js_obj) => Substrand.from_js_object(substrand_js_obj)));
+//    for (var substrand in this.substrands) {
+//      substrand._strand = this;
+//    }
+//
+//    if (js_obj.hasProperty(constants.color_key)) {
+//      this.color = parse_json_color(js_obj[constants.color_key]);
+//    } else {
+//      this.color = DEFAULT_STRAND_COLOR;
+//    }
+//
+//    this.dna_sequence =
+//        js_obj.hasProperty(constants.dna_sequence_key) ? js_obj[constants.dna_sequence_key] : null;
+//  }
+}
+
+class IllegalDNADesignError implements Exception {
+  String cause;
+  IllegalDNADesignError(String the_cause) {
+    this.cause =
+        '**********************\n'
+        '* illegal DNA design *\n'
+        '**********************\n\n' + the_cause;
   }
 }
 
@@ -531,6 +726,14 @@ class Substrand {
   int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
   int get visual_length => (this.end - this.start);
+
+  /// Indicates if `offset` is the offset of a base on this substrand.
+  /// Note that offsets refer to visual portions of the displayed grid for the Helix.
+  /// If for example, this Substrand starts at position 0 and ends at 10, and it has 5 deletions,
+  /// then it contains the offset 7 even though there is no base 7 positions from the start.
+  bool contains_offset(int offset) {
+    return this.start <= offset && offset < this.end;
+  }
 
   /// List of offsets (inclusive at each end) in 5' - 3' order, from 5' to `offset_stop`.
   List<int> offsets_from_5p_to(int offset_stop) {
@@ -795,11 +998,30 @@ class Substrand {
     }
   }
 
+
+//  Substrand.from_js_object(JsObject js_obj) {
+//    this.helix_idx = js_obj[constants.helix_idx_key];
+//    this.right = js_obj[constants.right_key];
+//    this.start = js_obj[constants.start_key];
+//    this.end = js_obj[constants.end_key];
+//    if (js_obj.hasProperty(constants.deletions_key)) {
+//      this.deletions = List<int>.from(js_obj[constants.deletions_key]);
+//    } else {
+//      this.deletions = [];
+//    }
+//    if (js_obj.hasProperty(constants.insertions_key)) {
+//      this.insertions = parse_json_insertions(js_obj[constants.insertions_key]);
+//    } else {
+//      this.insertions = [];
+//    }
+//  }
+
   static List<Tuple2<int, int>> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
     return List<Tuple2<int, int>>.from(
         json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
   }
+
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
@@ -811,45 +1033,23 @@ dynamic get_value(Map<String, dynamic> map, String key) {
   }
 }
 
-////////////////////////////////////////////////
-// MenuViewUIModel
 
-const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';
-const DEFAULT_EXT = 'dna';
-const ALLOWED_EXTENSIONS = ['dna'];
 
-default_filename() => DEFAULT_FILENAME_NO_EXT + "." + DEFAULT_EXT;
+/// Use this mixin to get listener functionality for when an object changes and listeners need to be notified.
+/// Must pass an existing instance of a notifier (should be stored in central location like Controller).
+/// This avoids the issues of Model and View objects being created and destroyed and the notifiers/listeners
+/// not updating properly.
+class ChangeNotifier<T> {
+//  final StreamController<T> notifier = StreamController<T>.broadcast();
+  StreamController<T> notifier;
 
-class MenuViewUIModel {
-  String loaded_filename = default_filename();
-}
+  listen_for_change(void Function(T) listener) {
+    this.notifier.stream.listen(listener);
+  }
 
-////////////////////////////////////////////////
-// MainViewUIModel
-
-class MainViewUIModel {
-  MainViewSelection selection = MainViewSelection();
-}
-
-class MainViewSelection {
-  List<Substrand> starts = [];
-  List<Substrand> ends = [];
-  List<Crossover> crossovers = [];
-  List<Substrand> substrands = [];
-}
-
-class Crossover {
-  Substrand substrand_5p = null;
-  Substrand substrand_3p = null;
-}
-
-////////////////////////////////////////////////
-// SideViewUIModel
-
-class SideViewSelection {
-  List<Helix> helices = [];
-}
-
-class SideViewUIModel {
-  SideViewSelection selection = SideViewSelection();
+  notify_changed() {
+    if (this.notifier != null){
+      this.notifier.add(this as T);
+    }
+  }
 }

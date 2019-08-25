@@ -1,91 +1,165 @@
 
 html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
 }
 
 /************************************************
-** BEGIN menu layout
+** BEGIN layout
 ************************************************/
 
-.top-container {
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-    flex-direction: column;
+#top-container {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
 }
 
-.menu-separator {
-    height: 0.5%;
-    background: black;
-    position: relative;
-    cursor: col-resize;
+.fixed-separator {
+  height: 5px;
+  background: black;
+  position: relative;
 }
+
+.draggable-separator {
+  width: 15px;
+  height: 100%;
+  background: lightgray;
+  position: relative;
+  cursor: col-resize;
+}
+
+#nonmenu-panes-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+#design-pane {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#design {
+  display: flex;
+  /*height: 100%;*/
+  flex-grow: 1;
+}
+
+#side-pane {
+  width: 8%;
+  /*background: #eee;*/
+}
+
+#main-pane {
+  /*width: 90%;*/
+}
+
+#design-footer-mouse-over {
+  height: 19px;
+  text-align: left;
+  background: #eee;
+  flex-grow: 0;
+}
+
+#design-footer-mouse-over-paragraph {
+  padding: 5px;
+  text-align: left;
+}
+
+#main-pane {
+  /*flex: auto;*/
+  width: 100%;
+  /*flex-basis: auto;*/
+}
+
+#editor-pane {
+  /*flex: auto;*/
+}
+
+#side-pane,
+#main-pane,
+#design-pane,
+#editor-pane {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+
+/*.panes-container {*/
+/*  display: flex;*/
+/*  width: 100%;*/
+/*  overflow: hidden;*/
+/*}*/
+
+/*.panes-container,*/
+/*.panes-separator {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  height: 100%;*/
+/*}*/
+
+/*.gutter {*/
+/*  background-color: #eee;*/
+/*}*/
+
+/*.split, .gutter.gutter-horizontal {*/
+/*  float: left;*/
+/*}*/
+
+/*.gutter.gutter-horizontal {*/
+/*  cursor: ew-resize;*/
+/*}*/
 
 /************************************************
-** END menu layout
+** END layout
 ************************************************/
 
-/************************************************
-** BEGIN split pane layout
-************************************************/
-.panes-container {
-    display: flex;
-    width: 100%;
-    overflow: hidden;
+.error-message {
+  color: darkred;
+  border: 10px;
+  padding: 10px;
 }
-
-.panes-container,
-.panes-separator {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
-
-.gutter {
-    background-color: #eee;
-}
-
-.split, .gutter.gutter-horizontal {
-    float: left;
-}
-
-.gutter.gutter-horizontal {
-    cursor: ew-resize;
-}
-
-/************************************************
-** END split pane layout
-************************************************/
 
 /************************************************
 ** BEGIN CodeMirror layout
 ************************************************/
 
 #controls {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 #editor-pane {
-    flex: 20;
-    height: 100%;
+  flex: 20;
+  height: 100%;
 }
 
-#editorContainer,
+#editor,
 .CodeMirror {
-    border: 0;
-    padding: 0;
-    flex: 20;
-    height: 200px;
-    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+  border: 0;
+  padding: 0;
+  flex: 20;
+  box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+#editor {
+  height: calc(100% - 60px);
+}
+
+.CodeMirror {
+  height: 100%;
 }
 
 #footer {
-    text-align: center;
-    font-size: 0.8em;
+  text-align: center;
+  font-size: 0.8em;
 }
 
 /************************************************
@@ -97,133 +171,138 @@ html, body {
 ************************************************/
 
 .panzoomable {
-    cursor: move; /* fallback: no `url()` support or images disabled */
-    cursor: url(images/grab.png), auto; /* fallback: Internet Explorer */
-    cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
-    cursor: -moz-grab; /* Firefox 1.5-26 */
-    cursor: grab; /* W3C standards syntax, should come least */
+  cursor: move; /* fallback: no `url()` support or images disabled */
+  cursor: url(images/grab.png), auto; /* fallback: Internet Explorer */
+  cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+  cursor: -moz-grab; /* Firefox 1.5-26 */
+  cursor: grab; /* W3C standards syntax, should come least */
 }
 
 .panzoomable.dragging {
-    cursor: url(images/grabbing.png), auto;
-    cursor: -webkit-grabbing;
-    cursor: -moz-grabbing;
-    cursor: grabbing;
+  cursor: url(images/grabbing.png), auto;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
+}
+
+.helix-invisible-box {
+  visibility: hidden;
+  pointer-events: all;
 }
 
 .helix-lines {
-    stroke: lightgray;
+  stroke: lightgray;
 }
 
 .helix-horz-line, .helix-vert-minor-line {
-    stroke-width: 0.5;
+  stroke-width: 0.5;
 }
 
 .helix-vert-end-line, .helix-vert-major-line {
-    stroke-width: 3;
+  stroke-width: 3;
 }
 
 .five-prime-end {
-    stroke: black;
-    stroke-width: 0.5px;
-    /*rx: 1.5;*/
-    /*ry: 1.5;*/
-    /*width: 6px;*/
-    /*height: 6px;*/
+  stroke: black;
+  stroke-width: 0.5px;
+  /*rx: 1.5;*/
+  /*ry: 1.5;*/
+  /*width: 6px;*/
+  /*height: 6px;*/
 }
 
 .three-prime-end {
-    stroke: black;
-    stroke-width: 0.5px;
+  stroke: black;
+  stroke-width: 0.5px;
 }
 
 .deletion-cross-outer {
-    stroke: black;
-    stroke-width: 1.5px;
-    /*stroke-linecap: round;*/
+  stroke: black;
+  stroke-width: 1.5px;
+  /*stroke-linecap: round;*/
 }
 
 .deletion-cross-inner {
-    stroke: red;
-    stroke-width: 2px;
-    /*stroke-linecap: round;*/
+  stroke: red;
+  stroke-width: 1px;
+  /*stroke-linecap: round;*/
 }
 
 .insertion-length {
-    font-size: 5px;
-    text-anchor: middle;
-    dominant-baseline: hanging;
+  font-size: 5px;
+  text-anchor: middle;
+  dominant-baseline: hanging;
 }
 
 .dna-base {
-    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
-    font-weight: bold;
-    font-size: 5px;
-    text-anchor: middle;
-    dominant-baseline: hanging;
-    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+  font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+  font-weight: bold;
+  font-size: 5px;
+  text-anchor: middle;
+  dominant-baseline: hanging;
+  text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+  0.7px -0.7px 0 #fff,
+  -0.7px 0.7px 0 #fff,
+  0.7px 0.7px 0 #fff;
 }
 
 .dna-seq {
-    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
-    font-weight: bold;
-    font-size: 5px;
-    text-anchor: start;
-    dominant-baseline: hanging;
-    /*letter-spacing: 10px;*/
-    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-    0.7px -0.7px 0 #fff,
-    -0.7px 0.7px 0 #fff,
-    0.7px 0.7px 0 #fff;
+  font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+  font-weight: bold;
+  font-size: 5px;
+  text-anchor: start;
+  dominant-baseline: hanging;
+  /*letter-spacing: 10px;*/
+  text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+  0.7px -0.7px 0 #fff,
+  -0.7px 0.7px 0 #fff,
+  0.7px 0.7px 0 #fff;
 }
 
 .substrand-line {
-    stroke-width: 3;
+  stroke-width: 2.5;
 }
 
 .crossover-curve {
-    stroke-width: 3;
-    stroke-dasharray: 2;
+  stroke-width: 2.5;
+  stroke-dasharray: 2;
 }
 
 .main-view-helix-circle {
-    /*stroke: saddlebrown;*/
-    stroke: goldenrod;
-    stroke-width: 0.5px;
-    fill: goldenrod;
+  /*stroke: saddlebrown;*/
+  stroke: goldenrod;
+  stroke-width: 0.5px;
+  fill: goldenrod;
 }
 
 .main-view-helix-text {
-    font-family: Helvetica, serif;
-    font-size: 36pt;
-    fill: DarkBlue;
-    stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
-    text-anchor: middle;
-    dominant-baseline: central;
+  font-family: Helvetica, serif;
+  font-size: 36pt;
+  fill: DarkBlue;
+  stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
+  text-anchor: middle;
+  dominant-baseline: central;
 }
 
 
 .side-view-helix-circle {
-    /*stroke: #e0e0e0;*/
-    /*stroke: saddlebrown;*/
-    stroke-width: 1px;
-    fill: #f0f0f0;
+  /*stroke: #e0e0e0;*/
+  /*stroke: saddlebrown;*/
+  stroke-width: 1px;
+  fill: #f0f0f0;
 }
 
 .used {
-    /*stroke: saddlebrown;*/
-    fill: goldenrod;
+  /*stroke: saddlebrown;*/
+  fill: goldenrod;
 }
 
 .side-view-helix-text {
-    font-family: Helvetica, serif;
-    font-size: 24pt;
-    fill: DarkBlue;
-    text-anchor: middle;
-    dominant-baseline: central;
+  font-family: Helvetica, serif;
+  font-size: 24pt;
+  fill: DarkBlue;
+  text-anchor: middle;
+  dominant-baseline: central;
 }
 
 

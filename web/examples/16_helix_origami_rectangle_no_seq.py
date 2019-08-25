@@ -1,10 +1,12 @@
 import origami_rectangle as rect
+import scadnano as sc
+
 
 def main():
-    rect_num_helices = 16
-    rect_num_cols = 24  # XXX: ensure num_cols is even since we divide it by 2
-    rect_design = rect.create(num_helices=rect_num_helices, num_cols=rect_num_cols, assign_seq = False)
-    rect_design.write_to_file("output_designs/16_helix_rectangle_no_seq.dna")
+    design = rect.create(num_helices=16, num_cols=24, assign_seq=False)
+    return design
 
-if __name__ == "__main__":
-    main()
+
+if not sc.in_browser() and __name__ == '__main__':
+    design = main()
+    design.write_file(directory='output_designs')

@@ -7,28 +7,70 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>s-cadnano</title>
+
+    <link href="packages/codemirror/codemirror.css" rel="stylesheet">
+    <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/favicon.ico">
 
     <script src="external-libs/svg-pan-zoom.min.js"></script>
     <script src="external-libs/hammer.min.js"></script>
 
-    <!--    the documentation doesn't say it, but we need to include this reference to split.min.js -->
-    <script src="packages/split/split.min.js"></script>
+<!--    <script src="external-libs/brython.js"></script>-->
+<!--    <script src="external-libs/brython_stdlib.js"></script>-->
 
-    <link href="packages/codemirror/codemirror.css" rel="stylesheet">
-    <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
+<!--    <script src="external-libs/pyodide/pyodide.js"></script>-->
+
+    <!--    the documentation doesn't say it, but we need to include this reference to split.min.js -->
+<!--    <script src="packages/split/split.min.js"></script>-->
+
+    <script src="external-libs/simpledrag.js"></script>
+
+    <script src="splitpane.js"></script>
+
     <script src="packages/codemirror/codemirror.js"></script>
     <script src="packages/codemirror/mode/python/python.js"></script>
 </head>
 
 <body>
 
-<div class="top-container"></div>
+<!--<button id="compile">Compile</button>-->
+
+<div id="top-container"></div>
 
 <script defer src="main.dart.js"></script>
 
-<script>
+<!--<script type="text/javascript">-->
+<!--    languagePluginLoader.then(() => {-->
+<!--        // pyodide is now ready to use...-->
+<!--        console.log(pyodide.runPython('import sys\nsys.version'));-->
+<!--    });-->
+
+<!--    function compile(code) {-->
+<!--        pyodide.loadPackage('scadnano.py');-->
+<!--        pyodide.loadPackage('origami_rectangle.py');-->
+<!--        pyodide.loadPackage('json_utils.py');-->
+<!--        pyodide.loadPackage('m13.py');-->
+<!--        pyodide.runPython(code);-->
+<!--        // pyodide.pyimport(code);-->
+
+<!--    }-->
+<!--</script>-->
+
+<script type="text/javascript">
+
+    var main_view_svg_pan_zoom;
+
+    function setup_splits(show_editor) {
+        setup_drag('side-pane', 'main-pane', 'side-main-separator');
+        if (show_editor) {
+            setup_drag('design-pane', 'editor-pane', 'design-editor-separator');
+        } else {
+            // need to remove style elements that specify width
+            clear_drag('design-pane');
+        }
+    }
+
     function setup_svg_panzoom() {
         var eventsHandler;
 
@@ -96,16 +138,20 @@
             minZoom: 0.05,
             maxZoom: 20,
             customEventsHandler: eventsHandler,
+            fit: false,
         });
         // side_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
 
-        var main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
+        main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
             customEventsHandler: eventsHandler,
+            fit: false,
         });
+
+
         // main_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
 
         // attempting to remove the dummy node here causes a race condition with the Dart code that clears out
@@ -113,12 +159,25 @@
         // removeDummy("dummy-elt-side-view");
         // removeDummy("dummy-elt-main-view");
     }
+
+
+    function current_pan() {
+        //XXX: dartdevc can handle passing the object pan directly, but the release version requires
+        // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
+        // of print statement debugging on the server to identify this.
+        var pan = main_view_svg_pan_zoom.getPan();
+        return [pan.x,pan.y];
+    }
+
+    function current_zoom() {
+        return main_view_svg_pan_zoom.getZoom();
+    }
+
 </script>
 
-
-<!--Useful for temporarily rendering nodes to query info; e.g., width of an element-->
-<div id="temp-div"></div>
+<!--<script type="text/python" src="compile_script.py"></script>-->
 
 </body>
 
 </html>
+

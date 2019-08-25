@@ -1,5 +1,9 @@
+import 'dart:js';
+
 import 'app.dart';
 import 'model.dart';
+import 'util.dart' as util;
+import 'constants.dart' as constants;
 
 //TODO: add notion of undoable action, don't require reverse from other actions
 
@@ -33,7 +37,7 @@ class LoadedFilenameAction implements Action {
   @override
   Model apply(Model model) {
     model.menu_view_ui_model.loaded_filename = this.new_filename;
-    app.controller.notifier_loaded_filename.add(this.new_filename);
+    app.controller.notifier_loaded_dna_filename.add(this.new_filename);
     return model;
   }
 }
@@ -95,7 +99,6 @@ class ShowDNAAction implements Action {
   @override
   Model apply(Model model) {
     model.show_dna = this.show_dna;
-    app.controller.notifier_show_dna_change.add(this.show_dna);
     return model;
   }
 }
@@ -125,8 +128,10 @@ class EditorContentAction implements Action {
   @override
   Model apply(Model model) {
     model.editor_content = this.new_content;
+    util.save_editor_content_to_js_context(this.new_content);
     return model;
   }
+
 }
 
 /// This doesn't actually save the file (that's a side effect). It alerts the model
@@ -136,6 +141,51 @@ class AlertFileSavedAction implements Action {
   Model apply(Model model) {
     model.changed_since_last_save = false;
     app.controller.notifier_model_changed_since_save.add(false);
+    return model;
+  }
+}
+
+class CompileAction implements Action {
+  @override
+  Model apply(Model model) {
+    print('compile action being applied');
+    var python_code = app.model.editor_content;
+
+    JsFunction js_compile = context[constants.js_function_name_compile];
+    js_compile.apply([python_code]);
+
+    //TODO: get design from python code and put in model
+
+    return model;
+  }
+}
+
+
+class UpdateMouseOverDataAction implements Action {
+  final int helix_idx;
+  final int offset;
+  final bool right;
+
+  UpdateMouseOverDataAction(this.helix_idx, this.offset, this.right);
+
+  @override
+  Model apply(Model model) {
+    Substrand substrand = null;
+    for (Substrand ss in app.model.dna_design.helix_idx_substrands_map[this.helix_idx]) {
+      if (ss.contains_offset(this.offset) && ss.right == this.right) {
+        substrand = ss;
+        break;
+      }
+    }
+    model.main_view_ui_model.mouse_over_data.give_data(this.helix_idx, this.offset, substrand);
+    return model;
+  }
+}
+
+class RemoveMouseOverDataAction implements Action {
+  @override
+  Model apply(Model model) {
+    model.main_view_ui_model.mouse_over_data.remove_data();
     return model;
   }
 }

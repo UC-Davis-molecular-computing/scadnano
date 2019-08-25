@@ -21,7 +21,10 @@ def main():
     design.add_deletion(helix_idx=1, offset=1)
     design.add_deletion(helix_idx=1, offset=4)
     design.assign_dna(scaf, 'AACATCGT')
-    design.write_to_file("output_designs/2_staple_2_helix_origami_small.dna")
 
-if __name__ == "__main__":
-    main()
+    return design
+
+
+if not sc.in_browser() and __name__ == '__main__':
+    design = main()
+    design.write_file(directory='output_designs')

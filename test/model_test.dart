@@ -7,7 +7,6 @@ import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/model.dart';
 
-
 main() {
   test("serialize then deserialize", () {
     DNADesign design = DNADesign.internal();

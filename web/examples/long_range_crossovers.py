@@ -1,5 +1,6 @@
 import scadnano as sc
 
+
 def main():
     num_helices = 16
     bases = 48
@@ -24,7 +25,10 @@ def main():
         strands.append(stap_right)
 
     design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
-    design.write_to_file("output_designs/long_range_crossovers.dna")
 
-if __name__ == "__main__":
-    main()
+    return design
+
+
+if not sc.in_browser() and __name__ == '__main__':
+    design = main()
+    design.write_file(directory='output_designs')

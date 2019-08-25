@@ -1,26 +1,27 @@
 import 'dart:html';
 
-import 'model.dart';
+import 'model_ui.dart';
 import 'app.dart';
 
-class MenuViewElement {
-  final DivElement element;
+class MenuViewComponent {
+  final DivElement root_element;
 
   final SpanElement file_buttons_elt = SpanElement();
+  final ButtonElement save_button = ButtonElement();
+
   final SpanElement show_dna_elt = SpanElement();
   final SpanElement show_editor_elt = SpanElement();
   final FileUploadInputElement file_chooser = FileUploadInputElement();
   final CheckboxInputElement show_dna_checkbox = CheckboxInputElement();
   final CheckboxInputElement show_editor_checkbox = CheckboxInputElement();
-  final ButtonElement save_button = ButtonElement();
 
-  MenuViewElement(this.element);
+  MenuViewComponent(this.root_element);
 
   render() {
-    this.element.children.clear();
-    this.element.children.add(this.file_buttons_elt);
-    this.element.children.add(this.show_dna_elt);
-    this.element.children.add(this.show_editor_elt);
+    this.root_element.children.clear();
+    this.root_element.children.add(this.file_buttons_elt);
+    this.root_element.children.add(this.show_dna_elt);
+    this.root_element.children.add(this.show_editor_elt);
 
     this.render_file_buttons();
     this.render_show_dna_checkbox();
@@ -58,14 +59,14 @@ class MenuViewElement {
     this.file_buttons_elt.children.clear();
 
     // save button
-    file_buttons_elt.children.add(save_button);
+    this.file_buttons_elt.children.add(save_button);
     this.save_button.text = "Save";
     this.save_button.disabled = !app.model.changed_since_last_save;
 
     // load button
     this.file_buttons_elt.children.add(new LabelElement()..text = "Load:");
     this.file_buttons_elt.children.add(file_chooser);
-    this.file_chooser.accept = ALLOWED_EXTENSIONS.map((ext) => '.' + ext).join(",");
+    this.file_chooser.accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",");
   }
 
   setup_keyboard_shortcuts() {

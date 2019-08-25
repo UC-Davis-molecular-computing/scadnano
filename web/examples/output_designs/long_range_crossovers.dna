@@ -21,168 +21,168 @@
   ],
   "strands": [
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": {"r": 115, "g": 0, "b": 222},
       "substrands": [
         {"helix_idx": 0, "right": false, "start": 0, "end": 16},
         {"helix_idx": 15, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": {"r": 170, "g": 170, "b": 0},
       "substrands": [
         {"helix_idx": 15, "right": true, "start": 16, "end": 32},
         {"helix_idx": 0, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": {"r": 184, "g": 5, "b": 108},
       "substrands": [
         {"helix_idx": 0, "right": false, "start": 32, "end": 48},
         {"helix_idx": 15, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": {"r": 0, "g": 114, "b": 0},
       "substrands": [
         {"helix_idx": 1, "right": false, "start": 0, "end": 16},
         {"helix_idx": 14, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": {"r": 247, "g": 67, "b": 8},
       "substrands": [
         {"helix_idx": 14, "right": true, "start": 16, "end": 32},
         {"helix_idx": 1, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": {"r": 247, "g": 147, "b": 30},
       "substrands": [
         {"helix_idx": 1, "right": false, "start": 32, "end": 48},
         {"helix_idx": 14, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": {"r": 87, "g": 187, "b": 0},
       "substrands": [
         {"helix_idx": 2, "right": false, "start": 0, "end": 16},
         {"helix_idx": 13, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": {"r": 136, "g": 136, "b": 136},
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 16, "end": 32},
         {"helix_idx": 2, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": {"r": 204, "g": 0, "b": 0},
       "substrands": [
         {"helix_idx": 2, "right": false, "start": 32, "end": 48},
         {"helix_idx": 13, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": {"r": 51, "g": 51, "b": 51},
       "substrands": [
         {"helix_idx": 3, "right": false, "start": 0, "end": 16},
         {"helix_idx": 12, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": {"r": 50, "g": 0, "b": 150},
       "substrands": [
         {"helix_idx": 12, "right": true, "start": 16, "end": 32},
         {"helix_idx": 3, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": {"r": 3, "g": 182, "b": 162},
       "substrands": [
         {"helix_idx": 3, "right": false, "start": 32, "end": 48},
         {"helix_idx": 12, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": {"r": 115, "g": 0, "b": 222},
       "substrands": [
         {"helix_idx": 4, "right": false, "start": 0, "end": 16},
         {"helix_idx": 11, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": {"r": 170, "g": 170, "b": 0},
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 16, "end": 32},
         {"helix_idx": 4, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": {"r": 184, "g": 5, "b": 108},
       "substrands": [
         {"helix_idx": 4, "right": false, "start": 32, "end": 48},
         {"helix_idx": 11, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": {"r": 0, "g": 114, "b": 0},
       "substrands": [
         {"helix_idx": 5, "right": false, "start": 0, "end": 16},
         {"helix_idx": 10, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": {"r": 247, "g": 67, "b": 8},
       "substrands": [
         {"helix_idx": 10, "right": true, "start": 16, "end": 32},
         {"helix_idx": 5, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": {"r": 247, "g": 147, "b": 30},
       "substrands": [
         {"helix_idx": 5, "right": false, "start": 32, "end": 48},
         {"helix_idx": 10, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": {"r": 87, "g": 187, "b": 0},
       "substrands": [
         {"helix_idx": 6, "right": false, "start": 0, "end": 16},
         {"helix_idx": 9, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": {"r": 136, "g": 136, "b": 136},
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 16, "end": 32},
         {"helix_idx": 6, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": {"r": 204, "g": 0, "b": 0},
       "substrands": [
         {"helix_idx": 6, "right": false, "start": 32, "end": 48},
         {"helix_idx": 9, "right": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": {"r": 51, "g": 51, "b": 51},
       "substrands": [
         {"helix_idx": 7, "right": false, "start": 0, "end": 16},
         {"helix_idx": 8, "right": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": {"r": 50, "g": 0, "b": 150},
       "substrands": [
         {"helix_idx": 8, "right": true, "start": 16, "end": 32},
         {"helix_idx": 7, "right": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": {"r": 3, "g": 182, "b": 162},
       "substrands": [
         {"helix_idx": 7, "right": false, "start": 32, "end": 48},
         {"helix_idx": 8, "right": true, "start": 32, "end": 48}

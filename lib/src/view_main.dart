@@ -1,14 +1,22 @@
-import 'dart:html' as html;
+@JS()
+library view_main;
+
 import 'dart:html';
 import 'dart:math';
 import 'dart:svg' as svg; // hide Point;
 
+import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/view.dart';
+import 'package:quiver/iterables.dart' as iter;
 
+import 'actions.dart';
+import 'view.dart';
 import 'model.dart';
 import 'app.dart';
+import 'util.dart' as util;
 import 'constants.dart' as constants;
+
+const DEBUG_PRINT_MOUSEOVER = false;
 
 const String MAIN_VIEW_PREFIX = 'main-view';
 
@@ -21,27 +29,30 @@ num width_svg_text(String string) {
   var svg_elt = svg.SvgSvgElement();
   svg_elt.children.add(text_elt);
 
-  html.document.body.children.add(svg_elt);
+  document.body.children.add(svg_elt);
   var bbox = text_elt.getBBox();
-  html.document.body.children.remove(svg_elt);
+  document.body.children.remove(svg_elt);
 
   return bbox.width;
 }
 
+
 class MainViewComponent {
-  final svg.GElement element;
+  final svg.GElement root_element;
 
   // There's no layering in SVG, so we need to make sure we draw DNA sequences last so they are on top.
   // So the component is stored with the strand, but it is not rendered into the same group as
   // the various other SVG elements representing the strands.
   // Similarly we want the helices group to appear before the strands group so helices appear underneath.
-  final svg.GElement helices_element = svg.GElement();
-  final svg.GElement strands_element = svg.GElement();
-  final svg.GElement dna_sequences_element = svg.GElement();
+  final svg.GElement helices_element = svg.GElement()..attributes = {'id': 'main-view-helices'};
+  final svg.GElement strands_element = svg.GElement()..attributes = {'id': 'main-view-strands'};
+  final svg.GElement dna_sequences_element = svg.GElement()..attributes = {'id': 'main-view-dna-sequences'};
+  final svg.GElement helix_invisible_boxes_element = svg.GElement()..attributes = {'id': 'main-view-helix-invisible-boxes'};
+
+  List<HelixMainViewComponent> used_helix_elts = [];
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<GridPosition, HelixMainViewComponent> helix_elts_map = {};
-  final List<HelixMainViewComponent> used_helix_elts =
-      List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+
   final svg.CircleElement _dummy_elt = svg.CircleElement()
     ..setAttribute('id', 'dummy-elt-main-view')
     ..setAttribute('fill', 'white')
@@ -49,31 +60,38 @@ class MainViewComponent {
     ..setAttribute('cx', '0')
     ..setAttribute('cy', '0')
     ..setAttribute('r', '1')
-    ..setInnerHtml(
-        'dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
+    ..setInnerHtml('dummy elt for svg-pan-zoom not to have a divide-by-0 error due to 0 width/height');
 
-  MainViewComponent(this.element) {
+  MainViewComponent(this.root_element) {
     // Adds a dummy SVG element (white circle that can't be seen)
     // to prevent the svg-pan-zoom library from dividing by 0 if there are no elements.
     // The dummy element placed here in index.html is sufficient to prevent the divide-by-0 error
     // in the local web server, but that element is removed dynamically once we render the main view.
     // For some reason the deployed server has the error unless we maintain that a dummy element is
     // always there.
-    this.element.children.add(_dummy_elt);
-
-    this.helices_element.attributes = {'id': 'main-view-helices'};
-    this.strands_element.attributes = {'id': 'main-view-strands'};
-    this.dna_sequences_element.attributes = {'id': 'main-view-dna-sequences'};
+    this.root_element.children.add(_dummy_elt);
 
   }
 
   /// Redraw elements
   render() {
-    this.element.children.clear();
+    // clear data
+    this.used_helix_elts = List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+    this.helix_elts_map.clear();
+    this.strand_elts_map.clear();
+
+    this.root_element.children.clear();
+    this.helices_element.children.clear();
+    this.strands_element.children.clear();
+    this.helix_invisible_boxes_element.children.clear();
+
+    //TODO: render footer view
+
     // put helix lines in their own group that is always rendered before strands so helices appear underneath
-    this.element.children.add(this.helices_element);
-    this.element.children.add(this.strands_element);
-    this.element.children.add(this.dna_sequences_element);
+    this.root_element.children.add(this.helices_element);
+    this.root_element.children.add(this.strands_element);
+    this.root_element.children.add(this.dna_sequences_element);
+    this.root_element.children.add(this.helix_invisible_boxes_element);
 
     // draw helices
     for (var helix in app.model.dna_design.helices) {
@@ -82,74 +100,155 @@ class MainViewComponent {
 
     for (var helix in app.model.dna_design.used_helices) {
       var helix_elt = helix_elts_map[helix.grid_position];
-      this.helices_element.children.add(helix_elt.element);
+      this.helices_element.children.add(helix_elt.root_element);
       this.used_helix_elts[helix.idx] = helix_elt;
     }
 
     // draw strands
+    this.strand_elts_map.clear();
     for (var strand in app.model.dna_design.strands) {
       var strand_elt = StrandComponent(strand);
-      this.strands_element.children.add(strand_elt.element);
+      this.strands_element.children.add(strand_elt.root_element);
       this.strand_elts_map[strand] = strand_elt;
     }
 
     for (var helix_elt in helix_elts_map.values) {
       helix_elt.render();
     }
+
     for (var strand_elt in strand_elts_map.values) {
       strand_elt.render();
     }
+
+    // render DNA sequences
     this.render_dna_sequences();
+
+    // render invisible helix boxes
+    for (var helix_elt in this.helix_elts_map.values) {
+      helix_elt.render_invisible_box();
+    }
   }
 
-  render_dna_sequences() {
+  void render_dna_sequences() {
     this.dna_sequences_element.children.clear();
     if (app.model.show_dna) {
-      for (var strand_elt in strand_elts_map.values) {
+      for (var strand_elt in this.strand_elts_map.values) {
         this.dna_sequences_element.children.add(strand_elt.dna_sequence_component.element);
         strand_elt.dna_sequence_component.render();
       }
     }
   }
+
 }
+
+
+@JS(constants.js_function_name_current_zoom)
+external num current_zoom();
+
+
+@JS(constants.js_function_name_current_pan)
+external List<num> current_pan_js();
+
+Point<num> current_pan() {
+  var ret = current_pan_js();
+  return Point<num>(ret[0], ret[1]);
+}
+
 
 class HelixMainViewComponent extends ReactiveComponent {
   final svg.GElement parent;
-  final svg.GElement element = svg.GElement();
+  final svg.GElement root_element = svg.GElement();
+  final svg.GElement invisible_box_group = svg.GElement();
   final Helix helix;
+  svg.RectElement invisible_box;
 
   HelixMainViewComponent(this.parent, this.helix) {
-    element.setAttribute("class", "helix-lines");
+    root_element.setAttribute("class", "helix-lines");
     this.listen(helix);
   }
 
+  register_mouse_events() {
+    this.invisible_box.onMouseLeave.listen((MouseEvent event) {
+      app.send_action(RemoveMouseOverDataAction());
+    });
+
+    this.invisible_box.onMouseMove.listen((MouseEvent event) {
+      Point<num> pan = current_pan();
+      num zoom = current_zoom();
+
+      var svg_coord = util.transform(event.offset, pan, zoom);
+      num svg_x = svg_coord.x;
+      num svg_y = svg_coord.y;
+
+      int helix_idx = this.helix.idx;
+      int offset = this.helix.svg_x_to_offset(svg_x);
+      bool right = this.helix.svg_y_to_right(svg_y);
+
+      if (DEBUG_PRINT_MOUSEOVER) {
+        print('mouse event: '
+            'x = ${event.offset.x},   '
+            'y = ${event.offset.y},   '
+            'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+            'zoom = ${zoom.toStringAsFixed(2)},   '
+            'svg_x = ${svg_x.toStringAsFixed(2)},   '
+            'svg_y = ${svg_y.toStringAsFixed(2)},   '
+            'helix = ${helix_idx},   '
+            'offset = ${offset},   '
+            'right = ${right}');
+      }
+
+      app.send_action(UpdateMouseOverDataAction(helix_idx, offset, right));
+    });
+  }
+
   render() {
-    element.children.clear();
+    this.root_element.children.clear();
     var x = helix.svg_position.x;
     var y = helix.svg_position.y;
-    element.setAttribute('transform', 'translate($x $y)');
-    if (!helix.used) {
-      parent.children.remove(element);
+    this.root_element.setAttribute('transform', 'translate($x $y)');
+    this.invisible_box_group.setAttribute('transform', 'translate($x $y)');
+    app.view.design_view.main_view.helix_invisible_boxes_element.children.add(this.invisible_box_group);
+    if (!helix.used) { //XXX: do this better
+      parent.children.remove(this.root_element);
     } else {
       var side_helix_group = svg.GElement();
-      element.children.add(side_helix_group);
+      this.root_element.children.add(side_helix_group);
       var lines_group = svg.GElement();
-      element.children.add(lines_group);
-      draw_side_helix(side_helix_group);
-      draw_horz_lines(lines_group);
-      draw_vert_lines(lines_group);
+      this.root_element.children.add(lines_group);
+      this.draw_side_helix(side_helix_group);
+      this.draw_horz_lines(lines_group);
+      this.draw_vert_lines(lines_group);
+      this.render_invisible_box();
 
       //TODO: this is ugly, and I need to build in some better assumptions about how elements get created
-      if (!parent.children.contains(element)) {
-        parent.children.add(element);
+      if (!parent.children.contains(this.root_element)) {
+        parent.children.add(this.root_element);
       }
     }
   }
 
+  /// This isn't shown, but it is used for mouseover events to display useful information in the footer.
+  render_invisible_box() {
+    var width = constants.BASE_WIDTH_SVG * this.helix.max_bases;
+    var height = 2 * constants.BASE_HEIGHT_SVG;
+
+    this.invisible_box_group.children.clear();
+
+    this.invisible_box = svg.RectElement();
+    invisible_box.attributes = {
+      'class': 'helix-invisible-box',
+      'x': '0',
+      'y': '0',
+      'width': '$width',
+      'height': '$height',
+    };
+    this.invisible_box_group.children.add(this.invisible_box);
+    this.register_mouse_events();
+  }
+
   draw_horz_lines(svg.SvgElement lines_group, {bool inline_style = false}) {
-    var max_bases = app.model.dna_design.max_bases();
     var x0 = 0;
-    var x1 = constants.BASE_WIDTH_SVG * max_bases;
+    var x1 = constants.BASE_WIDTH_SVG * this.helix.max_bases;
     var y0 = 0;
     var y1 = constants.BASE_HEIGHT_SVG;
     var y2 = 2 * constants.BASE_HEIGHT_SVG;
@@ -162,17 +261,34 @@ class HelixMainViewComponent extends ReactiveComponent {
     lines_group.children.add(path_horz);
   }
 
+  List<int> regularly_spaced_ticks(int distance, int end) {
+    if (distance < 0) {
+      throw ArgumentError('distance between major ticks must be positive');
+    } else if (distance == 0) {
+      return [];
+    } else {
+      return [for (int offset in iter.range(0, end + 1, distance)) offset];
+    }
+  }
+
   draw_vert_lines(svg.SvgElement lines_group, {bool inline_style = false}) {
-    var max_bases = app.model.dna_design.max_bases();
-    var major_tick_distance = app.model.dna_design.major_tick_distance;
+    var max_bases = this.helix.max_bases;
+    var major_tick_distance = this.helix.has_major_tick_distance()
+        ? this.helix.major_tick_distance
+        : app.model.dna_design.major_tick_distance;
     var path_cmds_vert_minor = [];
     var path_cmds_vert_major = [];
+
+    Set<int> major_ticks = (this.helix.has_major_ticks()
+            ? this.helix.major_ticks
+            : regularly_spaced_ticks(major_tick_distance, this.helix.max_bases))
+        .toSet();
 
     var x = 0;
     var y = 2 * constants.BASE_HEIGHT_SVG;
     for (int base = 0; base <= max_bases; base++) {
-      var major = major_tick_distance > 0 && base % major_tick_distance == 0;
-      var path_cmds = major ? path_cmds_vert_major : path_cmds_vert_minor;
+//      var major = major_tick_distance > 0 && base % major_tick_distance == 0;
+      var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x 0');
       path_cmds.add('v $y');
       x += constants.BASE_WIDTH_SVG;
@@ -212,23 +328,24 @@ class HelixMainViewComponent extends ReactiveComponent {
     side_helix_group.children.add(circle);
     side_helix_group.children.add(text);
   }
-}
 
+
+}
 
 class StrandComponent {
   final Strand strand;
-  svg.GElement element = svg.GElement();
+  svg.GElement root_element = svg.GElement();
   DNASequenceComponent dna_sequence_component;
 
   StrandComponent(Strand this.strand) {
     this.dna_sequence_component = DNASequenceComponent(this.strand);
-    this.element.attributes = {
+    this.root_element.attributes = {
       'class': 'strand',
     };
   }
 
   render() {
-    this.element.children.clear();
+    this.root_element.children.clear();
     this.render_strand_lines();
 //    this.render_strand_lines_single_path();
     this.render_5p_end();
@@ -278,8 +395,6 @@ class StrandComponent {
 //    }
 //  }
 
-
-
   render_strand_lines() {
     //TODO: go back to rendering each strand with separate paths for substrands, crossovers, etc.
     // This will be needed to let them each get selected individually.
@@ -295,16 +410,17 @@ class StrandComponent {
     for (int i = 0; i < this.strand.substrands.length; i++) {
       // substrand line
       var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.right);
-      var substrand_line = svg.LineElement()..attributes = {
-        'id': substrand_line_id(substrand),
-        'class': 'substrand-line',
-        'stroke': strand.color.toRgbColor().toCssString(),
-        'fill': 'none',
-        'x1': '${start_svg.x}',
-        'y1': '${start_svg.y}',
-        'x2': '${end_svg.x}',
-        'y2': '${end_svg.y}',
-      };
+      var substrand_line = svg.LineElement()
+        ..attributes = {
+          'id': substrand_line_id(substrand),
+          'class': 'substrand-line',
+          'stroke': strand.color.toRgbColor().toCssString(),
+          'fill': 'none',
+          'x1': '${start_svg.x}',
+          'y1': '${start_svg.y}',
+          'x2': '${end_svg.x}',
+          'y2': '${end_svg.y}',
+        };
       paths.add(substrand_line);
 
       // crossover line/arc
@@ -314,18 +430,19 @@ class StrandComponent {
         helix = app.model.dna_design.helices[substrand.helix_idx];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
         var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
-        var crossover_curve = svg.PathElement()..attributes = {
+        var crossover_curve = svg.PathElement()
+          ..attributes = {
 //          'id': substrand_line_id(substrand),
-          'class': 'crossover-curve',
-          'stroke': strand.color.toRgbColor().toCssString(),
-          'fill': 'none',
-          'd': 'M ${end_svg.x} ${end_svg.y} Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}'
-        };
+            'class': 'crossover-curve',
+            'stroke': strand.color.toRgbColor().toCssString(),
+            'fill': 'none',
+            'd': 'M ${end_svg.x} ${end_svg.y} Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}'
+          };
         paths.add(crossover_curve);
       }
     }
 
-    this.element.children.addAll(paths);
+    this.root_element.children.addAll(paths);
   }
 
   render_strand_lines_single_path() {
@@ -360,7 +477,7 @@ class StrandComponent {
       'fill': 'none',
       'd': path_cmds.join(' '),
     };
-    this.element.children.add(path);
+    this.root_element.children.add(path);
   }
 
   Point<num> control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
@@ -407,7 +524,7 @@ class StrandComponent {
       'ry': '1.5px',
       'fill': strand.color.toRgbColor().toCssString(),
     };
-    element.children.add(box);
+    root_element.children.add(box);
   }
 
   render_3p_end() {
@@ -433,7 +550,7 @@ class StrandComponent {
       'points': points,
       'fill': strand.color.toRgbColor().toCssString(),
     };
-    element.children.add(triangle);
+    root_element.children.add(triangle);
   }
 
   render_deletions(Substrand substrand) {
@@ -452,7 +569,7 @@ class StrandComponent {
         'fill': 'none',
         'd': path_cmds,
       };
-      this.element.children.add(deletion_path);
+      this.root_element.children.add(deletion_path);
     }
   }
 
@@ -486,7 +603,7 @@ class StrandComponent {
       // write number of insertions inside insertion loop
       int length = insertion.item2;
       var xmlns = "http://www.w3.org/2000/svg";
-      svg.TextPathElement textpath_elt = html.document.createElementNS(xmlns, 'textPath');
+      svg.TextPathElement textpath_elt = document.createElementNS(xmlns, 'textPath');
       textpath_elt.setInnerHtml('${length}');
 
       var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
@@ -506,8 +623,8 @@ class StrandComponent {
         'dy': dy_text,
       };
 
-      this.element.children.add(text_elt);
-      this.element.children.add(insertion_path);
+      this.root_element.children.add(text_elt);
+      this.root_element.children.add(insertion_path);
     }
   }
 
@@ -567,8 +684,7 @@ class DNASequenceComponent {
 
     StrandComponent.substrand_line_id(substrand);
 
-    var text_length =
-        constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
+    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + (WIDTH_SVG_TEXT_SYMBOL / 2);
     seq_elt.attributes = {
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
@@ -589,7 +705,7 @@ class DNASequenceComponent {
 //    seq_elt = svg.TextPathElement();
     // Got this from https://stackoverflow.com/questions/3492322/javascript-createelement-and-svg
     var xmlns = "http://www.w3.org/2000/svg";
-    textpath_elt = html.document.createElementNS(xmlns, 'textPath');
+    textpath_elt = document.createElementNS(xmlns, 'textPath');
 
 //    seq_elt = html.document.createElement('textPath');
     var subseq = substrand.dna_sequence_in(offset, offset);
@@ -604,8 +720,7 @@ class DNASequenceComponent {
     num base_factor = num_bases - 2;
     num spacing_coef = 0.1; // small is less space between letters
     var start_offset = '${(1.0 - min(1.0, base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
-    var text_length =
-        '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
+    var text_length = '${(0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG}';
 
     var dy = '-${0.5 * constants.BASE_WIDTH_SVG}';
     var side = 'right';

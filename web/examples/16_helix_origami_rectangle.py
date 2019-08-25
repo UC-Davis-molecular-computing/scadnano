@@ -1,11 +1,11 @@
 import origami_rectangle as rect
+import scadnano as sc
 
-# here's an example of using `origami_rectangle.create` to create a 6-helix rectangle
+
 def main():
-    rect_num_helices = 16
-    rect_num_cols = 24  # XXX: ensure num_cols is even since we divide it by 2
-    rect_design = rect.create(num_helices=rect_num_helices, num_cols=rect_num_cols)
-    rect_design.write_to_file("output_designs/16_helix_rectangle.dna")
+    design = rect.create(num_helices=16, num_cols=24)
+    return design
+
 
 # M13 in on helix 1 is (going left-to-right, which is 3'-to-5')
 # GATTTTGTGAGTAGAA
@@ -19,5 +19,7 @@ def main():
 #
 # GATTTTGTGAGTAGAA CTCCGTTTTCTTATGT (scaffold 3'-5')
 
-if __name__ == "__main__":
-    main()
+
+if not sc.in_browser() and __name__ == '__main__':
+    design = main()
+    design.write_file(directory='output_designs')

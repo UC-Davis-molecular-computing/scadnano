@@ -1,15 +1,30 @@
+@JS()
+library app;
+
 import 'dart:async';
 import 'dart:html';
+import 'dart:js';
 
+import 'package:js/js.dart';
 import 'controller.dart';
 import 'model.dart';
 import 'actions.dart';
-import 'util.dart';
+import 'util.dart' as util;
 import 'undo_redo.dart';
 import 'view.dart';
+import 'constants.dart' as constants;
 import 'local_storage.dart' as local_storage;
 
 App app = App();
+
+//TODO: show stats about strand/offset/helix on mouse-over
+
+//TODO: slow to load new files after first large file loaded
+
+//TODO: ensure overlap detected
+
+@JS()
+external set set_new_design_from_json_js(Function f);
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -24,11 +39,20 @@ class App {
   StreamController<Action> action_notifier = StreamController<Action>();
 
   start() async {
-//    this.model = Model.default_model();
-//    this.model = await Model.from_url('examples/output_designs/few-small-helices.dna');
-//    this.model = await Model.from_url('examples/output_designs/16_helix_rectangle_no_seq.dna');
+
+    // make Controller.set_new_design_from_json accessible from JS so pyodide can access it after compiling
+//    context[constants.js_function_name_set_new_design_from_json] =
+    set_new_design_from_json_js = allowInterop((String json_string) {
+      set_new_design_from_json(json_string);
+    });
+
+    this.controller = Controller();
+
     this.model =
-        await model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+//        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami.dna');
+
+    util.save_editor_content_to_js_context(model.editor_content);
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
@@ -36,12 +60,20 @@ class App {
       this.undo_redo.apply(action);
     });
 
-    this.controller = Controller();
+
+    // allow Brython some way to tell us about errors that happened when compiling
+    context[constants.js_function_name_set_error_message_from_python_script] = allowInterop((String msg) {
+      print('dart received error message: ${msg}');
+      set_error_message(msg);
+    });
 
     //XXX: Controller must be created before the first render since views must
     // register as listeners to the notifiers of the Controller.
-    this.view = View();
+    DivElement app_root_element = querySelector('#top-container');
+    this.view = View(app_root_element);
     this.view.render();
+
+    app.controller.setup_subscriptions();
   }
 
   send_action(Action action) {
@@ -58,4 +90,5 @@ class App {
       }
     });
   }
+
 }
