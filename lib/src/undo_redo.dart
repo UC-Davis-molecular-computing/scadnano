@@ -21,8 +21,6 @@ class UndoRedo {
 //      print('     key: ${event.key}');
 //      print('   which: ${event.which}');
 
-    //TODO: Ctrl+Z is not being recognized; appears to be intercepted by editor??
-
       // ctrl+Z to undo
       if (event.ctrlKey && !event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
         undo();

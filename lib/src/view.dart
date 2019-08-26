@@ -77,8 +77,8 @@ class View extends ReactiveComponent {
 
   update_showing_editor() {
 
-    //TODO: this works with local server but fails online
-    // check here for how to try to debug online: https://github.com/dart-lang/build/issues/896
+    //TODO: Firefox won't let editor pane shrink (when pan separater is dragged) to hide text; Chrome puts a scrollbar
+    // at the bottom when that happens and lets the editor pane shrink arbitrarily (which is the desired behavior)
 
     if (!this.currently_showing_editor && app.model.show_editor) {
       this.nonmenu_panes_container_element.children.add(design_editor_separator);

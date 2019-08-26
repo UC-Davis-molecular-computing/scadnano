@@ -303,8 +303,6 @@ set_error_message(String msg) {
   app.model.error_message = msg;
 }
 
-//TODO: figure out a consistent way of showing error message from any context (editor shown or not, error came from loading JSON or running script)
-
 //TODO: there's a lot of repeated code between here and the functions that save/load the .dna files
 // handle file saving/loading for script files
 script_save_file() async {

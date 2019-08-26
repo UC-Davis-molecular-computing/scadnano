@@ -17,12 +17,6 @@ import 'local_storage.dart' as local_storage;
 
 App app = App();
 
-//TODO: show stats about strand/offset/helix on mouse-over
-
-//TODO: slow to load new files after first large file loaded
-
-//TODO: ensure overlap detected
-
 @JS()
 external set set_new_design_from_json_js(Function f);
 

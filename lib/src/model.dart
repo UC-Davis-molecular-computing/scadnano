@@ -12,10 +12,10 @@ import 'model_ui.dart';
 import 'app.dart';
 import 'constants.dart' as constants;
 
+//TODO: support editing an existing DNADesign so that user can modify strands, etc.
+
 //TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
 // fields that are not used by scadnano, and write them back out on serialization using toJson
-
-//TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
 //TODO: import cadnano files
 
@@ -273,11 +273,6 @@ class Model with ChangeNotifier<Model> {
     this.main_view_ui_model.show_editor = show;
   }
 
-  //TODO: this is still notifying the old MainViewComponent about the show_dna change, which is attempting to draw
-  // DNA sequences while referencing helices that no longer exist in the model. Need to remove the listeners or
-  // come up with some better discipline for how to handle model changes like this, where the MainViewComponent
-  // goes away entirely and is replaced by a new one, while the old Model remains (but with a new DNADesign).
-
   String _error_message = null;
 
   //"private" constructor; meta package will warn if it is used outside testing
@@ -465,7 +460,6 @@ class Helix with ChangeNotifier<Helix> {
     _set_change_notifier();
   }
 
-  //TODO: make this depend on exact Helix svg_position, not default constants.DISTANCE_BETWEEN_HELICES_SVG
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
   /// depending on whether strand is going right or not.
   Point<num> svg_base_pos(int offset, bool right) {

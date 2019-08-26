@@ -5,8 +5,6 @@ import 'model.dart';
 import 'util.dart' as util;
 import 'constants.dart' as constants;
 
-//TODO: add notion of undoable action, don't require reverse from other actions
-
 /// A (non-reversible) Action is not added to the undo stack.
 abstract class Action {
   /// Apply this action to model and return the resulting model.

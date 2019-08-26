@@ -85,8 +85,6 @@ class MainViewComponent {
     this.strands_element.children.clear();
     this.helix_invisible_boxes_element.children.clear();
 
-    //TODO: render footer view
-
     // put helix lines in their own group that is always rendered before strands so helices appear underneath
     this.root_element.children.add(this.helices_element);
     this.root_element.children.add(this.strands_element);
@@ -396,8 +394,6 @@ class StrandComponent {
 //  }
 
   render_strand_lines() {
-    //TODO: go back to rendering each strand with separate paths for substrands, crossovers, etc.
-    // This will be needed to let them each get selected individually.
 
     if (this.strand.substrands.length == 0) {
       return;
