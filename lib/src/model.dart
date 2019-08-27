@@ -712,10 +712,10 @@ class Substrand {
   List<Tuple2<int, int>> insertions = []; // elt: Pair(offset, num insertions)
 
   /// 5' end, INCLUSIVE
-  int get offset_5p => right ? start : end - 1;
+  int get offset_5p => this.right ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  int get offset_3p => right ? end - 1 : start;
+  int get offset_3p => this.right ? this.end - 1 : this.start;
 
   int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 

@@ -36,6 +36,7 @@ num width_svg_text(String string) {
   return bbox.width;
 }
 
+//TODO: display width of each column lightly above helix 0; alternatley, display as mouseover information
 
 class MainViewComponent {
   final svg.GElement root_element;

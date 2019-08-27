@@ -1,0 +1,1949 @@
+{
+  "version": "0.0.1",
+  "grid": "square",
+  "helices": [
+    {"idx": 0, "max_bases": 347, "major_ticks": [5, 26, 47, 68, 89, 110, 131, 152, 173, 194, 215, 236, 257, 278, 299, 320, 341, 16, 37, 58, 79, 100, 121, 142, 163, 184, 205, 226, 247, 268, 289, 310, 331], "grid_position": [0, 0]},
+    {"idx": 1, "max_bases": 347, "major_ticks": [5, 26, 47, 68, 89, 110, 131, 152, 173, 194, 215, 236, 257, 278, 299, 320, 341, 16, 37, 58, 79, 100, 121, 142, 163, 184, 205, 226, 247, 268, 289, 310, 331], "grid_position": [0, 1]},
+    {"idx": 2, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 2]},
+    {"idx": 3, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 3]},
+    {"idx": 4, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 4]},
+    {"idx": 5, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 5]},
+    {"idx": 6, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 6]},
+    {"idx": 7, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 7]},
+    {"idx": 8, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 8]},
+    {"idx": 9, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 9]},
+    {"idx": 10, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 10]},
+    {"idx": 11, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 11]},
+    {"idx": 12, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 12]},
+    {"idx": 13, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 13]},
+    {"idx": 14, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 14]},
+    {"idx": 15, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 15]},
+    {"idx": 16, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 16]},
+    {"idx": 17, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 17]},
+    {"idx": 18, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 18]},
+    {"idx": 19, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 19]},
+    {"idx": 20, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 20]},
+    {"idx": 21, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 21]},
+    {"idx": 22, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 22]},
+    {"idx": 23, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 23]},
+    {"idx": 24, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 24]},
+    {"idx": 25, "max_bases": 347, "major_ticks": [0, 11, 21, 37, 44, 51, 58, 65, 72, 79, 86, 93, 100, 107, 114, 121, 128, 135, 142, 149, 156, 163, 170, 177, 184, 191, 198, 205, 212, 219, 226, 233, 240, 247, 254, 261, 268, 275, 282, 289, 296, 303, 310, 326, 336, 347], "grid_position": [0, 25]},
+    {"idx": 26, "max_bases": 347, "major_ticks": [5, 26, 47, 68, 89, 110, 131, 152, 173, 194, 215, 236, 257, 278, 299, 320, 341, 16, 37, 58, 79, 100, 121, 142, 163, 184, 205, 226, 247, 268, 289, 310, 331], "grid_position": [0, 26]},
+    {"idx": 27, "max_bases": 347, "major_ticks": [5, 26, 47, 68, 89, 110, 131, 152, 173, 194, 215, 236, 257, 278, 299, 320, 341, 16, 37, 58, 79, 100, 121, 142, 163, 184, 205, 226, 247, 268, 289, 310, 331], "grid_position": [0, 27]}
+  ],
+  "strands": [
+    {
+      "color": {"r": 0, "g": 102, "b": 204},
+      "dna_sequence": "TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCTCTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTCGCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTGCCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTTCCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCTTATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTCTAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAAATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAATAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATATCTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTTCTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTGTTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTATTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTGGTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTCGGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCATCAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTCAGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATATTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTTGCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCGTTATTGTTTCTCCCGATGTAAAAGGTACTGTTACTGTATATTCATCTGACGTTAAACCTGAAAATCTACGCAATTTCTTTATTTCTGTTTTACGTGCAAATAATTTTGATATGGTAGGTTCTAACCCTTCCATTATTCAGAAGTATAATCCAAACAATCAGGATTATATTGATGAATTGCCATCATCTGATAATCAGGAATATGATGATAATTCCGCTCCTTCTGGTGGTTTCTTTGTTCCGCAAAATGATAATGTTACTCAAACTTTTAAAATTAATAACGTTCGGGCAAAGGATTTAATACGAGTTGTCGAATTGTTTGTAAAGTCTAATACTTCTAAATCCTCAAATGTATTATCTATTGACGGCTCTAATCTATTAGTTGTTAGTGCTCCTAAAGATATTTTAGATAACCTTCCTCAATTCCTTTCAACTGTTGATTTGCCAACTGACCAGATATTGATTGAGGGTTTGATATTTGAGGTTCAGCAAGGTGATGCTTTAGATTTTTCATTTGCTGCTGGCTCTCAGCGTGGCACTGTTGCAGGCGGTGTTAATACTGACCGCCTCACCTCTGTTTTATCTTCTGCTGGTGGTTCGTTCGGTATTTTTAATGGCGATGTTTTAGGGCTATCAGTTCGCGCATTAAAGACTAATAGCCATTCAAAAATATTGTCTGTGCCACGTATTCTTACGCTTTCAGGTCAGAAGGGTTCTATCTCTGTTGGCCAGAATGTCCCTTTTATTACTGGTCGTGTGACTGGTGAATCTGCCAATGTAAATAATCCATTTCAGACGATTGAGCGTCAAAATGTAGGTATTTCCATGAGCGTTTTTCCTGTTGCAATGGCTGGCGGTAATATTGTTCTGGATATTACCAGCAAGGCCGATAGTTTGAGTTCTTCTACTCAGGCAAGTGATGTTATTACTAATCAAAGAAGTATTGCTACAACGGTTAATTTGCGTGATGGACAGACTCTTTTACTCGGTGGCCTCACTGATTATAAAAACACTTCTCAGGATTCTGGCGTACCGTTCCTGTCTAAAATCCCTTTAATCGGCCTCCTGTTTAGCTCCCGCTCTGATTCTAACGAGGAAAGCACGTTATACGTGCTCGTCAAAGCAACCATAGTACGCGCCCTGTAGCGGCGCATTAAGCGCGGCGGGTGTGGTGGTTACGCGCAGCGTGACCGCTACACTTGCCAGCGCCCTAGCGCCCGCTCCTTTCGCTTTC???????????????????????????????????????????????????????????????????????",
+      "substrands": [
+        {"helix_idx": 25, "right": false, "start": 21, "end": 152},
+        {"helix_idx": 24, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 23, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 22, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 21, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 20, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 19, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 18, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 17, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 16, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 15, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 14, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 13, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 12, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 11, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 10, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 9, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 8, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 7, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 6, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 5, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 4, "right": true, "start": 21, "end": 49},
+        {"helix_idx": 3, "right": false, "start": 21, "end": 49},
+        {"helix_idx": 2, "right": true, "start": 21, "end": 65},
+        {"helix_idx": 3, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 4, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 5, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 6, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 7, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 8, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 9, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 10, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 11, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 12, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 13, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 14, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 15, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 16, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 17, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 18, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 19, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 20, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 21, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 22, "right": true, "start": 49, "end": 65},
+        {"helix_idx": 23, "right": false, "start": 49, "end": 65},
+        {"helix_idx": 24, "right": true, "start": 49, "end": 91},
+        {"helix_idx": 23, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 22, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 21, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 20, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 19, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 18, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 17, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 16, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 15, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 14, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 13, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 12, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 11, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 10, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 9, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 8, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 7, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 6, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 5, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 4, "right": true, "start": 65, "end": 91},
+        {"helix_idx": 3, "right": false, "start": 65, "end": 91},
+        {"helix_idx": 2, "right": true, "start": 65, "end": 107},
+        {"helix_idx": 3, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 4, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 5, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 6, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 7, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 8, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 9, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 10, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 11, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 12, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 13, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 14, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 15, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 16, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 17, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 18, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 19, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 20, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 21, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 22, "right": true, "start": 91, "end": 107},
+        {"helix_idx": 23, "right": false, "start": 91, "end": 107},
+        {"helix_idx": 24, "right": true, "start": 91, "end": 133},
+        {"helix_idx": 23, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 22, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 21, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 20, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 19, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 18, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 17, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 16, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 15, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 14, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 13, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 12, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 11, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 10, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 9, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 8, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 7, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 6, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 5, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 4, "right": true, "start": 107, "end": 133},
+        {"helix_idx": 3, "right": false, "start": 107, "end": 133},
+        {"helix_idx": 2, "right": true, "start": 107, "end": 149},
+        {"helix_idx": 3, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 4, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 5, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 6, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 7, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 8, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 9, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 10, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 11, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 12, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 13, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 14, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 15, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 16, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 17, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 18, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 19, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 20, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 21, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 22, "right": true, "start": 133, "end": 149},
+        {"helix_idx": 23, "right": false, "start": 133, "end": 149},
+        {"helix_idx": 24, "right": true, "start": 133, "end": 175},
+        {"helix_idx": 23, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 22, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 21, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 20, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 19, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 18, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 17, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 16, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 15, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 14, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 13, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 12, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 11, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 10, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 9, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 8, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 7, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 6, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 5, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 4, "right": true, "start": 149, "end": 175},
+        {"helix_idx": 3, "right": false, "start": 149, "end": 175},
+        {"helix_idx": 2, "right": true, "start": 149, "end": 191},
+        {"helix_idx": 3, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 4, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 5, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 6, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 7, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 8, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 9, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 10, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 11, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 12, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 13, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 14, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 15, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 16, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 17, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 18, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 19, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 20, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 21, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 22, "right": true, "start": 175, "end": 191},
+        {"helix_idx": 23, "right": false, "start": 175, "end": 191},
+        {"helix_idx": 24, "right": true, "start": 175, "end": 217},
+        {"helix_idx": 23, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 22, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 21, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 20, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 19, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 18, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 17, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 16, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 15, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 14, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 13, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 12, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 11, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 10, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 9, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 8, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 7, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 6, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 5, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 4, "right": true, "start": 191, "end": 217},
+        {"helix_idx": 3, "right": false, "start": 191, "end": 217},
+        {"helix_idx": 2, "right": true, "start": 191, "end": 233},
+        {"helix_idx": 3, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 4, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 5, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 6, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 7, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 8, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 9, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 10, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 11, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 12, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 13, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 14, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 15, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 16, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 17, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 18, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 19, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 20, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 21, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 22, "right": true, "start": 217, "end": 233},
+        {"helix_idx": 23, "right": false, "start": 217, "end": 233},
+        {"helix_idx": 24, "right": true, "start": 217, "end": 259},
+        {"helix_idx": 23, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 22, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 21, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 20, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 19, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 18, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 17, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 16, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 15, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 14, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 13, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 12, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 11, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 10, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 9, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 8, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 7, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 6, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 5, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 4, "right": true, "start": 233, "end": 259},
+        {"helix_idx": 3, "right": false, "start": 233, "end": 259},
+        {"helix_idx": 2, "right": true, "start": 233, "end": 275},
+        {"helix_idx": 3, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 4, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 5, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 6, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 7, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 8, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 9, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 10, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 11, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 12, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 13, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 14, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 15, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 16, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 17, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 18, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 19, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 20, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 21, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 22, "right": true, "start": 259, "end": 275},
+        {"helix_idx": 23, "right": false, "start": 259, "end": 275},
+        {"helix_idx": 24, "right": true, "start": 259, "end": 301},
+        {"helix_idx": 23, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 22, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 21, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 20, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 19, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 18, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 17, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 16, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 15, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 14, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 13, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 12, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 11, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 10, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 9, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 8, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 7, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 6, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 5, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 4, "right": true, "start": 275, "end": 301},
+        {"helix_idx": 3, "right": false, "start": 275, "end": 301},
+        {"helix_idx": 2, "right": true, "start": 275, "end": 326},
+        {"helix_idx": 3, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 4, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 5, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 6, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 7, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 8, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 9, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 10, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 11, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 12, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 13, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 14, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 15, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 16, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 17, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 18, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 19, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 20, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 21, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 22, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 23, "right": false, "start": 301, "end": 326},
+        {"helix_idx": 24, "right": true, "start": 301, "end": 326},
+        {"helix_idx": 25, "right": false, "start": 152, "end": 326}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "GTGCTGCAAGAGTCACGACGTTTCTTCGCTAGAAAGGGGGAT?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 37, "end": 47},
+        {"helix_idx": 3, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 2, "right": false, "start": 47, "end": 58},
+        {"helix_idx": 1, "right": true, "start": 47, "end": 68}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "TCAAGCTGGCTTACGCCTTTGGGGCGCGAGCTAGCTATATTT?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 58, "end": 68},
+        {"helix_idx": 3, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 2, "right": false, "start": 68, "end": 79},
+        {"helix_idx": 1, "right": true, "start": 68, "end": 89}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "ATAACCTGTTTGAAAAGGTGGCAGTTTGACCGCAAATGGTCA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 79, "end": 89},
+        {"helix_idx": 3, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 2, "right": false, "start": 89, "end": 100},
+        {"helix_idx": 1, "right": true, "start": 89, "end": 110}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "CAGACATTTCATTAGATACCAGGCGCATAGGTGAACGGTGTA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 100, "end": 110},
+        {"helix_idx": 3, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 2, "right": false, "start": 110, "end": 121},
+        {"helix_idx": 1, "right": true, "start": 110, "end": 131}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "AGAGGACAGACTGGCTGACCTTCAATCATAACCAACTTTGAA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 121, "end": 131},
+        {"helix_idx": 3, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 2, "right": false, "start": 131, "end": 142},
+        {"helix_idx": 1, "right": true, "start": 131, "end": 152}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "AGCGAACTGAGGGAACCGGGGTTTTGCTCAGGGATTAGGATT?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 142, "end": 152},
+        {"helix_idx": 3, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 2, "right": false, "start": 152, "end": 163},
+        {"helix_idx": 1, "right": true, "start": 152, "end": 173}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "CTCAAGAGAATACCAGGCGGATTCTGAAACAGGCTGAGACTC?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 163, "end": 173},
+        {"helix_idx": 3, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 2, "right": false, "start": 173, "end": 184},
+        {"helix_idx": 1, "right": true, "start": 173, "end": 194}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "CGAATTAAGATGAAAGTAGCCCTTTTTAAGAAGCTATCTTAC?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 184, "end": 194},
+        {"helix_idx": 3, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 2, "right": false, "start": 194, "end": 205},
+        {"helix_idx": 1, "right": true, "start": 194, "end": 215}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "AAATAGCAATAAAGTAAGCAGAGAGTTAAGCAAGAAACAATG?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 205, "end": 215},
+        {"helix_idx": 3, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 2, "right": false, "start": 215, "end": 226},
+        {"helix_idx": 1, "right": true, "start": 215, "end": 236}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "TTTTAAGAGCCCAATAACATCTTCTGACCTAATTTTAGTTAA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 226, "end": 236},
+        {"helix_idx": 3, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 2, "right": false, "start": 236, "end": 247},
+        {"helix_idx": 1, "right": true, "start": 236, "end": 257}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "TTTCAAATATAATTTAATGGTTATCCAATCGCGAGAAAACTT?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 247, "end": 257},
+        {"helix_idx": 3, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 2, "right": false, "start": 257, "end": 268},
+        {"helix_idx": 1, "right": true, "start": 257, "end": 278}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "CGCAAGAACGCAAGACATGAGAGCCAGCAGCCAACAGTGCCA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 268, "end": 278},
+        {"helix_idx": 3, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 2, "right": false, "start": 278, "end": 289},
+        {"helix_idx": 1, "right": true, "start": 278, "end": 299}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "ACACCGCCTGAAATGAAAAATCACCGAACGAGGTCAGTATTA?????????????????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 289, "end": 299},
+        {"helix_idx": 3, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 2, "right": false, "start": 299, "end": 310},
+        {"helix_idx": 1, "right": true, "start": 299, "end": 320}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "??????????ACGCCAGGGTTTTCCCGCGATTAAGTTGGGTA??????????",
+      "substrands": [
+        {"helix_idx": 3, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 2, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "??????????ATGCCTGCAGGTCGACCCAGTGCCAAGCTTGC??????????",
+      "substrands": [
+        {"helix_idx": 5, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 4, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "??????????TGGTCATAGCTGTTTCCTCGAATTCGTAATCA??????????",
+      "substrands": [
+        {"helix_idx": 7, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 6, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "??????????ACGAGCCGGAAGCATACAATTCCACACAACAT??????????",
+      "substrands": [
+        {"helix_idx": 9, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 8, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "??????????CATTAATTGCGTTGCGTGAGTGAGCTAACTCA??????????",
+      "substrands": [
+        {"helix_idx": 11, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 10, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "??????????CTGCATTAATGAATCGAAACCTGTCGTGCCAG??????????",
+      "substrands": [
+        {"helix_idx": 13, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 12, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "??????????GGGTGGTTTTTCTTTTTGCGTATTGGGCGCCA??????????",
+      "substrands": [
+        {"helix_idx": 15, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 14, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "??????????TGGCCCTGAGAGAGTTATTGCCCTTCACCGCC??????????",
+      "substrands": [
+        {"helix_idx": 17, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 16, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "??????????ATCCTGTTTGATGGTGGCCCCAGCAGGCGAAA??????????",
+      "substrands": [
+        {"helix_idx": 19, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 18, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "??????????GCCCGAGATAGGGTTGATAAATCAAAAGAATA??????????",
+      "substrands": [
+        {"helix_idx": 21, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 20, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "??????????ACGTGGACTCCAACGTAGTCCACTATTAAAGA??????????",
+      "substrands": [
+        {"helix_idx": 23, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 22, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "??????????CGTGAACCATCACCCAGGGCGATGGCCCACTA??????????",
+      "substrands": [
+        {"helix_idx": 25, "right": true, "start": 11, "end": 37},
+        {"helix_idx": 24, "right": false, "start": 11, "end": 37}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "??????????AAAACAGAGGTGAGGCACCACCAGCAGAAGAT??????????",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 3, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "??????????GCCCTAAAACATCGCCAATGCGCGAACTGATA??????????",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 5, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "??????????CACAGACAATATTTTTGCGTAAGAATACGTGG??????????",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 7, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "??????????TGGCCAACAGAGATAGAATAAAAGGGACATTC??????????",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 9, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "??????????TTACATTGGCAGATTCGTCTGAAATGGATTAT??????????",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 11, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "??????????GCTCATGGAAATACCTTTGCAACAGGAAAAAC??????????",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 13, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "??????????CTGGTAATATCCAGAACAAACTATCGGCCTTG??????????",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 15, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "??????????TAGTAATAACATCACTGCAATACTTCTTTGAT??????????",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 17, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "??????????AAGAGTCTGTCCATCATGAGGCCACCGAGTAA??????????",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 19, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "??????????ACGCCAGAATCCTGAGTTTAGACAGGAACGGT??????????",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 21, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "??????????AGCGGGAGCTAAACAGTCCTCGTTAGAATCAG??????????",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 23, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "??????????TATGGTTGCTTTGACGGCTACAGGGCGCGTAC??????????",
+      "substrands": [
+        {"helix_idx": 24, "right": false, "start": 310, "end": 336},
+        {"helix_idx": 25, "right": true, "start": 310, "end": 336}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "GCCGTAAAACGACGGTCTAGAGGATCCGCAACTGTTGTGCGG",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 5, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 4, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "TGCCCGGGTACCGAGCTGTGTGAAATTCCAGGCAAATCAGGC",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 7, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 6, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "AAAGTTATCCGCTCAAAGTGTAAAGCCCAGCTTTCCTGCCGG",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 9, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 8, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "AGCTGGGGTGCCTAACTCACTGCCCGCCAGTATCGGCACTCC",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 11, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 10, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "CGATTTCCAGTCGGGGCCAACGCGCGGACCGTGCATGGACGA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 13, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 12, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "GTAGGAGAGGCGGTTCACCAGTGAGACTAGGTCACGCGCATC",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 15, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 14, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "GGAGGGCAACAGCTGGCAGCAAGCGGTTGGGAACAAGTAATG",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 17, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 16, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "CCGCCACGCTGGTTTGTTCCGAAATCGTGTGAGCGAGATTCT",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 19, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 18, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "AAAGCAAAATCCCTTAGTGTTGTTCCACCTTCCTGTAACATT",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 21, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 20, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "TGGGTTTGGAACAAGCAAAGGGCGAAATAGGAACGCCGCGTC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 37, "end": 52},
+        {"helix_idx": 23, "right": true, "start": 37, "end": 58},
+        {"helix_idx": 22, "right": false, "start": 52, "end": 58}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "AGTAGCATGCGATCGGGGAAGGTAACATCCAATAAAAATAGT",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 5, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 4, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "TTAAGCAATCGCCATGCGCCATTAAAGCCTCAGAGCGCAAAA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 7, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 6, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "TATGACCCCTTCTGGGGCACCGTGTAATACTTTTGCAAACAT",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 9, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 8, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "AAAATTTTAAGATCGCCTCAGGTAGAACCCTCATATAGGATA",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 11, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 10, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "GGTAAAGATTTGAGGCTGCCAGTTCAAAAGGGTGAGTGTGTA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 13, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 12, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "TATGATATAGATGGGTTGGTGTTCAACCGTTCTAGCCATCAA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 15, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 14, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "TTTTGAGAATTGACCACGGCGGGATCTACAAAGGCTAGCTAT",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 17, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 16, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "ACAAGAGACCCGTCGGTAACAAATCGATGAACGGTAGAGCAA",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 19, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 18, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "CCCCGGTTTTTCATCAGCCAGCGATAATCAGAAAAGTATGTA",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 21, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 20, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "TATTTAAAAATAATTCATCAAATTGTAAACGTTAATAGCAAA",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 58, "end": 73},
+        {"helix_idx": 23, "right": true, "start": 58, "end": 79},
+        {"helix_idx": 22, "right": false, "start": 73, "end": 79}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "TTTATCAATTCTACTTCATACAGGCAAGTTGATTCCAGTAGA",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 5, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 4, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "ACAGGCAAAGAATTAATAAAGCTAAATTACGGTGTCCATATA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 7, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 6, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "AAGCGGTTGTACCAAGGGAGAAGCCTTTAGCTCAACCAACTA",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 9, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 8, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "CTGTATTTCAACGCAATTTTAAATGCAGGCTTAGAGATAATG",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 11, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 10, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "GATATGCCTGAGTAAAAAGGCCGGAGAGCTCCTTTTTTTGCG",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 13, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 12, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "ATTCAGTCAAATCACTGATAAATTAATCAACAGGTCCCTTTA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 15, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 14, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "CTCGCCGGAGAGGGTATCAGGTCATTGGCTTCAAAGAGCAAA",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 17, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 16, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "CGACCTGAGAGTCTGATCGTAAAACTACGAAAGACTTTAATT",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 19, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 18, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "GCCGCATGTCAATCACCCCAAAAACAGGCGGATTGCGAGGAA",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 21, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 20, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "AAAGAAGATTGTATAATTTTGTTAAAATCTTTACCCAGAAGC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 79, "end": 94},
+        {"helix_idx": 23, "right": true, "start": 79, "end": 100},
+        {"helix_idx": 22, "right": false, "start": 94, "end": 100}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "CAAGAACCGCGAACGCAATTCTGGATATTCATTACCTCTTGA",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 5, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 4, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "TGAATAAGTTCATTCTGGAAGTGCTTGCCCTGACGAATTCAG",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 7, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 6, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "TGAGATGGAAATATGATGTTTTTTTAATTTCAACTTTGGGCT",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 9, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 8, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "AAGAACTGGCTGAATCTTAATTGCTCATTATACCAGGATTTT",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 11, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 10, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "ATAAAACGGGTCATTGATAAGAAACTAACGGAACAAACGTTA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 13, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 12, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "GAGATTTAGAGAGTAAGGATTAGGAATACCACATTCTCAGTT",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 15, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 14, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "ATTACGAGGACCGGACGAACCAGCATAGTAAGAGCAAAAGGA",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 17, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 16, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "CGATAAAATCGCGTTTCAAATAACCAAAATAGCGAGAGACGA",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 19, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 18, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "GGGTAATAAGATTAAATCAAAAGTAAAATGTTTAGACAGAGG",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 21, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 20, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "ATAAATATTATAGTCTGACTATTCATTGAATCCCCCATCGTC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 100, "end": 115},
+        {"helix_idx": 23, "right": true, "start": 100, "end": 121},
+        {"helix_idx": 22, "right": false, "start": 115, "end": 121}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "GGTCATCAAGAGTAACAAATCAACGTAATGTTACTTGCAGAC",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 5, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 4, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "TCCACAAAGCTGCTCGAAACACCAGAAGATAAATTGACCTGC",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 7, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 6, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "CCTCGAGTAGTAAATTAATCATTGTGAACAAAGTACTCATCG",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 9, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 8, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "GAAATTACCTTATGCTCAGGACGTTGGCTTTGACCCAAGCGC",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 11, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 10, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "CATGAAGAAAAATCTCATTATTACAGGAAAGAGGCAAACACT",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 13, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 12, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "ACGTAGAAAGATTCAAACTAATGCAGATAATGCCACCCTAAA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 15, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 14, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "ACGTACATAACGCCAACACTATCATAATGAGGAAGTTAAAAT",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 17, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 16, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "TCACCCTCGTTTACCAGGCTTTTGCAATACAGAGGCACTTTT",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 19, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 18, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "GGCAAGAAGTTTTGCCTGGATAGCGTCAAAGACAGCAGCAAC",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 21, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 20, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "GCGCAATACTGCGGATCAAATGCTTTACCGCTTTTGTCAGCA",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 121, "end": 136},
+        {"helix_idx": 23, "right": true, "start": 121, "end": 142},
+        {"helix_idx": 22, "right": false, "start": 136, "end": 142}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "TGATATAAACGAGGCAGCCGGAGTATAGCCCGGAATGAGGGT",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 5, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 4, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "ACCGCCACATCCGCGTGTCGAACCTCAGAACCGCCATTTAGT",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 7, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 6, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "CCCTCATTATTTGTAAACGGAGTTCAGGGATAGCAACCACCA",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 9, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 8, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "GAGTTTCGTTATACCCCAGCGATCACCAGTACAAACAACACT",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 11, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 10, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "CTCATAGTACACTAAAAAGAATTAGCGTAACGATCTACAGCC",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 13, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 12, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "AATGAATTGCACCAATACGAAGTTCTGTATGGGATTTTAGTA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 15, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 14, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "AGTGAGAAAAACGGGTTCCATTTAGAAAGGAACAACCAGCGG",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 17, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 16, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "GTTGAAAAACTAAAGTTTGAGGTCTCCAAAAAAAAGTTTCAC",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 19, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 18, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "TTATCAGCCGAGGGTATCGGAATTGCTTTCGAGGTGATCGGT",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 21, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 20, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "GCGCCGACGTCACCCCGGGATCAATGACAACAACCAATAGTT",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 142, "end": 157},
+        {"helix_idx": 23, "right": true, "start": 142, "end": 163},
+        {"helix_idx": 22, "right": false, "start": 157, "end": 163}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "TATAAGTGCCGTCGAAGGTGTATCACCTAATGCCCCACCTAT",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 5, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 4, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "AGTGTACTCAGGAGGCCCTCAGAACCGGTGCCTTGAATAAAC",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 7, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 6, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "TCACCACCCTCAGAGGCCCAATAGGAAGAGTGTACTACGGGG",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 9, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 8, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "CAGCCCATGTACCGTTACAACGCCTGTGTAAGCGTCATGATA",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 11, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 10, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "CCAAGCATTCCACAGAAAGTTTTGTCGTGGAAAGCGACCGTT",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 13, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 12, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "GAATCTTTCCAGACGTTGCTAAACAACCACAAACAAAAGCCA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 15, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 14, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "ATTTTTCAACAGTTTTAAAGGAATTGCTTGAGGCAGCTTGAT",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 17, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 16, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "AGGGAATAATAATTTGCTCCAAAAGGACCACCAGAGGACAGG",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 19, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 18, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "CCAGCCTTTAATTGTAATTTCTTAAACAGCCACCACCCAGAA",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 21, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 20, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "CAGAGCTTGATACCGTCGCCCACGCATAGAGCCGCCCACCCT",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 163, "end": 178},
+        {"helix_idx": 23, "right": true, "start": 163, "end": 184},
+        {"helix_idx": 22, "right": false, "start": 178, "end": 184}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "AGAAGGAATTTCGGACTGCCTAACCGAGGAAACGCAGTTACC",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 5, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 4, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "TGATTAAGTGCCCGTGTAACAGACTCCTTATTACGCCTGGCA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 7, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 6, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "ATAAAGGTAGTTTTAGGTAATAGGCAACATATAAAAACATAC",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 9, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 8, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "TTTTGTCAGCTTTTGATACATGCAATCAATAGAAAAAGTTTA",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 11, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 10, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "AGGGCGACTGAATTTCAGTCTCATTCAACCGATTGAGACAAA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 13, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 12, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "TTCATTAACTCATTAATAAATCAGGTGAATTATCACAAATTA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 15, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 14, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "AGCCAGCAGATTGGCGTCAGACAAATCACCAGTAGCAATTAG",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 17, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 16, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "ACCAATGACAGCATTCCGCCGCAACCATCGATAGCAAACGTC",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 19, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 18, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "TTGCCTTTGCCGCCACCTCAGAAGCGTCAGACTGTATCAAGT",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 21, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 20, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "CCCCCTTAGAACCGCACCCTCATTAGCGTTTGCCATTCATAG",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 184, "end": 199},
+        {"helix_idx": 23, "right": true, "start": 184, "end": 205},
+        {"helix_idx": 22, "right": false, "start": 199, "end": 205}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "ATTTAGCCGAACAAAATAATAACGGAACGCTAATATACAAGA",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 5, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 4, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "GAGTACCCAAAAGAAAGTATGTTAGCAAACACCCTGGTAATT",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 7, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 6, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "CTGAACGTAGAAAATGAAACGCAAAGACAGGGAAGCAATTAA",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 9, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 8, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "AAACACCACGGAATATTCATATGGTTTTAGCAGCCTACATAA",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 11, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 10, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "AAAACCAGCGCCAAAGGGAGGGAAGGTAACGATTTTAAATGA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 13, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 12, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "AGAAAATATTGACGGCGTCACCGACTTCAGCCATATCAAATA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 15, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 14, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "AAAGAGCCATTTGGGACCATTACCATTTCCAGAGCCCAAAAT",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 17, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 16, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "CTTAGCAAGGCCGGAGCACCGTAATCATCCTGAATCGAGCGT",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 19, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 18, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "TTAGTAGCGACAGAAGCGCGTTTTCATTAGTTGCTAACAATT",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 21, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 20, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "GATCGGCATTTTCGGCTTTTCATAATCTTGCGGGAGAATCAA",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 205, "end": 220},
+        {"helix_idx": 23, "right": true, "start": 205, "end": 226},
+        {"helix_idx": 22, "right": false, "start": 220, "end": 226}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "ATAAATAAATAACCCCAGAGAGGGCGTTAAATAAGACGTGTG",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 5, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 4, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "AGCCTGTTTCAGAGGAACAAAGTAGTATCATATGCGAGAAAA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 7, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 6, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "CGCTCAACACGGGAGGCATTAGAGTAGGGCTTAATTAGCCAA",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 9, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 8, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "GTAATTTAGAGAATATTACAGAGGCAGAGGCATTTTCAACAT",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 11, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 10, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "GACAAAAGACGTCAATTGTTTAGTAAAGTAATTCTGAGTACC",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 13, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 12, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "GCTAATGCCCCAATCTATTTATAGAACGCGCCTGTTTGTTCA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 15, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 14, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "AAATAATACCAGTTATAATTTGTCCCATCCTAATTTCAAGAA",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 17, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 16, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "CTGTCTTTCGCTAACTTACCAACCTTATCATTCCAAAATCGG",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 19, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 18, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "TCGAGAACCCCAGCTTTTTGCAAAGCAAGCCGTTTTCACTCA",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 21, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 20, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "CAATAGCAAGCCTTAGTTTTGAAGCAAATCAGATATCGCGCC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 226, "end": 241},
+        {"helix_idx": 23, "right": true, "start": 226, "end": 247},
+        {"helix_idx": 22, "right": false, "start": 241, "end": 247}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "CAATGAAATACCGACATAAACACCGGAGGTTATATACTGATG",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 5, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 4, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "TTGATCATAATTACTTTATACAAATTCGAGACTACCCTTAGG",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 7, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 6, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "TGATTACCAGTATAAGAGAATCGCCATCAATAGTGATAGGTC",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 9, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 8, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "AGTATTTAACAACGCCGAGCCAGTAATGCGATAGCTGAGAAG",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 11, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 10, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "ATAAAGAGAATATAATCCAGACGACGAATTAATTTTGAAAAC",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 13, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 12, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "TTACAATAAACAACATATCAACAATAGAATAACCTTTCGCTA",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 15, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 14, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "GTGATAAGTCCTGAAACGAGCATGTAGGGAAACAGTATGTGA",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 17, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 16, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "AATAAACCAATCAATGAACGGGTATTATTAACAATTTTTTTT",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 19, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 18, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "CATAACCAAGTACCGTATTTTCATCGTAACAAACATTAATTA",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 21, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 20, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "TGAAGGAATCATTACAGAAGGCTTATCATTTCAATTAGATGA",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 247, "end": 262},
+        {"helix_idx": 23, "right": true, "start": 247, "end": 268},
+        {"helix_idx": 22, "right": false, "start": 262, "end": 268}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "AACCTCAAGTAAATGACTATATATATCAAACCCTCATTGCTG",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 5, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 4, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "GTTGAAAGCCTCCGGTTTTTAAGAATTGAGGAAGGTTCAACA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 7, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 6, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "CTAATAGAAAAATCAATTTATCTTAGAGCCGTCAATTAACAA",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 9, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 8, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "AGACTTTAAGACGCTTAGATTACAAACAATTCGACAAGTATT",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 11, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 10, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "TTAATTTTAATCCTTCCCTTAGAAAAGTTTGAGTAAACGTTA",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 13, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 12, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "CAGAAGGATAAATCGGCTTCTGGCGGAATTATCATCAACCAC",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 15, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 14, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "ATCAATATTCAATATACATAAAAATCCTGATTGTTTCAATTC",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 17, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 16, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "GAACCTACAATTACCTCATTTGCATATCAAAATTATGGGTTA",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 19, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 18, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "GTAGATTTACAAAATCAAGAAATCAGGTTTAACGTCAATTGC",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 21, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 20, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "ATCGGGAGCAAAAGAACCTGAGAAACAATAACGGATTTTTAC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 268, "end": 283},
+        {"helix_idx": 23, "right": true, "start": 268, "end": 289},
+        {"helix_idx": 22, "right": false, "start": 283, "end": 289}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "AATTAAAGCATCACCATCAATATCTGGTTAGTCTTTATTAAA",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 5, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 4, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "CTATCAGTTGGCAAATATCTAAAATATGACCTGAAAGAATGG",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 7, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 6, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "TCTCTTTAGGAGCACAGATAATACATTACGACCAGTAACCCT",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 9, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 8, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "CACTGAGGATTTAGAACTCGTATTAAACGCTCAATCACCAGT",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 11, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 10, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "TGATCCTTTGCCCGACATTATCATTTTCGCCAGCCAACATTT",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 13, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 12, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "TACGCGGAACAAAGAATATTCCTGATTAGAAGAACTCAATAT",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 15, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 14, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "AGTATCAGATGATGGGGATTATACTTCACCGTTGTATGCCTG",
+      "substrands": [
+        {"helix_idx": 16, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 17, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 16, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "TTATGAATAATGGAATTGCACGTAAAATATAATCAGCGCAAA",
+      "substrands": [
+        {"helix_idx": 18, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 19, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 18, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "TTTCAGAAATAAAGAAGATGAATATACTAAAGGGATAAGTGT",
+      "substrands": [
+        {"helix_idx": 20, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 21, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 20, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "GATAGTAACAGTACCTCGCCTGATTGCAACGTGCTTGAGGCC",
+      "substrands": [
+        {"helix_idx": 22, "right": false, "start": 289, "end": 304},
+        {"helix_idx": 23, "right": true, "start": 289, "end": 310},
+        {"helix_idx": 22, "right": false, "start": 304, "end": 310}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 47, "end": 58},
+        {"helix_idx": 1, "right": false, "start": 37, "end": 58},
+        {"helix_idx": 0, "right": true, "start": 37, "end": 47}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 68, "end": 79},
+        {"helix_idx": 1, "right": false, "start": 58, "end": 79},
+        {"helix_idx": 0, "right": true, "start": 58, "end": 68}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 89, "end": 100},
+        {"helix_idx": 1, "right": false, "start": 79, "end": 100},
+        {"helix_idx": 0, "right": true, "start": 79, "end": 89}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 110, "end": 121},
+        {"helix_idx": 1, "right": false, "start": 100, "end": 121},
+        {"helix_idx": 0, "right": true, "start": 100, "end": 110}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 131, "end": 142},
+        {"helix_idx": 1, "right": false, "start": 121, "end": 142},
+        {"helix_idx": 0, "right": true, "start": 121, "end": 131}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 152, "end": 163},
+        {"helix_idx": 1, "right": false, "start": 142, "end": 163},
+        {"helix_idx": 0, "right": true, "start": 142, "end": 152}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 173, "end": 184},
+        {"helix_idx": 1, "right": false, "start": 163, "end": 184},
+        {"helix_idx": 0, "right": true, "start": 163, "end": 173}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 194, "end": 205},
+        {"helix_idx": 1, "right": false, "start": 184, "end": 205},
+        {"helix_idx": 0, "right": true, "start": 184, "end": 194}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 215, "end": 226},
+        {"helix_idx": 1, "right": false, "start": 205, "end": 226},
+        {"helix_idx": 0, "right": true, "start": 205, "end": 215}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 236, "end": 247},
+        {"helix_idx": 1, "right": false, "start": 226, "end": 247},
+        {"helix_idx": 0, "right": true, "start": 226, "end": 236}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 257, "end": 268},
+        {"helix_idx": 1, "right": false, "start": 247, "end": 268},
+        {"helix_idx": 0, "right": true, "start": 247, "end": 257}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 278, "end": 289},
+        {"helix_idx": 1, "right": false, "start": 268, "end": 289},
+        {"helix_idx": 0, "right": true, "start": 268, "end": 278}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 0, "b": 0},
+      "substrands": [
+        {"helix_idx": 0, "right": true, "start": 299, "end": 310},
+        {"helix_idx": 1, "right": false, "start": 289, "end": 310},
+        {"helix_idx": 0, "right": true, "start": 289, "end": 299}
+      ]
+    }
+  ]
+}
