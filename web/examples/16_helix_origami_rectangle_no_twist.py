@@ -3,7 +3,7 @@ import scadnano as sc
 
 
 def main():
-    design = rect.create(num_helices=16, num_cols=24, assign_seq=True, twist_correction_deletion_spacing=3)
+    design = rect.create(num_helices=16, num_cols=26, assign_seq=True, twist_correction_deletion_spacing=3)
     return design
 
 

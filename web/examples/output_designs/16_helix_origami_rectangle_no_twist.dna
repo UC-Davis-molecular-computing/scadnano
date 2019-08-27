@@ -2,64 +2,64 @@
   "version": "0.0.1",
   "grid": "square",
   "helices": [
-    {"idx": 0, "max_bases": 416, "grid_position": [0, 0]},
-    {"idx": 1, "max_bases": 416, "grid_position": [0, 1]},
-    {"idx": 2, "max_bases": 416, "grid_position": [0, 2]},
-    {"idx": 3, "max_bases": 416, "grid_position": [0, 3]},
-    {"idx": 4, "max_bases": 416, "grid_position": [0, 4]},
-    {"idx": 5, "max_bases": 416, "grid_position": [0, 5]},
-    {"idx": 6, "max_bases": 416, "grid_position": [0, 6]},
-    {"idx": 7, "max_bases": 416, "grid_position": [0, 7]},
-    {"idx": 8, "max_bases": 416, "grid_position": [0, 8]},
-    {"idx": 9, "max_bases": 416, "grid_position": [0, 9]},
-    {"idx": 10, "max_bases": 416, "grid_position": [0, 10]},
-    {"idx": 11, "max_bases": 416, "grid_position": [0, 11]},
-    {"idx": 12, "max_bases": 416, "grid_position": [0, 12]},
-    {"idx": 13, "max_bases": 416, "grid_position": [0, 13]},
-    {"idx": 14, "max_bases": 416, "grid_position": [0, 14]},
-    {"idx": 15, "max_bases": 416, "grid_position": [0, 15]}
+    {"idx": 0, "max_bases": 448, "grid_position": [0, 0]},
+    {"idx": 1, "max_bases": 448, "grid_position": [0, 1]},
+    {"idx": 2, "max_bases": 448, "grid_position": [0, 2]},
+    {"idx": 3, "max_bases": 448, "grid_position": [0, 3]},
+    {"idx": 4, "max_bases": 448, "grid_position": [0, 4]},
+    {"idx": 5, "max_bases": 448, "grid_position": [0, 5]},
+    {"idx": 6, "max_bases": 448, "grid_position": [0, 6]},
+    {"idx": 7, "max_bases": 448, "grid_position": [0, 7]},
+    {"idx": 8, "max_bases": 448, "grid_position": [0, 8]},
+    {"idx": 9, "max_bases": 448, "grid_position": [0, 9]},
+    {"idx": 10, "max_bases": 448, "grid_position": [0, 10]},
+    {"idx": 11, "max_bases": 448, "grid_position": [0, 11]},
+    {"idx": 12, "max_bases": 448, "grid_position": [0, 12]},
+    {"idx": 13, "max_bases": 448, "grid_position": [0, 13]},
+    {"idx": 14, "max_bases": 448, "grid_position": [0, 14]},
+    {"idx": 15, "max_bases": 448, "grid_position": [0, 15]}
   ],
   "strands": [
     {
       "color": {"r": 0, "g": 102, "b": 204},
-      "dna_sequence": "TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCTCTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTCGCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTGCCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTTCCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCTTATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTCTAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAAATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAATAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATATCTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTTCTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTGTTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTATTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTGGTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTCGGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCATCAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTCAGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATATTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTTGCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCG",
+      "dna_sequence": "TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCTCTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTCGCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTGCCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTTCCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCTTATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTCTAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAAATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAATAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATATCTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTTCTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTGTTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTATTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTGGTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTCGGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCATCAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTCAGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATATTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTTGCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCGTTATTGTTTCTCCCGATGTAAAAGGTACTGTTACTGTATATTCATCTGACGTTAAACCTGAAAATCTACGCAATTTCTTTATTTCTGTTTTACGTGCAAATAATTTTGATATGGTAGGTTCTAACCCTTCCATTATTCAGAAGTATAATCCAAACAATCAGGATTATATTGATGAATTGCCATCATCTGATAATCAGGAATATGATGATAATTCCGCTCCTTCTGGTGGTTTCTTTGTTCCGCAAAATGATAATGTTACTCAAACTTTTAAAATTAATAACGTTCGGGCAAAGGATTTAATACGAGTTGTCGAATTGTTTGTAAAGTCTAATACTTCTAAATCCTCAAATGTATTATCTATTGACGGCTCTAATCTATTAGTTGTTAGTGCTCCTAAAGATATTTTAGATAACCTTCCTCAATTCCTTTCAACTGTTGATTTGCCAACTGACCAGATATTGATTGAGGGTTTGATATTTGAGGTTCAGCAAGGTGA",
       "substrands": [
-        {"helix_idx": 15, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 14, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 13, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 12, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 11, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 10, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 9, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 8, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 7, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 6, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 5, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 4, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 3, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 2, "right": true, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 1, "right": false, "start": 16, "end": 208, "deletions": [49, 97, 145, 193]},
-        {"helix_idx": 0, "right": true, "start": 16, "end": 400, "deletions": [49, 97, 145, 193, 241, 289, 337, 385]},
-        {"helix_idx": 1, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 2, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 3, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 4, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 5, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 6, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 7, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 8, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 9, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 10, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 11, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 12, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 13, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 14, "right": true, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]},
-        {"helix_idx": 15, "right": false, "start": 208, "end": 400, "deletions": [241, 289, 337, 385]}
+        {"helix_idx": 15, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 14, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 13, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 12, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 11, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 10, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 9, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 8, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 7, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 6, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 5, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 4, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 3, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 2, "right": true, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 1, "right": false, "start": 16, "end": 224, "deletions": [33, 81, 129, 177]},
+        {"helix_idx": 0, "right": true, "start": 16, "end": 432, "deletions": [33, 81, 129, 177, 225, 273, 321, 369, 417]},
+        {"helix_idx": 1, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 2, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 3, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 4, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 5, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 6, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 7, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 8, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 9, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 10, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 11, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 12, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 13, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 14, "right": true, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]},
+        {"helix_idx": 15, "right": false, "start": 224, "end": 432, "deletions": [225, 273, 321, 369, 417]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "GATTTGTATCATCGCCAACAAAGTACAACGGA",
+      "dna_sequence": "GCCGCTTTTGCGGGATTTGCAGGGAGTTAAAG",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 16, "end": 32},
         {"helix_idx": 0, "right": false, "start": 16, "end": 32}
@@ -67,7 +67,7 @@
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "GAAAAATCTACGTTAAGTCAGGACGTTGGGAA",
+      "dna_sequence": "CAAGAGTAATCTTGACGCTGGCTGACCTTCAT",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 16, "end": 32},
         {"helix_idx": 2, "right": false, "start": 16, "end": 32}
@@ -75,7 +75,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "AAGCAAAGCGGATTGCTGACTATTATAGTCAG",
+      "dna_sequence": "TGCAAAAGAAGTTTTGAATAGCGAGAGGCTTT",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 16, "end": 32},
         {"helix_idx": 4, "right": false, "start": 16, "end": 32}
@@ -83,7 +83,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "GGCATCAATTCTACTACGCGAGCTGAAAAGGT",
+      "dna_sequence": "ACGGTGTCTGGAAGTTAATATGCAACTAAAGT",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 16, "end": 32},
         {"helix_idx": 6, "right": false, "start": 16, "end": 32}
@@ -91,7 +91,7 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CTGGAGCAAACAAGAGGTCATTGCCTGAGAGT",
+      "dna_sequence": "AGTCAAATCACCATCAGAGAAAGGCCGGAGAC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 16, "end": 32},
         {"helix_idx": 8, "right": false, "start": 16, "end": 32}
@@ -99,7 +99,7 @@
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "GACGACAGTATCGGCCGCCAGTTTGAGGGGAC",
+      "dna_sequence": "GGCGGATTGACCGTAACTCCGTGGGAACAAAC",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 16, "end": 32},
         {"helix_idx": 10, "right": false, "start": 16, "end": 32}
@@ -107,7 +107,7 @@
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "AAAGTGTAAAGCCTGGTACGAGCCGGAAGCAT",
+      "dna_sequence": "AAATTGTTATCCGCTCAGCTGTTTCCTGTGTG",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 16, "end": 32},
         {"helix_idx": 12, "right": false, "start": 16, "end": 32}
@@ -115,7 +115,7 @@
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "AACGTGGACTCCAACGGAGTCCACTATTAAAG",
+      "dna_sequence": "GAGTCCACTATTAAAGTTCCAGTTTGGAACAA",
       "substrands": [
         {"helix_idx": 15, "right": true, "start": 16, "end": 32},
         {"helix_idx": 14, "right": false, "start": 16, "end": 32}
@@ -123,349 +123,347 @@
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TGTATCGGTTTATCAAAAGGAGCCTTTAAT",
+      "dna_sequence": "AACCCATGTACCGTAAGCAAGCCCAATAGG",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 1, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 0, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 1, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "ACCGTACTCAGGAGGCGGAATAGGTGTATC",
+      "dna_sequence": "AGCCAGAATGGAAAGATAAATCCTCATTAA",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 3, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 2, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 3, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "CGCCAGCATTGACAGCACCACCAGAGCCGC",
+      "dna_sequence": "ACTTGAGCCATTTGGTTATCACCGTCACCG",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 5, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 4, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 5, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TATTGACGGAAATTAGGGAGGGAAGGTAAA",
+      "dna_sequence": "AACCCACAAGAATTGTAATATCAGAGAGAT",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 7, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 6, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 7, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "TAATATCAGAGAGATAGGGTAATTGAGCGC",
+      "dna_sequence": "CATCGTAGGAATCATAGCCGTTTTTATTTT",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 9, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 8, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 9, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "TACCGCGCCCAATAGCATCGTAGGAATCAT",
+      "dna_sequence": "TAATTACTAGAAAAATAAACACCGGAATCA",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 11, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 10, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 11, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "TTCTTACCAGTATAATATGCGTTATACAAA",
+      "dna_sequence": "TTAATTACATTTAACATCAAGAAAACAAAA",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 13, "right": true, "start": 384, "end": 400, "deletions": [385]}
+        {"helix_idx": 12, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 13, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ATAACCTTGCTTCTGAATATATGTGAGTGA",
+      "dna_sequence": "CTTTGCCCGAACGTTAACTCGTATTAAATC",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 384, "end": 400, "deletions": [385]},
-        {"helix_idx": 15, "right": true, "start": 384, "end": 400, "deletions": [385]}
-      ]
-    },
-    {
-      "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CGGAACGAGGGTAGCAACGGCTAGTAATCT",
-      "substrands": [
-        {"helix_idx": 0, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 1, "right": true, "start": 192, "end": 200, "deletions": [193]}
-      ]
-    },
-    {
-      "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CGTAACGATCTAAAGTTGACAAGAGACAGCAT",
-      "substrands": [
-        {"helix_idx": 1, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 0, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 14, "right": false, "start": 416, "end": 432, "deletions": [417]},
+        {"helix_idx": 15, "right": true, "start": 416, "end": 432, "deletions": [417]}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "ATAGTTAGACCGGATATTCATTAATAAAAA",
+      "dna_sequence": "AGAATAGAAAGGAACAACTAAAGGAATTGCG",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 3, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 0, "right": false, "start": 216, "end": 248, "deletions": [225]}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "TACCAAGCCTCATCTTTGACCCCCTCAAGAG",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 1, "right": true, "start": 208, "end": 232, "deletions": [225]}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "AAGGATTAAGAGGCTGAGACTCCAGCGATTA",
+      "substrands": [
+        {"helix_idx": 1, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 2, "right": false, "start": 216, "end": 240, "deletions": [225]}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "AATCTACGACCAGTCAGGACGTTGTTCATAA",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 3, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "GTAACAGTGCCCGTATCCAAAATACAGCCCTC",
+      "dna_sequence": "TCAAAATCAGCGTTTGCCATCTTGGAAGAAA",
       "substrands": [
-        {"helix_idx": 3, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 2, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 3, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 4, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TGCCTTGAGCGAGAGGCTTTTGCGAGCTTA",
+      "dna_sequence": "GCCCGAAATTGCATCAAAAAGATTACGTAGA",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 5, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 6, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 5, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "CTGTAGCGCGTTTTCAATTGCTGAGGGGTCAG",
+      "dna_sequence": "AAATACATGCAGTATGTTAGCAAAAGAGGAA",
       "substrands": [
-        {"helix_idx": 5, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 4, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 5, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 6, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "GCGTCAGAATATAATGCTGTAGCGATAAAA",
+      "dna_sequence": "CAAAATTACATACAGGCAAGGCAACCTAATT",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 7, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 8, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 7, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "AAGACTCCTTATTACGATTTTTAGTGCCTTTA",
+      "dna_sequence": "TGCCAGTTAGCGTCTTTCCAGAGAGAATTAG",
       "substrands": [
-        {"helix_idx": 7, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 6, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 7, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 8, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "GCATGATTAACCCTCATATATTTCTCATTT",
+      "dna_sequence": "TTGTATAAAGAAAAGCCCCAAAAAACAATAA",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 9, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 10, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 9, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "CCTAATTTGCCAGTTATTTAACCAAAGAACTG",
+      "dna_sequence": "ACAACATGTCTGTCCAGACGACGCAGGAAGA",
       "substrands": [
-        {"helix_idx": 9, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 8, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 9, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 10, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "TTCCAGAGATAGGAACGCCATCACAAGGCG",
+      "dna_sequence": "CTCTTCGCTTGGGAAGGGCGATCGAGACTAC",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 11, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 12, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 11, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ACGCGCCTGTTTATCAATTAAGTTGAGCGTCT",
+      "dna_sequence": "CTTTTTAAAATCATAGGTCTGAGGTGCGGGC",
       "substrands": [
-        {"helix_idx": 11, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 10, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 11, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 12, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "AATGCAGAGGGTAACGCCAGGGTAGTGAGA",
+      "dna_sequence": "CTTTTCACGTATTGGGCGCCAGGGAAACAGA",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 13, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 14, "right": false, "start": 208, "end": 216},
+        {"helix_idx": 13, "right": true, "start": 208, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CAAATCCAATCGCAAGCGGGCAACGTTCAGCT",
+      "dna_sequence": "AATAAAGAAATTATTTGCACGTATGGTTTTT",
       "substrands": [
-        {"helix_idx": 13, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 12, "right": false, "start": 216, "end": 224}
-      ]
-    },
-    {
-      "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TGCTGATGAGCTGATTGCCCTTCGAGAAAG",
-      "substrands": [
-        {"helix_idx": 14, "right": false, "start": 192, "end": 216, "deletions": [193]},
-        {"helix_idx": 15, "right": true, "start": 192, "end": 200, "deletions": [193]}
+        {"helix_idx": 13, "right": true, "start": 232, "end": 240},
+        {"helix_idx": 14, "right": false, "start": 216, "end": 240, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "CGGATTCGCCTGATTGGAAGGGAATATGTAAA",
+      "dna_sequence": "GAACGTGGCGAGAAAGGAAGGGAATCACCTT",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 200, "end": 224},
-        {"helix_idx": 14, "right": false, "start": 216, "end": 224}
+        {"helix_idx": 15, "right": true, "start": 200, "end": 232, "deletions": [225]}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "CCCAGCGATTATACCAAGCGCGATGATAAAT",
+      "dna_sequence": "CCGATATATTCGGTCGCTGAGGCCGTCACC",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 32, "end": 56, "deletions": [49]},
-        {"helix_idx": 1, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 0, "right": false, "start": 32, "end": 56, "deletions": [33]},
+        {"helix_idx": 1, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "TGTGTCGACTGGCTCATTATACCATAAAACGA",
+      "dna_sequence": "CTCAGCAGAGACCAGGCGCATAGAAGAACC",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 2, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 3, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 2, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 3, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "ACTAACGGAATCAGGTCTTTACCCATCAAAAA",
+      "dna_sequence": "GGATATTCGACGATAAAAACCAACCAGAGG",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 4, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 5, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 4, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 5, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "GATTAAGAATATTTTCATTTGGGGATAGTAGT",
+      "dna_sequence": "GGGTAATAGCTCAACATGTTTTATCATTCC",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 6, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 7, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 6, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 7, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "AGCATTAACTACAAAGGCTATCAGAATCGATG",
+      "dna_sequence": "ATATAACAAAGATTCAAAAGGGTATATGAT",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 8, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 9, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 8, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 9, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "AACGGTAATCGTAACCGTGCATCTTCAGGAAG",
+      "dna_sequence": "ATTCAACCACAACCCGTCGGATTTGGGATA",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 10, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 11, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 10, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 11, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "ATCGCACTACAATTCCACACAACAGGTGCCTA",
+      "dna_sequence": "GGTCACGTCGTAATCATGGTCATACAATTC",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 12, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 13, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 12, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 13, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ATGAGTGATTCCAGTTTGGAACAATCAAAGGG",
+      "dna_sequence": "CACACAACTAGGGTTGAGTGTTGAACGTGG",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 40, "end": 48},
-        {"helix_idx": 14, "right": false, "start": 32, "end": 48},
-        {"helix_idx": 15, "right": true, "start": 32, "end": 40}
+        {"helix_idx": 14, "right": false, "start": 32, "end": 48, "deletions": [33]},
+        {"helix_idx": 15, "right": true, "start": 32, "end": 40, "deletions": [33]}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CGAAAAACCGTCTATCAGGGCGATAGGGTTG",
+      "dna_sequence": "ACTCCAACGTCAAAGGGCGAAAAAAAAGAATA",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 40, "end": 64, "deletions": [49]},
+        {"helix_idx": 15, "right": true, "start": 40, "end": 64},
         {"helix_idx": 14, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "TTAAGAAAATCCGCGACCTGCTCTTTGACC",
+      "dna_sequence": "CGGTGTACCGAAAGACAGCATCGGACGCATAA",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 1, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 2, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 1, "right": true, "start": 48, "end": 64},
         {"helix_idx": 0, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "AATCAAAAACAACATTATTACAATGCGATT",
+      "dna_sequence": "TACCAGACATTACCCAAATCAACGCAGATGAA",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 3, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 4, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 3, "right": true, "start": 48, "end": 64},
         {"helix_idx": 2, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "TTTAGCTGGAAGCCCGAAAGACTGACCATA",
+      "dna_sequence": "ATGCTGTAGTAAAATGTTTAGACTCCCTCGTT",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 5, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 6, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 5, "right": true, "start": 48, "end": 64},
         {"helix_idx": 4, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "GAGAGATCATCCAATAAATCATATAACCTG",
+      "dna_sequence": "TGTAGGTAGTTGATTCCCAATTCTTGAATATA",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 7, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 8, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 7, "right": true, "start": 48, "end": 64},
         {"helix_idx": 6, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "GGGCGCATCGTAAAACTAGCATCTATTTTT",
+      "dna_sequence": "AGCGAGTAGTTCTAGCTGATAAATGAGTAATG",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 9, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 10, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 9, "right": true, "start": 48, "end": 64},
         {"helix_idx": 8, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TCCGCTCCCAGCCAGCTTTCCGGTGTAGAT",
+      "dna_sequence": "CTCGAATTTGGTGTAGATGGGCGCTAAATGTG",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 11, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 12, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 11, "right": true, "start": 48, "end": 64},
         {"helix_idx": 10, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "AGTGTTGGCTAACTCACATTAAAATTGTTA",
+      "dna_sequence": "GCCCGAGAATACGAGCCGGAAGCAGTACCGAG",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 48, "end": 56, "deletions": [49]},
-        {"helix_idx": 13, "right": true, "start": 48, "end": 64, "deletions": [49]},
+        {"helix_idx": 14, "right": false, "start": 48, "end": 56},
+        {"helix_idx": 13, "right": true, "start": 48, "end": 64},
         {"helix_idx": 12, "right": false, "start": 56, "end": 64}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "AAAAGAATACACTAAAACACTCATCCATGTTA",
+      "dna_sequence": "GACAATGACAACAACCATCGCCCAACGAGGG",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 64, "end": 88},
+        {"helix_idx": 0, "right": false, "start": 64, "end": 88, "deletions": [81]},
         {"helix_idx": 1, "right": true, "start": 64, "end": 72}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "CTTAGCCGCATTGTGAATTACCTTGGTAGAAA",
+      "dna_sequence": "TAGCAACGCAACTTTGAAAGAGGATAACAAAG",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 72, "end": 80},
         {"helix_idx": 2, "right": false, "start": 64, "end": 80},
@@ -474,7 +472,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "GATTCATCGTTCAGAAAACGAGAATTCAAATA",
+      "dna_sequence": "CTGCTCATAGCAACACTATCATAAGGATAGCG",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 72, "end": 80},
         {"helix_idx": 4, "right": false, "start": 64, "end": 80},
@@ -483,7 +481,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "TCGCGTTTATTTCGCAAATGGTCAACAGGCAA",
+      "dna_sequence": "TCCAATACCTTAGAGCTTAATTGCGCGAACGA",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 72, "end": 80},
         {"helix_idx": 6, "right": false, "start": 64, "end": 80},
@@ -492,7 +490,7 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "GGCAAAGAATGCCGGAGAGGGTAGGTCAATCA",
+      "dna_sequence": "GTAGATTTTTTAAATGCAATGCCTTAATGCCG",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 72, "end": 80},
         {"helix_idx": 8, "right": false, "start": 64, "end": 80},
@@ -501,7 +499,7 @@
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "TATGTACCGGGATAGGTCACGTTGGCACCGCT",
+      "dna_sequence": "GAGAGGGTCAGCTTTCATCAACATATCGTAAC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 72, "end": 80},
         {"helix_idx": 10, "right": false, "start": 64, "end": 80},
@@ -510,7 +508,7 @@
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TCTGGTGCGCTGTTTCCTGTGTGATTGCGTTG",
+      "dna_sequence": "CGTGCATCTCTAGAGGATCCCCGGTAAAGTGT",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 72, "end": 80},
         {"helix_idx": 12, "right": false, "start": 64, "end": 80},
@@ -519,7 +517,7 @@
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "CGCTCACTAAAGAATAGCCCGAGATGGCCCAC",
+      "dna_sequence": "AAAGCCTGAATCCCTTATAAATCACCGTCTAT",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 72, "end": 80},
         {"helix_idx": 14, "right": false, "start": 64, "end": 80},
@@ -528,149 +526,149 @@
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TACGTGAACCATCACCCAAATCAAAATCCCTT",
+      "dna_sequence": "CAGGGCGATGGCCCACTACGTGATTCCGAAA",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 72, "end": 96},
+        {"helix_idx": 15, "right": true, "start": 72, "end": 96, "deletions": [81]},
         {"helix_idx": 14, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "ACTTTAATGAACGAGGCGCAGACGAAAGAGGC",
+      "dna_sequence": "AACTGACGCTACAGAGGCTTTGGTTGCGCC",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 1, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 2, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 1, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 0, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TTTAAACAAGTTGAGATTTAGGAATAATTTCA",
+      "dna_sequence": "TAGTAAGTCAGTGAATAAGGCTGGGAACCG",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 3, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 4, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 3, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 2, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TTAGATACTAATTCGAGCTTCAAATCAAATGC",
+      "dna_sequence": "CGGATGGTGCGGAATCGTCATAACGAGGCA",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 5, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 6, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 5, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 4, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "ATAAATTAATTAGCAAAATTAAGCTTTGACCA",
+      "dna_sequence": "CATATATAGTTTGACCATTAGACATTTTTG",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 7, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 8, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 7, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 6, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "ACCGTAATCCGGTTGATAATCAGATCTAGCTG",
+      "dna_sequence": "CTGTAGCAGCTATTTTTGAGAGAGAACCCT",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 9, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 10, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 9, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 8, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "TGGTCATACGGAAACCAGGCAAAGGCGGATTG",
+      "dna_sequence": "GGTCGACTGCCAGTTTGAGGGGTGGCCTTC",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 11, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 12, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 11, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 10, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ATAAATCAGCCCGCTTTCCAGTCGCGTAATCA",
+      "dna_sequence": "TCGGCAAGGGTGCCTAATGAGTTGCCTGCA",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 80, "end": 88},
-        {"helix_idx": 13, "right": true, "start": 80, "end": 96},
+        {"helix_idx": 14, "right": false, "start": 80, "end": 88, "deletions": [81]},
+        {"helix_idx": 13, "right": true, "start": 80, "end": 96, "deletions": [81]},
         {"helix_idx": 12, "right": false, "start": 88, "end": 96}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "TACGAAGGCACCAACCTAAAACGGTCAATC",
+      "dna_sequence": "TTCTTAAACAGCTTGATACCGATAAGGACTAA",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 96, "end": 120, "deletions": [97]},
-        {"helix_idx": 1, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 0, "right": false, "start": 96, "end": 120},
+        {"helix_idx": 1, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "ATAAGGGAGGGCTTGAGATGGTTTACCACA",
+      "dna_sequence": "AGACTTTTAGACGGTCAATCATAATGCCCTGA",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 2, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 3, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 2, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 3, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TTCAACTATTCATTGAATCCCCCGCGAACC",
+      "dna_sequence": "CGAGAAACAACGCCAAAAGGAATTAATATTCA",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 4, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 5, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 4, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 5, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "AGACCGGAAACGAGTAGATTTAGAATAAAG",
+      "dna_sequence": "TTGAATCCCCTTTTGATAAGAGGTTACATTTC",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 6, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 7, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 6, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 7, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "CCTCAGAGATGATATTCAACCGTAAAGCCC",
+      "dna_sequence": "GCAAATGGAAGGATAAAAATTTTTATCTACAA",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 8, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 9, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 8, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 9, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "CAAAAACACCGTGGGAACAAACGCGCCATT",
+      "dna_sequence": "AGGCTATCAAAAATAATTCGCGTCACGACGAC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 10, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 11, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 10, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 11, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "CGCCATTCTACCGAGCTCGAATTGGAAACC",
+      "dna_sequence": "AGTATCGGCAGTGCCAAGCTTGCAGAGCTAAC",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 12, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 13, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 12, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 13, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TGTCGTGCTTCCGAAATCGGCAAGTTTTTT",
+      "dna_sequence": "TCACATTATCCTGTTTGATGGTGGACCATCAC",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 104, "end": 112},
-        {"helix_idx": 14, "right": false, "start": 96, "end": 112, "deletions": [97]},
-        {"helix_idx": 15, "right": true, "start": 96, "end": 104, "deletions": [97]}
+        {"helix_idx": 14, "right": false, "start": 96, "end": 112},
+        {"helix_idx": 15, "right": true, "start": 96, "end": 104}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "GGGGTCGAGGTGCCGTAAAGCACTTCCTGTTT",
+      "dna_sequence": "CCAAATCAAGTTTTTTGGGGTCGACCCCAGCA",
       "substrands": [
         {"helix_idx": 15, "right": true, "start": 104, "end": 128},
         {"helix_idx": 14, "right": false, "start": 120, "end": 128}
@@ -678,7 +676,7 @@
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "AGTAAATTACCGAACTGACCAACTAATGCCAC",
+      "dna_sequence": "CGAGGCGCTCATGAGGAAGTTTCCAGGTGAAT",
       "substrands": [
         {"helix_idx": 2, "right": false, "start": 112, "end": 120},
         {"helix_idx": 1, "right": true, "start": 112, "end": 128},
@@ -687,7 +685,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "CATAAATAATGCAGATACATAACGGAACGAGT",
+      "dna_sequence": "AGATACATACCAGAACGAGTAGTAAGCCGGAA",
       "substrands": [
         {"helix_idx": 4, "right": false, "start": 112, "end": 120},
         {"helix_idx": 3, "right": true, "start": 112, "end": 128},
@@ -696,7 +694,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ATTCTGCGAGCAAACTCCAACAGGGGAATCGT",
+      "dna_sequence": "TAATTGCTCCCTCAAATGCTTTAAACTAATGC",
       "substrands": [
         {"helix_idx": 6, "right": false, "start": 112, "end": 120},
         {"helix_idx": 5, "right": true, "start": 112, "end": 128},
@@ -705,7 +703,7 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CCATCAATCATAAAGCTAAATCGGGATTCCCA",
+      "dna_sequence": "TTCAACGCTCAATAACCTGTTTAGAGTACCTT",
       "substrands": [
         {"helix_idx": 8, "right": false, "start": 112, "end": 120},
         {"helix_idx": 7, "right": true, "start": 112, "end": 128},
@@ -714,7 +712,7 @@
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CGGATTCTGGAAGATTGTATAAGCTCAAATCA",
+      "dna_sequence": "ACGCCATCAGGTCATTGCCTGAGAGCCTTTAT",
       "substrands": [
         {"helix_idx": 10, "right": false, "start": 112, "end": 120},
         {"helix_idx": 9, "right": true, "start": 112, "end": 128},
@@ -723,7 +721,7 @@
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TCCCCGGGAGGCTGCGCAACTGTTCAACCCGT",
+      "dna_sequence": "ACGACGGCCCTCAGGAAGATCGCACAATAGGA",
       "substrands": [
         {"helix_idx": 12, "right": false, "start": 112, "end": 120},
         {"helix_idx": 11, "right": true, "start": 112, "end": 128},
@@ -732,7 +730,7 @@
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "GATGGTGGCAGCTGCATTAATGAACTAGAGGA",
+      "dna_sequence": "GGCGAAAAATTGCGTTGCGCTCACGTTGTAAA",
       "substrands": [
         {"helix_idx": 14, "right": false, "start": 112, "end": 120},
         {"helix_idx": 13, "right": true, "start": 112, "end": 128},
@@ -741,157 +739,157 @@
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TCCATTAAACGGGTAAAATACGTTTGAAAGA",
+      "dna_sequence": "ATCGGTTTATCAGCTTGCTTTCGATTAAAC",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 128, "end": 152, "deletions": [145]},
-        {"helix_idx": 1, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 0, "right": false, "start": 128, "end": 152, "deletions": [129]},
+        {"helix_idx": 1, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "GGACAGATCTGACGAGAAACACCACCAAAAGG",
+      "dna_sequence": "GGGTAAAATGCTCCATGTTACTTAATTGGG",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 2, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 3, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 2, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 3, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "AATTACGATAGCGTCCAATACTGCTCAGGATT",
+      "dna_sequence": "CTTGAGATGGAATACCACATTCAACAGTTC",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 4, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 5, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 4, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 5, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "AGAGAGTAATTCCATATAACAGTTTTGTACCA",
+      "dna_sequence": "AGAAAACGAGGTCAGGATTAGAGCTATATT",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 6, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 7, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 6, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 7, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "AAAACATTGAAAGGCCGGAGACAGAAATATTT",
+      "dna_sequence": "TTCATTTGACTTTTGCGGGAGAAGTCTGGA",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 8, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 9, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 8, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 9, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "AAATTGTAAAATGTGAGCGAGTAAGGGAAGGG",
+      "dna_sequence": "GCAAACAAAGCTCATTTTTTAACCTCCAGC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 10, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 11, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 10, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 11, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "CGATCGGTTGCCTGCAGGTCGACTTCGGCCAA",
+      "dna_sequence": "CAGCTTTCTTTCCCAGTCACGACTGCCCGC",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 12, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 13, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 12, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 13, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "CGCGCGGGCCCCAGCAGGCGAAAAAAATCGGA",
+      "dna_sequence": "TTTCCAGTGTCCACGCTGGTTTGGGTGCCG",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 136, "end": 144},
-        {"helix_idx": 14, "right": false, "start": 128, "end": 144},
-        {"helix_idx": 15, "right": true, "start": 128, "end": 136}
+        {"helix_idx": 14, "right": false, "start": 128, "end": 144, "deletions": [129]},
+        {"helix_idx": 15, "right": true, "start": 128, "end": 136, "deletions": [129]}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "ACCCTAAAGGGAGCCCCCGATTTGTCCACGC",
+      "dna_sequence": "TAAAGCACTAAATCGGAACCCTAAAGAGTTGC",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 136, "end": 160, "deletions": [145]},
+        {"helix_idx": 15, "right": true, "start": 136, "end": 160},
         {"helix_idx": 14, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "GCTTGCCGAACGGTGTACAGACAGGAAGTT",
+      "dna_sequence": "CCGCGACCTACGTAATGCCACTACTTAATTGT",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 1, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 2, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 1, "right": true, "start": 144, "end": 160},
         {"helix_idx": 0, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "GACTGGAGGCATAGTAAGAGCATGAATAAG",
+      "dna_sequence": "GAGATTTAGGTTTAATTTCAACTTGTCGAAAT",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 3, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 4, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 3, "right": true, "start": 144, "end": 160},
         {"helix_idx": 2, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "AAGTTTCCCTTTAATTGCTCCTAATGTTTA",
+      "dna_sequence": "ACTCCAACAGAATGACCATAAATCCATCAGTT",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 5, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 6, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 5, "right": true, "start": 144, "end": 160},
         {"helix_idx": 4, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "AGGGTGAATGACCCTGTAATACGTGTCTGG",
+      "dna_sequence": "CCTGTAATGGGCGCGAGCTGAAAAGGAAGCAA",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 7, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 8, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 7, "right": true, "start": 144, "end": 160},
         {"helix_idx": 6, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "CAACATTAACGTTAATATTTTGGATTCAAA",
+      "dna_sequence": "GTTAAATCGAGAATCGATGAACGGATTATGAC",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 9, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 10, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 9, "right": true, "start": 144, "end": 160},
         {"helix_idx": 8, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "GCTTGCAGCGGGCCTCTTCGCTGCTTTCAT",
+      "dna_sequence": "GCCAGGGTCGGCACCGCTTCTGGTAAATTTTT",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 11, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 12, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 11, "right": true, "start": 144, "end": 160},
         {"helix_idx": 10, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TGGTTTGGAGAGGCGGTTTGCGAGTGCCAA",
+      "dna_sequence": "AGCAAGCGCGGGAAACCTGTCGTGTGGGTAAC",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 144, "end": 152, "deletions": [145]},
-        {"helix_idx": 13, "right": true, "start": 144, "end": 160, "deletions": [145]},
+        {"helix_idx": 14, "right": false, "start": 144, "end": 152},
+        {"helix_idx": 13, "right": true, "start": 144, "end": 160},
         {"helix_idx": 12, "right": false, "start": 152, "end": 160}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "TTGAGGACTAAAGACTTTTTCATGCAGGCGCA",
+      "dna_sequence": "AAAAAAGGCTCCAAAAGGAGCCTGAAGGCAC",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 160, "end": 184},
+        {"helix_idx": 0, "right": false, "start": 160, "end": 184, "deletions": [177]},
         {"helix_idx": 1, "right": true, "start": 160, "end": 168}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "TAGGCTGGAAAGCTGCTCATTCAGACACTATC",
+      "dna_sequence": "CAACCTAATCGCCTGATAAATTGTTAATCATT",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 168, "end": 176},
         {"helix_idx": 2, "right": false, "start": 160, "end": 176},
@@ -900,7 +898,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "ATAACCCTGAGGGGGTAATAGTAATTTGATAA",
+      "dna_sequence": "GTGAATTATACAGGTAGAAAGATTAAAAATCA",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 168, "end": 176},
         {"helix_idx": 4, "right": false, "start": 160, "end": 176},
@@ -909,7 +907,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "GAGGTCATATGCAACTAAAGTACGTTTTGCGG",
+      "dna_sequence": "GGTCTTTACAAAGCGAACCAGACCGGTGGCAT",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 168, "end": 176},
         {"helix_idx": 6, "right": false, "start": 160, "end": 176},
@@ -918,7 +916,7 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "GAGAAGCCGTAATGTGTAGGTAAATTAAAATT",
+      "dna_sequence": "CAATTCTACGGTTGTACCAAAAACTAATCGTA",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 168, "end": 176},
         {"helix_idx": 8, "right": false, "start": 160, "end": 176},
@@ -927,7 +925,7 @@
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CGCATTAAGGCCTTCCTGTAGCCAATTACGCC",
+      "dna_sequence": "AAACTAGCTGTTAAAATTCGCATTGCCGGAAA",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 168, "end": 176},
         {"helix_idx": 10, "right": false, "start": 160, "end": 176},
@@ -936,7 +934,7 @@
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "AGCTGGCGTTGTAAAACGACGGCCTATTGGGC",
+      "dna_sequence": "CCAGGCAATGCAAGGCGATTAAGTCCAGCTGC",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 168, "end": 176},
         {"helix_idx": 12, "right": false, "start": 160, "end": 176},
@@ -945,7 +943,7 @@
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "GCCAGGGTAGAGTTGCAGCAAGCGAGAGCTTG",
+      "dna_sequence": "ATTAATGAACCGCCTGGCCCTGAGAGGGAGCC",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 168, "end": 176},
         {"helix_idx": 14, "right": false, "start": 160, "end": 176},
@@ -954,228 +952,228 @@
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "ACGGGGAAAGCCGGCGAACGTGGCACCGCCTG",
+      "dna_sequence": "CCCGATTTAGAGCTTGACGGGGAAGCTGATT",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 168, "end": 192},
+        {"helix_idx": 15, "right": true, "start": 168, "end": 192, "deletions": [177]},
         {"helix_idx": 14, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "AACGTAACCTGACCTTCATCAAGACAGAGGCT",
+      "dna_sequence": "TGTATCAAACGAAAGAGGCAAAATCTCCAA",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 1, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 2, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 1, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 0, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TTTTGCCACGTTTACCAGACGACGCCCAAATC",
+      "dna_sequence": "ACATTATCCTTATGCGATTTTACGGAGATT",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 3, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 4, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 3, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 2, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TTTTAAATTTTTGCGGATGGCTTAAAAAGAAG",
+      "dna_sequence": "CGAGCTTCCCTGACTATTATAGACGGAACA",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 5, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 6, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 5, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 4, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "ATGCCTGATTTATTTCAACGCAAGTCAACATG",
+      "dna_sequence": "GCTAAATCTAATAGTAGTAGCATTTTAATT",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 7, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 8, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 7, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 6, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "TCGCGTCTATTTTTGTTAAATCAGTAAATGCA",
+      "dna_sequence": "AATATTTATGTCAATCATATGTAGCATAAA",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 9, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 10, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 9, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 8, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "TCACGACGAAAGGGGGATGTGCTGAAAATAAT",
+      "dna_sequence": "GATGTGCAGCGCCATTCGCCATTAAACGTT",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 11, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 12, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 11, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 10, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "GCCCTGAGGGTTTTTCTTTTCACCTTTCCCAG",
+      "dna_sequence": "GCCCTTCATCGGCCAACGCGCGGAAAGGGG",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 176, "end": 184},
-        {"helix_idx": 13, "right": true, "start": 176, "end": 192},
+        {"helix_idx": 14, "right": false, "start": 176, "end": 184, "deletions": [177]},
+        {"helix_idx": 13, "right": true, "start": 176, "end": 192, "deletions": [177]},
         {"helix_idx": 12, "right": false, "start": 184, "end": 192}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "GATCGTCACCCTCAGCAGCGAAATTTGTCGT",
+      "dna_sequence": "AATAATAATTTTTTCACGTTGAAAAGAATACA",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 224, "end": 248, "deletions": [241]},
-        {"helix_idx": 1, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 0, "right": false, "start": 192, "end": 216},
+        {"helix_idx": 1, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CTTTCCAGTGTAGCATTCCACAGAAAACAGTT",
+      "dna_sequence": "CTAAAACAGCGAAACAAAGTACAAAGAACTGG",
       "substrands": [
-        {"helix_idx": 1, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 2, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 3, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 1, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 2, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 3, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "AATGCCCCGGTAATAAGTTTTAACTCGGCATT",
+      "dna_sequence": "CTCATTATTTAATAAAACGAACTATCAGAAGC",
       "substrands": [
-        {"helix_idx": 3, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 4, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 5, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 3, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 4, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 5, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "TTCGGTCAGCGACAGAATCAAGTTCAGTATGT",
+      "dna_sequence": "AAAGCGGAGACTTCAAATATCGCGTTAACATC",
       "substrands": [
-        {"helix_idx": 5, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 6, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 7, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 5, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 6, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 7, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TAGCAAACATAACGGAATACCCAACAAAATAA",
+      "dna_sequence": "CAATAAATAGCAATAAAGCCTCAGACCCCGGT",
       "substrands": [
-        {"helix_idx": 7, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 8, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 9, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 7, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 8, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 9, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "ACAGCCATTCTTACCAACGCTAACACAATAGA",
+      "dna_sequence": "TGATAATCGCAAATATTTAAATTGTCAGGCTG",
       "substrands": [
-        {"helix_idx": 9, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 10, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 11, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 9, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 10, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 11, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TAAGTCCTCGACAATAAACAACATACAAAGAA",
+      "dna_sequence": "CGCAACTGTATTACGCCAGCTGGCGGGAGAGG",
       "substrands": [
-        {"helix_idx": 11, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 12, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 13, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 11, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 12, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 13, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "CGCGAGAATTGGGTTATATAACTACTTTGAAT",
+      "dna_sequence": "CGGTTTGCCAGTGAGACGGGCAACAAGCCGGC",
       "substrands": [
-        {"helix_idx": 13, "right": true, "start": 232, "end": 240},
-        {"helix_idx": 14, "right": false, "start": 224, "end": 240},
-        {"helix_idx": 15, "right": true, "start": 224, "end": 232}
+        {"helix_idx": 13, "right": true, "start": 200, "end": 208},
+        {"helix_idx": 14, "right": false, "start": 192, "end": 208},
+        {"helix_idx": 15, "right": true, "start": 192, "end": 200}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "ACCAAGTTACAAAATCGCGCAGAAACCTCCG",
+      "dna_sequence": "GCTGAACCTCAAATATCAAACCCTGAACCTAC",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 232, "end": 256, "deletions": [241]},
+        {"helix_idx": 15, "right": true, "start": 232, "end": 256},
         {"helix_idx": 14, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "CAACGCCACGTTAGTAAATGAATTTTGCGG",
+      "dna_sequence": "AAGTATTAGGATTAGCGGGGTTTTGCGGAGTG",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 1, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 2, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 1, "right": true, "start": 240, "end": 256},
         {"helix_idx": 0, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "GTGTACTCTGCCTATTTCGGAAACAAACTA",
+      "dna_sequence": "CCCTTATTACCGGAACCAGAGCCAAAACATGA",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 3, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 4, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 3, "right": true, "start": 240, "end": 256},
         {"helix_idx": 2, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "ATCAGTATAGCCCCCTTATTAGATACAGGA",
+      "dna_sequence": "CTTATTACACATAAAGGTGGCAACTCATAGCC",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 5, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 6, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 5, "right": true, "start": 240, "end": 256},
         {"helix_idx": 4, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CGCAATAGTAGAAAATACATACGCACCGTA",
+      "dna_sequence": "CGCTAACGACAAAATAAACAGCCATAAGACTC",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 7, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 8, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 7, "right": true, "start": 240, "end": 256},
         {"helix_idx": 6, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "TCCTGAAATTATTTATCCCAATCGAGGAAA",
+      "dna_sequence": "AAAGTAATTTCAGCTAATGCAGAACTTACCAA",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 9, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 10, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 9, "right": true, "start": 240, "end": 256},
         {"helix_idx": 8, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "CAGACGAGAACAAGAAAAATAACAATTTTA",
+      "dna_sequence": "TTTATCAACCTCCGGCTTAGGTTGCAAAAGGT",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 11, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 12, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 11, "right": true, "start": 240, "end": 256},
         {"helix_idx": 10, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "GCTTAGGAACTTTTTCAAATATATTCTGTC",
+      "dna_sequence": "CATATCAAAATTGCGTAGATTTTCATAGTGAA",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 240, "end": 248, "deletions": [241]},
-        {"helix_idx": 13, "right": true, "start": 240, "end": 256, "deletions": [241]},
+        {"helix_idx": 14, "right": false, "start": 240, "end": 248},
+        {"helix_idx": 13, "right": true, "start": 240, "end": 256},
         {"helix_idx": 12, "right": false, "start": 248, "end": 256}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "GGCTTGCAGGGAGTTAAAGGCCGCTTTTCTGT",
+      "dna_sequence": "CTAAACAACTTTCAACAGTTTCAGCTCAGTA",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 256, "end": 280},
+        {"helix_idx": 0, "right": false, "start": 256, "end": 280, "deletions": [273]},
         {"helix_idx": 1, "right": true, "start": 256, "end": 264}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "ATGGGATTGAGTTTCGTCACCAGTCCTATTAT",
+      "dna_sequence": "CCAGGCGGGGAACCTATTATTCTGCCACCGGA",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 264, "end": 272},
         {"helix_idx": 2, "right": false, "start": 256, "end": 272},
@@ -1184,7 +1182,7 @@
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TCTGAAACTACATGGCTTTTGATGCGTTTGCC",
+      "dna_sequence": "ACCGCCTCTCATCGGCATTTTCGGATATAAAA",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 264, "end": 272},
         {"helix_idx": 4, "right": false, "start": 256, "end": 272},
@@ -1193,7 +1191,7 @@
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "ATCTTTTCGAAACCATCGATAGCAATAAAGGT",
+      "dna_sequence": "GAAACGCAAAAGAACTGGCATGATTATTATTT",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 264, "end": 272},
         {"helix_idx": 6, "right": false, "start": 256, "end": 272},
@@ -1202,7 +1200,7 @@
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "GGCAACATGTTACCAGAAGGAAACCCAAATAA",
+      "dna_sequence": "ATCCCAATCAATTTTATCCTGAATCGCGCCTG",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 264, "end": 272},
         {"helix_idx": 8, "right": false, "start": 256, "end": 272},
@@ -1211,7 +1209,7 @@
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "GAAACGATATTTTGCACCCAGCTATATCCCAT",
+      "dna_sequence": "TTTATCAAGAATATAAAGTACCGAGGTTATAT",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 264, "end": 272},
         {"helix_idx": 10, "right": false, "start": 256, "end": 272},
@@ -1220,7 +1218,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "CCTAATTTGACAAAAGGTAAAGTAATTTTAGT",
+      "dna_sequence": "AACTATATACGCTGAGAAGAGTCAAGGTTTAA",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 264, "end": 272},
         {"helix_idx": 12, "right": false, "start": 256, "end": 272},
@@ -1229,7 +1227,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "TAATTTCAGAGAGACTACCTTTTTGGCGAATT",
+      "dna_sequence": "CGTCAGATAATAATGGAAGGGTTACAATCAAT",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 264, "end": 272},
         {"helix_idx": 14, "right": false, "start": 256, "end": 272},
@@ -1238,149 +1236,149 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "ATTCATTTCAATTACCTGAGCAAATCAAAATC",
+      "dna_sequence": "ATCTGGTCAGTTGGCAAATCAACTGGATTAT",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 264, "end": 288},
+        {"helix_idx": 15, "right": true, "start": 264, "end": 288, "deletions": [273]},
         {"helix_idx": 14, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "GTAACACTTTGCTAAACAACTTTCGTCGCTGA",
+      "dna_sequence": "CTATTTCATAAGTGCCGTCGAGGGATTTTG",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 1, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 2, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 1, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 0, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "AAGCGTCAATGAAAGTATTAAGAGCATGTACC",
+      "dna_sequence": "CGCGTTTCCTCAGAGCCGCCACCCCCCTGC",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 3, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 4, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 3, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 2, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "TCACCAATATAATCAAAATCACCGGTTCCAGT",
+      "dna_sequence": "ATACCCAAAGACACCACGGAATGACTGTAG",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 5, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 6, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 5, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 4, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "CGAACAAAATAAAAGAAACGCAAACGGAAACG",
+      "dna_sequence": "CCAGCTACCAAATAAGAAACGAATAACGGA",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 7, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 8, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 7, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 6, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "TAGTTGCTTTTTTGTTTAACGTCACAGATAGC",
+      "dna_sequence": "AATAAGACAATAGATAAGTCCTTTTTGCAC",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 9, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 10, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 9, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 8, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "AAAGTACCACGAGCATGTAGAAACATCAAGAT",
+      "dna_sequence": "GATTAAGGTAAATGCTGATGCAGAGCCAGT",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 11, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 12, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 11, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 10, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "ATAGGTCTTCTTCTGACCTAAATTGAGAATAT",
+      "dna_sequence": "ACTTCTGGAATATACAGTAACAATAGCTTA",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 272, "end": 280},
-        {"helix_idx": 13, "right": true, "start": 272, "end": 288},
+        {"helix_idx": 14, "right": false, "start": 272, "end": 280, "deletions": [273]},
+        {"helix_idx": 13, "right": true, "start": 272, "end": 288, "deletions": [273]},
         {"helix_idx": 12, "right": false, "start": 280, "end": 288}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "CCCACGCATAACCGATATATTCGAACAGTT",
+      "dna_sequence": "GTTAGTAAATGAATTTTCTGTATGAGGGTTGA",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 288, "end": 312, "deletions": [289]},
-        {"helix_idx": 1, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 0, "right": false, "start": 288, "end": 312},
+        {"helix_idx": 1, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "TCAGCGGAAGCCCAATAGGAACCGCTGAGA",
+      "dna_sequence": "TATAAGTAGTATAAACAGTTAATGCCTCAGAA",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 2, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 3, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 2, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 3, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "CTCCTCAAGTCTCTGAATTTACCGAACCAG",
+      "dna_sequence": "CCGCCACCTTTGCCTTTAGCGTCAAAGTTTAT",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 4, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 5, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 4, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 5, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "AGCCACCATACCATTAGCAAGGCGACACCA",
+      "dna_sequence": "TTTGTCACCCGAGGAAACGCAATATTTTTTGT",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 6, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 7, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 6, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 7, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "CGGAATAATTTAAGAAAAGTAAGAAAATGA",
+      "dna_sequence": "TTAACGTCTCAAGATTAGTTGCTAGAACAAGA",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 8, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 9, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 8, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 9, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "AAATAGCAGTTTTGAAGCCTTAACAATCAA",
+      "dna_sequence": "AAAATAATAGGCAGAGGCATTTTCAATCCAAT",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 10, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 11, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 10, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 11, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TAATCGGCTCGAGCCAGTAATAATAATGGT",
+      "dna_sequence": "CGCAAGACCCTTGAAAACATAGCGGTACCTTT",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 12, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 13, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 12, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 13, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "TTGAAATATCAATAGTGAATTTAAGAAGAT",
+      "dna_sequence": "TACATCGGTATAATCCTGATTGTTAGTTGAAA",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 296, "end": 304},
-        {"helix_idx": 14, "right": false, "start": 288, "end": 304, "deletions": [289]},
-        {"helix_idx": 15, "right": true, "start": 288, "end": 296, "deletions": [289]}
+        {"helix_idx": 14, "right": false, "start": 288, "end": 304},
+        {"helix_idx": 15, "right": true, "start": 288, "end": 296}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "GATGAAACAAACATCAAGAAAACAAAGACGCT",
+      "dna_sequence": "GGAATTGAGGAAGGTTATCTAAAAGATGGCAA",
       "substrands": [
         {"helix_idx": 15, "right": true, "start": 296, "end": 320},
         {"helix_idx": 14, "right": false, "start": 312, "end": 320}
@@ -1388,7 +1386,7 @@
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "GGATAGCAGTGAGAATAGAAAGGAAACCATCG",
+      "dna_sequence": "CAGTGCCCTAGCCCGGAATAGGTGTTCCAGAC",
       "substrands": [
         {"helix_idx": 2, "right": false, "start": 304, "end": 312},
         {"helix_idx": 1, "right": true, "start": 304, "end": 320},
@@ -1397,7 +1395,7 @@
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "AAAGCGCAGAGAAGGATTAGGATTATTTTCAG",
+      "dna_sequence": "GAATCAAGCTCAGAGCCACCACCCTTGAGTAA",
       "substrands": [
         {"helix_idx": 4, "right": false, "start": 304, "end": 312},
         {"helix_idx": 3, "right": true, "start": 304, "end": 320},
@@ -1406,7 +1404,7 @@
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "AGCACCATCCGGAACCGCCTCCCTCAGAATGG",
+      "dna_sequence": "GAAGGAAAAATCAATAGAAAATTCTAGCGACA",
       "substrands": [
         {"helix_idx": 6, "right": false, "start": 304, "end": 312},
         {"helix_idx": 5, "right": true, "start": 304, "end": 320},
@@ -1415,7 +1413,7 @@
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "AAGCCCTTGTTTATTTTGTCACAATCACCAGT",
+      "dna_sequence": "GCCTTAAAAAAAATGAAAATAGCAAGTTACCA",
       "substrands": [
         {"helix_idx": 8, "right": false, "start": 304, "end": 312},
         {"helix_idx": 7, "right": true, "start": 304, "end": 320},
@@ -1424,7 +1422,7 @@
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "TGCGGGAGGCCTTTACAGAGAGAATCTTACCG",
+      "dna_sequence": "TGTAATTTATCCCATCCTAATTTAGTTTTGAA",
       "substrands": [
         {"helix_idx": 10, "right": false, "start": 304, "end": 312},
         {"helix_idx": 9, "right": true, "start": 304, "end": 320},
@@ -1433,7 +1431,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "AGGCATTTTGTCTTTCCTTATCATTCCCGACT",
+      "dna_sequence": "CTTAGAATAAAGAACGCGAGAAAACGCCAACA",
       "substrands": [
         {"helix_idx": 12, "right": false, "start": 304, "end": 312},
         {"helix_idx": 11, "right": true, "start": 304, "end": 320},
@@ -1442,7 +1440,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "GAGAAGAGCCGACCGTGTGATAAATTAGGCAG",
+      "dna_sequence": "TTCATCAAGAGAAACAATAACGGAAATTTTCC",
       "substrands": [
         {"helix_idx": 14, "right": false, "start": 304, "end": 312},
         {"helix_idx": 13, "right": true, "start": 304, "end": 320},
@@ -1451,157 +1449,157 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "ATAGTTGCGCCGACAATGACAACACAACTAA",
+      "dna_sequence": "AACGATCTAAAGTTTTGTCGTCTTATCACC",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 320, "end": 344, "deletions": [337]},
-        {"helix_idx": 1, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 0, "right": false, "start": 320, "end": 344, "deletions": [321]},
+        {"helix_idx": 1, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "AGGAATTGCAGAGCCACCACCCTCAGCGGGGT",
+      "dna_sequence": "GTACTCAGAACGGGGTCAGTGCCTCAGAGC",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 2, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 3, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 2, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 3, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "TTTGCTCAAAATCCTCATTAAAGCCAGAGCCG",
+      "dna_sequence": "CGCCACCACAGCACCGTAATCAGATATGGT",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 4, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 5, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 4, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 5, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "CCACCCTCATTAGAGCCAGCAAAATCAATAGA",
+      "dna_sequence": "TTACCAGCCAGATAGCCGAACAAGCCTTTA",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 6, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 7, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 6, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 7, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "AAATTCATGAAATAGCAATAGCTATAACATAA",
+      "dna_sequence": "CAGAGAGACCCGACTTGCGGGAGCGAGCAT",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 8, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 9, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 8, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 9, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "AAACAGGGGGCGTTTTAGCGAACCTCCAAGAA",
+      "dna_sequence": "GTAGAAACCGCCATATTTAACAACTTTTTC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 10, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 11, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 10, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 11, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "CGGGTATTAACGCCAACATGTAATTAAGGCGT",
+      "dna_sequence": "AAATATATTCGTCGCTATTAATTTTCGCCT",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 12, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 13, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 12, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 13, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "TAAATAAGAGCGATAGCTTAGATTAAATTAAT",
+      "dna_sequence": "GATTGCTTTCCTGATTATCAGATTATCTTT",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 328, "end": 336},
-        {"helix_idx": 14, "right": false, "start": 320, "end": 336},
-        {"helix_idx": 15, "right": true, "start": 320, "end": 328}
+        {"helix_idx": 14, "right": false, "start": 320, "end": 336, "deletions": [321]},
+        {"helix_idx": 15, "right": true, "start": 320, "end": 328, "deletions": [321]}
       ]
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "TACATTTAACAATTTCATTTGAAAATCCTTG",
+      "dna_sequence": "AGGAGCACTAACAACTAATAGATTGGAATTAT",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 328, "end": 352, "deletions": [337]},
+        {"helix_idx": 15, "right": true, "start": 328, "end": 352},
         {"helix_idx": 14, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "CCACCCTCGAATAATAATTTTTTGATACCG",
+      "dna_sequence": "TAAGTTTTGAGGTTTAGTACCGCCGTTAGCGT",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 1, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 2, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 1, "right": true, "start": 336, "end": 352},
         {"helix_idx": 0, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "AACAAATGTACCAGGCGGATAACAGAACCG",
+      "dna_sequence": "ATCGATAGGAACCACCACCAGAGCACTGGTAA",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 3, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 4, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 3, "right": true, "start": 336, "end": 352},
         {"helix_idx": 2, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "TTTGGGAAGAACCGCCACCCTCTATTCACA",
+      "dna_sequence": "AAAGTAAGGCCAAAGACAAAAGGGATGAAACC",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 5, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 6, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 5, "right": true, "start": 336, "end": 352},
         {"helix_idx": 4, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "AAACAATATGGTTTACCAGCGCTTGAGCCA",
+      "dna_sequence": "GCGAACCTATAACATAAAAACAGGTTTTAAGA",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 7, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 8, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 7, "right": true, "start": 336, "end": 352},
         {"helix_idx": 6, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "AACGCGAAAGCGCATTAGACGGAGAGCAAG",
+      "dna_sequence": "TTGAGAATCAATCAATAATCGGCTGCGTTTTA",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 9, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 10, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 9, "right": true, "start": 336, "end": 352},
         {"helix_idx": 8, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "ATTTAACAAACCAAGTACCGCAATTCTAAG",
+      "dna_sequence": "TCTGTAAATTTAGTTAATTTCATCGGGCTTAA",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 11, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 12, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 11, "right": true, "start": 336, "end": 352},
         {"helix_idx": 10, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "AAAACATAATAAACACCGGAATATCGCCAT",
+      "dna_sequence": "CATCATATTGAATACCAAGTTACAACCTTGCT",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 336, "end": 344, "deletions": [337]},
-        {"helix_idx": 13, "right": true, "start": 336, "end": 352, "deletions": [337]},
+        {"helix_idx": 14, "right": false, "start": 336, "end": 344},
+        {"helix_idx": 13, "right": true, "start": 336, "end": 352},
         {"helix_idx": 12, "right": false, "start": 344, "end": 352}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "TCGAGGTGAATTTCTTAAACAGCTTCACGTTG",
+      "dna_sequence": "GCATTCCACAGACAGCCCTCATAACCCTCAG",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 352, "end": 376},
+        {"helix_idx": 0, "right": false, "start": 352, "end": 376, "deletions": [369]},
         {"helix_idx": 1, "right": true, "start": 352, "end": 360}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "AAAATCTCTCAGAACCGCCACCCTGTGCCGTC",
+      "dna_sequence": "AACCGCCAGATGATACAGGAGTGTCGCCGCCA",
       "substrands": [
         {"helix_idx": 1, "right": true, "start": 360, "end": 368},
         {"helix_idx": 2, "right": false, "start": 352, "end": 368},
@@ -1610,7 +1608,7 @@
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "GAGAGGGTAGACGATTGGCCTTGAAGAGCCAC",
+      "dna_sequence": "GCATTGACGCCGGAAACGTCACCACGACATTC",
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 360, "end": 368},
         {"helix_idx": 4, "right": false, "start": 352, "end": 368},
@@ -1619,7 +1617,7 @@
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "CACCCTCATATCACCGTCACCGACCAAAGACA",
+      "dna_sequence": "AACCGATTATCTTACCGAAGCCCTGAAGCGCA",
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 360, "end": 368},
         {"helix_idx": 6, "right": false, "start": 352, "end": 368},
@@ -1628,7 +1626,7 @@
     },
     {
       "color": {"r": 247, "g": 147, "b": 30},
-      "dna_sequence": "AAAGGGCGGTTAAGCCCAATAATAGAGAATTA",
+      "dna_sequence": "TTAGACGGATTCTAAGAACGCGAGGTCTTTCC",
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 360, "end": 368},
         {"helix_idx": 8, "right": false, "start": 352, "end": 368},
@@ -1637,7 +1635,7 @@
     },
     {
       "color": {"r": 87, "g": 187, "b": 0},
-      "dna_sequence": "ACTGAACAAGAAGGCTTATCCGGTCTCATCGA",
+      "dna_sequence": "TTATCATTCCAACGCTCAACAGTATTCTGACC",
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 360, "end": 368},
         {"helix_idx": 10, "right": false, "start": 352, "end": 368},
@@ -1646,7 +1644,7 @@
     },
     {
       "color": {"r": 136, "g": 136, "b": 136},
-      "dna_sequence": "GAACAAGCTAGGGCTTAATTGAGACATAATTA",
+      "dna_sequence": "TAAATTTATATATGTGAGTGAATAAAATCGCG",
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 360, "end": 368},
         {"helix_idx": 12, "right": false, "start": 352, "end": 368},
@@ -1655,7 +1653,7 @@
     },
     {
       "color": {"r": 204, "g": 0, "b": 0},
-      "dna_sequence": "CTAGAAAAATTAATTTTCCCTTAGTTACCTTT",
+      "dna_sequence": "CAGAGGCGAACCACCAGAAGGAGCAGAGCCGT",
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 360, "end": 368},
         {"helix_idx": 14, "right": false, "start": 352, "end": 368},
@@ -1664,73 +1662,215 @@
     },
     {
       "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "TTTAATGGAAACAGTACATAAATCTAAATCGT",
+      "dna_sequence": "CAATAGATAATACATTTGAGGATTTTGCGGA",
       "substrands": [
-        {"helix_idx": 15, "right": true, "start": 360, "end": 384},
+        {"helix_idx": 15, "right": true, "start": 360, "end": 384, "deletions": [369]},
         {"helix_idx": 14, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 50, "g": 0, "b": 150},
-      "dna_sequence": "CGCCACCCCAAAAAAAAGGCTCCAGCTTGCTT",
+      "dna_sequence": "GGCTTTTCCCTCAGAACCGCCACGCCTGTA",
       "substrands": [
-        {"helix_idx": 2, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 1, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 2, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 1, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 0, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 3, "g": 182, "b": 162},
-      "dna_sequence": "GGCAGGTCTGATATAAGTATAGCCTTTAGTAC",
+      "dna_sequence": "TAGCAAGAGGAGGTTGAGGCAGTCATACAT",
       "substrands": [
-        {"helix_idx": 4, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 3, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 4, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 3, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 2, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 115, "g": 0, "b": 222},
-      "dna_sequence": "AGGTGAATGAGCCGCCACCAGAACGAGGTTGA",
+      "dna_sequence": "AATAGCTGAGGGAGGGAAGGTAATTACCAT",
       "substrands": [
-        {"helix_idx": 6, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 5, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 6, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 5, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 4, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 170, "g": 170, "b": 0},
-      "dna_sequence": "AGAATTGAACATTCAACCGATTGATTCATTAA",
+      "dna_sequence": "ATCCGGTGAGAATTAACTGAACGAAATAGC",
       "substrands": [
-        {"helix_idx": 8, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 7, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 8, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 7, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 6, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 184, "g": 5, "b": 108},
-      "dna_sequence": "TCAGATATCCCTGAACAAAGTCAGAACCCACA",
+      "dna_sequence": "TATAAAGCCAAGAACGGGTATTGAAGGCTT",
       "substrands": [
-        {"helix_idx": 10, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 9, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 10, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 9, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 8, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "CTCAACAGAAGCCGTTTTTATTTTCAAGCAAA",
+      "dna_sequence": "AAATCAAATGGTTTGAAATACCCTTACCAG",
       "substrands": [
-        {"helix_idx": 12, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 11, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 12, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 11, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 10, "right": false, "start": 376, "end": 384}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "CGCTATTAAGCCTGTTTAGTATCAAGCCAACG",
+      "dna_sequence": "ACAAAGAAATTATTCATTTCAACAGTACAT",
       "substrands": [
-        {"helix_idx": 14, "right": false, "start": 368, "end": 376},
-        {"helix_idx": 13, "right": true, "start": 368, "end": 384},
+        {"helix_idx": 14, "right": false, "start": 368, "end": 376, "deletions": [369]},
+        {"helix_idx": 13, "right": true, "start": 368, "end": 384, "deletions": [369]},
         {"helix_idx": 12, "right": false, "start": 376, "end": 384}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "TTTCGTCACCAGTACAAACTACAACCCTCAGA",
+      "substrands": [
+        {"helix_idx": 0, "right": false, "start": 384, "end": 408},
+        {"helix_idx": 1, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "GCCACCACACCGTTCCAGTAAGCGGTCAGACG",
+      "substrands": [
+        {"helix_idx": 1, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 2, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 3, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "ATTGGCCTAATCACCAGTAGCACCAATATTGA",
+      "substrands": [
+        {"helix_idx": 3, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 4, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 5, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "CGGAAATTAAGAGCAAGAAACAATACCCTGAA",
+      "substrands": [
+        {"helix_idx": 5, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 6, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 7, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 51, "g": 51, "b": 51},
+      "dna_sequence": "CAAAGTCAAAGCAAATCAGATATAAAACCAAG",
+      "substrands": [
+        {"helix_idx": 7, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 8, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 9, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 50, "g": 0, "b": 150},
+      "dna_sequence": "TACCGCACATGCGTTATACAAATTGACCGTGT",
+      "substrands": [
+        {"helix_idx": 9, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 10, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 11, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 3, "g": 182, "b": 162},
+      "dna_sequence": "GATAAATACCTTTTTTAATGGAAATTACCTGA",
+      "substrands": [
+        {"helix_idx": 11, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 12, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 13, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 115, "g": 0, "b": 222},
+      "dna_sequence": "GCAAAAGATGAGTAACATTATCATTTAGAAGT",
+      "substrands": [
+        {"helix_idx": 13, "right": true, "start": 392, "end": 400},
+        {"helix_idx": 14, "right": false, "start": 384, "end": 400},
+        {"helix_idx": 15, "right": true, "start": 384, "end": 392}
+      ]
+    },
+    {
+      "color": {"r": 170, "g": 170, "b": 0},
+      "dna_sequence": "ATTAGACTTTACAAACAATTCGACATTAATTT",
+      "substrands": [
+        {"helix_idx": 15, "right": true, "start": 392, "end": 416},
+        {"helix_idx": 14, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 184, "g": 5, "b": 108},
+      "dna_sequence": "CTGAATTTCCTCATTTTCAGGGATACACTGAG",
+      "substrands": [
+        {"helix_idx": 2, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 1, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 0, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 0, "g": 114, "b": 0},
+      "dna_sequence": "GCCAGCAATGATATTCACAAACAACGCAGTCT",
+      "substrands": [
+        {"helix_idx": 4, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 3, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 2, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 67, "b": 8},
+      "dna_sequence": "CCAATAATATTCATTAAAGGTGAAGAATTAGA",
+      "substrands": [
+        {"helix_idx": 6, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 5, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 4, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 247, "g": 147, "b": 30},
+      "dna_sequence": "CCAATAGCGAGGGTAATTGAGCGCAGTTAAGC",
+      "substrands": [
+        {"helix_idx": 8, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 7, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 6, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "AGTATCATTCATCGAGAACAAGCATACCGCGC",
+      "substrands": [
+        {"helix_idx": 10, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 9, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 8, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 136, "g": 136, "b": 136},
+      "dna_sequence": "TTGAATTAAGGCGTTAAATAAGAAGCCTGTTT",
+      "substrands": [
+        {"helix_idx": 12, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 11, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 10, "right": false, "start": 408, "end": 416}
+      ]
+    },
+    {
+      "color": {"r": 204, "g": 0, "b": 0},
+      "dna_sequence": "TAAAAGTTAGATGATGAAACAAACAATTTCAT",
+      "substrands": [
+        {"helix_idx": 14, "right": false, "start": 400, "end": 408},
+        {"helix_idx": 13, "right": true, "start": 400, "end": 416},
+        {"helix_idx": 12, "right": false, "start": 408, "end": 416}
       ]
     }
   ]
