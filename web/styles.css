@@ -234,29 +234,52 @@ html, body {
   dominant-baseline: hanging;
 }
 
-.dna-base {
-  font-family: "Consolas", "Lucida Console", "Courier New", monospace;
-  font-weight: bold;
-  font-size: 5px;
-  text-anchor: middle;
-  dominant-baseline: hanging;
-  text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
-  0.7px -0.7px 0 #fff,
-  -0.7px 0.7px 0 #fff,
-  0.7px 0.7px 0 #fff;
+/*.dna-base {*/
+/*  font-family: "Consolas", "Lucida Console", "Courier New", monospace;*/
+/*  font-weight: bold;*/
+/*  font-size: 5px;*/
+/*  text-anchor: middle;*/
+/*  dominant-baseline: hanging;*/
+/*  text-shadow: !*-1px -1px 0 #fff,*! !*1px -1px 0 #fff,*! !*-1px 1px 0 #fff,*! !*1px 1px 0 #fff;*! -0.7px -0.7px 0 #fff,*/
+/*  0.7px -0.7px 0 #fff,*/
+/*  -0.7px 0.7px 0 #fff,*/
+/*  0.7px 0.7px 0 #fff;*/
+/*}*/
+
+.dna-seq-textpath {
+
 }
 
 .dna-seq {
   font-family: "Consolas", "Lucida Console", "Courier New", monospace;
   font-weight: bold;
-  font-size: 5px;
+  font-size: 12px;
   text-anchor: start;
-  dominant-baseline: hanging;
+  dominant-baseline: ideographic;
   /*letter-spacing: 10px;*/
   text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
   0.7px -0.7px 0 #fff,
   -0.7px 0.7px 0 #fff,
   0.7px 0.7px 0 #fff;
+  text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+  white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.dna-seq-insertion {
+  font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+  font-weight: bold;
+  font-size: 12px;
+  text-anchor: middle;
+  /*text-anchor: start;*/
+  dominant-baseline: ideographic;
+  /*letter-spacing: 10px;*/
+  text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+  0.7px -0.7px 0 #fff,
+  -0.7px 0.7px 0 #fff,
+  0.7px 0.7px 0 #fff;
+  text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+  white-space: pre; /* needed to display multiple space symbols in a row */
+  letter-spacing: -0.3em;
 }
 
 .substrand-line {

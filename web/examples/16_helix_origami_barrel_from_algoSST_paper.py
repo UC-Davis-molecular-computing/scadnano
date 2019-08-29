@@ -5,7 +5,8 @@ import scadnano as sc
 def main():
     design = rect.create(num_helices=16, num_cols=28, seam_left_column=12, assign_seq=False,
                          num_flanking_columns=2,
-                         num_flanking_helices=2, edge_staples=False)
+                         num_flanking_helices=2, edge_staples=False,
+                         scaffold_nick_offset=102)
 
     # # need this to match original design, but doesn't leave room for left-side adapters
     # design.move_strand_offsets(8)
@@ -18,6 +19,7 @@ def main():
     add_twist_correct_deletions(design)
     add_angle_inducing_insertions_deletions(design)
     add_tiles_and_assign_dna(design)
+    assign_dna_to_unzipper_toeholds(design)
 
     design.assign_dna(design.scaffold, sc.m13_sequence)
 
@@ -37,9 +39,9 @@ def set_helix_major_tickets(design):
 def add_twist_correct_deletions(design: sc.DNADesign):
     # I choose between 3 and 4 offset arbitrarily for twist-correction deletions for some reason,
     # so they have to be hard-coded.
-    for col, offset in zip(range(2, 28, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
+    for col, offset in zip(range(4, 29, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
         for helix_idx in range(2, 18):
-            design.add_deletion(helix_idx, 8 + 16 * col + offset)
+            design.add_deletion(helix_idx, 16 * col + offset)
 
 
 def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
@@ -122,25 +124,26 @@ def add_adapters(design):
         adapter = sc.Strand(substrands=[ss_top, ss_bot])
         design.add_strand(adapter)
 
+seq_lines = """tile1rot0,ACCAAGAACT TTGTCAACAAT AAACAAATCCA ATCTTTCCGT,25nm,STD
+tile2rot0,TTGTCTAGAGT TTGGGATGTT AGTTCTTGGT ATTGTTGACAA,25nm,STD
+tile3rot0,TTATCCACGT TTCCTCCTATT ACTCTAGACAA AACATCCCAA,25nm,STD
+tile4rot0,AAGGAAGTAGA TTCGAAAGGT ACGTGGATAA AATAGGAGGAA,25nm,STD
+tile5rot0,AACCTCGAAT TACCAGATTCT TCTACTTCCTT ACCTTTCGAA,25nm,STD
+tile6rot0,AGAATAGTCGT TTGTCAGTGT ATTCGAGGTT AGAATCTGGTA,25nm,STD
+tile7rot0,ATCTGCTCAT TCTGATCTCTT ACGACTATTCT ACACTGACAA,25nm,STD
+tile8rot0,AATGGATAGGT AGGTGTCTTT ATGAGCAGAT AAGAGATCAGA,25nm,STD
+tile9rot0,TCAAGTTCCA TATCCTTAGCA ACCTATCCATT AAAGACACCT,25nm,STD
+tile10rot0,AGTGATGATCT TTTAGGCTGT TGGAACTTGA TGCTAAGGATA,25nm,STD
+tile11rot0,ACCCATTCAT TTCCTGATACT AGATCATCACT ACAGCCTAAA,25nm,STD
+tile12rot0,TGCGTTAAAAT AGATGCGTAT ATGAATGGGT AGTATCAGGAA,25nm,STD
+tile13rot0,AACCTTCACA ATCGTCTCATA ATTTTAACGCA ATACGCATCT,25nm,STD
+tile14rot0,ATTCAGAGAGT TGGCATGATA TGTGAAGGTT TATGAGACGAT,25nm,STD
+tile15rot0,TACCATGCTT TTGACCAATTT ACTCTCTGAAT TATCATGCCA,25nm,STD
+tile16rot0,TGGATTTGTTT ACGGAAAGAT AAGCATGGTA AAATTGGTCAA,25nm,STD""".split('\n')
 
-seq_lines = """T00;_;_  ACCAAGAACT TTGTCAACAAT AAACAAATCCA ATCTTTCCGT
-T01;_;_  TTGTCTAGAGT TTGGGATGTT AGTTCTTGGT ATTGTTGACAA
-T02;_;_  TTATCCACGT TTCCTCCTATT ACTCTAGACAA AACATCCCAA
-T03;_;_  AAGGAAGTAGA TTCGAAAGGT ACGTGGATAA AATAGGAGGAA
-T04;_;_  AACCTCGAAT TACCAGATTCT TCTACTTCCTT ACCTTTCGAA
-T05;_;_  AGAATAGTCGT TTGTCAGTGT ATTCGAGGTT AGAATCTGGTA
-T06;_;_  ATCTGCTCAT TCTGATCTCTT ACGACTATTCT ACACTGACAA
-T07;_;_  AATGGATAGGT AGGTGTCTTT ATGAGCAGAT AAGAGATCAGA
-T08;_;_  TCAAGTTCCA TATCCTTAGCA ACCTATCCATT AAAGACACCT
-T09;_;_  AGTGATGATCT TTTAGGCTGT TGGAACTTGA TGCTAAGGATA
-T10;_;_  ACCCATTCAT TTCCTGATACT AGATCATCACT ACAGCCTAAA
-T11;_;_  TGCGTTAAAAT AGATGCGTAT ATGAATGGGT AGTATCAGGAA
-T12;_;_  AACCTTCACA ATCGTCTCATA ATTTTAACGCA ATACGCATCT
-T13;_;_  ATTCAGAGAGT TGGCATGATA TGTGAAGGTT TATGAGACGAT
-T14;_;_  TACCATGCTT TTGACCAATTT ACTCTCTGAAT TATCATGCCA
-T15;_;_  TGGATTTGTTT ACGGAAAGAT AAGCATGGTA AAATTGGTCAA""".split('\n')
+tile_dna_seqs = [''.join(line.split(',')[1]) for line_no,line in enumerate(seq_lines) if line_no % 2 == 1]
+print(tile_dna_seqs)
 
-tile_dna_seqs = [''.join(line.split()[1:]) for line in seq_lines]
 
 def add_tiles_and_assign_dna(design):
     # left tiles
@@ -172,16 +175,65 @@ def add_tiles_and_assign_dna(design):
 
 def add_angle_inducing_insertions_deletions(design):
     # insertion followed by deletion
+    start = 59
+    end = start + (32 * 12)
     for helix_idx in [3, 7, 9, 13, 15]:
-        for offset in range(57, 434, 32):
+        for offset in range(start, end, 32):
             design.add_insertion(helix_idx, offset, 1)
             design.add_deletion(helix_idx, offset + 16)
 
     # deletion followed by insertion
     for helix_idx in [4, 6, 10, 12, 16]:
-        for offset in range(57, 434, 32):
+        for offset in range(start, end, 32):
             design.add_deletion(helix_idx, offset)
             design.add_insertion(helix_idx, offset + 16, 1)
+
+
+uz_toes_wc = """ 
+CACCCCAC
+CTTTCCTT
+TTCACTAA
+ACCAACCC
+TCTCTTAA
+CTTTCATA
+ATAATAAA
+AACTCACC
+ACTTAATA
+CAAATCAC
+ACCATCCA
+TACTCTAT
+ATACCTTC
+TTATTCAT
+ATCCACAA
+ATATTTTT
+CCACCTAA
+CTAAATTA
+ATTACCCC
+CACTAACA
+ACACACTT
+TTTTAATC
+ACATTTAA
+TCCACATC
+CCTACCTT
+TCCCTATA
+""".split()
+
+
+# above is in order from right to left on helix 1, followed by left to right on helix 18
+
+def assign_dna_to_unzipper_toeholds(design):
+    uz_toes = [sc.wc(seq) for seq in uz_toes_wc]
+
+    strands_h1 = design.strands_starting_on_helix(1)
+    strands_h1.sort(key=lambda strand: strand.first_substrand().offset_5p())
+    strands_h1.reverse()
+
+    strands_h18 = design.strands_starting_on_helix(18)
+    strands_h18.sort(key=lambda strand: strand.first_substrand().offset_5p())
+
+    for strand, toe in zip(strands_h1 + strands_h18, uz_toes):
+        seq = toe + sc.DNA_base_wildcard * (strand.dna_length() - 8)
+        design.assign_dna(strand, seq)
 
 
 if not sc.in_browser() and __name__ == '__main__':

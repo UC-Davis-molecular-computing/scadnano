@@ -23,6 +23,14 @@ class MenuViewComponent {
     this.root_element.children.add(this.show_dna_elt);
     this.root_element.children.add(this.show_editor_elt);
 
+    SpanElement help_elt = SpanElement();
+    AnchorElement link = AnchorElement()
+      ..href = './docs/'
+      ..text = 'Scripting Documentation'
+      ..target = '_blank';
+    help_elt.children.add(link);
+    this.root_element.children.add(help_elt);
+
     this.render_file_buttons();
     this.render_show_dna_checkbox();
     this.render_show_editor_checkbox();

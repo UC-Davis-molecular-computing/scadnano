@@ -14,8 +14,9 @@ import 'constants.dart' as constants;
 
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
-//TODO: add a mixin that lets me specify for each class that when it is created using fromJson, it should store all the
-// fields that are not used by scadnano, and write them back out on serialization using toJson
+//TODO: add a mixin that lets me specify for each class that when it is created using fromJson,
+// it should store all the fields that are not used by scadnano,
+// and write them back out on serialization using toJson
 
 //TODO: import cadnano files
 

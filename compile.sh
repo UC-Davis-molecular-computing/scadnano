@@ -16,3 +16,4 @@ for directory in build/packages/*; do
         rm -rf "$directory"
     fi
 done
+

@@ -19,10 +19,12 @@ def main():
     design.add_deletion(helix_idx=1, offset=12)
     design.add_deletion(helix_idx=1, offset=24)
     design.add_insertion(helix_idx=0, offset=6, length=1)
+    design.add_insertion(helix_idx=0, offset=7, length=1)
     design.add_insertion(helix_idx=0, offset=18, length=2)
     design.add_insertion(helix_idx=1, offset=6, length=3)
     design.add_insertion(helix_idx=1, offset=18, length=4)
-    design.assign_dna(scaf, 'AACT' * 18)
+    design.add_insertion(helix_idx=1, offset=19, length=4)
+    design.assign_dna(scaf, 'AACT' * 20)
 
     return design
 
