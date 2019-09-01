@@ -767,13 +767,17 @@ class DNASequenceComponent {
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -constants.BASE_WIDTH_SVG * 0.35;
+    var x_adjust = -constants.BASE_WIDTH_SVG * 0.32;
     if (!substrand.right) {
       rotate_degrees = 180;
     }
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
 
-    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + 0.85 * WIDTH_SVG_TEXT_SYMBOL;
+    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + 0.94 * WIDTH_SVG_TEXT_SYMBOL;
+    if (browser.isFirefox) {
+      text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + 1 * WIDTH_SVG_TEXT_SYMBOL;
+    }
+
     seq_elt.attributes = {
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',

@@ -225,9 +225,10 @@ html, body {
 }
 
 .mismatch-star {
+  /*stroke: black;*/
   stroke: red;
   fill: red;
-  stroke-width: 0.5;
+  stroke-width: 0.25;
 }
 
 .crossover-curve {
