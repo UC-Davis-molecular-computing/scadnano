@@ -27,15 +27,16 @@ class SideViewComponent {
     helix_elts_map.clear();
     for (var helix in app.model.dna_design.helices) {
       var helix_side_view_elt = HelixSideViewComponent(helix);
-      root_element.children.add(helix_side_view_elt.root_element);
+      this.root_element.children.add(helix_side_view_elt.root_element);
       var grid_pos = helix.grid_position;
       helix_elts_map[grid_pos] = helix_side_view_elt;
-    }
-
-    for (var helix_side_view_elt in helix_elts_map.values) {
-      this.root_element.children.add(helix_side_view_elt.root_element);
       helix_side_view_elt.render();
     }
+
+//    for (var helix_side_view_elt in helix_elts_map.values) {
+//      this.root_element.children.add(helix_side_view_elt.root_element);
+//      helix_side_view_elt.render();
+//    }
   }
 }
 

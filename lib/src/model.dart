@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:core';
+import 'dart:core' as prefix0;
 import 'dart:math';
 import 'dart:js';
 
@@ -7,6 +8,7 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
+import 'package:tuple/tuple.dart';
 
 import 'model_ui.dart';
 import 'app.dart';
@@ -20,6 +22,17 @@ import 'constants.dart' as constants;
 
 //TODO: import cadnano files
 
+class Mismatch {
+  final int dna_idx;
+  final int offset;
+  final int within_insertion;
+
+  Mismatch(this.dna_idx, this.offset, {this.within_insertion = -1});
+
+  String toString() =>
+      'Mismatch(dna_idx=${this.dna_idx}, offset=${this.offset}' +
+      (this.within_insertion < 0 ? ')' : ', within_insertion=${this.within_insertion})');
+}
 
 /// Represents parts of the Model to serialize
 class DNADesign {
@@ -40,7 +53,9 @@ class DNADesign {
   // maintained in sorted order, so that used_helices[helix.idx] == helix.
   List<Helix> used_helices = [];
 
-  Map<int,List<Substrand>> helix_idx_substrands_map = {};
+  Map<int, List<Substrand>> _helix_idx_substrands_map = {};
+
+  Map<Substrand, List<Mismatch>> _substrand_mismatches_map = {};
 
   DNADesign();
 
@@ -150,12 +165,10 @@ class DNADesign {
 
     //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
-    this.version = json_map.containsKey(constants.version_key)
-        ? json_map[constants.version_key]
-        : constants.INITIAL_VERSION;
+    this.version =
+        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
 
-    this.grid =
-        json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -182,23 +195,122 @@ class DNADesign {
       this.strands.add(strand);
     }
 
-    this.build_helix_idx_substrands_map();
+    this._build_helix_idx_substrands_map();
+    //XXX: important to build _substrand_mismatches_map second because it uses _helix_idx_substrands_map
+    this._build_substrand_mismatches_map();
   }
 
   String toString() => """DNADesign(grid=$grid, major_tick_distance=$major_tick_distance, 
   helices=$helices, 
   strands=$strands)""";
 
-  build_helix_idx_substrands_map() {
-    this.helix_idx_substrands_map = {};
+  _build_helix_idx_substrands_map() {
+    this._helix_idx_substrands_map = {};
     for (Helix helix in this.used_helices) {
-      this.helix_idx_substrands_map[helix.idx] = [];
+      this._helix_idx_substrands_map[helix.idx] = [];
     }
     for (Strand strand in this.strands) {
       for (Substrand substrand in strand.substrands) {
-        this.helix_idx_substrands_map[substrand.helix_idx].add(substrand);
+        this._helix_idx_substrands_map[substrand.helix_idx].add(substrand);
       }
     }
+  }
+
+  _build_substrand_mismatches_map() {
+    this._substrand_mismatches_map = {};
+    for (Strand strand in this.strands) {
+      if (strand.dna_sequence != null) {
+        for (Substrand substrand in strand.substrands) {
+          this._substrand_mismatches_map[substrand] = this._find_mismatches_on_substrand(substrand);
+        }
+      }
+    }
+    print('mismatches map built: ${this._substrand_mismatches_map}');
+  }
+
+  List<Mismatch> _find_mismatches_on_substrand(Substrand substrand) {
+    List<Mismatch> mismatches = [];
+
+    for (int offset = substrand.start; offset < substrand.end; offset++) {
+      if (substrand.deletions.contains(offset)) {
+        continue;
+      }
+
+      var other_ss = this.other_substrand_at_offset(substrand, offset);
+      if (other_ss == null || other_ss.dna_sequence() == null) {
+        continue;
+      }
+
+      this._ensure_other_substrand_same_deletion_or_insertion(substrand, other_ss, offset);
+
+      var seq = substrand.dna_sequence_in(offset, offset);
+      var other_seq = other_ss.dna_sequence_in(offset, offset);
+      assert(other_seq.length == seq.length);
+
+      for (int idx = 0, idx_other = seq.length-1; idx < seq.length; idx++, idx_other--) {
+        if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
+          int dna_idx = substrand.offset_to_strand_dna_idx(offset, substrand.right) + idx;
+          int within_insertion = seq.length == 1 ? -1 : idx;
+          var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+          mismatches.add(mismatch);
+        }
+      }
+    }
+    return mismatches;
+  }
+
+  /// Return other substrand at `offset` on `substrand.helix_idx`, or null if there isn't one.
+  Substrand other_substrand_at_offset(Substrand substrand, int offset) {
+    List<Substrand> other_substrands = this._other_substrands_overlapping(substrand);
+    for (var other_ss in other_substrands) {
+      if (other_ss.contains_offset(offset)) {
+        assert(substrand.right != other_ss.right);
+        return other_ss;
+      }
+    }
+    return null;
+  }
+
+  void _ensure_other_substrand_same_deletion_or_insertion(Substrand substrand, Substrand other_ss, int offset) {
+    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
+      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
+          'strand does not\nThis was found between the substrands on helix ${substrand.helix_idx} '
+          'occupying offset intervals\n'
+          '(${substrand.start}, ${substrand.end}) and\n'
+          '(${other_ss.start}, ${other_ss.end})');
+    }
+    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
+      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
+          'strand does not\nThis was found between the substrands on helix ${substrand.helix_idx} '
+          'occupying offset intervals\n'
+          '(${substrand.start}, ${substrand.end}) and\n'
+          '(${other_ss.start}, ${other_ss.end})');
+    }
+  }
+
+  /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
+  /// If a mismatch occurs outside an insertion, within_insertion = -1).
+  /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
+  List<Mismatch> mismatches_on_substrand(Substrand substrand) {
+    var ret = this._substrand_mismatches_map[substrand];
+    assert(ret != null);
+    return ret;
+  }
+
+  /// Return list of substrands on the Helix with the given index.
+  substrands_on_helix(int helix_idx) {
+    return this._helix_idx_substrands_map[helix_idx];
+  }
+
+  /// Return list of Substrands overlapping `substrand`.
+  List<Substrand> _other_substrands_overlapping(Substrand substrand) {
+    List<Substrand> ret = [];
+    for (var other_ss in this._helix_idx_substrands_map[substrand.helix_idx]) {
+      if (substrand.overlaps(other_ss)) {
+        ret.add(other_ss);
+      }
+    }
+    return ret;
   }
 
 //  /// Add new Helix.
@@ -247,6 +359,25 @@ class DNADesign {
 //  }
 }
 
+final Map<int,int> _wc_table = {
+  'A'.codeUnitAt(0): 'T'.codeUnitAt(0),
+  'T'.codeUnitAt(0): 'A'.codeUnitAt(0),
+  'G'.codeUnitAt(0): 'C'.codeUnitAt(0),
+  'C'.codeUnitAt(0): 'G'.codeUnitAt(0),
+  'a'.codeUnitAt(0): 't'.codeUnitAt(0),
+  't'.codeUnitAt(0): 'a'.codeUnitAt(0),
+  'g'.codeUnitAt(0): 'c'.codeUnitAt(0),
+  'c'.codeUnitAt(0): 'g'.codeUnitAt(0),
+};
+
+int _wc(int code_unit) {
+  if (_wc_table.containsKey(code_unit)) {
+    return _wc_table[code_unit];
+  } else {
+    return code_unit;
+  }
+}
+
 class Model with ChangeNotifier<Model> {
   DNADesign _dna_design;
 
@@ -266,6 +397,12 @@ class Model with ChangeNotifier<Model> {
 
   set show_dna(bool show) {
     this.main_view_ui_model.show_dna = show;
+  }
+
+  bool get show_mismatches => this.main_view_ui_model.show_mismatches;
+
+  set show_mismatches(bool show) {
+    this.main_view_ui_model.show_mismatches = show;
   }
 
   bool get show_editor => this.main_view_ui_model.show_editor;
@@ -393,7 +530,6 @@ class GridPosition {
   }
 }
 
-
 /// Represents a used helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a "used" helix doesn't
 /// have to have any strands on it.
@@ -492,8 +628,7 @@ class Helix with ChangeNotifier<Helix> {
     this.notify_changed();
   }
 
-  int get hashCode =>
-      quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
+  int get hashCode => quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -548,8 +683,7 @@ class Helix with ChangeNotifier<Helix> {
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -624,8 +758,7 @@ class Strand {
     var json_map = Map<String, dynamic>();
 
     // need to use List.from because List.map returns Iterable, not List
-    json_map[constants.substrands_key] =
-        List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
+    json_map[constants.substrands_key] = List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
     if (this.color != null) {
       json_map[constants.color_key] = this.color.toRgbColor().toMap();
     }
@@ -638,8 +771,8 @@ class Strand {
 
   Strand.from_json(Map<String, dynamic> json_map) {
     // need to use List.from because List.map returns Iterable, not List
-    this.substrands = List<Substrand>.from(get_value(json_map, constants.substrands_key)
-        .map((substrandJson) => Substrand.from_json(substrandJson)));
+    this.substrands = List<Substrand>.from(
+        get_value(json_map, constants.substrands_key).map((substrandJson) => Substrand.from_json(substrandJson)));
     for (var substrand in this.substrands) {
       substrand._strand = this;
     }
@@ -650,8 +783,7 @@ class Strand {
       this.color = DEFAULT_STRAND_COLOR;
     }
 
-    this.dna_sequence =
-        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    this.dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
     if (this.dna_sequence != null) {
       if (this.dna_sequence.length != this.length) {
         var first_substrand = this.substrands.first;
@@ -689,11 +821,12 @@ class Strand {
 
 class IllegalDNADesignError implements Exception {
   String cause;
+
   IllegalDNADesignError(String the_cause) {
-    this.cause =
-        '**********************\n'
-        '* illegal DNA design *\n'
-        '**********************\n\n' + the_cause;
+    this.cause = '**********************\n'
+            '* illegal DNA design *\n'
+            '**********************\n\n' +
+        the_cause;
   }
 }
 
@@ -721,6 +854,15 @@ class Substrand {
   int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
   int get visual_length => (this.end - this.start);
+
+//  @override
+//  int get hashCode => quiver.hash4(this.helix_idx, this.start, this.end, this.right);
+//
+//
+//  @override
+//  bool operator ==(Substrand other) {
+//    return this. this.start == other.start && this.end == other.end && this.right == other.right;
+//  }
 
   /// Indicates if `offset` is the offset of a base on this substrand.
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
@@ -970,8 +1112,7 @@ class Substrand {
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] =
-          List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+      json_map[constants.insertions_key] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
     }
     return json_map;
   }
@@ -992,7 +1133,6 @@ class Substrand {
       this.insertions = [];
     }
   }
-
 
 //  Substrand.from_js_object(JsObject js_obj) {
 //    this.helix_idx = js_obj[constants.helix_idx_key];
@@ -1017,6 +1157,30 @@ class Substrand {
         json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
   }
 
+  bool overlaps(Substrand other) {
+    return (this.helix_idx == other.helix_idx &&
+        this.right == (!other.right) &&
+        this.compute_overlap(other).item1 >= 0);
+  }
+
+  Tuple2<int, int> compute_overlap(Substrand other) {
+    int overlap_start = max(this.start, other.start);
+    int overlap_end = min(this.end, other.end);
+    if (overlap_start >= overlap_end) {
+      // overlap is empty
+      return Tuple2<int, int>(-1, -1);
+    }
+    return Tuple2<int, int>(overlap_start, overlap_end);
+  }
+
+  bool contains_insertion_at(int offset) {
+    for (Tuple2<int, int> insertion in this.insertions) {
+      if (offset == insertion.item1) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
@@ -1027,8 +1191,6 @@ dynamic get_value(Map<String, dynamic> map, String key) {
     return map[key];
   }
 }
-
-
 
 /// Use this mixin to get listener functionality for when an object changes and listeners need to be notified.
 /// Must pass an existing instance of a notifier (should be stored in central location like Controller).
@@ -1043,7 +1205,7 @@ class ChangeNotifier<T> {
   }
 
   notify_changed() {
-    if (this.notifier != null){
+    if (this.notifier != null) {
       this.notifier.add(this as T);
     }
   }

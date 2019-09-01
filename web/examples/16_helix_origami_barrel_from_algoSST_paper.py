@@ -109,7 +109,9 @@ def add_adapters(design):
                               start=left_outside_seed, end=left_inside_seed)
         ss_bot = sc.Substrand(helix_idx=bot_helix_idx, right=False,
                               start=left_outside_seed, end=left_inside_seed)
-        adapter = sc.Strand(substrands=[ss_bot, ss_top])
+        idt = sc.IDTFields(name=f'adap-left-{top_helix_idx}-{bot_helix_idx}',
+                           scale='25nm', purification='STD')
+        adapter = sc.Strand(substrands=[ss_bot, ss_top], idt=idt)
         design.add_strand(adapter)
 
     # right adapters
@@ -121,7 +123,9 @@ def add_adapters(design):
                               start=right_inside_seed, end=right_outside_seed)
         ss_bot = sc.Substrand(helix_idx=bot_helix_idx, right=False,
                               start=right_inside_seed, end=right_outside_seed)
-        adapter = sc.Strand(substrands=[ss_top, ss_bot])
+        idt = sc.IDTFields(name=f'adap-right-{top_helix_idx}-{bot_helix_idx}',
+                           scale='25nm', purification='STD')
+        adapter = sc.Strand(substrands=[ss_top, ss_bot], idt=idt)
         design.add_strand(adapter)
 
 seq_lines = """tile1rot0,ACCAAGAACT TTGTCAACAAT AAACAAATCCA ATCTTTCCGT,25nm,STD
@@ -142,7 +146,7 @@ tile15rot0,TACCATGCTT TTGACCAATTT ACTCTCTGAAT TATCATGCCA,25nm,STD
 tile16rot0,TGGATTTGTTT ACGGAAAGAT AAGCATGGTA AAATTGGTCAA,25nm,STD""".split('\n')
 
 tile_dna_seqs = [''.join(line.split(',')[1]) for line_no,line in enumerate(seq_lines) if line_no % 2 == 1]
-print(tile_dna_seqs)
+# print(tile_dna_seqs)
 
 
 def add_tiles_and_assign_dna(design):
@@ -238,4 +242,5 @@ def assign_dna_to_unzipper_toeholds(design):
 
 if not sc.in_browser() and __name__ == '__main__':
     design = main()
-    design.write_file(directory='output_designs')
+    design.write_scadnano_file(directory='output_designs')
+    design.write_idt_file(directory='idt')

@@ -22,7 +22,7 @@ def run(filename):
     if hasattr(module, "main"):
         print(f"  found main function in module {modulename}; running it and writing its output")
         design: sc.DNADesign = module.main()
-        design.write_file(directory='output_designs', filename=modulename + '.dna')
+        design.write_scadnano_file(directory='output_designs', filename=modulename + '.dna')
     else:
         print(f"  found no main function in module {modulename}; running as subprocess instead")
         try:

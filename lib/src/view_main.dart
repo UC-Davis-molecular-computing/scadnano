@@ -10,6 +10,7 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/iterables.dart' as iter;
 
 import 'actions.dart';
+import 'package:tuple/tuple.dart';
 import 'view.dart';
 import 'model.dart';
 import 'app.dart';
@@ -21,6 +22,8 @@ const DEBUG_PRINT_MOUSEOVER = false;
 const String MAIN_VIEW_PREFIX = 'main-view';
 
 final num WIDTH_SVG_TEXT_SYMBOL = width_svg_text('A');
+
+//TODO: add checkbox to toggle "show mismatches" on bound DNA sequences
 
 num width_svg_text(String string) {
   var text_elt = svg.TextElement();
@@ -48,6 +51,7 @@ class MainViewComponent {
   final svg.GElement helices_element = svg.GElement()..attributes = {'id': 'main-view-helices'};
   final svg.GElement strands_element = svg.GElement()..attributes = {'id': 'main-view-strands'};
   final svg.GElement dna_sequences_element = svg.GElement()..attributes = {'id': 'main-view-dna-sequences'};
+  final svg.GElement mismatches_element = svg.GElement()..attributes = {'id': 'main-view-mismatches'};
   final svg.GElement helix_invisible_boxes_element = svg.GElement()
     ..attributes = {'id': 'main-view-helix-invisible-boxes'};
 
@@ -86,8 +90,9 @@ class MainViewComponent {
     this.strands_element.children.clear();
     this.helix_invisible_boxes_element.children.clear();
 
-    // put helix lines in their own group that is always rendered before strands so helices appear underneath
+    // order of these groups determines which appears underneath
     this.root_element.children.add(this.helices_element);
+    this.root_element.children.add(this.mismatches_element);
     this.root_element.children.add(this.strands_element);
     this.root_element.children.add(this.dna_sequences_element);
     this.root_element.children.add(this.helix_invisible_boxes_element);
@@ -122,13 +127,16 @@ class MainViewComponent {
     // render DNA sequences
     this.render_dna_sequences();
 
+    // render mismatches
+    this.render_mismatches();
+
     // render invisible helix boxes
     for (var helix_elt in this.helix_elts_map.values) {
       helix_elt.render_invisible_box();
     }
   }
 
-  void render_dna_sequences() {
+  render_dna_sequences() {
     this.dna_sequences_element.children.clear();
     if (app.model.show_dna) {
       // these need to be rendered even if we are also rendering by HelixDNASequenceComponent, since the
@@ -141,6 +149,16 @@ class MainViewComponent {
 //        this.dna_sequences_element.children.add(helix_elt.dna_sequence_component.root_element);
 //        helix_elt.dna_sequence_component.render();
 //      }
+    }
+  }
+
+  render_mismatches() {
+    this.mismatches_element.children.clear();
+    if (app.model.show_mismatches) {
+      for (var strand_elt in this.strand_elts_map.values) {
+        this.mismatches_element.children.add(strand_elt.mismatches_component.root_element);
+        strand_elt.mismatches_component.render();
+      }
     }
   }
 }
@@ -339,9 +357,11 @@ class StrandComponent {
   final Strand strand;
   svg.GElement root_element = svg.GElement();
   DNASequenceComponent dna_sequence_component;
+  MismatchesComponent mismatches_component;
 
   StrandComponent(Strand this.strand) {
     this.dna_sequence_component = DNASequenceComponent(this.strand);
+    this.mismatches_component = MismatchesComponent(this.strand);
     this.root_element.attributes = {
       'class': 'strand',
     };
@@ -349,16 +369,20 @@ class StrandComponent {
 
   render() {
     this.root_element.children.clear();
-    this.render_strand_lines();
+    if (app.model.show_mismatches) {
+    }
+    this._draw_strand_lines();
 //    this.render_strand_lines_single_path();
-    this.render_5p_end();
-    this.render_3p_end();
+    this._draw_5p_end();
+    this._draw_3p_end();
     for (var substrand in this.strand.substrands) {
-      this.render_deletions(substrand);
-      this.render_insertions(substrand);
+      this._draw_deletions(substrand);
+      this._draw_insertions(substrand);
     }
     //XXX: note DNA sequence is not rendered here, or else later-rendered Strands would cover the DNA
     // Instead all DNA sequences are rendered into their own SVG group after all strands are rendered.
+    // Similarly mismatches are rendered separately so that they appear behind all other elements,
+    // and so that Strands need not be re-rendered when the "Show Mismatches" tickbox is checked/unchecked.
   }
 
   // keep this around in case this is how we want to export to an SVG file
@@ -398,7 +422,7 @@ class StrandComponent {
 //    }
 //  }
 
-  render_strand_lines() {
+  _draw_strand_lines() {
     if (this.strand.substrands.length == 0) {
       return;
     }
@@ -429,7 +453,7 @@ class StrandComponent {
         substrand = this.strand.substrands[i + 1];
         helix = app.model.dna_design.helices[substrand.helix_idx];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
+        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
         var crossover_curve = svg.PathElement()
           ..attributes = {
 //          'id': substrand_line_id(substrand),
@@ -445,7 +469,7 @@ class StrandComponent {
     this.root_element.children.addAll(paths);
   }
 
-  render_strand_lines_single_path() {
+  _draw_strand_lines_single_path() {
     if (this.strand.substrands.length == 0) {
       return;
     }
@@ -464,7 +488,7 @@ class StrandComponent {
         substrand = this.strand.substrands[i + 1];
         helix = app.model.dna_design.helices[substrand.helix_idx];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.right);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
+        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
     }
@@ -480,7 +504,7 @@ class StrandComponent {
     this.root_element.children.add(path);
   }
 
-  Point<num> control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
+  Point<num> _control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
     var helix_distance = (from_ss.helix_idx - to_ss.helix_idx).abs();
     var from_helix = app.model.dna_design.helices[from_ss.helix_idx];
     var to_helix = app.model.dna_design.helices[to_ss.helix_idx];
@@ -505,7 +529,7 @@ class StrandComponent {
     return control;
   }
 
-  render_5p_end() {
+  _draw_5p_end() {
     var substrand = strand.substrands.first;
     var helix = app.model.dna_design.helices[substrand.helix_idx];
     var offset = strand.substrands.first.offset_5p;
@@ -527,7 +551,7 @@ class StrandComponent {
     root_element.children.add(box);
   }
 
-  render_3p_end() {
+  _draw_3p_end() {
     var substrand = strand.substrands.last;
     var offset = substrand.offset_3p;
     var direction = substrand.right;
@@ -553,18 +577,18 @@ class StrandComponent {
     root_element.children.add(triangle);
   }
 
-  render_deletions(Substrand substrand) {
+  _draw_deletions(Substrand substrand) {
     for (var deletion in substrand.deletions) {
       var helix = app.model.dna_design.helices[substrand.helix_idx];
       Point<num> pos = helix.svg_base_pos(deletion, substrand.right);
 
-      var width = 0.9 * constants.BASE_WIDTH_SVG;
+      var width = 0.8 * constants.BASE_WIDTH_SVG;
       var half_width = 0.5 * width;
       var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
           'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
       var deletion_path = svg.PathElement();
       deletion_path.attributes = {
-        'class': 'deletion-cross-inner',
+        'class': 'deletion-cross',
         'stroke': strand.color.toRgbColor().toCssString(),
         'fill': 'none',
         'd': path_cmds,
@@ -573,59 +597,83 @@ class StrandComponent {
     }
   }
 
-  render_insertions(Substrand substrand) {
+  _draw_insertions(Substrand substrand) {
     for (var insertion in substrand.insertions) {
       int offset = insertion.item1;
 
-      var helix = app.model.dna_design.helices[substrand.helix_idx];
-      Point<num> pos = helix.svg_base_pos(offset, substrand.right);
-      num x0 = pos.x;
-      num y0 = pos.y;
-      num dx = constants.BASE_WIDTH_SVG;
-      num dy = 2.0 * constants.BASE_HEIGHT_SVG;
-      if (substrand.right) {
-        dy = -dy;
-        dx = -dx;
-      }
-      var x1 = (x0 + dx).toStringAsFixed(2);
-      var x2 = (x0 - dx).toStringAsFixed(2);
-      var y1 = (y0 + dy).toStringAsFixed(2);
-      var y2 = (y0 + dy).toStringAsFixed(2);
-      var insertion_path = svg.PathElement();
-      insertion_path.attributes = {
-        'id': insertion_id(substrand, offset),
-        'class': 'strand',
-        'stroke': this.strand.color.toRgbColor().toCssString(),
-        'fill': 'none',
-        'd': 'M $x0 $y0 C $x1 $y1, $x2 $y2, $x0 $y0',
-      };
+      svg.PathElement insertion_path = _draw_insertion(substrand, offset);
 
-      // write number of insertions inside insertion loop
-      int length = insertion.item2;
-      var xmlns = "http://www.w3.org/2000/svg";
-      svg.TextPathElement textpath_elt = document.createElementNS(xmlns, 'textPath');
-      textpath_elt.setInnerHtml('${length}');
-
-      var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
-      if (browser.isFirefox) {
-        // le sigh
-        dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
-      }
-
-      var text_elt = svg.TextElement();
-      text_elt.children.add(textpath_elt);
-      textpath_elt.attributes = {
-        'class': 'insertion-length',
-        'startOffset': '50%',
-        'href': '#${StrandComponent.insertion_id(substrand, offset)}',
-      };
-      text_elt.attributes = {
-        'dy': dy_text,
-      };
-
-      this.root_element.children.add(text_elt);
-      this.root_element.children.add(insertion_path);
+      _draw_text_number_of_insertions(insertion, insertion_path, substrand, offset);
     }
+  }
+
+  svg.PathElement _draw_insertion(Substrand substrand, int offset) {
+    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    Point<num> pos = helix.svg_base_pos(offset, substrand.right);
+
+    num dx1 = constants.BASE_WIDTH_SVG;
+    num dx2 = 0.5 * constants.BASE_WIDTH_SVG;
+    num dy1 = 2 * constants.BASE_HEIGHT_SVG;
+    num dy2 = 2 * constants.BASE_HEIGHT_SVG;
+    if (substrand.right) {
+      dy1 = -dy1;
+      dy2 = -dy2;
+      dx1 = -dx1;
+      dx2 = -dx2;
+    }
+    num x0 = pos.x;
+    num y0 = pos.y;
+    var x1 = (x0 + dx1).toStringAsFixed(2);
+    var x2 = (x0 + dx2).toStringAsFixed(2);
+    var x3 = x0.toStringAsFixed(2);
+    var x4 = (x0 - dx2).toStringAsFixed(2);
+    var x5 = (x0 - dx1).toStringAsFixed(2);
+
+    var y1 = (y0 + dy1).toStringAsFixed(2);
+    var y2 = (y0 + dy2).toStringAsFixed(2);
+
+    var insertion_path = svg.PathElement();
+
+    insertion_path.attributes = {
+      'id': insertion_id(substrand, offset),
+      'class': 'insertion-line',
+      'stroke': this.strand.color.toRgbColor().toCssString(),
+      'fill': 'none',
+      'd': 'M $x0 $y0 '
+          'C $x1 $y1, $x2 $y2, $x3 $y2 '
+          'C $x4 $y2, $x5 $y1, $x0 $y0 ',
+    };
+    return insertion_path;
+  }
+
+  void _draw_text_number_of_insertions(
+      Tuple2<int, int> insertion, svg.PathElement insertion_path, Substrand substrand, int offset) {
+    // write number of insertions inside insertion loop
+    int length = insertion.item2;
+    var xmlns = "http://www.w3.org/2000/svg";
+    svg.TextPathElement textpath_elt = document.createElementNS(xmlns, 'textPath');
+    textpath_elt.setInnerHtml('${length}');
+
+    this.root_element.children.add(insertion_path);
+
+    var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
+    if (browser.isFirefox) {
+      // le sigh
+      dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
+    }
+
+    var text_elt = svg.TextElement();
+    text_elt.children.add(textpath_elt);
+    textpath_elt.attributes = {
+      'class': 'insertion-length',
+      'startOffset': '50%',
+      'href': '#${StrandComponent.insertion_id(substrand, offset)}',
+    };
+    text_elt.attributes = {
+      'dy': dy_text,
+    };
+
+    this.root_element.children.add(text_elt);
   }
 
   static String substrand_line_id(Substrand substrand) =>
@@ -633,6 +681,45 @@ class StrandComponent {
 
   static String insertion_id(Substrand substrand, int offset) =>
       'insertion-H${substrand.helix_idx}-O${offset}-${substrand.right ? 'right' : 'left'}';
+}
+
+class MismatchesComponent {
+  svg.GElement root_element = svg.GElement();
+  Strand strand;
+
+  MismatchesComponent(this.strand) {
+    this.root_element.attributes = {
+      'class': 'mismatches-elts',
+    };
+  }
+
+  render() {
+    root_element.children.clear();
+    if (app.model.show_mismatches) {
+      for (var substrand in this.strand.substrands) {
+        this._draw_mismatches(substrand);
+      }
+    }
+  }
+
+
+  _draw_mismatches(Substrand substrand) {
+    List<Mismatch> mismatches = app.model.dna_design.mismatches_on_substrand(substrand);
+    for (Mismatch mismatch in mismatches) {
+      // For now if there is a mismatch in an insertion we simply display it for the whole insertion,
+      // not for a specific base.
+      if (true) { // || mismatch.within_insertion < 0) {
+        // outside insertion
+        var helix = app.model.dna_design.used_helices[substrand.helix_idx];
+        var base_pos = helix.svg_base_pos(mismatch.offset, substrand.right);
+        var star = create_mismatch_svg_star(base_pos, substrand.right);
+        this.root_element.children.add(star);
+      } else { // in insertion
+        throw UnimplementedError('does not yet support showing specific mismatches in insertions');
+      }
+    }
+  }
+
 }
 
 class DNASequenceComponent {
@@ -665,6 +752,8 @@ class DNASequenceComponent {
   // https://github.com/shrhdk/text-to-svg
 
   // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
+  // In general "draw" means it just draws (possibly over the top of something incorrectly),
+  // whereas "render" means "draw as though from scratch"
   _draw_dna_sequence(Substrand substrand) {
     var seq_elt = svg.TextElement();
     var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
@@ -678,13 +767,13 @@ class DNASequenceComponent {
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -constants.BASE_WIDTH_SVG * 0.25;
+    var x_adjust = -constants.BASE_WIDTH_SVG * 0.35;
     if (!substrand.right) {
       rotate_degrees = 180;
     }
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
 
-    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + 0.7 * WIDTH_SVG_TEXT_SYMBOL;
+    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 1) + 0.85 * WIDTH_SVG_TEXT_SYMBOL;
     seq_elt.attributes = {
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
@@ -711,38 +800,24 @@ class DNASequenceComponent {
     var subseq = substrand.dna_sequence_in(offset, offset);
     textpath_elt.setInnerHtml(subseq);
 
-    // hard to read, but this uses space nicely no matter how many insertions there are,
-    // when there are more bases, it starts earlier and ends later on the arc.
-    // I don't know why I need to multiple by base_factor instead of just num_bases, but I suspect
-    // it's because the Bezier curves are not uniform speed so the offset is not going to a predictable
-    // place along the curve.
-    int num_bases = length + 1;
-
     svg.PathElement insertion_path_elt = querySelector('#${StrandComponent.insertion_id(substrand, offset)}');
-    num path_length = insertion_path_elt.getTotalLength();
-    print('path length: $path_length');
 
-//    num base_factor = num_bases - 2;
-//    num spacing_coef = 0.1; // small is less space between letters
-//    num start_offset = (1.0 - min(1.0, base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG;
-//    num text_length = (0.5 + min(2.0, 2 * base_factor * spacing_coef)) * constants.BASE_WIDTH_SVG;
+    //XXX: path_length appears to return different results depending on the computer (probably resolution??)
+    // don't rely on it. This caused Firefox for example to render different on the same version.
+//    num path_length = insertion_path_elt.getTotalLength();
 
-//    num start_offset = path_length / 2 - (0.1 * path_length) - max(0, 0.05 * path_length * (num_bases-2));
-//    num text_length = path_length / 10 + ((num_bases - 1) / 10.0) * (path_length);
-//    print('start_offset $start_offset for insertion $subseq');
-//    print('text_length $text_length for insertion $subseq');
-
-    //XXX
     var start_offset = '50%';
-//    text_length = 0.1 * path_length;
-
     var dy = '${0.1 * constants.BASE_WIDTH_SVG}';
 
-    var side = 'right';
-    if (browser.isFirefox) {
-      // le sigh
-//      dy = '-${0.55 * constants.BASE_WIDTH_SVG}';
-      side = 'left';
+    Tuple2<num, num> ls_fs = _calculate_letter_spacing_and_font_size(length);
+    num letter_spacing = ls_fs.item1;
+    num font_size = ls_fs.item2;
+
+    String style_string;
+    if (letter_spacing != null) {
+      style_string = 'letter-spacing: ${letter_spacing}em; font-size: ${font_size}px';
+    } else {
+      style_string = 'font-size: ${font_size}px';
     }
 
     var text_elt = svg.TextElement();
@@ -751,25 +826,99 @@ class DNASequenceComponent {
       'class': classname_dna_sequence + '-insertion',
       'href': '#${StrandComponent.insertion_id(substrand, offset)}',
       'startOffset': start_offset,
-      'side': side,
+      'style': style_string,
     };
     text_elt.attributes = {
       'dy': dy,
     };
 
-    if (browser.isChrome) {
-//      textpath_elt.setAttribute('textLength', '$text_length');
-    } else if (browser.isFirefox) {
-      //UGGG, but it works
-      num text_length = 1.4 * (pow(num_bases - 1, 0.4)) * WIDTH_SVG_TEXT_SYMBOL;
-      text_elt.setAttribute('textLength', '$text_length');
-    } else {
-      // ??
-//      text_elt.setAttribute('textLength', '$text_length');
-    }
-
     this.root_element.children.add(text_elt);
   }
+
+}
+
+svg.PolygonElement create_mismatch_svg_star(Point<num> base_svg_pos, bool right) {
+  num x0 = base_svg_pos.x;
+  num y0 = base_svg_pos.y - 1.0 * constants.BASE_HEIGHT_SVG;
+
+  // assume bottom points of star are at origin
+  List<num> xs = [];
+  List<num> ys = [];
+
+  num inner_radius = 0.2 * constants.BASE_WIDTH_SVG;
+  num outer_radius = 0.45 * constants.BASE_WIDTH_SVG;
+
+  num num_points = 12;
+  num inner_angle = 0;
+  num outer_angle = inner_angle + pi / num_points;
+  for (int i = 0; i < num_points; i++) {
+    num x_inner = inner_radius * cos(inner_angle);
+    num y_inner = inner_radius * sin(inner_angle);
+    num x_outer = outer_radius * cos(outer_angle);
+    num y_outer = outer_radius * sin(outer_angle);
+    xs.add(x_inner);
+    xs.add(x_outer);
+    ys.add(y_inner);
+    ys.add(y_outer);
+    inner_angle += 2 * pi / num_points;
+    outer_angle += 2 * pi / num_points;
+  }
+
+  num rotate_degrees = 0;
+  if (!right) {
+    rotate_degrees = 180;
+  }
+
+  // translate from origin
+  for (int i = 0; i < xs.length; i++) {
+    xs[i] += x0;
+    ys[i] += y0;
+  }
+
+  List<String> points = [];
+  for (int i = 0; i < xs.length; i++) {
+    points.add('${xs[i].toStringAsFixed(2)},${ys[i].toStringAsFixed(2)}');
+  }
+
+  var ret = svg.PolygonElement()
+    ..attributes = {
+      'class': 'mismatch-star',
+      'points': points.join(' '),
+      'transform': 'rotate(${rotate_degrees} ${base_svg_pos.x} ${base_svg_pos.y})',
+    };
+  return ret;
+}
+
+Tuple2<num, num> _calculate_letter_spacing_and_font_size(int num_insertions) {
+  // UGGG
+  num letter_spacing;
+  num font_size = max(6, 12 - (num_insertions - 1));
+  if (browser.isChrome) {
+    if (num_insertions == 1) {
+      letter_spacing = 0;
+    } else if (num_insertions == 2) {
+      letter_spacing = -0.1;
+    } else if (num_insertions == 3) {
+      letter_spacing = -0.1;
+    } else if (num_insertions == 4) {
+      letter_spacing = -0.1;
+    } else if (num_insertions == 5) {
+      letter_spacing = -0.15;
+    } else if (num_insertions == 6) {
+      letter_spacing = -0.18;
+    } else {
+      letter_spacing = null;
+    }
+  }
+  if (browser.isFirefox) {
+    // Firefox ignores the "letter-spacing" property so we only have font-size to play with
+    font_size = max(6, 12 - (num_insertions - 1));
+    if (num_insertions > 3 && font_size > 6) {
+      font_size -= 1;
+    }
+    letter_spacing = null;
+  }
+  return Tuple2<num, num>(letter_spacing, font_size);
 }
 
 // HelixDNASequenceComponent was an attempted performance optimization to render a single line of text

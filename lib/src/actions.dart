@@ -101,6 +101,21 @@ class ShowDNAAction implements Action {
   }
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+/// Change whether to show mismatches on overlapping strands
+class ShowMismatchesAction implements Action {
+  final bool show_mismatches;
+
+  ShowMismatchesAction(this.show_mismatches);
+
+  @override
+  Model apply(Model model) {
+    model.show_mismatches = this.show_mismatches;
+    return model;
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /// Change whether to show the DNA sequence of each strand
 class ShowEditorAction implements Action {
@@ -169,7 +184,7 @@ class UpdateMouseOverDataAction implements Action {
   @override
   Model apply(Model model) {
     Substrand substrand = null;
-    for (Substrand ss in app.model.dna_design.helix_idx_substrands_map[this.helix_idx]) {
+    for (Substrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
       if (ss.contains_offset(this.offset) && ss.right == this.right) {
         substrand = ss;
         break;

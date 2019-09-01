@@ -23,6 +23,8 @@ class Controller {
 
   final notifier_show_dna_change = StreamController<bool>.broadcast();
 
+  final notifier_show_mismatches_change = StreamController<bool>.broadcast();
+
   // "Show Editor" boolean value changed (e.g., user clicks on "Show Editor Sequence" check)
   final notifier_show_editor_change = StreamController<bool>.broadcast();
 
@@ -66,6 +68,7 @@ class Controller {
   subscribe_to_all_to_model_change_events() {
     this.subscribe_to_model_changed();
     this.subscribe_to_show_dna();
+    this.subscribe_to_show_mismatches();
     this.subscribe_to_show_editor();
     this.subscribe_to_model_changed_since_last_save_changed();
   }
@@ -83,10 +86,15 @@ class Controller {
     });
   }
 
+  subscribe_to_show_mismatches() {
+    this.notifier_show_mismatches_change.stream.listen((_) {
+      app.view.design_view.main_view.render_mismatches();
+    });
+  }
+
   subscribe_to_show_editor() {
     this.notifier_show_editor_change.stream.listen((_) {
       app.view.update_showing_editor();
-//      app.view.render();
     });
   }
 
@@ -107,6 +115,7 @@ class Controller {
     //TODO: allow helices to be made longer or shorter
 
     this.subscribe_to_user_clicks_show_dna_checkbox();
+    this.subscribe_to_user_clicks_show_mismatches_checkbox();
     this.subscribe_to_user_clicks_show_editor_checkbox();
     this.subscribe_to_save_file_button_pressed();
     this.subscribe_to_load_file_button_pressed();
@@ -149,6 +158,12 @@ class Controller {
   subscribe_to_user_clicks_show_dna_checkbox() {
     app.view.menu_view.show_dna_checkbox.onChange.listen((_) {
       app.send_action(ShowDNAAction(app.view.menu_view.show_dna_checkbox.checked));
+    });
+  }
+
+  subscribe_to_user_clicks_show_mismatches_checkbox() {
+    app.view.menu_view.show_mismatches_checkbox.onChange.listen((_) {
+      app.send_action(ShowMismatchesAction(app.view.menu_view.show_mismatches_checkbox.checked));
     });
   }
 
@@ -210,10 +225,13 @@ class Controller {
     });
   }
 
+
+
 // END subscribe controller to events that result in dispatching Actions (e.g., user interaction)
 //////////////////////////////////////////////////////////////////////////////
 
 }
+
 
 // Saving files from browsers is tricky. I don't recall where I got the
 // following code, but maybe check here:

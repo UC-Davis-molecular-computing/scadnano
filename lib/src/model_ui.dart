@@ -33,11 +33,21 @@ class MainViewUIModel {
   MouseOverData mouse_over_data = MouseOverData();
 
   /// disabling this will make it easier to navigate since less SVG needs be rendered
-  bool _show_dna = false;
+  bool _show_dna = true;
+//  bool _show_dna = false;
+  bool _show_mismatches = true;
+//  bool _show_mismatches = false;
+
   bool get show_dna => this._show_dna;
   void set show_dna(bool new_show_dna) {
     this._show_dna = new_show_dna;
     app.controller.notifier_show_dna_change.add(this._show_dna);
+  }
+
+  bool get show_mismatches => this._show_mismatches;
+  void set show_mismatches(bool new_show_mismatches) {
+    this._show_mismatches = new_show_mismatches;
+    app.controller.notifier_show_mismatches_change.add(this._show_mismatches);
   }
 
   //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.

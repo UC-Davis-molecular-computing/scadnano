@@ -10,9 +10,11 @@ class MenuViewComponent {
   final ButtonElement save_button = ButtonElement();
 
   final SpanElement show_dna_elt = SpanElement();
+  final SpanElement show_mismatches_elt = SpanElement();
   final SpanElement show_editor_elt = SpanElement();
   final FileUploadInputElement file_chooser = FileUploadInputElement();
   final CheckboxInputElement show_dna_checkbox = CheckboxInputElement();
+  final CheckboxInputElement show_mismatches_checkbox = CheckboxInputElement();
   final CheckboxInputElement show_editor_checkbox = CheckboxInputElement();
 
   MenuViewComponent(this.root_element);
@@ -21,18 +23,20 @@ class MenuViewComponent {
     this.root_element.children.clear();
     this.root_element.children.add(this.file_buttons_elt);
     this.root_element.children.add(this.show_dna_elt);
+    this.root_element.children.add(this.show_mismatches_elt);
     this.root_element.children.add(this.show_editor_elt);
 
     SpanElement help_elt = SpanElement();
     AnchorElement link = AnchorElement()
       ..href = './docs/'
-      ..text = 'Scripting Documentation'
+      ..text = 'Docs'
       ..target = '_blank';
     help_elt.children.add(link);
     this.root_element.children.add(help_elt);
 
     this.render_file_buttons();
     this.render_show_dna_checkbox();
+    this.render_show_mismatches_checkbox();
     this.render_show_editor_checkbox();
 
     // should do this after file buttons are rendered since they are simulate-clicked
@@ -49,6 +53,18 @@ class MenuViewComponent {
     span_show_dna.children.add(label_show_dna);
     label_show_dna.text = "show DNA sequence";
     label_show_dna.onClick.listen((_) => this.show_dna_checkbox.click());
+  }
+
+  render_show_mismatches_checkbox() {
+    this.show_mismatches_elt.children.clear();
+    this.show_mismatches_checkbox.checked = app.model.show_mismatches;
+    var label_show_mismatches = LabelElement();
+    var span_show_mismatches = SpanElement();
+    show_mismatches_elt.children.add(span_show_mismatches);
+    span_show_mismatches.children.add(this.show_mismatches_checkbox);
+    span_show_mismatches.children.add(label_show_mismatches);
+    label_show_mismatches.text = "show mismatches";
+    label_show_mismatches.onClick.listen((_) => this.show_mismatches_checkbox.click());
   }
 
   render_show_editor_checkbox() {

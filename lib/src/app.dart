@@ -44,7 +44,10 @@ class App {
 
     this.model =
         await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+//        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_lots_of_insertions.dna');
+//        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami_mismatches.dna');
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami.dna');
+    //TODO: this isn't properly loading examples/output_designs/1_staple_1_helix_origami_mismatches.dna
 
     util.save_editor_content_to_js_context(model.editor_content);
 

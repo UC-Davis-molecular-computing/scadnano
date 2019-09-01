@@ -216,16 +216,29 @@ html, body {
   stroke-width: 0.5px;
 }
 
-.deletion-cross-outer {
-  stroke: black;
-  stroke-width: 1.5px;
-  /*stroke-linecap: round;*/
+.substrand-line {
+  stroke-width: 2.5;
 }
 
-.deletion-cross-inner {
+.insertion-line {
+  stroke-width: 2.0px;
+}
+
+.mismatch-star {
   stroke: red;
-  stroke-width: 1px;
-  /*stroke-linecap: round;*/
+  fill: red;
+  stroke-width: 0.5;
+}
+
+.crossover-curve {
+  stroke-width: 2.5;
+  stroke-dasharray: 2;
+}
+
+.deletion-cross {
+  stroke: red;
+  stroke-width: 2px;
+  stroke-linecap: round;
 }
 
 .insertion-length {
@@ -234,29 +247,12 @@ html, body {
   dominant-baseline: hanging;
 }
 
-/*.dna-base {*/
-/*  font-family: "Consolas", "Lucida Console", "Courier New", monospace;*/
-/*  font-weight: bold;*/
-/*  font-size: 5px;*/
-/*  text-anchor: middle;*/
-/*  dominant-baseline: hanging;*/
-/*  text-shadow: !*-1px -1px 0 #fff,*! !*1px -1px 0 #fff,*! !*-1px 1px 0 #fff,*! !*1px 1px 0 #fff;*! -0.7px -0.7px 0 #fff,*/
-/*  0.7px -0.7px 0 #fff,*/
-/*  -0.7px 0.7px 0 #fff,*/
-/*  0.7px 0.7px 0 #fff;*/
-/*}*/
-
-.dna-seq-textpath {
-
-}
-
 .dna-seq {
   font-family: "Consolas", "Lucida Console", "Courier New", monospace;
   font-weight: bold;
   font-size: 12px;
   text-anchor: start;
   dominant-baseline: ideographic;
-  /*letter-spacing: 10px;*/
   text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
   0.7px -0.7px 0 #fff,
   -0.7px 0.7px 0 #fff,
@@ -268,27 +264,14 @@ html, body {
 .dna-seq-insertion {
   font-family: "Consolas", "Lucida Console", "Courier New", monospace;
   font-weight: bold;
-  font-size: 12px;
   text-anchor: middle;
-  /*text-anchor: start;*/
   dominant-baseline: ideographic;
-  /*letter-spacing: 10px;*/
   text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
   0.7px -0.7px 0 #fff,
   -0.7px 0.7px 0 #fff,
   0.7px 0.7px 0 #fff;
   text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
   white-space: pre; /* needed to display multiple space symbols in a row */
-  letter-spacing: -0.3em;
-}
-
-.substrand-line {
-  stroke-width: 2.5;
-}
-
-.crossover-curve {
-  stroke-width: 2.5;
-  stroke-dasharray: 2;
 }
 
 .main-view-helix-circle {

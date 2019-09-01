@@ -1946,6 +1946,7 @@
     {
       "color": {"r": 51, "g": 51, "b": 51},
       "dna_sequence": "GTAAAATACGTAATGCTTGTCAACAAAACAAATCCACCCTAAAGGGAGCCCC",
+      "idt": {"name": "adap-left-17-2", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 2, "right": false, "start": 22, "end": 48},
         {"helix_idx": 17, "right": true, "start": 22, "end": 48}
@@ -1954,6 +1955,7 @@
     {
       "color": {"r": 50, "g": 0, "b": 150},
       "dna_sequence": "TGAGATGGTTTAATTTTTCCTCCTATCTCTAGACAACACTACGAAGGCACCA",
+      "idt": {"name": "adap-left-3-4", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 4, "right": false, "start": 22, "end": 48},
         {"helix_idx": 3, "right": true, "start": 22, "end": 48}
@@ -1962,6 +1964,7 @@
     {
       "color": {"r": 3, "g": 182, "b": 162},
       "dna_sequence": "AAAACGAGAATGACCATACCAGATTCCTACTTCCTTCAACTTTAATCATTGT",
+      "idt": {"name": "adap-left-5-6", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 6, "right": false, "start": 22, "end": 48},
         {"helix_idx": 5, "right": true, "start": 22, "end": 48}
@@ -1970,6 +1973,7 @@
     {
       "color": {"r": 115, "g": 0, "b": 222},
       "dna_sequence": "CATTTGGGGCGCGAGCTCTGATCTCTCGACTATTCTTAAATCAAAAATCAGG",
+      "idt": {"name": "adap-left-7-8", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 8, "right": false, "start": 22, "end": 48},
         {"helix_idx": 7, "right": true, "start": 22, "end": 48}
@@ -1978,6 +1982,7 @@
     {
       "color": {"r": 170, "g": 170, "b": 0},
       "dna_sequence": "AAACAAGAGAATCGATTATCCTTAGCCCTATCCATTTGAAAAGGTGGCATCA",
+      "idt": {"name": "adap-left-9-10", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 10, "right": false, "start": 22, "end": 48},
         {"helix_idx": 9, "right": true, "start": 22, "end": 48}
@@ -1986,6 +1991,7 @@
     {
       "color": {"r": 184, "g": 5, "b": 108},
       "dna_sequence": "GCTTTCCGGCACCGCTTTCCTGATACGATCATCACTGAACGGTAATCGTAAA",
+      "idt": {"name": "adap-left-11-12", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 12, "right": false, "start": 22, "end": 48},
         {"helix_idx": 11, "right": true, "start": 22, "end": 48}
@@ -1994,6 +2000,7 @@
     {
       "color": {"r": 0, "g": 114, "b": 0},
       "dna_sequence": "TCCAGTCGGGAAACCTATCGTCTCATTTTTAACGCATCTGGTGCCGGAAACC",
+      "idt": {"name": "adap-left-13-14", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 14, "right": false, "start": 22, "end": 48},
         {"helix_idx": 13, "right": true, "start": 22, "end": 48}
@@ -2002,6 +2009,7 @@
     {
       "color": {"r": 247, "g": 67, "b": 8},
       "dna_sequence": "AAGCACTAAATCGGAATTGACCAATTCTCTCTGAATGTCGTGCCAGCTGCAT",
+      "idt": {"name": "adap-left-15-16", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 16, "right": false, "start": 22, "end": 48},
         {"helix_idx": 15, "right": true, "start": 22, "end": 48}
@@ -2010,6 +2018,7 @@
     {
       "color": {"r": 247, "g": 147, "b": 30},
       "dna_sequence": "TAGTCTTTAATGCGCGATCTTTCCGTACCAAGAACTTCGTCTTTCCAGACGT",
+      "idt": {"name": "adap-right-17-2", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 17, "right": true, "start": 464, "end": 490},
         {"helix_idx": 2, "right": false, "start": 464, "end": 490}
@@ -2018,6 +2027,7 @@
     {
       "color": {"r": 87, "g": 187, "b": 0},
       "dna_sequence": "ACGATCTAAAGTTTTGAACATCCCAATTATCCACGTAGTAAGCGTCATACAT",
+      "idt": {"name": "adap-right-3-4", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 3, "right": true, "start": 464, "end": 490},
         {"helix_idx": 4, "right": false, "start": 464, "end": 490}
@@ -2026,6 +2036,7 @@
     {
       "color": {"r": 136, "g": 136, "b": 136},
       "dna_sequence": "CTGAATTTACCGTTCCACCTTTCGAAAACCTCGAATTAAAGGTGAATTATCA",
+      "idt": {"name": "adap-right-5-6", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 5, "right": true, "start": 464, "end": 490},
         {"helix_idx": 6, "right": false, "start": 464, "end": 490}
@@ -2034,6 +2045,7 @@
     {
       "color": {"r": 204, "g": 0, "b": 0},
       "dna_sequence": "GACGGAAATTATTCATACACTGACAAATCTGCTCATATAAAAACAGGGAAGC",
+      "idt": {"name": "adap-right-7-8", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 7, "right": true, "start": 464, "end": 490},
         {"helix_idx": 8, "right": false, "start": 464, "end": 490}
@@ -2042,6 +2054,7 @@
     {
       "color": {"r": 51, "g": 51, "b": 51},
       "dna_sequence": "TTACAGAGAGAATAACAAAGACACCTTCAAGTTCCATAGATAAGTCCTGAAC",
+      "idt": {"name": "adap-right-9-10", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 9, "right": true, "start": 464, "end": 490},
         {"helix_idx": 10, "right": false, "start": 464, "end": 490}
@@ -2050,6 +2063,7 @@
     {
       "color": {"r": 50, "g": 0, "b": 150},
       "dna_sequence": "GCCTGTTTATCAACAAACAGCCTAAAACCCATTCATATCATAGGTCTGAGAG",
+      "idt": {"name": "adap-right-11-12", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 11, "right": true, "start": 464, "end": 490},
         {"helix_idx": 12, "right": false, "start": 464, "end": 490}
@@ -2058,6 +2072,7 @@
     {
       "color": {"r": 3, "g": 182, "b": 162},
       "dna_sequence": "TAGTGAATTTATCAAAATACGCATCTAACCTTCACATATAATCCTGATTGTT",
+      "idt": {"name": "adap-right-13-14", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 13, "right": true, "start": 464, "end": 490},
         {"helix_idx": 14, "right": false, "start": 464, "end": 490}
@@ -2066,6 +2081,7 @@
     {
       "color": {"r": 115, "g": 0, "b": 222},
       "dna_sequence": "GATGGCAATTCATCAATATCATGCCATACCATGCTTAACTGATAGCCCTAAA",
+      "idt": {"name": "adap-right-15-16", "scale": "25nm", "purification": "STD"},
       "substrands": [
         {"helix_idx": 15, "right": true, "start": 464, "end": 490},
         {"helix_idx": 16, "right": false, "start": 464, "end": 490}
