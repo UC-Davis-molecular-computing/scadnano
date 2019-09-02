@@ -185,7 +185,7 @@ class UpdateMouseOverDataAction implements Action {
   Model apply(Model model) {
     Substrand substrand = null;
     for (Substrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
-      if (ss.contains_offset(this.offset) && ss.right == this.right) {
+      if (ss.contains_offset(this.offset) && ss.forward == this.right) {
         substrand = ss;
         break;
       }

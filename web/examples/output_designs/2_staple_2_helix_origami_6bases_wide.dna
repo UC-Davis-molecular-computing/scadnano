@@ -7,28 +7,28 @@
   ],
   "strands": [
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": {"r": 3, "g": 182, "b": 162},
       "dna_sequence": "TTTG",
       "substrands": [
-        {"helix_idx": 1, "right": true, "start": 0, "end": 3, "deletions": [1]},
-        {"helix_idx": 0, "right": false, "start": 0, "end": 3, "deletions": [1]}
+        {"helix_idx": 1, "forward": true, "start": 0, "end": 3, "deletions": [1]},
+        {"helix_idx": 0, "forward": false, "start": 0, "end": 3, "deletions": [1]}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": {"r": 115, "g": 0, "b": 222},
       "dna_sequence": "GAAC",
       "substrands": [
-        {"helix_idx": 0, "right": false, "start": 3, "end": 6, "deletions": [4]},
-        {"helix_idx": 1, "right": true, "start": 3, "end": 6, "deletions": [4]}
+        {"helix_idx": 0, "forward": false, "start": 3, "end": 6, "deletions": [4]},
+        {"helix_idx": 1, "forward": true, "start": 3, "end": 6, "deletions": [4]}
       ]
     },
     {
       "color": {"r": 0, "g": 102, "b": 204},
       "dna_sequence": "AACATCGT",
       "substrands": [
-        {"helix_idx": 1, "right": false, "start": 0, "end": 3, "deletions": [1]},
-        {"helix_idx": 0, "right": true, "start": 0, "end": 6, "deletions": [1, 4]},
-        {"helix_idx": 1, "right": false, "start": 3, "end": 6, "deletions": [4]}
+        {"helix_idx": 1, "forward": false, "start": 0, "end": 3, "deletions": [1]},
+        {"helix_idx": 0, "forward": true, "start": 0, "end": 6, "deletions": [1, 4]},
+        {"helix_idx": 1, "forward": false, "start": 3, "end": 6, "deletions": [4]}
       ]
     }
   ]

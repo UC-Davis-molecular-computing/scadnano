@@ -39,7 +39,7 @@ main() {
 
     Substrand ss00 = Substrand()
       ..helix_idx = 0
-      ..right = false
+      ..forward = false
       ..start = 2
       ..end = 8
       ..deletions = [3]
@@ -48,7 +48,7 @@ main() {
 
     Substrand ss01 = Substrand()
       ..helix_idx = 1
-      ..right = true
+      ..forward = true
       ..start = 1
       ..end = 6
       ..deletions = []
@@ -62,7 +62,7 @@ main() {
 
     Substrand ss10 = Substrand()
       ..helix_idx = 1
-      ..right = true
+      ..forward = true
       ..start = 11
       ..end = 15
       ..deletions = []
@@ -71,7 +71,7 @@ main() {
 
     Substrand ss11 = Substrand()
       ..helix_idx = 0
-      ..right = false
+      ..forward = false
       ..start = 13
       ..end = 16
       ..deletions = []
@@ -120,7 +120,7 @@ main() {
 
     Substrand parsed_substrand00 = parsed_strand0.substrands[0];
     expect(parsed_substrand00.helix_idx, equals(0));
-    expect(parsed_substrand00.right, equals(false));
+    expect(parsed_substrand00.forward, equals(false));
     expect(parsed_substrand00.start, equals(2));
     expect(parsed_substrand00.end, equals(8));
     expect(parsed_substrand00.deletions.length, equals(1));
@@ -133,7 +133,7 @@ main() {
 
     Substrand parsed_substrand01 = parsed_strand0.substrands[1];
     expect(parsed_substrand01.helix_idx, equals(1));
-    expect(parsed_substrand01.right, equals(true));
+    expect(parsed_substrand01.forward, equals(true));
     expect(parsed_substrand01.start, equals(1));
     expect(parsed_substrand01.end, equals(6));
     expect(parsed_substrand01.deletions.length, equals(0));
@@ -149,7 +149,7 @@ main() {
 
     Substrand parsed_substrand10 = parsed_strand1.substrands[0];
     expect(parsed_substrand10.helix_idx, equals(1));
-    expect(parsed_substrand10.right, equals(true));
+    expect(parsed_substrand10.forward, equals(true));
     expect(parsed_substrand10.start, equals(11));
     expect(parsed_substrand10.end, equals(15));
     expect(parsed_substrand10.deletions.length, equals(0));
@@ -159,7 +159,7 @@ main() {
 
     Substrand parsed_substrand11 = parsed_strand1.substrands[1];
     expect(parsed_substrand11.helix_idx, equals(0));
-    expect(parsed_substrand11.right, equals(false));
+    expect(parsed_substrand11.forward, equals(false));
     expect(parsed_substrand11.start, equals(13));
     expect(parsed_substrand11.end, equals(16));
     expect(parsed_substrand11.deletions.length, equals(0));
@@ -171,7 +171,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..right = true
+      ..forward = true
       ..start = 0
       ..end = 10;
     var strand = Strand()
@@ -184,7 +184,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_no_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..right = true
+      ..forward = true
       ..start = 0
       ..end = 10
       ..deletions = [2, 3, 7];
@@ -199,7 +199,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_with_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..right = true
+      ..forward = true
       ..start = 0
       ..end = 10
       ..insertions = [Tuple2<int, int>(2, 1), Tuple2<int, int>(5, 4), Tuple2<int, int>(7, 1)];
@@ -215,7 +215,7 @@ main() {
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_with_insertions", () {
     var ss = Substrand()
       ..helix_idx = 0
-      ..right = true
+      ..forward = true
       ..start = 0
       ..end = 10
       ..deletions=[4,8]
@@ -234,7 +234,7 @@ main() {
 //    print("starting test");
     var ss = Substrand()
       ..helix_idx = 0
-      ..right = false
+      ..forward = false
       ..start = 0
       ..end = 10
       ..deletions=[4,8]

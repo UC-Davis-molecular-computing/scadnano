@@ -51,7 +51,7 @@ class MainViewUIModel {
   }
 
   //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
-  // Then it's ubambiguous what Ctrl+Z should do
+  //  Then it's ubambiguous what Ctrl+Z should do
   bool show_editor = false;
 
 }

@@ -61,7 +61,7 @@ const substrands_key = 'substrands';
 
 // Substrand keys
 const helix_idx_key = 'helix_idx';
-const right_key = 'right';
+const forward_key = 'forward';
 const start_key = 'start';
 const end_key = 'end';
 const deletions_key = 'deletions';

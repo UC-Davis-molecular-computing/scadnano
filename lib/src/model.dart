@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:core';
-import 'dart:core' as prefix0;
 import 'dart:math';
 import 'dart:js';
 
@@ -8,7 +7,6 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:meta/meta.dart';
 import 'package:quiver/core.dart' as quiver;
-import 'package:tuple/tuple.dart';
 
 import 'model_ui.dart';
 import 'app.dart';
@@ -225,7 +223,6 @@ class DNADesign {
         }
       }
     }
-    print('mismatches map built: ${this._substrand_mismatches_map}');
   }
 
   List<Mismatch> _find_mismatches_on_substrand(Substrand substrand) {
@@ -249,7 +246,7 @@ class DNADesign {
 
       for (int idx = 0, idx_other = seq.length-1; idx < seq.length; idx++, idx_other--) {
         if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
-          int dna_idx = substrand.offset_to_strand_dna_idx(offset, substrand.right) + idx;
+          int dna_idx = substrand.offset_to_strand_dna_idx(offset, substrand.forward) + idx;
           int within_insertion = seq.length == 1 ? -1 : idx;
           var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
           mismatches.add(mismatch);
@@ -264,7 +261,7 @@ class DNADesign {
     List<Substrand> other_substrands = this._other_substrands_overlapping(substrand);
     for (var other_ss in other_substrands) {
       if (other_ss.contains_offset(offset)) {
-        assert(substrand.right != other_ss.right);
+        assert(substrand.forward != other_ss.forward);
         return other_ss;
       }
     }
@@ -598,11 +595,11 @@ class Helix with ChangeNotifier<Helix> {
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
-  /// depending on whether strand is going right or not.
-  Point<num> svg_base_pos(int offset, bool right) {
+  /// depending on whether strand is going forward or not.
+  Point<num> svg_base_pos(int offset, bool forward) {
     num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this._svg_position.x;
     num y = constants.BASE_HEIGHT_SVG / 2 + this._svg_position.y;
-    if (!right) {
+    if (!forward) {
       y += 10;
     }
     return Point<num>(x, y);
@@ -839,30 +836,21 @@ Color parse_json_color(Map json_map) {
 
 class Substrand {
   int helix_idx = -1;
-  bool right = true;
+  bool forward = true;
   int start = null;
   int end = null;
   List<int> deletions = [];
   List<Tuple2<int, int>> insertions = []; // elt: Pair(offset, num insertions)
 
   /// 5' end, INCLUSIVE
-  int get offset_5p => this.right ? this.start : this.end - 1;
+  int get offset_5p => this.forward ? this.start : this.end - 1;
 
   /// 3' end, INCLUSIVE
-  int get offset_3p => this.right ? this.end - 1 : this.start;
+  int get offset_3p => this.forward ? this.end - 1 : this.start;
 
   int get dna_length => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
   int get visual_length => (this.end - this.start);
-
-//  @override
-//  int get hashCode => quiver.hash4(this.helix_idx, this.start, this.end, this.right);
-//
-//
-//  @override
-//  bool operator ==(Substrand other) {
-//    return this. this.start == other.start && this.end == other.end && this.right == other.right;
-//  }
 
   /// Indicates if `offset` is the offset of a base on this substrand.
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
@@ -875,7 +863,7 @@ class Substrand {
   /// List of offsets (inclusive at each end) in 5' - 3' order, from 5' to `offset_stop`.
   List<int> offsets_from_5p_to(int offset_stop) {
     List<int> offsets = [];
-    if (this.right) {
+    if (this.forward) {
       for (int offset = this.start; offset <= offset_stop; offset++) {
         offsets.add(offset);
       }
@@ -890,7 +878,7 @@ class Substrand {
   /// List of offsets (inclusive at each end) in 5' - 3' order.
   List<int> offsets_in_5p_3p_order() {
     List<int> offsets = [];
-    if (this.right) {
+    if (this.forward) {
       for (int offset = this.start; offset < this.end; offset++) {
         offsets.add(offset);
       }
@@ -922,40 +910,40 @@ class Substrand {
   //  unlike other parts of this API where the right endpoint is exclusive.
   //  This is to make the notion well-defined when one of the endpoints is on an offset with a
   //  deletion or insertion.
-  String dna_sequence_in(int offset_left, int offset_right) {
+  String dna_sequence_in(int offset_low, int offset_high) {
     String strand_seq = this._strand.dna_sequence;
     if (strand_seq == null) {
       return null;
     }
     // if on a deletion, move inward until we are off of it
-    while (this.deletions.contains(offset_left)) {
-      offset_left += 1;
+    while (this.deletions.contains(offset_low)) {
+      offset_low += 1;
     }
-    while (this.deletions.contains(offset_right)) {
-      offset_right -= 1;
-    }
-
-    if (offset_left > offset_right) {
-      return '';
-    }
-    if (offset_left >= this.end) {
-      return '';
-    }
-    if (offset_right < 0) {
-      return '';
+    while (this.deletions.contains(offset_high)) {
+      offset_high -= 1;
     }
 
-    bool five_p_on_left = this.right;
-    int str_idx_left = this.offset_to_strand_dna_idx(offset_left, five_p_on_left);
-    int str_idx_right = this.offset_to_strand_dna_idx(offset_right, !five_p_on_left);
-    if (!this.right) {
-      // these will be out of order if strand is left
-      int swap = str_idx_left;
-      str_idx_left = str_idx_right;
-      str_idx_right = swap;
+    if (offset_low > offset_high) {
+      return '';
+    }
+    if (offset_low >= this.end) {
+      return '';
+    }
+    if (offset_high < 0) {
+      return '';
     }
 
-    String subseq = this._strand.dna_sequence.substring(str_idx_left, str_idx_right + 1);
+    bool five_p_on_left = this.forward;
+    int str_idx_low = this.offset_to_strand_dna_idx(offset_low, five_p_on_left);
+    int str_idx_high = this.offset_to_strand_dna_idx(offset_high, !five_p_on_left);
+    if (!this.forward) {
+      // these will be out of order if strand is reverse
+      int swap = str_idx_low;
+      str_idx_low = str_idx_high;
+      str_idx_high = swap;
+    }
+
+    String subseq = this._strand.dna_sequence.substring(str_idx_low, str_idx_high + 1);
     return subseq;
   }
 
@@ -978,9 +966,9 @@ class Substrand {
     int seq_idx = 0;
     int offset = this.offset_5p;
     int space_codeunit = ' '.codeUnitAt(0);
-    int forward = this.right ? 1 : -1;
+    int forward = this.forward ? 1 : -1;
     bool offset_out_of_bounds(offset) =>
-        this.right ? offset >= this.offset_3p + forward : offset <= this.offset_3p + forward;
+        this.forward ? offset >= this.offset_3p + forward : offset <= this.offset_3p + forward;
     while (!offset_out_of_bounds(offset)) {
       if (deletions_set.contains(offset)) {
         codeunits.add(space_codeunit);
@@ -1014,7 +1002,7 @@ class Substrand {
 
     // get string index assuming this Substrand is first on Strand
     int ss_str_idx = null;
-    if (this.right) {
+    if (this.forward) {
       //account for insertions and deletions
       offset += len_adjust;
       ss_str_idx = offset - this.start;
@@ -1063,8 +1051,8 @@ class Substrand {
   }
 
   bool _between_5p_and_offset(int offset_to_test, int offset_edge) {
-    return (this.right && this.start <= offset_to_test && offset_to_test < offset_edge) ||
-        (!this.right && offset_edge < offset_to_test && offset_to_test < this.end);
+    return (this.forward && this.start <= offset_to_test && offset_to_test < offset_edge) ||
+        (!this.forward && offset_edge < offset_to_test && offset_to_test < this.end);
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its
@@ -1103,7 +1091,7 @@ class Substrand {
   Map<String, dynamic> toJson() {
     var json_map = {
       constants.helix_idx_key: this.helix_idx,
-      constants.right_key: this.right,
+      constants.forward_key: this.forward,
       constants.start_key: this.start,
       constants.end_key: this.end,
     };
@@ -1119,7 +1107,7 @@ class Substrand {
 
   Substrand.from_json(Map<String, dynamic> json_map) {
     this.helix_idx = get_value(json_map, constants.helix_idx_key);
-    this.right = get_value(json_map, constants.right_key);
+    this.forward = get_value(json_map, constants.forward_key);
     this.start = get_value(json_map, constants.start_key);
     this.end = get_value(json_map, constants.end_key);
     if (json_map.containsKey(constants.deletions_key)) {
@@ -1134,23 +1122,6 @@ class Substrand {
     }
   }
 
-//  Substrand.from_js_object(JsObject js_obj) {
-//    this.helix_idx = js_obj[constants.helix_idx_key];
-//    this.right = js_obj[constants.right_key];
-//    this.start = js_obj[constants.start_key];
-//    this.end = js_obj[constants.end_key];
-//    if (js_obj.hasProperty(constants.deletions_key)) {
-//      this.deletions = List<int>.from(js_obj[constants.deletions_key]);
-//    } else {
-//      this.deletions = [];
-//    }
-//    if (js_obj.hasProperty(constants.insertions_key)) {
-//      this.insertions = parse_json_insertions(js_obj[constants.insertions_key]);
-//    } else {
-//      this.insertions = [];
-//    }
-//  }
-
   static List<Tuple2<int, int>> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
     return List<Tuple2<int, int>>.from(
@@ -1159,7 +1130,7 @@ class Substrand {
 
   bool overlaps(Substrand other) {
     return (this.helix_idx == other.helix_idx &&
-        this.right == (!other.right) &&
+        this.forward == (!other.forward) &&
         this.compute_overlap(other).item1 >= 0);
   }
 

@@ -11,12 +11,12 @@ def main():
         helix_top = helices[bot]
         helix_bot = helices[top]
 
-        stap_left_ss_top = sc.Substrand(top, sc.right, 0, bases // 3)
-        stap_left_ss_bot = sc.Substrand(bot, sc.left, 0, bases // 3)
-        stap_mid_ss_bot = sc.Substrand(bot, sc.left, bases // 3, bases * 2 // 3)
-        stap_mid_ss_top = sc.Substrand(top, sc.right, bases // 3, bases * 2 // 3)
-        stap_right_ss_top = sc.Substrand(top, sc.right, bases * 2 // 3, bases)
-        stap_right_ss_bot = sc.Substrand(bot, sc.left, bases * 2 // 3, bases)
+        stap_left_ss_top = sc.Substrand(top, sc.forward, 0, bases // 3)
+        stap_left_ss_bot = sc.Substrand(bot, sc.reverse, 0, bases // 3)
+        stap_mid_ss_bot = sc.Substrand(bot, sc.reverse, bases // 3, bases * 2 // 3)
+        stap_mid_ss_top = sc.Substrand(top, sc.forward, bases // 3, bases * 2 // 3)
+        stap_right_ss_top = sc.Substrand(top, sc.forward, bases * 2 // 3, bases)
+        stap_right_ss_bot = sc.Substrand(bot, sc.reverse, bases * 2 // 3, bases)
         stap_left = sc.Strand([stap_left_ss_bot, stap_left_ss_top])
         stap_mid = sc.Strand([stap_mid_ss_top, stap_mid_ss_bot])
         stap_right = sc.Strand([stap_right_ss_bot, stap_right_ss_top])

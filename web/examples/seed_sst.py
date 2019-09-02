@@ -74,9 +74,9 @@ def multiples_of(mul, start, num_bases_per_helix):
 
 def create_scaffold(offset_start: int, offset_end: int, offset_5p: int, num_helices: int,
                     num_cols: int):
-    bot_substrand_left = sc.Substrand(helix_idx=num_helices + 1, right=False, start=offset_start,
+    bot_substrand_left = sc.Substrand(helix_idx=num_helices + 1, forward=False, start=offset_start,
                                       end=offset_5p)
-    bot_substrand_right = sc.Substrand(helix_idx=num_helices + 1, right=False, start=offset_5p,
+    bot_substrand_right = sc.Substrand(helix_idx=num_helices + 1, forward=False, start=offset_5p,
                                        end=offset_end)
 
     # maps helix idx to list of substrands in order from left to right on that helix
