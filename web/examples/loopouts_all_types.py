@@ -36,7 +36,8 @@ def main():
                       f'CACGACGA '
                       f'{t20} '
                       f'???????? '
-                      f'ACGACGAC')
+                      f'ACGACGAC '
+                      f'T')
 
     return design
 

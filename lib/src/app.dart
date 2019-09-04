@@ -43,8 +43,8 @@ class App {
     this.controller = Controller();
 
     this.model =
-//        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
-        await util.model_from_url('examples/output_designs/loopouts_all_types.dna');
+        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+//        await util.model_from_url('examples/output_designs/loopouts_all_types.dna');
 //        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_lots_of_insertions.dna');
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami_mismatches.dna');
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami.dna');
