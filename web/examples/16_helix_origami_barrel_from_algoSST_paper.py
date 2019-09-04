@@ -40,8 +40,8 @@ def add_twist_correct_deletions(design: sc.DNADesign):
     # I choose between 3 and 4 offset arbitrarily for twist-correction deletions for some reason,
     # so they have to be hard-coded.
     for col, offset in zip(range(4, 29, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
-        for helix_idx in range(2, 18):
-            design.add_deletion(helix_idx, 16 * col + offset)
+        for helix in range(2, 18):
+            design.add_deletion(helix, 16 * col + offset)
 
 
 def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
@@ -76,17 +76,17 @@ def add_substrands_for_barrel_seam(design):
     bot_staples_3p.sort(key=lambda stap: stap.offset_3p())
 
     for top_5p, top_3p, bot_5p, bot_3p in zip(top_staples_5p, top_staples_3p, bot_staples_5p, bot_staples_3p):
-        ss_top = sc.Substrand(helix_idx=2, forward=False,
+        ss_top = sc.Substrand(helix=2, forward=False,
                               start=top_5p.first_substrand().end, end=top_3p.last_substrand().start)
-        ss_bot = sc.Substrand(helix_idx=17, forward=True,
+        ss_bot = sc.Substrand(helix=17, forward=True,
                               start=bot_3p.last_substrand().end, end=bot_5p.first_substrand().start)
         design.insert_substrand(bot_5p, 0, ss_top)
         design.insert_substrand(top_5p, 0, ss_bot)
 
 
 def add_toeholds_for_seam_displacement(design: sc.DNADesign):
-    for helix_idx in [2, 17]:
-        staples_5p = design.strands_starting_on_helix(helix_idx)
+    for helix in [2, 17]:
+        staples_5p = design.strands_starting_on_helix(helix)
 
         # remove scaffold
         staples_5p = [st for st in staples_5p if len(st.substrands) <= 3]
@@ -94,7 +94,7 @@ def add_toeholds_for_seam_displacement(design: sc.DNADesign):
         staples_5p.sort(key=lambda stap: stap.offset_5p())
 
         for stap_5p in staples_5p:
-            toe_ss = sc.Substrand(helix_idx=1 if helix_idx == 2 else 18, forward=helix_idx == 2,
+            toe_ss = sc.Substrand(helix=1 if helix == 2 else 18, forward=helix == 2,
                                   start=stap_5p.first_substrand().start, end=stap_5p.first_substrand().end)
             design.insert_substrand(stap_5p, 0, toe_ss)
 
@@ -103,13 +103,13 @@ def add_adapters(design):
     # left adapters
     left_inside_seed = 48
     left_outside_seed = left_inside_seed - 26
-    for bot_helix_idx in range(2, 18, 2):
-        top_helix_idx = bot_helix_idx - 1 if bot_helix_idx != 2 else 17
-        ss_top = sc.Substrand(helix_idx=top_helix_idx, forward=True,
+    for bot_helix in range(2, 18, 2):
+        top_helix = bot_helix - 1 if bot_helix != 2 else 17
+        ss_top = sc.Substrand(helix=top_helix, forward=True,
                               start=left_outside_seed, end=left_inside_seed)
-        ss_bot = sc.Substrand(helix_idx=bot_helix_idx, forward=False,
+        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
                               start=left_outside_seed, end=left_inside_seed)
-        idt = sc.IDTFields(name=f'adap-left-{top_helix_idx}-{bot_helix_idx}',
+        idt = sc.IDTFields(name=f'adap-left-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
         adapter = sc.Strand(substrands=[ss_bot, ss_top], idt=idt)
         design.add_strand(adapter)
@@ -117,13 +117,13 @@ def add_adapters(design):
     # right adapters
     right_inside_seed = 464
     right_outside_seed = right_inside_seed + 26
-    for bot_helix_idx in range(2, 18, 2):
-        top_helix_idx = bot_helix_idx - 1 if bot_helix_idx != 2 else 17
-        ss_top = sc.Substrand(helix_idx=top_helix_idx, forward=True,
+    for bot_helix in range(2, 18, 2):
+        top_helix = bot_helix - 1 if bot_helix != 2 else 17
+        ss_top = sc.Substrand(helix=top_helix, forward=True,
                               start=right_inside_seed, end=right_outside_seed)
-        ss_bot = sc.Substrand(helix_idx=bot_helix_idx, forward=False,
+        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
                               start=right_inside_seed, end=right_outside_seed)
-        idt = sc.IDTFields(name=f'adap-right-{top_helix_idx}-{bot_helix_idx}',
+        idt = sc.IDTFields(name=f'adap-right-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
         adapter = sc.Strand(substrands=[ss_top, ss_bot], idt=idt)
         design.add_strand(adapter)
@@ -153,11 +153,11 @@ def add_tiles_and_assign_dna(design):
     # left tiles
     left_left = 11
     left_right = 32
-    for top_helix_idx, seq in zip(range(2, 18, 2), tile_dna_seqs):
-        bot_helix_idx = top_helix_idx + 1
-        ss_top = sc.Substrand(helix_idx=top_helix_idx, forward=True,
+    for top_helix, seq in zip(range(2, 18, 2), tile_dna_seqs):
+        bot_helix = top_helix + 1
+        ss_top = sc.Substrand(helix=top_helix, forward=True,
                               start=left_left, end=left_right)
-        ss_bot = sc.Substrand(helix_idx=bot_helix_idx, forward=False,
+        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
                               start=left_left, end=left_right)
         tile = sc.Strand(substrands=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
         design.add_strand(tile)
@@ -166,11 +166,11 @@ def add_tiles_and_assign_dna(design):
     # right tiles
     right_left = 480
     right_right = 501
-    for top_helix_idx, seq in zip(range(2, 18, 2), tile_dna_seqs):
-        bot_helix_idx = top_helix_idx + 1
-        ss_top = sc.Substrand(helix_idx=top_helix_idx, forward=True,
+    for top_helix, seq in zip(range(2, 18, 2), tile_dna_seqs):
+        bot_helix = top_helix + 1
+        ss_top = sc.Substrand(helix=top_helix, forward=True,
                               start=right_left, end=right_right)
-        ss_bot = sc.Substrand(helix_idx=bot_helix_idx, forward=False,
+        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
                               start=right_left, end=right_right)
         tile = sc.Strand(substrands=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
         design.add_strand(tile)
@@ -181,16 +181,16 @@ def add_angle_inducing_insertions_deletions(design):
     # insertion followed by deletion
     start = 59
     end = start + (32 * 12)
-    for helix_idx in [3, 7, 9, 13, 15]:
+    for helix in [3, 7, 9, 13, 15]:
         for offset in range(start, end, 32):
-            design.add_insertion(helix_idx, offset, 1)
-            design.add_deletion(helix_idx, offset + 16)
+            design.add_insertion(helix, offset, 1)
+            design.add_deletion(helix, offset + 16)
 
     # deletion followed by insertion
-    for helix_idx in [4, 6, 10, 12, 16]:
+    for helix in [4, 6, 10, 12, 16]:
         for offset in range(start, end, 32):
-            design.add_deletion(helix_idx, offset)
-            design.add_insertion(helix_idx, offset + 16, 1)
+            design.add_deletion(helix, offset)
+            design.add_insertion(helix, offset + 16, 1)
 
 
 uz_toes_wc = """ 

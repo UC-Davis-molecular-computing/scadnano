@@ -218,10 +218,13 @@ html, body {
 
 .substrand-line {
   stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
 }
 
 .insertion-line {
   stroke-width: 2.0px;
+  fill: none;
 }
 
 .mismatch-star {
@@ -234,6 +237,8 @@ html, body {
 .crossover-curve {
   stroke-width: 2.5;
   stroke-dasharray: 2;
+  fill: none;
+  /*stroke-linecap: square;*/
 }
 
 .deletion-cross {
@@ -262,7 +267,7 @@ html, body {
   white-space: pre; /* needed to display multiple space symbols in a row */
 }
 
-.dna-seq-insertion {
+.dna-seq-insertion,.dna-seq-loopout {
   font-family: "Consolas", "Lucida Console", "Courier New", monospace;
   font-weight: bold;
   text-anchor: middle;

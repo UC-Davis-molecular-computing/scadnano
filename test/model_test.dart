@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/model.dart';
+import 'package:scadnano/src/strand.dart';
 
 main() {
   test("serialize then deserialize", () {
@@ -37,8 +38,8 @@ main() {
     ];
     design.used_helices = [h00, h01];
 
-    Substrand ss00 = Substrand()
-      ..helix_idx = 0
+    BoundSubstrand ss00 = BoundSubstrand()
+      ..helix = 0
       ..forward = false
       ..start = 2
       ..end = 8
@@ -46,8 +47,8 @@ main() {
       ..insertions = [Tuple2<int, int>(4, 1), Tuple2<int, int>(6, 2)];
 //      ..dna_sequence = 'GGGGGGCT';
 
-    Substrand ss01 = Substrand()
-      ..helix_idx = 1
+    BoundSubstrand ss01 = BoundSubstrand()
+      ..helix = 1
       ..forward = true
       ..start = 1
       ..end = 6
@@ -60,8 +61,8 @@ main() {
       ..color = RgbColor.name('red')
       ..dna_sequence = 'GGGGGGCTTAAAC';
 
-    Substrand ss10 = Substrand()
-      ..helix_idx = 1
+    BoundSubstrand ss10 = BoundSubstrand()
+      ..helix = 1
       ..forward = true
       ..start = 11
       ..end = 15
@@ -69,8 +70,8 @@ main() {
       ..insertions = [];
 //      ..dna_sequence = 'TTTG';
 
-    Substrand ss11 = Substrand()
-      ..helix_idx = 0
+    BoundSubstrand ss11 = BoundSubstrand()
+      ..helix = 0
       ..forward = false
       ..start = 13
       ..end = 16
@@ -115,11 +116,11 @@ main() {
     Strand parsed_strand0 = decoded_model.strands[0];
     expect(parsed_strand0.color, equals(RgbColor.name('red')));
     expect(parsed_strand0.substrands.length, equals(2));
-    expect(parsed_strand0.length, equals(13));
+    expect(parsed_strand0.dna_length, equals(13));
     expect(parsed_strand0.dna_sequence, equals('GGGGGGCTTAAAC'));
 
-    Substrand parsed_substrand00 = parsed_strand0.substrands[0];
-    expect(parsed_substrand00.helix_idx, equals(0));
+    BoundSubstrand parsed_substrand00 = parsed_strand0.substrands[0];
+    expect(parsed_substrand00.helix, equals(0));
     expect(parsed_substrand00.forward, equals(false));
     expect(parsed_substrand00.start, equals(2));
     expect(parsed_substrand00.end, equals(8));
@@ -131,8 +132,8 @@ main() {
     expect(parsed_substrand00.dna_sequence(), equals('GGGGGGCT'));
     expect(parsed_substrand00.dna_length, equals(8));
 
-    Substrand parsed_substrand01 = parsed_strand0.substrands[1];
-    expect(parsed_substrand01.helix_idx, equals(1));
+    BoundSubstrand parsed_substrand01 = parsed_strand0.substrands[1];
+    expect(parsed_substrand01.helix, equals(1));
     expect(parsed_substrand01.forward, equals(true));
     expect(parsed_substrand01.start, equals(1));
     expect(parsed_substrand01.end, equals(6));
@@ -144,11 +145,11 @@ main() {
     Strand parsed_strand1 = decoded_model.strands[1];
     expect(parsed_strand1.color, equals(RgbColor.name('green')));
     expect(parsed_strand1.substrands.length, equals(2));
-    expect(parsed_strand1.length, equals(7));
+    expect(parsed_strand1.dna_length, equals(7));
     expect(parsed_strand1.dna_sequence, equals('TTTGCCA'));
 
-    Substrand parsed_substrand10 = parsed_strand1.substrands[0];
-    expect(parsed_substrand10.helix_idx, equals(1));
+    BoundSubstrand parsed_substrand10 = parsed_strand1.substrands[0];
+    expect(parsed_substrand10.helix, equals(1));
     expect(parsed_substrand10.forward, equals(true));
     expect(parsed_substrand10.start, equals(11));
     expect(parsed_substrand10.end, equals(15));
@@ -157,8 +158,8 @@ main() {
     expect(parsed_substrand10.dna_sequence(), equals('TTTG'));
     expect(parsed_substrand10.dna_length, equals(4));
 
-    Substrand parsed_substrand11 = parsed_strand1.substrands[1];
-    expect(parsed_substrand11.helix_idx, equals(0));
+    BoundSubstrand parsed_substrand11 = parsed_strand1.substrands[1];
+    expect(parsed_substrand11.helix, equals(0));
     expect(parsed_substrand11.forward, equals(false));
     expect(parsed_substrand11.start, equals(13));
     expect(parsed_substrand11.end, equals(16));
@@ -169,8 +170,8 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
-    var ss = Substrand()
-      ..helix_idx = 0
+    var ss = BoundSubstrand()
+      ..helix = 0
       ..forward = true
       ..start = 0
       ..end = 10;
@@ -182,8 +183,8 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_no_insertions", () {
-    var ss = Substrand()
-      ..helix_idx = 0
+    var ss = BoundSubstrand()
+      ..helix = 0
       ..forward = true
       ..start = 0
       ..end = 10
@@ -197,8 +198,8 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_with_insertions", () {
-    var ss = Substrand()
-      ..helix_idx = 0
+    var ss = BoundSubstrand()
+      ..helix = 0
       ..forward = true
       ..start = 0
       ..end = 10
@@ -213,8 +214,8 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_with_insertions", () {
-    var ss = Substrand()
-      ..helix_idx = 0
+    var ss = BoundSubstrand()
+      ..helix = 0
       ..forward = true
       ..start = 0
       ..end = 10
@@ -232,8 +233,8 @@ main() {
 
   test("dna_sequence_deletions_insertions_to_spaces__going_left__with_deletions_with_insertions", () {
 //    print("starting test");
-    var ss = Substrand()
-      ..helix_idx = 0
+    var ss = BoundSubstrand()
+      ..helix = 0
       ..forward = false
       ..start = 0
       ..end = 10

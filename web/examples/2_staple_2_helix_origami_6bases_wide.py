@@ -16,10 +16,10 @@ def main():
     scaf = sc.Strand([scaf_ss1_left, scaf_ss0, scaf_ss1_right], color=sc.default_scaffold_color)
     strands = [stap_left, stap_right, scaf]
     design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
-    design.add_deletion(helix_idx=0, offset=1)
-    design.add_deletion(helix_idx=0, offset=4)
-    design.add_deletion(helix_idx=1, offset=1)
-    design.add_deletion(helix_idx=1, offset=4)
+    design.add_deletion(helix=0, offset=1)
+    design.add_deletion(helix=0, offset=4)
+    design.add_deletion(helix=1, offset=1)
+    design.add_deletion(helix=1, offset=4)
     design.assign_dna(scaf, 'AACATCGT')
 
     return design

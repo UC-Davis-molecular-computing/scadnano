@@ -11,8 +11,8 @@ def main():
     strands = [stap, scaf]
     design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
     insertion_length = 4
-    design.add_insertion(helix_idx=0, offset=2, length=insertion_length)
-    design.add_insertion(helix_idx=0, offset=8, length=insertion_length)
+    design.add_insertion(helix=0, offset=2, length=insertion_length)
+    design.add_insertion(helix=0, offset=8, length=insertion_length)
     scaf.set_dna_sequence('AG' + 'A' * (length + 2*insertion_length - 2))
     stap.set_dna_sequence('ATTCTCTTGCTTTTTTCA')
 

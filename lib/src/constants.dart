@@ -60,12 +60,15 @@ const dna_sequence_key = 'dna_sequence';
 const substrands_key = 'substrands';
 
 // Substrand keys
-const helix_idx_key = 'helix_idx';
+const helix_idx_key = 'helix';
 const forward_key = 'forward';
 const start_key = 'start';
 const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
+
+// Loopout keys
+const loopout_key = 'loopout';
 
 const initial_editor_content = """# import scadnano module
 import scadnano as sc

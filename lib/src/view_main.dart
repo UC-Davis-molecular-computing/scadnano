@@ -9,6 +9,7 @@ import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/iterables.dart' as iter;
 
+import 'strand.dart';
 import 'actions.dart';
 import 'package:tuple/tuple.dart';
 import 'view.dart';
@@ -21,7 +22,7 @@ const DEBUG_PRINT_MOUSEOVER = false;
 
 const String MAIN_VIEW_PREFIX = 'main-view';
 
-//TODO: display width of each column lightly above helix 0; alternatley, display as mouseover information
+//TODO: display width of each column lightly above helix 0; alternately, display as mouseover information
 
 class MainViewComponent {
   final svg.GElement root_element;
@@ -335,6 +336,14 @@ class HelixMainViewComponent extends ReactiveComponent {
   }
 }
 
+/// Indicates if loopout between two given strands is a hairpin.
+bool _is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
+  bool is_hairpin = prev_ss.helix == next_ss.helix &&
+      prev_ss.forward != next_ss.forward &&
+      (prev_ss.offset_3p - next_ss.offset_5p).abs() < 3;
+  return is_hairpin;
+}
+
 class StrandComponent {
   final Strand strand;
   svg.GElement root_element = svg.GElement();
@@ -351,12 +360,13 @@ class StrandComponent {
 
   render() {
     this.root_element.children.clear();
-    if (app.model.show_mismatches) {}
+
     this._draw_strand_lines();
 //    this.render_strand_lines_single_path();
+
     this._draw_5p_end();
     this._draw_3p_end();
-    for (var substrand in this.strand.substrands) {
+    for (var substrand in this.strand.bound_substrands()) {
       this._draw_deletions(substrand);
       this._draw_insertions(substrand);
     }
@@ -364,6 +374,7 @@ class StrandComponent {
     // Instead all DNA sequences are rendered into their own SVG group after all strands are rendered.
     // Similarly mismatches are rendered separately so that they appear behind all other elements,
     // and so that Strands need not be re-rendered when the "Show Mismatches" tickbox is checked/unchecked.
+    // But the components are stored here (maybe should change that.)
   }
 
   // keep this around in case this is how we want to export to an SVG file
@@ -403,51 +414,144 @@ class StrandComponent {
 //    }
 //  }
 
+  //TODO: draw loopout lines
+
   _draw_strand_lines() {
     if (this.strand.substrands.length == 0) {
       return;
     }
+
+    if (this.strand.substrands.first is Loopout) {
+      throw StrandError(this.strand, 'loopouts at beginning of strand not supported');
+    }
+    if (this.strand.substrands.last is Loopout) {
+      throw StrandError(this.strand, 'loopouts at end of strand not supported');
+    }
+
     List<Element> paths = [];
+
     var substrand = this.strand.substrands.first;
-    var helix = app.model.dna_design.helices[substrand.helix_idx];
-    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-
     for (int i = 0; i < this.strand.substrands.length; i++) {
-      // substrand line
-      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
-      var substrand_line = svg.LineElement()
-        ..attributes = {
-          'id': substrand_line_id(substrand),
-          'class': 'substrand-line',
-          'stroke': strand.color.toRgbColor().toCssString(),
-          'fill': 'none',
-          'x1': '${start_svg.x}',
-          'y1': '${start_svg.y}',
-          'x2': '${end_svg.x}',
-          'y2': '${end_svg.y}',
-        };
-      paths.add(substrand_line);
-
-      // crossover line/arc
-      if (i < this.strand.substrands.length - 1) {
-        var old_substrand = substrand;
-        substrand = this.strand.substrands[i + 1];
-        helix = app.model.dna_design.helices[substrand.helix_idx];
-        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
-        var crossover_curve = svg.PathElement()
-          ..attributes = {
-//          'id': substrand_line_id(substrand),
-            'class': 'crossover-curve',
-            'stroke': strand.color.toRgbColor().toCssString(),
-            'fill': 'none',
-            'd': 'M ${end_svg.x} ${end_svg.y} Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}'
-          };
-        paths.add(crossover_curve);
+      substrand = this.strand.substrands[i];
+      if (substrand.is_bound_substrand()) {
+        paths.add(_create_bound_substrand_line(substrand));
+        if (i < this.strand.substrands.length - 1 && this.strand.substrands[i + 1].is_bound_substrand()) {
+          paths.add(_create_crossover_arc(strand, i));
+        }
+      } else {
+        paths.add(_create_loopout_arc(strand, i));
       }
     }
 
     this.root_element.children.addAll(paths);
+  }
+
+  svg.LineElement _create_bound_substrand_line(BoundSubstrand substrand) {
+    Helix helix = app.model.dna_design.helices[substrand.helix];
+    Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
+    var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
+    var substrand_line = svg.LineElement()
+      ..attributes = {
+        'id': substrand_line_id(substrand),
+        'class': 'substrand-line',
+        'stroke': strand.color.toRgbColor().toCssString(),
+        'x1': '${start_svg.x}',
+        'y1': '${start_svg.y}',
+        'x2': '${end_svg.x}',
+        'y2': '${end_svg.y}',
+      };
+    return substrand_line;
+  }
+
+  /// loopout arc at position i in Strand (i.e., connect bound substrands i-1 and i+1
+  svg.PathElement _create_loopout_arc(Strand strand, int i) {
+    assert(0 < i);
+    assert(i < strand.substrands.length - 1);
+
+    var prev_ss = strand.substrands[i - 1] as BoundSubstrand;
+    var next_ss = strand.substrands[i + 1] as BoundSubstrand;
+    var classname = 'substrand-line';
+
+    Loopout loopout = strand.substrands[i];
+    if (_is_hairpin(prev_ss, next_ss)) {
+      // special case for hairpin so it's not a short straight line
+      return _create_hairpin_arc(prev_ss, next_ss, loopout, classname);
+    } else {
+      return _create_arc(prev_ss, next_ss, classname, id: loopout_id(loopout, prev_ss, next_ss));
+    }
+  }
+
+  svg.PathElement _create_hairpin_arc(
+      BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname) {
+    var helix = app.model.dna_design.helices[prev_substrand.helix];
+    var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
+    var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
+    var strand = prev_substrand.strand;
+
+    //TODO: make a design with all loopout lengths 1-20 and calibrate this
+    var w = 1.5 * util.sigmoid(loopout.length - 1) * constants.BASE_WIDTH_SVG;
+    var h = 10 * util.sigmoid(loopout.length - 5) * constants.BASE_HEIGHT_SVG;
+//    print('w = ${w}');
+//    print('h = ${h}');
+
+    var x_offset1, x_offset2, y_offset1, y_offset2;
+    if (prev_substrand.forward) {
+      x_offset1 = start_svg.x + w;
+      y_offset1 = start_svg.y - h;
+      x_offset2 = end_svg.x + w;
+      y_offset2 = end_svg.y + h;
+    } else {
+      x_offset1 = start_svg.x - w;
+      y_offset1 = start_svg.y + h;
+      x_offset2 = end_svg.x - w;
+      y_offset2 = end_svg.y - h;
+    }
+
+    var c1 = Point<num>(x_offset1, y_offset1);
+    var c2 = Point<num>(x_offset2, y_offset2);
+
+    var arc = svg.PathElement()
+      ..attributes = {
+        'id': loopout_id(loopout, prev_substrand, next_substrand),
+        'class': classname,
+        'stroke': strand.color.toRgbColor().toCssString(),
+        'd': 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
+      };
+    return arc;
+  }
+
+  /// crossover arc from bound substrand i to bound substrand i+1
+  svg.PathElement _create_crossover_arc(Strand strand, int i) {
+    assert(i < strand.substrands.length - 1);
+    assert(strand.substrands[i].is_bound_substrand());
+    assert(strand.substrands[i + 1].is_bound_substrand());
+
+    var prev_substrand = strand.substrands[i] as BoundSubstrand;
+    var next_substrand = strand.substrands[i + 1] as BoundSubstrand;
+    var classname = 'crossover-curve';
+
+    return _create_arc(prev_substrand, next_substrand, classname);
+  }
+
+  svg.PathElement _create_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, String classname,
+      {String id = null}) {
+    var prev_helix = app.model.dna_design.helices[prev_substrand.helix];
+    var next_helix = app.model.dna_design.helices[next_substrand.helix];
+    var start_svg = prev_helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
+    var control = _control_point_for_crossover_bezier_curve(prev_substrand, next_substrand);
+    var end_svg = next_helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
+    var strand = prev_substrand.strand;
+
+    var arc = svg.PathElement()
+      ..attributes = {
+        'class': classname,
+        'stroke': strand.color.toRgbColor().toCssString(),
+        'd': 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}'
+      };
+    if (id != null) {
+      arc.setAttribute('id', id);
+    }
+    return arc;
   }
 
 //  _draw_strand_lines_single_path() {
@@ -485,13 +589,13 @@ class StrandComponent {
 //    this.root_element.children.add(path);
 //  }
 
-  Point<num> _control_point_for_crossover_bezier_curve(Substrand from_ss, Substrand to_ss) {
-    var helix_distance = (from_ss.helix_idx - to_ss.helix_idx).abs();
-    var from_helix = app.model.dna_design.helices[from_ss.helix_idx];
-    var to_helix = app.model.dna_design.helices[to_ss.helix_idx];
+  Point<num> _control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss) {
+    var helix_distance = (from_ss.helix - to_ss.helix).abs();
+    var from_helix = app.model.dna_design.helices[from_ss.helix];
+    var to_helix = app.model.dna_design.helices[to_ss.helix];
     var start_pos = from_helix.svg_base_pos(from_ss.offset_3p, from_ss.forward);
     var end_pos = to_helix.svg_base_pos(to_ss.offset_5p, to_ss.forward);
-    bool from_strand_below = from_ss.helix_idx - to_ss.helix_idx > 0;
+    bool from_strand_below = from_ss.helix - to_ss.helix > 0;
     num midX = (start_pos.x + end_pos.x) / 2;
     num midY = (start_pos.y + end_pos.y) / 2;
     Point<num> mid = Point<num>(midX, midY);
@@ -511,10 +615,10 @@ class StrandComponent {
   }
 
   _draw_5p_end() {
-    var substrand = strand.substrands.first;
-    var helix = app.model.dna_design.helices[substrand.helix_idx];
-    var offset = strand.substrands.first.offset_5p;
-    var right = strand.substrands.first.forward;
+    var first_ss = strand.first_bound_substrand();
+    var helix = app.model.dna_design.helices[first_ss.helix];
+    var offset = first_ss.offset_5p;
+    var right = first_ss.forward;
     var pos = helix.svg_base_pos(offset, right);
     var box = svg.RectElement();
     //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
@@ -533,15 +637,15 @@ class StrandComponent {
   }
 
   _draw_3p_end() {
-    var substrand = strand.substrands.last;
-    var offset = substrand.offset_3p;
-    var direction = substrand.forward;
-    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    var last_ss = strand.last_bound_substrand();
+    var offset = last_ss.offset_3p;
+    var direction = last_ss.forward;
+    var helix = app.model.dna_design.helices[last_ss.helix];
     var pos = helix.svg_base_pos(offset, direction);
     var triangle = svg.PolygonElement();
     var points;
     num scale = 3.5;
-    if (!strand.substrands.last.forward) {
+    if (!last_ss.forward) {
       points = '${pos.x - scale * 0.8},${pos.y} '
           '${pos.x + scale},${pos.y + scale} '
           '${pos.x + scale},${pos.y - scale}';
@@ -558,9 +662,9 @@ class StrandComponent {
     root_element.children.add(triangle);
   }
 
-  _draw_deletions(Substrand substrand) {
+  _draw_deletions(BoundSubstrand substrand) {
     for (var deletion in substrand.deletions) {
-      var helix = app.model.dna_design.helices[substrand.helix_idx];
+      var helix = app.model.dna_design.helices[substrand.helix];
       Point<num> pos = helix.svg_base_pos(deletion, substrand.forward);
 
       var width = 0.8 * constants.BASE_WIDTH_SVG;
@@ -578,7 +682,7 @@ class StrandComponent {
     }
   }
 
-  _draw_insertions(Substrand substrand) {
+  _draw_insertions(BoundSubstrand substrand) {
     for (var insertion in substrand.insertions) {
       int offset = insertion.item1;
 
@@ -588,8 +692,8 @@ class StrandComponent {
     }
   }
 
-  svg.PathElement _draw_insertion(Substrand substrand, int offset) {
-    var helix = app.model.dna_design.helices[substrand.helix_idx];
+  svg.PathElement _draw_insertion(BoundSubstrand substrand, int offset) {
+    var helix = app.model.dna_design.helices[substrand.helix];
     Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
 
     num dx1 = constants.BASE_WIDTH_SVG;
@@ -628,7 +732,7 @@ class StrandComponent {
   }
 
   void _draw_text_number_of_insertions(
-      Tuple2<int, int> insertion, svg.PathElement insertion_path, Substrand substrand, int offset) {
+      Tuple2<int, int> insertion, svg.PathElement insertion_path, BoundSubstrand substrand, int offset) {
     // write number of insertions inside insertion loop
     int length = insertion.item2;
     var xmlns = "http://www.w3.org/2000/svg";
@@ -658,11 +762,14 @@ class StrandComponent {
   }
 }
 
-String substrand_line_id(Substrand substrand) =>
-    'substrand-H${substrand.helix_idx}-O${substrand.start}-${substrand.forward ? 'right' : 'left'}';
+String substrand_line_id(BoundSubstrand substrand) =>
+    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'right' : 'left'}';
 
-String insertion_id(Substrand substrand, int offset) =>
-    'insertion-H${substrand.helix_idx}-O${offset}-${substrand.forward ? 'right' : 'left'}';
+String insertion_id(BoundSubstrand substrand, int offset) =>
+    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'right' : 'left'}';
+
+String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
+    'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';
 
 class MismatchesComponent {
   svg.GElement root_element = svg.GElement();
@@ -677,18 +784,18 @@ class MismatchesComponent {
   render() {
     root_element.children.clear();
     if (app.model.show_mismatches) {
-      for (var substrand in this.strand.substrands) {
+      for (var substrand in this.strand.bound_substrands()) {
         this._draw_mismatches(substrand);
       }
     }
   }
 
-  _draw_mismatches(Substrand substrand) {
+  _draw_mismatches(BoundSubstrand substrand) {
     List<Mismatch> mismatches = app.model.dna_design.mismatches_on_substrand(substrand);
     for (Mismatch mismatch in mismatches) {
       // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
       // not for a specific base.
-      var helix = app.model.dna_design.used_helices[substrand.helix_idx];
+      var helix = app.model.dna_design.used_helices[substrand.helix];
       var base_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
       var star = create_mismatch_svg_star(base_pos, substrand.forward);
       this.root_element.children.add(star);
@@ -707,15 +814,28 @@ class DNASequenceComponent {
     };
   }
 
+  //TODO: draw loopout DNA
+
   render() {
     root_element.children.clear();
     if (app.model.show_dna && this.strand.dna_sequence != null) {
-      for (var substrand in this.strand.substrands) {
-        this._draw_dna_sequence(substrand);
-        for (var insertion in substrand.insertions) {
-          int offset = insertion.item1;
-          int length = insertion.item2;
-          this._draw_insertion_dna_sequence(substrand, offset, length);
+//      for (var substrand in this.strand.substrands) {
+      for (int i = 0; i < this.strand.substrands.length; i++) {
+        var substrand = this.strand.substrands[i];
+        if (substrand.is_bound_substrand()) {
+          var bound_ss = substrand as BoundSubstrand;
+          this._draw_dna_sequence_on_bound_substrand(substrand);
+          for (var insertion in bound_ss.insertions) {
+            int offset = insertion.item1;
+            int length = insertion.item2;
+            this._draw_insertion_dna_sequence(bound_ss, offset, length);
+          }
+        } else {
+          assert(0 < i);
+          assert(i < this.strand.substrands.length - 1);
+          BoundSubstrand prev_ss = this.strand.substrands[i - 1];
+          BoundSubstrand next_ss = this.strand.substrands[i + 1];
+          this._draw_dna_sequence_on_loopout(substrand, prev_ss, next_ss);
         }
       }
     }
@@ -728,14 +848,14 @@ class DNASequenceComponent {
   // This is not declarative rendering; it makes some assumptions about what render_dna_sequences() did
   // In general "draw" means it just draws (possibly over the top of something incorrectly),
   // whereas "render" means "draw as though from scratch"
-  _draw_dna_sequence(Substrand substrand) {
+  _draw_dna_sequence_on_bound_substrand(BoundSubstrand substrand) {
     var seq_elt = svg.TextElement();
     var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
     seq_elt.setInnerHtml(seq_to_draw);
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    var helix = app.model.dna_design.helices[substrand.helix_idx];
+    var helix = app.model.dna_design.helices[substrand.helix];
     Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
@@ -761,7 +881,7 @@ class DNASequenceComponent {
     this.root_element.children.add(seq_elt);
   }
 
-  _draw_insertion_dna_sequence(Substrand substrand, int offset, int length) {
+  _draw_insertion_dna_sequence(BoundSubstrand substrand, int offset, int length) {
     svg.TextPathElement textpath_elt;
     // I can't find documentation for a constructor that can be called for TextPathElement:
     // https://api.dartlang.org/stable/2.4.0/dart-svg/TextPathElement-class.html
@@ -782,7 +902,7 @@ class DNASequenceComponent {
     var start_offset = '50%';
     var dy = '${0.1 * constants.BASE_WIDTH_SVG}';
 
-    Tuple2<num, num> ls_fs = _calculate_letter_spacing_and_font_size(length);
+    Tuple2<num, num> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
     num letter_spacing = ls_fs.item1;
     num font_size = ls_fs.item2;
 
@@ -798,6 +918,51 @@ class DNASequenceComponent {
     textpath_elt.attributes = {
       'class': classname_dna_sequence + '-insertion',
       'href': '#${insertion_id(substrand, offset)}',
+      'startOffset': start_offset,
+      'style': style_string,
+    };
+    text_elt.attributes = {
+      'dy': dy,
+    };
+
+    this.root_element.children.add(text_elt);
+  }
+
+  _draw_dna_sequence_on_loopout(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) {
+    svg.TextPathElement textpath_elt;
+    var xmlns = "http://www.w3.org/2000/svg";
+    textpath_elt = document.createElementNS(xmlns, 'textPath');
+
+    //TODO: write this
+
+    var subseq = loopout.dna_sequence();
+    var length = subseq.length;
+    textpath_elt.setInnerHtml(subseq);
+
+    var start_offset = '50%';
+    var dy = '${0.1 * constants.BASE_WIDTH_SVG}';
+
+    Tuple2<num, num> ls_fs;
+    if (_is_hairpin(prev_ss, next_ss)) {
+      ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
+    } else {
+      ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);
+    }
+    num letter_spacing = ls_fs.item1;
+    num font_size = ls_fs.item2;
+
+    String style_string;
+    if (letter_spacing != null) {
+      style_string = 'letter-spacing: ${letter_spacing}em; font-size: ${font_size}px';
+    } else {
+      style_string = 'font-size: ${font_size}px';
+    }
+
+    var text_elt = svg.TextElement();
+    text_elt.children.add(textpath_elt);
+    textpath_elt.attributes = {
+      'class': classname_dna_sequence + '-loopout',
+      'href': '#${loopout_id(loopout, prev_ss, next_ss)}',
       'startOffset': start_offset,
       'style': style_string,
     };
@@ -861,7 +1026,46 @@ svg.PolygonElement create_mismatch_svg_star(Point<num> base_svg_pos, bool right)
   return ret;
 }
 
-Tuple2<num, num> _calculate_letter_spacing_and_font_size(int num_insertions) {
+//TODO: calibrate these based on real usages
+
+Tuple2<num, num> _calculate_letter_spacing_and_font_size_loopout(int len) {
+  num letter_spacing = 0;
+  num font_size = 12;
+  return Tuple2<num, num>(letter_spacing, font_size);
+}
+
+Tuple2<num, num> _calculate_letter_spacing_and_font_size_hairpin(int len) {
+  num letter_spacing;
+  num font_size = max(6, 12 - max(0, len - 6));
+  if (browser.isChrome) {
+    if (len == 1) {
+      letter_spacing = 0;
+    } else if (len == 2) {
+      letter_spacing = -0.1;
+    } else if (len == 3) {
+      letter_spacing = -0.1;
+    } else if (len == 4) {
+      letter_spacing = -0.1;
+    } else if (len == 5) {
+      letter_spacing = -0.15;
+    } else if (len == 6) {
+      letter_spacing = -0.18;
+    } else {
+      letter_spacing = null;
+    }
+  }
+  if (browser.isFirefox) {
+    // Firefox ignores the "letter-spacing" property so we only have font-size to play with
+    font_size = max(6, 12 - (len - 1));
+    if (len > 3 && font_size > 6) {
+      font_size -= 1;
+    }
+    letter_spacing = null;
+  }
+  return Tuple2<num, num>(letter_spacing, font_size);
+}
+
+Tuple2<num, num> _calculate_letter_spacing_and_font_size_insertion(int num_insertions) {
   // UGGG
   num letter_spacing;
   num font_size = max(6, 12 - (num_insertions - 1));

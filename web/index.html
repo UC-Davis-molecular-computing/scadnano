@@ -40,23 +40,6 @@
 
 <script defer src="main.dart.js"></script>
 
-<!--<script type="text/javascript">-->
-<!--    languagePluginLoader.then(() => {-->
-<!--        // pyodide is now ready to use...-->
-<!--        console.log(pyodide.runPython('import sys\nsys.version'));-->
-<!--    });-->
-
-<!--    function compile(code) {-->
-<!--        pyodide.loadPackage('scadnano.py');-->
-<!--        pyodide.loadPackage('origami_rectangle.py');-->
-<!--        pyodide.loadPackage('json_utils.py');-->
-<!--        pyodide.loadPackage('m13.py');-->
-<!--        pyodide.runPython(code);-->
-<!--        // pyodide.pyimport(code);-->
-
-<!--    }-->
-<!--</script>-->
-
 <script type="text/javascript">
 
     //TODO: add ability to pan with keyboard; possibly change to this library:
@@ -162,7 +145,6 @@
         // removeDummy("dummy-elt-side-view");
         // removeDummy("dummy-elt-main-view");
     }
-
 
     function current_pan() {
         //XXX: dartdevc can handle passing the object pan directly, but the release version requires

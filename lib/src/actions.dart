@@ -1,5 +1,9 @@
-import 'dart:js';
+@JS()
+library actions;
 
+import 'package:js/js.dart';
+
+import 'strand.dart';
 import 'app.dart';
 import 'model.dart';
 import 'util.dart' as util;
@@ -158,14 +162,16 @@ class AlertFileSavedAction implements Action {
   }
 }
 
+@JS(constants.js_function_name_compile)
+external js_compile(String code);
+
 class CompileAction implements Action {
   @override
   Model apply(Model model) {
     print('compile action being applied');
     var python_code = app.model.editor_content;
 
-    JsFunction js_compile = context[constants.js_function_name_compile];
-    js_compile.apply([python_code]);
+    js_compile(python_code);
 
     //TODO: get design from python code and put in model
 
@@ -183,8 +189,8 @@ class UpdateMouseOverDataAction implements Action {
 
   @override
   Model apply(Model model) {
-    Substrand substrand = null;
-    for (Substrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
+    BoundSubstrand substrand = null;
+    for (BoundSubstrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
       if (ss.contains_offset(this.offset) && ss.forward == this.right) {
         substrand = ss;
         break;

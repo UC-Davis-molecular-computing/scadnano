@@ -74,9 +74,9 @@ def multiples_of(mul, start, num_bases_per_helix):
 
 def create_scaffold(offset_start: int, offset_end: int, offset_5p: int, num_helices: int,
                     num_cols: int):
-    bot_substrand_left = sc.Substrand(helix_idx=num_helices + 1, forward=False, start=offset_start,
+    bot_substrand_left = sc.Substrand(helix=num_helices + 1, forward=False, start=offset_start,
                                       end=offset_5p)
-    bot_substrand_right = sc.Substrand(helix_idx=num_helices + 1, forward=False, start=offset_5p,
+    bot_substrand_right = sc.Substrand(helix=num_helices + 1, forward=False, start=offset_5p,
                                        end=offset_end)
 
     # maps helix idx to list of substrands in order from left to right on that helix
@@ -117,7 +117,7 @@ def create_scaffold(offset_start: int, offset_end: int, offset_5p: int, num_heli
         col_start = col_end
 
     # other helices
-    for helix_idx in range(3, num_helices):
+    for helix in range(3, num_helices):
         col_start = offset_start
         for col in range(num_cols // 2 + 1):
 
@@ -131,28 +131,28 @@ def create_scaffold(offset_start: int, offset_end: int, offset_5p: int, num_heli
                 col_end = col_start + 2 * BASES_PER_COLUMN
                 col_mid = col_end - mid_dist_from_end
 
-            substrand_left = sc.Substrand(helix_idx, helix_idx % 2 == 0, col_start, col_mid)
-            substrands_on_helix[helix_idx].append(substrand_left)
-            substrand_right = sc.Substrand(helix_idx, helix_idx % 2 == 0, col_mid, col_end)
-            substrands_on_helix[helix_idx].append(substrand_right)
+            substrand_left = sc.Substrand(helix, helix % 2 == 0, col_start, col_mid)
+            substrands_on_helix[helix].append(substrand_left)
+            substrand_right = sc.Substrand(helix, helix % 2 == 0, col_mid, col_end)
+            substrands_on_helix[helix].append(substrand_right)
             col_start = col_end
 
     # put in reverse order for efficient popping from stack
-    for helix_idx in range(2, num_helices + 1):
-        substrands_on_helix[helix_idx].reverse()
+    for helix in range(2, num_helices + 1):
+        substrands_on_helix[helix].reverse()
 
     # now go in order of columns, within column by helix,
     # and pop substrands from stack associated to each helix
     for dual_col in range(num_cols // 2 + 1):
 
         # zig-zag up from bottom
-        for helix_idx in range(num_helices, 1, -1):
-            substrand = substrands_on_helix[helix_idx].pop()
+        for helix in range(num_helices, 1, -1):
+            substrand = substrands_on_helix[helix].pop()
             substrands.append(substrand)
 
         # zig-zag down from top
-        for helix_idx in range(3, num_helices):
-            substrand = substrands_on_helix[helix_idx].pop()
+        for helix in range(3, num_helices):
+            substrand = substrands_on_helix[helix].pop()
             substrands.append(substrand)
 
     substrands.append(substrands_on_helix[num_helices].pop())
@@ -182,9 +182,9 @@ def create_staples(offset_start, offset_end, num_helices, num_cols):
 def create_left_edge_staples(offset_start, num_helices):
     staples = []
     crossover_right = offset_start + BASES_PER_EDGE_COLUMN
-    for helix_idx in range(2, num_helices + 1, 2):
-        ss_5p_bot = sc.Substrand(helix_idx + 1, True, offset_start - 10, crossover_right)
-        ss_3p_top = sc.Substrand(helix_idx, False, offset_start - 10, crossover_right)
+    for helix in range(2, num_helices + 1, 2):
+        ss_5p_bot = sc.Substrand(helix + 1, True, offset_start - 10, crossover_right)
+        ss_3p_top = sc.Substrand(helix, False, offset_start - 10, crossover_right)
         staple = sc.Strand(substrands=[ss_5p_bot, ss_3p_top])
         staples.append(staple)
     return staples
@@ -193,9 +193,9 @@ def create_left_edge_staples(offset_start, num_helices):
 def create_right_edge_staples(offset_end, num_helices):
     staples = []
     crossover_left = offset_end - BASES_PER_EDGE_COLUMN
-    for helix_idx in range(2, num_helices + 1, 2):
-        ss_5p_bot = sc.Substrand(helix_idx + 1, True, crossover_left, offset_end + 10)
-        ss_3p_top = sc.Substrand(helix_idx, False, crossover_left, offset_end + 10)
+    for helix in range(2, num_helices + 1, 2):
+        ss_5p_bot = sc.Substrand(helix + 1, True, crossover_left, offset_end + 10)
+        ss_3p_top = sc.Substrand(helix, False, crossover_left, offset_end + 10)
         staple = sc.Strand(substrands=[ss_3p_top, ss_5p_bot])
         staples.append(staple)
     return staples
@@ -206,13 +206,13 @@ def create_inner_staples(offset_start, num_helices, num_cols):
     for col in range(num_cols):
         x_l = offset_start + BASES_PER_EDGE_COLUMN + BASES_PER_COLUMN * col
         x_r = offset_start + BASES_PER_EDGE_COLUMN + BASES_PER_COLUMN * (col + 1)
-        for helix_idx in range(4, num_helices - 1, 2):
-            nick_delta = 10 if helix_idx == 2 else 15
+        for helix in range(4, num_helices - 1, 2):
+            nick_delta = 10 if helix == 2 else 15
             x_nick = x_l + nick_delta
 
-            ss_helix_i_left = sc.Substrand(helix_idx, False, x_l, x_nick)
-            ss_helix_i_right = sc.Substrand(helix_idx, False, x_nick, x_r)
-            ss_helix_ip1 = sc.Substrand(helix_idx + 1, True, x_l, x_r)
+            ss_helix_i_left = sc.Substrand(helix, False, x_l, x_nick)
+            ss_helix_i_right = sc.Substrand(helix, False, x_nick, x_r)
+            ss_helix_ip1 = sc.Substrand(helix + 1, True, x_l, x_r)
             staple = sc.Strand(substrands=[ss_helix_i_left, ss_helix_ip1, ss_helix_i_right])
             staples.append(staple)
 

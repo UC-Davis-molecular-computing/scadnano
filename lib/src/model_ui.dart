@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'model.dart';
+import 'strand.dart';
 import 'app.dart';
 
 ////////////////////////////////////////////////
@@ -70,7 +71,7 @@ class MouseOverData with ChangeNotifier<MouseOverData> {
     this.notifier = app.controller.notifier_mouse_over_data;
   }
 
-  give_data(int helix_idx, int offset, Substrand substrand) {
+  give_data(int helix_idx, int offset, BoundSubstrand substrand) {
     this._has_data = true;
     this._helix_idx = helix_idx;
     this._offset = offset;
@@ -89,7 +90,7 @@ class MouseOverData with ChangeNotifier<MouseOverData> {
     if (this._has_data) {
       int helix_idx = this._helix_idx;
       int offset = this._offset;
-      Substrand substrand = this._substrand;
+      BoundSubstrand substrand = this._substrand;
       var ret = MouseOverData.internal();
       ret._helix_idx = helix_idx;
       ret._offset = offset;
@@ -109,21 +110,21 @@ class MouseOverData with ChangeNotifier<MouseOverData> {
   int _offset;
   int get offset => this._offset;
 
-  Substrand _substrand;
-  Substrand get substrand => this._substrand;
+  BoundSubstrand _substrand;
+  BoundSubstrand get substrand => this._substrand;
 
 }
 
 class MainViewSelection {
-  List<Substrand> starts = [];
-  List<Substrand> ends = [];
+  List<BoundSubstrand> starts = [];
+  List<BoundSubstrand> ends = [];
   List<Crossover> crossovers = [];
-  List<Substrand> substrands = [];
+  List<BoundSubstrand> substrands = [];
 }
 
 class Crossover {
-  Substrand substrand_5p = null;
-  Substrand substrand_3p = null;
+  BoundSubstrand substrand_5p = null;
+  BoundSubstrand substrand_3p = null;
 }
 
 ////////////////////////////////////////////////

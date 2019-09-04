@@ -9,14 +9,14 @@
       "color": {"r": 50, "g": 0, "b": 150},
       "dna_sequence": "ATTCTCTTGCTTTTTTCA",
       "substrands": [
-        {"helix_idx": 0, "forward": true, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}
+        {"helix": 0, "forward": true, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}
       ]
     },
     {
       "color": {"r": 0, "g": 102, "b": 204},
       "dna_sequence": "AGAAAAAAAAAAAAAAAA",
       "substrands": [
-        {"helix_idx": 0, "forward": false, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}
+        {"helix": 0, "forward": false, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}
       ]
     }
   ]

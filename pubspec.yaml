@@ -1,11 +1,11 @@
 name: scadnano
-description: A web-based scriptable implementation of cadnano (https://cadnano.org/).
+description: A web-based scriptable cadnano (see https://cadnano.org/ for original cadnano developed by Shawn Douglas).
 # version: 0.0.1
 #homepage: https://web.cs.ucdavis.edu/~doty/scadnano/
 #author: David Doty <doty@ucdavis.edu>
 
 environment:
-  sdk: '>=2.4.0 <3.0.0'
+  sdk: ^2.4.0
 
 dependencies:
   js: ^0.6.1+1
@@ -17,6 +17,7 @@ dependencies:
   meta: ^1.1.6
   path: ^1.6.2
   platform_detect: ^1.3.5
+#  sealed_unions: ^3.0.2+2
 
 dev_dependencies:
   build_runner: ^1.6.2

@@ -22,8 +22,8 @@ class FooterViewComponent extends ReactiveComponent {
       int offset = mouse_over_data.offset;
       this.paragraph_element.text = 'helix: ${idx},  offset: ${offset}';
       if (mouse_over_data.substrand != null) {
-        int substrand_length = mouse_over_data.substrand.dna_length;
-        int strand_length = mouse_over_data.substrand.strand.length;
+        int substrand_length = mouse_over_data.substrand.dna_length();
+        int strand_length = mouse_over_data.substrand.strand.dna_length();
         this.paragraph_element.text += ', '
             'strand length: ${strand_length}, '
             'substrand length: ${substrand_length}';

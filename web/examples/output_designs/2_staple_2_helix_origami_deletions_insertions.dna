@@ -8,27 +8,27 @@
   "strands": [
     {
       "color": {"r": 0, "g": 114, "b": 0},
-      "dna_sequence": "TTAGTTAGTTAGTTAGTTTTAGTTAGTTAGTTAG",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
       "substrands": [
-        {"helix_idx": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
-        {"helix_idx": 0, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 1]]}
+        {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
+        {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12], "insertions": [[6, 1]]}
       ]
     },
     {
       "color": {"r": 247, "g": 67, "b": 8},
-      "dna_sequence": "GTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTA",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTAG",
       "substrands": [
-        {"helix_idx": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
-        {"helix_idx": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
+        {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
+        {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
       ]
     },
     {
       "color": {"r": 0, "g": 102, "b": 204},
-      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAA",
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTA",
       "substrands": [
-        {"helix_idx": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
-        {"helix_idx": 0, "forward": true, "start": 0, "end": 32, "deletions": [12, 24], "insertions": [[6, 1], [18, 2]]},
-        {"helix_idx": 1, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
+        {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
+        {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24], "insertions": [[6, 1], [18, 2]]},
+        {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
       ]
     }
   ]
