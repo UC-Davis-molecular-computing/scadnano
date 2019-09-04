@@ -183,17 +183,20 @@ class CompileAction implements Action {
 class UpdateMouseOverDataAction implements Action {
   final int helix_idx;
   final int offset;
-  final bool right;
+  final bool forward;
 
-  UpdateMouseOverDataAction(this.helix_idx, this.offset, this.right);
+  UpdateMouseOverDataAction(this.helix_idx, this.offset, this.forward);
 
   @override
   Model apply(Model model) {
     BoundSubstrand substrand = null;
-    for (BoundSubstrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
-      if (ss.contains_offset(this.offset) && ss.forward == this.right) {
-        substrand = ss;
-        break;
+    for (Substrand ss in app.model.dna_design.substrands_on_helix(this.helix_idx)) {
+      if (ss.is_bound_substrand()) {
+        var bound_ss = ss as BoundSubstrand;
+        if (bound_ss.contains_offset(this.offset) && bound_ss.forward == this.forward) {
+          substrand = ss;
+          break;
+        }
       }
     }
     model.main_view_ui_model.mouse_over_data.give_data(this.helix_idx, this.offset, substrand);

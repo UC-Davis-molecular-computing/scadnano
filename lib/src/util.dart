@@ -4,6 +4,8 @@ import 'dart:html';
 import 'dart:js' as js;
 import 'dart:math';
 
+import 'package:platform_detect/platform_detect.dart';
+
 import 'model.dart';
 import 'constants.dart' as constants;
 
@@ -25,8 +27,16 @@ Future<DNADesign> _dna_design_from_url(String url) async {
 /// Transform point by panning and zooming.
 /// (Actually I needed to do what appears to be the inverse transformation here, not sure why.)
 Point<num> transform(Point<num> point, Point<num> pan, num zoom) {
-  num ret_x = (point.x - pan.x) / zoom;
-  num ret_y = (point.y - pan.y) / zoom;
+  num ret_x;
+  num ret_y;
+  if (browser.isFirefox) {
+    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
+    ret_x = point.x;
+    ret_y = point.y;
+  } else {
+    ret_x = (point.x - pan.x) / zoom;
+    ret_y = (point.y - pan.y) / zoom;
+  }
   return Point<num>(ret_x, ret_y);
 }
 

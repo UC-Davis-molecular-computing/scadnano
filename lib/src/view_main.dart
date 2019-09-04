@@ -18,7 +18,8 @@ import 'app.dart';
 import 'util.dart' as util;
 import 'constants.dart' as constants;
 
-const DEBUG_PRINT_MOUSEOVER = false;
+//const DEBUG_PRINT_MOUSEOVER = false;
+const DEBUG_PRINT_MOUSEOVER = true;
 
 const String MAIN_VIEW_PREFIX = 'main-view';
 
@@ -187,7 +188,7 @@ class HelixMainViewComponent extends ReactiveComponent {
 
       int helix_idx = this.helix.idx;
       int offset = this.helix.svg_x_to_offset(svg_x);
-      bool right = this.helix.svg_y_to_right(svg_y);
+      bool forward = this.helix.svg_y_is_forward(svg_y);
 
       if (DEBUG_PRINT_MOUSEOVER) {
         print('mouse event: '
@@ -199,10 +200,10 @@ class HelixMainViewComponent extends ReactiveComponent {
             'svg_y = ${svg_y.toStringAsFixed(2)},   '
             'helix = ${helix_idx},   '
             'offset = ${offset},   '
-            'right = ${right}');
+            'forward = ${forward}');
       }
 
-      app.send_action(UpdateMouseOverDataAction(helix_idx, offset, right));
+      app.send_action(UpdateMouseOverDataAction(helix_idx, offset, forward));
     });
   }
 

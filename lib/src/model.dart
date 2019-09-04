@@ -5,6 +5,7 @@ import 'dart:js';
 
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
+import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
 
 import 'util.dart' as util;
@@ -612,12 +613,26 @@ class Helix with ChangeNotifier<Helix> {
     return Point<num>(x, y);
   }
 
+  // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   int svg_x_to_offset(num x) {
-    return ((x - this._svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+    var offset;
+    if (browser.isFirefox) {
+      offset = (x / constants.BASE_WIDTH_SVG).floor();
+    } else {
+      offset = ((x - this._svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+    }
+    return offset;
   }
 
-  bool svg_y_to_right(num y) {
-    return (y - this._svg_position.y) < 10;
+  // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
+  bool svg_y_is_forward(num y) {
+    var relative_y;
+    if (browser.isFirefox) {
+      relative_y = y;
+    } else {
+      relative_y = (y - this._svg_position.y);
+    }
+    return relative_y < 10;
   }
 
   Point<num> default_svg_position() {
