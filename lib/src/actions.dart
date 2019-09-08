@@ -64,8 +64,8 @@ class HelixUseAction implements ReversibleAction {
     if (this.use) {
       var new_idx = this.idx;
       this.helix.idx = new_idx;
-      design.used_helices.insert(new_idx, this.helix);
-      for (var helix_after_idx_used in design.used_helices.sublist(new_idx + 1)) {
+      design.helices.insert(new_idx, this.helix);
+      for (var helix_after_idx_used in design.helices.sublist(new_idx + 1)) {
         helix_after_idx_used.idx++;
 //        app.controller.notifier_helix_change_used.add(helix_after_idx_used);
 //        helix_after_idx_used.notify_changed();
@@ -73,10 +73,10 @@ class HelixUseAction implements ReversibleAction {
     } else {
       int old_idx = this.helix.idx;
       assert(old_idx == this.idx);
-      design.used_helices.removeAt(old_idx);
+      design.helices.removeAt(old_idx);
       this.helix.idx = -1;
 //      app.controller.notifier_helix_change_used.add(this.helix);
-      for (var helix_after_idx_unused in design.used_helices.sublist(old_idx)) {
+      for (var helix_after_idx_unused in design.helices.sublist(old_idx)) {
         helix_after_idx_unused.idx--;
 //        app.controller.notifier_helix_change_used.add(helix_after_idx_unused);
       }

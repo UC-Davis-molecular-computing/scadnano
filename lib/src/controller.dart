@@ -149,7 +149,7 @@ class Controller {
     var use = !helix.used;
     var idx = helix.idx;
     if (idx < 0) {
-      idx = app.model.dna_design.used_helices.length;
+      idx = app.model.dna_design.helices.length;
     }
     var helix_action = HelixUseAction(use, helix, idx);
     app.send_action(helix_action);

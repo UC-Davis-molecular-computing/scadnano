@@ -20,6 +20,7 @@ final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 const Grid default_grid = Grid.none;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
+const js_function_name_cache_svg = 'cache_svg';
 const js_function_name_setup_svg_panzoom = 'setup_svg_panzoom';
 const js_function_name_setup_splits = 'setup_splits';
 const js_function_name_sdrag = 'sdrag';
@@ -45,6 +46,7 @@ const grid_key = 'grid';
 const major_tick_distance_key = 'major_tick_distance';
 const major_ticks_key = 'major_ticks';
 const helices_key = 'helices';
+const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 
 // Helix keys

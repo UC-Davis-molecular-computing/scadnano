@@ -1,3 +1,7 @@
+@JS()
+library util;
+
+import 'package:js/js.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:html';
@@ -29,7 +33,7 @@ Future<DNADesign> _dna_design_from_url(String url) async {
 Point<num> transform(Point<num> point, Point<num> pan, num zoom) {
   num ret_x;
   num ret_y;
-  if (browser.isFirefox) {
+  if (browser.isFirefox || browser.isInternetExplorer) {
     // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
     ret_x = point.x;
     ret_y = point.y;
@@ -59,3 +63,6 @@ dynamic get_value(Map<String, dynamic> map, String key) {
 num sigmoid(num x) {
   return 1.0 / (1.0 + exp(-x));
 }
+
+@JS(constants.js_function_name_cache_svg)
+external ImageElement cache_svg(String svg_elt_id);

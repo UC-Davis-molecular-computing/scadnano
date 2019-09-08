@@ -2,13 +2,13 @@
   "version": "0.0.1",
   "grid": "square",
   "helices": [
-    {"idx": 0, "max_bases": 8, "grid_position": [0, 0]},
-    {"idx": 1, "max_bases": 8, "grid_position": [0, 1]},
-    {"idx": 2, "max_bases": 32, "grid_position": [0, 2]}
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"grid_position": [0, 2]}
   ],
   "strands": [
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": {"r": 184, "g": 5, "b": 108},
       "dna_sequence": "ACGACGACTTTTTGTCGTCGTTTTTTGACGACGATTTTTTTTTTCACGACGATTTTTTTTTTTTTTTTTTTTTCGTCGTGACGACGACTGTCGTCGT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 8},

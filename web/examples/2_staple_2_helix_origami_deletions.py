@@ -2,7 +2,6 @@ import scadnano as sc
 
 
 def main():
-    helices = [sc.Helix(0, 32), sc.Helix(1, 32)]
     stap_left_ss1 = sc.Substrand(1, sc.forward, 0, 16)
     stap_left_ss0 = sc.Substrand(0, sc.reverse, 0, 16)
     stap_right_ss0 = sc.Substrand(0, sc.reverse, 16, 32)
@@ -14,7 +13,7 @@ def main():
     stap_right = sc.Strand([stap_right_ss0, stap_right_ss1])
     scaf = sc.Strand([scaf_ss1_left, scaf_ss0, scaf_ss1_right], color=sc.default_scaffold_color)
     strands = [stap_left, stap_right, scaf]
-    design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
+    design = sc.DNADesign(strands=strands, grid=sc.square)
     design.add_deletion(helix=0, offset=11)
     design.add_deletion(helix=0, offset=12)
     design.add_deletion(helix=0, offset=24)

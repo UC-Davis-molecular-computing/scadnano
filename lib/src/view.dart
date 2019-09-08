@@ -64,7 +64,6 @@ class View extends ReactiveComponent {
   /// using the notifier streams defined in Controller.
   render() {
     this.update_showing_editor();
-
     // now re-render components in place
     this.menu_view.render();
     this.design_view.render();

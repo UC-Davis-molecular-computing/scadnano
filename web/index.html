@@ -16,6 +16,11 @@
     <script src="external-libs/svg-pan-zoom.min.js"></script>
     <script src="external-libs/hammer.min.js"></script>
 
+    <script src="external-libs/pablo.js"></script>
+
+<!--    <script src="external-libs/panzoom.min.js"></script>-->
+<!--    <script src="external-libs/panzoom.js"></script>-->
+
 <!--    <script src="external-libs/brython.js"></script>-->
 <!--    <script src="external-libs/brython_stdlib.js"></script>-->
 
@@ -38,12 +43,13 @@
 
 <div id="top-container"></div>
 
-<script defer src="main.dart.js"></script>
+<script src="main.dart.js"></script>
 
 <script type="text/javascript">
 
-    //TODO: add ability to pan with keyboard; possibly change to this library:
+    //TODO: add ability to pan with keyboard; possibly change to one of these libraries:
     //  https://github.com/anvaka/panzoom
+    //  https://github.com/timmywil/panzoom
 
     var main_view_svg_pan_zoom;
 
@@ -67,6 +73,9 @@
                     , initialScale = 1
                     , pannedX = 0
                     , pannedY = 0;
+
+                //TODO: bug in code below sets wrong zoom fixed point when using pinch zoom
+                //  (assumes container is in upper-left corner of screen)
 
                 // Init Hammer
                 // Listen only for pointer and touch events
@@ -118,6 +127,8 @@
             }
         };
 
+
+        // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         var side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
             zoomScaleSensitivity: 0.3,
@@ -126,7 +137,6 @@
             customEventsHandler: eventsHandler,
             fit: false,
         });
-        // side_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
 
         main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
@@ -137,13 +147,37 @@
             fit: false,
         });
 
-
-        // main_view_svg_pan_zoom.zoomAtPoint(1, {x: 50, y:50});
-
         // attempting to remove the dummy node here causes a race condition with the Dart code that clears out
         // DOM children before rendering, so we just leave it in.
         // removeDummy("dummy-elt-side-view");
         // removeDummy("dummy-elt-main-view");
+
+
+
+
+        /*
+        // panzoom library: https://github.com/anvaka/panzoom
+        var side_view_elt = document.getElementById('side-view-svg-viewport')
+        var side_view_svg_pan_zoom = panzoom(side_view_elt, {
+            zoomSpeed: 0.065,
+            pinchSpeed: 2,
+            minZoom: 0.05,
+            maxZoom: 20,
+            zoomDoubleClickSpeed: 1.2,
+        });
+        side_view_svg_pan_zoom.moveTo(0,0);
+
+        var main_view_elt = document.getElementById('main-view-svg-viewport')
+        var main_view_svg_pan_zoom = panzoom(main_view_elt, {
+            zoomSpeed: 0.065,
+            pinchSpeed: 2,
+            minZoom: 0.05,
+            maxZoom: 20,
+            zoomDoubleClickSpeed: 1.2,
+        });
+        main_view_svg_pan_zoom.moveTo(0,0);
+        */
+
     }
 
     function current_pan() {
@@ -156,6 +190,30 @@
 
     function current_zoom() {
         return main_view_svg_pan_zoom.getZoom();
+    }
+
+    function cache_svg(svg_elt_id) {
+        var svg_elt = document.querySelector(svg_elt_id);
+        var pablo_svg_elt = Pablo([svg_elt]);
+        var imgs = pablo_svg_elt.toImage('png');
+        var img = imgs[0];
+        return img;
+
+        // var svgString = new XMLSerializer().serializeToString(document.querySelector(svg_elt_id));
+        //
+        // var canvas = document.getElementById("canvas");
+        // var ctx = canvas.getContext("2d");
+        // var DOMURL = self.URL || self.webkitURL || self;
+        // var img = new Image();
+        // var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+        // var url = DOMURL.createObjectURL(svg);
+        // img.onload = function() {
+        //     ctx.drawImage(img, 0, 0);
+        //     var png = canvas.toDataURL("image/png");
+        //     document.querySelector('#png-container').innerHTML = '<img src="'+png+'"/>';
+        //     DOMURL.revokeObjectURL(png);
+        // };
+        // img.src = url;
     }
 
 </script>

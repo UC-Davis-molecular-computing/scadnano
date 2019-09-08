@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
-import 'dart:js';
+//import 'dart:js';
 
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
+import 'package:quiver/iterables.dart';
 
 import 'util.dart' as util;
 import 'strand.dart';
@@ -17,8 +18,8 @@ import 'constants.dart' as constants;
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
 //TODO: add a mixin that lets me specify for each class that when it is created using fromJson,
-// it should store all the fields that are not used by scadnano,
-// and write them back out on serialization using toJson
+//  it should store all the fields that are not used by scadnano,
+//  and write them back out on serialization using toJson
 
 //TODO: import cadnano files
 
@@ -48,12 +49,9 @@ class DNADesign {
   /// all strands in model
   List<Strand> strands = [];
 
-  // optimized implementation detail; not serialized
-  // optimization so we can quickly look up a helix given its index. It is
-  // maintained in sorted order, so that used_helices[helix.idx] == helix.
-  List<Helix> used_helices = [];
+  List<PotentialHelix> potential_helices = [];
 
-  Map<int, List<BoundSubstrand>> _helix_idx_substrands_map = {};
+  List<List<BoundSubstrand>> _substrands_on_helix = [];
 
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
@@ -66,31 +64,19 @@ class DNADesign {
   DNADesign.default_design({int num_helices_x = 10, int num_helices_y = 10}) {
     this.grid = Grid.square;
     this.major_tick_distance = 8;
-    this.build_default_unused_helices(num_helices_x, num_helices_y);
+    this.build_default_potential_helices(num_helices_x, num_helices_y);
     this.strands = [];
+    this.helices = [];
   }
 
-  build_default_unused_helices(int num_helices_x, int num_helices_y) {
+  build_default_potential_helices(int num_helices_x, int num_helices_y) {
     this.helices = [];
     for (int gx = 0; gx < num_helices_x; gx++) {
       for (int gy = 0; gy < num_helices_y; gy++) {
         var grid_pos = GridPosition(gx, gy);
-        this.helices.add(Helix(idx: -1, grid_position: grid_pos));
+        this.potential_helices.add(PotentialHelix(grid_pos));
       }
     }
-    // should be unnecessary if model.helices is empty
-    this.build_used_helices();
-  }
-
-  /// Build the list used_helices.
-  build_used_helices() {
-    this.used_helices = [];
-    for (Helix helix in this.helices) {
-      if (helix.used) {
-        this.used_helices.add(helix);
-      }
-    }
-    this.used_helices.sort((h1, h2) => h1._idx - h2._idx);
   }
 
   /// max number of bases allowed on any Helix in the Model
@@ -114,6 +100,7 @@ class DNADesign {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
     json_map[constants.helices_key] = this.helices;
+    json_map[constants.potential_helices_key] = this.potential_helices;
     json_map[constants.strands_key] = this.strands;
     return json_map;
   }
@@ -165,10 +152,12 @@ class DNADesign {
 
     //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
-    this.version =
-        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
+    this.version = json_map.containsKey(constants.version_key)
+        ? json_map[constants.version_key]
+        : constants.INITIAL_VERSION;
 
-    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+    this.grid =
+        json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -182,11 +171,13 @@ class DNADesign {
 
     this.helices = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
+    int idx = 0;
     for (var helix_json in deserialized_helices_list) {
       Helix helix = Helix.from_json(helix_json);
+      helix.idx = idx;
+      idx++;
       this.helices.add(helix);
     }
-    this.build_used_helices();
 
     this.strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
@@ -195,9 +186,48 @@ class DNADesign {
       this.strands.add(strand);
     }
 
+    //XXX: order of these is important because each uses the data calculated from the previous
+    this._set_helices_idxs();
+    this._set_helices_grid_and_svg_positions();
     this._build_helix_idx_substrands_map();
-    //XXX: important to build _substrand_mismatches_map second because it uses _helix_idx_substrands_map
+    this._set_helices_max_bases(update: false);
     this._build_substrand_mismatches_map();
+    this._check_legal_design();
+  }
+
+  _set_helices_idxs() {
+    for (int idx = 0; idx < this.helices.length; idx++) {
+      var helix = this.helices[idx];
+      helix._idx = idx;
+    }
+  }
+
+  _set_helices_grid_and_svg_positions() {
+    for (int idx = 0; idx < this.helices.length; idx++) {
+      var helix = this.helices[idx];
+      if (helix.grid_position == null) {
+        helix._grid_position = helix.default_grid_position();
+      }
+      if (helix.svg_position == null) {
+        helix._svg_position = helix.default_svg_position();
+      }
+    }
+  }
+
+  _set_helices_max_bases({bool update = true}) {
+    for (var helix in this.helices) {
+      if (update || helix.max_bases < 0) {
+        var max_bases = -1;
+        for (var substrand in this._substrands_on_helix[helix._idx]) {
+          max_bases = max([max_bases, substrand.end]);
+        }
+        helix._max_bases = max_bases;
+      }
+    }
+  }
+
+  _check_legal_design() {
+    //TODO: implement this and give reasonable error messages
   }
 
   String toString() => """DNADesign(grid=$grid, major_tick_distance=$major_tick_distance, 
@@ -205,15 +235,12 @@ class DNADesign {
   strands=$strands)""";
 
   _build_helix_idx_substrands_map() {
-    this._helix_idx_substrands_map = {};
-    for (Helix helix in this.used_helices) {
-      this._helix_idx_substrands_map[helix.idx] = [];
-    }
+    this._substrands_on_helix = [for (int _ in range(this.helices.length)) []];
     for (Strand strand in this.strands) {
       for (Substrand substrand in strand.substrands) {
         if (substrand.is_bound_substrand()) {
           var bound_ss = substrand as BoundSubstrand;
-          this._helix_idx_substrands_map[bound_ss.helix].add(bound_ss);
+          this._substrands_on_helix[bound_ss.helix].add(bound_ss);
         }
       }
     }
@@ -252,7 +279,7 @@ class DNADesign {
       var other_seq = other_ss.dna_sequence_in(offset, offset);
       assert(other_seq.length == seq.length);
 
-      for (int idx = 0, idx_other = seq.length-1; idx < seq.length; idx++, idx_other--) {
+      for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
         if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
           int dna_idx = substrand.offset_to_strand_dna_idx(offset, substrand.forward) + idx;
           int within_insertion = seq.length == 1 ? -1 : idx;
@@ -276,7 +303,8 @@ class DNADesign {
     return null;
   }
 
-  void _ensure_other_substrand_same_deletion_or_insertion(BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
+  void _ensure_other_substrand_same_deletion_or_insertion(
+      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
     if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
       throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
           'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
@@ -304,13 +332,13 @@ class DNADesign {
 
   /// Return list of substrands on the Helix with the given index.
   substrands_on_helix(int helix_idx) {
-    return this._helix_idx_substrands_map[helix_idx];
+    return this._substrands_on_helix[helix_idx];
   }
 
   /// Return list of Substrands overlapping `substrand`.
   List<BoundSubstrand> _other_substrands_overlapping(BoundSubstrand substrand) {
     List<BoundSubstrand> ret = [];
-    for (var other_ss in this._helix_idx_substrands_map[substrand.helix]) {
+    for (var other_ss in this._substrands_on_helix[substrand.helix]) {
       if (substrand.overlaps(other_ss)) {
         ret.add(other_ss);
       }
@@ -364,7 +392,7 @@ class DNADesign {
 //  }
 }
 
-final Map<int,int> _wc_table = {
+final Map<int, int> _wc_table = {
   'A'.codeUnitAt(0): 'T'.codeUnitAt(0),
   'T'.codeUnitAt(0): 'A'.codeUnitAt(0),
   'G'.codeUnitAt(0): 'C'.codeUnitAt(0),
@@ -461,7 +489,7 @@ class Model with ChangeNotifier<Model> {
 
   set editor_content(String new_content) {
     this._editor_content = new_content;
-    context[constants.editor_content_js_key] = new_content;
+//    context[constants.editor_content_js_key] = new_content;
   }
 }
 
@@ -535,8 +563,28 @@ class GridPosition {
   }
 }
 
-/// Represents a used helix (as opposed to the circles drawn in the side
-/// view initially, which are unused helices). However, a "used" helix doesn't
+/// Represents a potential position for a Helix (the circles drawn in the side
+/// view initially, which are unused helices). It has a grid position but nothing else.
+class PotentialHelix {
+  /// position within square/hex/honeycomb integer grid (side view)
+  GridPosition _grid_position;
+
+  PotentialHelix(this._grid_position);
+
+  PotentialHelix.from_json(Map<String, dynamic> json_map) {
+    if (json_map.containsKey(constants.grid_position_key)) {
+      List<dynamic> gp_list = json_map[constants.grid_position_key];
+      if (!(gp_list.length == 2 || gp_list.length == 3)) {
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+      }
+      this._grid_position = GridPosition.from_list(gp_list);
+    }
+  }
+}
+
+/// Represents a helix (as opposed to the circles drawn in the side
+/// view initially, which are unused helices). However, a helix doesn't
 /// have to have any strands on it.
 class Helix with ChangeNotifier<Helix> {
   /// unique identifier of used helix; also index indicating order to show
@@ -545,16 +593,16 @@ class Helix with ChangeNotifier<Helix> {
   int _idx = -1;
 
   /// position within square/hex/honeycomb integer grid (side view)
-  GridPosition _grid_position;
+  GridPosition _grid_position = null;
 
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
-  Point<num> _svg_position;
+  Point<num> _svg_position = null;
 
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
-  int _max_bases;
+  int _max_bases = -1;
 
   int _major_tick_distance = -1;
 
@@ -594,8 +642,7 @@ class Helix with ChangeNotifier<Helix> {
 
   List<BoundSubstrand> _substrands = [];
 
-  Helix({int idx, grid_position, max_bases}) {
-    this._idx = idx;
+  Helix({grid_position, max_bases}) {
     this._grid_position = grid_position;
     this._max_bases = max_bases;
     this._svg_position = this.default_svg_position();
@@ -635,6 +682,10 @@ class Helix with ChangeNotifier<Helix> {
     return relative_y < 10;
   }
 
+  GridPosition default_grid_position() {
+    return GridPosition(0, this._idx);
+  }
+
   Point<num> default_svg_position() {
     return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this._idx);
   }
@@ -647,7 +698,8 @@ class Helix with ChangeNotifier<Helix> {
     this.notify_changed();
   }
 
-  int get hashCode => quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
+  int get hashCode =>
+      quiver.hash4(this._idx, this.grid_position.h, this.grid_position.v, this.grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -689,8 +741,6 @@ class Helix with ChangeNotifier<Helix> {
   Helix.from_json(Map<String, dynamic> json_map) {
     this._set_change_notifier();
 
-    this._idx = util.get_value(json_map, constants.idx_key);
-
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this._major_tick_distance = json_map[constants.major_tick_distance_key];
     }
@@ -702,7 +752,8 @@ class Helix with ChangeNotifier<Helix> {
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -713,12 +764,12 @@ class Helix with ChangeNotifier<Helix> {
         throw ArgumentError(
             "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
       }
-      this._svg_position = Point<int>(svg_position_list[0], svg_position_list[1]);
-    } else {
-      this._svg_position = this.default_svg_position();
+      this._svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
 
-    this._max_bases = util.get_value(json_map, constants.max_bases_key);
+    if (json_map.containsKey(constants.max_bases_key)) {
+      this._max_bases = json_map[constants.max_bases_key];
+    }
   }
 
   void _set_change_notifier() {
@@ -757,14 +808,13 @@ class IllegalDNADesignError implements Exception {
 
   IllegalDNADesignError(String the_cause) {
     this.cause = '**********************\n'
-        '* illegal DNA design *\n'
-        '**********************\n\n' +
+            '* illegal DNA design *\n'
+            '**********************\n\n' +
         the_cause;
   }
 }
 
 class StrandError extends IllegalDNADesignError {
-
   StrandError(Strand strand, String the_cause) : super(the_cause) {
     var first_substrand = strand.first_bound_substrand();
     var last_substrand = strand.last_bound_substrand();

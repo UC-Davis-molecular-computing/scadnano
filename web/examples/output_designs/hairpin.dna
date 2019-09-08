@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "grid": "square",
   "helices": [
-    {"idx": 0, "max_bases": 10, "grid_position": [0, 0]}
+    {"grid_position": [0, 0]}
   ],
   "strands": [
     {

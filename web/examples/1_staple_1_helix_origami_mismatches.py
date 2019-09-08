@@ -3,13 +3,12 @@ import scadnano as sc
 
 def main():
     length = 10
-    helices = [sc.Helix(idx=0, max_bases=length)]
     stap_ss = sc.Substrand(0, sc.forward, 0, length)
     scaf_ss = sc.Substrand(0, sc.reverse, 0, length)
     stap = sc.Strand([stap_ss])
     scaf = sc.Strand([scaf_ss], color=sc.default_scaffold_color)
     strands = [stap, scaf]
-    design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
+    design = sc.DNADesign(strands=strands, grid=sc.square)
     insertion_length = 4
     design.add_insertion(helix=0, offset=2, length=insertion_length)
     design.add_insertion(helix=0, offset=8, length=insertion_length)

@@ -2,8 +2,6 @@ import scadnano as sc
 
 
 def main():
-    helices = [sc.Helix(idx=0), sc.Helix(idx=1), sc.Helix(idx=2)]
-
     ss_f0 = sc.Substrand(helix=0, forward=True, start=0, end=8)
     hairpin0 = sc.Loopout(loopout=5)
     ss_r0 = sc.Substrand(helix=0, forward=False, start=0, end=8)
@@ -22,7 +20,7 @@ def main():
         [ss_f0, hairpin0, ss_r0, crossover_like_loopout, ss_f1, long_range_loopout, ss_r2, hairpin2, ss_f2,
          hairpin2_2, ss_r2_2])
 
-    design = sc.DNADesign(helices=helices, strands=[strand], grid=sc.square)
+    design = sc.DNADesign(strands=[strand], grid=sc.square)
     t5 = 'T'*5
     t10 = 'T'*10
     t20 = 'T'*20

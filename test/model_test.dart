@@ -18,25 +18,19 @@ main() {
 
     var hp00 = GridPosition(0, 0);
     var hp01 = GridPosition(0, 1);
-    var h00 = Helix(idx: 0, grid_position: hp00, max_bases: max_bases);
-    var h01 = Helix(idx: 1, grid_position: hp01, max_bases: max_bases);
+    var h00 = Helix(grid_position: hp00, max_bases: max_bases);
+    var h01 = Helix(grid_position: hp01, max_bases: max_bases);
     var hp10 = GridPosition(1, 0);
     var hp11 = GridPosition(1, 1);
-    var h10 = Helix(idx: -1, grid_position: hp10, max_bases: max_bases);
-    var h11 = Helix(idx: -1, grid_position: hp11, max_bases: max_bases);
+    var h10 = PotentialHelix(hp10);
+    var h11 = PotentialHelix(hp11);
     var hp20 = GridPosition(2, 0);
     var hp21 = GridPosition(2, 1);
-    var h20 = Helix(idx: -1, grid_position: hp20, max_bases: max_bases);
-    var h21 = Helix(idx: -1, grid_position: hp21, max_bases: max_bases);
-    design.helices = [
-      h00,
-      h01,
-      h10,
-      h11,
-      h20,
-      h21,
-    ];
-    design.used_helices = [h00, h01];
+    var h20 = PotentialHelix(hp20);
+    var h21 = PotentialHelix(hp21);
+
+    design.helices = [h00, h01];
+    design.potential_helices = [h10, h11, h20, h21];
 
     BoundSubstrand ss00 = BoundSubstrand()
       ..helix = 0
@@ -99,17 +93,15 @@ main() {
 //    expect(decodedModel.basesPerHelix, equals(60));
     expect(decoded_model.major_tick_distance, equals(7));
 
-    expect(decoded_model.helices.length, equals(6));
+    expect(decoded_model.potential_helices.length, equals(4));
+    expect(decoded_model.potential_helices[0], equals(h10));
+    expect(decoded_model.potential_helices[1], equals(h11));
+    expect(decoded_model.potential_helices[2], equals(h20));
+    expect(decoded_model.potential_helices[3], equals(h21));
+
+    expect(decoded_model.helices.length, equals(2));
     expect(decoded_model.helices[0], equals(h00));
     expect(decoded_model.helices[1], equals(h01));
-    expect(decoded_model.helices[2], equals(h10));
-    expect(decoded_model.helices[3], equals(h11));
-    expect(decoded_model.helices[4], equals(h20));
-    expect(decoded_model.helices[5], equals(h21));
-
-    expect(decoded_model.used_helices.length, equals(2));
-    expect(decoded_model.used_helices[0], equals(h00));
-    expect(decoded_model.used_helices[1], equals(h01));
 
     expect(decoded_model.strands.length, equals(2));
 

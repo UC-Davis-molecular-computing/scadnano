@@ -4,7 +4,7 @@ import scadnano as sc
 def main():
     num_helices = 16
     bases = 48
-    helices = [sc.Helix(i, bases) for i in range(num_helices)]
+    helices = [sc.Helix() for _ in range(num_helices)]
     strands = []
     for bot in range(num_helices // 2):
         top = num_helices - bot - 1

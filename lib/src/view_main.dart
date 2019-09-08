@@ -18,8 +18,8 @@ import 'app.dart';
 import 'util.dart' as util;
 import 'constants.dart' as constants;
 
-//const DEBUG_PRINT_MOUSEOVER = false;
-const DEBUG_PRINT_MOUSEOVER = true;
+const DEBUG_PRINT_MOUSEOVER = false;
+//const DEBUG_PRINT_MOUSEOVER = true;
 
 const String MAIN_VIEW_PREFIX = 'main-view';
 
@@ -39,7 +39,7 @@ class MainViewComponent {
   final svg.GElement helix_invisible_boxes_element = svg.GElement()
     ..attributes = {'id': 'main-view-helix-invisible-boxes'};
 
-  List<HelixMainViewComponent> used_helix_elts = [];
+  List<HelixMainViewComponent> helix_elts = [];
   final Map<Strand, StrandComponent> strand_elts_map = {};
   final Map<GridPosition, HelixMainViewComponent> helix_elts_map = {};
 
@@ -65,7 +65,7 @@ class MainViewComponent {
   /// Redraw elements
   render() {
     // clear data
-    this.used_helix_elts = List<HelixMainViewComponent>(app.model.dna_design.used_helices.length);
+    this.helix_elts = List<HelixMainViewComponent>(app.model.dna_design.helices.length);
     this.helix_elts_map.clear();
     this.strand_elts_map.clear();
 
@@ -86,10 +86,10 @@ class MainViewComponent {
       this.helix_elts_map[helix.grid_position] = HelixMainViewComponent(this.helices_element, helix);
     }
 
-    for (var helix in app.model.dna_design.used_helices) {
+    for (var helix in app.model.dna_design.helices) {
       var helix_elt = helix_elts_map[helix.grid_position];
       this.helices_element.children.add(helix_elt.root_element);
-      this.used_helix_elts[helix.idx] = helix_elt;
+      this.helix_elts[helix.idx] = helix_elt;
     }
 
     // draw strands
@@ -134,6 +134,41 @@ class MainViewComponent {
 //        helix_elt.dna_sequence_component.render();
 //      }
     }
+
+
+
+    // http://ramblings.mcpher.com/Home/excelquirks/gassnips/svgtopng
+    // https://spin.atomicobject.com/2014/01/21/convert-svg-to-png/
+    // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
+    // http://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/
+
+//    var elt_id = id;
+//    ImageElement img = util.cache_svg(elt_id);
+//    svg.ImageElement svg_img = svg.ImageElement()..attributes = {
+//      ''
+//    };
+
+//    CanvasElement canvas = CanvasElement();
+//    document.body.children.add(canvas);
+//
+//    var seqs_elt = querySelector('dna-sequence-elts');
+//    var svgString = new XMLSerializer().serializeToString(seqs_elt);
+//    var ctx = canvas.getContext("2d");
+//    var DOMURL = window;
+//    var img = ImageElement();
+//    var svg = Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+//    var url = DOMURL.createObjectURL(svg);
+//    img.onload = function() {
+//      ctx.drawImage(img, 0, 0);
+//      var png = canvas.toDataURL("image/png");
+//      document.querySelector('#png-container').innerHTML = '<img src="'+png+'"/>';
+//      DOMURL.revokeObjectURL(png);
+//    };
+//    img.src = url;
+//
+//    print("within Dart: type: ${img.runtimeType}, img.src: ${img.src}");
+//
+//    document.body.children.remove(canvas);
   }
 
   render_mismatches() {
@@ -796,7 +831,7 @@ class MismatchesComponent {
     for (Mismatch mismatch in mismatches) {
       // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
       // not for a specific base.
-      var helix = app.model.dna_design.used_helices[substrand.helix];
+      var helix = app.model.dna_design.helices[substrand.helix];
       var base_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
       var star = create_mismatch_svg_star(base_pos, substrand.forward);
       this.root_element.children.add(star);
@@ -850,6 +885,7 @@ class DNASequenceComponent {
   // In general "draw" means it just draws (possibly over the top of something incorrectly),
   // whereas "render" means "draw as though from scratch"
   _draw_dna_sequence_on_bound_substrand(BoundSubstrand substrand) {
+
     var seq_elt = svg.TextElement();
     var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
     seq_elt.setInnerHtml(seq_to_draw);
@@ -870,7 +906,9 @@ class DNASequenceComponent {
 
     var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 0.342);
 
+    var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}';
     seq_elt.attributes = {
+      'id': id,
       'class': classname_dna_sequence,
       'x': '${pos.x + x_adjust}',
       'y': '${pos.y}',
