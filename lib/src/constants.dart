@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'model.dart';
 
 const String INITIAL_VERSION = "0.0.1";
@@ -59,6 +61,7 @@ const svg_position_key = 'svg_position';
 // Strand keys
 const color_key = 'color';
 const dna_sequence_key = 'dna_sequence';
+const idt_key = 'idt';
 const substrands_key = 'substrands';
 
 // Substrand keys
@@ -71,55 +74,3 @@ const insertions_key = 'insertions';
 
 // Loopout keys
 const loopout_key = 'loopout';
-
-const initial_editor_content = """# import scadnano module
-import scadnano as sc
-
-# If running in scadnano, return define a function called main() and that returns design.
-# It will be displayed in the browser by scadnano.
-def main():
-    # helices
-    helices = [sc.Helix(0, 32), sc.Helix(1, 32)]
-    
-    # left staple
-    stap_left_ss1 = sc.Substrand(1, sc.right, 0, 16)
-    stap_left_ss0 = sc.Substrand(0, sc.left, 0, 16)
-    stap_left = sc.Strand([stap_left_ss1, stap_left_ss0])
-    
-    # right staple
-    stap_right_ss0 = sc.Substrand(0, sc.left, 16, 32)
-    stap_right_ss1 = sc.Substrand(1, sc.right, 16, 32)
-    stap_right = sc.Strand([stap_right_ss0, stap_right_ss1])
-    
-    # scaffold
-    scaf_ss1_left = sc.Substrand(1, sc.left, 0, 16)
-    scaf_ss1_right = sc.Substrand(1, sc.left, 16, 32)
-    scaf_ss0 = sc.Substrand(0, sc.right, 0, 32)
-    scaf = sc.Strand([scaf_ss1_left, scaf_ss0, scaf_ss1_right], color=sc.default_scaffold_color)
-    
-    # strands
-    strands = [stap_left, stap_right, scaf]
-    
-    # whole design
-    design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
-    
-    # deletions and insertions added to design so they can be added to both strands on a helix
-    design.add_deletion(helix_idx=0, offset=12)
-    design.add_deletion(helix_idx=0, offset=24)
-    design.add_deletion(helix_idx=1, offset=12)
-    design.add_deletion(helix_idx=1, offset=24)
-    design.add_insertion(helix_idx=0, offset=6, length=1)
-    design.add_insertion(helix_idx=0, offset=18, length=2)
-    design.add_insertion(helix_idx=1, offset=6, length=3)
-    design.add_insertion(helix_idx=1, offset=18, length=4)
-    
-    # DNA assigned to whole design so complement can be assigned to strands other than scaf
-    design.assign_dna(scaf, 'AACT' * 18)
-
-    return design
-
-# If running from the command line, call main() manually and write design to .dna file.
-if not sc.in_browser() and __name__ == '__main__':
-    design = main()
-    design.write_file(directory='output_designs')
-""";

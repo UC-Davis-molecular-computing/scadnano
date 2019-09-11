@@ -49,7 +49,12 @@ class App {
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami_mismatches.dna');
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami.dna');
 
-    util.save_editor_content_to_js_context(model.editor_content);
+
+    String initial_editor_content = await
+      util.file_content('examples/2_staple_2_helix_origami_deletions_insertions.py');
+    this.model.editor_content = initial_editor_content;
+
+    util.save_editor_content_to_js_context(this.model.editor_content);
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();

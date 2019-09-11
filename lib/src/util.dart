@@ -21,10 +21,16 @@ Future<Model> model_from_url(String url) async {
 }
 
 Future<DNADesign> _dna_design_from_url(String url) async {
+  String content = await file_content(url);
+  Map<String, dynamic> parsed_json = jsonDecode(content);
+  var dna_design = DNADesign.from_json(parsed_json);
+  return dna_design;
+}
+
+
+Future<String> file_content(String url) async {
   return await HttpRequest.getString(url).then((content) {
-    Map<String, dynamic> parsed_json = jsonDecode(content);
-    var dna_design = DNADesign.from_json(parsed_json);
-    return dna_design;
+    return content;
   });
 }
 

@@ -3,6 +3,8 @@ import 'dart:html';
 import 'dart:convert';
 
 import 'package:path/path.dart' as path;
+import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/json_serializable.dart';
 
 import 'model.dart';
 import 'model_ui.dart';
@@ -225,42 +227,49 @@ class Controller {
     });
   }
 
-
-
 // END subscribe controller to events that result in dispatching Actions (e.g., user interaction)
 //////////////////////////////////////////////////////////////////////////////
 
 }
 
-
 // Saving files from browsers is tricky. I don't recall where I got the
 // following code, but maybe check here:
 // https://developers.google.com/web/updates/2011/08/Saving-generated-files-on-the-client-side
 // https://github.com/eligrey/FileSaver.js/blob/master/src/FileSaver.js#L69
+//
+// see also
+// https://stackoverflow.com/questions/29674913/dart-and-client-side-file-handling-with-authorization
 save_file() async {
-  //TODO: for some reason, this does not prompt the user to save the file in dartium
-  // in development mode, but it does in Chrome when running the program in production mode
-  var encoder = JsonEncoder.withIndent('  ');
-  String json_model_text = encoder.convert(app.model);
-  Blob blob = new Blob([json_model_text], 'text/plain;charset=utf-8');
+  String json_dna_design_text = json_encode(app.model.dna_design);
+  Blob blob = new Blob([json_dna_design_text], 'text/plain;charset=utf-8');
   String url = Url.createObjectUrlFromBlob(blob);
   String filename = app.model.menu_view_ui_model.loaded_filename;
   var link = new AnchorElement()
     ..href = url
     ..download = filename;
 
-  //TODO: the following is needed for Firefox; see how to test for Firefox
-  document.body.children.add(link);
+  if (browser.isFirefox) {
+    document.body.children.add(link);
+  }
   //TODO: this await is my attempt to block until the user has selected a file, but it doesn't work.
   // The code keeps executing while they pick their file. Figure out how to detect if they picked a file or cancelled
   // If they cancelled then we should act as though nothing happened (in particular the Controller should not
   // send an Action indicating that the file was saved.
-  //TODO: consider using this library if possible: https://github.com/jimmywarting/StreamSaver.js
+  //TODO: consider using one of these libraries if possible:
+  //  https://github.com/jimmywarting/StreamSaver.js
+  //  https://github.com/eligrey/FileSaver.js
   await link.click();
-  //the following is needed for Firefox; see how to test for Firefox
-  link.remove();
 
-  //TODO: figure out how to detect filename user picked and save it as new filename
+  if (browser.isFirefox) {
+    link.remove();
+  }
+
+  Url.revokeObjectUrl(url);
+
+  //TODO: create separate textfield for user to enter desired save filename that we use above
+  // we cannot pull it from the download dialog due to security:
+  //  https://github.com/eligrey/FileSaver.js/issues/75
+  //  https://github.com/WICG/native-file-system
 }
 
 request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {

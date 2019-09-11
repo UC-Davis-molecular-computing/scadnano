@@ -1,13 +1,13 @@
 import 'dart:html';
 
-//TODO: put whole DNADesign (and maybe parts of the *UIModels) in here
+//TODO: put whole DNADesign in here
 
 /// Aspects of model that can be stored in localStorage.
 /// This constitutes more than is saved in jsonStorage, including things like
 /// parts of the *UIModels, i.e., where certain visual elements are located.
 enum Storable { zoom_speed }
 
-const String _LOCAL_STORAGE_PREFIX = "s-cadnano:";
+const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 save(Storable storable) {
 //  String storableKey = _LOCAL_STORAGE_PREFIX + storable.toString();
@@ -19,8 +19,8 @@ save(Storable storable) {
 }
 
 restore(Storable storable) {
-  String storableKey = _LOCAL_STORAGE_PREFIX + storable.toString();
-  if (window.localStorage.containsKey(storableKey)) {
+  String storable_key = _LOCAL_STORAGE_PREFIX + storable.toString();
+  if (window.localStorage.containsKey(storable_key)) {
     switch (storable) {
       case Storable.zoom_speed:
 //        model.zoomSpeed = double.parse(window.localStorage[storableKey]);
@@ -29,7 +29,7 @@ restore(Storable storable) {
   }
 }
 
-saveAllLocalStorage() {
+save_all_local_storage() {
   for (Storable storable in Storable.values) {
     save(storable);
   }

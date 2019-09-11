@@ -4,16 +4,41 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 //import 'package:sealed_unions/sealed_unions.dart';
 
+import 'json_serializable.dart';
 import 'constants.dart' as constants;
 import 'model.dart';
 import 'util.dart' as util;
 
-class Strand {
+class IDTFields extends JSONSerializable {
+  String name;
+  String scale;
+  String purification;
+
+  IDTFields(this.name, this.scale, this.purification);
+
+  Map<String, dynamic> to_json_serializable() {
+    Map<String, dynamic> json_map = {
+      'name': this.name,
+      'scale': this.scale,
+      'purification': this.purification
+    };
+    return json_map;
+  }
+
+  IDTFields.from_json(Map<String, dynamic> json_map) {
+    this.name = util.get_value(json_map, 'name');
+    this.scale = util.get_value(json_map, 'scale');
+    this.purification = util.get_value(json_map, 'purification');
+  }
+}
+
+class Strand extends JSONSerializable {
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color color = null;
   String dna_sequence = null;
   List<Substrand> substrands = [];
+  IDTFields idt = null;
 
   Strand();
 
@@ -25,8 +50,7 @@ class Strand {
   List<BoundSubstrand> bound_substrands() =>
       [for (var ss in this.substrands) if (ss.is_bound_substrand()) ss];
 
-  List<BoundSubstrand> loopouts() =>
-      [for (var ss in this.substrands) if (ss.is_loopout()) ss];
+  List<BoundSubstrand> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
 
   int dna_length() {
     int num = 0;
@@ -36,18 +60,22 @@ class Strand {
     return num;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> to_json_serializable() {
     var json_map = Map<String, dynamic>();
 
-    // need to use List.from because List.map returns Iterable, not List
-    json_map[constants.substrands_key] =
-        List<dynamic>.from(this.substrands.map((substrand) => substrand.toJson()));
     if (this.color != null) {
-      json_map[constants.color_key] = this.color.toRgbColor().toMap();
+      json_map[constants.color_key] = NoIndent(this.color.toRgbColor().toMap());
     }
+
     if (this.dna_sequence != null) {
       json_map[constants.dna_sequence_key] = this.dna_sequence;
     }
+
+    if (this.idt != null) {
+      json_map[constants.dna_sequence_key] = NoIndent(this.idt.to_json_serializable());
+    }
+
+    json_map[constants.substrands_key] = [for (var ss in this.substrands) ss.to_json_serializable()];
 
     return json_map;
   }
@@ -75,6 +103,9 @@ class Strand {
       }
     }
 
+    this.idt =
+        json_map.containsKey(constants.idt_key) ? IDTFields.from_json(json_map[constants.idt_key]) : null;
+
     if (this.substrands.first is Loopout) {
       throw StrandError(this, 'Loopout at beginning of strand not supported');
     }
@@ -91,13 +122,6 @@ class Strand {
       }
     }
     throw AssertionError('should not be reachable');
-//    if (this.substrands.first is BoundSubstrand) {
-//      return (this.substrands.first as BoundSubstrand);
-//    } else {
-//      assert(this.substrands.length >= 2);
-//      assert(this.substrands[1] is BoundSubstrand);
-//      return (this.substrands[1] as BoundSubstrand);
-//    }
   }
 
   BoundSubstrand last_bound_substrand() {
@@ -135,7 +159,7 @@ class Strand {
 //
 //}
 
-abstract class Substrand {
+abstract class Substrand extends JSONSerializable {
   // for efficiency but not serialized since it would introduce a JSON cycle
   Strand _strand;
 
@@ -160,8 +184,6 @@ abstract class Substrand {
       return BoundSubstrand.from_json(json_map);
     }
   }
-
-  Map<String, dynamic> toJson();
 }
 
 class Loopout extends Substrand {
@@ -205,7 +227,7 @@ class Loopout extends Substrand {
     this.length = util.get_value(json_map, constants.loopout_key);
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> to_json_serializable() {
     var json_map = {
       constants.loopout_key: this.length,
     };
@@ -463,7 +485,7 @@ class BoundSubstrand extends Substrand {
 
   BoundSubstrand();
 
-  Map<String, dynamic> toJson() {
+  dynamic to_json_serializable() {
     var json_map = {
       constants.helix_idx_key: this.helix,
       constants.forward_key: this.forward,
@@ -478,7 +500,7 @@ class BoundSubstrand extends Substrand {
       json_map[constants.insertions_key] =
           List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
     }
-    return json_map;
+    return NoIndent(json_map);
   }
 
   BoundSubstrand.from_json(Map<String, dynamic> json_map) {

@@ -7,7 +7,8 @@ import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
-import 'package:quiver/iterables.dart';
+import 'package:quiver/iterables.dart' hide max;
+import 'package:scadnano/src/json_serializable.dart';
 
 import 'util.dart' as util;
 import 'strand.dart';
@@ -17,9 +18,9 @@ import 'constants.dart' as constants;
 
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
-//TODO: add a mixin that lets me specify for each class that when it is created using fromJson,
+//TODO: add a mixin that lets me specify for each class that when it is created using from_json,
 //  it should store all the fields that are not used by scadnano,
-//  and write them back out on serialization using toJson
+//  and write them back out on serialization using to_json
 
 //TODO: import cadnano files
 
@@ -36,7 +37,7 @@ class Mismatch {
 }
 
 /// Represents parts of the Model to serialize
-class DNADesign {
+class DNADesign extends JSONSerializable {
   String version = constants.CURRENT_VERSION;
 
   Grid grid;
@@ -50,8 +51,6 @@ class DNADesign {
   List<Strand> strands = [];
 
   List<PotentialHelix> potential_helices = [];
-
-  List<List<BoundSubstrand>> _substrands_on_helix = [];
 
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
@@ -70,7 +69,7 @@ class DNADesign {
   }
 
   build_default_potential_helices(int num_helices_x, int num_helices_y) {
-    this.helices = [];
+    this.potential_helices = [];
     for (int gx = 0; gx < num_helices_x; gx++) {
       for (int gy = 0; gy < num_helices_y; gy++) {
         var grid_pos = GridPosition(gx, gy);
@@ -91,7 +90,7 @@ class DNADesign {
   }
 
   /// This exact method name is required for Dart to know how to encode as JSON.
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> to_json_serializable() {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
     if (this.grid != constants.default_grid) {
       json_map[constants.grid_key] = grid_to_json(this.grid);
@@ -99,53 +98,18 @@ class DNADesign {
     if (this.major_tick_distance != default_major_tick_distance(this.grid)) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
-    json_map[constants.helices_key] = this.helices;
-    json_map[constants.potential_helices_key] = this.potential_helices;
-    json_map[constants.strands_key] = this.strands;
+
+    json_map[constants.helices_key] = [for (var helix in this.helices) helix.to_json_serializable()];
+
+    if (this.potential_helices.isNotEmpty) {
+      json_map[constants.potential_helices_key] = [
+        for (var ph in this.potential_helices) ph.to_json_serializable()
+      ];
+    }
+    json_map[constants.strands_key] = [for (var strand in this.strands) strand.to_json_serializable()];
+
     return json_map;
   }
-
-  static int default_major_tick_distance(Grid grid) {
-    return grid == Grid.hex || grid == Grid.honeycomb ? 7 : 8;
-  }
-
-//  DNADesign.from_js_object(JsObject js_obj) {
-//    if (js_obj.hasProperty(constants.version_key)) {
-//      this.version = js_obj[constants.version_key];
-//    } else {
-//      this.version = constants.INITIAL_VERSION;
-//    }
-////    this.version =
-////        js_obj.hasProperty(constants.version_key) ? js_obj[constants.version_key] : constants.INITIAL_VERSION;
-//
-//    this.grid =
-//        js_obj.hasProperty(constants.grid_key) ? grid_from_string(js_obj[constants.grid_key]) : Grid.none;
-//
-//    if (js_obj.hasProperty(constants.major_tick_distance_key)) {
-//      this.major_tick_distance = js_obj[constants.major_tick_distance_key];
-//    } else if (js_obj.hasProperty(constants.grid_key)) {
-//      if (this.grid == Grid.hex || this.grid == Grid.honeycomb) {
-//        this.major_tick_distance = 7;
-//      } else {
-//        this.major_tick_distance = 8;
-//      }
-//    }
-//
-//    this.helices = [];
-//    List<dynamic> deserialized_helices_list = js_obj[constants.helices_key];
-//    for (var helix_json in deserialized_helices_list) {
-//      Helix helix = Helix.from_js_object(helix_json);
-//      this.helices.add(helix);
-//    }
-//    this.build_used_helices();
-//
-//    this.strands = [];
-//    List<dynamic> deserialized_strand_list = js_obj[constants.strands_key];
-//    for (var strand_json in deserialized_strand_list) {
-//      Strand strand = Strand.from_js_object(strand_json);
-//      this.strands.add(strand);
-//    }
-//  }
 
   DNADesign.from_json(Map<String, dynamic> json_map) {
 //    this.menu_view_ui_model.loaded_filename = filename;
@@ -195,6 +159,10 @@ class DNADesign {
     this._check_legal_design();
   }
 
+  static int default_major_tick_distance(Grid grid) {
+    return grid == Grid.hex || grid == Grid.honeycomb ? 7 : 8;
+  }
+
   _set_helices_idxs() {
     for (int idx = 0; idx < this.helices.length; idx++) {
       var helix = this.helices[idx];
@@ -218,8 +186,8 @@ class DNADesign {
     for (var helix in this.helices) {
       if (update || helix.max_bases < 0) {
         var max_bases = -1;
-        for (var substrand in this._substrands_on_helix[helix._idx]) {
-          max_bases = max([max_bases, substrand.end]);
+        for (var substrand in helix._substrands) {
+          max_bases = max(max_bases, substrand.end);
         }
         helix._max_bases = max_bases;
       }
@@ -235,12 +203,11 @@ class DNADesign {
   strands=$strands)""";
 
   _build_helix_idx_substrands_map() {
-    this._substrands_on_helix = [for (int _ in range(this.helices.length)) []];
     for (Strand strand in this.strands) {
       for (Substrand substrand in strand.substrands) {
         if (substrand.is_bound_substrand()) {
           var bound_ss = substrand as BoundSubstrand;
-          this._substrands_on_helix[bound_ss.helix].add(bound_ss);
+          this.helices[bound_ss.helix]._substrands.add(bound_ss);
         }
       }
     }
@@ -332,13 +299,14 @@ class DNADesign {
 
   /// Return list of substrands on the Helix with the given index.
   substrands_on_helix(int helix_idx) {
-    return this._substrands_on_helix[helix_idx];
+    return this.helices[helix_idx]._substrands;
   }
 
   /// Return list of Substrands overlapping `substrand`.
   List<BoundSubstrand> _other_substrands_overlapping(BoundSubstrand substrand) {
     List<BoundSubstrand> ret = [];
-    for (var other_ss in this._substrands_on_helix[substrand.helix]) {
+    var helix = this.helices[substrand.helix];
+    for (var other_ss in helix._substrands) {
       if (substrand.overlaps(other_ss)) {
         ret.add(other_ss);
       }
@@ -414,7 +382,7 @@ int _wc(int code_unit) {
 class Model with ChangeNotifier<Model> {
   DNADesign _dna_design;
 
-  String _editor_content = constants.initial_editor_content;
+  String _editor_content = "";
 
   MenuViewUIModel menu_view_ui_model = MenuViewUIModel();
   EditorViewUIModel editor_view_ui_model = EditorViewUIModel();
@@ -468,7 +436,7 @@ class Model with ChangeNotifier<Model> {
   //TODO: this is crashing when we save; debug it
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    return this._dna_design.toJson();
+    return this._dna_design.to_json_serializable();
   }
 
   DNADesign get dna_design => this._dna_design;
@@ -565,7 +533,7 @@ class GridPosition {
 
 /// Represents a potential position for a Helix (the circles drawn in the side
 /// view initially, which are unused helices). It has a grid position but nothing else.
-class PotentialHelix {
+class PotentialHelix extends JSONSerializable {
   /// position within square/hex/honeycomb integer grid (side view)
   GridPosition _grid_position;
 
@@ -581,12 +549,17 @@ class PotentialHelix {
       this._grid_position = GridPosition.from_list(gp_list);
     }
   }
+
+  Map<String, dynamic> to_json_serializable() {
+    Map<String, dynamic> json_map = {constants.grid_position_key: this._grid_position};
+    return json_map;
+  }
 }
 
 /// Represents a helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a helix doesn't
 /// have to have any strands on it.
-class Helix with ChangeNotifier<Helix> {
+class Helix extends JSONSerializable with ChangeNotifier<Helix> {
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default. This default positioning can be overridden by setting the position field.
@@ -645,8 +618,25 @@ class Helix with ChangeNotifier<Helix> {
   Helix({grid_position, max_bases}) {
     this._grid_position = grid_position;
     this._max_bases = max_bases;
-    this._svg_position = this.default_svg_position();
     _set_change_notifier();
+  }
+
+  dynamic to_json_serializable() {
+    Map<String, dynamic> json_map = {};
+
+    if (this.has_grid_position()) {
+      json_map[constants.grid_position_key] = this.grid_position;
+    }
+
+    if (this.has_nondefault_svg_position()) {
+      json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
+    }
+
+    if (this.has_nondefault_max_bases()) {
+      json_map[constants.max_bases_key] = this.max_bases;
+    }
+
+    return NoIndent(json_map);
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
@@ -712,31 +702,34 @@ class Helix with ChangeNotifier<Helix> {
 
   String toString() => "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_bases=$max_bases})";
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json_map = {constants.idx_key: this._idx};
-
-    if (this.has_grid_position()) {
-      json_map[constants.grid_position_key] = this.grid_position;
-    }
-
-    if (this.has_svg_position()) {
-      json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
-    }
-
-    if (this.has_max_bases()) {
-      json_map[constants.max_bases_key] = this.max_bases;
-    }
-
-    return json_map;
-  }
-
   bool has_substrands() => this._substrands.isNotEmpty;
 
   bool has_grid_position() => this._grid_position != null;
 
   bool has_svg_position() => this._svg_position != null;
 
+  bool has_nondefault_svg_position() {
+    num eps = 0.00000001;
+    num default_x = this.default_svg_position().x;
+    num default_y = this.default_svg_position().y;
+    num this_x = this._svg_position.x;
+    num this_y = this._svg_position.y;
+    num diff_x = (this_x - default_x).abs();
+    num diff_y = (this_y - default_y).abs();
+    return diff_x > eps && diff_y > eps;
+  }
+
   bool has_max_bases() => this._max_bases != null;
+
+  bool has_nondefault_max_bases() {
+    int max_ss_offset = -1;
+    for (var ss in this._substrands) {
+      if (max_ss_offset < ss.end) {
+        max_ss_offset = ss.end;
+      }
+    }
+    return this.max_bases != max_ss_offset;
+  }
 
   Helix.from_json(Map<String, dynamic> json_map) {
     this._set_change_notifier();

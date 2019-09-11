@@ -5,6 +5,8 @@ import 'dart:html';
 
 import 'package:js/js.dart';
 import 'package:scadnano/src/view_design.dart';
+
+import 'json_serializable.dart' as json;
 import 'view_menu.dart';
 import 'view_editor.dart';
 import 'app.dart';
@@ -71,7 +73,6 @@ class View extends ReactiveComponent {
     if (app.model.show_editor) {
       this.editor_view.render();
     }
-
   }
 
   update_showing_editor() {
