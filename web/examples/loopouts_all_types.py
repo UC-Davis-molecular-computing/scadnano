@@ -3,17 +3,17 @@ import scadnano as sc
 
 def main():
     ss_f0 = sc.Substrand(helix=0, forward=True, start=0, end=8)
-    hairpin0 = sc.Loopout(loopout=5)
+    hairpin0 = sc.Loopout(length=5)
     ss_r0 = sc.Substrand(helix=0, forward=False, start=0, end=8)
 
-    crossover_like_loopout = sc.Loopout(loopout=5)
+    crossover_like_loopout = sc.Loopout(length=5)
     ss_f1 = sc.Substrand(helix=1, forward=True, start=0, end=8)
 
-    long_range_loopout = sc.Loopout(loopout=10)
+    long_range_loopout = sc.Loopout(length=10)
     ss_r2 = sc.Substrand(helix=2, forward=False, start=16, end=24)
-    hairpin2 = sc.Loopout(loopout=20)
+    hairpin2 = sc.Loopout(length=20)
     ss_f2 = sc.Substrand(helix=2, forward=True, start=16, end=32)
-    hairpin2_2 = sc.Loopout(loopout=1)
+    hairpin2_2 = sc.Loopout(length=1)
     ss_r2_2 = sc.Substrand(helix=2, forward=False, start=24, end=32)
 
     strand = sc.Strand(

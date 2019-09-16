@@ -12,6 +12,8 @@ import 'view_side.dart';
 import 'app.dart';
 import 'actions.dart';
 
+//TODO: fix bug; when loading design with fewer helices, old helices remain
+
 /// Responsible for notifying view listeners of changes to the model,
 /// and for dispatching actions to change the model (coming from View interactions, for example).
 class Controller {

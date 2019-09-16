@@ -3,7 +3,7 @@ import scadnano as sc
 
 def main():
     ss_f = sc.Substrand(helix=0, forward=True, start=0, end=10)
-    loop = sc.Loopout(loopout=5)
+    loop = sc.Loopout(length=5)
     ss_r = sc.Substrand(helix=0, forward=False, start=0, end=10)
     strand_forward = sc.Strand([ss_f, loop, ss_r])
     design = sc.DNADesign(strands=[strand_forward], grid=sc.square)

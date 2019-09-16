@@ -23,3 +23,5 @@ def main():
 if not sc.in_browser() and __name__ == '__main__':
     design = main()
     design.write_scadnano_file(directory='output_designs')
+    design.write_idt_file(directory='idt')
+    design.write_idt_plate_excel_file(directory='idt')

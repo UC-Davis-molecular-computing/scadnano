@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
-//import 'dart:js';
 
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
-import 'package:quiver/iterables.dart' hide max;
 import 'package:scadnano/src/json_serializable.dart';
 
-import 'util.dart' as util;
 import 'strand.dart';
 import 'model_ui.dart';
 import 'app.dart';
@@ -18,11 +15,17 @@ import 'constants.dart' as constants;
 
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
 
+//TODO: add support for PotentialHelix (modify existing view code to query them)
+
 //TODO: add a mixin that lets me specify for each class that when it is created using from_json,
 //  it should store all the fields that are not used by scadnano,
 //  and write them back out on serialization using to_json
 
 //TODO: import cadnano files
+
+//TODO: export IDT files
+
+//TODO: export SVG
 
 class Mismatch {
   final int dna_idx;
@@ -138,7 +141,7 @@ class DNADesign extends JSONSerializable {
     int idx = 0;
     for (var helix_json in deserialized_helices_list) {
       Helix helix = Helix.from_json(helix_json);
-      helix.idx = idx;
+      helix._idx = idx;
       idx++;
       this.helices.add(helix);
     }
@@ -293,7 +296,9 @@ class DNADesign extends JSONSerializable {
   /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
   List<Mismatch> mismatches_on_substrand(BoundSubstrand substrand) {
     var ret = this._substrand_mismatches_map[substrand];
-    assert(ret != null);
+    if (ret == null) {
+      ret = List<Mismatch>();
+    }
     return ret;
   }
 
@@ -555,6 +560,8 @@ class PotentialHelix extends JSONSerializable {
     return json_map;
   }
 }
+
+//TODO: rename Helix.max_bases to max_offset, add Helix.min_offset, and allow offsets to be negative
 
 /// Represents a helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a helix doesn't

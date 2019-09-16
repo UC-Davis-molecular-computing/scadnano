@@ -7,6 +7,8 @@ import 'package:codemirror/hints.dart';
 import 'app.dart';
 import 'model_ui.dart';
 
+//TODO: compile Python scripts in the browser using pyodide (or something)
+
 /// This should only be created once in the app lifetime, so not much happens in the render() method.
 /// Since it uses the CodeMirror library, it falls a bit outside of the reactive component framework of the
 /// rest of the view and acts more like an outside agent communicating with the rest of the app.

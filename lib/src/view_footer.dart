@@ -3,6 +3,8 @@ import 'dart:html';
 import 'view.dart';
 import 'app.dart';
 
+//TODO: use tooltips (or something) to give more information on mouse hover than the footer has room for
+
 class FooterViewComponent extends ReactiveComponent {
 
   final DivElement root_element;

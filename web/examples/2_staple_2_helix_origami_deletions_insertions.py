@@ -1,6 +1,6 @@
 import scadnano as sc
 
-# If running in scadnano, return define a function called main() that returns design.
+# If running in scadnano, define a function called main() that returns design.
 # It will be displayed in the browser by scadnano.
 def main():
 
@@ -17,7 +17,7 @@ def main():
     # scaffold
     scaf_ss1_left  = sc.Substrand(helix=1, forward=False, start=0, end=16)
     scaf_ss0       = sc.Substrand(helix=0, forward=True,  start=0, end=32)
-    scaf_ss1_right = sc.Substrand(helix=1, forward=False, 16, end=32)
+    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
     scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, scaf_ss1_right], color=sc.default_scaffold_color)
     
     # whole design
