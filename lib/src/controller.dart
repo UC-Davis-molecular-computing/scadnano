@@ -4,15 +4,15 @@ import 'dart:convert';
 
 import 'package:path/path.dart' as path;
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/json_serializable.dart';
 
-import 'model.dart';
-import 'model_ui.dart';
-import 'view_side.dart';
+import 'model/model.dart';
+import 'model/dna_design.dart';
+import 'model/helix.dart';
+import 'model/model_ui.dart';
+import 'view/view_side.dart';
+import 'json_serializable.dart';
 import 'app.dart';
 import 'actions.dart';
-
-//TODO: fix bug; when loading design with fewer helices, old helices remain
 
 /// Responsible for notifying view listeners of changes to the model,
 /// and for dispatching actions to change the model (coming from View interactions, for example).
@@ -24,6 +24,16 @@ class Controller {
   final notifier_model_change = StreamController<Model>.broadcast();
 
   final notifier_helix_change = StreamController<Helix>.broadcast();
+
+  final notifier_potential_helix_change = StreamController<PotentialHelix>.broadcast();
+
+  final notifier_helix_added = StreamController<Helix>.broadcast();
+
+  final notifier_potential_helix_added = StreamController<PotentialHelix>.broadcast();
+
+  final notifier_helix_removed = StreamController<Helix>.broadcast();
+
+  final notifier_potential_helix_removed = StreamController<PotentialHelix>.broadcast();
 
   final notifier_show_dna_change = StreamController<bool>.broadcast();
 
@@ -145,17 +155,21 @@ class Controller {
     //TODO: detect if any strands are on this helix and warn before deleting
     //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
     var helix = helix_side_view_elt.helix;
-    if (helix.used) {
+    var pot_helix = helix_side_view_elt.potential_helix;
+    var use = helix == null;
+    if (!use) {
       if (helix.has_substrands()) {
         // implement this
       }
     }
-    var use = !helix.used;
-    var idx = helix.idx;
-    if (idx < 0) {
+
+    int idx;
+    if (use) {
       idx = app.model.dna_design.helices.length;
+    } else {
+      idx = helix.idx;
     }
-    var helix_action = HelixUseAction(use, helix, idx);
+    var helix_action = HelixUseAction(use, helix, pot_helix, idx);
     app.send_action(helix_action);
   }
 

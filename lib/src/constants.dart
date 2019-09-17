@@ -1,6 +1,4 @@
-import 'dart:html';
-
-import 'model.dart';
+import 'model/helix.dart';
 
 const String INITIAL_VERSION = "0.0.1";
 
@@ -63,6 +61,13 @@ const color_key = 'color';
 const dna_sequence_key = 'dna_sequence';
 const idt_key = 'idt';
 const substrands_key = 'substrands';
+
+// IDTFields keys
+const idt_name_key = 'name';
+const idt_scale_key = 'scale';
+const idt_purification_key = 'purification';
+const idt_plate_key = 'plate';
+const idt_well_key = 'well';
 
 // Substrand keys
 const helix_idx_key = 'helix';

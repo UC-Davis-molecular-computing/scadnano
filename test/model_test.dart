@@ -1,14 +1,16 @@
 //@TestOn("browser")  // uncomment this to test stuff in files that require importing 'dart:html'
+
 import 'dart:convert';
 
 import 'package:color/color.dart';
 import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
-import 'package:scadnano/src/model.dart';
-import 'package:scadnano/src/strand.dart';
+import 'package:scadnano/src/model/model.dart';
+import 'package:scadnano/src/model/strand.dart';
 
 main() {
+  /*
   test("serialize then deserialize", () {
     DNADesign design = DNADesign.internal();
 
@@ -160,6 +162,7 @@ main() {
     expect(parsed_substrand11.dna_sequence(), equals('CCA'));
     expect(parsed_substrand11.dna_length, equals(3));
   });
+  */
 
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
     var ss = BoundSubstrand()

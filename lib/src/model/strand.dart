@@ -4,31 +4,53 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 //import 'package:sealed_unions/sealed_unions.dart';
 
-import 'json_serializable.dart';
-import 'constants.dart' as constants;
-import 'model.dart';
-import 'util.dart' as util;
+import '../json_serializable.dart';
+import '../constants.dart' as constants;
+import '../util.dart' as util;
+import 'dna_design.dart';
 
 class IDTFields extends JSONSerializable {
   String name;
   String scale;
   String purification;
+  String plate;
+  String well;
 
   IDTFields(this.name, this.scale, this.purification);
 
   Map<String, dynamic> to_json_serializable() {
     Map<String, dynamic> json_map = {
-      'name': this.name,
-      'scale': this.scale,
-      'purification': this.purification
+      constants.idt_name_key: this.name,
+      constants.idt_scale_key: this.scale,
+      constants.idt_purification_key: this.purification
     };
+    if (this.plate != null) {
+      json_map[constants.idt_plate_key] = this.plate;
+    }
+    if (this.well != null) {
+      json_map[constants.idt_well_key] = this.well;
+    }
     return json_map;
   }
 
   IDTFields.from_json(Map<String, dynamic> json_map) {
-    this.name = util.get_value(json_map, 'name');
-    this.scale = util.get_value(json_map, 'scale');
-    this.purification = util.get_value(json_map, 'purification');
+    this.name = util.get_value(json_map, constants.idt_name_key);
+    this.scale = util.get_value(json_map, constants.idt_scale_key);
+    this.purification = util.get_value(json_map, constants.idt_purification_key);
+    if (json_map.containsKey(constants.idt_plate_key)) {
+      this.plate = json_map[constants.idt_plate_key];
+    }
+    if (json_map.containsKey(constants.idt_scale_key)) {
+      this.scale = json_map[constants.idt_scale_key];
+    }
+    if (this.plate == null && this.well != null) {
+      throw IllegalDNADesignError("cannot set IDTFields.well to ${this.well} when plate is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
+    if (this.plate != null && this.well == null) {
+      throw IllegalDNADesignError("cannot set IDTFields.plate to ${this.plate} when well is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
   }
 }
 
@@ -103,8 +125,13 @@ class Strand extends JSONSerializable {
       }
     }
 
-    this.idt =
-        json_map.containsKey(constants.idt_key) ? IDTFields.from_json(json_map[constants.idt_key]) : null;
+    if (json_map.containsKey(constants.idt_key)) {
+      try {
+        this.idt = IDTFields.from_json(json_map[constants.idt_key]);
+      } catch (err) {
+        throw StrandError(this, err.toString());
+      }
+    }
 
     if (this.substrands.first is Loopout) {
       throw StrandError(this, 'Loopout at beginning of strand not supported');

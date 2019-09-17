@@ -1,16 +1,17 @@
 @JS()
 library util;
 
-import 'package:js/js.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:html';
 import 'dart:js' as js;
 import 'dart:math';
 
+import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
 
-import 'model.dart';
+import 'model/model.dart';
+import 'model/dna_design.dart';
 import 'constants.dart' as constants;
 
 Future<Model> model_from_url(String url) async {

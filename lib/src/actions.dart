@@ -3,9 +3,10 @@ library actions;
 
 import 'package:js/js.dart';
 
-import 'strand.dart';
+import 'model/strand.dart';
 import 'app.dart';
-import 'model.dart';
+import 'model/model.dart';
+import 'model/helix.dart';
 import 'util.dart' as util;
 import 'constants.dart' as constants;
 
@@ -50,13 +51,14 @@ class LoadedFilenameAction implements Action {
 class HelixUseAction implements ReversibleAction {
   final bool use;
   final Helix helix;
+  final PotentialHelix potential_helix;
 
   // idx of Helix when it was used (before if use=true, after if use=false)
   final int idx;
 
   /// use: whether to set the Helix as used
   /// helix: the helix to set
-  HelixUseAction(this.use, this.helix, this.idx);
+  HelixUseAction(this.use, this.helix, this.potential_helix, this.idx);
 
   @override
   Model apply(Model model) {
@@ -87,7 +89,7 @@ class HelixUseAction implements ReversibleAction {
 
   @override
   ReversibleAction reverse() {
-    return HelixUseAction(!this.use, this.helix, this.idx);
+    return HelixUseAction(!this.use, this.helix, this.potential_helix, this.idx);
   }
 }
 

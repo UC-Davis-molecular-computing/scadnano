@@ -7,11 +7,11 @@ import 'dart:js';
 
 import 'package:js/js.dart';
 import 'controller.dart';
-import 'model.dart';
+import 'model/model.dart';
 import 'actions.dart';
 import 'util.dart' as util;
 import 'undo_redo.dart';
-import 'view.dart';
+import 'view/view.dart';
 import 'constants.dart' as constants;
 import 'local_storage.dart' as local_storage;
 
