@@ -6,8 +6,11 @@ import 'dart:html';
 import 'dart:js';
 
 import 'package:js/js.dart';
-import 'controller.dart';
+
+//import 'model/model.dart';
 import 'model/model.dart';
+
+import 'controller.dart';
 import 'actions.dart';
 import 'util.dart' as util;
 import 'undo_redo.dart';
@@ -30,7 +33,7 @@ class App {
   UndoRedo undo_redo = UndoRedo();
 
   /// Listener for Actions that indicate desired changes to the Model
-  StreamController<Action> action_notifier = StreamController<Action>();
+  StreamController<ActionCustom> action_notifier = StreamController<ActionCustom>();
 
   start() async {
 
@@ -58,7 +61,7 @@ class App {
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
-    this.action_notifier.stream.listen((Action action) {
+    this.action_notifier.stream.listen((ActionCustom action) {
       this.undo_redo.apply(action);
     });
 
@@ -78,7 +81,7 @@ class App {
     app.controller.setup_subscriptions();
   }
 
-  send_action(Action action) {
+  send_action(ActionCustom action) {
     this.action_notifier.sink.add(action);
   }
 

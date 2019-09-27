@@ -5,11 +5,12 @@ import 'dart:convert';
 import 'package:path/path.dart' as path;
 import 'package:platform_detect/platform_detect.dart';
 
+import 'model/mouseover_data.dart';
+
 import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'model/helix.dart';
-import 'model/model_ui.dart';
-import 'view/view_side.dart';
+import 'view/design_side.dart';
 import 'json_serializable.dart';
 import 'app.dart';
 import 'actions.dart';
@@ -49,7 +50,7 @@ class Controller {
   final notifier_model_changed_since_save = StreamController<bool>.broadcast();
 
   // mouse over data (which helix/offset is the mouse over?) has changed.
-  final notifier_mouse_over_data = StreamController<MouseOverData>.broadcast();
+  final notifier_mouse_over_data = StreamController<MouseoverData>.broadcast();
 
   // END Notifiers that fire when Model is updated by an Action
   ////////////////////////////////////////////////////////////////////////////
@@ -96,13 +97,13 @@ class Controller {
 
   subscribe_to_show_dna() {
     this.notifier_show_dna_change.stream.listen((_) {
-      app.view.design_view.main_view.render_dna_sequences();
+//      app.view.design_view.main_view.render_dna_sequences();
     });
   }
 
   subscribe_to_show_mismatches() {
     this.notifier_show_mismatches_change.stream.listen((_) {
-      app.view.design_view.main_view.render_mismatches();
+//      app.view.design_view.main_view.render_mismatches();
     });
   }
 
@@ -114,7 +115,7 @@ class Controller {
 
   subscribe_to_model_changed_since_last_save_changed() {
     this.notifier_model_changed_since_save.stream.listen((_) {
-      app.view.menu_view.render_file_buttons();
+//      app.view.menu_view.render_file_buttons();
     });
   }
 
@@ -125,54 +126,56 @@ class Controller {
   // subscribe controller to events that result in dispatching Actions (e.g., user interaction)
 
   subscribe_to_all_action_causing_events() {
-    this.subscribe_to_user_clicks_side_view_helix();
+//    this.subscribe_to_user_clicks_side_view_helix();
     //TODO: allow helices to be made longer or shorter
 
-    this.subscribe_to_user_clicks_show_dna_checkbox();
-    this.subscribe_to_user_clicks_show_mismatches_checkbox();
-    this.subscribe_to_user_clicks_show_editor_checkbox();
-    this.subscribe_to_save_file_button_pressed();
-    this.subscribe_to_load_file_button_pressed();
-    this.subscribe_to_script_load_file_button_pressed();
-
-    this.subscribe_to_compile_button_pressed();
-
-    this.subscribe_to_editor_change_events();
+//    this.subscribe_to_user_clicks_show_dna_checkbox();
+//    this.subscribe_to_user_clicks_show_mismatches_checkbox();
+//    this.subscribe_to_user_clicks_show_editor_checkbox();
+//    this.subscribe_to_save_file_button_pressed();
+//    this.subscribe_to_load_file_button_pressed();
+//    this.subscribe_to_script_load_file_button_pressed();
+//
+//    this.subscribe_to_compile_button_pressed();
+//
+//    this.subscribe_to_editor_change_events();
   }
 
-  subscribe_to_user_clicks_side_view_helix() {
-    for (var helix_side_view_elt in app.view.design_view.side_view.helix_elts_map.values) {
-      helix_side_view_elt.circle.onClick.listen((MouseEvent e) {
-        if (e.ctrlKey) this.handle_click_side_view(helix_side_view_elt);
-      });
-      helix_side_view_elt.text.onClick.listen((MouseEvent e) {
-        if (e.ctrlKey) this.handle_click_side_view(helix_side_view_elt);
-      });
-    }
-  }
+//  subscribe_to_user_clicks_side_view_helix() {
+//    for (var helix_side_view_elt in app.view.design_view.side_view.helix_elts_map.values) {
+//      helix_side_view_elt.circle.onClick.listen((MouseEvent e) {
+//        if (e.ctrlKey) this.handle_click_side_view(helix_side_view_elt);
+//      });
+//      helix_side_view_elt.text.onClick.listen((MouseEvent e) {
+//        if (e.ctrlKey) this.handle_click_side_view(helix_side_view_elt);
+//      });
+//    }
+//  }
+//
+//  handle_click_side_view(HelixSideViewComponent helix_side_view_elt) {
+//    //TODO: detect if any strands are on this helix and warn before deleting
+//    //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
+//    var helix = helix_side_view_elt.helix;
+//    var pot_helix = helix_side_view_elt.potential_helix;
+//    var use = helix == null;
+//    if (!use) {
+//      if (helix.has_substrands()) {
+//        // implement this
+//      }
+//    }
+//
+//    int idx;
+//    if (use) {
+//      idx = app.model.dna_design.helices.length;
+//    } else {
+//      idx = helix.idx();
+//    }
+//    //TODO: restructure how HelixUseAction works
+////    var helix_action = HelixUseAction(use, helix, pot_helix, idx);
+////    app.send_action(helix_action);
+//  }
 
-  handle_click_side_view(HelixSideViewComponent helix_side_view_elt) {
-    //TODO: detect if any strands are on this helix and warn before deleting
-    //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
-    var helix = helix_side_view_elt.helix;
-    var pot_helix = helix_side_view_elt.potential_helix;
-    var use = helix == null;
-    if (!use) {
-      if (helix.has_substrands()) {
-        // implement this
-      }
-    }
-
-    int idx;
-    if (use) {
-      idx = app.model.dna_design.helices.length;
-    } else {
-      idx = helix.idx;
-    }
-    var helix_action = HelixUseAction(use, helix, pot_helix, idx);
-    app.send_action(helix_action);
-  }
-
+  /*
   subscribe_to_user_clicks_show_dna_checkbox() {
     app.view.menu_view.show_dna_checkbox.onChange.listen((_) {
       app.send_action(ShowDNAAction(app.view.menu_view.show_dna_checkbox.checked));
@@ -221,6 +224,7 @@ class Controller {
       request_load_file_from_file_chooser(file_chooser);
     });
   }
+  */
 
   subscribe_to_script_load_file_button_pressed() {
     // this is needed in case the user selects the same filename, to reload the file in case it has changed.
@@ -319,27 +323,39 @@ set_new_design_from_json(String json_model_text) {
   set_new_design_from_map(deserialized_map);
 }
 
+
 set_new_design_from_map(Map map) {
-  DNADesign new_design;
   try {
-    new_design = DNADesign.from_json(map);
-    set_new_design(new_design);
+    app.model.dna_design.read_from_json(map);
+    app.model.changed_since_last_save = false;
+    app.undo_redo.reset();
+    app.model.error_message = null;
   } on IllegalDNADesignError catch (error) {
     set_error_message(error.cause);
   }
 }
 
 //set_new_design_from_map(Map map) {
+//  DNADesign new_design;
+//  try {
+//    new_design = DNADesign.from_json(map);
+//    set_new_design(new_design);
+//  } on IllegalDNADesignError catch (error) {
+//    set_error_message(error.cause);
+//  }
+//}
+
+//set_new_design_from_map(Map map) {
 //  var new_design = DNADesign.from_json(map);
 //  set_new_design(new_design);
 //}
 
-set_new_design(DNADesign new_design) {
-  app.model.changed_since_last_save = false;
-  app.undo_redo.reset();
-  app.model.error_message = null;
-  app.model.dna_design = new_design;
-}
+//set_new_design(DNADesign new_design) {
+//  app.model.changed_since_last_save = false;
+//  app.undo_redo.reset();
+//  app.model.error_message = null;
+//  app.model.dna_design = new_design;
+//}
 
 set_error_message(String msg) {
   app.undo_redo.reset();

@@ -6,7 +6,7 @@
   ],
   "strands": [
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": {"r": 204, "g": 0, "b": 0},
       "dna_sequence": "AAAAACCCCCTGCATGGGGGTTTTT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 10},

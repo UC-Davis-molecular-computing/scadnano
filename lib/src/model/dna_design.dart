@@ -1,16 +1,18 @@
 import 'dart:math';
 
+import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:scadnano/src/json_serializable.dart';
+import 'package:tuple/tuple.dart';
 
+import '../app.dart';
 import 'strand.dart';
 import 'helix.dart';
+import '../util.dart' as util;
 import '../constants.dart' as constants;
 
 //TODO: support editing an existing DNADesign so that user can modify strands, etc.
-
-//TODO: add support for PotentialHelix (modify existing view code to query them)
 
 //TODO: add a mixin that lets me specify for each class that when it is created using from_json,
 //  it should store all the fields that are not used by scadnano,
@@ -22,46 +24,68 @@ import '../constants.dart' as constants;
 
 //TODO: export SVG
 
+
 /// Represents parts of the Model to serialize
-class DNADesign extends JSONSerializable {
+class DNADesign extends Store implements JSONSerializable {
+  static final Action<Null> save_dna_file_global = Action<Null>();
+
+  Action<Null> get save_dna_file => save_dna_file_global;
+
   String version = constants.CURRENT_VERSION;
 
   Grid grid;
 
   int major_tick_distance;
 
-  /// all helices in model
-  List<Helix> helices = [];
+  /// helices
+  HelicesStore helices_store = HelicesStore();
 
-  /// all strands in model
-  List<Strand> strands = [];
+  List<Helix> get helices => this.helices_store.helices;
 
-  List<PotentialHelix> potential_helices = [];
+  List<PotentialHelix> get potential_helices => this.helices_store.potential_helices;
+
+  /// strands
+  StrandsStore strands_store = StrandsStore();
+  List<Strand> get strands => this.strands_store.strands;
 
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
-  DNADesign();
+  _handle_actions() {
+    triggerOnActionV2<Null>(this.save_dna_file, (_) {
+      String content = json_encode(this);
+      String default_filename = app.model.menu_view_ui_model.loaded_filename;
+      util.save_file(default_filename, content);
+      //TODO: do something about Undo stack here
+    });
+
+  }
+
+  DNADesign() {
+    this._handle_actions();
+  }
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
-  DNADesign.internal();
+  DNADesign.internal(){
+    this._handle_actions();
+  }
 
   DNADesign.default_design({int num_helices_x = 10, int num_helices_y = 10}) {
+    this._handle_actions();
     this.grid = Grid.square;
     this.major_tick_distance = 8;
     this.build_default_potential_helices(num_helices_x, num_helices_y);
-    this.strands = [];
-    this.helices = [];
   }
 
   build_default_potential_helices(int num_helices_x, int num_helices_y) {
-    this.potential_helices = [];
+    List<PotentialHelix> potential_helices = [];
     for (int gx = 0; gx < num_helices_x; gx++) {
       for (int gy = 0; gy < num_helices_y; gy++) {
         var grid_pos = GridPosition(gx, gy);
-        this.potential_helices.add(PotentialHelix(grid_pos));
+        potential_helices.add(PotentialHelix(grid_pos));
       }
     }
+    this.helices_store.set_potential_helices(potential_helices);
   }
 
   /// max number of bases allowed on any Helix in the Model
@@ -98,9 +122,9 @@ class DNADesign extends JSONSerializable {
     return json_map;
   }
 
-  DNADesign.from_json(Map<String, dynamic> json_map) {
-//    this.menu_view_ui_model.loaded_filename = filename;
-
+  /// Replace this DNADesign with the one described in json_map.
+  read_from_json(Map<String, dynamic> json_map) {
+//  DNADesign.from_json(Map<String, dynamic> json_map) {
     //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
     this.version = json_map.containsKey(constants.version_key)
@@ -120,39 +144,51 @@ class DNADesign extends JSONSerializable {
       }
     }
 
-    this.helices = [];
+    List<Helix> helices = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
     int idx = 0;
     for (var helix_json in deserialized_helices_list) {
       Helix helix = Helix.from_json(helix_json);
-      helix.set_idx_no_change_notification(idx);
-      idx++;
-      this.helices.add(helix);
+      helix.set_idx(idx++);
+      helices.add(helix);
     }
 
-    this.potential_helices = [];
+    List<PotentialHelix> potential_helices = [];
     if (json_map.containsKey(constants.potential_helices_key)) {
       List<dynamic> deserialized_potential_helices_list = json_map[constants.potential_helices_key];
       for (var potential_helix_json in deserialized_potential_helices_list) {
         PotentialHelix potential_helix = PotentialHelix.from_json(potential_helix_json);
-        this.potential_helices.add(potential_helix);
+        potential_helices.add(potential_helix);
       }
     }
 
-    this.strands = [];
+    //XXX: it's important that we keep the Store the same, so we don't assign to this.helices_store.
+    // However, we can't send an Action to change it because we need the new data right away to build more
+    // internal data (e.g., _build_helix_idx_substrands_map and _build_substrand_mismatches_map below).
+    // Instead we directly mutate the Store (against the wishes of Flux) and then do a manual trigger at the end.
+    this.helices_store.helices = helices;
+    this.helices_store.potential_helices = potential_helices;
+
+    List<Strand> strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
       Strand strand = Strand.from_json(strand_json);
-      this.strands.add(strand);
+      strands.add(strand);
     }
+    this.strands_store.strands = strands;
 
     //XXX: order of these is important because each uses the data calculated from the previous
     this._set_helices_idxs();
     this._set_helices_grid_and_svg_positions();
     this._build_helix_idx_substrands_map();
     this._set_helices_max_bases(update: false);
+
+    //TODO: maybe move strand (and maybe helix) functionality into stores
     this._build_substrand_mismatches_map();
     this._check_legal_design();
+
+    this.helices_store.trigger();
+    this.strands_store.trigger();
   }
 
   static int default_major_tick_distance(Grid grid) {
@@ -162,7 +198,8 @@ class DNADesign extends JSONSerializable {
   _set_helices_idxs() {
     for (int idx = 0; idx < this.helices.length; idx++) {
       var helix = this.helices[idx];
-      helix.set_idx_no_change_notification(idx);
+      helix.set_idx(idx);
+//      helix.set_idx_no_change_notification(idx);
     }
   }
 

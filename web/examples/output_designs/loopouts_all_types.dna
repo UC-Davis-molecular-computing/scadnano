@@ -8,7 +8,7 @@
   ],
   "strands": [
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": {"r": 204, "g": 0, "b": 0},
       "dna_sequence": "ACGACGACTTTTTGTCGTCGTTTTTTGACGACGATTTTTTTTTTCACGACGATTTTTTTTTTTTTTTTTTTTTCGTCGTGACGACGACTGTCGTCGT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 8},

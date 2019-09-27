@@ -1,13 +1,20 @@
 import 'dart:async';
 import 'dart:core';
 
+import 'package:w_flux/w_flux.dart';
 import 'package:meta/meta.dart';
 
+import 'composite_stores.dart';
+import 'strand.dart';
 import 'model_ui.dart';
 import '../app.dart';
 import 'dna_design.dart';
 
-class Model with ChangeNotifier<Model> {
+class Model extends Store {
+  DNASequencesStore dna_sequences_store;
+  MismatchesStore mismatches_store;
+  ShowStore show_store;
+
   DNADesign _dna_design;
 
   String _editor_content = "";
@@ -42,23 +49,23 @@ class Model with ChangeNotifier<Model> {
 
   String _error_message = null;
 
-  //"private" constructor; meta package will warn if it is used outside testing
-  @visibleForTesting
-  Model.internal() {
-    this._set_change_notifier();
-  }
-
   Model.default_model({int num_helices_x = 10, int num_helices_y = 10}) {
     this._dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
-    this._set_change_notifier();
+    this._initialize_composite_stores();
   }
 
   Model.empty() {
-    this._set_change_notifier();
+    this._dna_design = DNADesign();
+    this._initialize_composite_stores();
   }
 
-  _set_change_notifier() {
-    this.notifier = app.controller.notifier_model_change;
+  _initialize_composite_stores() {
+    this.dna_sequences_store =
+        DNASequencesStore(this._dna_design.strands_store, this.main_view_ui_model.show_dna_store);
+    this.mismatches_store =
+        MismatchesStore(this._dna_design.strands_store, this.main_view_ui_model.show_mismatches_store);
+    this.show_store = ShowStore(this.main_view_ui_model.show_dna_store,
+        this.main_view_ui_model.show_mismatches_store, this.main_view_ui_model.show_editor_store);
   }
 
   //TODO: this is crashing when we save; debug it
@@ -73,14 +80,12 @@ class Model with ChangeNotifier<Model> {
 
   String get editor_content => this._editor_content;
 
-  set dna_design(DNADesign new_dna_design) {
-    this._dna_design = new_dna_design;
-    this.notify_changed();
-  }
+//  set dna_design(DNADesign new_dna_design) {
+//    this._dna_design = new_dna_design;
+//  }
 
   set error_message(String new_msg) {
     this._error_message = new_msg;
-    this.notify_changed();
   }
 
   set editor_content(String new_content) {

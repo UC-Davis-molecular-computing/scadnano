@@ -4,8 +4,8 @@ import scadnano as sc
 def main():
     helices = []
     num_helices, max_bases = 30, 2000
-    for i in range(num_helices):
-        helices.append(sc.Helix(i, max_bases))
+    for _ in range(num_helices):
+        helices.append(sc.Helix(max_bases))
     design = sc.DNADesign(helices=helices, strands=[], grid=sc.square)
 
     return design

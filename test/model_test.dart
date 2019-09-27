@@ -6,6 +6,7 @@ import 'package:color/color.dart';
 import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
+//import 'package:scadnano/src/model/model.dart';
 import 'package:scadnano/src/model/model.dart';
 import 'package:scadnano/src/model/strand.dart';
 

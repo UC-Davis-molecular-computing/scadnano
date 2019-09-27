@@ -1,9 +1,61 @@
 import 'dart:core';
 
-import 'model.dart';
+import 'package:w_flux/w_flux.dart';
+
+import 'mouseover_data.dart';
 import 'strand.dart';
 import '../app.dart';
 import 'helix.dart';
+
+////////////////////////////////////////////////
+// Stores
+
+class ShowDNAStore extends Store {
+  static final Action<bool> set_show_dna_global = Action<bool>();
+
+  Action<bool> get set_show_dna => set_show_dna_global;
+
+  bool _show_dna = true;
+
+  bool get show_dna => this._show_dna;
+
+  ShowDNAStore() {
+    triggerOnActionV2<bool>(this.set_show_dna, (show) {
+      this._show_dna = show;
+    });
+  }
+}
+
+class ShowMismatchesStore extends Store {
+  static final Action<bool> set_show_mismatches_global = Action<bool>();
+
+  Action<bool> get set_show_mismatches => set_show_mismatches_global;
+
+  bool _show_mismatches = true;
+
+  bool get show_mismatches => this._show_mismatches;
+
+  ShowMismatchesStore() {
+    triggerOnActionV2<bool>(this.set_show_mismatches, (show) => this._show_mismatches = show);
+  }
+}
+
+class ShowEditorStore extends Store {
+  static final Action<bool> set_show_editor_global = Action<bool>();
+
+  Action<bool> get set_show_editor => set_show_editor_global;
+
+  bool _show_editor = false;
+
+  bool get show_editor => this._show_editor;
+
+  ShowEditorStore() {
+    triggerOnActionV2<bool>(this.set_show_editor, (show) => this._show_editor = show);
+  }
+}
+
+// end Stores
+////////////////////////////////////////////////
 
 ////////////////////////////////////////////////
 // MenuViewUIModel
@@ -32,87 +84,31 @@ class EditorViewUIModel {
 
 class MainViewUIModel {
   MainViewSelection selection = MainViewSelection();
-  MouseOverData mouse_over_data = MouseOverData();
 
-  /// disabling this will make it easier to navigate since less SVG needs be rendered
-  bool _show_dna = true;
-//  bool _show_dna = false;
-  bool _show_mismatches = true;
-//  bool _show_mismatches = false;
+  MouseoverDataStore mouse_over_store = MouseoverDataStore();
+  ShowDNAStore show_dna_store = ShowDNAStore();
+  ShowMismatchesStore show_mismatches_store = ShowMismatchesStore();
+  ShowEditorStore show_editor_store = ShowEditorStore();
 
-  bool get show_dna => this._show_dna;
+  bool get show_dna => this.show_dna_store.show_dna;
+
   void set show_dna(bool new_show_dna) {
-    this._show_dna = new_show_dna;
-    app.controller.notifier_show_dna_change.add(this._show_dna);
+    this.show_dna_store.set_show_dna(new_show_dna);
   }
 
-  bool get show_mismatches => this._show_mismatches;
+  bool get show_mismatches => this.show_mismatches_store.show_mismatches;
+
   void set show_mismatches(bool new_show_mismatches) {
-    this._show_mismatches = new_show_mismatches;
-    app.controller.notifier_show_mismatches_change.add(this._show_mismatches);
+    this.show_mismatches_store.set_show_mismatches(new_show_mismatches);
   }
 
   //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
   //  Then it's ubambiguous what Ctrl+Z should do
-  bool show_editor = false;
+  bool get show_editor => this.show_editor_store.show_editor;
 
-}
-
-class MouseOverData with ChangeNotifier<MouseOverData> {
-  bool _has_data = false;
-  bool get has_data => this._has_data;
-
-  MouseOverData.internal();
-
-  MouseOverData() {
-    this._set_change_notifier();
+  void set show_editor(bool new_show_editor) {
+    this.show_editor_store.set_show_editor(new_show_editor);
   }
-
-  void _set_change_notifier() {
-    this.notifier = app.controller.notifier_mouse_over_data;
-  }
-
-  give_data(int helix_idx, int offset, BoundSubstrand substrand) {
-    this._has_data = true;
-    this._helix_idx = helix_idx;
-    this._offset = offset;
-    this._substrand = substrand;
-    this.notify_changed();
-  }
-
-  remove_data() {
-    this._has_data = false;
-    this.notify_changed();
-  }
-
-  /// Returns clone of this MouseOverData. (Prevents race condition that sometimes results in exceptions.)
-  /// Should actually lock some object here to really prevent the race condition but I'm lazy.
-  MouseOverData clone() {
-    if (this._has_data) {
-      int helix_idx = this._helix_idx;
-      int offset = this._offset;
-      BoundSubstrand substrand = this._substrand;
-      var ret = MouseOverData.internal();
-      ret._helix_idx = helix_idx;
-      ret._offset = offset;
-      ret._substrand = substrand;
-      ret._has_data = true;
-      return ret;
-    } else {
-      var ret = MouseOverData.internal();
-      ret._has_data = false;
-      return ret;
-    }
-  }
-
-  int _helix_idx;
-  int get helix_idx => this._helix_idx;
-
-  int _offset;
-  int get offset => this._offset;
-
-  BoundSubstrand _substrand;
-  BoundSubstrand get substrand => this._substrand;
 
 }
 

@@ -2,12 +2,30 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
-//import 'package:sealed_unions/sealed_unions.dart';
+import 'package:w_flux/w_flux.dart';
 
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'dna_design.dart';
+
+class StrandsActions {}
+
+class StrandsStore extends Store {
+  StrandsActions _actions = StrandsActions();
+
+  List<Strand> _strands;
+
+  List<Strand> get strands => this._strands;
+
+  set strands(List<Strand> new_strands) {
+    this._strands = new_strands;
+  }
+
+  StrandsStore() {
+    this._strands = [];
+  }
+}
 
 class IDTFields extends JSONSerializable {
   String name;
@@ -66,7 +84,7 @@ class Strand extends JSONSerializable {
 
   String toString() {
     var first_ss = this.first_bound_substrand();
-    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p})';
+    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}), forward=${first_ss.forward}';
   }
 
   List<BoundSubstrand> bound_substrands() =>
