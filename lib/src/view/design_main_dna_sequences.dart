@@ -1,11 +1,7 @@
-import 'package:w_flux/w_flux.dart';
 import 'package:over_react/over_react.dart';
 
 import '../model/composite_stores.dart';
-import '../model/model_ui.dart';
-import '../app.dart';
 import '../model/strand.dart';
-import '../store_union.dart';
 import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';

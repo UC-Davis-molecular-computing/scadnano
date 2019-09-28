@@ -4,15 +4,35 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../dispatcher/actions.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'dna_design.dart';
 
-class StrandsActions {}
+class StrandRemoveActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
+  Strand strand;
+
+  StrandRemoveActionPack(this.strand) : super(Actions.strand_remove, strand);
+
+  @override
+  ReversibleActionPack<Action<Strand>, Strand> reverse() {
+    return StrandAddActionPack(this.strand);
+  }
+}
+
+class StrandAddActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
+  Strand strand;
+
+  StrandAddActionPack(this.strand) : super(Actions.strand_add, strand);
+
+  @override
+  ReversibleActionPack<Action<Strand>, Strand> reverse() {
+    return StrandRemoveActionPack(this.strand);
+  }
+}
 
 class StrandsStore extends Store {
-  StrandsActions _actions = StrandsActions();
 
   List<Strand> _strands;
 

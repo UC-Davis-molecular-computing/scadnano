@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
@@ -27,6 +28,8 @@ import '../constants.dart' as constants;
 
 /// Represents parts of the Model to serialize
 class DNADesign extends Store implements JSONSerializable {
+
+
   static final Action<Null> save_dna_file_global = Action<Null>();
 
   Action<Null> get save_dna_file => save_dna_file_global;
@@ -51,13 +54,84 @@ class DNADesign extends Store implements JSONSerializable {
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
   _handle_actions() {
-    triggerOnActionV2<Null>(this.save_dna_file, (_) {
+    this.triggerOnActionV2<Null>(this.save_dna_file, (_) {
       String content = json_encode(this);
       String default_filename = app.model.menu_view_ui_model.loaded_filename;
       util.save_file(default_filename, content);
-      //TODO: do something about Undo stack here
     });
 
+    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_remove, (strand) {
+      this.remove_strand(strand);
+    });
+
+    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_add, (strand) {
+      this.add_strand(strand);
+    });
+
+
+    this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.use_helix, (params) {
+      params.use ? this._convert_potential_to_helix(params) : this._convert_helix_to_potential(params);
+    });
+
+    this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
+      this.helices_store.helices = new_helices;
+    });
+
+    this.helices_store.triggerOnActionV2<List<PotentialHelix>>(Actions.set_potential_helices, (new_potential_helices) {
+      this.helices_store.potential_helices = new_potential_helices;
+    });
+
+    this.helices_store.triggerOnActionV2<Tuple2<List<Helix>, List<PotentialHelix>>>(Actions.set_all_helices, (all_helices) {
+      this.helices_store.helices = all_helices.item1;
+      this.helices_store.potential_helices = all_helices.item2;
+      this.helices_store.build_helices_map();
+    });
+  }
+
+  _convert_potential_to_helix(HelixUseActionParameters params) {
+    int max_bases = params.max_bases > 0 ? params.max_bases : constants.default_max_bases;
+    Helix helix = Helix(grid_position: params.grid_position, max_bases: max_bases);
+    helix.set_idx(params.idx);
+
+    this.helices.insert(params.idx, helix);
+    PotentialHelix old_pot_helix = this.helices_store.gp_to_helix[params.grid_position];
+    this.potential_helices.remove(old_pot_helix);
+    this.helices_store.gp_to_helix[params.grid_position] = helix;
+
+    for (Helix helix_after_idx_used in this.helices.sublist(params.idx + 1)) {
+      int prev_idx = helix_after_idx_used.idx();
+      helix_after_idx_used.set_idx(prev_idx + 1);
+    }
+  }
+
+  _convert_helix_to_potential(HelixUseActionParameters params) {
+    Helix old_helix = this.helices_store.gp_to_helix[params.grid_position];
+    int old_idx = old_helix.idx();
+    assert(old_idx == params.idx);
+    PotentialHelix potential_helix = PotentialHelix(params.grid_position);
+
+    this.helices.removeAt(old_idx);
+    this.potential_helices.add(potential_helix);
+    this.helices_store.gp_to_helix[params.grid_position] = potential_helix;
+
+    for (Helix helix_after_idx_unused in this.helices.sublist(old_idx)) {
+      int prev_idx = helix_after_idx_unused.idx();
+      helix_after_idx_unused.set_idx(prev_idx - 1);
+    }
+  }
+
+  add_strand(Strand strand) {
+    this.strands_store.strands.add(strand);
+    for (BoundSubstrand ss in strand.bound_substrands()) {
+      this.helices[ss.helix].bound_substrands().add(ss);
+    }
+  }
+
+  remove_strand(Strand strand) {
+    this.strands_store.strands.remove(strand);
+    for (BoundSubstrand ss in strand.bound_substrands()) {
+      this.helices[ss.helix].bound_substrands().remove(ss);
+    }
   }
 
   DNADesign() {
@@ -85,7 +159,7 @@ class DNADesign extends Store implements JSONSerializable {
         potential_helices.add(PotentialHelix(grid_pos));
       }
     }
-    this.helices_store.set_potential_helices(potential_helices);
+    Actions.set_potential_helices(potential_helices);
   }
 
   /// max number of bases allowed on any Helix in the Model

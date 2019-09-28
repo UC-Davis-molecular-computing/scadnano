@@ -10,10 +10,9 @@ import 'model/mouseover_data.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'model/helix.dart';
-import 'view/design_side.dart';
 import 'json_serializable.dart';
 import 'app.dart';
-import 'actions.dart';
+import 'dispatcher/actions.dart';
 
 /// Responsible for notifying view listeners of changes to the model,
 /// and for dispatching actions to change the model (coming from View interactions, for example).
@@ -242,8 +241,8 @@ class Controller {
     var editor = app.view.editor_view.editor;
     editor.onChange.listen((event) {
       String new_editor_content = app.view.editor_view.editor.getDoc().getValue();
-      var editor_content_action = EditorContentAction(new_editor_content);
-      app.send_action(editor_content_action);
+//      var editor_content_action = EditorContentAction(new_editor_content);
+//      app.send_action(editor_content_action);
     });
   }
 

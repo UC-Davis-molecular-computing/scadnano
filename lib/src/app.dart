@@ -11,39 +11,39 @@ import 'package:js/js.dart';
 import 'model/model.dart';
 
 import 'controller.dart';
-import 'actions.dart';
+import 'dispatcher/actions.dart';
 import 'util.dart' as util;
-import 'undo_redo.dart';
+import 'dispatcher/undo_redo.dart';
 import 'view/view.dart';
 import 'constants.dart' as constants;
 import 'local_storage.dart' as local_storage;
 
 App app = App();
 
-@JS()
-external set set_new_design_from_json_js(Function f);
+//@JS()
+//external set set_new_design_from_json_js(Function f);
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
   Model model;
   View view;
-  Controller controller;
+//  Controller controller;
 
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
 
   /// Listener for Actions that indicate desired changes to the Model
-  StreamController<ActionCustom> action_notifier = StreamController<ActionCustom>();
+//  StreamController<ActionCustom> action_notifier = StreamController<ActionCustom>();
 
   start() async {
 
     // make Controller.set_new_design_from_json accessible from JS so pyodide can access it after compiling
 //    context[constants.js_function_name_set_new_design_from_json] =
-    set_new_design_from_json_js = allowInterop((String json_string) {
-      set_new_design_from_json(json_string);
-    });
+//    set_new_design_from_json_js = allowInterop((String json_string) {
+//      set_new_design_from_json(json_string);
+//    });
 
-    this.controller = Controller();
+//    this.controller = Controller();
 
     this.model =
         await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
@@ -61,15 +61,16 @@ class App {
 
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
-    this.action_notifier.stream.listen((ActionCustom action) {
-      this.undo_redo.apply(action);
-    });
+
+//    this.action_notifier.stream.listen((ActionCustom action) {
+//      this.undo_redo.apply(action);
+//    });
 
 
     // allow Brython some way to tell us about errors that happened when compiling
     context[constants.js_function_name_set_error_message_from_python_script] = allowInterop((String msg) {
       print('dart received error message: ${msg}');
-      set_error_message(msg);
+//      set_error_message(msg);
     });
 
     //XXX: Controller must be created before the first render since views must
@@ -78,11 +79,16 @@ class App {
     this.view = View(app_root_element);
     this.view.render();
 
-    app.controller.setup_subscriptions();
+//    app.controller.setup_subscriptions();
   }
 
-  send_action(ActionCustom action) {
-    this.action_notifier.sink.add(action);
+  send_action(ActionPack action_pack) {
+    if (action_pack is ReversibleActionPack) {
+      ReversibleActionPack rev_action_pack = action_pack as ReversibleActionPack;
+      this.undo_redo.apply(rev_action_pack);
+    } else {
+      action_pack.apply();
+    }
   }
 
   setup_warning_before_unload() {

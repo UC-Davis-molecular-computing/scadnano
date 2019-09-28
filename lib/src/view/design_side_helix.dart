@@ -1,4 +1,8 @@
+import 'dart:html';
 import 'dart:math';
+
+import 'package:path/path.dart';
+import 'package:scadnano/src/model/strand.dart';
 
 import '../app.dart';
 import '../model/helix.dart';
@@ -54,14 +58,22 @@ class DesignSideHelixComponent extends UiComponent<DesignSideHelixProps> {
 
     if (this.props.used) {
       if (this.props.helix.has_substrands()) {
-        //TODO: detect if any strands are on this helix and warn before deleting
+        bool confirm = window.confirm('This Helix has strands on it. '
+            'If you delete it, all the Strands will be deleted. Do you want to proceed?');
+        if (!confirm) {
+          return;
+        }
+        for (BoundSubstrand ss in this.props.helix.bound_substrands()) {
+          app.send_action(StrandRemoveActionPack(ss.strand));
+        }
         //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
       }
     }
 
     int idx = this.props.used ? this.props.helix.idx() : app.model.dna_design.helices.length;
-    var params = UseHelixActionParameters(!this.props.used, this.props.grid_position, idx);
-    app.model.dna_design.helices_store.use_helix(params);
+    int max_bases = this.props.used ? this.props.helix.max_bases : -1;
+    var params = HelixUseActionParameters(!this.props.used, this.props.grid_position, idx, max_bases);
+    app.send_action(HelixUseActionPack(params));
   }
 }
 

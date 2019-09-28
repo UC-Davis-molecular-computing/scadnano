@@ -100,13 +100,3 @@ class View {
     }
   }
 }
-
-/// A Component that can listen to a change in some part of the model
-/// and re-render all of itself in response.
-abstract class ReactiveComponent {
-  render();
-
-  listen<T>(ChangeNotifier<T> change_notifier) {
-    change_notifier.listen_for_change((_) => this.render());
-  }
-}

@@ -8,69 +8,35 @@ import 'package:w_flux/w_flux.dart';
 
 import 'strand.dart';
 import 'model.dart';
-import '../app.dart';
-import '../actions.dart';
+import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 
-
 /// If use=true, converting the given PotentialHelix to a Helix; otherwise converting the other way.
-class UseHelixActionParameters extends ReversibleActionParameters {
+class HelixUseActionParameters extends ReversibleActionParameters {
   final bool use;
   final GridPosition grid_position;
   final int idx;
+  final int max_bases;
 
-  UseHelixActionParameters(this.use, this.grid_position, this.idx);
+  HelixUseActionParameters(this.use, this.grid_position, this.idx, this.max_bases);
 
   @override
-  UseHelixActionParameters reverse() => UseHelixActionParameters(!this.use, this.grid_position, this.idx);
+  HelixUseActionParameters reverse() =>
+      HelixUseActionParameters(!this.use, this.grid_position, this.idx, this.max_bases);
 }
 
-//class HelicesActions {
-//  /// converts potential helix to actual helix, or the other way
-//  static final use_helix_global = Action<UseHelixActionParameters>();
-//
-//  Action<UseHelixActionParameters> get use_helix => use_helix_global;
-//
-//  static final set_helices_global = Action<List<Helix>>();
-//
-//  Action<List<Helix>> get set_helices => set_helices_global;
-//
-//  static final set_potential_helices_global = Action<List<PotentialHelix>>();
-//
-//  Action<List<PotentialHelix>> get set_potential_helices => set_potential_helices_global;
-//
-//  static final set_all_helices_global = Action<Tuple2<List<Helix>, List<PotentialHelix>>>();
-//
-//  Action<Tuple2<List<Helix>, List<PotentialHelix>>> get set_all_helices => set_all_helices_global;
-//}
+class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
+  HelixUseActionParameters params;
+
+  HelixUseActionPack(this.params) : super(Actions.use_helix, params);
+
+  @override
+  HelixUseActionPack reverse() {
+    return HelixUseActionPack(this.params.reverse());
+  }
+}
 
 class HelicesStore extends Store {
-  static final use_helix_global = Action<UseHelixActionParameters>();
-
-  Action<UseHelixActionParameters> get use_helix => use_helix_global;
-
-  static final set_helices_global = Action<List<Helix>>();
-
-  Action<List<Helix>> get set_helices => set_helices_global;
-
-  static final set_potential_helices_global = Action<List<PotentialHelix>>();
-
-  Action<List<PotentialHelix>> get set_potential_helices => set_potential_helices_global;
-
-  static final set_all_helices_global = Action<Tuple2<List<Helix>, List<PotentialHelix>>>();
-
-  Action<Tuple2<List<Helix>, List<PotentialHelix>>> get set_all_helices => set_all_helices_global;
-
-//  HelicesActions _actions = HelicesActions();
-//
-//  get use_helix => this._actions.use_helix;
-//
-//  get set_helices => this._actions.set_helices;
-//
-//  get set_potential_helices => this._actions.set_potential_helices;
-//
-//  get set_all_helices => this._actions.set_all_helices;
-
   List<Helix> _helices;
   List<PotentialHelix> _potential_helices;
 
@@ -80,76 +46,25 @@ class HelicesStore extends Store {
 
   set helices(List<Helix> new_helices) {
     this._helices = new_helices;
-    this._build_helices_map();
+    this.build_helices_map();
   }
 
   set potential_helices(List<PotentialHelix> new_potential_helices) {
     this._potential_helices = new_potential_helices;
-    this._build_helices_map();
+    this.build_helices_map();
   }
 
   Map<GridPosition, dynamic> _gp_to_helix;
 
+  Map<GridPosition, dynamic> get gp_to_helix => this._gp_to_helix;
+
   HelicesStore() {
     this._helices = [];
     this._potential_helices = [];
-    this._build_helices_map();
-
-    this._handle_actions();
+    this.build_helices_map();
   }
 
-  _handle_actions() {
-    triggerOnActionV2<UseHelixActionParameters>(this.use_helix, (params) {
-      params.use ? this._convert_potential_to_helix(params) : this._convert_helix_to_potential(params);
-    });
-
-    triggerOnActionV2<List<Helix>>(this.set_helices, (new_helices) {
-      this.helices = new_helices;
-    });
-
-    triggerOnActionV2<List<PotentialHelix>>(this.set_potential_helices, (new_potential_helices) {
-      this.potential_helices = new_potential_helices;
-    });
-
-    triggerOnActionV2<Tuple2<List<Helix>, List<PotentialHelix>>>(this.set_all_helices, (all_helices) {
-      this._helices = all_helices.item1;
-      this._potential_helices = all_helices.item2;
-      this._build_helices_map();
-    });
-  }
-
-  void _convert_helix_to_potential(UseHelixActionParameters params) {
-    Helix old_helix = this._gp_to_helix[params.grid_position];
-    int old_idx = old_helix.idx();
-    assert(old_idx == params.idx);
-    PotentialHelix potential_helix = PotentialHelix(params.grid_position);
-
-    this.helices.removeAt(old_idx);
-    this.potential_helices.add(potential_helix);
-    this._gp_to_helix[params.grid_position] = potential_helix;
-
-    for (Helix helix_after_idx_unused in this.helices.sublist(old_idx)) {
-      int prev_idx = helix_after_idx_unused.idx();
-      helix_after_idx_unused.set_idx(prev_idx - 1);
-    }
-  }
-
-  void _convert_potential_to_helix(UseHelixActionParameters params) {
-    Helix helix = Helix(grid_position: params.grid_position, max_bases: constants.default_max_bases);
-    helix.set_idx(params.idx);
-
-    this.helices.insert(params.idx, helix);
-    PotentialHelix old_pot_helix = this._gp_to_helix[params.grid_position];
-    this.potential_helices.remove(old_pot_helix);
-    this._gp_to_helix[params.grid_position] = helix;
-
-    for (Helix helix_after_idx_used in this.helices.sublist(params.idx + 1)) {
-      int prev_idx = helix_after_idx_used.idx();
-      helix_after_idx_used.set_idx(prev_idx + 1);
-    }
-  }
-
-  void _build_helices_map() {
+  build_helices_map() {
     this._gp_to_helix = {};
     for (var h in this.helices) {
       this._gp_to_helix[h.grid_position()] = h;
@@ -245,18 +160,13 @@ class PotentialHelix extends JSONSerializable with ChangeNotifier {
 
   GridPosition grid_position() => this._grid_position;
 
-  PotentialHelix(this._grid_position) {
-    this._set_change_notifier();
-  }
+  PotentialHelix(this._grid_position);
 
   PotentialHelix.from_json(Map<String, dynamic> json_map) {
-    this._set_change_notifier();
-
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -272,10 +182,6 @@ class PotentialHelix extends JSONSerializable with ChangeNotifier {
   num get gv => this._grid_position.v;
 
   num get gb => this._grid_position.b;
-
-  _set_change_notifier() {
-    this.notifier = app.controller.notifier_potential_helix_change;
-  }
 }
 
 //TODO: rename Helix.max_bases to max_offset, add Helix.min_offset, and allow offsets to be negative
@@ -416,8 +322,7 @@ class Helix extends JSONSerializable {
 //    this._svg_position = this.default_svg_position();
 //  }
 
-  int get hashCode =>
-      quiver.hash4(this._idx, this._grid_position.h, this._grid_position.v, this._grid_position.b);
+  int get hashCode => quiver.hash4(this._idx, this._grid_position.h, this._grid_position.v, this._grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -438,12 +343,8 @@ class Helix extends JSONSerializable {
 
   bool has_nondefault_svg_position() {
     num eps = 0.00000001;
-    num default_x = this
-        .default_svg_position()
-        .x;
-    num default_y = this
-        .default_svg_position()
-        .y;
+    num default_x = this.default_svg_position().x;
+    num default_y = this.default_svg_position().y;
     num this_x = this._svg_position.x;
     num this_y = this._svg_position.y;
     num diff_x = (this_x - default_x).abs();
@@ -475,8 +376,7 @@ class Helix extends JSONSerializable {
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -485,8 +385,7 @@ class Helix extends JSONSerializable {
       List<dynamic> svg_position_list = json_map[constants.svg_position_key];
       if (svg_position_list.length != 2) {
         throw ArgumentError(
-            "svg_position must have exactly two integers but instead it has ${svg_position_list
-                .length}: ${svg_position_list}");
+            "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
       }
       this._svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
@@ -510,11 +409,7 @@ class Helix extends JSONSerializable {
 
   /// Transform to apply to an SVG element so that it will appear in the correct position relative to this
   /// Helix.
-  transform() => 'translate(${this
-      .svg_position()
-      .x} ${this
-      .svg_position()
-      .y})';
+  transform() => 'translate(${this.svg_position().x} ${this.svg_position().y})';
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.max_bases;
 

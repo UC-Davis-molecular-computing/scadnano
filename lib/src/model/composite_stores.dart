@@ -4,8 +4,8 @@ import 'strand.dart';
 import 'model_ui.dart';
 
 /// These are stores that reference other stores, notifying their listeners when any of those Stores update.
-/// Useful for parts of the view that listen to disparate parts of the Model.
-
+/// They have no Actions that mutate them directly, and only serve as "funnels" for notification.
+/// Useful for parts of the view that listen to parts of the Model that are disparate in the Model tree.
 _subscribe_to_stores(Store composite_store, Iterable<Store> stores) {
   for (Store store in stores) {
     store.listen((_) => composite_store.trigger());

@@ -6,8 +6,10 @@ import 'dart:html';
 import 'dart:svg' as svg;
 
 import 'package:js/js.dart';
+import 'package:over_react/over_react.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 
+//import 'react_svg_pan_zoom.dart';
 import '../app.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -29,19 +31,18 @@ class DesignViewComponent {
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
 
-//  SideViewComponent side_view;
-//  MainViewComponent main_view;
-
-//  FooterViewComponent footer_view;
   ErrorMessageComponent error_message_component;
+
+  DivElement side_pane;
+  DivElement main_pane;
 
   bool svg_panzoom_has_been_set_up = false;
 
   DesignViewComponent(this.root_element) {
-    var side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
+    this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
     var side_main_separator = DivElement()
       ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
-    var main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
+    this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     var side_view_svg = svg.SvgSvgElement()
       ..attributes = {
@@ -55,8 +56,6 @@ class DesignViewComponent {
         'width': '100%',
         'height': '100%',
       };
-    side_pane.children.add(side_view_svg);
-    main_pane.children.add(main_view_svg);
 
     var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT};
     var main_view_svg_viewport = svg.GElement()..attributes = {'id': 'main-view-svg-viewport'};
@@ -78,9 +77,9 @@ class DesignViewComponent {
     design_above_footer_pane.children.add(main_pane);
 
     this.error_message_component = ErrorMessageComponent(error_message_pane);
-//    this.side_view = SideViewComponent(side_view_svg_viewport);
-//    this.main_view = MainViewComponent(main_view_svg_viewport);
-//    this.footer_view = FooterViewComponent(footer_element);
+
+    side_pane.children.add(side_view_svg);
+    main_pane.children.add(main_view_svg);
   }
 
   render() {
@@ -93,16 +92,42 @@ class DesignViewComponent {
       this.root_element.children.add(this.footer_separator);
       this.root_element.children.add(this.footer_element);
 
+//      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
+//        {
+//          'width': '100%',
+//          'height': '100%',
+//        },
+//        (Dom.svg()
+//          ..id = 'side-view-svg'
+//          ..width = '100%'
+//          ..height = '100%')(
+//          (DesignSide()..store = app.model.dna_design.helices_store)(),
+//        ),
+//      );
+//      react_dom.render(react_svg_pan_zoom_side, this.side_pane);
+//
+//      var react_svg_pan_zoom_main = UncontrolledReactSVGPanZoom(
+//        {
+//          'width': '100%',
+//          'height': '100%',
+//        },
+//        (Dom.svg()
+//          ..id = 'main-view-svg'
+//          ..width = '100%'
+//          ..height = '100%')(
+//          (DesignMain()..store = app.model)(),
+//        ),
+//      );
+//      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
+
       react_dom.render(
           (DesignSide()..store=app.model.dna_design.helices_store)(),
           querySelector('#$SIDE_VIEW_SVG_VIEWPORT'));
 
-      react_dom.render(
-          (DesignMain()..store=app.model)(),
-          querySelector('#$MAIN_VIEW_SVG_VIEWPORT'));
+      react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT'));
 
-      react_dom.render((DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(),
-          querySelector('#$FOOTER_ID'));
+      react_dom.render(
+          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
@@ -112,7 +137,7 @@ class DesignViewComponent {
   }
 }
 
-class ErrorMessageComponent extends ReactiveComponent {
+class ErrorMessageComponent {
   DivElement root_element;
 
   ErrorMessageComponent(this.root_element) {

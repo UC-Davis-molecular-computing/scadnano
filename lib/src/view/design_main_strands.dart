@@ -11,7 +11,7 @@ part 'design_main_strands.over_react.g.dart';
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 
 @Props()
-class _$DesignMainStrandsProps extends FluxUiProps<StrandsActions, StrandsStore> {}
+class _$DesignMainStrandsProps extends FluxUiProps<StrandsStore, StrandsStore> {}
 
 @Component()
 class DesignMainStrandsComponent extends FluxUiComponent<DesignMainStrandsProps> {

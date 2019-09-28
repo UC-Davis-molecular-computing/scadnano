@@ -12,7 +12,7 @@ import 'package:react/react_dom.dart' as react_dom;
 import 'package:react/react_client.dart';
 import 'package:scadnano/src/view/design_main_helix.dart';
 
-import '../actions.dart';
+import '../dispatcher/actions.dart';
 import 'view.dart';
 import '../model/helix.dart';
 import '../app.dart';
