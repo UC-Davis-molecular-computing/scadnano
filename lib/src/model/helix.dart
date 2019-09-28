@@ -12,7 +12,7 @@ import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 
 /// If use=true, converting the given PotentialHelix to a Helix; otherwise converting the other way.
-class HelixUseActionParameters extends ReversibleActionParameters {
+class HelixUseActionParameters {
   final bool use;
   final GridPosition grid_position;
   final int idx;

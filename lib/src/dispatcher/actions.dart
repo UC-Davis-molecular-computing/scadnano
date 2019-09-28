@@ -35,21 +35,23 @@ abstract class ReversibleActionPack<A extends Action<P>, P> extends ActionPack<A
   ReversibleActionPack<A, P> reverse();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-///// A ReversibleAction is added to the undo stack. Its reverse is executed as it is popped.
-//abstract class ReversibleAction<T> extends Action<T> {
-//  /// Get the ReversibleAction that, if applied to the model, undoes this ReversibleAction.
-//  ReversibleAction<T> reverse();
-//
-//  ReversibleAction() : super();
-//}
+/// Represents Actions to do in a batch. Useful for having a single action to undo/redo that is a composite of many
+/// small ones, so the user doesn't have to press ctrl+z multiple times to undo them all.
+class BatchActionPack extends ReversibleActionPack {
+  List<ReversibleActionPack> action_packs;
 
-abstract class ActionParameters {}
+  BatchActionPack(this.action_packs) : super(null, null);
 
-abstract class ReversibleActionParameters extends ActionParameters {
-  /// Get the ReversibleActionParameters that, if applied to the model, undoes this Action represented
-  /// by the original parameters.
-  ReversibleActionParameters reverse();
+  apply() {
+    for (var action_pack in this.action_packs) {
+      action_pack.apply();
+    }
+  }
+
+  BatchActionPack reverse() {
+    List<ReversibleActionPack> reverse = [for (var action_pack in this.action_packs.reversed) action_pack.reverse()];
+    return BatchActionPack(reverse);
+  }
 }
 
 class Actions {

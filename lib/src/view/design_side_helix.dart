@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:path/path.dart';
+import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/model/strand.dart';
 
 import '../app.dart';
@@ -56,6 +57,7 @@ class DesignSideHelixComponent extends UiComponent<DesignSideHelixProps> {
       return;
     }
 
+    List<ReversibleActionPack> action_packs_for_batch = [];
     if (this.props.used) {
       if (this.props.helix.has_substrands()) {
         bool confirm = window.confirm('This Helix has strands on it. '
@@ -63,9 +65,8 @@ class DesignSideHelixComponent extends UiComponent<DesignSideHelixProps> {
         if (!confirm) {
           return;
         }
-        for (BoundSubstrand ss in this.props.helix.bound_substrands()) {
-          app.send_action(StrandRemoveActionPack(ss.strand));
-        }
+        Set<Strand> strands_to_remove = {for (BoundSubstrand ss in this.props.helix.bound_substrands()) ss.strand};
+        action_packs_for_batch.addAll([for (var strand in strands_to_remove) StrandRemoveActionPack(strand)]);
         //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
       }
     }
@@ -73,7 +74,15 @@ class DesignSideHelixComponent extends UiComponent<DesignSideHelixProps> {
     int idx = this.props.used ? this.props.helix.idx() : app.model.dna_design.helices.length;
     int max_bases = this.props.used ? this.props.helix.max_bases : -1;
     var params = HelixUseActionParameters(!this.props.used, this.props.grid_position, idx, max_bases);
-    app.send_action(HelixUseActionPack(params));
+    var helix_use_action_pack = HelixUseActionPack(params);
+
+    if (action_packs_for_batch.isEmpty) {
+      app.send_action(helix_use_action_pack);
+    } else {
+      action_packs_for_batch.add(helix_use_action_pack);
+      BatchActionPack batch_action_pack = BatchActionPack(action_packs_for_batch);
+      app.send_action(batch_action_pack);
+    }
   }
 }
 
