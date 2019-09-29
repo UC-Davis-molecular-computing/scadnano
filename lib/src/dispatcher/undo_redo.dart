@@ -40,9 +40,7 @@ class UndoRedo {
   apply(ReversibleActionPack action) {
     if (!app.model.changed_since_last_save) {
       app.model.changed_since_last_save = true;
-//        app.controller.notifier_model_changed_since_save.add(app.model.changed_since_last_save);
     }
-//    app.model = action.apply(app.model);
     action.apply();
     redo_stack.clear();
     undo_stack.add(action);
@@ -52,13 +50,11 @@ class UndoRedo {
     if (undo_stack.isNotEmpty) {
       var most_recent_action = undo_stack.removeLast();
       var reverse_action = most_recent_action.reverse();
-//      app.model = reverse_action.apply(app.model);
       reverse_action.apply();
       redo_stack.add(most_recent_action);
       if (undo_stack.isEmpty) {
         if (!app.model.changed_since_last_save) {
           app.model.changed_since_last_save = true;
-//          app.controller.notifier_model_changed_since_save.add(app.model.changed_since_last_save);
         }
       }
     }
@@ -68,10 +64,8 @@ class UndoRedo {
     if (redo_stack.isNotEmpty) {
       if (app.model.changed_since_last_save) {
         app.model.changed_since_last_save = false;
-//        app.controller.notifier_model_changed_since_save.add(app.model.changed_since_last_save);
       }
       var action_to_redo = redo_stack.removeLast();
-//      app.model = action_to_redo.apply(app.model);
       action_to_redo.apply();
       undo_stack.add(action_to_redo);
     }

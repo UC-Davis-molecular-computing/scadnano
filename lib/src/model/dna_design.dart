@@ -29,7 +29,6 @@ import '../constants.dart' as constants;
 /// Represents parts of the Model to serialize
 class DNADesign extends Store implements JSONSerializable {
 
-
   static final Action<Null> save_dna_file_global = Action<Null>();
 
   Action<Null> get save_dna_file => save_dna_file_global;
@@ -68,8 +67,7 @@ class DNADesign extends Store implements JSONSerializable {
       this.add_strand(strand);
     });
 
-
-    this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.use_helix, (params) {
+    this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.helix_use, (params) {
       params.use ? this._convert_potential_to_helix(params) : this._convert_helix_to_potential(params);
     });
 
@@ -261,6 +259,12 @@ class DNADesign extends Store implements JSONSerializable {
     this._build_substrand_mismatches_map();
     this._check_legal_design();
 
+    this.trigger();
+  }
+
+  @override
+  trigger() {
+    super.trigger();
     this.helices_store.trigger();
     this.strands_store.trigger();
   }

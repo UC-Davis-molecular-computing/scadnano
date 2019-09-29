@@ -92,6 +92,10 @@ html, body {
     height: 100%;
 }
 
+.menu-item {
+    padding-left: 10px;
+}
+
 
 /*.panes-container {*/
 /*  display: flex;*/

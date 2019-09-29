@@ -28,7 +28,7 @@ class HelixUseActionParameters {
 class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
   HelixUseActionParameters params;
 
-  HelixUseActionPack(this.params) : super(Actions.use_helix, params);
+  HelixUseActionPack(this.params) : super(Actions.helix_use, params);
 
   @override
   HelixUseActionPack reverse() {
@@ -154,7 +154,7 @@ class GridPosition {
 
 /// Represents a potential position for a Helix (the circles drawn in the side
 /// view initially, which are unused helices). It has a grid position but nothing else.
-class PotentialHelix extends JSONSerializable with ChangeNotifier {
+class PotentialHelix extends JSONSerializable {
   /// position within square/hex/honeycomb integer grid (side view)
   GridPosition _grid_position;
 

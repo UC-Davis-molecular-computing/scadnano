@@ -13,10 +13,11 @@ import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 
-/// An ActionPack has all the data needed to apply an Action. It serves as a layer of abstraction between an
-/// Action in w_flux and the Undo/Redo stack.
-/// P: payload type for the Action
+/// An ActionPack has all the data needed to apply an Action (the "payload" in the terminology of w_flux).
+/// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
+/// and the Undo/Redo stack (which needs the Action and payload packed into one object to put on the stack).
 /// A: type of the Action
+/// P: payload type for the Action
 class ActionPack<A extends Action<P>, P> {
   final A action;
   final P payload;
@@ -24,11 +25,14 @@ class ActionPack<A extends Action<P>, P> {
   ActionPack(this.action, this.payload);
 
   apply() {
+    // for some react this.action(this.payload) does not compile, but we can call the method "call" explicitly
     this.action.call(this.payload);
   }
 }
 
 /// A ReversibleActionPack is added to the undo stack. Its reverse is applied as it is popped.
+/// Often a ReversibleActionPack will contain more information than is needed simply to apply the Action,
+/// in order also to have enough information to construct its reverse.
 abstract class ReversibleActionPack<A extends Action<P>, P> extends ActionPack<A, P> {
   ReversibleActionPack(A action, P payload) : super(action, payload);
 
@@ -37,6 +41,7 @@ abstract class ReversibleActionPack<A extends Action<P>, P> extends ActionPack<A
 
 /// Represents Actions to do in a batch. Useful for having a single action to undo/redo that is a composite of many
 /// small ones, so the user doesn't have to press ctrl+z multiple times to undo them all.
+/// For example, deleting a Helix with Strands on it implies the Strands should be deleted first.
 class BatchActionPack extends ReversibleActionPack {
   List<ReversibleActionPack> action_packs;
 
@@ -49,18 +54,25 @@ class BatchActionPack extends ReversibleActionPack {
   }
 
   BatchActionPack reverse() {
+    // put Actions in reverse order, and reverse each Action
     List<ReversibleActionPack> reverse = [for (var action_pack in this.action_packs.reversed) action_pack.reverse()];
     return BatchActionPack(reverse);
   }
 }
 
 class Actions {
-  static final strand_remove = Action<Strand>();
-  static final strand_add = Action<Strand>();
-  static final use_helix = Action<HelixUseActionParameters>();
+  // Helix
+  static final helix_use = Action<HelixUseActionParameters>();
   static final set_helices = Action<List<Helix>>();
   static final set_potential_helices = Action<List<PotentialHelix>>();
   static final set_all_helices = Action<Tuple2<List<Helix>, List<PotentialHelix>>>();
+
+  // Strand
+  static final strand_remove = Action<Strand>();
+  static final strand_add = Action<Strand>();
+
+  // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
+  static final set_error_message = Action<String>();
 }
 
 /*

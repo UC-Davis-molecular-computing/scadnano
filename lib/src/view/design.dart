@@ -8,6 +8,7 @@ import 'dart:svg' as svg;
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
+import 'package:scadnano/src/model/model.dart';
 
 //import 'react_svg_pan_zoom.dart';
 import '../app.dart';
@@ -19,6 +20,7 @@ import 'design_main.dart';
 import 'design_footer.dart';
 
 const FOOTER_ID = 'design-footer-mouse-over';
+const MODES_ID = 'design-mode-buttons';
 const SIDE_VIEW_SVG_VIEWPORT = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT = 'main-view-svg-viewport';
 
@@ -29,6 +31,7 @@ class DesignViewComponent {
   DivElement footer_separator = DivElement()
     ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
+  DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
 
   ErrorMessageComponent error_message_component;
@@ -38,7 +41,9 @@ class DesignViewComponent {
 
   bool svg_panzoom_has_been_set_up = false;
 
-  DesignViewComponent(this.root_element) {
+  Model model;
+
+  DesignViewComponent(this.root_element, this.model) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
     var side_main_separator = DivElement()
       ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
@@ -76,15 +81,19 @@ class DesignViewComponent {
     design_above_footer_pane.children.add(side_main_separator);
     design_above_footer_pane.children.add(main_pane);
 
-    this.error_message_component = ErrorMessageComponent(error_message_pane);
+    this.error_message_component = ErrorMessageComponent(error_message_pane, this.model.error_message_store);
 
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
+
+    app.model.design_or_error_store.listen((_) => this.render());
   }
 
   render() {
+    print('rendering Design element');
+    //TODO: add MODES element to right side
     this.root_element.children.clear();
-    if (app.model.error_message != null) {
+    if (this.model.has_error()) {
       this.root_element.children.addAll([this.error_message_pane]);
       this.error_message_component.render();
     } else {
@@ -139,18 +148,19 @@ class DesignViewComponent {
 
 class ErrorMessageComponent {
   DivElement root_element;
+  ErrorMessageStore error_message_store;
 
-  ErrorMessageComponent(this.root_element) {
-//    this.listen(app.model);
+  ErrorMessageComponent(this.root_element, this.error_message_store) {
     this.root_element.attributes = {'class': 'error-message'};
+    this.error_message_store.listen((_) => this.render());
   }
 
   render() {
     this.root_element.children.clear();
-    if (app.model.error_message != null) {
+    if (this.error_message_store.has_error()) {
       var pre = PreElement();
       var escaper = HtmlEscape();
-      var escaped_error_message = escaper.convert(app.model.error_message);
+      var escaped_error_message = escaper.convert(this.error_message_store.error_message);
       pre.setInnerHtml(escaped_error_message);
       this.root_element.children.add(pre);
     }

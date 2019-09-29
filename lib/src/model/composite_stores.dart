@@ -1,3 +1,5 @@
+import 'package:scadnano/src/model/dna_design.dart';
+import 'package:scadnano/src/model/model.dart';
 import 'package:w_flux/w_flux.dart';
 
 import 'strand.dart';
@@ -7,7 +9,7 @@ import 'model_ui.dart';
 /// They have no Actions that mutate them directly, and only serve as "funnels" for notification.
 /// Useful for parts of the view that listen to parts of the Model that are disparate in the Model tree.
 _subscribe_to_stores(Store composite_store, Iterable<Store> stores) {
-  for (Store store in stores) {
+  for (var store in stores) {
     store.listen((_) => composite_store.trigger());
   }
 }
@@ -38,5 +40,15 @@ class ShowStore extends Store {
 
   ShowStore(this.show_dna_store, this.show_mismatches_store, this.show_editor_store) {
     _subscribe_to_stores(this, [this.show_dna_store, this.show_mismatches_store, this.show_editor_store]);
+  }
+}
+
+// Fires when either Design or ErrorMessage updates so Design view knows to redraw.
+class DesignOrErrorStore extends Store {
+  DNADesign dna_design;
+  ErrorMessageStore error_message_store;
+
+  DesignOrErrorStore(this.dna_design, this.error_message_store) {
+    _subscribe_to_stores(this, [this.dna_design, this.error_message_store]);
   }
 }

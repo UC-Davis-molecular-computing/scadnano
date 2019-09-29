@@ -5,7 +5,6 @@ import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 
 import '../model/composite_stores.dart';
-import '../model/model.dart';
 import '../model/dna_design.dart';
 import '../model/model_ui.dart';
 import '../app.dart';
@@ -49,13 +48,14 @@ class MenuComponent extends FluxUiComponent<MenuProps> {
 //          ..key = 'dummy'
 //          ..className = 'dummy-button')('Dummy'),
         (Dom.button()
+          ..className = 'menu-item'
           ..onClick = (_) {
             app.model.dna_design.save_dna_file();
           }
           ..className = 'save-button-dna-file'
           ..key = 'save')('Save'),
         (Dom.label()
-          ..className = 'load-button-dna-file'
+          ..className = 'load-button-dna-file menu-item'
           ..key = 'load')([
           'Load:',
           (Dom.input()
@@ -72,7 +72,7 @@ class MenuComponent extends FluxUiComponent<MenuProps> {
             ..key = 'load-input')()
         ]),
         (Dom.span()
-          ..className = 'show-dna-span'
+          ..className = 'show-dna-span menu-item'
           ..key = 'show-dna')(
           (Dom.label()..key = 'show-dna-label')(
             (Dom.input()
@@ -84,21 +84,22 @@ class MenuComponent extends FluxUiComponent<MenuProps> {
             'show DNA',
           ),
         ),
+        //XXX: let's keep this commented out until we need it
+//        (Dom.span()
+//          ..key = 'show-editor menu-item'
+//          ..className = 'show-editor-span')(
+//          (Dom.label()..key = 'show-editor-label')(
+//            (Dom.input()
+//              ..checked = show_editor
+//              ..onChange = (_) {
+//                app.model.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
+//              }
+//              ..type = 'checkbox')(),
+//            'show editor',
+//          ),
+//        ),
         (Dom.span()
-          ..key = 'show-editor'
-          ..className = 'show-editor-span')(
-          (Dom.label()..key = 'show-editor-label')(
-            (Dom.input()
-              ..checked = show_editor
-              ..onChange = (_) {
-                app.model.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
-              }
-              ..type = 'checkbox')(),
-            'show editor',
-          ),
-        ),
-        (Dom.span()
-          ..className = 'show-mismatches-span'
+          ..className = 'show-mismatches-span menu-item'
           ..key = 'show-mismatches')(
           (Dom.label()..key = 'show-mismatches-label')(
             (Dom.input()
@@ -111,14 +112,12 @@ class MenuComponent extends FluxUiComponent<MenuProps> {
           ),
         ),
         (Dom.a()
+          ..className = 'docs-link menu-item'
           ..href = './docs/'
           ..target = '_blank')('Docs'));
   }
 }
 
-//TODO: make the rest of the menu_view more clean like the rest of the view
-// (separate from model, go through Actions for notifications)
-// This is not following the React/Flux pattern currently.
 request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
@@ -127,6 +126,8 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
   var basefilename = path.basenameWithoutExtension(file.name);
 
   FileReader file_reader = new FileReader();
+  //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
+  // and what is done in file_loaded should be another Action.
   file_reader.onLoad.listen((_) => file_loaded(file_reader, basefilename));
   var err_msg = "error reading file: ${file_reader.error.toString()}";
   //file_reader.onError.listen((e) => error_message.text = err_msg);
@@ -137,26 +138,6 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
 file_loaded(FileReader file_reader, String filename) {
   app.model.menu_view_ui_model.loaded_filename = filename;
   var json_model_text = file_reader.result;
-  set_new_design_from_json(json_model_text);
+  app.model.set_new_design_from_json(json_model_text);
 }
 
-set_new_design_from_json(String json_model_text) {
-  Map<String, dynamic> deserialized_map = jsonDecode(json_model_text);
-  set_new_design_from_map(deserialized_map);
-}
-
-set_new_design_from_map(Map map) {
-  try {
-    app.model.dna_design.read_from_json(map);
-    app.model.changed_since_last_save = false;
-    app.undo_redo.reset();
-    app.model.error_message = null;
-  } on IllegalDNADesignError catch (error) {
-    set_error_message(error.cause);
-  }
-}
-
-set_error_message(String msg) {
-  app.undo_redo.reset();
-  app.model.error_message = msg;
-}

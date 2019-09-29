@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 
+import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
-import 'package:meta/meta.dart';
 
 import 'composite_stores.dart';
-import 'strand.dart';
 import 'model_ui.dart';
 import '../app.dart';
 import 'dna_design.dart';
@@ -14,8 +14,10 @@ class Model extends Store {
   DNASequencesStore dna_sequences_store;
   MismatchesStore mismatches_store;
   ShowStore show_store;
+  DesignOrErrorStore design_or_error_store;
 
   DNADesign _dna_design;
+  ErrorMessageStore error_message_store = ErrorMessageStore();
 
   String _editor_content = "";
 
@@ -50,11 +52,13 @@ class Model extends Store {
   String _error_message = null;
 
   Model.default_model({int num_helices_x = 10, int num_helices_y = 10}) {
+    this._handle_actions();
     this._dna_design = DNADesign.default_design(num_helices_x: num_helices_x, num_helices_y: num_helices_y);
     this._initialize_composite_stores();
   }
 
   Model.empty() {
+    this._handle_actions();
     this._dna_design = DNADesign();
     this._initialize_composite_stores();
   }
@@ -64,8 +68,17 @@ class Model extends Store {
         DNASequencesStore(this._dna_design.strands_store, this.main_view_ui_model.show_dna_store);
     this.mismatches_store =
         MismatchesStore(this._dna_design.strands_store, this.main_view_ui_model.show_mismatches_store);
-    this.show_store = ShowStore(this.main_view_ui_model.show_dna_store,
-        this.main_view_ui_model.show_mismatches_store, this.main_view_ui_model.show_editor_store);
+    this.show_store = ShowStore(this.main_view_ui_model.show_dna_store, this.main_view_ui_model.show_mismatches_store,
+        this.main_view_ui_model.show_editor_store);
+    this.design_or_error_store = DesignOrErrorStore(this.dna_design, this.error_message_store);
+  }
+
+
+  _handle_actions() {
+    this.error_message_store.triggerOnActionV2<String>(Actions.set_error_message, (msg) {
+      this.error_message = msg;
+      app.undo_redo.reset();
+    });
   }
 
   //TODO: this is crashing when we save; debug it
@@ -80,35 +93,52 @@ class Model extends Store {
 
   String get editor_content => this._editor_content;
 
-//  set dna_design(DNADesign new_dna_design) {
-//    this._dna_design = new_dna_design;
-//  }
-
   set error_message(String new_msg) {
-    this._error_message = new_msg;
+    this.error_message_store.error_message = new_msg;
   }
+
+  clear_error() {
+    this.error_message_store.clear();
+  }
+
+  bool has_error() => this.error_message_store.has_error();
 
   set editor_content(String new_content) {
     this._editor_content = new_content;
 //    context[constants.editor_content_js_key] = new_content;
   }
-}
 
-/// Use this mixin to get listener functionality for when an object changes and listeners need to be notified.
-/// Must pass an existing instance of a notifier (should be stored in central location like Controller).
-/// This avoids the issues of Model and View objects being created and destroyed and the notifiers/listeners
-/// not updating properly.
-class ChangeNotifier<T> {
-//  final StreamController<T> notifier = StreamController<T>.broadcast();
-  StreamController<T> notifier;
-
-  listen_for_change(void Function(T) listener) {
-    this.notifier.stream.listen(listener);
+  set_new_design_from_json(String json_model_text) {
+    Map<String, dynamic> deserialized_map = jsonDecode(json_model_text);
+    this.set_new_design_from_map(deserialized_map);
   }
 
-  notify_changed() {
-    if (this.notifier != null) {
-      this.notifier.add(this as T);
+  set_new_design_from_map(Map map) {
+    try {
+      app.model.dna_design.read_from_json(map);
+      app.model.changed_since_last_save = false;
+      app.undo_redo.reset();
+      app.model.clear_error();
+    } on IllegalDNADesignError catch (error) {
+      Actions.set_error_message(error.cause);
     }
+  }
+
+
+}
+
+class ErrorMessageStore extends Store {
+  String _error_message;
+
+  String get error_message => this._error_message;
+
+  set error_message(String new_msg) {
+    this._error_message = new_msg;
+  }
+
+  bool has_error() => this._error_message != null;
+
+  clear() {
+    this._error_message = null;
   }
 }

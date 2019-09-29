@@ -20,7 +20,6 @@ import 'model/strand.dart';
 Future<Model> model_from_url(String url) async {
   Model model = Model.empty();
 
-
 //  var dna_design = await _dna_design_from_url(url);
   String content = await file_content(url);
   Map<String, dynamic> parsed_json = jsonDecode(content);
@@ -41,7 +40,6 @@ Future<Model> model_from_url(String url) async {
 //  dna_design.read_from_json(parsed_json);
 //  return dna_design;
 //}
-
 
 Future<String> file_content(String url) async {
   return await HttpRequest.getString(url).then((content) {
@@ -73,9 +71,10 @@ save_editor_content_to_js_context(String new_content) {
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
-dynamic get_value(Map<String, dynamic> map, String key) {
+/// Since this is only used for [DNADesign]s, it throws an [IllegalDNADesignError].
+dynamic get_value(Map<String, dynamic> map, String key, String name) {
   if (!map.containsKey(key)) {
-    throw ArgumentError('key "${key}" is missing from map ${map}');
+    throw IllegalDNADesignError('key "${key}" is missing from map describing ${name}:\n  ${map}');
   } else {
     return map[key];
   }
@@ -88,7 +87,6 @@ num sigmoid(num x) {
 @JS(constants.js_function_name_cache_svg)
 external ImageElement cache_svg(String svg_elt_id);
 
-
 @JS(constants.js_function_name_current_zoom)
 external num current_zoom();
 
@@ -100,7 +98,6 @@ Point<num> current_pan() {
   return Point<num>(ret[0], ret[1]);
 }
 
-
 String substrand_line_id(BoundSubstrand substrand) =>
     'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'right' : 'left'}';
 
@@ -109,7 +106,6 @@ String insertion_id(BoundSubstrand substrand, int offset) =>
 
 String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
     'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';
-
 
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {

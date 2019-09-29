@@ -16,7 +16,7 @@ import 'util.dart' as util;
 import 'dispatcher/undo_redo.dart';
 import 'view/view.dart';
 import 'constants.dart' as constants;
-import 'local_storage.dart' as local_storage;
+import 'dispatcher/local_storage.dart' as local_storage;
 
 App app = App();
 
@@ -27,13 +27,9 @@ App app = App();
 class App {
   Model model;
   View view;
-//  Controller controller;
 
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
-
-  /// Listener for Actions that indicate desired changes to the Model
-//  StreamController<ActionCustom> action_notifier = StreamController<ActionCustom>();
 
   start() async {
 
@@ -42,8 +38,6 @@ class App {
 //    set_new_design_from_json_js = allowInterop((String json_string) {
 //      set_new_design_from_json(json_string);
 //    });
-
-//    this.controller = Controller();
 
     this.model =
         await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
@@ -56,16 +50,9 @@ class App {
     String initial_editor_content = await
       util.file_content('examples/2_staple_2_helix_origami_deletions_insertions.py');
     this.model.editor_content = initial_editor_content;
-
     util.save_editor_content_to_js_context(this.model.editor_content);
-
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
-
-//    this.action_notifier.stream.listen((ActionCustom action) {
-//      this.undo_redo.apply(action);
-//    });
-
 
     // allow Brython some way to tell us about errors that happened when compiling
     context[constants.js_function_name_set_error_message_from_python_script] = allowInterop((String msg) {
@@ -73,13 +60,11 @@ class App {
 //      set_error_message(msg);
     });
 
-    //XXX: Controller must be created before the first render since views must
-    // register as listeners to the notifiers of the Controller.
     DivElement app_root_element = querySelector('#top-container');
-    this.view = View(app_root_element);
-    this.view.render();
+    this.view = View(app_root_element, this.model);
 
-//    app.controller.setup_subscriptions();
+    model.trigger();
+
   }
 
   send_action(ActionPack action_pack) {

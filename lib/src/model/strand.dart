@@ -72,9 +72,10 @@ class IDTFields extends JSONSerializable {
   }
 
   IDTFields.from_json(Map<String, dynamic> json_map) {
-    this.name = util.get_value(json_map, constants.idt_name_key);
-    this.scale = util.get_value(json_map, constants.idt_scale_key);
-    this.purification = util.get_value(json_map, constants.idt_purification_key);
+    var field_name = 'IDTFields';
+    this.name = util.get_value(json_map, constants.idt_name_key, field_name);
+    this.scale = util.get_value(json_map, constants.idt_scale_key, field_name);
+    this.purification = util.get_value(json_map, constants.idt_purification_key, field_name);
     if (json_map.containsKey(constants.idt_plate_key)) {
       this.plate = json_map[constants.idt_plate_key];
     }
@@ -142,8 +143,9 @@ class Strand extends JSONSerializable {
 
   Strand.from_json(Map<String, dynamic> json_map) {
     // need to use List.from because List.map returns Iterable, not List
+    var name = 'Strand';
     this.substrands = List<Substrand>.from(util
-        .get_value(json_map, constants.substrands_key)
+        .get_value(json_map, constants.substrands_key, name)
         .map((substrand_json) => Substrand.from_json(substrand_json)));
     for (var substrand in this.substrands) {
       substrand._strand = this;
@@ -289,7 +291,8 @@ class Loopout extends Substrand {
   }
 
   Loopout.from_json(Map<String, dynamic> json_map) {
-    this.length = util.get_value(json_map, constants.loopout_key);
+    var name = 'Loopout';
+    this.length = util.get_value(json_map, constants.loopout_key, name);
   }
 
   Map<String, dynamic> to_json_serializable() {
@@ -569,10 +572,11 @@ class BoundSubstrand extends Substrand {
   }
 
   BoundSubstrand.from_json(Map<String, dynamic> json_map) {
-    this.helix = util.get_value(json_map, constants.helix_idx_key);
-    this.forward = util.get_value(json_map, constants.forward_key);
-    this.start = util.get_value(json_map, constants.start_key);
-    this.end = util.get_value(json_map, constants.end_key);
+    var name = 'Substrand';
+    this.helix = util.get_value(json_map, constants.helix_idx_key, name);
+    this.forward = util.get_value(json_map, constants.forward_key, name);
+    this.start = util.get_value(json_map, constants.start_key, name);
+    this.end = util.get_value(json_map, constants.end_key, name);
     if (json_map.containsKey(constants.deletions_key)) {
       this.deletions = List<int>.from(json_map[constants.deletions_key]);
     } else {

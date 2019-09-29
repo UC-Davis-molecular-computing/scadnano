@@ -1,7 +1,6 @@
 import 'dart:html';
 import 'dart:math';
 
-import 'package:path/path.dart';
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/model/strand.dart';
 
