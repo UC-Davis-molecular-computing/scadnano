@@ -1,3 +1,4 @@
+import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 
 import 'strand.dart';
@@ -38,17 +39,12 @@ class MouseoverData {
       'MouseoverData(helix=${this.helix_idx}, offset=${this.offset}, substrand=${this.substrand})';
 }
 
-class MouseoverActions {
-  final Action<MouseoverParameters> update_data = Action<MouseoverParameters>();
-  final Action<Null> remove_data = Action<Null>();
-}
 
 class MouseoverDataStore extends Store {
-  MouseoverActions _actions = MouseoverActions();
 
-  Action<MouseoverParameters> get update_data => this._actions.update_data;
+  Action<MouseoverParameters> get update_mouseover_data => Actions.update_mouseover_data;
 
-  Action<Null> get remove_data => this._actions.remove_data;
+  Action<Null> get remove_mouseover_data => Actions.remove_mouseover_data;
 
   MouseoverData _data = null;
 
@@ -56,7 +52,7 @@ class MouseoverDataStore extends Store {
 
   MouseoverDataStore() {
     triggerOnActionV2<MouseoverParameters>(
-        this._actions.update_data, (params) => this._data = params.mouseover_data());
-    triggerOnActionV2<Null>(this._actions.remove_data, (_) => this._data = null);
+        this.update_mouseover_data, (params) => this._data = params.mouseover_data());
+    triggerOnActionV2<Null>(this.remove_mouseover_data, (_) => this._data = null);
   }
 }

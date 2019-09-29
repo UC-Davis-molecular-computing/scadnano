@@ -14,7 +14,7 @@ part 'design_footer.over_react.g.dart';
 UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
 @Props()
-class _$DesignFooterProps extends FluxUiProps<MouseoverActions, MouseoverDataStore> {}
+class _$DesignFooterProps extends FluxUiProps<MouseoverDataStore, MouseoverDataStore> {}
 
 @Component()
 class DesignFooterComponent extends FluxUiComponent<DesignFooterProps> {

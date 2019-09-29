@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'model/helix.dart';
 
 const String INITIAL_VERSION = "0.0.1";
@@ -39,6 +41,8 @@ const editor_content_js_key = 'editor_content';
 
 const compile_button_id = 'compile';
 
+const default_helix_rotation = - pi / 2.0;
+
 /////////////////////////////////////////////////////////////
 // JSON keys
 
@@ -54,6 +58,7 @@ const strands_key = 'strands';
 // Helix keys
 const idx_key = 'idx';
 const max_bases_key = 'max_bases';
+const rotation_key = 'rotation';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 //const position_key = 'position'; // support in the future

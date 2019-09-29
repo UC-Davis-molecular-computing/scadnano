@@ -204,6 +204,8 @@ class Helix extends JSONSerializable {
   /// position in Helix as well, but svg_position will always be 2D.
   Point<num> _svg_position = null;
 
+  double _rotation = constants.default_helix_rotation;
+
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
   int _max_bases = -1;
 
@@ -218,6 +220,14 @@ class Helix extends JSONSerializable {
   bool has_major_tick_distance() => this._major_tick_distance >= 0;
 
   bool has_major_ticks() => this._major_ticks != null;
+
+  get rotation => this._rotation;
+
+  set rotation(double new_rotation) {
+    this._rotation = new_rotation;
+  }
+
+  bool has_nondefault_rotation() => (this._rotation - constants.default_helix_rotation).abs() > 0.0001;
 
   set major_tick_distance(int new_dist) {
     this._major_tick_distance = new_dist;
@@ -261,6 +271,10 @@ class Helix extends JSONSerializable {
 
     if (this.has_nondefault_max_bases()) {
       json_map[constants.max_bases_key] = this.max_bases;
+    }
+
+    if (this.has_nondefault_rotation()) {
+      json_map[constants.rotation_key] = this._rotation;
     }
 
     return NoIndent(json_map);
@@ -414,6 +428,13 @@ class Helix extends JSONSerializable {
   num svg_width() => constants.BASE_WIDTH_SVG * this.max_bases;
 
   num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
+
+  //TODO: figure out how to account for (or not) insertions and deletions
+  /// in radians
+  double rotation_3p(int offset) => (this._rotation + (2 * pi * offset / 10.5)) % (2 * pi);
+
+  /// in radians
+  double rotation_5p(int offset) => this.rotation_3p(offset) + (150.0 / 360.0 * 2 * pi); // 3' rotation + 150 degrees
 
 //  Helix.from_js_object(JsObject js_obj) {
 //    this._idx = js_obj[constants.idx_key];

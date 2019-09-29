@@ -3,6 +3,7 @@ library actions;
 
 import 'package:js/js.dart';
 import 'package:scadnano/src/model/helix.dart';
+import 'package:scadnano/src/model/mouseover_data.dart';
 import 'package:scadnano/src/model/strand.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
@@ -61,6 +62,10 @@ class BatchActionPack extends ReversibleActionPack {
 }
 
 class Actions {
+  // Mouseover data
+  static final Action<MouseoverParameters> update_mouseover_data = Action<MouseoverParameters>();
+  static final Action<Null> remove_mouseover_data = Action<Null>();
+
   // Helix
   static final helix_use = Action<HelixUseActionParameters>();
   static final set_helices = Action<List<Helix>>();

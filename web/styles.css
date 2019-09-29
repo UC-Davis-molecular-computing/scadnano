@@ -189,6 +189,18 @@ html, body {
     cursor: grabbing;
 }
 
+.rotation-line {
+    stroke-width: 3;
+}
+
+.rotation-line-3p{
+    stroke: red;
+}
+
+.rotation-line-5p{
+    stroke: blue;
+}
+
 .helix-mouseover {
     visibility: hidden;
     pointer-events: all;

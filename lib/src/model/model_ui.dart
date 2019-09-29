@@ -7,6 +7,9 @@ import 'strand.dart';
 import '../app.dart';
 import 'helix.dart';
 
+//TODO: add ability for user to ctrl+click (or some special key click) at offset on helix to set that helix's notion
+// of DNA backbones rotation, which will then be displayed in the side view on all other offsets
+
 ////////////////////////////////////////////////
 // Stores
 

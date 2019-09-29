@@ -1,6 +1,7 @@
 import 'dart:svg' hide Point;
 
 import 'package:scadnano/src/constants.dart';
+import 'package:scadnano/src/model/mouseover_data.dart';
 
 import 'design_side_helix.dart';
 import '../model/helix.dart';
@@ -14,7 +15,9 @@ part 'design_side.over_react.g.dart';
 UiFactory<DesignSideProps> DesignSide = _$DesignSide;
 
 @Props()
-class _$DesignSideProps extends FluxUiProps<HelicesStore, HelicesStore> {}
+class _$DesignSideProps extends FluxUiProps<HelicesStore, HelicesStore> {
+  MouseoverDataStore mouseover_data_store;
+}
 
 @Component()
 class DesignSideComponent extends FluxUiComponent<DesignSideProps> {
@@ -30,6 +33,7 @@ class DesignSideComponent extends FluxUiComponent<DesignSideProps> {
           ..helix = helix
           ..used = true
           ..grid_position = helix.grid_position()
+          ..store = this.props.mouseover_data_store
           ..key = '${helix.has_grid_position() ? helix.grid_position() : helix.svg_position()}')()
     ];
     List potential_helices_components = [

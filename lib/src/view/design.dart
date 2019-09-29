@@ -45,8 +45,7 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element, this.model) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     var side_view_svg = svg.SvgSvgElement()
@@ -63,7 +62,7 @@ class DesignViewComponent {
       };
 
     var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT};
-    var main_view_svg_viewport = svg.GElement()..attributes = {'id': 'main-view-svg-viewport'};
+    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT};
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
@@ -130,13 +129,14 @@ class DesignViewComponent {
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
 
       react_dom.render(
-          (DesignSide()..store=app.model.dna_design.helices_store)(),
+          (DesignSide()
+            ..store = app.model.dna_design.helices_store
+            ..mouseover_data_store = app.model.main_view_ui_model.mouse_over_store)(),
           querySelector('#$SIDE_VIEW_SVG_VIEWPORT'));
 
       react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT'));
 
-      react_dom.render(
-          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
+      react_dom.render((DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();

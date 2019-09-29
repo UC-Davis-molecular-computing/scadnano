@@ -44,7 +44,7 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent<DesignMainMouseo
   }
 
   _remove_mouseover_data() {
-    app.model.main_view_ui_model.mouse_over_store.remove_data();
+    app.model.main_view_ui_model.mouse_over_store.remove_mouseover_data();
   }
 
   _handle_mousemove(SyntheticMouseEvent event_syn) {
@@ -73,6 +73,7 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent<DesignMainMouseo
           'forward = ${forward}');
     }
 
-    app.model.main_view_ui_model.mouse_over_store.update_data(MouseoverParameters(helix_idx, offset, forward));
+    app.model.main_view_ui_model.mouse_over_store
+        .update_mouseover_data(MouseoverParameters(helix_idx, offset, forward));
   }
 }
