@@ -1,16 +1,13 @@
 @JS()
 library app;
 
-import 'dart:async';
 import 'dart:html';
 import 'dart:js';
 
 import 'package:js/js.dart';
 
-//import 'model/model.dart';
 import 'model/model.dart';
 
-import 'controller.dart';
 import 'dispatcher/actions.dart';
 import 'util.dart' as util;
 import 'dispatcher/undo_redo.dart';
@@ -64,12 +61,11 @@ class App {
     this.view = View(app_root_element, this.model);
 
     model.trigger();
-
   }
 
   send_action(ActionPack action_pack) {
     if (action_pack is ReversibleActionPack) {
-      ReversibleActionPack rev_action_pack = action_pack as ReversibleActionPack;
+      ReversibleActionPack rev_action_pack = action_pack;
       this.undo_redo.apply(rev_action_pack);
     } else {
       action_pack.apply();

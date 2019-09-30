@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:html';
 
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 
 import '../model/composite_stores.dart';
-import '../model/dna_design.dart';
 import '../model/model_ui.dart';
 import '../app.dart';
 
@@ -38,7 +36,7 @@ class MenuComponent extends FluxUiComponent<MenuProps> {
   render() {
     bool show_dna = this.props.store.show_dna_store.show_dna;
     bool show_mismatches = this.props.store.show_mismatches_store.show_mismatches;
-    bool show_editor = this.props.store.show_editor_store.show_editor;
+//    bool show_editor = this.props.store.show_editor_store.show_editor;
     return Dom.div()(
       //XXX: I like to keep this button around to simulate random things that require user interaction
 //        (Dom.button()

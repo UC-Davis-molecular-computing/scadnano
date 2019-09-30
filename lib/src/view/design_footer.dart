@@ -1,8 +1,4 @@
-import 'dart:html';
-
 import '../model/mouseover_data.dart';
-import 'view.dart';
-import '../app.dart';
 
 //TODO: use tooltips (or something) to give more information on mouse hover than the footer has room for
 

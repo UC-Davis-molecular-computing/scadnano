@@ -81,22 +81,22 @@ class View {
 //    }
   }
 
-  update_showing_editor() {
-    //TODO: Firefox won't let editor pane shrink (when pan separater is dragged) to hide text; Chrome puts a scrollbar
-    // at the bottom when that happens and lets the editor pane shrink arbitrarily (which is the desired behavior)
-
-    if (!this.currently_showing_editor && app.model.show_editor) {
-      this.nonmenu_panes_container_element.children.add(design_editor_separator);
-      this.nonmenu_panes_container_element.children.add(editor_element);
-      this.currently_showing_editor = true;
-      setup_splits(app.model.show_editor);
-      this.editor_view.render();
-    } else if (this.currently_showing_editor && !app.model.show_editor) {
-      this.nonmenu_panes_container_element.children.remove(design_editor_separator);
-      this.nonmenu_panes_container_element.children.remove(editor_element);
-      this.currently_showing_editor = false;
-      setup_splits(app.model.show_editor);
-      this.editor_view.render();
-    }
-  }
+//  update_showing_editor() {
+//    //TODO: Firefox won't let editor pane shrink (when pan separater is dragged) to hide text; Chrome puts a scrollbar
+//    // at the bottom when that happens and lets the editor pane shrink arbitrarily (which is the desired behavior)
+//
+//    if (!this.currently_showing_editor && app.model.show_editor) {
+//      this.nonmenu_panes_container_element.children.add(design_editor_separator);
+//      this.nonmenu_panes_container_element.children.add(editor_element);
+//      this.currently_showing_editor = true;
+//      setup_splits(app.model.show_editor);
+//      this.editor_view.render();
+//    } else if (this.currently_showing_editor && !app.model.show_editor) {
+//      this.nonmenu_panes_container_element.children.remove(design_editor_separator);
+//      this.nonmenu_panes_container_element.children.remove(editor_element);
+//      this.currently_showing_editor = false;
+//      setup_splits(app.model.show_editor);
+//      this.editor_view.render();
+//    }
+//  }
 }

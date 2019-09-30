@@ -41,12 +41,19 @@ class DesignSideHelixComponent extends FluxUiComponent<DesignSideHelixProps> {
     Point<num> center = _g2c(this.props.grid_position);
     MouseoverDataStore mouseover_data_store = this.props.store;
 
+
+
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')([
       (Dom.circle()
         ..className = '$SIDE_VIEW_PREFIX-helix-circle' + (this.props.used ? ' used' : ' potential')
         ..r = '$RADIUS'
         ..key = 'circle'
         ..onClick = (e) => this._handle_click(e))(),
+      if (this.props.used)
+        (Dom.text()
+          ..className = '$SIDE_VIEW_PREFIX-helix-text'
+          ..key = 'text'
+          ..onClick = (e) => this._handle_click(e))(this.props.helix.idx().toString()),
       if (this.props.used &&
           mouseover_data_store.data != null &&
           mouseover_data_store.data.helix_idx == this.props.helix.idx())
@@ -56,11 +63,6 @@ class DesignSideHelixComponent extends FluxUiComponent<DesignSideHelixProps> {
           ..mouseover_data = mouseover_data_store.data
           ..key='rotation'
           ..className = '$SIDE_VIEW_PREFIX-helix-rotation')(),
-      if (this.props.used)
-        (Dom.text()
-          ..className = '$SIDE_VIEW_PREFIX-helix-text'
-          ..key = 'text'
-          ..onClick = (e) => this._handle_click(e))(this.props.helix.idx().toString()),
     ]);
   }
 

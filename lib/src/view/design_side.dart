@@ -1,11 +1,7 @@
-import 'dart:svg' hide Point;
-
-import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/model/mouseover_data.dart';
 
 import 'design_side_helix.dart';
 import '../model/helix.dart';
-import '../app.dart';
 
 import 'package:over_react/over_react.dart';
 

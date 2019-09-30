@@ -8,12 +8,6 @@ import 'package:scadnano/src/model/strand.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
-import '../model/model.dart';
-
-import '../app.dart';
-import '../util.dart' as util;
-import '../constants.dart' as constants;
-
 /// An ActionPack has all the data needed to apply an Action (the "payload" in the terminology of w_flux).
 /// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
 /// and the Undo/Redo stack (which needs the Action and payload packed into one object to put on the stack).

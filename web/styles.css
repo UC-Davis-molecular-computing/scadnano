@@ -191,15 +191,16 @@ html, body {
 
 .rotation-line {
     stroke-width: 3;
+    stroke-linecap: round;
 }
 
-.rotation-line-3p{
-    stroke: red;
-}
+/*.rotation-line-3p{*/
+/*    stroke: red;*/
+/*}*/
 
-.rotation-line-5p{
-    stroke: blue;
-}
+/*.rotation-line-5p{*/
+/*    stroke: blue;*/
+/*}*/
 
 .helix-mouseover {
     visibility: hidden;

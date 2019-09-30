@@ -10,8 +10,6 @@ import "package:react/react_client.dart";
 import "package:react/react_client/js_interop_helpers.dart"
     hide getProperty, setProperty, jsify;
 import 'package:react/react_client/react_interop.dart';
-import "package:react/react_dom.dart";
-import "package:react/react_dom_server.dart";
 import "package:react/src/react_client/synthetic_event_wrappers.dart" as events;
 import "package:react/src/react_client/event_prop_key_to_event_factory.dart";
 

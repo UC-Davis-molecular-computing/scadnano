@@ -1,12 +1,8 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/view/design_main_mismatches.dart';
 import 'package:tuple/tuple.dart';
 
-import '../model/dna_design.dart';
-import '../app.dart';
-import '../model/strand.dart';
 import '../constants.dart' as constants;
 
 part 'design_main_mismatch.over_react.g.dart';

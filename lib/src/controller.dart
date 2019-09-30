@@ -12,7 +12,6 @@ import 'model/dna_design.dart';
 import 'model/helix.dart';
 import 'json_serializable.dart';
 import 'app.dart';
-import 'dispatcher/actions.dart';
 
 /// Responsible for notifying view listeners of changes to the model,
 /// and for dispatching actions to change the model (coming from View interactions, for example).
@@ -108,7 +107,7 @@ class Controller {
 
   subscribe_to_show_editor() {
     this.notifier_show_editor_change.stream.listen((_) {
-      app.view.update_showing_editor();
+//      app.view.update_showing_editor();
     });
   }
 
@@ -240,7 +239,7 @@ class Controller {
   subscribe_to_editor_change_events() {
     var editor = app.view.editor_view.editor;
     editor.onChange.listen((event) {
-      String new_editor_content = app.view.editor_view.editor.getDoc().getValue();
+//      String new_editor_content = app.view.editor_view.editor.getDoc().getValue();
 //      var editor_content_action = EditorContentAction(new_editor_content);
 //      app.send_action(editor_content_action);
     });

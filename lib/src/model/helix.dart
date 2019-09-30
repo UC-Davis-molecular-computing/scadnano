@@ -7,7 +7,6 @@ import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
 import 'strand.dart';
-import 'model.dart';
 import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 
@@ -20,12 +19,12 @@ class HelixUseActionParameters {
 
   HelixUseActionParameters(this.use, this.grid_position, this.idx, this.max_bases);
 
-  @override
   HelixUseActionParameters reverse() =>
       HelixUseActionParameters(!this.use, this.grid_position, this.idx, this.max_bases);
 }
 
-class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
+class HelixUseActionPack
+    extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
   HelixUseActionParameters params;
 
   HelixUseActionPack(this.params) : super(Actions.helix_use, params);
@@ -166,7 +165,8 @@ class PotentialHelix extends JSONSerializable {
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -205,6 +205,7 @@ class Helix extends JSONSerializable {
   Point<num> _svg_position = null;
 
   double _rotation = constants.default_helix_rotation;
+  int _rotation_anchor = constants.default_helix_rotation_anchor;
 
   /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
   int _max_bases = -1;
@@ -228,6 +229,14 @@ class Helix extends JSONSerializable {
   }
 
   bool has_nondefault_rotation() => (this._rotation - constants.default_helix_rotation).abs() > 0.0001;
+
+  get rotation_anchor => this._rotation_anchor;
+
+  set rotation_anchor(int new_rotation_anchor) {
+    this._rotation_anchor = new_rotation_anchor;
+  }
+
+  bool has_nondefault_rotation_anchor() => this._rotation_anchor != constants.default_helix_rotation_anchor;
 
   set major_tick_distance(int new_dist) {
     this._major_tick_distance = new_dist;
@@ -278,6 +287,14 @@ class Helix extends JSONSerializable {
     }
 
     return NoIndent(json_map);
+  }
+
+  /// Return [Substrand]s at [offset].
+  List<BoundSubstrand> substrands_at(int offset) {
+    List<BoundSubstrand> substrands_at_offset = [
+      for (var substrand in this._substrands) if (substrand.contains_offset(offset)) substrand
+    ];
+    return substrands_at_offset;
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
@@ -336,7 +353,8 @@ class Helix extends JSONSerializable {
 //    this._svg_position = this.default_svg_position();
 //  }
 
-  int get hashCode => quiver.hash4(this._idx, this._grid_position.h, this._grid_position.v, this._grid_position.b);
+  int get hashCode =>
+      quiver.hash4(this._idx, this._grid_position.h, this._grid_position.v, this._grid_position.b);
 
   operator ==(other) {
     if (other is Helix) {
@@ -390,7 +408,8 @@ class Helix extends JSONSerializable {
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       this._grid_position = GridPosition.from_list(gp_list);
     }
@@ -429,12 +448,66 @@ class Helix extends JSONSerializable {
 
   num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
 
-  //TODO: figure out how to account for (or not) insertions and deletions
-  /// in radians
-  double rotation_3p(int offset) => (this._rotation + (2 * pi * offset / 10.5)) % (2 * pi);
+  /// Number of bases between start and end offsets, inclusive, on this [Helix].
+  /// Accounts for substrands with insertions and deletions on [BoundSubstrand]s on this Helix, but not if they
+  /// are inconsistent (on one [BoundSubstrand] but not the other).
+  int num_bases_between(int start, int end) {
+    if (start > end) {
+      int swap = start;
+      start = end;
+      end = swap;
+    }
+
+    List<BoundSubstrand> substrands_intersecting = [];
+    for (var ss in this._substrands) {
+//      if (! (ss.end <= start || end < ss.start)) {
+//
+//      }
+      if (start < ss.end && ss.start <= end) {
+        substrands_intersecting.add(ss);
+      }
+    }
+
+    Set<int> deletions_intersecting = {};
+    Set<Tuple2<int, int>> insertions_intersecting = {};
+    for (var ss in substrands_intersecting) {
+      for (var deletion in ss.deletions) {
+        if (start <= deletion && deletion <= end) {
+          deletions_intersecting.add(deletion);
+        }
+      }
+      for (var insertion in ss.insertions) {
+        if (start <= insertion.item1 && insertion.item1 <= end) {
+          insertions_intersecting.add(insertion);
+        }
+      }
+    }
+
+    int total_insertion_length = 0;
+    for (var insertion in insertions_intersecting) {
+      total_insertion_length += insertion.item2;
+    }
+
+    int dna_length = end - start + 1 - deletions_intersecting.length + total_insertion_length;
+
+    return dna_length;
+  }
 
   /// in radians
-  double rotation_5p(int offset) => this.rotation_3p(offset) + (150.0 / 360.0 * 2 * pi); // 3' rotation + 150 degrees
+  double rotation_3p(int offset) {
+    int num_bases;
+    if (this._rotation_anchor < offset) {
+      num_bases = this.num_bases_between(this._rotation_anchor, offset - 1);
+    } else if (this._rotation_anchor > offset) {
+      num_bases = this.num_bases_between(offset + 1, this._rotation_anchor);
+    } else {
+      num_bases = 0;
+    }
+    return (this._rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
+  }
+
+  /// in radians;  3' rotation + 150 degrees
+  double rotation_5p(int offset) => this.rotation_3p(offset) + (150.0 / 360.0 * 2 * pi);
 
 //  Helix.from_js_object(JsObject js_obj) {
 //    this._idx = js_obj[constants.idx_key];

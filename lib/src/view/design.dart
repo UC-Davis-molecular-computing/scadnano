@@ -6,7 +6,6 @@ import 'dart:html';
 import 'dart:svg' as svg;
 
 import 'package:js/js.dart';
-import 'package:over_react/over_react.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:scadnano/src/model/model.dart';
 
@@ -79,6 +78,7 @@ class DesignViewComponent {
     design_above_footer_pane.children.add(side_pane);
     design_above_footer_pane.children.add(side_main_separator);
     design_above_footer_pane.children.add(main_pane);
+    setup_splits(false);
 
     this.error_message_component = ErrorMessageComponent(error_message_pane, this.model.error_message_store);
 
@@ -89,7 +89,6 @@ class DesignViewComponent {
   }
 
   render() {
-    print('rendering Design element');
     //TODO: add MODES element to right side
     this.root_element.children.clear();
     if (this.model.has_error()) {

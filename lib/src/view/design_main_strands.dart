@@ -1,7 +1,5 @@
 import 'package:over_react/over_react.dart';
 
-import '../model/dna_design.dart';
-import '../app.dart';
 import '../model/strand.dart';
 import 'design_main_strand.dart';
 

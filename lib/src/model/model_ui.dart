@@ -4,7 +4,6 @@ import 'package:w_flux/w_flux.dart';
 
 import 'mouseover_data.dart';
 import 'strand.dart';
-import '../app.dart';
 import 'helix.dart';
 
 //TODO: add ability for user to ctrl+click (or some special key click) at offset on helix to set that helix's notion

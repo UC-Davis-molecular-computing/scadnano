@@ -291,10 +291,7 @@ ReactElement _svg_text_number_of_insertions(
   }
 
   String key = 'num-insertion-H${substrand.helix}-${offset}';
-  String key_textpath = 'textpath-$key';
   SvgProps text_path_props = Dom.textPath()
-//    ..key = key_textpath
-//    ..id = key_textpath
     ..className = 'insertion-length'
     ..href = '#${util.insertion_id(substrand, offset)}';
   text_path_props.addProp('startOffset', '50%');

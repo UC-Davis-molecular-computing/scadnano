@@ -41,7 +41,8 @@ const editor_content_js_key = 'editor_content';
 
 const compile_button_id = 'compile';
 
-const default_helix_rotation = - pi / 2.0;
+const default_helix_rotation = -pi / 2.0;
+const default_helix_rotation_anchor = 0;
 
 /////////////////////////////////////////////////////////////
 // JSON keys
@@ -86,4 +87,3 @@ const insertions_key = 'insertions';
 
 // Loopout keys
 const loopout_key = 'loopout';
-
