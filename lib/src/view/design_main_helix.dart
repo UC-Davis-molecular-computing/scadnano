@@ -17,31 +17,30 @@ part 'design_main_helix.over_react.g.dart';
 UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 
 @Props()
-class _$DesignMainHelixProps extends UiProps {
-  Helix helix;
-}
+class _$DesignMainHelixProps extends FluxUiProps<Helix, Helix> {}
 
 @Component()
-class DesignMainHelixComponent extends UiComponent<DesignMainHelixProps> {
+class DesignMainHelixComponent extends FluxUiComponent<DesignMainHelixProps> {
   @override
   Map getDefaultProps() => (newProps());
 
   @override
   render() {
+    Helix helix = this.props.store;
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
 
     // for helix horizontal lines
-    num width = this.props.helix.svg_width();
-    num height = this.props.helix.svg_height();
+    num width = helix.svg_width();
+    num height = helix.svg_height();
 
     var vert_line_paths = this._vert_line_paths();
-    int idx = this.props.helix.idx();
+    int idx = helix.idx();
 
     return (Dom.g()
       ..className = 'helix-main-view'
-      ..transform = this.props.helix.transform())(
+      ..transform = helix.translate())(
       (Dom.circle()
         ..className = 'helix-circle-main-view'
         ..cx = '$cx'
@@ -75,22 +74,23 @@ class DesignMainHelixComponent extends UiComponent<DesignMainHelixProps> {
       }
     }
 
-    var major_tick_distance = this.props.helix.has_major_tick_distance()
-        ? this.props.helix.major_tick_distance
+    Helix helix = this.props.store;
+    var major_tick_distance = helix.has_major_tick_distance()
+        ? helix.major_tick_distance
         : app.model.dna_design.major_tick_distance;
-    Set<int> major_ticks = (this.props.helix.has_major_ticks()
-            ? this.props.helix.major_ticks
-            : regularly_spaced_ticks(major_tick_distance, this.props.helix.max_bases))
+    Set<int> major_ticks = (helix.has_major_ticks()
+            ? helix.major_ticks
+            : regularly_spaced_ticks(major_tick_distance, helix.max_bases))
         .toSet();
 
     List<String> path_cmds_vert_minor = [];
     List<String> path_cmds_vert_major = [];
 
     num x = 0;
-    for (int base = 0; base <= this.props.helix.max_bases; base++) {
+    for (int base = 0; base <= helix.max_bases; base++) {
       var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x 0');
-      path_cmds.add('v ${this.props.helix.svg_height()}');
+      path_cmds.add('v ${helix.svg_height()}');
       x += constants.BASE_WIDTH_SVG;
     }
 

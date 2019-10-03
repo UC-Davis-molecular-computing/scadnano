@@ -2,6 +2,7 @@
 library actions;
 
 import 'package:js/js.dart';
+import 'package:scadnano/src/model/edit_mode.dart';
 import 'package:scadnano/src/model/helix.dart';
 import 'package:scadnano/src/model/mouseover_data.dart';
 import 'package:scadnano/src/model/strand.dart';
@@ -57,14 +58,15 @@ class BatchActionPack extends ReversibleActionPack {
 
 class Actions {
   // Mouseover data
-  static final Action<MouseoverParameters> update_mouseover_data = Action<MouseoverParameters>();
-  static final Action<Null> remove_mouseover_data = Action<Null>();
+  static final update_mouseover_data = Action<MouseoverParameters>();
+  static final remove_mouseover_data = Action<Null>();
 
   // Helix
   static final helix_use = Action<HelixUseActionParameters>();
   static final set_helices = Action<List<Helix>>();
   static final set_potential_helices = Action<List<PotentialHelix>>();
   static final set_all_helices = Action<Tuple2<List<Helix>, List<PotentialHelix>>>();
+  static final set_helix_rotation = Action<SetHelixRotationActionParameters>();
 
   // Strand
   static final strand_remove = Action<Strand>();
@@ -72,6 +74,10 @@ class Actions {
 
   // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
   static final set_error_message = Action<String>();
+
+  // Edit mode
+  static final set_edit_mode = Action<EditModeChoice>();
+
 }
 
 /*

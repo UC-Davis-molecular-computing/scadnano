@@ -99,10 +99,10 @@ Point<num> current_pan() {
 }
 
 String substrand_line_id(BoundSubstrand substrand) =>
-    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'right' : 'left'}';
+    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'forward' : 'reverse'}';
 
 String insertion_id(BoundSubstrand substrand, int offset) =>
-    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'right' : 'left'}';
+    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
 String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
     'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';

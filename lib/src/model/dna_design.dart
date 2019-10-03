@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:tuple/tuple.dart';
 
+import '../dispatcher/actions.dart';
 import '../app.dart';
 import 'strand.dart';
 import 'helix.dart';

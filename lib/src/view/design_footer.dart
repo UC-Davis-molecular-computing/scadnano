@@ -22,7 +22,7 @@ class DesignFooterComponent extends FluxUiComponent<DesignFooterProps> {
     MouseoverData mouseover_data = this.props.store.data;
     String text = '';
     if (mouseover_data != null) {
-      int idx = mouseover_data.helix_idx;
+      int idx = mouseover_data.helix.idx();
       int offset = mouseover_data.offset;
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.substrand != null) {

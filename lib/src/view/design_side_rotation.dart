@@ -12,7 +12,6 @@ UiFactory<DesignSideRotationProps> DesignSideRotation = _$DesignSideRotation;
 
 @Props()
 class _$DesignSideRotationProps extends UiProps {
-  Helix helix;
   double radius;
   MouseoverData mouseover_data;
 }
@@ -24,10 +23,11 @@ class DesignSideRotationComponent extends UiComponent<DesignSideRotationProps> {
 
   @override
   render() {
+    Helix helix = this.props.mouseover_data.helix;
     Strand strand_forward;
     Strand strand_reverse;
 
-    var substrands = this.props.helix.substrands_at(this.props.mouseover_data.offset);
+    var substrands = helix.substrands_at(this.props.mouseover_data.offset);
     for (var ss in substrands) {
       if (ss.forward) {
         strand_forward = ss.strand;
@@ -36,8 +36,8 @@ class DesignSideRotationComponent extends UiComponent<DesignSideRotationProps> {
       }
     }
 
-    var rotation_3p = this.props.helix.rotation_3p(this.props.mouseover_data.offset);
-    var rotation_5p = this.props.helix.rotation_5p(this.props.mouseover_data.offset);
+    var rotation_3p = helix.rotation_3p(this.props.mouseover_data.offset);
+    var rotation_5p = helix.rotation_5p(this.props.mouseover_data.offset);
     var color_3p = strand_forward == null ? 'black' : strand_forward.color.toHexColor().toCssString();
     var color_5p = strand_reverse == null ? 'black' : strand_reverse.color.toHexColor().toCssString();
 

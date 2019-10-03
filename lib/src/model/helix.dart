@@ -10,6 +10,30 @@ import 'strand.dart';
 import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 
+class SetHelixRotationActionParameters {
+  final int idx;
+  final int anchor;
+  final num rotation;
+
+  final int old_anchor;
+  final num old_rotation;
+
+  SetHelixRotationActionParameters(this.idx, this.anchor, this.rotation, this.old_anchor, this.old_rotation);
+
+  SetHelixRotationActionParameters reverse() => SetHelixRotationActionParameters(
+      this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
+}
+
+class SetHelixRotationActionPack
+    extends ReversibleActionPack<Action<SetHelixRotationActionParameters>, SetHelixRotationActionParameters> {
+  SetHelixRotationActionParameters params;
+
+  SetHelixRotationActionPack(this.params) : super(Actions.set_helix_rotation, params);
+
+  @override
+  SetHelixRotationActionPack reverse() => SetHelixRotationActionPack(this.params.reverse());
+}
+
 /// If use=true, converting the given PotentialHelix to a Helix; otherwise converting the other way.
 class HelixUseActionParameters {
   final bool use;
@@ -30,9 +54,7 @@ class HelixUseActionPack
   HelixUseActionPack(this.params) : super(Actions.helix_use, params);
 
   @override
-  HelixUseActionPack reverse() {
-    return HelixUseActionPack(this.params.reverse());
-  }
+  HelixUseActionPack reverse() => HelixUseActionPack(this.params.reverse());
 }
 
 class HelicesStore extends Store {
@@ -61,6 +83,7 @@ class HelicesStore extends Store {
     this._helices = [];
     this._potential_helices = [];
     this.build_helices_map();
+    this._handle_actions();
   }
 
   build_helices_map() {
@@ -71,6 +94,14 @@ class HelicesStore extends Store {
     for (var ph in this.potential_helices) {
       this._gp_to_helix[ph.grid_position()] = ph;
     }
+  }
+
+  _handle_actions() {
+//    this.triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation, (params) {
+//      Helix helix = this._helices[params.idx];
+//      helix.rotation = params.rotation;
+//      helix.rotation_anchor = params.anchor;
+//    });
   }
 }
 
@@ -189,7 +220,7 @@ class PotentialHelix extends JSONSerializable {
 /// Represents a helix (as opposed to the circles drawn in the side
 /// view initially, which are unused helices). However, a helix doesn't
 /// have to have any strands on it.
-class Helix extends JSONSerializable {
+class Helix extends Store implements JSONSerializable {
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default. This default positioning can be overridden by setting the position field.
@@ -265,7 +296,20 @@ class Helix extends JSONSerializable {
   Helix({grid_position, max_bases}) {
     this._grid_position = grid_position;
     this._max_bases = max_bases;
+
+    this._handle_actions();
   }
+
+
+  _handle_actions() {
+    this.triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation, (params) {
+      if (this.idx() == params.idx) {
+        this.rotation = params.rotation;
+        this.rotation_anchor = params.anchor;
+      }
+    });
+  }
+
 
   dynamic to_json_serializable() {
     Map<String, dynamic> json_map = {};
@@ -426,6 +470,8 @@ class Helix extends JSONSerializable {
     if (json_map.containsKey(constants.max_bases_key)) {
       this._max_bases = json_map[constants.max_bases_key];
     }
+
+    this._handle_actions();
   }
 
   set_default_grid_position() {
@@ -442,7 +488,7 @@ class Helix extends JSONSerializable {
 
   /// Transform to apply to an SVG element so that it will appear in the correct position relative to this
   /// Helix.
-  transform() => 'translate(${this.svg_position().x} ${this.svg_position().y})';
+  translate() => 'translate(${this.svg_position().x} ${this.svg_position().y})';
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.max_bases;
 
@@ -460,9 +506,6 @@ class Helix extends JSONSerializable {
 
     List<BoundSubstrand> substrands_intersecting = [];
     for (var ss in this._substrands) {
-//      if (! (ss.end <= start || end < ss.start)) {
-//
-//      }
       if (start < ss.end && ss.start <= end) {
         substrands_intersecting.add(ss);
       }
@@ -499,7 +542,7 @@ class Helix extends JSONSerializable {
     if (this._rotation_anchor < offset) {
       num_bases = this.num_bases_between(this._rotation_anchor, offset - 1);
     } else if (this._rotation_anchor > offset) {
-      num_bases = this.num_bases_between(offset + 1, this._rotation_anchor);
+      num_bases = -this.num_bases_between(offset + 1, this._rotation_anchor);
     } else {
       num_bases = 0;
     }

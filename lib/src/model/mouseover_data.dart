@@ -1,6 +1,7 @@
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 
+import 'helix.dart';
 import 'strand.dart';
 import '../app.dart';
 
@@ -23,28 +24,25 @@ class MouseoverParameters {
         }
       }
     }
-    var ret = MouseoverData(this.helix_idx, this.offset, substrand);
+    Helix helix = app.model.dna_design.helices[this.helix_idx];
+    var ret = MouseoverData(helix, this.offset, substrand);
     return ret;
   }
 }
 
 class MouseoverData {
-  final int helix_idx;
+  final Helix helix;
   final int offset;
   final BoundSubstrand substrand;
 
-  MouseoverData([this.helix_idx = null, this.offset = null, this.substrand = null]);
+  MouseoverData([this.helix = null, this.offset = null, this.substrand = null]);
 
   String toString() =>
-      'MouseoverData(helix=${this.helix_idx}, offset=${this.offset}, substrand=${this.substrand})';
+      'MouseoverData(helix=${this.helix.idx()}, offset=${this.offset}, substrand=${this.substrand})';
 }
 
 
 class MouseoverDataStore extends Store {
-
-  Action<MouseoverParameters> get update_mouseover_data => Actions.update_mouseover_data;
-
-  Action<Null> get remove_mouseover_data => Actions.remove_mouseover_data;
 
   MouseoverData _data = null;
 
@@ -52,7 +50,11 @@ class MouseoverDataStore extends Store {
 
   MouseoverDataStore() {
     triggerOnActionV2<MouseoverParameters>(
-        this.update_mouseover_data, (params) => this._data = params.mouseover_data());
-    triggerOnActionV2<Null>(this.remove_mouseover_data, (_) => this._data = null);
+        Actions.update_mouseover_data, (params) => this._data = params.mouseover_data());
+    triggerOnActionV2<Null>(Actions.remove_mouseover_data, (_) => this._data = null);
+
+    // don't need to update any data, but want to alert listeners that data has changed; this helps to
+    // see the new rotation right away instead of waiting for a mouse move
+    triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation);
   }
 }

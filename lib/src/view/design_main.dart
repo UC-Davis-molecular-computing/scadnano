@@ -33,7 +33,8 @@ class DesignMainComponent extends FluxUiComponent<DesignMainProps> {
     DNADesign dna_design = this.props.store.dna_design;
     DNASequencesStore dna_sequences_store = this.props.store.dna_sequences_store;
     MismatchesStore mismatches_store = this.props.store.mismatches_store;
-    return Dom.g()(
+    return (Dom.g()
+      ..id = 'main-view-group')(
       (DesignMainHelices()..store = dna_design.helices_store)(),
       (DesignMainMismatches()..store = mismatches_store)(),
       (DesignMainStrands()..store = dna_design.strands_store)(),
@@ -42,3 +43,4 @@ class DesignMainComponent extends FluxUiComponent<DesignMainProps> {
     );
   }
 }
+

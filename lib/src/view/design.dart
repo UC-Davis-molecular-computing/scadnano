@@ -20,8 +20,10 @@ import 'design_footer.dart';
 
 const FOOTER_ID = 'design-footer-mouse-over';
 const MODES_ID = 'design-mode-buttons';
-const SIDE_VIEW_SVG_VIEWPORT = 'side-view-svg-viewport';
-const MAIN_VIEW_SVG_VIEWPORT = 'main-view-svg-viewport';
+const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
+const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
+const SIDE_VIEW_SVG_ID = 'side-view-svg';
+const MAIN_VIEW_SVG_ID = 'main-view-svg';
 
 class DesignViewComponent {
   DivElement root_element;
@@ -44,24 +46,26 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element, this.model) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()
+      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     var side_view_svg = svg.SvgSvgElement()
       ..attributes = {
-        'id': 'side-view-svg',
+        'id': SIDE_VIEW_SVG_ID,
         'width': '100%',
         'height': '100%',
       };
     var main_view_svg = svg.SvgSvgElement()
       ..attributes = {
-        'id': 'main-view-svg',
+        'id': MAIN_VIEW_SVG_ID,
         'width': '100%',
         'height': '100%',
       };
+    add_shadow_filter(main_view_svg);
 
-    var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT};
-    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT};
+    var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT_GROUP};
+    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
@@ -131,11 +135,12 @@ class DesignViewComponent {
           (DesignSide()
             ..store = app.model.dna_design.helices_store
             ..mouseover_data_store = app.model.main_view_ui_model.mouse_over_store)(),
-          querySelector('#$SIDE_VIEW_SVG_VIEWPORT'));
+          querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'));
 
-      react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT'));
+      react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'));
 
-      react_dom.render((DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
+      react_dom.render(
+          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
@@ -143,6 +148,107 @@ class DesignViewComponent {
       }
     }
   }
+
+  add_shadow_filter(svg.SvgSvgElement elt) {
+
+    // https://stackoverflow.com/a/6094674
+    var drop_shadow1 = [
+      svg.FEGaussianBlurElement()
+        ..attributes = {
+          'in': 'SourceAlpha',
+          'stdDeviation': '1',
+        },
+      svg.FEComponentTransferElement()
+        ..children = [
+          svg.FEFuncAElement()
+            ..attributes = {
+              'type': "linear",
+              'slope': "0.9",
+            },
+        ],
+      svg.FEMergeElement()
+        ..children = [
+          svg.FEMergeNodeElement(),
+          svg.FEMergeNodeElement()..attributes = {'in': "SourceGraphic"},
+        ],
+    ];
+
+
+//    <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="-5" />
+//    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
+//    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+
+    // https://codepen.io/andyshora/pen/vRRdRd
+    /*
+    <filter id="dropshadow" x="-2" y="-2" width="200" height="200">
+      <feGaussianBlur  stdDeviation="1"/>
+    </filter>
+     */
+    var drop_shadow2 = [
+      svg.FEGaussianBlurElement()
+        ..attributes = {
+          'stdDeviation': '0.5',
+        },
+    ];
+
+    //https://www.w3schools.com/graphics/svg_feoffset.asp
+    /*
+<svg height="120" width="120">
+  <defs>
+    <filter id="f1" x="0" y="0" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
+      <feBlend in2="offOut" in="SourceGraphic" mode="normal" />
+    </filter>
+  </defs>
+  <rect width="90" height="90" stroke="green" stroke-width="3"
+  fill="yellow" filter="url(#f1)" />
+</svg>
+     */
+    var drop_shadow3 = [
+      svg.FEOffsetElement()..attributes = {'result': 'offOut', 'in': 'SourceGraphic', 'dx': '0', 'dy': '0'},
+      svg.FEBlendElement()..attributes = {'in2': 'offOut', 'in': 'SourceGraphic', 'mode': 'normal'},
+    ];
+
+    var defns = svg.DefsElement()
+      ..children = [
+        svg.FilterElement()
+          ..children = drop_shadow2
+          ..attributes = {
+            'id': 'shadow',
+            'x': '-200%',
+            'y': '-100%',
+            'width': '500%',
+            'height': '500%',
+          }
+      ];
+    //XXX: if we want to use a filter, uncomment the next line
+    elt.children.add(defns);
+  }
+/*
+  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur -->
+  <feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset -->
+  <feComponentTransfer>
+    <feFuncA type="linear" slope="0.5"/> <!-- slope is the opacity of the shadow -->
+  </feComponentTransfer>
+  <feMerge>
+    <feMergeNode/> <!-- this contains the offset blurred image -->
+    <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
+  </feMerge>
+   */
+/* from https://gist.github.com/redblobgames/6851dc787241e390c241cd9484b16e4d
+  <defs>
+    <filter id="drop-shadow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="5" dy="5" result="offsetblur"/>
+      <feFlood flood-color="#000000"/>
+      <feComposite in2="offsetblur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+   */
 }
 
 class ErrorMessageComponent {

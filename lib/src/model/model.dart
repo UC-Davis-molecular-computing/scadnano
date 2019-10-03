@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:core';
 
 import 'package:scadnano/src/dispatcher/actions.dart';
+import 'package:scadnano/src/model/edit_mode.dart';
 import 'package:w_flux/w_flux.dart';
 
 import 'composite_stores.dart';
@@ -10,13 +11,16 @@ import '../app.dart';
 import 'dna_design.dart';
 
 class Model extends Store {
+  // composite stores
   DNASequencesStore dna_sequences_store;
   MismatchesStore mismatches_store;
   ShowStore show_store;
   DesignOrErrorStore design_or_error_store;
 
+  // basic stores
   DNADesign _dna_design;
   ErrorMessageStore error_message_store = ErrorMessageStore();
+  EditModeStore edit_mode_store = EditModeStore();
 
   String _editor_content = "";
 

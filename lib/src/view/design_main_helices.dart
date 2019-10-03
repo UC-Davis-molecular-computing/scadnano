@@ -23,7 +23,7 @@ class DesignMainHelicesComponent extends FluxUiComponent<DesignMainHelicesProps>
     return (Dom.g()..className = 'helices-main-view')([
       for (Helix helix in this.props.store.helices)
         (DesignMainHelix()
-          ..helix = helix
+          ..store = helix
           ..key = idx++)()
     ]);
   }

@@ -24,6 +24,12 @@ html, body {
     position: relative;
 }
 
+.fixed-vertical-separator {
+    width: 5px;
+    background: black;
+    position: relative;
+}
+
 .draggable-separator {
     width: 15px;
     height: 100%;
@@ -171,36 +177,56 @@ html, body {
 ************************************************/
 
 /************************************************
+** BEGIN mode layout
+************************************************/
+
+#edit-mode {
+    width: 75px;
+}
+
+.mode-button {
+    border: none;
+    width: 75px;
+    outline: 0;
+    font-weight: bold;
+    color: black;
+}
+
+.mode-button-selected {
+    background-color: mediumseagreen;
+}
+
+.mode-button-unselected {
+    background-color: lightgray;
+}
+
+/************************************************
+** END mode layout
+************************************************/
+
+/************************************************
 ** BEGIN SVG layout
 ************************************************/
 
-.panzoomable {
-    cursor: move; /* fallback: no `url()` support or images disabled */
-    cursor: url(images/grab.png), auto; /* fallback: Internet Explorer */
-    cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
-    cursor: -moz-grab; /* Firefox 1.5-26 */
-    cursor: grab; /* W3C standards syntax, should come least */
-}
+/*.panzoomable {*/
+/*    cursor: move; !* fallback: no `url()` support or images disabled *!*/
+/*    cursor: url(images/grab.png), auto; !* fallback: Internet Explorer *!*/
+/*    cursor: -webkit-grab; !* Chrome 1-21, Safari 4+ *!*/
+/*    cursor: -moz-grab; !* Firefox 1.5-26 *!*/
+/*    cursor: grab; !* W3C standards syntax, should come least *!*/
+/*}*/
 
-.panzoomable.dragging {
-    cursor: url(images/grabbing.png), auto;
-    cursor: -webkit-grabbing;
-    cursor: -moz-grabbing;
-    cursor: grabbing;
-}
+/*.panzoomable.dragging {*/
+/*    cursor: url(images/grabbing.png), auto;*/
+/*    cursor: -webkit-grabbing;*/
+/*    cursor: -moz-grabbing;*/
+/*    cursor: grabbing;*/
+/*}*/
 
 .rotation-line {
     stroke-width: 3;
     stroke-linecap: round;
 }
-
-/*.rotation-line-3p{*/
-/*    stroke: red;*/
-/*}*/
-
-/*.rotation-line-5p{*/
-/*    stroke: blue;*/
-/*}*/
 
 .helix-mouseover {
     visibility: hidden;
@@ -239,6 +265,44 @@ html, body {
     fill: none;
 }
 
+/*.substrand-line:hover {*/
+/*    stroke-width: 4;*/
+/*    stroke: red;*/
+/*}*/
+
+.substrand-line.hover {
+    stroke-width: 4;
+    stroke: red;
+}
+
+.crossover-curve {
+    stroke-width: 2.5;
+    stroke-dasharray: 2;
+    fill: none;
+    /*pointer-events: none;*/
+    /*filter: blur(100px);*/
+    /*filter: url("#shadow");*/
+}
+
+.crossover-curve:hover {
+    stroke-width: 4;
+    stroke-dasharray: 0;
+    stroke: red;
+    /*pointer-events: none;*/
+    /*filter: blur(100px);*/
+    /*filter: url("#shadow");*/
+}
+
+.crossover-curve.hover {
+    stroke-width: 4;
+    stroke-dasharray: 0;
+    stroke: red;
+    /*pointer-events: none;*/
+    /*filter: blur(100px);*/
+    /*filter: url("#shadow");*/
+}
+
+
 .insertion-line {
     stroke-width: 2.0px;
     fill: none;
@@ -249,13 +313,6 @@ html, body {
     stroke: red;
     fill: red;
     stroke-width: 0.25;
-}
-
-.crossover-curve {
-    stroke-width: 2.5;
-    stroke-dasharray: 2;
-    fill: none;
-    /*stroke-linecap: square;*/
 }
 
 .deletion-cross {
