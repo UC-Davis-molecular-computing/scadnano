@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:html';
 
+import 'package:path/path.dart' as path;
 import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
@@ -181,4 +182,42 @@ class EditorViewComponent {
 
     return String.fromCharCodes(buf.toString().codeUnits.reversed);
   }
+}
+
+
+//TODO: there's a lot of repeated code between here and the functions that save/load the .dna files
+// handle file saving/loading for script files
+script_save_file() async {
+  Blob blob = new Blob([app.model.editor_content], 'text/plain;charset=utf-8');
+  String url = Url.createObjectUrlFromBlob(blob);
+  String filename = app.model.editor_view_ui_model.loaded_script_filename;
+  var link = new AnchorElement()
+    ..href = url
+    ..download = filename;
+
+  document.body.children.add(link);
+  await link.click();
+  link.remove();
+}
+
+request_script_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
+  List<File> files = file_chooser.files;
+  assert(files.isNotEmpty);
+  File file = files[0];
+
+  var basefilename = path.basenameWithoutExtension(file.name);
+
+  FileReader file_reader = new FileReader();
+  file_reader.onLoad.listen((_) => script_file_loaded(file_reader, basefilename));
+  var err_msg = "error reading file: ${file_reader.error.toString()}";
+  //file_reader.onError.listen((e) => error_message.text = err_msg);
+  file_reader.onError.listen((_) => window.alert(err_msg));
+  file_reader.readAsText(file);
+}
+
+script_file_loaded(FileReader file_reader, String filename) {
+  app.model.editor_view_ui_model.loaded_script_filename = filename;
+  app.model.editor_content = file_reader.result;
+//  print('in dart, just put this script file contents into model: ${app.model.editor_content}');
+  app.view.editor_view.render();
 }
