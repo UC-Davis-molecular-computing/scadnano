@@ -175,6 +175,10 @@ class GridPosition {
   String toString() => '(${this.h}, ${this.v}, ${this.b})';
 }
 
+//TODO: eliminate PotentialHelix and simply give user help creating new Helix's whenever grid is not none
+//  for instance when they put the mouse pointer somewhere in the side view, show a light circle where
+//  a Helix could be created by clicking in the current mouse position.
+
 /// Represents a potential position for a Helix (the circles drawn in the side
 /// view initially, which are unused helices). It has a grid position but nothing else.
 class PotentialHelix extends JSONSerializable {
