@@ -152,20 +152,12 @@ class DesignViewComponent {
   add_shadow_filter(svg.SvgSvgElement elt) {
 
     // https://stackoverflow.com/a/6094674
-    var drop_shadow1 = [
+    var drop_shadow = [
       svg.FEGaussianBlurElement()
         ..attributes = {
-          'in': 'SourceAlpha',
-          'stdDeviation': '1',
+//          'in': 'SourceAlpha',
+          'stdDeviation': '2.5',
         },
-      svg.FEComponentTransferElement()
-        ..children = [
-          svg.FEFuncAElement()
-            ..attributes = {
-              'type': "linear",
-              'slope': "0.9",
-            },
-        ],
       svg.FEMergeElement()
         ..children = [
           svg.FEMergeNodeElement(),
@@ -173,52 +165,17 @@ class DesignViewComponent {
         ],
     ];
 
-
-//    <feOffset result="offOut" in="SourceAlpha" dx="-5" dy="-5" />
-//    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
-//    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-
-    // https://codepen.io/andyshora/pen/vRRdRd
-    /*
-    <filter id="dropshadow" x="-2" y="-2" width="200" height="200">
-      <feGaussianBlur  stdDeviation="1"/>
-    </filter>
-     */
-    var drop_shadow2 = [
-      svg.FEGaussianBlurElement()
-        ..attributes = {
-          'stdDeviation': '0.5',
-        },
-    ];
-
-    //https://www.w3schools.com/graphics/svg_feoffset.asp
-    /*
-<svg height="120" width="120">
-  <defs>
-    <filter id="f1" x="0" y="0" width="200%" height="200%">
-      <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
-      <feBlend in2="offOut" in="SourceGraphic" mode="normal" />
-    </filter>
-  </defs>
-  <rect width="90" height="90" stroke="green" stroke-width="3"
-  fill="yellow" filter="url(#f1)" />
-</svg>
-     */
-    var drop_shadow3 = [
-      svg.FEOffsetElement()..attributes = {'result': 'offOut', 'in': 'SourceGraphic', 'dx': '0', 'dy': '0'},
-      svg.FEBlendElement()..attributes = {'in2': 'offOut', 'in': 'SourceGraphic', 'mode': 'normal'},
-    ];
-
     var defns = svg.DefsElement()
       ..children = [
         svg.FilterElement()
-          ..children = drop_shadow2
+          ..children = drop_shadow
           ..attributes = {
             'id': 'shadow',
-            'x': '-200%',
-            'y': '-100%',
-            'width': '500%',
-            'height': '500%',
+            'filterUnits': 'userSpaceOnUse',
+            'x': '-300%',
+            'y': '-300%',
+            'width': '900%',
+            'height': '900%',
           }
       ];
     //XXX: if we want to use a filter, uncomment the next line

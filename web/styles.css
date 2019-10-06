@@ -245,66 +245,57 @@ html, body {
     stroke-width: 3;
 }
 
-.five-prime-end {
+.five-prime-end-first-substrand,
+.three-prime-end-last-substrand {
     stroke: black;
     stroke-width: 0.5px;
-    /*rx: 1.5;*/
-    /*ry: 1.5;*/
-    /*width: 6px;*/
-    /*height: 6px;*/
 }
 
+.five-prime-end,
 .three-prime-end {
     stroke: black;
     stroke-width: 0.5px;
+    visibility: hidden;
+    pointer-events: all;
 }
 
+.five-prime-end:hover,
+.three-prime-end:hover {
+    stroke: black;
+    stroke-width: 0.5px;
+    visibility: visible;
+}
+
+
 .substrand-line {
-    stroke-width: 2.5;
+    stroke-width: 4;
     stroke-linecap: round;
     fill: none;
 }
 
-/*.substrand-line:hover {*/
-/*    stroke-width: 4;*/
-/*    stroke: red;*/
-/*}*/
-
-.substrand-line.hover {
-    stroke-width: 4;
-    stroke: red;
-}
-
-.crossover-curve {
-    stroke-width: 2.5;
-    stroke-dasharray: 2;
-    fill: none;
-    /*pointer-events: none;*/
-    /*filter: blur(100px);*/
-    /*filter: url("#shadow");*/
+.strand.hover,
+.five-prime-end-first-substrand:hover,
+.three-prime-end-last-substrand:hover,
+.five-prime-end:hover,
+.three-prime-end:hover,
+.insertion-line:hover,
+.deletion-cross:hover {
+    filter: url("#shadow");
 }
 
 .crossover-curve:hover {
-    stroke-width: 4;
     stroke-dasharray: 0;
-    stroke: red;
-    /*pointer-events: none;*/
-    /*filter: blur(100px);*/
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
-.crossover-curve.hover {
+.crossover-curve {
     stroke-width: 4;
-    stroke-dasharray: 0;
-    stroke: red;
-    /*pointer-events: none;*/
-    /*filter: blur(100px);*/
-    /*filter: url("#shadow");*/
+    stroke-dasharray: 2;
+    fill: none;
 }
-
 
 .insertion-line {
-    stroke-width: 2.0px;
+    stroke-width: 2.5px;
     fill: none;
 }
 

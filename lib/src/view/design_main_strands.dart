@@ -18,13 +18,16 @@ class DesignMainStrandsComponent extends FluxUiComponent<DesignMainStrandsProps>
 
   @override
   render() {
+    //TODO: when loading from JSON, this is called 4 times for some reason
+    print('rendering all strands');
     return (Dom.g()..className = 'strands-main-view')([
       for (Strand strand in this.props.store.strands)
         (DesignMainStrand()
           //TODO: see whether it matters if key stays same even when Strand changes
           // (toString does not depend on on parts of Strand currently)
-          ..key = strand.toString()
-          ..strand = strand)()
+          ..store = strand
+          ..key = strand.toString())()
     ]);
   }
 }
+

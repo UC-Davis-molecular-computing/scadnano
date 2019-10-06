@@ -1,3 +1,5 @@
+import 'dart:html_common';
+
 import 'package:scadnano/src/model/dna_design.dart';
 import 'package:scadnano/src/model/model.dart';
 import 'package:w_flux/w_flux.dart';
@@ -12,6 +14,7 @@ _subscribe_to_stores(Store composite_store, Iterable<Store> stores) {
   for (var store in stores) {
     store.listen((_) => composite_store.trigger());
   }
+  convertNativePromiseToDartFuture;
 }
 
 class DNASequencesStore extends Store {

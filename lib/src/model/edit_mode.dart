@@ -31,6 +31,6 @@ class EditModeStore extends Store {
   }
 }
 
-class EditModeActionPack extends ActionPack {
-  EditModeActionPack(EditModeChoice mode) : super(Actions.set_edit_mode, mode);
-}
+//class EditModeActionPack extends ActionPack {
+//  EditModeActionPack(EditModeChoice mode) : super(Actions.set_edit_mode, mode);
+//}

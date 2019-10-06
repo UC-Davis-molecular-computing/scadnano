@@ -1,3 +1,5 @@
+import 'package:scadnano/src/model/helix.dart';
+
 import '../model/mouseover_data.dart';
 
 //TODO: use tooltips (or something) to give more information on mouse hover than the footer has room for
@@ -19,10 +21,12 @@ class DesignFooterComponent extends FluxUiComponent<DesignFooterProps> {
 
   @override
   render() {
-    MouseoverData mouseover_data = this.props.store.data;
+    List<MouseoverData> mouseover_datas = this.props.store.data;
     String text = '';
-    if (mouseover_data != null) {
-      int idx = mouseover_data.helix.idx();
+    if (mouseover_datas.length == 1) {
+      MouseoverData mouseover_data = mouseover_datas.first;
+      Helix helix = mouseover_data.helix;
+      int idx = helix.idx();
       int offset = mouseover_data.offset;
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.substrand != null) {

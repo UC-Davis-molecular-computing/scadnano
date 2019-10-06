@@ -29,9 +29,7 @@ import '../constants.dart' as constants;
 /// Represents parts of the Model to serialize
 class DNADesign extends Store implements JSONSerializable {
 
-  static final Action<Null> save_dna_file_global = Action<Null>();
-
-  Action<Null> get save_dna_file => save_dna_file_global;
+  Action<Null> get save_dna_file => Actions.save_dna_file;
 
   String version = constants.CURRENT_VERSION;
 
@@ -87,8 +85,8 @@ class DNADesign extends Store implements JSONSerializable {
   }
 
   _convert_potential_to_helix(HelixUseActionParameters params) {
-    int max_bases = params.max_bases > 0 ? params.max_bases : constants.default_max_bases;
-    Helix helix = Helix(grid_position: params.grid_position, max_bases: max_bases);
+    int max_bases = params.max_offset > 0 ? params.max_offset : constants.default_max_bases;
+    Helix helix = Helix(grid_position: params.grid_position, max_offset: max_bases);
     helix.set_idx(params.idx);
 
     this.helices.insert(params.idx, helix);
@@ -160,12 +158,12 @@ class DNADesign extends Store implements JSONSerializable {
     Actions.set_potential_helices(potential_helices);
   }
 
-  /// max number of bases allowed on any Helix in the Model
-  int max_bases() {
+  /// max offset allowed on any Helix in the Model
+  int max_offset() {
     int ret = 0;
     for (var helix in this.helices) {
-      if (ret < helix.max_bases) {
-        ret = helix.max_bases;
+      if (ret < helix.max_offset) {
+        ret = helix.max_offset;
       }
     }
     return ret;
@@ -258,15 +256,6 @@ class DNADesign extends Store implements JSONSerializable {
     //TODO: maybe move strand (and maybe helix) functionality into stores
     this._build_substrand_mismatches_map();
     this._check_legal_design();
-
-    this.trigger();
-  }
-
-  @override
-  trigger() {
-    super.trigger();
-    this.helices_store.trigger();
-    this.strands_store.trigger();
   }
 
   static int default_major_tick_distance(Grid grid) {
@@ -295,7 +284,7 @@ class DNADesign extends Store implements JSONSerializable {
 
   _set_helices_max_bases({bool update = true}) {
     for (var helix in this.helices) {
-      if (update || helix.max_bases < 0) {
+      if (update || !helix.has_max_offset()) {
         var max_bases = -1;
         for (var substrand in helix.bound_substrands()) {
           max_bases = max(max_bases, substrand.end);

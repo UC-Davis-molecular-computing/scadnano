@@ -7,6 +7,7 @@ import 'package:w_flux/w_flux.dart';
 
 import 'composite_stores.dart';
 import 'model_ui.dart';
+import 'model_ui_main.dart';
 import '../app.dart';
 import 'dna_design.dart';
 
@@ -36,21 +37,9 @@ class Model extends Store {
   // model parts like MainViewUIModel, we don't fire a changed notification, but let the sub-part do it.
   bool get show_dna => this.main_view_ui_model.show_dna;
 
-  set show_dna(bool show) {
-    this.main_view_ui_model.show_dna = show;
-  }
-
   bool get show_mismatches => this.main_view_ui_model.show_mismatches;
 
-  set show_mismatches(bool show) {
-    this.main_view_ui_model.show_mismatches = show;
-  }
-
   bool get show_editor => this.main_view_ui_model.show_editor;
-
-  set show_editor(bool show) {
-    this.main_view_ui_model.show_editor = show;
-  }
 
   String _error_message = null;
 
@@ -76,11 +65,14 @@ class Model extends Store {
     this.design_or_error_store = DesignOrErrorStore(this.dna_design, this.error_message_store);
   }
 
-
   _handle_actions() {
     this.error_message_store.triggerOnActionV2<String>(Actions.set_error_message, (msg) {
       this.error_message = msg;
       app.undo_redo.reset();
+    });
+
+    this.triggerOnActionV2<LoadDNAFileParameters>(Actions.load_dna_file, (params) {
+      this.set_new_design_from_json(params.content);
     });
   }
 
@@ -118,16 +110,14 @@ class Model extends Store {
 
   set_new_design_from_map(Map map) {
     try {
-      app.model.dna_design.read_from_json(map);
-      app.model.changed_since_last_save = false;
+      this.dna_design.read_from_json(map);
+      this.changed_since_last_save = false;
       app.undo_redo.reset();
-      app.model.clear_error();
+      this.clear_error();
     } on IllegalDNADesignError catch (error) {
       Actions.set_error_message(error.cause);
     }
   }
-
-
 }
 
 class ErrorMessageStore extends Store {

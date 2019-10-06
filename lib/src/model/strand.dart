@@ -4,6 +4,7 @@ import 'package:color/color.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
+import 'strand_ui_model.dart';
 import '../dispatcher/actions.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
@@ -93,7 +94,7 @@ class IDTFields extends JSONSerializable {
   }
 }
 
-class Strand extends JSONSerializable {
+class Strand extends Store implements JSONSerializable {
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color color = null;
@@ -101,7 +102,42 @@ class Strand extends JSONSerializable {
   List<Substrand> substrands = [];
   IDTFields idt = null;
 
-  Strand();
+  StrandUIModel ui_model;
+
+  Strand() {
+    this.ui_model = StrandUIModel(this);
+    this._handle_actions();
+  }
+
+  void _handle_actions() {
+    Actions.add_strand_hover.listen((strand) {
+      if (identical(strand, this)){
+        this.ui_model.hover = true;
+        this.trigger();
+      }
+    });
+    Actions.remove_strand_hover.listen((strand) {
+      if (identical(strand, this)){
+        this.ui_model.hover = false;
+        this.trigger();
+      }
+    });
+
+    //XXX: the code below fires trigger() for every strand and causes a re-render of all strands
+    // even though only one changed. So we substitute what triggerOnAction is shorthand for, with an
+    // additiona check for equality between this and strand to avoid the re-render for most strands.
+//    this.triggerOnActionV2<Strand>(Actions.add_strand_hover, (strand) {
+//      strand.ui_model.hover = true;
+//    });
+//    this.triggerOnActionV2<Strand>(Actions.remove_strand_hover, (strand) {
+//      strand.ui_model.hover = false;
+//    });
+  }
+
+  String css_selector() {
+    BoundSubstrand first_ss = this.bound_substrands().first;
+    return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward? 'forward': 'reverse'}';
+  }
 
   String toString() {
     var first_ss = this.first_bound_substrand();
@@ -142,6 +178,9 @@ class Strand extends JSONSerializable {
   }
 
   Strand.from_json(Map<String, dynamic> json_map) {
+    this.ui_model = StrandUIModel(this);
+    this._handle_actions();
+
     // need to use List.from because List.map returns Iterable, not List
     var name = 'Strand';
     this.substrands = List<Substrand>.from(util

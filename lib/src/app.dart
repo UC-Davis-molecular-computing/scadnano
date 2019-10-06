@@ -63,18 +63,16 @@ class App {
     model.trigger();
   }
 
-  send_action(ActionPack action_pack) {
-    if (action_pack is ReversibleActionPack) {
-      ReversibleActionPack rev_action_pack = action_pack;
-      this.undo_redo.apply(rev_action_pack);
-    } else {
-      action_pack.apply();
-    }
+  send_action(ReversibleActionPack action_pack) {
+//    if (action_pack is ReversibleActionPack) {
+//      ReversibleActionPack rev_action_pack = action_pack;
+      this.undo_redo.apply(action_pack);
+//    } else {
+//      action_pack.apply();
+//    }
   }
 
   setup_warning_before_unload() {
-    //TODO: change check for undo stack empty to check for changes since last save
-    // (set "unsaved work" flag in UIModel)
     window.onBeforeUnload.listen((Event event) {
       if (this.undo_redo.undo_stack.isNotEmpty) {
         BeforeUnloadEvent e = event;

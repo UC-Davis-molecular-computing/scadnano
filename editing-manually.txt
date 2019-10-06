@@ -7,6 +7,7 @@ Non-selectable elements
 - DNA sequences
 - BoundSubstrand
 
+
 Selectable elements
 -------------------
 
@@ -17,11 +18,12 @@ Selectable elements
 - Strand (by clicking on BoundSubstrand)
 - Helix circle (can move left/right/up/down)
 
+
 Operations
 ----------
 
 - delete with delete key
-  - 5'/3' end (deletes substrand, to delete whole )
+  - 5'/3' end (deletes substrand)
   - crossover
   - loopout
   - strand
@@ -42,3 +44,7 @@ Operations
   
 - move up/down
   - substrand
+  - strand
+  - Helix circle (changes idx order)
+  
+If a strand is selected and moved, then if any of its constituent elements (5'/3' end, Substrand, crossover) are also selected, they are ignored during the move since moving the Strand will move all of them as well.

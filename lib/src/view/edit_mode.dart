@@ -2,8 +2,6 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/model/edit_mode.dart';
 
-import '../app.dart';
-
 part 'edit_mode.over_react.g.dart';
 
 @Factory()
@@ -21,14 +19,14 @@ class EditModeComponent extends FluxUiComponent<EditModeProps> {
   render() {
     return (Dom.div())(
       this._button_for_choice(EditModeChoice.select),
-//      this._button_for_choice(EditModeChoice.pencil),
-//      this._button_for_choice(EditModeChoice.nick),
-//      this._button_for_choice(EditModeChoice.ligate),
-//      this._button_for_choice(EditModeChoice.insertion),
-//      this._button_for_choice(EditModeChoice.deletion),
-//      this._button_for_choice(EditModeChoice.sequence),
+      this._button_for_choice(EditModeChoice.pencil),
+      this._button_for_choice(EditModeChoice.nick),
+      this._button_for_choice(EditModeChoice.ligate),
+      this._button_for_choice(EditModeChoice.insertion),
+      this._button_for_choice(EditModeChoice.deletion),
+      this._button_for_choice(EditModeChoice.sequence),
       this._button_for_choice(EditModeChoice.backbone_rotation),
-//      this._button_for_choice(EditModeChoice.python_editor),
+      this._button_for_choice(EditModeChoice.python_editor),
     );
   }
 
@@ -42,6 +40,7 @@ class EditModeComponent extends FluxUiComponent<EditModeProps> {
   }
 
   _change_mode(EditModeChoice mode) {
-    app.send_action(ActionPack(Actions.set_edit_mode, mode));
+    Actions.set_edit_mode(mode);
+//    app.send_action(ActionPack(Actions.set_edit_mode, mode));
   }
 }

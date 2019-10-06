@@ -9,6 +9,7 @@ import '../app.dart';
 import '../model/strand.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'design_main_mouseover_rect_helix.dart';
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
@@ -68,18 +69,17 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
       rotate_degrees = 180;
     }
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
-
     var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 0.342);
-
     var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}';
 
     SvgProps text_props = (Dom.text()
+      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+      ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
       ..x = '${pos.x + x_adjust}'
       ..y = '${pos.y}'
-//      ..textLength = '$text_length'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
       ..dy = '$dy');
     //XXX: for some reason OverReact does not supply textLength as a typed field.

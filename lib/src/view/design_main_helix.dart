@@ -6,6 +6,7 @@ import 'package:quiver/iterables.dart' as iter;
 
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
+import 'package:scadnano/src/view/design_main_mouseover_rect_helix.dart';
 
 import '../model/helix.dart';
 import '../app.dart';
@@ -50,27 +51,32 @@ class DesignMainHelixComponent extends FluxUiComponent<DesignMainHelixProps> {
         ..className = 'helix-text-main-view'
         ..x = '$cx'
         ..y = '$cy')('$idx'),
-      (Dom.path()
-        ..className = 'helix-lines helix-horz-line'
-        ..d = 'M 0 0 H $width M 0 ${height / 2.0} H $width M 0 $height H $width')(),
-      (Dom.path()
-        ..className = 'helix-lines helix-vert-minor-line'
-        ..d = vert_line_paths['minor'])(),
-      (Dom.path()
-        ..className = 'helix-lines helix-vert-major-line'
-        ..d = vert_line_paths['major'])(),
+      (Dom.g()
+        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+        ..onMouseMove = ((event) => update_mouseover(event, helix))
+        ..className = 'helix-lines-group')(
+        (Dom.path()
+          ..className = 'helix-lines helix-horz-line'
+          ..d = 'M 0 0 H $width M 0 ${height / 2.0} H $width M 0 $height H $width')(),
+        (Dom.path()
+          ..className = 'helix-lines helix-vert-minor-line'
+          ..d = vert_line_paths['minor'])(),
+        (Dom.path()
+          ..className = 'helix-lines helix-vert-major-line'
+          ..d = vert_line_paths['major'])(),
+      ),
     );
   }
 
   /// Return Map mapping 'minor' and 'major' to paths describing minor and major vertical lines.
   Map<String, String> _vert_line_paths() {
-    List<int> regularly_spaced_ticks(int distance, int end) {
+    List<int> regularly_spaced_ticks(int distance, int start, int end) {
       if (distance < 0) {
         throw ArgumentError('distance between major ticks must be positive');
       } else if (distance == 0) {
         return [];
       } else {
-        return [for (int offset in iter.range(0, end + 1, distance)) offset];
+        return [for (int offset in iter.range(start, end + 1, distance)) offset];
       }
     }
 
@@ -80,14 +86,14 @@ class DesignMainHelixComponent extends FluxUiComponent<DesignMainHelixProps> {
         : app.model.dna_design.major_tick_distance;
     Set<int> major_ticks = (helix.has_major_ticks()
             ? helix.major_ticks
-            : regularly_spaced_ticks(major_tick_distance, helix.max_bases))
+            : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
         .toSet();
 
     List<String> path_cmds_vert_minor = [];
     List<String> path_cmds_vert_major = [];
 
     num x = 0;
-    for (int base = 0; base <= helix.max_bases; base++) {
+    for (int base = helix.min_offset; base <= helix.max_offset; base++) {
       var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
       path_cmds.add('M $x 0');
       path_cmds.add('v ${helix.svg_height()}');

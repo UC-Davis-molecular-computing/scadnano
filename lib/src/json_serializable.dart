@@ -4,7 +4,7 @@ abstract class JSONSerializable {
   dynamic to_json_serializable();
 }
 
-class NoIndent extends JSONSerializable {
+class NoIndent implements JSONSerializable {
   dynamic value;
 
   NoIndent(this.value);

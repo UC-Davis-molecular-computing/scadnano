@@ -39,28 +39,35 @@ class DesignSideHelixComponent extends FluxUiComponent<DesignSideHelixProps> {
   @override
   render() {
     Point<num> center = _g2c(this.props.grid_position);
-    MouseoverDataStore mouseover_data_store = this.props.store;
 
-    return (Dom.g()..transform = 'translate(${center.x} ${center.y})')([
+    var children = [
       (Dom.circle()
         ..className = '$SIDE_VIEW_PREFIX-helix-circle' + (this.props.used ? ' used' : ' potential')
         ..r = '$RADIUS'
         ..key = 'circle'
         ..onClick = (e) => this._handle_click(e))(),
-      if (this.props.used)
-        (Dom.text()
-          ..className = '$SIDE_VIEW_PREFIX-helix-text'
-          ..key = 'text'
-          ..onClick = (e) => this._handle_click(e))(this.props.helix.idx().toString()),
-      if (this.props.used &&
-          mouseover_data_store.data != null &&
-          mouseover_data_store.data.helix.idx() == this.props.helix.idx())
-        (DesignSideRotation()
-          ..radius = RADIUS
-          ..mouseover_data = mouseover_data_store.data
-          ..key='rotation'
-          ..className = '$SIDE_VIEW_PREFIX-helix-rotation')(),
-    ]);
+    ];
+    if (this.props.used) {
+      children.add((Dom.text()
+        ..className = '$SIDE_VIEW_PREFIX-helix-text'
+        ..key = 'text'
+        ..onClick = (e) => this._handle_click(e))(this.props.helix.idx().toString()));
+    }
+
+    if (this.props.used) {
+      for (MouseoverData mouseover_data in this.props.store.data) {
+        if (mouseover_data.helix.idx() == this.props.helix.idx()) {
+          children.add((DesignSideRotation()
+            ..radius = RADIUS
+            ..helix = mouseover_data.helix
+            ..offset = mouseover_data.offset
+            ..key = 'rotation'
+            ..className = '$SIDE_VIEW_PREFIX-helix-rotation')());
+        }
+      }
+    }
+
+    return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }
 
   _handle_click(SyntheticMouseEvent e) {
@@ -83,8 +90,9 @@ class DesignSideHelixComponent extends FluxUiComponent<DesignSideHelixProps> {
     }
 
     int idx = this.props.used ? this.props.helix.idx() : app.model.dna_design.helices.length;
-    int max_bases = this.props.used ? this.props.helix.max_bases : -1;
-    var params = HelixUseActionParameters(!this.props.used, this.props.grid_position, idx, max_bases);
+    int max_offset = this.props.used ? this.props.helix.max_offset : null;
+    int min_offset = this.props.used ? this.props.helix.min_offset : null;
+    var params = HelixUseActionParameters(!this.props.used, this.props.grid_position, idx, max_offset, min_offset);
     var helix_use_action_pack = HelixUseActionPack(params);
 
     if (action_packs_for_batch.isEmpty) {

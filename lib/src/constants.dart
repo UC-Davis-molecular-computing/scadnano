@@ -58,7 +58,9 @@ const strands_key = 'strands';
 
 // Helix keys
 const idx_key = 'idx';
-const max_bases_key = 'max_bases';
+const max_offset_key = 'max_bases';
+//const max_offset_key = 'max_offset';
+const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';

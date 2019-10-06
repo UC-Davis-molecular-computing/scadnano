@@ -39,12 +39,13 @@ class HelixUseActionParameters {
   final bool use;
   final GridPosition grid_position;
   final int idx;
-  final int max_bases;
+  final int max_offset;
+  final int min_offset;
 
-  HelixUseActionParameters(this.use, this.grid_position, this.idx, this.max_bases);
+  HelixUseActionParameters(this.use, this.grid_position, this.idx, this.max_offset, [this.min_offset=0]);
 
   HelixUseActionParameters reverse() =>
-      HelixUseActionParameters(!this.use, this.grid_position, this.idx, this.max_bases);
+      HelixUseActionParameters(!this.use, this.grid_position, this.idx, this.max_offset, this.min_offset);
 }
 
 class HelixUseActionPack
@@ -83,7 +84,6 @@ class HelicesStore extends Store {
     this._helices = [];
     this._potential_helices = [];
     this.build_helices_map();
-    this._handle_actions();
   }
 
   build_helices_map() {
@@ -96,13 +96,6 @@ class HelicesStore extends Store {
     }
   }
 
-  _handle_actions() {
-//    this.triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation, (params) {
-//      Helix helix = this._helices[params.idx];
-//      helix.rotation = params.rotation;
-//      helix.rotation_anchor = params.anchor;
-//    });
-  }
 }
 
 enum Grid { square, hex, honeycomb, none }
@@ -238,8 +231,11 @@ class Helix extends Store implements JSONSerializable {
   double _rotation = constants.default_helix_rotation;
   int _rotation_anchor = constants.default_helix_rotation_anchor;
 
-  /// Maximum length (in bases) of Substrand that can be drawn on this Helix.
-  int _max_bases = -1;
+  /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix.
+  int _max_offset = null;
+
+  /// Minimum allowed offset of Substrand that can be drawn on this Helix.
+  int _min_offset = null;
 
   int _major_tick_distance = -1;
 
@@ -287,19 +283,21 @@ class Helix extends Store implements JSONSerializable {
 
   Point<num> svg_position() => this._svg_position;
 
-  int get max_bases => this._max_bases;
+  int get max_offset => this._max_offset;
+
+  int get min_offset => this._min_offset == null? 0: this._min_offset;
 
   List<BoundSubstrand> _substrands = [];
 
   List<BoundSubstrand> bound_substrands() => this._substrands;
 
-  Helix({grid_position, max_bases}) {
+  Helix({grid_position, max_offset=null, min_offset=null}) {
     this._grid_position = grid_position;
-    this._max_bases = max_bases;
+    this._max_offset = max_offset;
+    this._max_offset = min_offset;
 
     this._handle_actions();
   }
-
 
   _handle_actions() {
     this.triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation, (params) {
@@ -322,8 +320,12 @@ class Helix extends Store implements JSONSerializable {
       json_map[constants.svg_position_key] = [this._svg_position.x, this._svg_position.y];
     }
 
-    if (this.has_nondefault_max_bases()) {
-      json_map[constants.max_bases_key] = this.max_bases;
+    if (this.has_max_offset() && this.has_nondefault_max_offset()) {
+      json_map[constants.max_offset_key] = this.max_offset;
+    }
+
+    if (this.has_min_offset() && this.has_nondefault_min_offset()) {
+      json_map[constants.min_offset_key] = this.min_offset;
     }
 
     if (this.has_nondefault_rotation()) {
@@ -409,7 +411,7 @@ class Helix extends Store implements JSONSerializable {
     }
   }
 
-  String toString() => "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_bases=$max_bases})";
+  String toString() => "Helix(idx=$_idx, gh=$gh, gv=$gv, gb=$gb, max_offset=$max_offset})";
 
   bool has_substrands() => this._substrands.isNotEmpty;
 
@@ -428,16 +430,28 @@ class Helix extends Store implements JSONSerializable {
     return diff_x > eps && diff_y > eps;
   }
 
-  bool has_max_bases() => this._max_bases != null;
+  bool has_max_offset() => this._max_offset != null;
 
-  bool has_nondefault_max_bases() {
+  bool has_min_offset() => this._min_offset != null;
+
+  bool has_nondefault_max_offset() {
     int max_ss_offset = -1;
     for (var ss in this._substrands) {
       if (max_ss_offset < ss.end) {
         max_ss_offset = ss.end;
       }
     }
-    return this.max_bases != max_ss_offset;
+    return this.max_offset != max_ss_offset;
+  }
+
+  bool has_nondefault_min_offset() {
+    int min_ss_offset = -1;
+    for (var ss in this._substrands) {
+      if (min_ss_offset > ss.start) {
+        min_ss_offset = ss.start;
+      }
+    }
+    return this.min_offset != min_ss_offset;
   }
 
   Helix.from_json(Map<String, dynamic> json_map) {
@@ -467,8 +481,8 @@ class Helix extends Store implements JSONSerializable {
       this._svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
 
-    if (json_map.containsKey(constants.max_bases_key)) {
-      this._max_bases = json_map[constants.max_bases_key];
+    if (json_map.containsKey(constants.max_offset_key)) {
+      this._max_offset = json_map[constants.max_offset_key];
     }
 
     this._handle_actions();
@@ -483,14 +497,14 @@ class Helix extends Store implements JSONSerializable {
   }
 
   set_max_bases_directly(int max_bases) {
-    this._max_bases = max_bases;
+    this._max_offset = max_bases;
   }
 
   /// Transform to apply to an SVG element so that it will appear in the correct position relative to this
   /// Helix.
   translate() => 'translate(${this.svg_position().x} ${this.svg_position().y})';
 
-  num svg_width() => constants.BASE_WIDTH_SVG * this.max_bases;
+  num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
   num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
 
@@ -551,6 +565,8 @@ class Helix extends Store implements JSONSerializable {
 
   /// in radians;  3' rotation + 150 degrees
   double rotation_5p(int offset) => this.rotation_3p(offset) + (150.0 / 360.0 * 2 * pi);
+
+  int num_bases() => this.max_offset - this.min_offset;
 
 //  Helix.from_js_object(JsObject js_obj) {
 //    this._idx = js_obj[constants.idx_key];

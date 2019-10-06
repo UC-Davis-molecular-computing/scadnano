@@ -8,6 +8,7 @@ import '../app.dart';
 import '../model/strand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
@@ -16,82 +17,37 @@ part 'design_main_strand.over_react.g.dart';
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
 @Props()
-class _$DesignMainStrandProps extends UiProps {
-  Strand strand;
-}
+class _$DesignMainStrandProps extends FluxUiProps<Strand, Strand> {}
 
 @Component()
-class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
+class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
   @override
   Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    if (this.props.strand.substrands.length == 0) {
+    print('rendering one strand');
+    Strand strand = this.props.store;
+
+    if (strand.substrands.length == 0) {
       return null;
     } else {
-      return (Dom.g()..className = 'strand')([
+      bool hover = strand.ui_model.hover;
+      var classname = 'strand' + (hover ? ' hover' : '');
+      var strand_id = '${strand.css_selector()}';
+
+      return (Dom.g()
+        ..id = strand_id
+        ..className = classname)([
         (DesignMainStrandPaths()
-          ..strand = this.props.strand
+          ..strand = strand
+          ..strand_id = strand_id
           ..key = 'strand-paths')(),
-        _5p_end(this.props.strand),
-        _3p_end(this.props.strand),
-        ..._insertion_paths(this.props.strand),
-        ..._deletion_paths(this.props.strand),
+        ..._insertion_paths(strand),
+        ..._deletion_paths(strand),
       ]);
     }
   }
-}
-
-ReactElement _5p_end(Strand strand) {
-  var first_ss = strand.first_bound_substrand();
-  var helix = app.model.dna_design.helices[first_ss.helix];
-  var offset = first_ss.offset_5p;
-  var right = first_ss.forward;
-  var pos = helix.svg_base_pos(offset, right);
-
-  //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
-  // if they are specified in CSS, but it will if they are specified here
-  String key = "5'-end";
-  ReactElement box = (Dom.rect()
-    ..key = key
-    ..id = key
-    ..className = 'five-prime-end'
-    ..x = '${pos.x - 3}'
-    ..y = '${pos.y - 3}'
-    ..width = '6px'
-    ..height = '6px'
-    ..rx = '1.5px'
-    ..ry = '1.5px'
-    ..fill = strand.color.toRgbColor().toCssString())();
-  return box;
-}
-
-ReactElement _3p_end(Strand strand) {
-  var last_ss = strand.last_bound_substrand();
-  var offset = last_ss.offset_3p;
-  var direction = last_ss.forward;
-  var helix = app.model.dna_design.helices[last_ss.helix];
-  var pos = helix.svg_base_pos(offset, direction);
-  var points;
-  num scale = 3.5;
-  if (!last_ss.forward) {
-    points = '${pos.x - scale * 0.8},${pos.y} '
-        '${pos.x + scale},${pos.y + scale} '
-        '${pos.x + scale},${pos.y - scale}';
-  } else {
-    points = '${pos.x + scale * 0.8},${pos.y} '
-        '${pos.x - scale},${pos.y + scale} '
-        '${pos.x - scale},${pos.y - scale}';
-  }
-  String key = "3'-end";
-  ReactElement triangle = (Dom.polygon()
-    ..key = key
-    ..id = key
-    ..className = 'three-prime-end'
-    ..points = points
-    ..fill = strand.color.toRgbColor().toCssString())();
-  return triangle;
 }
 
 List<ReactElement> _insertion_paths(Strand strand) {
