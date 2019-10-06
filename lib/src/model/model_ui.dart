@@ -1,8 +1,6 @@
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 
-import 'helix.dart';
-
 //TODO: add ability for user to ctrl+click (or some special key click) at offset on helix to set that helix's notion
 // of DNA backbones rotation, which will then be displayed in the side view on all other offsets
 
@@ -64,15 +62,4 @@ class MenuViewUIModel {
 
 class EditorViewUIModel {
   String loaded_script_filename = default_script_filename();
-}
-
-////////////////////////////////////////////////
-// SideViewUIModel
-
-class SideViewSelection {
-  List<Helix> helices = [];
-}
-
-class SideViewUIModel {
-  SideViewSelection selection = SideViewSelection();
 }

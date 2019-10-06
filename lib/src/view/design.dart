@@ -7,16 +7,19 @@ import 'dart:svg' as svg;
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
+import 'package:scadnano/src/dispatcher/actions.dart';
+import 'package:scadnano/src/model/helix.dart';
 import 'package:scadnano/src/model/model.dart';
 
-//import 'react_svg_pan_zoom.dart';
 import '../app.dart';
 import 'view.dart';
 import 'design_side.dart';
-
-//import 'main.dart';
+import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
+
+const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
+//const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
 
 const FOOTER_ID = 'design-footer-mouse-over';
 const MODES_ID = 'design-mode-buttons';
@@ -56,6 +59,10 @@ class DesignViewComponent {
         'width': '100%',
         'height': '100%',
       };
+    side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
+    side_view_svg.onMouseMove.listen((event) {
+      side_view_update_mouseover(event);
+    });
     var main_view_svg = svg.SvgSvgElement()
       ..attributes = {
         'id': MAIN_VIEW_SVG_ID,
@@ -64,7 +71,10 @@ class DesignViewComponent {
       };
     add_shadow_filter(main_view_svg);
 
-    var side_view_svg_viewport = svg.GElement()..attributes = {'id': SIDE_VIEW_SVG_VIEWPORT_GROUP};
+    var side_view_svg_viewport = svg.GElement()
+      ..attributes = {
+        'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
+      };
     var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
 
     side_view_svg.children.add(side_view_svg_viewport);
@@ -93,7 +103,6 @@ class DesignViewComponent {
   }
 
   render() {
-    //TODO: add MODES element to right side
     this.root_element.children.clear();
     if (this.model.has_error()) {
       this.root_element.children.addAll([this.error_message_pane]);
@@ -134,7 +143,9 @@ class DesignViewComponent {
       react_dom.render(
           (DesignSide()
             ..store = app.model.dna_design.helices_store
-            ..mouseover_data_store = app.model.main_view_ui_model.mouse_over_store)(),
+            ..mouseover_data_store = app.model.main_view_ui_model.mouse_over_store
+            ..side_view_mouse_position_store = app.model.side_view_ui_model.side_view_mouse_position_store
+            ..grid = app.model.dna_design.grid)(),
           querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'));
 
       react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'));
@@ -150,7 +161,6 @@ class DesignViewComponent {
   }
 
   add_shadow_filter(svg.SvgSvgElement elt) {
-
     // https://stackoverflow.com/a/6094674
     var drop_shadow = [
       svg.FEGaussianBlurElement()
@@ -178,34 +188,8 @@ class DesignViewComponent {
             'height': '900%',
           }
       ];
-    //XXX: if we want to use a filter, uncomment the next line
     elt.children.add(defns);
   }
-/*
-  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> <!-- stdDeviation is how much to blur -->
-  <feOffset dx="2" dy="2" result="offsetblur"/> <!-- how much to offset -->
-  <feComponentTransfer>
-    <feFuncA type="linear" slope="0.5"/> <!-- slope is the opacity of the shadow -->
-  </feComponentTransfer>
-  <feMerge>
-    <feMergeNode/> <!-- this contains the offset blurred image -->
-    <feMergeNode in="SourceGraphic"/> <!-- this contains the element that the filter is applied to -->
-  </feMerge>
-   */
-/* from https://gist.github.com/redblobgames/6851dc787241e390c241cd9484b16e4d
-  <defs>
-    <filter id="drop-shadow" x="-100%" y="-100%" width="300%" height="300%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
-      <feOffset dx="5" dy="5" result="offsetblur"/>
-      <feFlood flood-color="#000000"/>
-      <feComposite in2="offsetblur" operator="in"/>
-      <feMerge>
-        <feMergeNode/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-   */
 }
 
 class ErrorMessageComponent {
@@ -227,4 +211,31 @@ class ErrorMessageComponent {
       this.root_element.children.add(pre);
     }
   }
+}
+
+side_view_mouse_leave_update_mouseover() {
+  Actions.remove_side_view_mouse_position();
+}
+
+side_view_update_mouseover(MouseEvent event) {
+  if (!event.ctrlKey) {
+    Actions.remove_side_view_mouse_position();
+    return;
+  }
+
+  Point<num> pan = util.current_pan_side();
+  num zoom = util.current_zoom_side();
+  Point<num> svg_coord = util.transform(event.offset, pan, zoom);
+
+  if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
+    print('mouse event: '
+        'x = ${event.offset.x},   '
+        'y = ${event.offset.y},   '
+        'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+        'zoom = ${zoom.toStringAsFixed(2)},   '
+        'svg_x = ${svg_coord.x.toStringAsFixed(2)},   '
+        'svg_y = ${svg_coord.y.toStringAsFixed(2)},   ');
+  }
+
+  Actions.update_side_view_mouse_position(svg_coord);
 }

@@ -7,6 +7,7 @@ import 'package:w_flux/w_flux.dart';
 
 import 'composite_stores.dart';
 import 'model_ui.dart';
+import 'model_ui_side.dart';
 import 'model_ui_main.dart';
 import '../app.dart';
 import 'dna_design.dart';

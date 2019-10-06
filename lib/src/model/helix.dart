@@ -34,18 +34,17 @@ class SetHelixRotationActionPack
   SetHelixRotationActionPack reverse() => SetHelixRotationActionPack(this.params.reverse());
 }
 
-/// If use=true, converting the given PotentialHelix to a Helix; otherwise converting the other way.
 class HelixUseActionParameters {
-  final bool use;
+  final bool create;
   final GridPosition grid_position;
   final int idx;
   final int max_offset;
   final int min_offset;
 
-  HelixUseActionParameters(this.use, this.grid_position, this.idx, this.max_offset, [this.min_offset=0]);
+  HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset, [this.min_offset=0]);
 
   HelixUseActionParameters reverse() =>
-      HelixUseActionParameters(!this.use, this.grid_position, this.idx, this.max_offset, this.min_offset);
+      HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset, this.min_offset);
 }
 
 class HelixUseActionPack
@@ -60,19 +59,11 @@ class HelixUseActionPack
 
 class HelicesStore extends Store {
   List<Helix> _helices;
-  List<PotentialHelix> _potential_helices;
 
   List<Helix> get helices => this._helices;
 
-  List<PotentialHelix> get potential_helices => this._potential_helices;
-
   set helices(List<Helix> new_helices) {
     this._helices = new_helices;
-    this.build_helices_map();
-  }
-
-  set potential_helices(List<PotentialHelix> new_potential_helices) {
-    this._potential_helices = new_potential_helices;
     this.build_helices_map();
   }
 
@@ -82,7 +73,6 @@ class HelicesStore extends Store {
 
   HelicesStore() {
     this._helices = [];
-    this._potential_helices = [];
     this.build_helices_map();
   }
 
@@ -90,9 +80,6 @@ class HelicesStore extends Store {
     this._gp_to_helix = {};
     for (var h in this.helices) {
       this._gp_to_helix[h.grid_position()] = h;
-    }
-    for (var ph in this.potential_helices) {
-      this._gp_to_helix[ph.grid_position()] = ph;
     }
   }
 
@@ -175,42 +162,9 @@ class GridPosition {
   String toString() => '(${this.h}, ${this.v}, ${this.b})';
 }
 
-//TODO: eliminate PotentialHelix and simply give user help creating new Helix's whenever grid is not none
+//TODO: give user help creating new Helix's whenever grid is not none
 //  for instance when they put the mouse pointer somewhere in the side view, show a light circle where
 //  a Helix could be created by clicking in the current mouse position.
-
-/// Represents a potential position for a Helix (the circles drawn in the side
-/// view initially, which are unused helices). It has a grid position but nothing else.
-class PotentialHelix extends JSONSerializable {
-  /// position within square/hex/honeycomb integer grid (side view)
-  GridPosition _grid_position;
-
-  GridPosition grid_position() => this._grid_position;
-
-  PotentialHelix(this._grid_position);
-
-  PotentialHelix.from_json(Map<String, dynamic> json_map) {
-    if (json_map.containsKey(constants.grid_position_key)) {
-      List<dynamic> gp_list = json_map[constants.grid_position_key];
-      if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
-      }
-      this._grid_position = GridPosition.from_list(gp_list);
-    }
-  }
-
-  Map<String, dynamic> to_json_serializable() {
-    Map<String, dynamic> json_map = {constants.grid_position_key: this._grid_position};
-    return json_map;
-  }
-
-  num get gh => this._grid_position.h;
-
-  num get gv => this._grid_position.v;
-
-  num get gb => this._grid_position.b;
-}
 
 //TODO: rename Helix.max_bases to max_offset, add Helix.min_offset, and allow offsets to be negative
 
@@ -298,7 +252,7 @@ class Helix extends Store implements JSONSerializable {
   Helix({grid_position, max_offset=null, min_offset=null}) {
     this._grid_position = grid_position;
     this._max_offset = max_offset;
-    this._max_offset = min_offset;
+    this._min_offset = min_offset;
 
     this._handle_actions();
   }
@@ -457,6 +411,10 @@ class Helix extends Store implements JSONSerializable {
     }
     return this.min_offset != min_ss_offset;
   }
+
+
+  //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines
+  //  in main view
 
   Helix.from_json(Map<String, dynamic> json_map) {
     if (json_map.containsKey(constants.major_tick_distance_key)) {

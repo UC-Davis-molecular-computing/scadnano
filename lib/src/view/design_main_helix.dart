@@ -6,8 +6,8 @@ import 'package:quiver/iterables.dart' as iter;
 
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
-import 'package:scadnano/src/view/design_main_mouseover_rect_helix.dart';
 
+import 'design_main_mouseover_rect_helix.dart';
 import '../model/helix.dart';
 import '../app.dart';
 import '../constants.dart' as constants;
@@ -43,12 +43,12 @@ class DesignMainHelixComponent extends FluxUiComponent<DesignMainHelixProps> {
       ..className = 'helix-main-view'
       ..transform = helix.translate())(
       (Dom.circle()
-        ..className = 'helix-circle-main-view'
+        ..className = 'main-view-helix-circle'
         ..cx = '$cx'
         ..cy = '$cy'
         ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}')(),
       (Dom.text()
-        ..className = 'helix-text-main-view'
+        ..className = 'main-view-helix-text'
         ..x = '$cx'
         ..y = '$cy')('$idx'),
       (Dom.g()

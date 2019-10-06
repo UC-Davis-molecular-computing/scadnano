@@ -1,5 +1,4 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/mouseover_data.dart';
 import 'package:scadnano/src/model/strand.dart';
 
 import '../model/helix.dart';

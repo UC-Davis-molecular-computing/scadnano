@@ -3,6 +3,8 @@ import 'dart:html';
 import 'actions.dart';
 import '../app.dart';
 
+//TODO: exception currently thrown when undoing remove helix
+
 /// Maintains an undo stack and a redo stack of Actions.
 class UndoRedo {
   List<ReversibleActionPack> undo_stack;

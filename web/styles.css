@@ -346,15 +346,18 @@ html, body {
     white-space: pre; /* needed to display multiple space symbols in a row */
 }
 
-.helix-circle-main-view,
 .main-view-helix-circle {
-    /*stroke: saddlebrown;*/
-    stroke: goldenrod;
-    stroke-width: 0.5px;
     fill: goldenrod;
 }
 
-.helix-text-main-view,
+.side-view-helix-circle {
+    fill: goldenrod;
+}
+
+.side-view-potential-helix {
+    fill: #C0C0C0;
+}
+
 .main-view-helix-text {
     font-family: Helvetica, serif;
     font-size: 36pt;
@@ -362,20 +365,6 @@ html, body {
     stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
     text-anchor: middle;
     dominant-baseline: central;
-}
-
-
-.helix-circle-side-view,
-.side-view-helix-circle {
-    /*stroke: #e0e0e0;*/
-    /*stroke: saddlebrown;*/
-    stroke-width: 1px;
-    fill: #f0f0f0;
-}
-
-.used {
-    /*stroke: saddlebrown;*/
-    fill: goldenrod;
 }
 
 .side-view-helix-text {

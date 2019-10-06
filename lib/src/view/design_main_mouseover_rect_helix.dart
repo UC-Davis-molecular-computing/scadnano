@@ -35,19 +35,19 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent<DesignMainMouseo
   @override
   render() {
     String id = '$_ID_PREFIX-${this.props.helix.idx()}';
+    Helix helix = this.props.helix;
+    var width = helix.svg_width();
+    var height = helix.svg_height();
     return (Dom.rect()
-      ..id = id
-      ..className = _CLASS
       ..transform = this.props.helix.translate()
       ..x = '0'
       ..y = '0'
-      ..width = '${this.props.helix.svg_width()}'
-      ..height = '${this.props.helix.svg_height()}'
-//      ..onMouseDown = this._dispatch_mouse_click_to_covered_elts
-//      ..onMouseLeave = ((_) => this._handle_mouse_leave())
+      ..width = '$width'
+      ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//      ..onMouseMove = ((event) => this._handle_mousemove(event, this.props.helix, id)))();
-      ..onMouseMove = ((event) => update_mouseover(event, this.props.helix)))();
+      ..onMouseMove = ((event) => update_mouseover(event, this.props.helix))
+      ..id = id
+      ..className = _CLASS)();
   }
 }
 
@@ -57,8 +57,8 @@ mouse_leave_update_mouseover() {
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   MouseEvent event = event_syn.nativeEvent;
-  Point<num> pan = util.current_pan();
-  num zoom = util.current_zoom();
+  Point<num> pan = util.current_pan_main();
+  num zoom = util.current_zoom_main();
 
   var svg_coord = util.transform(event.offset, pan, zoom);
   num svg_x = svg_coord.x;
@@ -81,5 +81,6 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
         'forward = ${forward}');
   }
 
-  Actions.update_mouseover_data(MouseoverParameters([Tuple3(helix_idx, offset, forward)]));
+  var params = MouseoverParameters([Tuple3(helix_idx, offset, forward)]);
+  Actions.update_mouseover_data(params);
 }

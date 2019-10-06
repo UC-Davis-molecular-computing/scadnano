@@ -1,31 +1,15 @@
 @JS()
 library actions;
 
+import 'dart:math';
+
 import 'package:js/js.dart';
-import 'package:scadnano/src/model/edit_mode.dart';
-import 'package:scadnano/src/model/helix.dart';
-import 'package:scadnano/src/model/mouseover_data.dart';
-import 'package:scadnano/src/model/strand.dart';
-import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
-
-/// An ActionPack has all the data needed to apply an Action (the "payload" in the terminology of w_flux).
-/// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
-/// and the Undo/Redo stack (which needs the Action and payload packed into one object to put on the stack).
-/// A: type of the Action
-/// P: payload type for the Action
-//class ActionPack<A extends Action<P>, P> {
-//  final A action;
-//  final P payload;
-//
-//  ActionPack(this.action, this.payload);
-//
-//  apply() {
-//    // for some react this.action(this.payload) does not compile, but we can call the method "call" explicitly
-//    this.action.call(this.payload);
-//  }
-//}
+import '../model/edit_mode.dart';
+import '../model/helix.dart';
+import '../model/mouseover_data.dart';
+import '../model/strand.dart';
 
 /// An ActionPack has all the data needed to apply an Action (the "payload" in the terminology of w_flux).
 /// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
@@ -79,15 +63,17 @@ class Actions {
   // Load .dna file
   static final load_dna_file = Action<LoadDNAFileParameters>();
 
-  // Mouseover data
+  // Mouseover data (main view)
   static final update_mouseover_data = Action<MouseoverParameters>();
   static final remove_mouseover_data = Action<Null>();
+
+  // Side view position position
+  static final update_side_view_mouse_position = Action<Point<num>>();
+  static final remove_side_view_mouse_position = Action<Null>();
 
   // Helix
   static final helix_use = Action<HelixUseActionParameters>();
   static final set_helices = Action<List<Helix>>();
-  static final set_potential_helices = Action<List<PotentialHelix>>();
-  static final set_all_helices = Action<Tuple2<List<Helix>, List<PotentialHelix>>>();
   static final set_helix_rotation = Action<SetHelixRotationActionParameters>();
 
   // Strand

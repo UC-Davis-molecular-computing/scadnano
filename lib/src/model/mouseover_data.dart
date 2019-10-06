@@ -11,10 +11,6 @@ class MouseoverParameters {
   // each tuple is (helix_idx, offset, forward)
   final List<Tuple3<int, int, bool>> param_list;
 
-//  final int offset;
-//  final bool forward;
-
-//  MouseoverParameters(this.helix_idxs, this.offset, this.forward);
   MouseoverParameters(this.param_list);
 
   List<MouseoverData> mouseover_data() {
@@ -47,7 +43,8 @@ class MouseoverData {
 
   MouseoverData(this.helix, this.offset, this.substrand);
 
-  String toString() => 'MouseoverData(helix=${this.helix.idx()}, offset=${this.offset}, substrand=${this.substrand})';
+  String toString() =>
+      'MouseoverData(helix=${this.helix.idx()}, offset=${this.offset}, substrand=${this.substrand})';
 }
 
 class MouseoverDataStore extends Store {

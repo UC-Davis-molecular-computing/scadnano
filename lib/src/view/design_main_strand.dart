@@ -8,7 +8,6 @@ import '../app.dart';
 import '../model/strand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
-import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';

@@ -1,9 +1,10 @@
-import 'package:scadnano/src/model/mouseover_data.dart';
+import 'package:over_react/over_react.dart';
 
+import '../model/model_ui_side.dart';
+import '../model/mouseover_data.dart';
 import 'design_side_helix.dart';
 import '../model/helix.dart';
-
-import 'package:over_react/over_react.dart';
+import 'design_side_potential_helix.dart';
 
 part 'design_side.over_react.g.dart';
 
@@ -13,6 +14,8 @@ UiFactory<DesignSideProps> DesignSide = _$DesignSide;
 @Props()
 class _$DesignSideProps extends FluxUiProps<HelicesStore, HelicesStore> {
   MouseoverDataStore mouseover_data_store;
+  SideViewMousePositionStore side_view_mouse_position_store;
+  Grid grid;
 }
 
 @Component()
@@ -27,19 +30,20 @@ class DesignSideComponent extends FluxUiComponent<DesignSideProps> {
       for (var helix in this.props.store.helices)
         (DesignSideHelix()
           ..helix = helix
-          ..used = true
           ..grid_position = helix.grid_position()
+          ..grid = this.props.grid
           ..store = this.props.mouseover_data_store
           ..key = '${helix.has_grid_position() ? helix.grid_position() : helix.svg_position()}')()
     ];
-    List potential_helices_components = [
-      for (var potential_helix in this.props.store.potential_helices)
-        (DesignSideHelix()
-          ..helix = null
-          ..used = false
-          ..grid_position = potential_helix.grid_position()
-          ..key = '${potential_helix.grid_position()}')()
-    ];
-    return (Dom.g()..className = 'helices-side-view')(helices_components + potential_helices_components);
+    Set<GridPosition> existing_helix_grid_positions = {
+      for (var helix in this.props.store.helices) helix.grid_position()
+    };
+    return (Dom.g()..className = 'side-view')(
+      (DesignSidePotentialHelix()
+        ..grid = this.props.grid
+        ..existing_helix_grid_positions = existing_helix_grid_positions
+        ..store = this.props.side_view_mouse_position_store)(),
+      (Dom.g()..className = 'helices-side-view')(helices_components),
+    );
   }
 }

@@ -9,7 +9,7 @@ const String CURRENT_VERSION = "0.0.1";
 const int BASE_WIDTH_SVG = 10;
 const int BASE_HEIGHT_SVG = 10;
 
-const default_max_bases = 256;
+const default_max_offset = 256;
 
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:
@@ -21,6 +21,8 @@ const default_max_bases = 256;
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
 final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 
+const SIDE_HELIX_RADIUS = 25.0;
+
 const Grid default_grid = Grid.none;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
@@ -28,8 +30,10 @@ const js_function_name_cache_svg = 'cache_svg';
 const js_function_name_setup_svg_panzoom = 'setup_svg_panzoom';
 const js_function_name_setup_splits = 'setup_splits';
 const js_function_name_sdrag = 'sdrag';
-const js_function_name_current_pan = 'current_pan';
-const js_function_name_current_zoom = 'current_zoom';
+const js_function_name_current_pan_main = 'current_pan_main';
+const js_function_name_current_pan_side = 'current_pan_side';
+const js_function_name_current_zoom_main = 'current_zoom_main';
+const js_function_name_current_zoom_side = 'current_zoom_side';
 const js_function_name_compile = 'compile';
 
 const js_function_name_start_brython = 'start_brython';
@@ -58,8 +62,7 @@ const strands_key = 'strands';
 
 // Helix keys
 const idx_key = 'idx';
-const max_offset_key = 'max_bases';
-//const max_offset_key = 'max_offset';
+const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';
 const grid_position_key = 'grid_position';

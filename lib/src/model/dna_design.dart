@@ -4,7 +4,6 @@ import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
 import 'package:scadnano/src/json_serializable.dart';
-import 'package:tuple/tuple.dart';
 
 import '../dispatcher/actions.dart';
 import '../app.dart';
@@ -25,10 +24,8 @@ import '../constants.dart' as constants;
 
 //TODO: export SVG
 
-
 /// Represents parts of the Model to serialize
 class DNADesign extends Store implements JSONSerializable {
-
   Action<Null> get save_dna_file => Actions.save_dna_file;
 
   String version = constants.CURRENT_VERSION;
@@ -42,10 +39,9 @@ class DNADesign extends Store implements JSONSerializable {
 
   List<Helix> get helices => this.helices_store.helices;
 
-  List<PotentialHelix> get potential_helices => this.helices_store.potential_helices;
-
   /// strands
   StrandsStore strands_store = StrandsStore();
+
   List<Strand> get strands => this.strands_store.strands;
 
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
@@ -66,32 +62,20 @@ class DNADesign extends Store implements JSONSerializable {
     });
 
     this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.helix_use, (params) {
-      params.use ? this._convert_potential_to_helix(params) : this._convert_helix_to_potential(params);
+      params.create ? this._add_helix(params) : this._remove_helix(params);
     });
 
     this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
       this.helices_store.helices = new_helices;
     });
-
-    this.helices_store.triggerOnActionV2<List<PotentialHelix>>(Actions.set_potential_helices, (new_potential_helices) {
-      this.helices_store.potential_helices = new_potential_helices;
-    });
-
-    this.helices_store.triggerOnActionV2<Tuple2<List<Helix>, List<PotentialHelix>>>(Actions.set_all_helices, (all_helices) {
-      this.helices_store.helices = all_helices.item1;
-      this.helices_store.potential_helices = all_helices.item2;
-      this.helices_store.build_helices_map();
-    });
   }
 
-  _convert_potential_to_helix(HelixUseActionParameters params) {
-    int max_bases = params.max_offset > 0 ? params.max_offset : constants.default_max_bases;
-    Helix helix = Helix(grid_position: params.grid_position, max_offset: max_bases);
+  _add_helix(HelixUseActionParameters params) {
+    Helix helix = Helix(
+        grid_position: params.grid_position, max_offset: params.max_offset, min_offset: params.min_offset);
     helix.set_idx(params.idx);
 
     this.helices.insert(params.idx, helix);
-    PotentialHelix old_pot_helix = this.helices_store.gp_to_helix[params.grid_position];
-    this.potential_helices.remove(old_pot_helix);
     this.helices_store.gp_to_helix[params.grid_position] = helix;
 
     for (Helix helix_after_idx_used in this.helices.sublist(params.idx + 1)) {
@@ -100,15 +84,12 @@ class DNADesign extends Store implements JSONSerializable {
     }
   }
 
-  _convert_helix_to_potential(HelixUseActionParameters params) {
+  _remove_helix(HelixUseActionParameters params) {
     Helix old_helix = this.helices_store.gp_to_helix[params.grid_position];
     int old_idx = old_helix.idx();
     assert(old_idx == params.idx);
-    PotentialHelix potential_helix = PotentialHelix(params.grid_position);
 
     this.helices.removeAt(old_idx);
-    this.potential_helices.add(potential_helix);
-    this.helices_store.gp_to_helix[params.grid_position] = potential_helix;
 
     for (Helix helix_after_idx_unused in this.helices.sublist(old_idx)) {
       int prev_idx = helix_after_idx_unused.idx();
@@ -136,7 +117,7 @@ class DNADesign extends Store implements JSONSerializable {
 
   //"private" constructor; meta package will warn if it is used outside testing
   @visibleForTesting
-  DNADesign.internal(){
+  DNADesign.internal() {
     this._handle_actions();
   }
 
@@ -144,18 +125,6 @@ class DNADesign extends Store implements JSONSerializable {
     this._handle_actions();
     this.grid = Grid.square;
     this.major_tick_distance = 8;
-    this.build_default_potential_helices(num_helices_x, num_helices_y);
-  }
-
-  build_default_potential_helices(int num_helices_x, int num_helices_y) {
-    List<PotentialHelix> potential_helices = [];
-    for (int gx = 0; gx < num_helices_x; gx++) {
-      for (int gy = 0; gy < num_helices_y; gy++) {
-        var grid_pos = GridPosition(gx, gy);
-        potential_helices.add(PotentialHelix(grid_pos));
-      }
-    }
-    Actions.set_potential_helices(potential_helices);
   }
 
   /// max offset allowed on any Helix in the Model
@@ -172,6 +141,7 @@ class DNADesign extends Store implements JSONSerializable {
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> to_json_serializable() {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
+
     if (this.grid != constants.default_grid) {
       json_map[constants.grid_key] = grid_to_json(this.grid);
     }
@@ -180,13 +150,6 @@ class DNADesign extends Store implements JSONSerializable {
     }
 
     json_map[constants.helices_key] = [for (var helix in this.helices) helix.to_json_serializable()];
-
-    if (this.potential_helices.isNotEmpty) {
-      json_map[constants.potential_helices_key] = [
-        for (var ph in this.potential_helices) ph.to_json_serializable()
-      ];
-    }
-
     json_map[constants.strands_key] = [for (var strand in this.strands) strand.to_json_serializable()];
 
     return json_map;
@@ -223,21 +186,11 @@ class DNADesign extends Store implements JSONSerializable {
       helices.add(helix);
     }
 
-    List<PotentialHelix> potential_helices = [];
-    if (json_map.containsKey(constants.potential_helices_key)) {
-      List<dynamic> deserialized_potential_helices_list = json_map[constants.potential_helices_key];
-      for (var potential_helix_json in deserialized_potential_helices_list) {
-        PotentialHelix potential_helix = PotentialHelix.from_json(potential_helix_json);
-        potential_helices.add(potential_helix);
-      }
-    }
-
     //XXX: it's important that we keep the Store the same, so we don't assign to this.helices_store.
     // However, we can't send an Action to change it because we need the new data right away to build more
     // internal data (e.g., _build_helix_idx_substrands_map and _build_substrand_mismatches_map below).
     // Instead we directly mutate the Store (against the wishes of Flux) and then do a manual trigger at the end.
     this.helices_store.helices = helices;
-    this.helices_store.potential_helices = potential_helices;
 
     List<Strand> strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];

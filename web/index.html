@@ -81,6 +81,7 @@
     //  https://github.com/timmywil/panzoom
 
     var main_view_svg_pan_zoom;
+    var side_view_svg_pan_zoom;
 
     function setup_splits(show_editor) {
         setup_drag('side-pane', 'main-pane', 'side-main-separator');
@@ -158,7 +159,7 @@
 
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
-        var side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
+        side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
@@ -206,7 +207,7 @@
 
     }
 
-    function current_pan() {
+    function current_pan_main() {
         //XXX: dartdevc can handle passing the object pan directly, but the release version requires
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
         // of print statement debugging on the server to identify this.
@@ -214,8 +215,20 @@
         return [pan.x,pan.y];
     }
 
-    function current_zoom() {
+    function current_zoom_main() {
         return main_view_svg_pan_zoom.getZoom();
+    }
+
+    function current_pan_side() {
+        //XXX: dartdevc can handle passing the object pan directly, but the release version requires
+        // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
+        // of print statement debugging on the server to identify this.
+        var pan = side_view_svg_pan_zoom.getPan();
+        return [pan.x,pan.y];
+    }
+
+    function current_zoom_side() {
+        return side_view_svg_pan_zoom.getZoom();
     }
 
     function current_pan_new() {

@@ -9,6 +9,7 @@ import 'dart:math';
 
 import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/model/helix.dart';
 
 //import 'model/model.dart';
 import 'model/model.dart';
@@ -63,6 +64,32 @@ Point<num> transform(Point<num> point, Point<num> pan, num zoom) {
   return Point<num>(ret_x, ret_y);
 }
 
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
+  num radius = constants.SIDE_HELIX_RADIUS;
+  if (grid == Grid.square) {
+    return Point<num>(2 * radius * (gp.h + 1), 2 * radius * (gp.v + 1));
+  } else if (grid == Grid.hex || grid == Grid.honeycomb) {
+    throw UnimplementedError('hex and honeycomb grids not yet supported');
+  } else {
+    throw ArgumentError('cannot convert grid coordinates for grid = Grid.none');
+  }
+}
+
+/// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
+  num radius = constants.SIDE_HELIX_RADIUS;
+  if (grid == Grid.square) {
+    int h = ((svg_coord.x / (2 * radius)) - 1).round();
+    int v = ((svg_coord.y / (2 * radius)) - 1).round();
+    int b = 0;
+    return GridPosition(h,v,b);
+  } else if (grid == Grid.hex || grid == Grid.honeycomb) {
+    throw UnimplementedError('hex and honeycomb grids not yet supported');
+  } else {
+    throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
+  }
+}
+
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
 /// print(window['editor_content'])
@@ -87,14 +114,25 @@ num sigmoid(num x) {
 @JS(constants.js_function_name_cache_svg)
 external ImageElement cache_svg(String svg_elt_id);
 
-@JS(constants.js_function_name_current_zoom)
-external num current_zoom();
+@JS(constants.js_function_name_current_zoom_main)
+external num current_zoom_main();
 
-@JS(constants.js_function_name_current_pan)
-external List<num> current_pan_js();
+@JS(constants.js_function_name_current_pan_main)
+external List<num> current_pan_main_js();
 
-Point<num> current_pan() {
-  var ret = current_pan_js();
+Point<num> current_pan_main() {
+  var ret = current_pan_main_js();
+  return Point<num>(ret[0], ret[1]);
+}
+
+@JS(constants.js_function_name_current_zoom_side)
+external num current_zoom_side();
+
+@JS(constants.js_function_name_current_pan_side)
+external List<num> current_pan_side_js();
+
+Point<num> current_pan_side() {
+  var ret = current_pan_side_js();
   return Point<num>(ret[0], ret[1]);
 }
 
