@@ -59,11 +59,11 @@ def create_helices(num_helices: int, num_bases_per_helix: int):
     major_ticks.append(num_bases_per_helix)
 
     tile_major_ticks = multiples_of(21, 5, num_bases_per_helix) + multiples_of(21, 16, num_bases_per_helix)
-    tile_helices = [sc.Helix(max_bases=num_bases_per_helix, major_ticks=tile_major_ticks)
+    tile_helices = [sc.Helix(max_offset=num_bases_per_helix, major_ticks=tile_major_ticks)
                     for _ in [0, 1, num_helices + 2, num_helices + 3]]
 
     return [tile_helices[0], tile_helices[1]] + \
-           [sc.Helix(max_bases=num_bases_per_helix, major_ticks=major_ticks)
+           [sc.Helix(max_offset=num_bases_per_helix, major_ticks=major_ticks)
             for _ in range(2, num_helices + 2)] + \
            [tile_helices[2], tile_helices[3]]
 

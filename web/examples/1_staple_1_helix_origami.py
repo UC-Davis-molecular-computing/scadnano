@@ -2,7 +2,7 @@ import scadnano as sc
 
 def main():
     length = 9
-    helices = [sc.Helix(max_bases=length, major_ticks=[2,5])]
+    helices = [sc.Helix(max_offset=length, major_ticks=[2,5])]
     stap_ss = sc.Substrand(0, sc.forward, 0, length)
     scaf_ss = sc.Substrand(0, sc.reverse, 0, length)
     stap = sc.Strand([stap_ss])

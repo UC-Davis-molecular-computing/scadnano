@@ -2,12 +2,12 @@
   "version": "0.0.1",
   "grid": "square",
   "helices": [
-    {"max_bases": 192, "grid_position": [0, 0]},
-    {"max_bases": 192, "grid_position": [0, 1]},
-    {"max_bases": 192, "grid_position": [0, 2]},
-    {"max_bases": 192, "grid_position": [0, 3]},
-    {"max_bases": 192, "grid_position": [0, 4]},
-    {"max_bases": 192, "grid_position": [0, 5]}
+    {"max_offset": 192, "grid_position": [0, 0]},
+    {"max_offset": 192, "grid_position": [0, 1]},
+    {"max_offset": 192, "grid_position": [0, 2]},
+    {"max_offset": 192, "grid_position": [0, 3]},
+    {"max_offset": 192, "grid_position": [0, 4]},
+    {"max_offset": 192, "grid_position": [0, 5]}
   ],
   "strands": [
     {
