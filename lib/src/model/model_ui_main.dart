@@ -15,10 +15,10 @@ class StrandHoverStore extends Store {
   Strand get strand => this._strand;
 
   StrandHoverStore() {
-    triggerOnActionV2<Strand>(Actions.add_strand_hover, (strand) {
+    triggerOnActionV2<Strand>(Actions.strand_hover_add, (strand) {
       this._strand = strand;
     });
-    triggerOnActionV2<Null>(Actions.remove_strand_hover, (_) {
+    triggerOnActionV2<Null>(Actions.strand_hover_remove, (_) {
       this._strand = null;
     });
   }
@@ -47,10 +47,24 @@ class MainViewSelection {
   List<BoundSubstrand> starts = [];
   List<BoundSubstrand> ends = [];
   List<Crossover> crossovers = [];
-  List<BoundSubstrand> substrands = [];
+  List<Strand> strands = [];
+  List<Loopout> loopouts = [];
+  List<Deletion> deletions = [];
+  List<Insertion> insertions = [];
 }
 
 class Crossover {
-  BoundSubstrand substrand_5p = null;
-  BoundSubstrand substrand_3p = null;
+  BoundSubstrand prev_substrand;
+  BoundSubstrand next_substrand;
+}
+
+class Deletion {
+  BoundSubstrand substrand;
+  int offset;
+}
+
+class Insertion {
+  BoundSubstrand substrand;
+  int offset;
+  int num_insertions;
 }

@@ -20,8 +20,6 @@ import '../constants.dart' as constants;
 
 //TODO: import/export cadnano files
 
-//TODO: export IDT files
-
 //TODO: export SVG
 
 /// Represents parts of the Model to serialize
@@ -204,11 +202,14 @@ class DNADesign extends Store implements JSONSerializable {
     this._set_helices_idxs();
     this._set_helices_grid_and_svg_positions();
     this._build_helix_idx_substrands_map();
-    this._set_helices_max_bases(update: false);
+    this._set_helices_max_offsets(update: false);
 
     //TODO: maybe move strand (and maybe helix) functionality into stores
     this._build_substrand_mismatches_map();
     this._check_legal_design();
+
+    //FIXME: side view does not re-render on file load unless this is explicitly triggered
+    this.helices_store.trigger();
   }
 
   static int default_major_tick_distance(Grid grid) {
@@ -219,7 +220,6 @@ class DNADesign extends Store implements JSONSerializable {
     for (int idx = 0; idx < this.helices.length; idx++) {
       var helix = this.helices[idx];
       helix.set_idx(idx);
-//      helix.set_idx_no_change_notification(idx);
     }
   }
 
@@ -235,7 +235,7 @@ class DNADesign extends Store implements JSONSerializable {
     }
   }
 
-  _set_helices_max_bases({bool update = true}) {
+  _set_helices_max_offsets({bool update = true}) {
     for (var helix in this.helices) {
       if (update || !helix.has_max_offset()) {
         var max_bases = -1;

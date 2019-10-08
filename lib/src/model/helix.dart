@@ -10,53 +10,6 @@ import 'strand.dart';
 import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 
-class SetHelixRotationActionParameters {
-  final int idx;
-  final int anchor;
-  final num rotation;
-
-  final int old_anchor;
-  final num old_rotation;
-
-  SetHelixRotationActionParameters(this.idx, this.anchor, this.rotation, this.old_anchor, this.old_rotation);
-
-  SetHelixRotationActionParameters reverse() => SetHelixRotationActionParameters(
-      this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
-}
-
-class SetHelixRotationActionPack
-    extends ReversibleActionPack<Action<SetHelixRotationActionParameters>, SetHelixRotationActionParameters> {
-  SetHelixRotationActionParameters params;
-
-  SetHelixRotationActionPack(this.params) : super(Actions.set_helix_rotation, params);
-
-  @override
-  SetHelixRotationActionPack reverse() => SetHelixRotationActionPack(this.params.reverse());
-}
-
-class HelixUseActionParameters {
-  final bool create;
-  final GridPosition grid_position;
-  final int idx;
-  final int max_offset;
-  final int min_offset;
-
-  HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset, [this.min_offset=0]);
-
-  HelixUseActionParameters reverse() =>
-      HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset, this.min_offset);
-}
-
-class HelixUseActionPack
-    extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
-  HelixUseActionParameters params;
-
-  HelixUseActionPack(this.params) : super(Actions.helix_use, params);
-
-  @override
-  HelixUseActionPack reverse() => HelixUseActionPack(this.params.reverse());
-}
-
 class HelicesStore extends Store {
   List<Helix> _helices;
 
@@ -162,19 +115,13 @@ class GridPosition {
   String toString() => '(${this.h}, ${this.v}, ${this.b})';
 }
 
-//TODO: give user help creating new Helix's whenever grid is not none
-//  for instance when they put the mouse pointer somewhere in the side view, show a light circle where
-//  a Helix could be created by clicking in the current mouse position.
-
 //TODO: rename Helix.max_bases to max_offset, add Helix.min_offset, and allow offsets to be negative
 
-/// Represents a helix (as opposed to the circles drawn in the side
-/// view initially, which are unused helices). However, a helix doesn't
-/// have to have any strands on it.
+/// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
 class Helix extends Store implements JSONSerializable {
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
-  /// by default. This default positioning can be overridden by setting the position field.
+  /// by default.
   int _idx = -1;
 
   /// position within square/hex/honeycomb integer grid (side view)
@@ -347,15 +294,7 @@ class Helix extends Store implements JSONSerializable {
   set_idx(int new_idx) {
     this._idx = new_idx;
     this._svg_position = this.default_svg_position();
-//    this.notify_changed();
   }
-
-//  /// Sets idx without changing svg position or notifying listeners.
-//  /// Intended only for specialized use within library.
-//  set_idx_no_change_notification(int new_idx) {
-//    this._idx = new_idx;
-//    this._svg_position = this.default_svg_position();
-//  }
 
   int get hashCode =>
       quiver.hash4(this._idx, this._grid_position.h, this._grid_position.v, this._grid_position.b);

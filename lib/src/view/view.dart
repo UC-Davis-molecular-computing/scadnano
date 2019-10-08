@@ -71,7 +71,8 @@ class View {
 //    this.editor_view = EditorViewComponent(editor_element);
 
 //    setup_splits(app.model.show_editor);
-    this.model.listen((_) => this.render());
+//    this.model.listen((_) => this.render());
+//    this.render();
   }
 
   /// This should be called whenever app.model is set to a new object,

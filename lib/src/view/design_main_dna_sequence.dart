@@ -9,7 +9,6 @@ import '../app.dart';
 import '../model/strand.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
-import 'design_main_mouseover_rect_helix.dart';
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
@@ -73,8 +72,8 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
     var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}';
 
     SvgProps text_props = (Dom.text()
-      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseMove = ((event) => update_mouseover(event, helix))
+//      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+//      ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
@@ -138,9 +137,9 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
 
     Map<String, dynamic> style_map;
     if (letter_spacing != null) {
-      style_map = {'letter-spacing': '${letter_spacing}em', 'font-size': '${font_size}px'};
+      style_map = {'letterSpacing': '${letter_spacing}em', 'fontSize': '${font_size}px'};
     } else {
-      style_map = {'font-size': '${font_size}px'};
+      style_map = {'fontSize': '${font_size}px'};
     }
 
     SvgProps text_path_props = (Dom.textPath()
@@ -149,7 +148,11 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
 //      ..startOffset = start_offset
       ..style = style_map);
     text_path_props.addProp('startOffset', start_offset); // bug in OverReact
-    return (Dom.text()..dy = dy)(text_path_props(subseq));
+    return (Dom.text()
+      ..key = 'loopout-text-'
+          'H${prev_ss.helix},${prev_ss.offset_3p}-'
+          'H${next_ss.helix},${next_ss.offset_5p}'
+      ..dy = dy)(text_path_props(subseq));
   }
 }
 

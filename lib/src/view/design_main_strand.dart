@@ -25,15 +25,20 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
 
   @override
   render() {
-    print('rendering one strand');
     Strand strand = this.props.store;
 
     if (strand.substrands.length == 0) {
       return null;
     } else {
-      bool hover = strand.ui_model.hover;
-      var classname = 'strand' + (hover ? ' hover' : '');
       var strand_id = '${strand.css_selector()}';
+
+      var classname = 'strand';
+      if (strand.ui_model.hover) {
+        classname += ' hover';
+      }
+      if (strand.ui_model.selected) {
+        classname += ' selected';
+      }
 
       return (Dom.g()
         ..id = strand_id

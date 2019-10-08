@@ -8,7 +8,6 @@ import 'dart:svg' as svg;
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/helix.dart';
 import 'package:scadnano/src/model/model.dart';
 
 import '../app.dart';

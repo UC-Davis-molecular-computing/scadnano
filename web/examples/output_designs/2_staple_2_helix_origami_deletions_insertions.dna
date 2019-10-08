@@ -8,15 +8,16 @@
   "strands": [
     {
       "color": {"r": 0, "g": 102, "b": 204},
-      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTA",
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACT",
       "substrands": [
         {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
         {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24], "insertions": [[6, 1], [18, 2]]},
+        {"loopout": 3},
         {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": {"r": 247, "g": 67, "b": 8},
       "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
@@ -24,8 +25,8 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
-      "dna_sequence": "TTAGTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTAG",
+      "color": {"r": 87, "g": 187, "b": 0},
+      "dna_sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAGTTAGT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
         {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}

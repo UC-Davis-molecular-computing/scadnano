@@ -11,30 +11,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'dna_design.dart';
 
-class StrandRemoveActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
-  Strand strand;
-
-  StrandRemoveActionPack(this.strand) : super(Actions.strand_remove, strand);
-
-  @override
-  ReversibleActionPack<Action<Strand>, Strand> reverse() {
-    return StrandAddActionPack(this.strand);
-  }
-}
-
-class StrandAddActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
-  Strand strand;
-
-  StrandAddActionPack(this.strand) : super(Actions.strand_add, strand);
-
-  @override
-  ReversibleActionPack<Action<Strand>, Strand> reverse() {
-    return StrandRemoveActionPack(this.strand);
-  }
-}
-
 class StrandsStore extends Store {
-
   List<Strand> _strands;
 
   List<Strand> get strands => this._strands;
@@ -48,7 +25,7 @@ class StrandsStore extends Store {
   }
 }
 
-class IDTFields extends JSONSerializable {
+class IDTFields implements JSONSerializable {
   String name;
   String scale;
   String purification;
@@ -94,7 +71,7 @@ class IDTFields extends JSONSerializable {
   }
 }
 
-class Strand extends Store implements JSONSerializable {
+class Strand extends SelfListeningStore implements JSONSerializable {
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color color = null;
@@ -110,33 +87,15 @@ class Strand extends Store implements JSONSerializable {
   }
 
   void _handle_actions() {
-    Actions.add_strand_hover.listen((strand) {
-      if (identical(strand, this)){
-        this.ui_model.hover = true;
-        this.trigger();
-      }
-    });
-    Actions.remove_strand_hover.listen((strand) {
-      if (identical(strand, this)){
-        this.ui_model.hover = false;
-        this.trigger();
-      }
-    });
-
-    //XXX: the code below fires trigger() for every strand and causes a re-render of all strands
-    // even though only one changed. So we substitute what triggerOnAction is shorthand for, with an
-    // additiona check for equality between this and strand to avoid the re-render for most strands.
-//    this.triggerOnActionV2<Strand>(Actions.add_strand_hover, (strand) {
-//      strand.ui_model.hover = true;
-//    });
-//    this.triggerOnActionV2<Strand>(Actions.remove_strand_hover, (strand) {
-//      strand.ui_model.hover = false;
-//    });
+    this.trigger_on_action_if_this(Actions.strand_hover_add, ((_) => this.ui_model.hover = true));
+    this.trigger_on_action_if_this(Actions.strand_hover_remove, ((_) => this.ui_model.hover = false));
+    this.trigger_on_action_if_this(
+        Actions.strand_select_toggle, ((_) => this.ui_model.selected = !this.ui_model.selected));
   }
 
   String css_selector() {
     BoundSubstrand first_ss = this.bound_substrands().first;
-    return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward? 'forward': 'reverse'}';
+    return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward ? 'forward' : 'reverse'}';
   }
 
   String toString() {
@@ -219,6 +178,8 @@ class Strand extends Store implements JSONSerializable {
     if (this.substrands.last is Loopout) {
       throw StrandError(this, 'Loopout at end of strand not supported');
     }
+
+    this.ui_model.assign_crossover_ui_models();
   }
 
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
@@ -242,30 +203,7 @@ class Strand extends Store implements JSONSerializable {
   }
 }
 
-//class Substrand extends Union2Impl<BoundSubstrand,Loopout> {
-//  // copying the pattern here:
-//  // https://github.com/fluttercommunity/mvi_sealed_unions/blob/master/lib/trending/trending_model.dart
-//
-//  static final Doublet<BoundSubstrand,Loopout> factory = const Doublet<BoundSubstrand,Loopout>();
-//
-//  Substrand._(Union2<BoundSubstrand,Loopout> union) : super(union);
-//
-//  factory Substrand.loopout(int length) {
-//    return Substrand._(factory(Loopout(length)));
-//  }
-//
-//  int dna_length();
-//
-//  bool is_loopout();
-//
-//  bool is_bound_substrand() => !this.is_loopout();
-//
-//  String dna_sequence();
-//
-//
-//}
-
-abstract class Substrand extends JSONSerializable {
+abstract class Substrand extends SelfListeningStore implements JSONSerializable {
   // for efficiency but not serialized since it would introduce a JSON cycle
   Strand _strand;
 
@@ -293,15 +231,26 @@ abstract class Substrand extends JSONSerializable {
 }
 
 class Loopout extends Substrand {
-  int length;
+  LoopoutUIModel ui_model;
 
-  Loopout(this.length);
+  int loopout_length;
 
-  String toString() => 'Loopout(${this.length})';
+  Loopout(this.loopout_length) {
+    this.ui_model = LoopoutUIModel(this);
+    this._handle_actions();
+  }
+
+  _handle_actions() {
+    this.trigger_on_action_if_this(Actions.loopout_select_toggle, (_) {
+      this.ui_model.selected = !this.ui_model.selected;
+    });
+  }
+
+  String toString() => 'Loopout(${this.loopout_length})';
 
   bool is_loopout() => true;
 
-  int dna_length() => this.length;
+  int dna_length() => this.loopout_length;
 
   String dna_sequence() {
     String strand_seq = this.strand.dna_sequence;
@@ -310,7 +259,7 @@ class Loopout extends Substrand {
     }
 
     int str_idx_left = this.get_seq_start_idx();
-    int str_idx_right = str_idx_left + this.length; // EXCLUSIVE (unlike similar code for Substrand)
+    int str_idx_right = str_idx_left + this.loopout_length; // EXCLUSIVE (unlike similar code for Substrand)
     String subseq = strand_seq.substring(str_idx_left, str_idx_right);
     return subseq;
   }
@@ -330,13 +279,15 @@ class Loopout extends Substrand {
   }
 
   Loopout.from_json(Map<String, dynamic> json_map) {
+    this._handle_actions();
     var name = 'Loopout';
-    this.length = util.get_value(json_map, constants.loopout_key, name);
+    this.loopout_length = util.get_value(json_map, constants.loopout_key, name);
+    this.ui_model = LoopoutUIModel(this);
   }
 
   Map<String, dynamic> to_json_serializable() {
     var json_map = {
-      constants.loopout_key: this.length,
+      constants.loopout_key: this.loopout_length,
     };
     return json_map;
   }
@@ -346,12 +297,71 @@ class Loopout extends Substrand {
 /// BoundSubstrand that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
 class BoundSubstrand extends Substrand {
+  BoundSubstrandUIModel ui_model;
+
   int helix = -1;
   bool forward = true;
   int start = null;
   int end = null;
   List<int> deletions = [];
   List<Tuple2<int, int>> insertions = []; // elt: Pair(offset, num insertions)
+
+  BoundSubstrand() {
+    this.ui_model = BoundSubstrandUIModel(this);
+    this._handle_actions();
+  }
+
+  _handle_actions() {
+    this.trigger_on_action_if_this(
+        Actions.five_prime_select_toggle, (_) => this.ui_model.selected_5p = !this.ui_model.selected_5p);
+    this.trigger_on_action_if_this(
+        Actions.three_prime_select_toggle, (_) => this.ui_model.selected_3p = !this.ui_model.selected_3p);
+  }
+
+  dynamic to_json_serializable() {
+    var json_map = {
+      constants.helix_idx_key: this.helix,
+      constants.forward_key: this.forward,
+      constants.start_key: this.start,
+      constants.end_key: this.end,
+    };
+    if (this.deletions.isNotEmpty) {
+      json_map[constants.deletions_key] = this.deletions;
+    }
+    if (this.insertions.isNotEmpty) {
+      // need to use List.from because List.map returns Iterable, not List
+      json_map[constants.insertions_key] =
+          List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+    }
+    return NoIndent(json_map);
+  }
+
+  BoundSubstrand.from_json(Map<String, dynamic> json_map) {
+    this.ui_model = BoundSubstrandUIModel(this);
+    this._handle_actions();
+
+    var name = 'Substrand';
+    this.helix = util.get_value(json_map, constants.helix_idx_key, name);
+    this.forward = util.get_value(json_map, constants.forward_key, name);
+    this.start = util.get_value(json_map, constants.start_key, name);
+    this.end = util.get_value(json_map, constants.end_key, name);
+    if (json_map.containsKey(constants.deletions_key)) {
+      this.deletions = List<int>.from(json_map[constants.deletions_key]);
+    } else {
+      this.deletions = [];
+    }
+    if (json_map.containsKey(constants.insertions_key)) {
+      this.insertions = parse_json_insertions(json_map[constants.insertions_key]);
+    } else {
+      this.insertions = [];
+    }
+  }
+
+  static List<Tuple2<int, int>> parse_json_insertions(json_encoded_insertions) {
+    // need to use List.from because List.map returns Iterable, not List
+    return List<Tuple2<int, int>>.from(
+        json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
+  }
 
   /// 5' end, INCLUSIVE
   int get offset_5p => this.forward ? this.start : this.end - 1;
@@ -364,6 +374,9 @@ class BoundSubstrand extends Substrand {
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
   int get visual_length => (this.end - this.start);
+
+  String toString() =>
+      'BoundSubstrand(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand.
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
@@ -588,50 +601,6 @@ class BoundSubstrand extends Substrand {
       num += insertion.item2;
     }
     return num;
-  }
-
-  BoundSubstrand();
-
-  dynamic to_json_serializable() {
-    var json_map = {
-      constants.helix_idx_key: this.helix,
-      constants.forward_key: this.forward,
-      constants.start_key: this.start,
-      constants.end_key: this.end,
-    };
-    if (this.deletions.isNotEmpty) {
-      json_map[constants.deletions_key] = this.deletions;
-    }
-    if (this.insertions.isNotEmpty) {
-      // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] =
-          List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
-    }
-    return NoIndent(json_map);
-  }
-
-  BoundSubstrand.from_json(Map<String, dynamic> json_map) {
-    var name = 'Substrand';
-    this.helix = util.get_value(json_map, constants.helix_idx_key, name);
-    this.forward = util.get_value(json_map, constants.forward_key, name);
-    this.start = util.get_value(json_map, constants.start_key, name);
-    this.end = util.get_value(json_map, constants.end_key, name);
-    if (json_map.containsKey(constants.deletions_key)) {
-      this.deletions = List<int>.from(json_map[constants.deletions_key]);
-    } else {
-      this.deletions = [];
-    }
-    if (json_map.containsKey(constants.insertions_key)) {
-      this.insertions = parse_json_insertions(json_map[constants.insertions_key]);
-    } else {
-      this.insertions = [];
-    }
-  }
-
-  static List<Tuple2<int, int>> parse_json_insertions(json_encoded_insertions) {
-    // need to use List.from because List.map returns Iterable, not List
-    return List<Tuple2<int, int>>.from(
-        json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
   }
 
   bool overlaps(BoundSubstrand other) {

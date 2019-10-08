@@ -266,14 +266,41 @@ html, body {
     visibility: visible;
 }
 
-
 .substrand-line {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
 }
 
+.selected.five-prime-end,
+.selected.three-prime-end,
+.selected.five-prime-end-first-substrand,
+.selected.three-prime-end-last-substrand{
+    stroke: red;
+    fill: hotpink;
+    visibility: visible;
+}
+
+.selected .five-prime-end,
+.selected .three-prime-end,
+.selected .five-prime-end-first-substrand,
+.selected .three-prime-end-last-substrand {
+    stroke: red;
+    fill: hotpink;
+}
+
+.selected.crossover-curve,
+.selected.loopout-line,
+.selected.insertion-line,
+.selected .crossover-curve,
+.selected .loopout-line,
+.selected .insertion-line,
+.selected .substrand-line {
+    stroke: hotpink;
+}
+
 .strand.hover,
+.loopout-line:hover,
 .five-prime-end-first-substrand:hover,
 .three-prime-end-last-substrand:hover,
 .five-prime-end:hover,
@@ -282,6 +309,7 @@ html, body {
 .deletion-cross:hover {
     filter: url("#shadow");
 }
+
 
 .crossover-curve:hover {
     stroke-dasharray: 0;
@@ -323,6 +351,7 @@ html, body {
     font-weight: bold;
     font-size: 12px;
     text-anchor: start;
+    pointer-events: none;
     dominant-baseline: ideographic;
     text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
     0.7px -0.7px 0 #fff,
@@ -355,7 +384,8 @@ html, body {
 }
 
 .side-view-potential-helix {
-    fill: #C0C0C0;
+    fill: palegoldenrod;
+    stroke: goldenrod;
 }
 
 .main-view-helix-text {

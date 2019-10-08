@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/helix.dart';
 
-import '../../scadnano.dart';
+import '../app.dart';
+import '../dispatcher/actions.dart';
+import '../model/helix.dart';
 import '../model/model_ui_side.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;

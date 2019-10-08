@@ -1,7 +1,9 @@
 import 'dart:html_common';
 
+import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/model/dna_design.dart';
 import 'package:scadnano/src/model/model.dart';
+import 'package:scadnano/src/model/strand_ui_model.dart';
 import 'package:w_flux/w_flux.dart';
 
 import 'strand.dart';
@@ -55,3 +57,23 @@ class DesignOrErrorStore extends Store {
     _subscribe_to_stores(this, [this.dna_design, this.error_message_store]);
   }
 }
+
+
+// Crossover components listen to this on the BoundSubstrands on either end of them.
+class TwoBoundSubstrandsStore extends Store {
+  BoundSubstrand prev_substrand;
+  BoundSubstrand next_substrand;
+  CrossoverUIModel crossover_ui_model;
+
+  TwoBoundSubstrandsStore(this.prev_substrand, this.next_substrand, this.crossover_ui_model) {
+    _subscribe_to_stores(this, [this.prev_substrand, this.next_substrand]);
+    Actions.crossover_select_toggle.listen((pair) {
+      if (identical(pair.item1, prev_substrand) && identical(pair.item2, next_substrand)) {
+        crossover_ui_model.selected = !crossover_ui_model.selected;
+        this.trigger();
+      }
+    });
+  }
+}
+
+

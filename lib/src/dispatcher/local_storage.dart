@@ -1,6 +1,6 @@
 import 'dart:html';
 
-//TODO: put whole DNADesign in here
+//TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
 
 /// Aspects of model that can be stored in localStorage.
 /// This constitutes more than is saved in jsonStorage, including things like

@@ -2,23 +2,21 @@ import 'package:w_flux/w_flux.dart';
 import '../dispatcher/actions.dart';
 
 class EditModeChoice {
-  final String _name;
+  final String name;
 
-  static final EditModeChoice select = EditModeChoice('Select');
-  static final EditModeChoice pencil = EditModeChoice('Pencil');
-  static final EditModeChoice nick = EditModeChoice('Nick');
-  static final EditModeChoice ligate = EditModeChoice('Ligate');
-  static final EditModeChoice insertion = EditModeChoice('Insertion');
-  static final EditModeChoice deletion = EditModeChoice('Deletion');
-  static final EditModeChoice sequence = EditModeChoice('Sequence');
-  static final EditModeChoice backbone_rotation = EditModeChoice('Backbone');
-  static final EditModeChoice python_editor = EditModeChoice('Python');
+  static final select = EditModeChoice._('Select');
+  static final pencil = EditModeChoice._('Pencil');
+  static final nick = EditModeChoice._('Nick');
+  static final ligate = EditModeChoice._('Ligate');
+  static final insertion = EditModeChoice._('Insertion');
+  static final deletion = EditModeChoice._('Deletion');
+  static final sequence = EditModeChoice._('Sequence');
+  static final backbone_rotation = EditModeChoice._('Backbone');
+  static final python_editor = EditModeChoice._('Python');
 
-  EditModeChoice(this._name);
+  EditModeChoice._(this.name);
 
-  String get name => this._name;
-
-  String toString() => this._name;
+  String toString() => 'EditModeChoice(${this.name})';
 }
 
 class EditModeStore extends Store {

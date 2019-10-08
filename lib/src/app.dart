@@ -2,7 +2,6 @@
 library app;
 
 import 'dart:html';
-import 'dart:js';
 
 import 'package:js/js.dart';
 
@@ -12,13 +11,9 @@ import 'dispatcher/actions.dart';
 import 'util.dart' as util;
 import 'dispatcher/undo_redo.dart';
 import 'view/view.dart';
-import 'constants.dart' as constants;
 import 'dispatcher/local_storage.dart' as local_storage;
 
 App app = App();
-
-//@JS()
-//external set set_new_design_from_json_js(Function f);
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -29,12 +24,6 @@ class App {
   UndoRedo undo_redo = UndoRedo();
 
   start() async {
-
-    // make Controller.set_new_design_from_json accessible from JS so pyodide can access it after compiling
-//    context[constants.js_function_name_set_new_design_from_json] =
-//    set_new_design_from_json_js = allowInterop((String json_string) {
-//      set_new_design_from_json(json_string);
-//    });
 
     this.model =
         await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
@@ -51,16 +40,10 @@ class App {
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
 
-    // allow Brython some way to tell us about errors that happened when compiling
-    context[constants.js_function_name_set_error_message_from_python_script] = allowInterop((String msg) {
-      print('dart received error message: ${msg}');
-//      set_error_message(msg);
-    });
-
     DivElement app_root_element = querySelector('#top-container');
     this.view = View(app_root_element, this.model);
 
-    model.trigger();
+    this.view.render();
   }
 
   send_action(ReversibleActionPack action_pack) {

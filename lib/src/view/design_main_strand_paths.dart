@@ -2,15 +2,17 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
+import 'package:scadnano/src/model/composite_stores.dart';
+import 'package:tuple/tuple.dart';
 
+import 'design_main_strand_3p_end.dart';
+import 'design_main_strand_5p_end.dart';
 import '../app.dart';
-import '../model/helix.dart';
 import '../model/dna_design.dart';
 import '../model/strand.dart';
-import '../util.dart' as util;
 import '../constants.dart' as constants;
-import 'design_main_mouseover_rect_helix.dart';
+import 'design_main_strand_bound_substrand.dart';
+import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
@@ -47,189 +49,49 @@ List<ReactElement> _strand_paths(Strand strand, String strand_id) {
   List<ReactElement> ends = []; // add after so clicking on ends takes priority
   var substrand = strand.substrands.first;
 
+  //TODO: make crossover a component that listens to both BoundSubstrands it connects
   for (int i = 0; i < strand.substrands.length; i++) {
     substrand = strand.substrands[i];
     if (substrand.is_bound_substrand()) {
-      paths.add(_bound_substrand_line(substrand, strand_id));
-      ends.add(_5p_end(substrand, i));
-      ends.add(_3p_end(substrand, i));
+      var key_bound_ss = "bound-substrand-$i";
+      paths.add((DesignMainBoundSubstrand()
+        ..store = substrand
+        ..strand_id = strand_id
+        ..key = key_bound_ss
+        ..id = key_bound_ss)());
+
+      var key_5p = "5'-end-$i";
+      ends.add((DesignMain5pEnd()
+        ..store = substrand
+        ..substrand_idx = i
+        ..key = key_5p)());
+
+      var key_3p = "3'-end-$i";
+      ends.add((DesignMain3pEnd()
+        ..store = substrand
+        ..substrand_idx = i
+        ..key = key_3p)());
+
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand()) {
+        BoundSubstrand prev_ss = substrand;
+        BoundSubstrand next_ss = strand.substrands[i + 1];
+        var pair_ss = Tuple2<BoundSubstrand, BoundSubstrand>(prev_ss, next_ss);
+        var crossover_ui_model = strand.ui_model.crossover_ui_models[pair_ss];
         paths.add((DesignMainStrandPathsCrossover()
+          ..store = TwoBoundSubstrandsStore(prev_ss, next_ss, crossover_ui_model)
           ..strand = strand
           ..idx = i
           ..key = 'crossover-paths-$i')());
       }
     } else {
-      paths.add(_loopout_arc(strand, i));
+      paths.add((DesignMainLoopout()
+        ..store = substrand
+        ..substrand_idx = i
+        ..key = "loopout-$i")());
     }
   }
 
   return paths + ends;
-}
-
-ReactElement _5p_end(BoundSubstrand substrand, int substrand_order) {
-//  var first_ss = strand.first_bound_substrand();
-  var helix = app.model.dna_design.helices[substrand.helix];
-  var offset = substrand.offset_5p;
-  var right = substrand.forward;
-  var pos = helix.svg_base_pos(offset, right);
-
-  bool is_first_substrand = substrand_order == 0;
-  var classname = 'five-prime-end' + (is_first_substrand ? '-first-substrand' : '');
-
-  //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
-  // if they are specified in CSS, but it will if they are specified here
-  String key = "5'-end-$substrand_order";
-  ReactElement box = (Dom.rect()
-    ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-    ..onMouseMove = ((event) => update_mouseover(event, helix))
-    ..key = key
-    ..id = key
-    ..className = classname
-    ..x = '${pos.x - 3.5}'
-    ..y = '${pos.y - 3.5}'
-    ..width = '7px'
-    ..height = '7px'
-    ..rx = '1.5px'
-    ..ry = '1.5px'
-    ..fill = substrand.strand.color.toRgbColor().toCssString())();
-  return box;
-}
-
-ReactElement _3p_end(BoundSubstrand substrand, int substrand_order) {
-  var offset = substrand.offset_3p;
-  var direction = substrand.forward;
-  var helix = app.model.dna_design.helices[substrand.helix];
-  var pos = helix.svg_base_pos(offset, direction);
-  var points;
-  num scale = 3.7;
-  if (!substrand.forward) {
-    points = '${pos.x - scale},${pos.y} '
-        '${pos.x + 0.9 * scale},${pos.y + scale} '
-        '${pos.x + 0.9 * scale},${pos.y - scale}';
-  } else {
-    points = '${pos.x + scale},${pos.y} '
-        '${pos.x - 0.9 * scale},${pos.y + scale} '
-        '${pos.x - 0.9 * scale},${pos.y - scale}';
-  }
-
-  bool is_last_substrand = substrand_order == substrand.strand.bound_substrands().length - 1;
-  var classname = 'three-prime-end' + (is_last_substrand ? '-last-substrand' : '');
-  String key = "3'-end-$substrand_order";
-  ReactElement triangle = (Dom.polygon()
-    ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-    ..onMouseMove = ((event) => update_mouseover(event, helix))
-    ..key = key
-    ..id = key
-    ..className = classname
-    ..points = points
-    ..fill = substrand.strand.color.toRgbColor().toCssString())();
-  return triangle;
-}
-
-// There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
-// go around React when OPT=true and set the class directly by querying the element by ID.
-const OPT = true;
-//const OPT = false;
-
-ReactElement _bound_substrand_line(BoundSubstrand substrand, String strand_id) {
-  Helix helix = app.model.dna_design.helices[substrand.helix];
-  Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-  Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
-  String id = util.substrand_line_id(substrand);
-  Strand strand = substrand.strand;
-  ReactElement substrand_line = (Dom.line()
-    ..onMouseEnter = ((_) {
-      if (OPT) {
-        print('querying for elt with id #${strand_id}');
-        Element strand_elt = querySelector('#${strand_id}');
-        strand_elt.classes.add('hover');
-      } else {
-        Actions.add_strand_hover(strand);
-      }
-    })
-    ..onMouseLeave = ((_) {
-      if (OPT) {
-        Element strand_elt = querySelector('#${strand_id}');
-        strand_elt.classes.remove('hover');
-      } else {
-        Actions.remove_strand_hover(strand);
-      }
-      mouse_leave_update_mouseover();
-    })
-    ..onMouseMove = ((event) => update_mouseover(event, helix))
-    ..stroke = substrand.strand.color.toRgbColor().toCssString()
-    ..x1 = '${start_svg.x}'
-    ..y1 = '${start_svg.y}'
-    ..x2 = '${end_svg.x}'
-    ..y2 = '${end_svg.y}'
-    ..key = id
-    ..id = id
-    ..className = 'substrand-line')();
-  return substrand_line;
-}
-
-/// loopout arc at position i in Strand (i.e., connect bound substrands i-1 and i+1
-ReactElement _loopout_arc(Strand strand, int i) {
-  assert(0 < i);
-  assert(i < strand.substrands.length - 1);
-
-  var prev_ss = strand.substrands[i - 1] as BoundSubstrand;
-  var next_ss = strand.substrands[i + 1] as BoundSubstrand;
-  var classname = 'substrand-line';
-
-  Loopout loopout = strand.substrands[i];
-  if (util.is_hairpin(prev_ss, next_ss)) {
-    // special case for hairpin so it's not a short straight line
-    return _hairpin_arc(prev_ss, next_ss, loopout, classname);
-  } else {
-    String path = crossover_path_description(prev_ss, next_ss);
-    String id = util.loopout_id(loopout, prev_ss, next_ss);
-    String color = strand.color.toRgbColor().toCssString();
-    return (Dom.path()
-      ..d = path
-      ..stroke = color
-      ..className = classname
-      ..id = id
-      ..key = id)();
-  }
-}
-
-ReactElement _hairpin_arc(
-    BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname) {
-  var helix = app.model.dna_design.helices[prev_substrand.helix];
-  var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
-  var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
-  var strand = prev_substrand.strand;
-
-  //TODO: make a design with all loopout lengths 1-20 and calibrate this
-  var w = 1.5 * util.sigmoid(loopout.length - 1) * constants.BASE_WIDTH_SVG;
-  var h = 10 * util.sigmoid(loopout.length - 5) * constants.BASE_HEIGHT_SVG;
-
-  var x_offset1, x_offset2, y_offset1, y_offset2;
-  if (prev_substrand.forward) {
-    x_offset1 = start_svg.x + w;
-    y_offset1 = start_svg.y - h;
-    x_offset2 = end_svg.x + w;
-    y_offset2 = end_svg.y + h;
-  } else {
-    x_offset1 = start_svg.x - w;
-    y_offset1 = start_svg.y + h;
-    x_offset2 = end_svg.x - w;
-    y_offset2 = end_svg.y - h;
-  }
-
-  var c1 = Point<num>(x_offset1, y_offset1);
-  var c2 = Point<num>(x_offset2, y_offset2);
-
-  String id = util.loopout_id(loopout, prev_substrand, next_substrand);
-  ReactElement arc = (Dom.path()
-    ..key = id
-    ..id = id
-    ..className = classname
-    ..stroke = strand.color.toRgbColor().toCssString()
-    ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}')();
-  return arc;
 }
 
 String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand next_substrand) {
