@@ -157,6 +157,17 @@
             }
         };
 
+        var ctrl_or_shift_pressed = false;
+        function set_ctrl_or_shift(event) {
+            ctrl_or_shift_pressed = (event.ctrlKey || event.shiftKey);
+        }
+        window.onkeydown = set_ctrl_or_shift;
+        window.onkeyup = set_ctrl_or_shift;
+        window.onmousedown = set_ctrl_or_shift; // needed because others aren't called if mouse key is depressed
+        window.onmouseup = set_ctrl_or_shift; // needed because others aren't called if mouse key is depressed
+        function before_pan(oldPan, newPan) {
+            return !ctrl_or_shift_pressed;
+        }
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
@@ -173,6 +184,7 @@
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
+            beforePan: before_pan,
             customEventsHandler: eventsHandler,
             fit: false,
         });

@@ -197,10 +197,12 @@ class Helix extends Store implements JSONSerializable {
 
   List<BoundSubstrand> bound_substrands() => this._substrands;
 
-  Helix({grid_position, max_offset=null, min_offset=null}) {
+  Helix({grid_position, max_offset=null, min_offset=null, major_tick_distance = -1, major_ticks = null}) {
     this._grid_position = grid_position;
     this._max_offset = max_offset;
     this._min_offset = min_offset;
+    this._major_tick_distance = major_tick_distance;
+    this._major_ticks = major_ticks;
 
     this._handle_actions();
   }
@@ -295,6 +297,9 @@ class Helix extends Store implements JSONSerializable {
   set_idx(int new_idx) {
     this._idx = new_idx;
     this._svg_position = this.default_svg_position();
+    for (var ss in bound_substrands()) {
+      ss.helix = new_idx;
+    }
   }
 
   int get hashCode =>

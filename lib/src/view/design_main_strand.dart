@@ -143,6 +143,8 @@ List<ReactElement> _deletion_paths(Strand strand) {
 }
 
 ReactElement _deletion_path(BoundSubstrand substrand, int deletion_offset, Strand strand) {
+//  print('app.model.dna_design.helices: ${app.model.dna_design.helices}');
+//  print('  substrand: ${substrand}');
   var helix = app.model.dna_design.helices[substrand.helix];
   Point<num> pos = helix.svg_base_pos(deletion_offset, substrand.forward);
 

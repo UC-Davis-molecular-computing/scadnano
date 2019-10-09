@@ -35,9 +35,9 @@ abstract class ReversibleActionPack<A extends Action<P>, P> {
 
   ReversibleActionPack<A, P> reverse();
 
-  apply() {
+  apply() async {
     // for some react this.action(this.payload) does not compile, but we can call the method "call" explicitly
-    this.action.call(this.payload);
+    return await this.action.call(this.payload);
   }
 }
 
@@ -49,17 +49,15 @@ class BatchActionPack extends ReversibleActionPack {
 
   BatchActionPack(this.action_packs) : super(null, null);
 
-  apply() {
+  apply() async {
     for (var action_pack in this.action_packs) {
-      action_pack.apply();
+      await action_pack.apply();
     }
   }
 
   BatchActionPack reverse() {
     // put Actions in reverse order, and reverse each Action
-    List<ReversibleActionPack> reverse = [
-      for (var action_pack in this.action_packs.reversed) action_pack.reverse()
-    ];
+    List<ReversibleActionPack> reverse = [for (var action_pack in this.action_packs.reversed) action_pack.reverse()];
     return BatchActionPack(reverse);
   }
 }
@@ -87,6 +85,8 @@ class Actions {
   // Strand
   static final strand_remove = Action<Strand>();
   static final strand_add = Action<Strand>();
+  static final strands_remove = Action<Iterable<Strand>>();
+  static final strands_add = Action<Iterable<Strand>>();
 
   // Strand UI model
   static final strand_hover_add = Action<Strand>();
@@ -120,8 +120,7 @@ class Actions {
 /// selected or unselected is rendered.
 class SelfListeningStore extends Store {
   /// execute on_action if payload == this object
-  trigger_on_action_if_this<T extends SelfListeningStore>(Action<T> action,
-      [FutureOr<dynamic> on_action(T payload)]) {
+  trigger_on_action_if_this<T extends SelfListeningStore>(Action<T> action, [FutureOr<dynamic> on_action(T payload)]) {
     action.listen((the_payload) {
       if (the_payload == this) {
         on_action.call(the_payload);
@@ -164,6 +163,28 @@ class StrandAddActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
   }
 }
 
+class StrandsRemoveActionPack extends ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> {
+  Iterable<Strand> strands;
+
+  StrandsRemoveActionPack(this.strands) : super(Actions.strands_remove, strands);
+
+  @override
+  ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> reverse() {
+    return StrandsAddActionPack(this.strands);
+  }
+}
+
+class StrandsAddActionPack extends ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> {
+  Iterable<Strand> strands;
+
+  StrandsAddActionPack(this.strands) : super(Actions.strands_add, strands);
+
+  @override
+  ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> reverse() {
+    return StrandsRemoveActionPack(this.strands);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix actions
 
@@ -177,8 +198,8 @@ class SetHelixRotationActionParameters {
 
   SetHelixRotationActionParameters(this.idx, this.anchor, this.rotation, this.old_anchor, this.old_rotation);
 
-  SetHelixRotationActionParameters reverse() => SetHelixRotationActionParameters(
-      this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
+  SetHelixRotationActionParameters reverse() =>
+      SetHelixRotationActionParameters(this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
 }
 
 class SetHelixRotationActionPack
@@ -197,15 +218,18 @@ class HelixUseActionParameters {
   final int idx;
   final int max_offset;
   final int min_offset;
+  final int major_tick_distance;
+  final List<int> major_ticks;
 
-  HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset, [this.min_offset = 0]);
+  HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset,
+      {this.min_offset = 0, this.major_tick_distance = -1, this.major_ticks = null});
 
   HelixUseActionParameters reverse() =>
-      HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset, this.min_offset);
+      HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset,
+          min_offset: this.min_offset, major_tick_distance: this.major_tick_distance, major_ticks: this.major_ticks);
 }
 
-class HelixUseActionPack
-    extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
+class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
   HelixUseActionParameters params;
 
   HelixUseActionPack(this.params) : super(Actions.helix_use, params);

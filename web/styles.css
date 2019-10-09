@@ -272,6 +272,10 @@ html, body {
     fill: none;
 }
 
+.selected {
+    filter: url("#shadow");
+}
+
 .selected.five-prime-end,
 .selected.three-prime-end,
 .selected.five-prime-end-first-substrand,

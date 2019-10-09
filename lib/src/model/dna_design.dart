@@ -52,13 +52,10 @@ class DNADesign extends Store implements JSONSerializable {
       util.save_file(default_filename, content);
     });
 
-    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_remove, (strand) {
-      this.remove_strand(strand);
-    });
-
-    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_add, (strand) {
-      this.add_strand(strand);
-    });
+    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_remove, remove_strand);
+    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_add, add_strand);
+    this.strands_store.triggerOnActionV2<Iterable<Strand>>(Actions.strands_remove, remove_strands);
+    this.strands_store.triggerOnActionV2<Iterable<Strand>>(Actions.strands_add, add_strands);
 
     this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.helix_use, (params) {
       params.create ? this._add_helix(params) : this._remove_helix(params);
@@ -71,7 +68,11 @@ class DNADesign extends Store implements JSONSerializable {
 
   _add_helix(HelixUseActionParameters params) {
     Helix helix = Helix(
-        grid_position: params.grid_position, max_offset: params.max_offset, min_offset: params.min_offset);
+        grid_position: params.grid_position,
+        max_offset: params.max_offset,
+        min_offset: params.min_offset,
+        major_tick_distance: params.major_tick_distance,
+        major_ticks: params.major_ticks);
     helix.set_idx(params.idx);
 
     this.helices.insert(params.idx, helix);
@@ -97,16 +98,28 @@ class DNADesign extends Store implements JSONSerializable {
   }
 
   add_strand(Strand strand) {
-    this.strands_store.strands.add(strand);
+    this.strands.add(strand);
     for (BoundSubstrand ss in strand.bound_substrands()) {
       this.helices[ss.helix].bound_substrands().add(ss);
     }
   }
 
   remove_strand(Strand strand) {
-    this.strands_store.strands.remove(strand);
+    this.strands.remove(strand);
     for (BoundSubstrand ss in strand.bound_substrands()) {
       this.helices[ss.helix].bound_substrands().remove(ss);
+    }
+  }
+
+  add_strands(Iterable<Strand> strands) {
+    for (Strand strand in strands) {
+      add_strand(strand);
+    }
+  }
+
+  remove_strands(Iterable<Strand> strands) {
+    for (Strand strand in strands) {
+      remove_strand(strand);
     }
   }
 
@@ -159,12 +172,10 @@ class DNADesign extends Store implements JSONSerializable {
 //  DNADesign.from_json(Map<String, dynamic> json_map) {
     //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
-    this.version = json_map.containsKey(constants.version_key)
-        ? json_map[constants.version_key]
-        : constants.INITIAL_VERSION;
+    this.version =
+        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
 
-    this.grid =
-        json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this.major_tick_distance = json_map[constants.major_tick_distance_key];
