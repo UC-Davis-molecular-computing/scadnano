@@ -1,22 +1,24 @@
 import 'dart:html_common';
 
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/dna_design.dart';
-import 'package:scadnano/src/model/model.dart';
-import 'package:scadnano/src/model/strand_ui_model.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../app.dart';
+import '../dispatcher/actions.dart';
+import 'dna_design.dart';
+import 'model.dart';
+import 'selectable.dart';
+import 'strand_ui_model.dart';
 import 'strand.dart';
+import 'bound_substrand.dart';
 import 'model_ui.dart';
 
 /// These are stores that reference other stores, notifying their listeners when any of those Stores update.
 /// They have no Actions that mutate them directly, and only serve as "funnels" for notification.
 /// Useful for parts of the view that listen to parts of the Model that are disparate in the Model tree.
-_subscribe_to_stores(Store composite_store, Iterable<Store> stores) {
+subscribe_to_stores(Store composite_store, Iterable<Store> stores) {
   for (var store in stores) {
     store.listen((_) => composite_store.trigger());
   }
-  convertNativePromiseToDartFuture;
 }
 
 class DNASequencesStore extends Store {
@@ -24,7 +26,7 @@ class DNASequencesStore extends Store {
   final ShowDNAStore show_dna_store;
 
   DNASequencesStore(this.strands_store, this.show_dna_store) {
-    _subscribe_to_stores(this, [this.strands_store, this.show_dna_store]);
+    subscribe_to_stores(this, [this.strands_store, this.show_dna_store]);
   }
 }
 
@@ -33,7 +35,7 @@ class MismatchesStore extends Store {
   final ShowMismatchesStore show_mismatches_store;
 
   MismatchesStore(this.strands_store, this.show_mismatches_store) {
-    _subscribe_to_stores(this, [this.strands_store, this.show_mismatches_store]);
+    subscribe_to_stores(this, [this.strands_store, this.show_mismatches_store]);
   }
 }
 
@@ -44,7 +46,7 @@ class ShowStore extends Store {
   final ShowEditorStore show_editor_store;
 
   ShowStore(this.show_dna_store, this.show_mismatches_store, this.show_editor_store) {
-    _subscribe_to_stores(this, [this.show_dna_store, this.show_mismatches_store, this.show_editor_store]);
+    subscribe_to_stores(this, [this.show_dna_store, this.show_mismatches_store, this.show_editor_store]);
   }
 }
 
@@ -54,26 +56,35 @@ class DesignOrErrorStore extends Store {
   ErrorMessageStore error_message_store;
 
   DesignOrErrorStore(this.dna_design, this.error_message_store) {
-    _subscribe_to_stores(this, [this.dna_design, this.error_message_store]);
+    subscribe_to_stores(this, [this.dna_design, this.error_message_store]);
   }
 }
-
-
-// Crossover components listen to this on the BoundSubstrands on either end of them.
-class TwoBoundSubstrandsStore extends Store {
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
-  CrossoverUIModel crossover_ui_model;
-
-  TwoBoundSubstrandsStore(this.prev_substrand, this.next_substrand, this.crossover_ui_model) {
-    _subscribe_to_stores(this, [this.prev_substrand, this.next_substrand]);
-    Actions.crossover_select_toggle.listen((pair) {
-      if (identical(pair.item1, prev_substrand) && identical(pair.item2, next_substrand)) {
-        crossover_ui_model.selected = !crossover_ui_model.selected;
-        this.trigger();
-      }
-    });
-  }
-}
+//
+//// Crossover components listen to this on the BoundSubstrands on either end of them.
+//class CrossoverStore extends Store with Selectable<CrossoverStore> {
+//  BoundSubstrand prev_substrand;
+//  BoundSubstrand next_substrand;
+//  CrossoverUIModel crossover_ui_model;
+//
+//  CrossoverStore(this.prev_substrand, this.next_substrand, this.crossover_ui_model) {
+//    _subscribe_to_stores(this, [this.prev_substrand, this.next_substrand]);
+//
+//    trigger_on_select_toggle_actions(() => app.model.main_view_ui_model.selection.crossovers);
+//
+//    Actions.crossover_select_toggle.listen((pair) {
+//      if (pair.item1 == prev_substrand && pair.item2 == next_substrand) {
+//        crossover_ui_model.selected = !crossover_ui_model.selected;
+//        this.trigger();
+//      }
+//    });
+//
+//    Actions.remove_all_selections.listen((_) {
+//      if (this.crossover_ui_model.selected) {
+//        this.crossover_ui_model.selected = false;
+//        trigger();
+//      }
+//    });
+//  }
+//}
 
 

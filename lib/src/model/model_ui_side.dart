@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../dispatcher/actions.dart';
 import 'helix.dart';
 
 class SideViewSelection {

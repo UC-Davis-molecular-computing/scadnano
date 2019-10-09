@@ -1,9 +1,10 @@
-import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../dispatcher/actions.dart';
 import 'helix.dart';
 import 'strand.dart';
+import 'bound_substrand.dart';
 import '../app.dart';
 
 /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)

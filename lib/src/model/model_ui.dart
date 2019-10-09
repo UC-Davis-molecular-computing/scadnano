@@ -1,5 +1,6 @@
-import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
+
+import '../dispatcher/actions.dart';
 
 //TODO: add ability for user to ctrl+click (or some special key click) at offset on helix to set that helix's notion
 // of DNA backbones rotation, which will then be displayed in the side view on all other offsets

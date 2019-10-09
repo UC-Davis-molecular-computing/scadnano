@@ -2,14 +2,16 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/composite_stores.dart';
 import 'package:tuple/tuple.dart';
 
+import '../model/crossover.dart';
 import 'design_main_strand_3p_end.dart';
 import 'design_main_strand_5p_end.dart';
 import '../app.dart';
 import '../model/dna_design.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
+import '../model/loopout.dart';
 import '../constants.dart' as constants;
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
@@ -52,37 +54,38 @@ List<ReactElement> _strand_paths(Strand strand, String strand_id) {
   //TODO: make crossover a component that listens to both BoundSubstrands it connects
   for (int i = 0; i < strand.substrands.length; i++) {
     substrand = strand.substrands[i];
+
     if (substrand.is_bound_substrand()) {
-      var key_bound_ss = "bound-substrand-$i";
+
       paths.add((DesignMainBoundSubstrand()
         ..store = substrand
         ..strand_id = strand_id
-        ..key = key_bound_ss
-        ..id = key_bound_ss)());
+        ..key = "bound-substrand-$i"
+        ..id = "bound-substrand-$i")());
 
-      var key_5p = "5'-end-$i";
       ends.add((DesignMain5pEnd()
         ..store = substrand
-        ..substrand_idx = i
-        ..key = key_5p)());
+        ..is_first_substrand = (i == 0)
+        ..key = "5'-end-$i")());
 
-      var key_3p = "3'-end-$i";
       ends.add((DesignMain3pEnd()
         ..store = substrand
-        ..substrand_idx = i
-        ..key = key_3p)());
+        ..is_last_substrand = (i == strand.substrands.length - 1)
+        ..key = "3'-end-$i")());
 
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand()) {
         BoundSubstrand prev_ss = substrand;
         BoundSubstrand next_ss = strand.substrands[i + 1];
-        var pair_ss = Tuple2<BoundSubstrand, BoundSubstrand>(prev_ss, next_ss);
-        var crossover_ui_model = strand.ui_model.crossover_ui_models[pair_ss];
+        var pair = Tuple2<BoundSubstrand,BoundSubstrand>(prev_ss, next_ss);
+        Crossover crossover = strand.crossovers[pair];
+
         paths.add((DesignMainStrandPathsCrossover()
-          ..store = TwoBoundSubstrandsStore(prev_ss, next_ss, crossover_ui_model)
+          ..store = crossover
           ..strand = strand
           ..idx = i
           ..key = 'crossover-paths-$i')());
       }
+
     } else {
       paths.add((DesignMainLoopout()
         ..store = substrand

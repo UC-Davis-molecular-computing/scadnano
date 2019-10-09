@@ -98,6 +98,12 @@ class DesignViewComponent {
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
+    main_view_svg.onMouseDown.listen((ev) {
+      if (!ev.ctrlKey && ! ev.shiftKey) {
+        Actions.remove_all_selections();
+      }
+    });
+
     app.model.design_or_error_store.listen((_) => this.render());
   }
 

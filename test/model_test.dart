@@ -1,9 +1,8 @@
 //@TestOn("browser")  // uncomment this to test stuff in files that require importing 'dart:html'
 
-import 'package:test/test.dart';
-import 'package:tuple/tuple.dart';
-
-import 'package:scadnano/src/model/strand.dart';
+//import 'package:test/test.dart';
+//import 'package:tuple/tuple.dart';
+//import 'package:scadnano/src/model/strand.dart';
 
 //TODO: figure out good testing framework.
 

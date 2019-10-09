@@ -6,6 +6,7 @@ import 'package:tuple/tuple.dart';
 
 import '../app.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
@@ -36,7 +37,8 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
       if (strand.ui_model.hover) {
         classname += ' hover';
       }
-      if (strand.ui_model.selected) {
+//      if (strand.ui_model.selected) {
+      if (strand.selected()) {
         classname += ' selected';
       }
 

@@ -2,11 +2,12 @@ import 'dart:math';
 
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
-import 'package:scadnano/src/json_serializable.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../json_serializable.dart';
 import 'strand.dart';
+import 'bound_substrand.dart';
 import '../dispatcher/actions.dart';
 import '../constants.dart' as constants;
 

@@ -5,6 +5,8 @@ import 'package:over_react/over_react.dart';
 
 import '../dispatcher/actions.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
+import '../model/loopout.dart';
 import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
@@ -38,7 +40,7 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
     var next_ss = strand.substrands[substrand_idx + 1] as BoundSubstrand;
 
     var classname = 'substrand-line loopout-line';
-    if (loopout.ui_model.selected) {
+    if (loopout.selected()) {
       classname += ' selected';
     }
 
@@ -50,7 +52,8 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
       String id = util.loopout_id(loopout, prev_ss, next_ss);
       String color = strand.color.toRgbColor().toCssString();
       return (Dom.path()
-        ..onMouseDown = ((event) => event.ctrlKey ? Actions.loopout_select_toggle(loopout) : null)
+//        ..onMouseDown = ((event) => event.ctrlKey ? Actions.loopout_select_toggle(loopout) : null)
+        ..onMouseDown = loopout.handle_selection // use with mixin Selectable
         ..d = path
         ..stroke = color
         ..className = classname

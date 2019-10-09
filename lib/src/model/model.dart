@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/edit_mode.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../dispatcher/actions.dart';
+import 'edit_mode.dart';
 import 'composite_stores.dart';
 import 'model_ui.dart';
 import 'model_ui_side.dart';
@@ -13,6 +13,11 @@ import '../app.dart';
 import 'dna_design.dart';
 
 class Model extends Store {
+  MenuViewUIModel menu_view_ui_model = MenuViewUIModel();
+  EditorViewUIModel editor_view_ui_model = EditorViewUIModel();
+  MainViewUIModel main_view_ui_model = MainViewUIModel();
+  SideViewUIModel side_view_ui_model = SideViewUIModel();
+
   // composite stores
   DNASequencesStore dna_sequences_store;
   MismatchesStore mismatches_store;
@@ -25,11 +30,6 @@ class Model extends Store {
   EditModeStore edit_mode_store = EditModeStore();
 
   String _editor_content = "";
-
-  MenuViewUIModel menu_view_ui_model = MenuViewUIModel();
-  EditorViewUIModel editor_view_ui_model = EditorViewUIModel();
-  MainViewUIModel main_view_ui_model = MainViewUIModel();
-  SideViewUIModel side_view_ui_model = SideViewUIModel();
 
   /// Save button is enabled iff this is true
   bool changed_since_last_save = false;

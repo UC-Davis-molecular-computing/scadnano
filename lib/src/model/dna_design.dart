@@ -3,11 +3,12 @@ import 'dart:math';
 import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
-import 'package:scadnano/src/json_serializable.dart';
 
+import '../json_serializable.dart';
 import '../dispatcher/actions.dart';
 import '../app.dart';
 import 'strand.dart';
+import 'bound_substrand.dart';
 import 'helix.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
@@ -463,7 +464,7 @@ class StrandError extends IllegalDNADesignError {
     var last_substrand = strand.last_bound_substrand();
 
     var msg = '\n'
-        'strand length        =  ${strand.dna_length}\n'
+        'strand length        =  ${strand.dna_length()}\n'
         'DNA length           =  ${strand.dna_sequence.length}\n'
         'DNA sequence         =  ${strand.dna_sequence}'
         "strand 5' helix      =  ${first_substrand.helix}\n"

@@ -6,6 +6,7 @@ import 'package:over_react/over_react.dart';
 import '../dispatcher/actions.dart';
 import '../model/helix.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
 import '../app.dart';
 import 'design_main_mouseover_rect_helix.dart';
 import '../util.dart' as util;
@@ -16,7 +17,7 @@ part 'design_main_strand_bound_substrand.over_react.g.dart';
 UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
 
 @Props()
-class _$DesignMainBoundSubstrandProps extends FluxUiProps<BoundSubstrand,BoundSubstrand> {
+class _$DesignMainBoundSubstrandProps extends FluxUiProps<BoundSubstrand, BoundSubstrand> {
   String strand_id;
 }
 
@@ -42,11 +43,12 @@ class DesignMainBoundSubstrandComponent extends FluxUiComponent<DesignMainBoundS
     Strand strand = substrand.strand;
 
     ReactElement substrand_line = (Dom.line()
-      ..onMouseDown = ((event) {
-        if (event.ctrlKey) {
-          Actions.strand_select_toggle(substrand.strand);
-        }
-      })
+//      ..onMouseDown = ((event) {
+//        if (event.ctrlKey) {
+//          Actions.strand_select_toggle(substrand.strand);
+//        }
+//      })
+      ..onMouseDown = strand.handle_selection
       ..onMouseEnter = ((_) {
         if (_OPTIMIZE) {
           Element strand_elt = querySelector('#${strand_id}');
@@ -76,5 +78,3 @@ class DesignMainBoundSubstrandComponent extends FluxUiComponent<DesignMainBoundS
     return substrand_line;
   }
 }
-
-

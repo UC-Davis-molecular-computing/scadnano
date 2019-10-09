@@ -7,6 +7,8 @@ import 'package:tuple/tuple.dart';
 
 import '../app.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
+import '../model/loopout.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
@@ -69,7 +71,8 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
     }
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
     var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 0.342);
-    var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}';
+    var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}-'
+        '${substrand.forward? 'forward': 'reverse'}';
 
     SvgProps text_props = (Dom.text()
 //      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())

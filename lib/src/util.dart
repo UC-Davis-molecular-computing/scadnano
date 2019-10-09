@@ -9,13 +9,13 @@ import 'dart:math';
 
 import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/model/helix.dart';
 
-//import 'model/model.dart';
+import 'model/helix.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'constants.dart' as constants;
-import 'model/strand.dart';
+import 'model/loopout.dart';
+import 'model/bound_substrand.dart';
 
 /// Should only be called once at the start of the program
 Future<Model> model_from_url(String url) async {

@@ -1,9 +1,12 @@
-import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../dispatcher/actions.dart';
+import 'crossover.dart';
 import 'model_ui.dart';
 import 'mouseover_data.dart';
 import 'strand.dart';
+import 'bound_substrand.dart';
+import 'loopout.dart';
 
 ////////////////////////////////////////////////
 // Stores
@@ -24,9 +27,9 @@ class StrandHoverStore extends Store {
   }
 }
 
-
 // end Stores
 ////////////////////////////////////////////////
+
 
 class MainViewUIModel {
   MainViewSelection selection = MainViewSelection();
@@ -37,25 +40,22 @@ class MainViewUIModel {
   ShowEditorStore show_editor_store = ShowEditorStore();
 
   bool get show_dna => this.show_dna_store.show_dna;
+
   bool get show_mismatches => this.show_mismatches_store.show_mismatches;
+
   //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
   //  Then it's ubambiguous what Ctrl+Z should do
   bool get show_editor => this.show_editor_store.show_editor;
 }
 
 class MainViewSelection {
-  List<BoundSubstrand> starts = [];
-  List<BoundSubstrand> ends = [];
-  List<Crossover> crossovers = [];
-  List<Strand> strands = [];
-  List<Loopout> loopouts = [];
-  List<Deletion> deletions = [];
-  List<Insertion> insertions = [];
-}
-
-class Crossover {
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
+  Set<DNAEnd> starts = {};
+  Set<DNAEnd> ends = {};
+  Set<Crossover> crossovers = {};
+  Set<Strand> strands = {};
+  Set<Loopout> loopouts = {};
+  Set<Deletion> deletions = {};
+  Set<Insertion> insertions = {};
 }
 
 class Deletion {

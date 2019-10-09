@@ -8,10 +8,13 @@ import 'package:js/js.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
+import '../model/selectable.dart';
 import '../model/edit_mode.dart';
 import '../model/helix.dart';
 import '../model/mouseover_data.dart';
 import '../model/strand.dart';
+import '../model/bound_substrand.dart';
+import '../model/loopout.dart';
 
 /// An ActionPack has all the data needed to apply an [Action] (the "payload" in the terminology of w_flux).
 /// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
@@ -54,7 +57,9 @@ class BatchActionPack extends ReversibleActionPack {
 
   BatchActionPack reverse() {
     // put Actions in reverse order, and reverse each Action
-    List<ReversibleActionPack> reverse = [for (var action_pack in this.action_packs.reversed) action_pack.reverse()];
+    List<ReversibleActionPack> reverse = [
+      for (var action_pack in this.action_packs.reversed) action_pack.reverse()
+    ];
     return BatchActionPack(reverse);
   }
 }
@@ -91,6 +96,12 @@ class Actions {
   static final three_prime_select_toggle = Action<BoundSubstrand>();
   static final loopout_select_toggle = Action<Loopout>();
   static final crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
+  static final remove_all_selections = Action<Null>();
+
+  static final select = Action<Selectable>();
+  static final toggle = Action<Selectable>();
+
+//  static final select_update
 
   // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
   static final set_error_message = Action<String>();
@@ -104,12 +115,15 @@ class Actions {
   static final set_show_editor = Action<bool>();
 }
 
-/// w_flux [Store] that can listen specifically to [Action]s whose payload is itself and only trigger for those.
+/// w_flux [Store] that can listen specifically to [Action]s whose payload is itself and only calls trigger() for those.
+/// This avoids unnecessary re-rendering when a select or toggle action is dispatched, so only the element that was
+/// selected or unselected is rendered.
 class SelfListeningStore extends Store {
   /// execute on_action if payload == this object
-  trigger_on_action_if_this<T extends SelfListeningStore>(Action<T> action, [FutureOr<dynamic> on_action(T payload)]) {
+  trigger_on_action_if_this<T extends SelfListeningStore>(Action<T> action,
+      [FutureOr<dynamic> on_action(T payload)]) {
     action.listen((the_payload) {
-      if (identical(the_payload, this)) {
+      if (the_payload == this) {
         on_action.call(the_payload);
         this.trigger();
       }
@@ -163,8 +177,8 @@ class SetHelixRotationActionParameters {
 
   SetHelixRotationActionParameters(this.idx, this.anchor, this.rotation, this.old_anchor, this.old_rotation);
 
-  SetHelixRotationActionParameters reverse() =>
-      SetHelixRotationActionParameters(this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
+  SetHelixRotationActionParameters reverse() => SetHelixRotationActionParameters(
+      this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
 }
 
 class SetHelixRotationActionPack
@@ -190,7 +204,8 @@ class HelixUseActionParameters {
       HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset, this.min_offset);
 }
 
-class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
+class HelixUseActionPack
+    extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
   HelixUseActionParameters params;
 
   HelixUseActionPack(this.params) : super(Actions.helix_use, params);
