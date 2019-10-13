@@ -2,10 +2,10 @@
 library util;
 
 import 'dart:convert';
-import 'dart:core';
-import 'dart:html';
+import 'dart:html' hide ImageElement;
 import 'dart:js' as js;
 import 'dart:math';
+import 'dart:svg' hide Point;
 
 import 'package:js/js.dart';
 import 'package:platform_detect/platform_detect.dart';
@@ -14,7 +14,6 @@ import 'model/helix.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'constants.dart' as constants;
-import 'model/loopout.dart';
 import 'model/bound_substrand.dart';
 
 /// Should only be called once at the start of the program
@@ -48,9 +47,17 @@ Future<String> file_content(String url) async {
   });
 }
 
-/// Transform point by panning and zooming.
+Point<num> transform_mouse_coord_to_svg_current_panzoom_side(Point<num> point) {
+  return transform_mouse_coord_to_svg(point, current_pan_side(), current_zoom_side());
+}
+
+Point<num> transform_mouse_coord_to_svg_current_panzoom_main(Point<num> point) {
+  return transform_mouse_coord_to_svg(point, current_pan_main(), current_zoom_main());
+}
+
+/// Transform point by panning and zooming from mouse coordinates to SVG coordinates.
 /// (Actually I needed to do what appears to be the inverse transformation here, not sure why.)
-Point<num> transform(Point<num> point, Point<num> pan, num zoom) {
+Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zoom) {
   num ret_x;
   num ret_y;
   if (browser.isFirefox || browser.isInternetExplorer) {
@@ -62,6 +69,51 @@ Point<num> transform(Point<num> point, Point<num> pan, num zoom) {
     ret_y = (point.y - pan.y) / zoom;
   }
   return Point<num>(ret_x, ret_y);
+}
+
+Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zoom) {
+  num ret_x;
+  num ret_y;
+  if (browser.isFirefox || browser.isInternetExplorer) {
+    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
+    ret_x = point.x;
+    ret_y = point.y;
+  } else {
+    ret_x = point.x * zoom + pan.x;
+    ret_y = point.y * zoom + pan.y;
+  }
+  return Point<num>(ret_x, ret_y);
+}
+
+transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+  var up_left = Point<num>(rect.x, rect.y);
+  var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
+  var up_left_tran = transform(up_left, pan, zoom);
+  var low_right_tran = transform(low_right, pan, zoom);
+  rect.x = up_left_tran.x;
+  rect.y = up_left_tran.y;
+  rect.width = low_right_tran.x - rect.x;
+  rect.height = low_right_tran.y - rect.y;
+}
+
+///Modifies Rect in place because there doesn't seem to be a constructor:
+/// https://api.dartlang.org/stable/2.5.2/dart-svg/Rect-class.html
+transform_rect_mouse_coord_to_svg(Rect rect, Point<num> pan, num zoom) {
+  transform_rect(transform_mouse_coord_to_svg, rect, pan, zoom);
+}
+
+///Modifies Rect in place because there doesn't seem to be a constructor:
+/// https://api.dartlang.org/stable/2.5.2/dart-svg/Rect-class.html
+transform_rect_svg_to_mouse_coord(Rect rect, Point<num> pan, num zoom) {
+  transform_rect(transform_svg_to_mouse_coord, rect, pan, zoom);
+}
+
+transform_rect_mouse_coord_to_svg_main_view(Rect rect) {
+  transform_rect_mouse_coord_to_svg(rect, current_pan_main(), current_zoom_main());
+}
+
+transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
+  transform_rect_svg_to_mouse_coord(rect, current_pan_main(), current_zoom_main());
 }
 
 Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
@@ -82,7 +134,7 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
     int h = ((svg_coord.x / (2 * radius)) - 1).round();
     int v = ((svg_coord.y / (2 * radius)) - 1).round();
     int b = 0;
-    return GridPosition(h,v,b);
+    return GridPosition(h, v, b);
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
     throw UnimplementedError('hex and honeycomb grids not yet supported');
   } else {
@@ -136,15 +188,6 @@ Point<num> current_pan_side() {
   return Point<num>(ret[0], ret[1]);
 }
 
-String substrand_line_id(BoundSubstrand substrand) =>
-    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'forward' : 'reverse'}';
-
-String insertion_id(BoundSubstrand substrand, int offset) =>
-    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
-
-String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
-    'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';
-
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
   bool is_hairpin = prev_ss.helix == next_ss.helix &&
@@ -185,3 +228,39 @@ save_file(String default_filename, String content) async {
   //  https://github.com/eligrey/FileSaver.js/issues/75
   //  https://github.com/WICG/native-file-system
 }
+
+pprint(Map map) {
+  print('{');
+  for (var key in map.keys) {
+    print('$key: ${map[key]},');
+  }
+  print('}');
+}
+
+/// Unique IDs for parts of model to associate view components to model.
+
+//String id_strand(Strand strand) {
+//  BoundSubstrand first_ss = this
+//      .bound_substrands()
+//      .first;
+//  return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward ? 'forward' : 'reverse'}';
+//}
+//
+//String id_5p(BoundSubstrand substrand) => '5p-end-${id_substrand(substrand)}';
+//
+//String id_3p(BoundSubstrand substrand) => '3p-end-${id_substrand(substrand)}';
+//
+//String id_substrand(BoundSubstrand substrand) =>
+//    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'forward' : 'reverse'}';
+//
+//String id_loopout(Loopout loopout) => 'loopout-${loopout.order()}-${id_strand(loopout.strand)}';
+//
+//String id_crossover(Crossover crossover) =>
+//    'crossover-${id_strand(crossover.prev_substrand.strand)}-${id_strand(crossover.next_substrand.strand)}';
+
+
+String id_insertion(BoundSubstrand substrand, int offset) =>
+    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
+
+//String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
+//    'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';;

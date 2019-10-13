@@ -60,7 +60,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   Point<num> pan = util.current_pan_main();
   num zoom = util.current_zoom_main();
 
-  var svg_coord = util.transform(event.offset, pan, zoom);
+  var svg_coord = util.transform_mouse_coord_to_svg(event.offset, pan, zoom);
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
 

@@ -223,6 +223,12 @@ html, body {
 /*    cursor: grabbing;*/
 /*}*/
 
+.selection-box {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.5;
+}
+
 .rotation-line {
     stroke-width: 3;
     stroke-linecap: round;

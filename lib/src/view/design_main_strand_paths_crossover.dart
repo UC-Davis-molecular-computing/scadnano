@@ -12,6 +12,7 @@ import '../model/bound_substrand.dart';
 import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
+import '../util.dart' as util;
 
 part 'design_main_strand_paths_crossover.over_react.g.dart';
 
@@ -23,7 +24,6 @@ UiFactory<DesignMainStrandPathsCrossoverProps> DesignMainStrandPathsCrossover = 
 @Props()
 class _$DesignMainStrandPathsCrossoverProps extends FluxUiProps<Crossover, Crossover> {
   Strand strand;
-  int idx;
 }
 
 @Component()
@@ -34,14 +34,10 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
   @override
   render() {
     Strand strand = this.props.strand;
-    int idx = this.props.idx;
     Crossover crossover = this.props.store;
 
-    assert(idx < strand.substrands.length - 1);
     BoundSubstrand prev_substrand = crossover.prev_substrand;
     BoundSubstrand next_substrand = crossover.next_substrand;
-
-    var id = 'crossover-${idx}-${strand.toString()}';
 
     handle_crossover_click() {
       for (var ss in [prev_substrand, next_substrand]) {
@@ -76,11 +72,12 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
 
     var path = crossover_path_description(prev_substrand, next_substrand);
     var color = strand.color.toRgbColor().toCssString();
+    var id = crossover.id();
+
     return (Dom.path()
       ..d = path
       ..stroke = color
       ..className = classname_this_curve
-//      ..onMouseDown = ((ev) => ev.ctrlKey ? handle_crossover_ctrl_click() : handle_crossover_click())
       ..onMouseDown = ((ev) => ev.ctrlKey || ev.shiftKey ? crossover.handle_selection(ev) : handle_crossover_click())
       ..onMouseEnter = ((_) => update_mouseover_crossover())
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
@@ -89,18 +86,7 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
   }
 }
 
-const classname = 'crossover-curve';
-const classname_hidden = 'crossover-curve-hidden';
-const classname_unhidden = 'crossover-curve-unhidden';
-const classname_mouseover = 'crossover-curve-mouseover ' + classname;
-
-on_mouse_enter(SyntheticMouseEvent ev) {
-  ev.target.setAttribute('class', classname_unhidden);
-}
-
-on_mouse_leave(SyntheticMouseEvent ev) {
-  ev.target.setAttribute('class', classname_hidden);
-}
+const classname = 'selectable crossover-curve';
 
 _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
   bool crossover_up = ss.helix > other_ss.helix;

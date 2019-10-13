@@ -1,4 +1,5 @@
 import 'package:color/color.dart';
+import 'package:react/react.dart';
 import 'package:scadnano/src/model/selectable.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
@@ -6,7 +7,6 @@ import 'package:w_flux/w_flux.dart';
 import '../app.dart';
 import 'crossover.dart';
 import 'strand_ui_model.dart';
-import '../dispatcher/actions.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -75,7 +75,7 @@ class IDTFields implements JSONSerializable {
 }
 
 //class Strand extends SelfListeningStore implements JSONSerializable {
-class Strand extends Store with Selectable<Strand> implements JSONSerializable {
+class Strand extends Store with Selectable implements JSONSerializable {
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color color = null;
@@ -85,29 +85,37 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
 
   StrandUIModel ui_model;
 
-  Map<Tuple2<BoundSubstrand,BoundSubstrand>, Crossover> crossovers = {};
+  Map<Tuple2<BoundSubstrand, BoundSubstrand>, Crossover> crossovers = {};
 
   Strand() {
     this.ui_model = StrandUIModel(this);
-    this._handle_actions();
+    this.handle_actions();
     this._build_crossovers();
   }
 
-  void _handle_actions() {
-    this.trigger_on_select_toggle_actions(() => app.model.main_view_ui_model.selection.strands);
-
-//    this.trigger_on_action_if_this(Actions.strand_hover_add, ((_) => this.ui_model.hover = true));
-//    this.trigger_on_action_if_this(Actions.strand_hover_remove, ((_) => this.ui_model.hover = false));
-//    this.trigger_on_action_if_this(
-//        Actions.strand_select_toggle, ((_) => this.ui_model.selected = !this.ui_model.selected));
-//
-//    Actions.remove_all_selections.listen((_) {
-//      if (this.ui_model.selected) {
-//        this.ui_model.selected = false;
-//        trigger();
-//      }
-//    });
+  handle_actions() {
+//    this.register_selectable(() => app.model.main_view_ui_model.selection.strands);
+    for (var ss in substrands) {
+      ss.handle_actions();
+    }
+    for (var crossover in crossovers.values) {
+      crossover.handle_actions();
+    }
   }
+
+  register_selectables(SelectableStore store) {
+    for (var ss in substrands) {
+      ss.register_selectables(store);
+    }
+    for (var crossover in crossovers.values) {
+      crossover.register_selectables(store);
+    }
+  }
+
+//  trigger() {
+//    print('calling Strand.trigger() on ${id()}');
+//    super.trigger();
+//  }
 
   _build_crossovers() {
     this.crossovers.clear();
@@ -121,18 +129,17 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
     }
   }
 
-  String css_selector() {
-    BoundSubstrand first_ss = this.bound_substrands().first;
+  String id() {
+    var first_ss = this.first_bound_substrand();
     return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward ? 'forward' : 'reverse'}';
   }
 
   String toString() {
     var first_ss = this.first_bound_substrand();
-    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward? 'forward': 'reverse'})';
+    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
   }
 
-  List<BoundSubstrand> bound_substrands() =>
-      [for (var ss in this.substrands) if (ss.is_bound_substrand()) ss];
+  List<BoundSubstrand> bound_substrands() => [for (var ss in this.substrands) if (ss.is_bound_substrand()) ss];
 
   List<BoundSubstrand> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
 
@@ -166,7 +173,6 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
 
   Strand.from_json(Map<String, dynamic> json_map) {
     this.ui_model = StrandUIModel(this);
-    this._handle_actions();
 
     // need to use List.from because List.map returns Iterable, not List
     var name = 'Strand';
@@ -183,8 +189,7 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
       this.color = DEFAULT_STRAND_COLOR;
     }
 
-    this.dna_sequence =
-        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    this.dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
     if (this.dna_sequence != null) {
       int seq_len = this.dna_sequence.length;
       int dna_len_strand = this.dna_length();
@@ -209,8 +214,12 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
       throw StrandError(this, 'Loopout at end of strand not supported');
     }
 
-    this._build_crossovers();
-//    this.ui_model.assign_crossover_ui_models();
+    _build_crossovers();
+
+    //XXX: need to handle actions for each Strand sub-component at the end,
+    // because it requires registering id's with a glboal map, which don't exist
+    // until the whole Strand is created.
+    handle_actions();
   }
 
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
@@ -232,7 +241,6 @@ class Strand extends Store with Selectable<Strand> implements JSONSerializable {
       return (this.substrands[len - 2] as BoundSubstrand);
     }
   }
-
 }
 
 abstract class Substrand extends Store implements JSONSerializable {
@@ -254,4 +262,11 @@ abstract class Substrand extends Store implements JSONSerializable {
       return BoundSubstrand.from_json(json_map);
     }
   }
+
+  /// Order this substrand appears in the Strand
+  int order() => strand.substrands.indexOf(this);
+
+  handle_actions();
+
+  register_selectables(SelectableStore store);
 }

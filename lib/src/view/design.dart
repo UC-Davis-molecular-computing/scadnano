@@ -7,9 +7,10 @@ import 'dart:svg' as svg;
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/model.dart';
 
+import '../dispatcher/actions.dart';
+import '../model/model.dart';
+import '../model/selectable.dart';
 import '../app.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -48,8 +49,7 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element, this.model) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     var side_view_svg = svg.SvgSvgElement()
@@ -98,17 +98,38 @@ class DesignViewComponent {
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
-    main_view_svg.onMouseDown.listen((ev) {
-      if (!ev.ctrlKey && ! ev.shiftKey) {
-        Actions.remove_all_selections();
-      }
-    });
+    handle_mouse_events(main_view_svg);
 
     app.model.design_or_error_store.listen((_) => this.render());
   }
 
+  void handle_mouse_events(svg.SvgSvgElement main_view_svg) {
+    main_view_svg.onMouseDown.listen((ev) {
+      if (ev.ctrlKey) {
+        Actions.create_selection_box_toggling(ev.offset);
+      } else if (ev.shiftKey) {
+        Actions.create_selection_box_selecting(ev.offset);
+      } else if (ev.button == 0) {
+        // detects left mouse button: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+//        print('removing all selections');
+        Actions.remove_all_selections();
+      }
+    });
+
+    main_view_svg.onMouseMove.listen((ev) {
+      if (ev.ctrlKey || ev.shiftKey) {
+        Actions.selection_box_size_changed(ev.offset);
+      }
+    });
+
+    main_view_svg.onMouseUp.listen((ev) {
+      Actions.remove_selection_box();
+    });
+  }
+
   render() {
     this.root_element.children.clear();
+
     if (this.model.has_error()) {
       this.root_element.children.addAll([this.error_message_pane]);
       this.error_message_component.render();
@@ -155,8 +176,7 @@ class DesignViewComponent {
 
       react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'));
 
-      react_dom.render(
-          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
+      react_dom.render((DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
@@ -230,7 +250,7 @@ side_view_update_mouseover(MouseEvent event) {
 
   Point<num> pan = util.current_pan_side();
   num zoom = util.current_zoom_side();
-  Point<num> svg_coord = util.transform(event.offset, pan, zoom);
+  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
 
   if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
     print('mouse event: '

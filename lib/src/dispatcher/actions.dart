@@ -96,12 +96,20 @@ class Actions {
   static final three_prime_select_toggle = Action<BoundSubstrand>();
   static final loopout_select_toggle = Action<Loopout>();
   static final crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
+
   static final remove_all_selections = Action<Null>();
-
   static final select = Action<Selectable>();
+  static final select_all = Action<List<Selectable>>();
+  static final unselect = Action<Selectable>();
   static final toggle = Action<Selectable>();
+  static final toggle_all = Action<List<Selectable>>();
 
-//  static final select_update
+  // Selection rectangle
+  static final create_selection_box_toggling = Action<Point<num>>();
+  static final create_selection_box_selecting = Action<Point<num>>();
+  static final selection_box_size_changed = Action<Point<num>>();
+  static final remove_selection_box = Action<Null>();
+//  static final update_selection_box_selections = Action<Null>();
 
   // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
   static final set_error_message = Action<String>();

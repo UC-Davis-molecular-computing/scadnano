@@ -5,21 +5,31 @@ import 'package:tuple/tuple.dart';
 
 import '../app.dart';
 import 'composite_stores.dart';
+import 'helix.dart';
 import 'selectable.dart';
-import 'strand_ui_model.dart';
-import '../dispatcher/actions.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'strand.dart';
 
 /// This is needed to make the 5' and 3' ends selectable and listenable.
-class DNAEnd extends Store with Selectable<DNAEnd> {
+class DNAEnd extends Store with Selectable {
+  BoundSubstrand substrand;
   int offset;
+  bool is_5p;
 
-  DNAEnd(Set<Selectable<DNAEnd>> Function() selected_items_factory) {
-    trigger_on_select_toggle_actions(selected_items_factory);
+  DNAEnd(this.is_5p, this.substrand);
+
+//  trigger() {
+//    print('calling DNAEnd.trigger() on ${id()}');
+//    super.trigger();
+//  }
+
+  bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner) {
+    return substrand.in_box(upper_left_corner, lower_right_corner, this);
   }
+
+  String id() => 'end-' + (is_5p? '5p': '3p') + '-' + substrand.id();
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
@@ -30,8 +40,8 @@ class BoundSubstrand extends Substrand {
 
   int helix = -1;
   bool forward = true;
-  DNAEnd dnaend_start = DNAEnd(() => app.model.main_view_ui_model.selection.starts);
-  DNAEnd dnaend_end = DNAEnd(() => app.model.main_view_ui_model.selection.ends);
+  DNAEnd dnaend_start;
+  DNAEnd dnaend_end;
 
   int get start => dnaend_start.offset;
 
@@ -54,34 +64,33 @@ class BoundSubstrand extends Substrand {
 
   DNAEnd get dnaend_3p => forward ? dnaend_end : dnaend_start;
 
-  bool selected_5p() => dnaend_5p.selected();
+  bool selected_5p() => app.model.dna_design.selectable_store.selected(dnaend_5p);
 
-  bool selected_3p() => dnaend_3p.selected();
+  bool selected_3p() => app.model.dna_design.selectable_store.selected(dnaend_3p);
 
-  bool selected_start() => dnaend_start.selected();
+  bool selected_start() => app.model.dna_design.selectable_store.selected(dnaend_start);
 
-  bool selected_end() => dnaend_end.selected();
+  bool selected_end() => app.model.dna_design.selectable_store.selected(dnaend_end);
+
+  String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
   BoundSubstrand() {
-//    this.ui_model = BoundSubstrandUIModel(this);
-    this._handle_actions();
+    _create_dna_ends();
+    handle_actions();
   }
 
-  _handle_actions() {
-    subscribe_to_stores(this, [dnaend_start, dnaend_end]);
+  _create_dna_ends() {
+    dnaend_start = DNAEnd(forward, this);
+    dnaend_end = DNAEnd(!forward, this);
+  }
 
-//    this.trigger_on_action_if_this(
-//        Actions.five_prime_select_toggle, (_) => this.ui_model.selected_5p = !this.ui_model.selected_5p);
-//    this.trigger_on_action_if_this(
-//        Actions.three_prime_select_toggle, (_) => this.ui_model.selected_3p = !this.ui_model.selected_3p);
-//
-//    Actions.remove_all_selections.listen((_) {
-//      if (this.ui_model.selected_5p || this.ui_model.selected_3p) {
-//        this.ui_model.selected_5p = false;
-//        this.ui_model.selected_3p = false;
-//        trigger();
-//      }
-//    });
+  handle_actions() {
+    subscribe_to_stores(this, [dnaend_start, dnaend_end]);
+  }
+
+  register_selectables(SelectableStore store) {
+    store.register(dnaend_end);
+    store.register(dnaend_start);
   }
 
   dynamic to_json_serializable() {
@@ -96,18 +105,18 @@ class BoundSubstrand extends Substrand {
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+      json_map[constants.insertions_key] =
+          List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
     }
     return NoIndent(json_map);
   }
 
   BoundSubstrand.from_json(Map<String, dynamic> json_map) {
-//    this.ui_model = BoundSubstrandUIModel(this);
-    this._handle_actions();
-
     var name = 'Substrand';
-    this.helix = util.get_value(json_map, constants.helix_idx_key, name);
     this.forward = util.get_value(json_map, constants.forward_key, name);
+    _create_dna_ends();
+
+    this.helix = util.get_value(json_map, constants.helix_idx_key, name);
     this.start = util.get_value(json_map, constants.start_key, name);
     this.end = util.get_value(json_map, constants.end_key, name);
     if (json_map.containsKey(constants.deletions_key)) {
@@ -369,7 +378,9 @@ class BoundSubstrand extends Substrand {
   }
 
   bool overlaps(BoundSubstrand other) {
-    return (this.helix == other.helix && this.forward == (!other.forward) && this.compute_overlap(other).item1 >= 0);
+    return (this.helix == other.helix &&
+        this.forward == (!other.forward) &&
+        this.compute_overlap(other).item1 >= 0);
   }
 
   Tuple2<int, int> compute_overlap(BoundSubstrand other) {
@@ -390,4 +401,16 @@ class BoundSubstrand extends Substrand {
     }
     return false;
   }
+
+  bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner, DNAEnd dna_end) {
+    Helix helix = app.model.dna_design.helices[this.helix];
+    int offset = dna_end == dnaend_5p ? offset_5p : offset_3p;
+    Point<num> end_point = helix.svg_base_pos(offset, forward);
+
+    return upper_left_corner.x <= end_point.x &&
+        end_point.x <= lower_right_corner.x &&
+        upper_left_corner.y <= end_point.y &&
+        end_point.y <= lower_right_corner.y;
+  }
+
 }

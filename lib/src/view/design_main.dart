@@ -5,7 +5,9 @@ import 'design_main_helices.dart';
 import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
+import 'design_main_selection_box.dart';
 
+import '../model/selection_box.dart';
 import '../model/composite_stores.dart';
 import '../model/model.dart';
 import '../model/dna_design.dart';
@@ -33,14 +35,15 @@ class DesignMainComponent extends FluxUiComponent<DesignMainProps> {
     DNADesign dna_design = this.props.store.dna_design;
     DNASequencesStore dna_sequences_store = this.props.store.dna_sequences_store;
     MismatchesStore mismatches_store = this.props.store.mismatches_store;
-    return (Dom.g()
-      ..id = 'main-view-group')(
+    SelectionBoxStore selection_rectangle_store =
+        this.props.store.main_view_ui_model.selection_rectangle_store;
+    return (Dom.g()..id = 'main-view-group')(
       (DesignMainMouseoverRectHelices()..store = dna_design.helices_store)(),
       (DesignMainHelices()..store = dna_design.helices_store)(),
       (DesignMainMismatches()..store = mismatches_store)(),
       (DesignMainStrands()..store = dna_design.strands_store)(),
       (DesignMainDNASequences()..store = dna_sequences_store)(),
+      (DesignMainSelectionBox()..store = selection_rectangle_store)(),
     );
   }
 }
-

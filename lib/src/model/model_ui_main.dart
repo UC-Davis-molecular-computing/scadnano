@@ -4,9 +4,11 @@ import '../dispatcher/actions.dart';
 import 'crossover.dart';
 import 'model_ui.dart';
 import 'mouseover_data.dart';
+import 'selectable.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'loopout.dart';
+import 'selection_box.dart';
 
 ////////////////////////////////////////////////
 // Stores
@@ -30,7 +32,6 @@ class StrandHoverStore extends Store {
 // end Stores
 ////////////////////////////////////////////////
 
-
 class MainViewUIModel {
   MainViewSelection selection = MainViewSelection();
 
@@ -38,6 +39,7 @@ class MainViewUIModel {
   ShowDNAStore show_dna_store = ShowDNAStore();
   ShowMismatchesStore show_mismatches_store = ShowMismatchesStore();
   ShowEditorStore show_editor_store = ShowEditorStore();
+  SelectionBoxStore selection_rectangle_store = SelectionBoxStore();
 
   bool get show_dna => this.show_dna_store.show_dna;
 
@@ -49,6 +51,8 @@ class MainViewUIModel {
 }
 
 class MainViewSelection {
+  Set<Selectable> selections = {};
+
   Set<DNAEnd> starts = {};
   Set<DNAEnd> ends = {};
   Set<Crossover> crossovers = {};

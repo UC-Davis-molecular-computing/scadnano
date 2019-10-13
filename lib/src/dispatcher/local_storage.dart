@@ -1,30 +1,39 @@
 import 'dart:html';
 
+import '../app.dart';
+import 'actions.dart';
+
 //TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
 
 /// Aspects of model that can be stored in localStorage.
 /// This constitutes more than is saved in jsonStorage, including things like
 /// parts of the *UIModels, i.e., where certain visual elements are located.
-enum Storable { zoom_speed }
+class Storable {
+  final String key;
+
+  Storable(this.key);
+
+  static final show_dna = Storable('show_dna');
+
+  static final values = [show_dna];
+}
 
 const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 save(Storable storable) {
-//  String storableKey = _LOCAL_STORAGE_PREFIX + storable.toString();
-  switch (storable) {
-    case Storable.zoom_speed:
-//      window.localStorage[storableKey] = model.zoomSpeed.toString();
-      break;
+  String storable_key = _LOCAL_STORAGE_PREFIX + storable.key;
+  if (storable == Storable.show_dna) {
+    window.localStorage[storable_key] = app.model.main_view_ui_model.show_dna.toString();
   }
 }
 
 restore(Storable storable) {
-  String storable_key = _LOCAL_STORAGE_PREFIX + storable.toString();
+  String storable_key = _LOCAL_STORAGE_PREFIX + storable.key;
   if (window.localStorage.containsKey(storable_key)) {
-    switch (storable) {
-      case Storable.zoom_speed:
-//        model.zoomSpeed = double.parse(window.localStorage[storableKey]);
-        break;
+    var value = window.localStorage[storable_key];
+
+    if (storable == Storable.show_dna) {
+      Actions.set_show_dna(value == 'true');
     }
   }
 }

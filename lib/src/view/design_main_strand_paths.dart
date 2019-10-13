@@ -13,6 +13,7 @@ import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths_crossover.dart';
@@ -25,7 +26,6 @@ UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrand
 @Props()
 class _$DesignMainStrandPathsProps extends UiProps {
   Strand strand;
-  String strand_id;
 }
 
 @Component()
@@ -35,11 +35,11 @@ class DesignMainStrandPathsComponent extends UiComponent<DesignMainStrandPathsPr
 
   @override
   render() {
-    return (Dom.g()..className = 'strand-paths')(_strand_paths(this.props.strand, this.props.strand_id));
+    return (Dom.g()..className = 'strand-paths')(_strand_paths(this.props.strand));
   }
 }
 
-List<ReactElement> _strand_paths(Strand strand, String strand_id) {
+List<ReactElement> _strand_paths(Strand strand) {
   if (strand.substrands.first is Loopout) {
     throw StrandError(strand, 'loopouts at beginning of strand not supported');
   }
@@ -50,6 +50,7 @@ List<ReactElement> _strand_paths(Strand strand, String strand_id) {
   List<ReactElement> paths = [];
   List<ReactElement> ends = []; // add after so clicking on ends takes priority
   var substrand = strand.substrands.first;
+  var strand_id = strand.id();
 
   //TODO: make crossover a component that listens to both BoundSubstrands it connects
   for (int i = 0; i < strand.substrands.length; i++) {
@@ -61,7 +62,7 @@ List<ReactElement> _strand_paths(Strand strand, String strand_id) {
         ..store = substrand
         ..strand_id = strand_id
         ..key = "bound-substrand-$i"
-        ..id = "bound-substrand-$i")());
+      )());
 
       ends.add((DesignMain5pEnd()
         ..store = substrand
@@ -82,7 +83,6 @@ List<ReactElement> _strand_paths(Strand strand, String strand_id) {
         paths.add((DesignMainStrandPathsCrossover()
           ..store = crossover
           ..strand = strand
-          ..idx = i
           ..key = 'crossover-paths-$i')());
       }
 

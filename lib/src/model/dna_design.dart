@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:scadnano/src/model/selectable.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
 import 'package:meta/meta.dart';
@@ -43,9 +44,13 @@ class DNADesign extends Store implements JSONSerializable {
 
   List<Strand> get strands => this.strands_store.strands;
 
+  SelectableStore selectable_store = SelectableStore(() => app.model.main_view_ui_model.selection.selections);
+
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
   _handle_actions() {
+    selectable_store.handle_actions();
+
     this.triggerOnActionV2<Null>(this.save_dna_file, (_) {
       String content = json_encode(this);
       String default_filename = app.model.menu_view_ui_model.loaded_filename;
@@ -64,6 +69,12 @@ class DNADesign extends Store implements JSONSerializable {
     this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
       this.helices_store.helices = new_helices;
     });
+  }
+
+  register_selectables() {
+    for (var strand in strands) {
+      strand.register_selectables(selectable_store);
+    }
   }
 
   _add_helix(HelixUseActionParameters params) {
@@ -124,7 +135,8 @@ class DNADesign extends Store implements JSONSerializable {
   }
 
   DNADesign() {
-    this._handle_actions();
+    _handle_actions();
+    register_selectables();
   }
 
   //"private" constructor; meta package will warn if it is used outside testing
@@ -222,6 +234,8 @@ class DNADesign extends Store implements JSONSerializable {
 
     //FIXME: side view does not re-render on file load unless this is explicitly triggered
     this.helices_store.trigger();
+
+    register_selectables();
   }
 
   static int default_major_tick_distance(Grid grid) {

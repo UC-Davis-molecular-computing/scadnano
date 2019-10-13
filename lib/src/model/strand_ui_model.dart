@@ -1,10 +1,5 @@
-import 'package:tuple/tuple.dart';
-
 import '../app.dart';
-import 'crossover.dart';
 import 'strand.dart';
-import 'bound_substrand.dart';
-import 'loopout.dart';
 
 class StrandUIModel {
   final Strand strand;

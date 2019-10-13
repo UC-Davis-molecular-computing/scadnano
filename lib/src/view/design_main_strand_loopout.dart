@@ -39,7 +39,7 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
     var prev_ss = strand.substrands[substrand_idx - 1] as BoundSubstrand;
     var next_ss = strand.substrands[substrand_idx + 1] as BoundSubstrand;
 
-    var classname = 'substrand-line loopout-line';
+    var classname = 'selectable substrand-line loopout-line';
     if (loopout.selected()) {
       classname += ' selected';
     }
@@ -49,10 +49,10 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
       return _hairpin_arc(prev_ss, next_ss, loopout, classname);
     } else {
       String path = crossover_path_description(prev_ss, next_ss);
-      String id = util.loopout_id(loopout, prev_ss, next_ss);
+      String id = loopout.id();
       String color = strand.color.toRgbColor().toCssString();
+
       return (Dom.path()
-//        ..onMouseDown = ((event) => event.ctrlKey ? Actions.loopout_select_toggle(loopout) : null)
         ..onMouseDown = loopout.handle_selection // use with mixin Selectable
         ..d = path
         ..stroke = color
@@ -90,7 +90,7 @@ ReactElement _hairpin_arc(
   var c1 = Point<num>(x_offset1, y_offset1);
   var c2 = Point<num>(x_offset2, y_offset2);
 
-  String id = util.loopout_id(loopout, prev_substrand, next_substrand);
+  String id = loopout.id();
   ReactElement arc = (Dom.path()
     ..onMouseDown = ((event) => event.ctrlKey ? Actions.loopout_select_toggle(loopout) : null)
     ..className = classname

@@ -7,18 +7,27 @@ import 'selectable.dart';
 import 'bound_substrand.dart';
 
 
-class Crossover extends Store with Selectable<Crossover> {
+class Crossover extends Store with Selectable {
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
 
-  Crossover(this.prev_substrand, this.next_substrand){
-    _handle_actions();
+  Crossover(this.prev_substrand, this.next_substrand);
+
+  handle_actions() {
+    subscribe_to_stores(this, [prev_substrand, next_substrand]);
   }
 
-  _handle_actions() {
-    subscribe_to_stores(this, [prev_substrand, next_substrand]);
-    trigger_on_select_toggle_actions(() => app.model.main_view_ui_model.selection.crossovers);
+  register_selectables(SelectableStore store) {
+    store.register(this);
   }
+
+  //TODO: Crossover.trigger() gets called when a 5'/3' end "near" it is selected
+//  trigger() {
+//    print('calling Crossover.trigger() on ${id()}');
+//    super.trigger();
+//  }
+
+  String id() => 'crossover-${prev_substrand.id()}-${next_substrand.id()}';
 
   @override
   bool operator ==(other) {
@@ -31,40 +40,6 @@ class Crossover extends Store with Selectable<Crossover> {
   }
 
   @override
-//  int get hashCode => hash2(this.prev_substrand, this.next_substrand);
-  int get hashCode {
-    return hash2(this.prev_substrand, this.next_substrand);
-  }
+  int get hashCode => hash2(this.prev_substrand, this.next_substrand);
 
 }
-
-/*
-
-// Crossover components listen to this on the BoundSubstrands on either end of them.
-class CrossoverStore extends Store with Selectable<CrossoverStore> {
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
-  CrossoverUIModel crossover_ui_model;
-
-  CrossoverStore(this.prev_substrand, this.next_substrand, this.crossover_ui_model) {
-    _subscribe_to_stores(this, [this.prev_substrand, this.next_substrand]);
-
-    trigger_on_select_toggle_actions(() => app.model.main_view_ui_model.selection.crossovers);
-
-    Actions.crossover_select_toggle.listen((pair) {
-      if (pair.item1 == prev_substrand && pair.item2 == next_substrand) {
-        crossover_ui_model.selected = !crossover_ui_model.selected;
-        this.trigger();
-      }
-    });
-
-    Actions.remove_all_selections.listen((_) {
-      if (this.crossover_ui_model.selected) {
-        this.crossover_ui_model.selected = false;
-        trigger();
-      }
-    });
-  }
-}
-
- */

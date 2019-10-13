@@ -113,12 +113,12 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
-      ..href = '#${util.insertion_id(substrand, offset)}'
+      ..href = '#${util.id_insertion(substrand, offset)}'
 //      ..startOffset = start_offset
       ..style = style_map);
     text_path_props.addProp('startOffset', start_offset); // bug in OverReact
     return (Dom.text()
-      ..key = 'textelt-${util.insertion_id(substrand, offset)}'
+      ..key = 'textelt-${util.id_insertion(substrand, offset)}'
       ..dy = dy)(text_path_props(subseq));
   }
 
@@ -147,7 +147,7 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
-      ..href = '#${util.loopout_id(loopout, prev_ss, next_ss)}'
+      ..href = '#${loopout.id()}'
 //      ..startOffset = start_offset
       ..style = style_map);
     text_path_props.addProp('startOffset', start_offset); // bug in OverReact

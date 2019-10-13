@@ -31,8 +31,9 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
     if (strand.substrands.length == 0) {
       return null;
     } else {
-      var strand_id = '${strand.css_selector()}';
 
+      //TODO: make strand selectable, but decide how it will interact with selecting other elements.
+//      var classname = 'selectable strand';
       var classname = 'strand';
       if (strand.ui_model.hover) {
         classname += ' hover';
@@ -42,12 +43,12 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
         classname += ' selected';
       }
 
+      var strand_id = strand.id();
       return (Dom.g()
         ..id = strand_id
         ..className = classname)([
         (DesignMainStrandPaths()
           ..strand = strand
-          ..strand_id = strand_id
           ..key = 'strand-paths')(),
         ..._insertion_paths(strand),
         ..._deletion_paths(strand),
@@ -96,7 +97,7 @@ ReactElement _insertion_path(BoundSubstrand substrand, int offset) {
   var y2 = (y0 + dy2).toStringAsFixed(2);
 
 //  String key = 'insertion-H${substrand.helix}-${offset}';
-  String id = util.insertion_id(substrand, offset);
+  String id = util.id_insertion(substrand, offset);
   ReactElement insertion_path = (Dom.path()
     ..key = id
     ..id = id
@@ -123,7 +124,7 @@ ReactElement _svg_text_number_of_insertions(
   String key = 'num-insertion-H${substrand.helix}-${offset}';
   SvgProps text_path_props = Dom.textPath()
     ..className = 'insertion-length'
-    ..href = '#${util.insertion_id(substrand, offset)}';
+    ..href = '#${util.id_insertion(substrand, offset)}';
   text_path_props.addProp('startOffset', '50%');
   return (Dom.text()
     ..key = key

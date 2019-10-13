@@ -35,19 +35,14 @@ class DesignMainBoundSubstrandComponent extends FluxUiComponent<DesignMainBoundS
   render() {
     BoundSubstrand substrand = this.props.store;
     String strand_id = this.props.strand_id;
+    String id = substrand.id();
 
     Helix helix = app.model.dna_design.helices[substrand.helix];
     Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
     Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
-    String id = util.substrand_line_id(substrand);
     Strand strand = substrand.strand;
 
     ReactElement substrand_line = (Dom.line()
-//      ..onMouseDown = ((event) {
-//        if (event.ctrlKey) {
-//          Actions.strand_select_toggle(substrand.strand);
-//        }
-//      })
       ..onMouseDown = strand.handle_selection
       ..onMouseEnter = ((_) {
         if (_OPTIMIZE) {

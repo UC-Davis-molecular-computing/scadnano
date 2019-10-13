@@ -1,8 +1,8 @@
 import 'package:over_react/over_react.dart';
 
-import '../dispatcher/actions.dart';
 import '../model/bound_substrand.dart';
 import '../app.dart';
+import '../util.dart' as util;
 import 'design_main_mouseover_rect_helix.dart';
 
 part 'design_main_strand_3p_end.over_react.g.dart';
@@ -13,7 +13,6 @@ UiFactory<DesignMain3pEndProps> DesignMain3pEnd = _$DesignMain3pEnd;
 @Props()
 class _$DesignMain3pEndProps extends FluxUiProps<BoundSubstrand, BoundSubstrand> {
   bool is_last_substrand;
-  String id;
 }
 
 @Component()
@@ -24,8 +23,8 @@ class DesignMain3pEndComponent extends FluxUiComponent<DesignMain3pEndProps> {
   @override
   render() {
     BoundSubstrand substrand = this.props.store;
-    String id = this.props.id;
     bool is_last_substrand = this.props.is_last_substrand;
+    var id = substrand.dnaend_3p.id();
 
     var offset = substrand.offset_3p;
     var direction = substrand.forward;
@@ -43,25 +42,23 @@ class DesignMain3pEndComponent extends FluxUiComponent<DesignMain3pEndProps> {
           '${pos.x - 0.9 * scale},${pos.y - scale}';
     }
 
-    var classname = 'three-prime-end' + (is_last_substrand ? '-last-substrand' : '');
-//    if (substrand.ui_model.selected_3p) {
+    var classname = 'selectable three-prime-end' + (is_last_substrand ? '-last-substrand' : '');
     if (substrand.selected_3p()) {
       classname += ' selected';
     }
 
+
+
     ReactElement triangle = (Dom.polygon()
-//      ..onMouseDown = ((event) => event.ctrlKey ? Actions.three_prime_select_toggle(substrand) : null)
           ..onMouseDown = substrand.dnaend_3p.handle_selection
           ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//      ..onMouseMove = ((event) => update_mouseover(event, helix))
           ..onMouseMove = ((event) {
             update_mouseover(event, helix);
-//        print('${querySelector('#$id')}');
           })
           ..className = classname
           ..points = points
           ..fill = substrand.strand.color.toRgbColor().toCssString()
-          ..id = id //XXX: this id is not showing up in the DOM; not sure why
+          ..id = id
         )();
     return triangle;
   }

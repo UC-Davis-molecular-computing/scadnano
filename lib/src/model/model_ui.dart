@@ -1,6 +1,7 @@
 import 'package:w_flux/w_flux.dart';
 
 import '../dispatcher/actions.dart';
+import '../dispatcher/local_storage.dart' as local_storage;
 
 //TODO: add ability for user to ctrl+click (or some special key click) at offset on helix to set that helix's notion
 // of DNA backbones rotation, which will then be displayed in the side view on all other offsets
@@ -16,6 +17,7 @@ class ShowDNAStore extends Store {
   ShowDNAStore() {
     triggerOnActionV2<bool>(Actions.set_show_dna, (show) {
       this._show_dna = show;
+      local_storage.save(local_storage.Storable.show_dna);
     });
   }
 }

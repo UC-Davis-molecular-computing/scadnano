@@ -1,31 +1,30 @@
 import '../app.dart';
 import 'strand.dart';
-import 'strand_ui_model.dart';
 import 'selectable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
-class Loopout extends Substrand with Selectable<Loopout> {
+class Loopout extends Substrand with Selectable {
   int loopout_length;
 
   Loopout(this.loopout_length) {
-    this._handle_actions();
+    this.handle_actions();
   }
 
-  _handle_actions() {
-    trigger_on_select_toggle_actions(() => app.model.main_view_ui_model.selection.loopouts);
-
-//    this.trigger_on_action_if_this(Actions.loopout_select_toggle, (_) {
-//      this.ui_model.selected = !this.ui_model.selected;
-//    });
-//    Actions.remove_all_selections.listen((_) {
-//      if (this.ui_model.selected) {
-//        this.ui_model.selected = false;
-//        trigger();
-//      }
-//    });
-
+  handle_actions() {
+//    register_selectable(() => app.model.main_view_ui_model.selection.loopouts);
   }
+
+  register_selectables(SelectableStore store) {
+    store.register(this);
+  }
+
+//  trigger() {
+//    print('calling Loopout.trigger() on ${id()}');
+//    super.trigger();
+//  }
+
+  String id() => 'loopout-${order()}-${strand.id()}';
 
   String toString() => 'Loopout(${this.loopout_length})';
 
@@ -60,7 +59,6 @@ class Loopout extends Substrand with Selectable<Loopout> {
   }
 
   Loopout.from_json(Map<String, dynamic> json_map) {
-    this._handle_actions();
     var name = 'Loopout';
     this.loopout_length = util.get_value(json_map, constants.loopout_key, name);
   }
