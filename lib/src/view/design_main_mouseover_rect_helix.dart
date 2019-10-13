@@ -4,6 +4,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/model/mouseover_data.dart';
 import 'package:tuple/tuple.dart';
@@ -57,10 +58,15 @@ mouse_leave_update_mouseover() {
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   MouseEvent event = event_syn.nativeEvent;
-  Point<num> pan = util.current_pan_main();
-  num zoom = util.current_zoom_main();
 
-  var svg_coord = util.transform_mouse_coord_to_svg(event.offset, pan, zoom);
+  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+  var svg_coord;
+  if (browser.isFirefox) {
+    svg_coord = event.offset;
+  } else {
+    svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_main(event.offset);
+  }
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
 
@@ -69,6 +75,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   bool forward = helix.svg_y_is_forward(svg_y);
 
   if (DEBUG_PRINT_MOUSEOVER) {
+    Point<num> pan = util.current_pan_main();
+    num zoom = util.current_zoom_main();
     print('mouse event: '
         'x = ${event.offset.x},   '
         'y = ${event.offset.y},   '

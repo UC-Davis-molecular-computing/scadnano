@@ -60,14 +60,14 @@ Point<num> transform_mouse_coord_to_svg_current_panzoom_main(Point<num> point) {
 Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zoom) {
   num ret_x;
   num ret_y;
-  if (browser.isFirefox || browser.isInternetExplorer) {
-    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
-    ret_x = point.x;
-    ret_y = point.y;
-  } else {
+//  if (browser.isFirefox || browser.isInternetExplorer) {
+//    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
+//    ret_x = point.x;
+//    ret_y = point.y;
+//  } else {
     ret_x = (point.x - pan.x) / zoom;
     ret_y = (point.y - pan.y) / zoom;
-  }
+//  }
   return Point<num>(ret_x, ret_y);
 }
 

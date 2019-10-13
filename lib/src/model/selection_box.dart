@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:svg' hide Point;
 import 'dart:math';
 
+import 'package:platform_detect/platform_detect.dart';
 import 'package:w_flux/w_flux.dart';
 
 import '../app.dart';
@@ -46,7 +47,11 @@ class SelectionBoxStore extends Store {
     });
 
     triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
-      _current = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+//      if (browser.isFirefox) {
+//        _current = mouse_coord;
+//      } else {
+        _current = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+//      }
     });
 
     triggerOnActionV2(Actions.remove_selection_box, (_) {
@@ -56,7 +61,11 @@ class SelectionBoxStore extends Store {
   }
 
   start_selection(Point<num> mouse_coord) {
-    _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+//    if (browser.isFirefox) {
+//      _start = mouse_coord;
+//    } else {
+      _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+//    }
     displayed = true;
   }
 
