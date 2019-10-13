@@ -1,9 +1,13 @@
 import 'dart:convert';
 
+import 'package:scadnano/src/model/bound_substrand.dart';
+import 'package:scadnano/src/model/crossover.dart';
 import 'package:w_flux/w_flux.dart';
 
 import '../dispatcher/actions.dart';
 import '../dispatcher/local_storage.dart' as local_storage;
+import 'loopout.dart';
+import 'strand.dart';
 
 /// Indicates which objects are selectable in the main view.
 class SelectModeChoice {
@@ -50,6 +54,39 @@ class SelectModeStore extends Store {
 
   SelectModeStore() {
     handle_actions();
+  }
+
+  bool is_selectable(Object obj) {
+    switch(obj.runtimeType) {
+      case DNAEnd:
+        DNAEnd end = obj as DNAEnd;
+        if (end.is_5p) {
+          if (end.substrand.is_first()) {
+            return modes.contains(SelectModeChoice.end_5p_strand);
+          } else {
+            return modes.contains(SelectModeChoice.end_5p_substrand);
+          }
+        } else {
+          if (end.substrand.is_last()) {
+            return modes.contains(SelectModeChoice.end_3p_strand);
+          } else {
+            return modes.contains(SelectModeChoice.end_3p_substrand);
+          }
+        }
+        break;
+
+      case Crossover:
+        return modes.contains(SelectModeChoice.crossover);
+        break;
+
+      case Loopout:
+        return modes.contains(SelectModeChoice.loopout);
+        break;
+
+      case Strand:
+        return modes.contains(SelectModeChoice.strand);
+        break;
+    }
   }
 
   String to_json() {

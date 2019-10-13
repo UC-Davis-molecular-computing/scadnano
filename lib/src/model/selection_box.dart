@@ -96,26 +96,31 @@ class SelectionBoxStore extends Store {
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    Set<SvgElement> elts_overlapping = elts_all.where((elt) => elt.classes.contains('selectable')).toSet();
 
-    Set<SvgElement> elts_overlapping =
-        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+    Set<SvgElement> elts_overlapping = get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
     List<Selectable> overlapping_now = [for (var elt in elts_overlapping) selectables_by_id[elt.id]];
 
+//    print('overlapping_now: $overlapping_now');
+
+    List<Selectable> overlapping_now_select_mode_enabled = [
+      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
+    ];
+
 //    Set<Selectable> overlapping_before = Set<Selectable>.from(selectables_overlapping);
 //    Set<Selectable> newly_overlapping = overlapping_now.difference(overlapping_before);
 //    Set<Selectable> newly_nonoverlapping = overlapping_before.difference(overlapping_now);
 
-//    print('newly_nonoverlapping: $newly_nonoverlapping');
+//    print('overlapping_now_select_mode_enabled: $overlapping_now_select_mode_enabled');
 
     if (toggling) {
 //      print('toggling  overlapping_now: $overlapping_now');
-      Actions.toggle_all(overlapping_now);
+      Actions.toggle_all(overlapping_now_select_mode_enabled);
     } else {
 //      print('selecting overlapping_now: $overlapping_now');
-      Actions.select_all(overlapping_now);
+      Actions.select_all(overlapping_now_select_mode_enabled);
     }
   }
 }
@@ -156,8 +161,7 @@ get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(
-    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

@@ -72,6 +72,10 @@ class BoundSubstrand extends Substrand {
 
   bool selected_end() => app.model.dna_design.selectable_store.selected(dnaend_end);
 
+  bool is_first() => this == strand.first_bound_substrand();
+
+  bool is_last() => this == strand.last_bound_substrand();
+
   String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
   BoundSubstrand() {

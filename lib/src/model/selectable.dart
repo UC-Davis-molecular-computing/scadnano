@@ -13,16 +13,19 @@ mixin Selectable implements Store {
   String id();
 
   handle_selection(SyntheticMouseEvent event) {
-    if (event.ctrlKey) {
-      Actions.toggle(this);
-    } else if (event.shiftKey) {
-      Actions.select(this);
+    if (app.model.select_mode_store.is_selectable(this)) {
+      if (event.ctrlKey) {
+        Actions.toggle(this);
+      } else if (event.shiftKey) {
+        Actions.select(this);
+      }
     }
   }
 
   bool selected() => app.model.dna_design.selectable_store.selected(this);
 
   String toString() => id();
+
 }
 
 class SelectableStore extends Store {
@@ -40,6 +43,15 @@ class SelectableStore extends Store {
     selectables_by_id[id] = selectable;
   }
 
+  handle_actions() {
+    triggerOnActionV2(Actions.select, (obj) => select(obj));
+    triggerOnActionV2(Actions.select_all, (objs) => select_all(objs));
+    triggerOnActionV2(Actions.unselect, (obj) => unselect(obj));
+    triggerOnActionV2(Actions.toggle, (obj) => toggle(obj));
+    triggerOnActionV2(Actions.toggle_all, (objs) => toggle_all(objs));
+    triggerOnActionV2(Actions.remove_all_selections, (_) => clear());
+  }
+
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
   select(Selectable selectable) {
@@ -49,16 +61,25 @@ class SelectableStore extends Store {
     }
   }
 
-  select_all(Iterable<Selectable> selectables) {
-    for (var selectable in selectables) {
-      select(selectable);
-    }
-  }
-
   unselect(Selectable selectable) {
     bool removed = selected_items.remove(selectable);
     if (removed) {
       selectable.trigger();
+    }
+  }
+
+  clear() {
+    List<Selectable> old_selected_items = selected_items.toList();
+    selected_items.clear();
+    for (var selectable in old_selected_items) {
+      selectable.trigger();
+    }
+  }
+
+  // methods below here defined in terms of select and unselect
+  select_all(Iterable<Selectable> selectables) {
+    for (var selectable in selectables) {
+      select(selectable);
     }
   }
 
@@ -76,21 +97,4 @@ class SelectableStore extends Store {
     }
   }
 
-  clear() {
-    List<Selectable> old_selected_items = selected_items.toList();
-    selected_items.clear();
-    for (var selectable in old_selected_items) {
-      selectable.trigger();
-    }
-  }
-
-  /// Set up selectable
-  handle_actions() {
-    triggerOnActionV2(Actions.select, (obj) => select(obj));
-    triggerOnActionV2(Actions.select_all, (objs) => select_all(objs));
-    triggerOnActionV2(Actions.unselect, (obj) => unselect(obj));
-    triggerOnActionV2(Actions.toggle, (obj) => toggle(obj));
-    triggerOnActionV2(Actions.toggle_all, (objs) => toggle_all(objs));
-    triggerOnActionV2(Actions.remove_all_selections, (_) => clear());
-  }
 }
