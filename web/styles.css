@@ -18,7 +18,7 @@ html, body {
     flex-direction: column;
 }
 
-.fixed-separator {
+.fixed-horizontal-separator {
     height: 5px;
     background: black;
     position: relative;
@@ -184,7 +184,11 @@ html, body {
     width: 75px;
 }
 
-.mode-button {
+#select-mode {
+    width: 75px;
+}
+
+.edit-mode-button {
     border: none;
     width: 75px;
     outline: 0;
@@ -192,11 +196,27 @@ html, body {
     color: black;
 }
 
-.mode-button-selected {
+.edit-mode-button-selected {
     background-color: mediumseagreen;
 }
 
-.mode-button-unselected {
+.edit-mode-button-unselected {
+    background-color: lightgray;
+}
+
+.select-mode-button {
+    border: none;
+    width: 75px;
+    outline: 0;
+    font-weight: bold;
+    color: black;
+}
+
+.select-mode-button-selected {
+    background-color: lightcoral;
+}
+
+.select-mode-button-unselected {
     background-color: lightgray;
 }
 

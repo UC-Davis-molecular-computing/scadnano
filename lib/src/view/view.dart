@@ -9,6 +9,7 @@ import 'package:scadnano/src/model/model.dart';
 
 import 'design.dart';
 import 'edit_mode.dart';
+import 'select_mode.dart';
 import 'menu.dart';
 import 'editor.dart';
 import '../app.dart';
@@ -28,9 +29,13 @@ external sdrag_js();
 
 const MENU_ID = 'menu';
 const EDIT_MODE_ID = 'edit-mode';
+const SELECT_MODE_ID = 'select-mode';
 const DESIGN_ID = 'design-pane';
 const EDITOR_ID = 'editor-pane';
 const NONMENU_PANES_CONTAINER_ID = 'nonmenu-panes-container';
+
+const FIXED_VERTICAL_SEPARATOR = 'fixed-vertical-separator';
+const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 
 /// Most views clear out their root element on each render, but View is a little special, so some
 /// elements are put in place in the DOM in the constructor and never moved again. It is expected that
@@ -49,6 +54,7 @@ class View {
   DivElement editor_element = DivElement()..attributes = {'id': EDITOR_ID};
 
   DivElement edit_mode_element = DivElement()..attributes = {'id': EDIT_MODE_ID};
+  DivElement select_mode_element = DivElement()..attributes = {'id': SELECT_MODE_ID};
 
   DesignViewComponent design_view;
   EditorViewComponent editor_view;
@@ -57,14 +63,20 @@ class View {
 
   View(this.root_element, this.model) {
     this.root_element.children.add(menu_element);
-    var menu_design_separator = DivElement()..attributes = {'class': 'fixed-separator'};
+    var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
     this.root_element.children.add(this.nonmenu_panes_container_element);
 
     this.nonmenu_panes_container_element.children.add(design_element);
-    var design_mode_separator = DivElement()..attributes = {'class': 'fixed-vertical-separator'};
+    var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};
     this.nonmenu_panes_container_element.children.add(design_mode_separator);
-    this.nonmenu_panes_container_element.children.add(edit_mode_element);
+
+    var modes_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
+    this.nonmenu_panes_container_element.children.add(DivElement()
+      ..id = 'modes-buttons'
+      ..children = [edit_mode_element, modes_separator, select_mode_element]);
+//    this.nonmenu_panes_container_element.children.add(edit_mode_element);
+//    this.nonmenu_panes_container_element.children.add(select_mode_element);
 
     this.design_view = DesignViewComponent(design_element, this.model);
 
@@ -84,6 +96,7 @@ class View {
     react_dom.render((Menu()..store = app.model.show_store)(), this.menu_element);
     this.design_view.render();
     react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
+    react_dom.render((SelectMode()..store = app.model.select_mode_store)(), this.select_mode_element);
 
 //    if (app.model.show_editor) {
 //      this.editor_view.render();

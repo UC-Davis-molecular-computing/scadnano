@@ -65,6 +65,7 @@ const idx_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';
+const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 //const position_key = 'position'; // support in the future

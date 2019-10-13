@@ -90,7 +90,7 @@ const classname = 'selectable crossover-curve';
 
 _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
   bool crossover_up = ss.helix > other_ss.helix;
-  num rotation = crossover_up ? -pi / 2.0 : pi / 2.0;
+  num rotation = crossover_up ? 0 : pi;
   if (!ss.forward) {
     rotation = (rotation - radians(150)) % (2 * pi);
   }

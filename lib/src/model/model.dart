@@ -5,6 +5,7 @@ import 'package:w_flux/w_flux.dart';
 
 import '../dispatcher/actions.dart';
 import 'edit_mode.dart';
+import 'select_mode.dart';
 import 'composite_stores.dart';
 import 'model_ui.dart';
 import 'model_ui_side.dart';
@@ -28,6 +29,7 @@ class Model extends Store {
   DNADesign _dna_design;
   ErrorMessageStore error_message_store = ErrorMessageStore();
   EditModeStore edit_mode_store = EditModeStore();
+  SelectModeStore select_mode_store = SelectModeStore();
 
   String _editor_content = "";
 

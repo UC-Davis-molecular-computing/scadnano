@@ -17,30 +17,14 @@ class EditModeComponent extends FluxUiComponent<EditModeProps> {
 
   @override
   render() {
-    return (Dom.div())(
-      this._button_for_choice(EditModeChoice.select),
-      this._button_for_choice(EditModeChoice.pencil),
-      this._button_for_choice(EditModeChoice.nick),
-      this._button_for_choice(EditModeChoice.ligate),
-      this._button_for_choice(EditModeChoice.insertion),
-      this._button_for_choice(EditModeChoice.deletion),
-      this._button_for_choice(EditModeChoice.sequence),
-      this._button_for_choice(EditModeChoice.backbone_rotation),
-      this._button_for_choice(EditModeChoice.python_editor),
-    );
+    return (Dom.div())([for (var choice in EditModeChoice.values) this._button_for_choice(choice)]);
   }
 
   ReactElement _button_for_choice(EditModeChoice mode) {
     return (Dom.button()
-      ..onClick = ((_) => _change_mode(mode))
-      ..className = 'mode-button ' +
-          (this.props.store.mode == mode
-              ? 'mode-button-selected'
-              : 'mode-button-unselected'))(mode.name);
-  }
-
-  _change_mode(EditModeChoice mode) {
-    Actions.set_edit_mode(mode);
-//    app.send_action(ActionPack(Actions.set_edit_mode, mode));
+      ..onClick = ((_) => Actions.set_edit_mode(mode))
+      ..className = 'edit-mode-button ' +
+          (this.props.store.mode == mode ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
+      ..key = mode.name)(mode.name);
   }
 }

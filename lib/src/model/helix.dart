@@ -240,6 +240,10 @@ class Helix extends Store implements JSONSerializable {
       json_map[constants.rotation_key] = this._rotation;
     }
 
+    if (this.has_nondefault_rotation_anchor()) {
+      json_map[constants.rotation_anchor_key] = this._rotation_anchor;
+    }
+
     return NoIndent(json_map);
   }
 
@@ -392,6 +396,14 @@ class Helix extends Store implements JSONSerializable {
       this._max_offset = json_map[constants.max_offset_key];
     }
 
+    if (json_map.containsKey(constants.rotation_key)) {
+      this._rotation = json_map[constants.rotation_key];
+    }
+
+    if (json_map.containsKey(constants.rotation_anchor_key)) {
+      this._rotation_anchor = json_map[constants.rotation_anchor_key];
+    }
+
     this._handle_actions();
   }
 
@@ -467,11 +479,12 @@ class Helix extends Store implements JSONSerializable {
     } else {
       num_bases = 0;
     }
-    return (this._rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
+    num rad = (this._rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
+    return rad;
   }
 
   /// in radians;  3' rotation + 150 degrees
-  double rotation_5p(int offset) => this.rotation_3p(offset) + (150.0 / 360.0 * 2 * pi);
+  double rotation_5p(int offset) => this.rotation_3p(offset) + (2 * pi * 150.0 / 360.0);
 
   int num_bases() => this.max_offset - this.min_offset;
 

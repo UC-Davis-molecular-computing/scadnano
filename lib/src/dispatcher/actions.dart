@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:js/js.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
@@ -121,6 +122,12 @@ class Actions {
   static final set_show_dna = Action<bool>();
   static final set_show_mismatches = Action<bool>();
   static final set_show_editor = Action<bool>();
+
+  // Select modes
+  static final toggle_select_mode = Action<SelectModeChoice>();
+  static final set_select_modes = Action<List<SelectModeChoice>>();
+//  static final add_select_mode = Action<SelectModeChoice>();
+//  static final remove_select_mode = Action<SelectModeChoice>();
 }
 
 /// w_flux [Store] that can listen specifically to [Action]s whose payload is itself and only calls trigger() for those.
