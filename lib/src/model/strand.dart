@@ -1,5 +1,6 @@
 import 'package:color/color.dart';
 import 'package:react/react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 import 'package:scadnano/src/model/selectable.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
@@ -128,6 +129,8 @@ class Strand extends Store with Selectable implements JSONSerializable {
       }
     }
   }
+
+  SelectModeChoice select_mode() => SelectModeChoice.strand;
 
   String id() {
     var first_ss = this.first_bound_substrand();

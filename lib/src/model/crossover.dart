@@ -3,6 +3,7 @@ import 'package:scadnano/src/model/composite_stores.dart';
 import 'package:w_flux/w_flux.dart';
 
 import '../app.dart';
+import 'select_mode.dart';
 import 'selectable.dart';
 import 'bound_substrand.dart';
 
@@ -26,6 +27,8 @@ class Crossover extends Store with Selectable {
 //    print('calling Crossover.trigger() on ${id()}');
 //    super.trigger();
 //  }
+
+  SelectModeChoice select_mode() => SelectModeChoice.crossover;
 
   String id() => 'crossover-${prev_substrand.id()}-${next_substrand.id()}';
 

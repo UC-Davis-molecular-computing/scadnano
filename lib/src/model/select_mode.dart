@@ -7,6 +7,7 @@ import 'package:w_flux/w_flux.dart';
 import '../dispatcher/actions.dart';
 import '../dispatcher/local_storage.dart' as local_storage;
 import 'loopout.dart';
+import 'selectable.dart';
 import 'strand.dart';
 
 /// Indicates which objects are selectable in the main view.
@@ -56,37 +57,8 @@ class SelectModeStore extends Store {
     handle_actions();
   }
 
-  bool is_selectable(Object obj) {
-    switch(obj.runtimeType) {
-      case DNAEnd:
-        DNAEnd end = obj as DNAEnd;
-        if (end.is_5p) {
-          if (end.substrand.is_first()) {
-            return modes.contains(SelectModeChoice.end_5p_strand);
-          } else {
-            return modes.contains(SelectModeChoice.end_5p_substrand);
-          }
-        } else {
-          if (end.substrand.is_last()) {
-            return modes.contains(SelectModeChoice.end_3p_strand);
-          } else {
-            return modes.contains(SelectModeChoice.end_3p_substrand);
-          }
-        }
-        break;
-
-      case Crossover:
-        return modes.contains(SelectModeChoice.crossover);
-        break;
-
-      case Loopout:
-        return modes.contains(SelectModeChoice.loopout);
-        break;
-
-      case Strand:
-        return modes.contains(SelectModeChoice.strand);
-        break;
-    }
+  bool is_selectable(Selectable selectable) {
+    return modes.contains(selectable.select_mode());
   }
 
   String to_json() {

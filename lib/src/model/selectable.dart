@@ -6,11 +6,15 @@ import 'package:w_flux/w_flux.dart';
 
 import '../app.dart';
 import '../dispatcher/actions.dart';
+import 'select_mode.dart';
 
 /// Represents a part of the Model that represents a part of the View that is Selectable.
 mixin Selectable implements Store {
   /// Subclasses must define this to be used to associate view element to model object through CSS selector.
   String id();
+
+  /// Subclasses must define this to be able to be selectively selected.
+  SelectModeChoice select_mode();
 
   handle_selection(SyntheticMouseEvent event) {
     if (app.model.select_mode_store.is_selectable(this)) {
@@ -55,10 +59,13 @@ class SelectableStore extends Store {
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
   select(Selectable selectable) {
+    print('h2');
     bool added = selected_items.add(selectable);
+    print('h3');
     if (added) {
       selectable.trigger();
     }
+    print('h4');
   }
 
   unselect(Selectable selectable) {
@@ -78,9 +85,11 @@ class SelectableStore extends Store {
 
   // methods below here defined in terms of select and unselect
   select_all(Iterable<Selectable> selectables) {
+    print('h');
     for (var selectable in selectables) {
       select(selectable);
     }
+    print('i');
   }
 
   toggle(Selectable selectable) {

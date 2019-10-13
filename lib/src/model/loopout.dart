@@ -1,3 +1,5 @@
+import 'package:scadnano/src/model/select_mode.dart';
+
 import '../app.dart';
 import 'strand.dart';
 import 'selectable.dart';
@@ -23,6 +25,8 @@ class Loopout extends Substrand with Selectable {
 //    print('calling Loopout.trigger() on ${id()}');
 //    super.trigger();
 //  }
+
+  SelectModeChoice select_mode() => SelectModeChoice.loopout;
 
   String id() => 'loopout-${order()}-${strand.id()}';
 

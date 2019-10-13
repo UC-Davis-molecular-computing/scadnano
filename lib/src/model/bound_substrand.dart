@@ -6,6 +6,7 @@ import 'package:tuple/tuple.dart';
 import '../app.dart';
 import 'composite_stores.dart';
 import 'helix.dart';
+import 'select_mode.dart';
 import 'selectable.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
@@ -27,6 +28,23 @@ class DNAEnd extends Store with Selectable {
 
   bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner) {
     return substrand.in_box(upper_left_corner, lower_right_corner, this);
+  }
+
+
+  SelectModeChoice select_mode() {
+    if (is_5p) {
+      if (substrand.is_first()) {
+        return SelectModeChoice.end_5p_strand;
+      } else {
+        return SelectModeChoice.end_5p_substrand;
+      }
+    } else {
+      if (substrand.is_last()) {
+        return SelectModeChoice.end_3p_strand;
+      } else {
+        return SelectModeChoice.end_3p_substrand;
+      }
+    }
   }
 
   String id() => 'end-' + (is_5p? '5p': '3p') + '-' + substrand.id();
