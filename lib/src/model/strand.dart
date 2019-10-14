@@ -105,6 +105,7 @@ class Strand extends Store with Selectable implements JSONSerializable {
   }
 
   register_selectables(SelectableStore store) {
+    store.register(this);
     for (var ss in substrands) {
       ss.register_selectables(store);
     }

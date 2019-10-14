@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 
 import '../app.dart';
@@ -31,14 +32,14 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
     if (strand.substrands.length == 0) {
       return null;
     } else {
-
       //TODO: make strand selectable, but decide how it will interact with selecting other elements.
-//      var classname = 'selectable strand';
       var classname = 'strand';
       if (strand.ui_model.hover) {
         classname += ' hover';
       }
-//      if (strand.ui_model.selected) {
+      if (app.model.select_mode_store.modes.contains(SelectModeChoice.strand)) {
+        classname += ' selectable';
+      }
       if (strand.selected()) {
         classname += ' selected';
       }

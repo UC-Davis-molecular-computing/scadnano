@@ -6,14 +6,14 @@
   ],
   "strands": [
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "dna_sequence": "AGTTAGTT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 9, "deletions": [2]}
       ]
     },
     {
-      "color": {"r": 0, "g": 102, "b": 204},
+      "color": "#0066cc",
       "dna_sequence": "AACTAACT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 0, "end": 9, "deletions": [2]}

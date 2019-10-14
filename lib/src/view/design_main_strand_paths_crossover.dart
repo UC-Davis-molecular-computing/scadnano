@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 
 import '../dispatcher/actions.dart';
@@ -65,9 +66,13 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
 
     //TODO: figure out a way to display helix backbone rotation when mouse is on crossover
 
-    var classname_this_curve = classname;
+    var classname_this_curve = 'crossover-curve';
     if (crossover.selected()) {
       classname_this_curve += ' selected';
+    }
+    print('modes: ${app.model.select_mode_store.modes}');
+    if (app.model.select_mode_store.modes.contains(SelectModeChoice.crossover)) {
+      classname_this_curve += ' selectable';
     }
 
     var path = crossover_path_description(prev_substrand, next_substrand);
@@ -86,7 +91,6 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
   }
 }
 
-const classname = 'selectable crossover-curve';
 
 _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
   bool crossover_up = ss.helix > other_ss.helix;

@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 
 import '../dispatcher/actions.dart';
 import '../model/strand.dart';
@@ -39,9 +40,12 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
     var prev_ss = strand.substrands[substrand_idx - 1] as BoundSubstrand;
     var next_ss = strand.substrands[substrand_idx + 1] as BoundSubstrand;
 
-    var classname = 'selectable substrand-line loopout-line';
+    var classname = 'substrand-line loopout-line';
     if (loopout.selected()) {
       classname += ' selected';
+    }
+    if (app.model.select_mode_store.modes.contains(SelectModeChoice.loopout)) {
+      classname += ' selectable';
     }
 
     if (util.is_hairpin(prev_ss, next_ss)) {

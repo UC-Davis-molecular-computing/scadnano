@@ -6,14 +6,14 @@
   ],
   "strands": [
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "dna_sequence": "ATTCTCTTGCTTTTTTCA",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}
       ]
     },
     {
-      "color": {"r": 0, "g": 102, "b": 204},
+      "color": "#0066cc",
       "dna_sequence": "AGAAAAAAAAAAAAAAAA",
       "substrands": [
         {"helix": 0, "forward": false, "start": 0, "end": 10, "insertions": [[2, 4], [8, 4]]}

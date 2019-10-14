@@ -501,9 +501,18 @@ class StrandError extends IllegalDNADesignError {
   }
 }
 
-Color parse_json_color(Map json_map) {
-  int r = json_map['r'];
-  int g = json_map['g'];
-  int b = json_map['b'];
-  return RgbColor(r, g, b);
+Color parse_json_color(Object json_obj) {
+  if (json_obj is Map) {
+    Map json_map = json_obj as Map;
+    int r = json_map['r'];
+    int g = json_map['g'];
+    int b = json_map['b'];
+    return RgbColor(r, g, b);
+  } else if (json_obj is String) {
+    String json_str = json_obj as String;
+    return HexColor(json_str);
+  } else {
+    throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
+        '${json_obj.runtimeType}:\n${json_obj}');
+  }
 }

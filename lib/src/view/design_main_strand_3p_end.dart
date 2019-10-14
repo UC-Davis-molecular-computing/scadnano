@@ -1,4 +1,5 @@
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 
 import '../model/bound_substrand.dart';
 import '../app.dart';
@@ -42,9 +43,13 @@ class DesignMain3pEndComponent extends FluxUiComponent<DesignMain3pEndProps> {
           '${pos.x - 0.9 * scale},${pos.y - scale}';
     }
 
-    var classname = 'selectable three-prime-end' + (is_last_substrand ? '-last-substrand' : '');
+    var classname = 'three-prime-end' + (is_last_substrand ? '-last-substrand' : '');
     if (substrand.selected_3p()) {
       classname += ' selected';
+    }
+    if (is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_strand)
+        || !is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_substrand)) {
+      classname += ' selectable';
     }
 
 

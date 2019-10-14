@@ -7,7 +7,7 @@
   ],
   "strands": [
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#888888",
       "dna_sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12]},
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#32b86c",
       "dna_sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24]},
@@ -23,7 +23,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 102, "b": 204},
+      "color": "#0066cc",
       "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAAC",
       "substrands": [
         {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12]},

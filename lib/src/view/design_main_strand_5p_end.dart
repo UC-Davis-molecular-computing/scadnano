@@ -1,4 +1,5 @@
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 
 import '../model/bound_substrand.dart';
 import '../app.dart';
@@ -31,9 +32,13 @@ class DesignMain5pEndComponent extends FluxUiComponent<DesignMain5pEndProps> {
     var right = substrand.forward;
     var pos = helix.svg_base_pos(offset, right);
 
-    var classname = 'selectable five-prime-end' + (is_first_substrand ? '-first-substrand' : '');
+    var classname = 'five-prime-end' + (is_first_substrand ? '-first-substrand' : '');
     if (substrand.selected_5p()) {
       classname += ' selected';
+    }
+    if (is_first_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_strand)
+    || !is_first_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_substrand)) {
+      classname += ' selectable';
     }
 
     //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly

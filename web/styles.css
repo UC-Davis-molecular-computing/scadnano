@@ -285,8 +285,8 @@ html, body {
     pointer-events: all;
 }
 
-.five-prime-end:hover,
-.three-prime-end:hover {
+.selectable.five-prime-end:hover,
+.selectable.three-prime-end:hover {
     stroke: black;
     stroke-width: 0.5px;
     visibility: visible;
@@ -329,19 +329,19 @@ html, body {
     stroke: hotpink;
 }
 
-.strand.hover,
-.loopout-line:hover,
-.five-prime-end-first-substrand:hover,
-.three-prime-end-last-substrand:hover,
-.five-prime-end:hover,
-.three-prime-end:hover,
-.insertion-line:hover,
-.deletion-cross:hover {
+.selectable.strand.hover,
+.selectable.loopout-line:hover,
+.selectable.five-prime-end-first-substrand:hover,
+.selectable.three-prime-end-last-substrand:hover,
+.selectable.five-prime-end:hover,
+.selectable.three-prime-end:hover,
+.selectable.insertion-line:hover,
+.selectable.deletion-cross:hover {
     filter: url("#shadow");
 }
 
 
-.crossover-curve:hover {
+.selectable.crossover-curve:hover {
     stroke-dasharray: 0;
     filter: url("#shadow");
 }

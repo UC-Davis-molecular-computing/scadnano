@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 
 import '../dispatcher/actions.dart';
 import '../model/helix.dart';

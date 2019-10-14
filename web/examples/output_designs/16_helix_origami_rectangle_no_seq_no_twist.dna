@@ -21,7 +21,7 @@
   ],
   "strands": [
     {
-      "color": {"r": 0, "g": 102, "b": 204},
+      "color": "#0066cc",
       "substrands": [
         {"helix": 15, "forward": false, "start": 16, "end": 224, "deletions": [49, 97, 145, 193]},
         {"helix": 14, "forward": true, "start": 16, "end": 224, "deletions": [49, 97, 145, 193]},
@@ -57,236 +57,236 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 1, "forward": true, "start": 16, "end": 32},
         {"helix": 0, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 3, "forward": true, "start": 16, "end": 32},
         {"helix": 2, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 5, "forward": true, "start": 16, "end": 32},
         {"helix": 4, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 7, "forward": true, "start": 16, "end": 32},
         {"helix": 6, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 9, "forward": true, "start": 16, "end": 32},
         {"helix": 8, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 11, "forward": true, "start": 16, "end": 32},
         {"helix": 10, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 13, "forward": true, "start": 16, "end": 32},
         {"helix": 12, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 15, "forward": true, "start": 16, "end": 32},
         {"helix": 14, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 0, "forward": false, "start": 416, "end": 432},
         {"helix": 1, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 2, "forward": false, "start": 416, "end": 432},
         {"helix": 3, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 4, "forward": false, "start": 416, "end": 432},
         {"helix": 5, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 6, "forward": false, "start": 416, "end": 432},
         {"helix": 7, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 8, "forward": false, "start": 416, "end": 432},
         {"helix": 9, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 10, "forward": false, "start": 416, "end": 432},
         {"helix": 11, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 12, "forward": false, "start": 416, "end": 432},
         {"helix": 13, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 14, "forward": false, "start": 416, "end": 432},
         {"helix": 15, "forward": true, "start": 416, "end": 432}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 0, "forward": false, "start": 216, "end": 248, "deletions": [241]}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 2, "forward": false, "start": 208, "end": 216},
         {"helix": 1, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 1, "forward": true, "start": 232, "end": 240},
         {"helix": 2, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 4, "forward": false, "start": 208, "end": 216},
         {"helix": 3, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 3, "forward": true, "start": 232, "end": 240},
         {"helix": 4, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 6, "forward": false, "start": 208, "end": 216},
         {"helix": 5, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 5, "forward": true, "start": 232, "end": 240},
         {"helix": 6, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 8, "forward": false, "start": 208, "end": 216},
         {"helix": 7, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 7, "forward": true, "start": 232, "end": 240},
         {"helix": 8, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 10, "forward": false, "start": 208, "end": 216},
         {"helix": 9, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 9, "forward": true, "start": 232, "end": 240},
         {"helix": 10, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 12, "forward": false, "start": 208, "end": 216},
         {"helix": 11, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 11, "forward": true, "start": 232, "end": 240},
         {"helix": 12, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 14, "forward": false, "start": 208, "end": 216},
         {"helix": 13, "forward": true, "start": 208, "end": 232}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 13, "forward": true, "start": 232, "end": 240},
         {"helix": 14, "forward": false, "start": 216, "end": 240}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 15, "forward": true, "start": 200, "end": 232}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 0, "forward": false, "start": 32, "end": 56, "deletions": [49]},
         {"helix": 1, "forward": true, "start": 32, "end": 40}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 1, "forward": true, "start": 40, "end": 48},
         {"helix": 2, "forward": false, "start": 32, "end": 48},
@@ -294,7 +294,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 3, "forward": true, "start": 40, "end": 48},
         {"helix": 4, "forward": false, "start": 32, "end": 48},
@@ -302,7 +302,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 5, "forward": true, "start": 40, "end": 48},
         {"helix": 6, "forward": false, "start": 32, "end": 48},
@@ -310,7 +310,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 7, "forward": true, "start": 40, "end": 48},
         {"helix": 8, "forward": false, "start": 32, "end": 48},
@@ -318,7 +318,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 9, "forward": true, "start": 40, "end": 48},
         {"helix": 10, "forward": false, "start": 32, "end": 48},
@@ -326,7 +326,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 11, "forward": true, "start": 40, "end": 48},
         {"helix": 12, "forward": false, "start": 32, "end": 48},
@@ -334,7 +334,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 13, "forward": true, "start": 40, "end": 48},
         {"helix": 14, "forward": false, "start": 32, "end": 48},
@@ -342,14 +342,14 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 15, "forward": true, "start": 40, "end": 64, "deletions": [49]},
         {"helix": 14, "forward": false, "start": 56, "end": 64}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 2, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 1, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -357,7 +357,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 4, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 3, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -365,7 +365,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 6, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 5, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -373,7 +373,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 8, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 7, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -381,7 +381,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 10, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 9, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -389,7 +389,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 12, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 11, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 14, "forward": false, "start": 48, "end": 56, "deletions": [49]},
         {"helix": 13, "forward": true, "start": 48, "end": 64, "deletions": [49]},
@@ -405,14 +405,14 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 0, "forward": false, "start": 64, "end": 88},
         {"helix": 1, "forward": true, "start": 64, "end": 72}
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 1, "forward": true, "start": 72, "end": 80},
         {"helix": 2, "forward": false, "start": 64, "end": 80},
@@ -420,7 +420,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 3, "forward": true, "start": 72, "end": 80},
         {"helix": 4, "forward": false, "start": 64, "end": 80},
@@ -428,7 +428,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 5, "forward": true, "start": 72, "end": 80},
         {"helix": 6, "forward": false, "start": 64, "end": 80},
@@ -436,7 +436,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 7, "forward": true, "start": 72, "end": 80},
         {"helix": 8, "forward": false, "start": 64, "end": 80},
@@ -444,7 +444,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 9, "forward": true, "start": 72, "end": 80},
         {"helix": 10, "forward": false, "start": 64, "end": 80},
@@ -452,7 +452,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 11, "forward": true, "start": 72, "end": 80},
         {"helix": 12, "forward": false, "start": 64, "end": 80},
@@ -460,7 +460,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 13, "forward": true, "start": 72, "end": 80},
         {"helix": 14, "forward": false, "start": 64, "end": 80},
@@ -468,14 +468,14 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 15, "forward": true, "start": 72, "end": 96},
         {"helix": 14, "forward": false, "start": 88, "end": 96}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 2, "forward": false, "start": 80, "end": 88},
         {"helix": 1, "forward": true, "start": 80, "end": 96},
@@ -483,7 +483,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 4, "forward": false, "start": 80, "end": 88},
         {"helix": 3, "forward": true, "start": 80, "end": 96},
@@ -491,7 +491,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 6, "forward": false, "start": 80, "end": 88},
         {"helix": 5, "forward": true, "start": 80, "end": 96},
@@ -499,7 +499,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 8, "forward": false, "start": 80, "end": 88},
         {"helix": 7, "forward": true, "start": 80, "end": 96},
@@ -507,7 +507,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 10, "forward": false, "start": 80, "end": 88},
         {"helix": 9, "forward": true, "start": 80, "end": 96},
@@ -515,7 +515,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 12, "forward": false, "start": 80, "end": 88},
         {"helix": 11, "forward": true, "start": 80, "end": 96},
@@ -523,7 +523,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 14, "forward": false, "start": 80, "end": 88},
         {"helix": 13, "forward": true, "start": 80, "end": 96},
@@ -531,14 +531,14 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 0, "forward": false, "start": 96, "end": 120, "deletions": [97]},
         {"helix": 1, "forward": true, "start": 96, "end": 104, "deletions": [97]}
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 1, "forward": true, "start": 104, "end": 112},
         {"helix": 2, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -546,7 +546,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 3, "forward": true, "start": 104, "end": 112},
         {"helix": 4, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -554,7 +554,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 5, "forward": true, "start": 104, "end": 112},
         {"helix": 6, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -562,7 +562,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 7, "forward": true, "start": 104, "end": 112},
         {"helix": 8, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -570,7 +570,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 9, "forward": true, "start": 104, "end": 112},
         {"helix": 10, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -578,7 +578,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 11, "forward": true, "start": 104, "end": 112},
         {"helix": 12, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -586,7 +586,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 13, "forward": true, "start": 104, "end": 112},
         {"helix": 14, "forward": false, "start": 96, "end": 112, "deletions": [97]},
@@ -594,14 +594,14 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 15, "forward": true, "start": 104, "end": 128},
         {"helix": 14, "forward": false, "start": 120, "end": 128}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 2, "forward": false, "start": 112, "end": 120},
         {"helix": 1, "forward": true, "start": 112, "end": 128},
@@ -609,7 +609,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 4, "forward": false, "start": 112, "end": 120},
         {"helix": 3, "forward": true, "start": 112, "end": 128},
@@ -617,7 +617,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 6, "forward": false, "start": 112, "end": 120},
         {"helix": 5, "forward": true, "start": 112, "end": 128},
@@ -625,7 +625,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 8, "forward": false, "start": 112, "end": 120},
         {"helix": 7, "forward": true, "start": 112, "end": 128},
@@ -633,7 +633,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 10, "forward": false, "start": 112, "end": 120},
         {"helix": 9, "forward": true, "start": 112, "end": 128},
@@ -641,7 +641,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 12, "forward": false, "start": 112, "end": 120},
         {"helix": 11, "forward": true, "start": 112, "end": 128},
@@ -649,7 +649,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 14, "forward": false, "start": 112, "end": 120},
         {"helix": 13, "forward": true, "start": 112, "end": 128},
@@ -657,14 +657,14 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 0, "forward": false, "start": 128, "end": 152, "deletions": [145]},
         {"helix": 1, "forward": true, "start": 128, "end": 136}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 1, "forward": true, "start": 136, "end": 144},
         {"helix": 2, "forward": false, "start": 128, "end": 144},
@@ -672,7 +672,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 3, "forward": true, "start": 136, "end": 144},
         {"helix": 4, "forward": false, "start": 128, "end": 144},
@@ -680,7 +680,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 5, "forward": true, "start": 136, "end": 144},
         {"helix": 6, "forward": false, "start": 128, "end": 144},
@@ -688,7 +688,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 7, "forward": true, "start": 136, "end": 144},
         {"helix": 8, "forward": false, "start": 128, "end": 144},
@@ -696,7 +696,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 9, "forward": true, "start": 136, "end": 144},
         {"helix": 10, "forward": false, "start": 128, "end": 144},
@@ -704,7 +704,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 11, "forward": true, "start": 136, "end": 144},
         {"helix": 12, "forward": false, "start": 128, "end": 144},
@@ -712,7 +712,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 13, "forward": true, "start": 136, "end": 144},
         {"helix": 14, "forward": false, "start": 128, "end": 144},
@@ -720,14 +720,14 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 15, "forward": true, "start": 136, "end": 160, "deletions": [145]},
         {"helix": 14, "forward": false, "start": 152, "end": 160}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 2, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 1, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -735,7 +735,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 4, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 3, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -743,7 +743,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 6, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 5, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -751,7 +751,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 8, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 7, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -759,7 +759,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 10, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 9, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -767,7 +767,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 12, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 11, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -775,7 +775,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 14, "forward": false, "start": 144, "end": 152, "deletions": [145]},
         {"helix": 13, "forward": true, "start": 144, "end": 160, "deletions": [145]},
@@ -783,14 +783,14 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 0, "forward": false, "start": 160, "end": 184},
         {"helix": 1, "forward": true, "start": 160, "end": 168}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 1, "forward": true, "start": 168, "end": 176},
         {"helix": 2, "forward": false, "start": 160, "end": 176},
@@ -798,7 +798,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 3, "forward": true, "start": 168, "end": 176},
         {"helix": 4, "forward": false, "start": 160, "end": 176},
@@ -806,7 +806,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 5, "forward": true, "start": 168, "end": 176},
         {"helix": 6, "forward": false, "start": 160, "end": 176},
@@ -814,7 +814,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 7, "forward": true, "start": 168, "end": 176},
         {"helix": 8, "forward": false, "start": 160, "end": 176},
@@ -822,7 +822,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 9, "forward": true, "start": 168, "end": 176},
         {"helix": 10, "forward": false, "start": 160, "end": 176},
@@ -830,7 +830,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 11, "forward": true, "start": 168, "end": 176},
         {"helix": 12, "forward": false, "start": 160, "end": 176},
@@ -838,7 +838,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 13, "forward": true, "start": 168, "end": 176},
         {"helix": 14, "forward": false, "start": 160, "end": 176},
@@ -846,14 +846,14 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 15, "forward": true, "start": 168, "end": 192},
         {"helix": 14, "forward": false, "start": 184, "end": 192}
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 2, "forward": false, "start": 176, "end": 184},
         {"helix": 1, "forward": true, "start": 176, "end": 192},
@@ -861,7 +861,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 4, "forward": false, "start": 176, "end": 184},
         {"helix": 3, "forward": true, "start": 176, "end": 192},
@@ -869,7 +869,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 6, "forward": false, "start": 176, "end": 184},
         {"helix": 5, "forward": true, "start": 176, "end": 192},
@@ -877,7 +877,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 8, "forward": false, "start": 176, "end": 184},
         {"helix": 7, "forward": true, "start": 176, "end": 192},
@@ -885,7 +885,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 10, "forward": false, "start": 176, "end": 184},
         {"helix": 9, "forward": true, "start": 176, "end": 192},
@@ -893,7 +893,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 12, "forward": false, "start": 176, "end": 184},
         {"helix": 11, "forward": true, "start": 176, "end": 192},
@@ -901,7 +901,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 14, "forward": false, "start": 176, "end": 184},
         {"helix": 13, "forward": true, "start": 176, "end": 192},
@@ -909,14 +909,14 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 0, "forward": false, "start": 192, "end": 216, "deletions": [193]},
         {"helix": 1, "forward": true, "start": 192, "end": 200, "deletions": [193]}
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 1, "forward": true, "start": 200, "end": 208},
         {"helix": 2, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -924,7 +924,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 3, "forward": true, "start": 200, "end": 208},
         {"helix": 4, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -932,7 +932,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 5, "forward": true, "start": 200, "end": 208},
         {"helix": 6, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -940,7 +940,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 7, "forward": true, "start": 200, "end": 208},
         {"helix": 8, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -948,7 +948,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 9, "forward": true, "start": 200, "end": 208},
         {"helix": 10, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -956,7 +956,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 11, "forward": true, "start": 200, "end": 208},
         {"helix": 12, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -964,7 +964,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 13, "forward": true, "start": 200, "end": 208},
         {"helix": 14, "forward": false, "start": 192, "end": 208, "deletions": [193]},
@@ -972,14 +972,14 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 15, "forward": true, "start": 232, "end": 256, "deletions": [241]},
         {"helix": 14, "forward": false, "start": 248, "end": 256}
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 2, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 1, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -987,7 +987,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 4, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 3, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -995,7 +995,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 6, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 5, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -1003,7 +1003,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 8, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 7, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -1011,7 +1011,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 10, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 9, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -1019,7 +1019,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 12, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 11, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -1027,7 +1027,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 14, "forward": false, "start": 240, "end": 248, "deletions": [241]},
         {"helix": 13, "forward": true, "start": 240, "end": 256, "deletions": [241]},
@@ -1035,14 +1035,14 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 0, "forward": false, "start": 256, "end": 280},
         {"helix": 1, "forward": true, "start": 256, "end": 264}
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 1, "forward": true, "start": 264, "end": 272},
         {"helix": 2, "forward": false, "start": 256, "end": 272},
@@ -1050,7 +1050,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 3, "forward": true, "start": 264, "end": 272},
         {"helix": 4, "forward": false, "start": 256, "end": 272},
@@ -1058,7 +1058,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 5, "forward": true, "start": 264, "end": 272},
         {"helix": 6, "forward": false, "start": 256, "end": 272},
@@ -1066,7 +1066,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 7, "forward": true, "start": 264, "end": 272},
         {"helix": 8, "forward": false, "start": 256, "end": 272},
@@ -1074,7 +1074,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 9, "forward": true, "start": 264, "end": 272},
         {"helix": 10, "forward": false, "start": 256, "end": 272},
@@ -1082,7 +1082,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 11, "forward": true, "start": 264, "end": 272},
         {"helix": 12, "forward": false, "start": 256, "end": 272},
@@ -1090,7 +1090,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 13, "forward": true, "start": 264, "end": 272},
         {"helix": 14, "forward": false, "start": 256, "end": 272},
@@ -1098,14 +1098,14 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 15, "forward": true, "start": 264, "end": 288},
         {"helix": 14, "forward": false, "start": 280, "end": 288}
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 2, "forward": false, "start": 272, "end": 280},
         {"helix": 1, "forward": true, "start": 272, "end": 288},
@@ -1113,7 +1113,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 4, "forward": false, "start": 272, "end": 280},
         {"helix": 3, "forward": true, "start": 272, "end": 288},
@@ -1121,7 +1121,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 6, "forward": false, "start": 272, "end": 280},
         {"helix": 5, "forward": true, "start": 272, "end": 288},
@@ -1129,7 +1129,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 8, "forward": false, "start": 272, "end": 280},
         {"helix": 7, "forward": true, "start": 272, "end": 288},
@@ -1137,7 +1137,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 10, "forward": false, "start": 272, "end": 280},
         {"helix": 9, "forward": true, "start": 272, "end": 288},
@@ -1145,7 +1145,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 12, "forward": false, "start": 272, "end": 280},
         {"helix": 11, "forward": true, "start": 272, "end": 288},
@@ -1153,7 +1153,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 14, "forward": false, "start": 272, "end": 280},
         {"helix": 13, "forward": true, "start": 272, "end": 288},
@@ -1161,14 +1161,14 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 0, "forward": false, "start": 288, "end": 312, "deletions": [289]},
         {"helix": 1, "forward": true, "start": 288, "end": 296, "deletions": [289]}
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 1, "forward": true, "start": 296, "end": 304},
         {"helix": 2, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1176,7 +1176,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 3, "forward": true, "start": 296, "end": 304},
         {"helix": 4, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1184,7 +1184,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 5, "forward": true, "start": 296, "end": 304},
         {"helix": 6, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1192,7 +1192,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 7, "forward": true, "start": 296, "end": 304},
         {"helix": 8, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1200,7 +1200,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 9, "forward": true, "start": 296, "end": 304},
         {"helix": 10, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1208,7 +1208,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 11, "forward": true, "start": 296, "end": 304},
         {"helix": 12, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1216,7 +1216,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 13, "forward": true, "start": 296, "end": 304},
         {"helix": 14, "forward": false, "start": 288, "end": 304, "deletions": [289]},
@@ -1224,14 +1224,14 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 15, "forward": true, "start": 296, "end": 320},
         {"helix": 14, "forward": false, "start": 312, "end": 320}
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 2, "forward": false, "start": 304, "end": 312},
         {"helix": 1, "forward": true, "start": 304, "end": 320},
@@ -1239,7 +1239,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 4, "forward": false, "start": 304, "end": 312},
         {"helix": 3, "forward": true, "start": 304, "end": 320},
@@ -1247,7 +1247,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 6, "forward": false, "start": 304, "end": 312},
         {"helix": 5, "forward": true, "start": 304, "end": 320},
@@ -1255,7 +1255,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 8, "forward": false, "start": 304, "end": 312},
         {"helix": 7, "forward": true, "start": 304, "end": 320},
@@ -1263,7 +1263,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 10, "forward": false, "start": 304, "end": 312},
         {"helix": 9, "forward": true, "start": 304, "end": 320},
@@ -1271,7 +1271,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 12, "forward": false, "start": 304, "end": 312},
         {"helix": 11, "forward": true, "start": 304, "end": 320},
@@ -1279,7 +1279,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 14, "forward": false, "start": 304, "end": 312},
         {"helix": 13, "forward": true, "start": 304, "end": 320},
@@ -1287,14 +1287,14 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 0, "forward": false, "start": 320, "end": 344, "deletions": [337]},
         {"helix": 1, "forward": true, "start": 320, "end": 328}
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 1, "forward": true, "start": 328, "end": 336},
         {"helix": 2, "forward": false, "start": 320, "end": 336},
@@ -1302,7 +1302,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 3, "forward": true, "start": 328, "end": 336},
         {"helix": 4, "forward": false, "start": 320, "end": 336},
@@ -1310,7 +1310,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 5, "forward": true, "start": 328, "end": 336},
         {"helix": 6, "forward": false, "start": 320, "end": 336},
@@ -1318,7 +1318,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 7, "forward": true, "start": 328, "end": 336},
         {"helix": 8, "forward": false, "start": 320, "end": 336},
@@ -1326,7 +1326,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 9, "forward": true, "start": 328, "end": 336},
         {"helix": 10, "forward": false, "start": 320, "end": 336},
@@ -1334,7 +1334,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 11, "forward": true, "start": 328, "end": 336},
         {"helix": 12, "forward": false, "start": 320, "end": 336},
@@ -1342,7 +1342,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 13, "forward": true, "start": 328, "end": 336},
         {"helix": 14, "forward": false, "start": 320, "end": 336},
@@ -1350,14 +1350,14 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 15, "forward": true, "start": 328, "end": 352, "deletions": [337]},
         {"helix": 14, "forward": false, "start": 344, "end": 352}
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 2, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 1, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1365,7 +1365,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 4, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 3, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1373,7 +1373,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 6, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 5, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1381,7 +1381,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 8, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 7, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1389,7 +1389,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 10, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 9, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1397,7 +1397,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 12, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 11, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1405,7 +1405,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 14, "forward": false, "start": 336, "end": 344, "deletions": [337]},
         {"helix": 13, "forward": true, "start": 336, "end": 352, "deletions": [337]},
@@ -1413,14 +1413,14 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 0, "forward": false, "start": 352, "end": 376},
         {"helix": 1, "forward": true, "start": 352, "end": 360}
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 1, "forward": true, "start": 360, "end": 368},
         {"helix": 2, "forward": false, "start": 352, "end": 368},
@@ -1428,7 +1428,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 3, "forward": true, "start": 360, "end": 368},
         {"helix": 4, "forward": false, "start": 352, "end": 368},
@@ -1436,7 +1436,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 5, "forward": true, "start": 360, "end": 368},
         {"helix": 6, "forward": false, "start": 352, "end": 368},
@@ -1444,7 +1444,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 7, "forward": true, "start": 360, "end": 368},
         {"helix": 8, "forward": false, "start": 352, "end": 368},
@@ -1452,7 +1452,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 9, "forward": true, "start": 360, "end": 368},
         {"helix": 10, "forward": false, "start": 352, "end": 368},
@@ -1460,7 +1460,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 11, "forward": true, "start": 360, "end": 368},
         {"helix": 12, "forward": false, "start": 352, "end": 368},
@@ -1468,7 +1468,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 13, "forward": true, "start": 360, "end": 368},
         {"helix": 14, "forward": false, "start": 352, "end": 368},
@@ -1476,14 +1476,14 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 15, "forward": true, "start": 360, "end": 384},
         {"helix": 14, "forward": false, "start": 376, "end": 384}
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 2, "forward": false, "start": 368, "end": 376},
         {"helix": 1, "forward": true, "start": 368, "end": 384},
@@ -1491,7 +1491,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 4, "forward": false, "start": 368, "end": 376},
         {"helix": 3, "forward": true, "start": 368, "end": 384},
@@ -1499,7 +1499,7 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 6, "forward": false, "start": 368, "end": 376},
         {"helix": 5, "forward": true, "start": 368, "end": 384},
@@ -1507,7 +1507,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 8, "forward": false, "start": 368, "end": 376},
         {"helix": 7, "forward": true, "start": 368, "end": 384},
@@ -1515,7 +1515,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 10, "forward": false, "start": 368, "end": 376},
         {"helix": 9, "forward": true, "start": 368, "end": 384},
@@ -1523,7 +1523,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 12, "forward": false, "start": 368, "end": 376},
         {"helix": 11, "forward": true, "start": 368, "end": 384},
@@ -1531,7 +1531,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 14, "forward": false, "start": 368, "end": 376},
         {"helix": 13, "forward": true, "start": 368, "end": 384},
@@ -1539,14 +1539,14 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 0, "forward": false, "start": 384, "end": 408, "deletions": [385]},
         {"helix": 1, "forward": true, "start": 384, "end": 392, "deletions": [385]}
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 1, "forward": true, "start": 392, "end": 400},
         {"helix": 2, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1554,7 +1554,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 3, "forward": true, "start": 392, "end": 400},
         {"helix": 4, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1562,7 +1562,7 @@
       ]
     },
     {
-      "color": {"r": 3, "g": 182, "b": 162},
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 5, "forward": true, "start": 392, "end": 400},
         {"helix": 6, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1570,7 +1570,7 @@
       ]
     },
     {
-      "color": {"r": 115, "g": 0, "b": 222},
+      "color": "#7300de",
       "substrands": [
         {"helix": 7, "forward": true, "start": 392, "end": 400},
         {"helix": 8, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1578,7 +1578,7 @@
       ]
     },
     {
-      "color": {"r": 170, "g": 170, "b": 0},
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 9, "forward": true, "start": 392, "end": 400},
         {"helix": 10, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1586,7 +1586,7 @@
       ]
     },
     {
-      "color": {"r": 184, "g": 5, "b": 108},
+      "color": "#b8056c",
       "substrands": [
         {"helix": 11, "forward": true, "start": 392, "end": 400},
         {"helix": 12, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1594,7 +1594,7 @@
       ]
     },
     {
-      "color": {"r": 0, "g": 114, "b": 0},
+      "color": "#007200",
       "substrands": [
         {"helix": 13, "forward": true, "start": 392, "end": 400},
         {"helix": 14, "forward": false, "start": 384, "end": 400, "deletions": [385]},
@@ -1602,14 +1602,14 @@
       ]
     },
     {
-      "color": {"r": 204, "g": 0, "b": 0},
+      "color": "#cc0000",
       "substrands": [
         {"helix": 15, "forward": true, "start": 392, "end": 416},
         {"helix": 14, "forward": false, "start": 408, "end": 416}
       ]
     },
     {
-      "color": {"r": 247, "g": 147, "b": 30},
+      "color": "#f7931e",
       "substrands": [
         {"helix": 2, "forward": false, "start": 400, "end": 408},
         {"helix": 1, "forward": true, "start": 400, "end": 416},
@@ -1617,7 +1617,7 @@
       ]
     },
     {
-      "color": {"r": 247, "g": 67, "b": 8},
+      "color": "#f74308",
       "substrands": [
         {"helix": 4, "forward": false, "start": 400, "end": 408},
         {"helix": 3, "forward": true, "start": 400, "end": 416},
@@ -1625,7 +1625,7 @@
       ]
     },
     {
-      "color": {"r": 87, "g": 187, "b": 0},
+      "color": "#57bb00",
       "substrands": [
         {"helix": 6, "forward": false, "start": 400, "end": 408},
         {"helix": 5, "forward": true, "start": 400, "end": 416},
@@ -1633,7 +1633,7 @@
       ]
     },
     {
-      "color": {"r": 136, "g": 136, "b": 136},
+      "color": "#888888",
       "substrands": [
         {"helix": 8, "forward": false, "start": 400, "end": 408},
         {"helix": 7, "forward": true, "start": 400, "end": 416},
@@ -1641,7 +1641,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 184, "b": 108},
+      "color": "#32b86c",
       "substrands": [
         {"helix": 10, "forward": false, "start": 400, "end": 408},
         {"helix": 9, "forward": true, "start": 400, "end": 416},
@@ -1649,7 +1649,7 @@
       ]
     },
     {
-      "color": {"r": 51, "g": 51, "b": 51},
+      "color": "#333333",
       "substrands": [
         {"helix": 12, "forward": false, "start": 400, "end": 408},
         {"helix": 11, "forward": true, "start": 400, "end": 416},
@@ -1657,7 +1657,7 @@
       ]
     },
     {
-      "color": {"r": 50, "g": 0, "b": 150},
+      "color": "#320096",
       "substrands": [
         {"helix": 14, "forward": false, "start": 400, "end": 408},
         {"helix": 13, "forward": true, "start": 400, "end": 416},

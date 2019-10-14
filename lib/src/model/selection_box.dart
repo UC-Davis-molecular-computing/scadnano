@@ -2,7 +2,6 @@ import 'dart:html';
 import 'dart:svg' hide Point;
 import 'dart:math';
 
-import 'package:platform_detect/platform_detect.dart';
 import 'package:w_flux/w_flux.dart';
 
 import '../app.dart';
@@ -10,7 +9,10 @@ import 'selectable.dart';
 import '../dispatcher/actions.dart';
 import '../util.dart' as util;
 
-//TODO: when lots of items are selected, it is slow to drag around
+//TODO: selection box appears even when ephemerally clicking; use drag/drop library (perhaps) or manual
+// checking to ensure it only turns on after a nontrivial drag (e.g, 3 pixels)
+
+//TODO: when lots of items are selected, it is slow to drag around; find out why
 
 class SelectionBoxStore extends Store {
 //class SelectionBoxStore extends ThrottledStore {
@@ -105,13 +107,23 @@ class SelectionBoxStore extends Store {
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
-    List<Selectable> overlapping_now = [for (var elt in elts_overlapping) selectables_by_id[elt.id]];
-
-//    print('overlapping_now: $overlapping_now');
-
-    List<Selectable> overlapping_now_select_mode_enabled = [
-      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
+    List<Selectable> overlapping_now = [
+      for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
     ];
+
+    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');
+    print('overlapping_now:      $overlapping_now');
+
+//    List<Selectable> overlapping_now_select_mode_enabled = [
+//      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
+//    ];
+    List<Selectable> overlapping_now_select_mode_enabled = [];
+    for (var obj in overlapping_now) {
+      print('obj: $obj');
+      if (app.model.select_mode_store.is_selectable(obj)) {
+        overlapping_now_select_mode_enabled.add(obj);
+      }
+    }
 
 //    Set<Selectable> overlapping_before = Set<Selectable>.from(selectables_overlapping);
 //    Set<Selectable> newly_overlapping = overlapping_now.difference(overlapping_before);

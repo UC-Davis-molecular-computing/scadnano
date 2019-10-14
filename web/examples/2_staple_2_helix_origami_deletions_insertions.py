@@ -20,7 +20,6 @@ def main():
     loopout = sc.Loopout(length=3)
     scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
     scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
-        # ,color=sc.default_scaffold_color)
 
     # whole design
     design = sc.DNAOrigamiDesign(strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
