@@ -59,13 +59,10 @@ class SelectableStore extends Store {
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
   select(Selectable selectable) {
-    print('h2');
     bool added = selected_items.add(selectable);
-    print('h3');
     if (added) {
       selectable.trigger();
     }
-    print('h4');
   }
 
   unselect(Selectable selectable) {
@@ -85,11 +82,9 @@ class SelectableStore extends Store {
 
   // methods below here defined in terms of select and unselect
   select_all(Iterable<Selectable> selectables) {
-    print('h');
     for (var selectable in selectables) {
       select(selectable);
     }
-    print('i');
   }
 
   toggle(Selectable selectable) {

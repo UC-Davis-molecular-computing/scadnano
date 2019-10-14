@@ -1,14 +1,10 @@
 import 'dart:convert';
 
-import 'package:scadnano/src/model/bound_substrand.dart';
-import 'package:scadnano/src/model/crossover.dart';
 import 'package:w_flux/w_flux.dart';
 
 import '../dispatcher/actions.dart';
 import '../dispatcher/local_storage.dart' as local_storage;
-import 'loopout.dart';
 import 'selectable.dart';
-import 'strand.dart';
 
 /// Indicates which objects are selectable in the main view.
 class SelectModeChoice {
@@ -16,8 +12,8 @@ class SelectModeChoice {
 
   static final end_5p_strand = SelectModeChoice._("5' strand");
   static final end_3p_strand = SelectModeChoice._("3' strand");
-  static final end_5p_substrand = SelectModeChoice._("5' (all)");
-  static final end_3p_substrand = SelectModeChoice._("3' (all)");
+  static final end_5p_substrand = SelectModeChoice._("5' (other)");
+  static final end_3p_substrand = SelectModeChoice._("3' (other)");
   static final crossover = SelectModeChoice._('crossover');
   static final loopout = SelectModeChoice._('loopout');
   static final strand = SelectModeChoice._('strand');

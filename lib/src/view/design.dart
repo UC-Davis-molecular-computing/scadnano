@@ -38,6 +38,9 @@ class DesignViewComponent {
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
 
+  svg.SvgSvgElement side_view_svg;
+  svg.SvgSvgElement main_view_svg;
+
   ErrorMessageComponent error_message_component;
 
   DivElement side_pane;
@@ -49,10 +52,11 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element, this.model) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()
+      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
-    var side_view_svg = svg.SvgSvgElement()
+    side_view_svg = svg.SvgSvgElement()
       ..attributes = {
         'id': SIDE_VIEW_SVG_ID,
         'width': '100%',
@@ -60,9 +64,10 @@ class DesignViewComponent {
       };
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_update_mouseover(event);
+      side_view_update_mouseover(side_view_svg, event);
     });
-    var main_view_svg = svg.SvgSvgElement()
+
+    main_view_svg = svg.SvgSvgElement()
       ..attributes = {
         'id': MAIN_VIEW_SVG_ID,
         'width': '100%',
@@ -111,14 +116,16 @@ class DesignViewComponent {
         Actions.create_selection_box_selecting(ev.offset);
       } else if (ev.button == 0) {
         // detects left mouse button: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-//        print('removing all selections');
         Actions.remove_all_selections();
       }
     });
 
+    //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
     main_view_svg.onMouseMove.listen((ev) {
       if (ev.ctrlKey || ev.shiftKey) {
-        Actions.selection_box_size_changed(ev.offset);
+        //XXX: need to take care to transform mouse coordinates in transformed SVG element
+        Point<num> svg_point = util.untransformed_svg_point(main_view_svg, ev);
+        Actions.selection_box_size_changed(svg_point);
       }
     });
 
@@ -176,7 +183,8 @@ class DesignViewComponent {
 
       react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'));
 
-      react_dom.render((DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
+      react_dom.render(
+          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
@@ -242,17 +250,19 @@ side_view_mouse_leave_update_mouseover() {
   Actions.remove_side_view_mouse_position();
 }
 
-side_view_update_mouseover(MouseEvent event) {
+side_view_update_mouseover(svg.SvgSvgElement side_view_svg, MouseEvent event) {
   if (!event.ctrlKey) {
     Actions.remove_side_view_mouse_position();
     return;
   }
 
-  Point<num> pan = util.current_pan_side();
-  num zoom = util.current_zoom_side();
-  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
+  Point<num> mouse_point = util.untransformed_svg_point(side_view_svg, event);
+  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
+//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
 
   if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
+    Point<num> pan = util.current_pan_side();
+    num zoom = util.current_zoom_side();
     print('mouse event: '
         'x = ${event.offset.x},   '
         'y = ${event.offset.y},   '

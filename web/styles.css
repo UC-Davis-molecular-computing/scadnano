@@ -181,16 +181,16 @@ html, body {
 ************************************************/
 
 #edit-mode {
-    width: 75px;
+    width: 81px;
 }
 
 #select-mode {
-    width: 75px;
+    width: 81px;
 }
 
-.edit-mode-button {
+.mode-button {
     border: none;
-    width: 75px;
+    width: 81px;
     outline: 0;
     font-weight: bold;
     color: black;

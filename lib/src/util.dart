@@ -47,6 +47,19 @@ Future<String> file_content(String url) async {
   });
 }
 
+/// Gets untransformed coordinates of mouse event in svg_elt.
+/// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
+/// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
+Point<num> untransformed_svg_point(SvgSvgElement svg_elt, MouseEvent ev) {
+  var svg_point_SVG = svg_elt.createSvgPoint();
+  svg_point_SVG.x = ev.client.x;
+  svg_point_SVG.y = ev.client.y;
+  svg_point_SVG = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
+  Point<num> svg_point = Point<num>(svg_point_SVG.x, svg_point_SVG.y);
+  return svg_point;
+}
+
+
 Point<num> transform_mouse_coord_to_svg_current_panzoom_side(Point<num> point) {
   return transform_mouse_coord_to_svg(point, current_pan_side(), current_zoom_side());
 }

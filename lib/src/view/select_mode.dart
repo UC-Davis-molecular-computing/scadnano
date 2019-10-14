@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+
+import '../dispatcher/actions.dart';
+import '../model/select_mode.dart';
 
 part 'select_mode.over_react.g.dart';
 
@@ -30,7 +31,7 @@ class SelectModeComponent extends FluxUiComponent<SelectModeProps> {
   ReactElement _choice_button(SelectModeChoice mode) {
     return (Dom.button()
       ..onClick = ((_) => Actions.toggle_select_mode(mode))
-      ..className = 'select-mode-button ' +
+      ..className = 'mode-button ' +
           (this.props.store.modes.contains(mode) ? 'select-mode-button-selected' : 'select-mode-button-unselected')
       ..key = mode.name)(mode.name);
   }

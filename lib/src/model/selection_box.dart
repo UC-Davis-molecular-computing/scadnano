@@ -47,11 +47,9 @@ class SelectionBoxStore extends Store {
     });
 
     triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
-//      if (browser.isFirefox) {
-//        _current = mouse_coord;
-//      } else {
-        _current = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
-//      }
+      var m = mouse_coord;
+      var c = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+      _current = c;
     });
 
     triggerOnActionV2(Actions.remove_selection_box, (_) {
@@ -61,11 +59,7 @@ class SelectionBoxStore extends Store {
   }
 
   start_selection(Point<num> mouse_coord) {
-//    if (browser.isFirefox) {
-//      _start = mouse_coord;
-//    } else {
-      _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
-//    }
+    _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
     displayed = true;
   }
 
@@ -105,7 +99,8 @@ class SelectionBoxStore extends Store {
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    Set<SvgElement> elts_overlapping = elts_all.where((elt) => elt.classes.contains('selectable')).toSet();
 
-    Set<SvgElement> elts_overlapping = get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+    Set<SvgElement> elts_overlapping =
+        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    print('elts_overlapping: $elts_overlapping');
 
@@ -170,7 +165,8 @@ get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(
+    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

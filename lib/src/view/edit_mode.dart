@@ -23,7 +23,7 @@ class EditModeComponent extends FluxUiComponent<EditModeProps> {
   ReactElement _button_for_choice(EditModeChoice mode) {
     return (Dom.button()
       ..onClick = ((_) => Actions.set_edit_mode(mode))
-      ..className = 'edit-mode-button ' +
+      ..className = 'mode-button ' +
           (this.props.store.mode == mode ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
       ..key = mode.name)(mode.name);
   }
