@@ -47,24 +47,22 @@ class DesignMain3pEndComponent extends FluxUiComponent<DesignMain3pEndProps> {
     if (substrand.selected_3p()) {
       classname += ' selected';
     }
-    if (is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_strand)
-        || !is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_substrand)) {
+    if (is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_strand) ||
+        !is_last_substrand && app.model.select_mode_store.modes.contains(SelectModeChoice.end_5p_substrand)) {
       classname += ' selectable';
     }
 
-
-
-    ReactElement triangle = (Dom.polygon()
-          ..onMouseDown = substrand.dnaend_3p.handle_selection
-          ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-          ..onMouseMove = ((event) {
-            update_mouseover(event, helix);
-          })
-          ..className = classname
-          ..points = points
-          ..fill = substrand.strand.color.toRgbColor().toCssString()
-          ..id = id
-        )();
-    return triangle;
+    var attr = Dom.polygon()
+//          ..onMouseDown = substrand.dnaend_3p.handle_selection
+      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+      ..onMouseMove = ((event) {
+        update_mouseover(event, helix);
+      })
+      ..className = classname
+      ..points = points
+      ..fill = substrand.strand.color.toRgbColor().toCssString()
+      ..id = id;
+    attr.addProp('onPointerDown', substrand.dnaend_3p.handle_selection);
+    return attr();
   }
 }

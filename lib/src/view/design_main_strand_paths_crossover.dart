@@ -20,7 +20,8 @@ part 'design_main_strand_paths_crossover.over_react.g.dart';
 const SELECTED_CROSSOVER_COLOR = 'hotpink';
 
 @Factory()
-UiFactory<DesignMainStrandPathsCrossoverProps> DesignMainStrandPathsCrossover = _$DesignMainStrandPathsCrossover;
+UiFactory<DesignMainStrandPathsCrossoverProps> DesignMainStrandPathsCrossover =
+    _$DesignMainStrandPathsCrossover;
 
 @Props()
 class _$DesignMainStrandPathsCrossoverProps extends FluxUiProps<Crossover, Crossover> {
@@ -70,7 +71,6 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
     if (crossover.selected()) {
       classname_this_curve += ' selected';
     }
-    print('modes: ${app.model.select_mode_store.modes}');
     if (app.model.select_mode_store.modes.contains(SelectModeChoice.crossover)) {
       classname_this_curve += ' selectable';
     }
@@ -79,18 +79,20 @@ class DesignMainStrandPathsCrossoverComponent extends FluxUiComponent<DesignMain
     var color = strand.color.toRgbColor().toCssString();
     var id = crossover.id();
 
-    return (Dom.path()
+    var attr = Dom.path()
       ..d = path
       ..stroke = color
       ..className = classname_this_curve
-      ..onMouseDown = ((ev) => ev.ctrlKey || ev.shiftKey ? crossover.handle_selection(ev) : handle_crossover_click())
+//      ..onMouseDown = ((ev) => ev.ctrlKey || ev.shiftKey ? crossover.handle_selection(ev) : handle_crossover_click())
       ..onMouseEnter = ((_) => update_mouseover_crossover())
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
       ..id = id
-      ..key = id)();
+      ..key = id;
+    attr.addProp('onPointerDown', //crossover.handle_selection);
+        ((ev) => ev.ctrlKey || ev.shiftKey ? crossover.handle_selection(ev) : handle_crossover_click()));
+    return attr();
   }
 }
-
 
 _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
   bool crossover_up = ss.helix > other_ss.helix;

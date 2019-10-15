@@ -36,7 +36,7 @@ class DesignMainComponent extends FluxUiComponent<DesignMainProps> {
     DNASequencesStore dna_sequences_store = this.props.store.dna_sequences_store;
     MismatchesStore mismatches_store = this.props.store.mismatches_store;
     SelectionBoxStore selection_rectangle_store =
-        this.props.store.main_view_ui_model.selection_rectangle_store;
+        this.props.store.main_view_ui_model.selection_box_store;
     return (Dom.g()..id = 'main-view-group')(
       (DesignMainMouseoverRectHelices()..store = dna_design.helices_store)(),
       (DesignMainHelices()..store = dna_design.helices_store)(),

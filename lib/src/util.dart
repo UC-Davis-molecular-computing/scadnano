@@ -8,6 +8,7 @@ import 'dart:math';
 import 'dart:svg' hide Point;
 
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
 
 import 'model/helix.dart';
@@ -15,6 +16,12 @@ import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'constants.dart' as constants;
 import 'model/bound_substrand.dart';
+
+make_dart_function_available_to_js(String js_function_name, Function dart_func) {
+  setProperty(window, js_function_name, allowInterop(dart_func));
+}
+
+
 
 /// Should only be called once at the start of the program
 Future<Model> model_from_url(String url) async {

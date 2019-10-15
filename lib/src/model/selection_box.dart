@@ -49,7 +49,6 @@ class SelectionBoxStore extends Store {
     });
 
     triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
-      var m = mouse_coord;
       var c = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
       _current = c;
     });
@@ -62,6 +61,7 @@ class SelectionBoxStore extends Store {
 
   start_selection(Point<num> mouse_coord) {
     _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+    _current = _start;
     displayed = true;
   }
 
@@ -111,15 +111,15 @@ class SelectionBoxStore extends Store {
       for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
     ];
 
-    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');
-    print('overlapping_now:      $overlapping_now');
+//    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');
+//    print('overlapping_now:      $overlapping_now');
 
 //    List<Selectable> overlapping_now_select_mode_enabled = [
 //      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
 //    ];
     List<Selectable> overlapping_now_select_mode_enabled = [];
     for (var obj in overlapping_now) {
-      print('obj: $obj');
+//      print('obj: $obj');
       if (app.model.select_mode_store.is_selectable(obj)) {
         overlapping_now_select_mode_enabled.add(obj);
       }

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:svg' as svg;
 
+import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 
@@ -17,6 +18,7 @@ import 'design_side.dart';
 import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
+import '../constants.dart' as constants;
 
 const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 //const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
@@ -64,7 +66,7 @@ class DesignViewComponent {
       };
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
-      side_view_update_mouseover(side_view_svg, event);
+      side_view_update_mouseover(event);
     });
 
     main_view_svg = svg.SvgSvgElement()
@@ -103,15 +105,66 @@ class DesignViewComponent {
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
-    handle_mouse_events(main_view_svg);
+    handle_main_view_keyboard_mouse_events();
 
     app.model.design_or_error_store.listen((_) => this.render());
   }
 
-  void handle_mouse_events(svg.SvgSvgElement main_view_svg) {
-    main_view_svg.onMouseDown.listen((ev) {
+  Draggable draggable_main_view_svg;
+
+  handle_main_view_keyboard_mouse_events() {
+    //XXX: need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
+    // because while installed, Draggable disrupts the mouse events required by the svg-pan-zoom library.
+    window.onKeyDown.listen((ev) {
+      if ((ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) && !ev.repeat) {
+        install_draggable_main_view();
+      }
+
+      if (ev.which == constants.KEY_CODE_ESC) {
+        Actions.remove_all_selections();
+      }
+    });
+
+    window.onKeyUp.listen((ev) {
+      if (ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) {
+        uninstall_draggable_main_view();
+      }
+    });
+
+    //XXX: this doesn't get fired when Draggable was running things
+    main_view_svg.onMouseUp.listen((ev) {
+      //TODO: add some logic to make sure we didn't just get done moving a selected item/group of items
+      if (!(ev.ctrlKey || ev.shiftKey)) {
+        Actions.remove_all_selections();
+      }
+    });
+  }
+
+  uninstall_draggable_main_view() {
+    if (draggable_main_view_svg != null) {
+      draggable_main_view_svg.destroy();
+      draggable_main_view_svg = null;
+      if (app.model.main_view_ui_model.selection_box_store.displayed) {
+        Actions.remove_selection_box();
+      }
+    }
+  }
+
+  install_draggable_main_view() {
+    if (draggable_main_view_svg != null) {
+      return;
+    }
+
+    draggable_main_view_svg = Draggable(main_view_svg);
+//    print('installing draggable');
+
+//    main_view_svg.onMouseDown.listen((MouseEvent ev) {
+    draggable_main_view_svg.onDragStart.listen((DraggableEvent draggable_event) {
+      MouseEvent ev = draggable_event.originalEvent;
+//      print('drag start');
       if (ev.ctrlKey) {
         Actions.create_selection_box_toggling(ev.offset);
+//        print('drag start ev.offset: ${ev.offset}');
       } else if (ev.shiftKey) {
         Actions.create_selection_box_selecting(ev.offset);
       } else if (ev.button == 0) {
@@ -121,15 +174,22 @@ class DesignViewComponent {
     });
 
     //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
-    main_view_svg.onMouseMove.listen((ev) {
+//    main_view_svg.onMouseMove.listen((MouseEvent ev) {
+    draggable_main_view_svg.onDrag.listen((DraggableEvent draggable_event) {
+      MouseEvent ev = draggable_event.originalEvent;
+
       if (ev.ctrlKey || ev.shiftKey) {
         //XXX: need to take care to transform mouse coordinates in transformed SVG element
+//        print('drag       ev.offset: ${ev.offset}');
         Point<num> svg_point = util.untransformed_svg_point(main_view_svg, ev);
         Actions.selection_box_size_changed(svg_point);
       }
     });
 
-    main_view_svg.onMouseUp.listen((ev) {
+//    main_view_svg.onMouseUp.listen((MouseEvent ev) {
+    draggable_main_view_svg.onDragEnd.listen((DraggableEvent draggable_event) {
+      MouseEvent ev = draggable_event.originalEvent;
+
       Actions.remove_selection_box();
     });
   }
@@ -223,6 +283,35 @@ class DesignViewComponent {
       ];
     elt.children.add(defns);
   }
+
+  side_view_mouse_leave_update_mouseover() {
+    Actions.remove_side_view_mouse_position();
+  }
+
+  side_view_update_mouseover(MouseEvent event) {
+    if (!event.ctrlKey) {
+      Actions.remove_side_view_mouse_position();
+      return;
+    }
+
+    Point<num> mouse_point = util.untransformed_svg_point(side_view_svg, event);
+    Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
+//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
+
+    if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
+      Point<num> pan = util.current_pan_side();
+      num zoom = util.current_zoom_side();
+      print('mouse event: '
+          'x = ${event.offset.x},   '
+          'y = ${event.offset.y},   '
+          'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+          'zoom = ${zoom.toStringAsFixed(2)},   '
+          'svg_x = ${svg_coord.x.toStringAsFixed(2)},   '
+          'svg_y = ${svg_coord.y.toStringAsFixed(2)},   ');
+    }
+
+    Actions.update_side_view_mouse_position(svg_coord);
+  }
 }
 
 class ErrorMessageComponent {
@@ -244,33 +333,4 @@ class ErrorMessageComponent {
       this.root_element.children.add(pre);
     }
   }
-}
-
-side_view_mouse_leave_update_mouseover() {
-  Actions.remove_side_view_mouse_position();
-}
-
-side_view_update_mouseover(svg.SvgSvgElement side_view_svg, MouseEvent event) {
-  if (!event.ctrlKey) {
-    Actions.remove_side_view_mouse_position();
-    return;
-  }
-
-  Point<num> mouse_point = util.untransformed_svg_point(side_view_svg, event);
-  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
-//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
-
-  if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
-    Point<num> pan = util.current_pan_side();
-    num zoom = util.current_zoom_side();
-    print('mouse event: '
-        'x = ${event.offset.x},   '
-        'y = ${event.offset.y},   '
-        'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
-        'zoom = ${zoom.toStringAsFixed(2)},   '
-        'svg_x = ${svg_coord.x.toStringAsFixed(2)},   '
-        'svg_y = ${svg_coord.y.toStringAsFixed(2)},   ');
-  }
-
-  Actions.update_side_view_mouse_position(svg_coord);
 }

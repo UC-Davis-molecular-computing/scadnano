@@ -25,6 +25,8 @@ class App {
 
   start() async {
 
+    make_dart_functions_available_to_js();
+
     this.model =
         await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
 //        await util.model_from_url('examples/output_designs/16_helix_origami_rectangle.dna');
@@ -66,4 +68,12 @@ class App {
     });
   }
 
+}
+
+bool allow_pan() {
+  return true;
+}
+
+make_dart_functions_available_to_js() {
+  util.make_dart_function_available_to_js('dart_allow_pan', allow_pan);
 }

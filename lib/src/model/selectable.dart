@@ -16,7 +16,12 @@ mixin Selectable implements Store {
   /// Subclasses must define this to be able to be selectively selected.
   SelectModeChoice select_mode();
 
-  handle_selection(SyntheticMouseEvent event) {
+  //TODO: handle_selection is getting called twice on a single pionter down
+
+  //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
+  // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
+  // ctrlKey and shiftKey properties we need to check for.
+  handle_selection(event) {
     if (app.model.select_mode_store.is_selectable(this)) {
       if (event.ctrlKey) {
         Actions.toggle(this);

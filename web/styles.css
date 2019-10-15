@@ -329,7 +329,7 @@ html, body {
     stroke: hotpink;
 }
 
-.selectable.strand.hover,
+.selectable.strand:hover,
 .selectable.loopout-line:hover,
 .selectable.five-prime-end-first-substrand:hover,
 .selectable.three-prime-end-last-substrand:hover,

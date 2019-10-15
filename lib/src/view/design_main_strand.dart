@@ -1,18 +1,26 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 
+import '../dispatcher/actions.dart';
+import '../model/select_mode.dart';
 import '../app.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
+
+// There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
+// go around React when _OPTIMIZE=true and set the class directly by querying the element by ID.
+const _OPTIMIZE = true;
+//const _OPTIMIZE = false;
 
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
@@ -34,9 +42,6 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
     } else {
       //TODO: make strand selectable, but decide how it will interact with selecting other elements.
       var classname = 'strand';
-      if (strand.ui_model.hover) {
-        classname += ' hover';
-      }
       if (app.model.select_mode_store.modes.contains(SelectModeChoice.strand)) {
         classname += ' selectable';
       }
@@ -45,9 +50,11 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
       }
 
       var strand_id = strand.id();
-      return (Dom.g()
+      var attr = Dom.g()
         ..id = strand_id
-        ..className = classname)([
+        ..className = classname;
+      attr.addProp('onPointerDown', strand.handle_selection);
+      return attr([
         (DesignMainStrandPaths()
           ..strand = strand
           ..key = 'strand-paths')(),

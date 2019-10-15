@@ -26,7 +26,7 @@ class SelectModeComponent extends FluxUiComponent<SelectModeProps> {
     ]);
   }
 
-  _choice_buttons() => [for (var choice in SelectModeChoice.values) this._choice_button(choice)];
+  _choice_buttons() => [for (var choice in SelectModeChoice.all_choices) this._choice_button(choice)];
 
   ReactElement _choice_button(SelectModeChoice mode) {
     return (Dom.button()

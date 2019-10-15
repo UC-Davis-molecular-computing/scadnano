@@ -56,13 +56,24 @@ class DesignMainLoopoutComponent extends FluxUiComponent<DesignMainLoopoutProps>
       String id = loopout.id();
       String color = strand.color.toRgbColor().toCssString();
 
-      return (Dom.path()
-        ..onMouseDown = loopout.handle_selection // use with mixin Selectable
+      //TODO: find way to not repeat ourselves by reusing the Selectable logic between components
+      // loopout, crossover, 5p-end, 3p-end, strand
+      // There's a pattern called higher-order component in React but it's not clear how to implement it in
+      // OverReact.
+
+      //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:
+      // https://github.com/marcojakob/dart-dnd/issues/27
+      // perhaps not implemented by Safari though:
+      // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
+      var attr = Dom.path()
+//        ..onMouseDown = loopout.handle_selection // use with mixin Selectable
         ..d = path
         ..stroke = color
         ..className = classname
         ..id = id
-        ..key = id)();
+        ..key = id;
+      attr.addProp('onPointerDown', loopout.handle_selection);
+      return attr();
     }
   }
 }

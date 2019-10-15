@@ -44,24 +44,24 @@ class DesignMainBoundSubstrandComponent extends FluxUiComponent<DesignMainBoundS
     Strand strand = substrand.strand;
 
     ReactElement substrand_line = (Dom.line()
-      ..onMouseDown = strand.handle_selection
-      ..onMouseEnter = ((_) {
-        if (_OPTIMIZE) {
-          Element strand_elt = querySelector('#${strand_id}');
-          strand_elt.classes.add('hover');
-        } else {
-          Actions.strand_hover_add(strand);
-        }
-      })
-      ..onMouseLeave = ((_) {
-        if (_OPTIMIZE) {
-          Element strand_elt = querySelector('#${strand_id}');
-          strand_elt.classes.remove('hover');
-        } else {
-          Actions.strand_hover_remove(strand);
-        }
-        mouse_leave_update_mouseover();
-      })
+//      ..onMouseDown = strand.handle_selection
+//      ..onMouseEnter = ((_) {
+//        if (_OPTIMIZE) {
+//          Element strand_elt = querySelector('#${strand_id}');
+//          strand_elt.classes.add('hover');
+//        } else {
+//          Actions.strand_hover_add(strand);
+//        }
+//      })
+//      ..onMouseLeave = ((_) {
+//        if (_OPTIMIZE) {
+//          Element strand_elt = querySelector('#${strand_id}');
+//          strand_elt.classes.remove('hover');
+//        } else {
+//          Actions.strand_hover_remove(strand);
+//        }
+//        mouse_leave_update_mouseover();
+//      })
       ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..stroke = substrand.strand.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'

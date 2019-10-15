@@ -90,8 +90,6 @@ class Actions {
   static final strands_add = Action<Iterable<Strand>>();
 
   // Strand UI model
-  static final strand_hover_add = Action<Strand>();
-  static final strand_hover_remove = Action<Strand>();
   static final strand_select_toggle = Action<Strand>();
   static final five_prime_select_toggle = Action<BoundSubstrand>();
   static final three_prime_select_toggle = Action<BoundSubstrand>();
@@ -110,7 +108,6 @@ class Actions {
   static final create_selection_box_selecting = Action<Point<num>>();
   static final selection_box_size_changed = Action<Point<num>>();
   static final remove_selection_box = Action<Null>();
-//  static final update_selection_box_selections = Action<Null>();
 
   // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
   static final set_error_message = Action<String>();

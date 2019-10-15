@@ -10,25 +10,6 @@ import 'bound_substrand.dart';
 import 'loopout.dart';
 import 'selection_box.dart';
 
-////////////////////////////////////////////////
-// Stores
-
-//TODO: make composite store with this and Strand (changed to be a store) that StrandComponents can listen to via Flux
-class StrandHoverStore extends Store {
-  Strand _strand = null;
-
-  Strand get strand => this._strand;
-
-  StrandHoverStore() {
-    triggerOnActionV2<Strand>(Actions.strand_hover_add, (strand) {
-      this._strand = strand;
-    });
-    triggerOnActionV2<Null>(Actions.strand_hover_remove, (_) {
-      this._strand = null;
-    });
-  }
-}
-
 // end Stores
 ////////////////////////////////////////////////
 
@@ -39,7 +20,7 @@ class MainViewUIModel {
   ShowDNAStore show_dna_store = ShowDNAStore();
   ShowMismatchesStore show_mismatches_store = ShowMismatchesStore();
   ShowEditorStore show_editor_store = ShowEditorStore();
-  SelectionBoxStore selection_rectangle_store = SelectionBoxStore();
+  SelectionBoxStore selection_box_store = SelectionBoxStore();
 
   bool get show_dna => this.show_dna_store.show_dna;
 

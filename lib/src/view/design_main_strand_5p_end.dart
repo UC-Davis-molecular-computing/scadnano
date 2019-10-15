@@ -41,10 +41,10 @@ class DesignMain5pEndComponent extends FluxUiComponent<DesignMain5pEndProps> {
       classname += ' selectable';
     }
 
-    //XXX: width, height, rx, ry should be do-able in CSS, but Firefox won't display properly
-    // if they are specified in CSS, but it will if they are specified here
-    var box = (Dom.rect()
-      ..onMouseDown = substrand.dnaend_5p.handle_selection
+    //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
+    // if they are specified in CSS, but it will if they are specified here.
+    var attr = (Dom.rect()
+//      ..onMouseDown = substrand.dnaend_5p.handle_selection
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
       ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..className = classname
@@ -56,6 +56,7 @@ class DesignMain5pEndComponent extends FluxUiComponent<DesignMain5pEndProps> {
       ..ry = '1.5px'
       ..fill = substrand.strand.color.toRgbColor().toCssString()
       ..id = id);
-    return box();
+    attr.addProp('onPointerDown', substrand.dnaend_5p.handle_selection);
+    return attr();
   }
 }

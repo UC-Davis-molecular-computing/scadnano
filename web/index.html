@@ -157,16 +157,23 @@
             }
         };
 
-        var ctrl_or_shift_pressed = false;
-        function set_ctrl_or_shift(event) {
-            ctrl_or_shift_pressed = (event.ctrlKey || event.shiftKey);
+        var ctrl = false;
+        var shift = false;
+        var alt = false;
+        function set_ctrl_shift_alt(event) {
+            ctrl = event.ctrlKey;
+            shift = event.shiftKey;
+            alt = event.altKey;
+            // console.log('alt: ' + alt);
+            // console.log(dart_allow_pan());
         }
-        window.onkeydown = set_ctrl_or_shift;
-        window.onkeyup = set_ctrl_or_shift;
-        window.onmousedown = set_ctrl_or_shift; // needed because others aren't called if mouse key is depressed
-        window.onmouseup = set_ctrl_or_shift; // needed because others aren't called if mouse key is depressed
+        window.onkeydown = set_ctrl_shift_alt;
+        window.onkeyup = set_ctrl_shift_alt;
+        window.onmousedown = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
+        window.onmouseup = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
         function before_pan(oldPan, newPan) {
-            return !ctrl_or_shift_pressed;
+            // return alt && !(ctrl || shift);
+            return !(ctrl || shift);
         }
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
