@@ -12,6 +12,7 @@ import 'util.dart' as util;
 import 'dispatcher/undo_redo.dart';
 import 'view/view.dart';
 import 'dispatcher/local_storage.dart' as local_storage;
+import 'view/react_dnd.dart';
 
 App app = App();
 
@@ -24,11 +25,10 @@ class App {
   UndoRedo undo_redo = UndoRedo();
 
   start() async {
+//    Actions.reversible_action.listen((action_pack) => this.undo_redo.apply(action_pack));
 
-    make_dart_functions_available_to_js();
-
-    this.model =
-        await util.model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
+    this.model = await util
+        .model_from_url('examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna');
 //        await util.model_from_url('examples/output_designs/16_helix_origami_rectangle.dna');
 //        await util.model_from_url('examples/output_designs/6_helix_origami_rectangle.dna');
 //        await util.model_from_url('examples/output_designs/loopouts_all_types.dna');
@@ -36,13 +36,14 @@ class App {
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami_mismatches.dna');
 //        await util.model_from_url('examples/output_designs/1_staple_1_helix_origami.dna');
 
-
-    String initial_editor_content = await
-      util.file_content('examples/2_staple_2_helix_origami_deletions_insertions.py');
+    String initial_editor_content =
+        await util.file_content('examples/2_staple_2_helix_origami_deletions_insertions.py');
     this.model.editor_content = initial_editor_content;
     util.save_editor_content_to_js_context(this.model.editor_content);
     local_storage.restore_all_local_storage();
     this.setup_warning_before_unload();
+
+    make_dart_functions_available_to_js();
 
     DivElement app_root_element = querySelector('#top-container');
     this.view = View(app_root_element, this.model);
@@ -53,7 +54,7 @@ class App {
   send_action(ReversibleActionPack action_pack) {
 //    if (action_pack is ReversibleActionPack) {
 //      ReversibleActionPack rev_action_pack = action_pack;
-      this.undo_redo.apply(action_pack);
+    this.undo_redo.apply(action_pack);
 //    } else {
 //      action_pack.apply();
 //    }
@@ -68,12 +69,7 @@ class App {
     });
   }
 
-}
-
-bool allow_pan() {
-  return true;
-}
-
-make_dart_functions_available_to_js() {
-  util.make_dart_function_available_to_js('dart_allow_pan', allow_pan);
+  make_dart_functions_available_to_js() {
+    util.make_dart_function_available_to_js('dart_allow_pan', model.allow_main_view_pan);
+  }
 }

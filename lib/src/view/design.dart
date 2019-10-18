@@ -9,6 +9,7 @@ import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 
+import '../model/dna_design_action_packs.dart' as dna_design_action_packs;
 import '../dispatcher/actions.dart';
 import '../model/model.dart';
 import '../model/selectable.dart';
@@ -113,15 +114,24 @@ class DesignViewComponent {
   Draggable draggable_main_view_svg;
 
   handle_main_view_keyboard_mouse_events() {
-    //XXX: need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
-    // because while installed, Draggable disrupts the mouse events required by the svg-pan-zoom library.
+    // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
+    // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
       if ((ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) && !ev.repeat) {
         install_draggable_main_view();
       }
 
       if (ev.which == constants.KEY_CODE_ESC) {
-        Actions.remove_all_selections();
+        Actions.unselect_all();
+      }
+
+      if (ev.which == constants.KEY_CODE_DELETE) {
+        List<Selectable> selected = app.model.main_view_ui_model.selection.selections.toList();
+        //XXX: we call a method on DNADesign directly here rather than firing an Action. That method will
+        // do the work of determining which selections are redundant and only fire a reversible Action
+        // for what remains after the set is trimmed.
+//        app.model.dna_design.delete_all(selected);
+        dna_design_action_packs.delete_all(app.model.dna_design, selected);
       }
     });
 
@@ -131,11 +141,13 @@ class DesignViewComponent {
       }
     });
 
-    //XXX: this doesn't get fired when Draggable was running things
+    //XXX: this does NOT get fired when Draggable is running things, in particular when the user
+    // did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
+    // finish the box
     main_view_svg.onMouseUp.listen((ev) {
       //TODO: add some logic to make sure we didn't just get done moving a selected item/group of items
-      if (!(ev.ctrlKey || ev.shiftKey)) {
-        Actions.remove_all_selections();
+      if (!(ev.ctrlKey || ev.shiftKey) && app.model.dna_design.selectable_store.selected_items.isNotEmpty) {
+        Actions.unselect_all();
       }
     });
   }
@@ -156,20 +168,17 @@ class DesignViewComponent {
     }
 
     draggable_main_view_svg = Draggable(main_view_svg);
-//    print('installing draggable');
 
 //    main_view_svg.onMouseDown.listen((MouseEvent ev) {
     draggable_main_view_svg.onDragStart.listen((DraggableEvent draggable_event) {
       MouseEvent ev = draggable_event.originalEvent;
-//      print('drag start');
       if (ev.ctrlKey) {
         Actions.create_selection_box_toggling(ev.offset);
-//        print('drag start ev.offset: ${ev.offset}');
       } else if (ev.shiftKey) {
         Actions.create_selection_box_selecting(ev.offset);
       } else if (ev.button == 0) {
         // detects left mouse button: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-        Actions.remove_all_selections();
+        Actions.unselect_all();
       }
     });
 
@@ -180,7 +189,6 @@ class DesignViewComponent {
 
       if (ev.ctrlKey || ev.shiftKey) {
         //XXX: need to take care to transform mouse coordinates in transformed SVG element
-//        print('drag       ev.offset: ${ev.offset}');
         Point<num> svg_point = util.untransformed_svg_point(main_view_svg, ev);
         Actions.selection_box_size_changed(svg_point);
       }

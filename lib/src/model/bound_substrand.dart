@@ -14,7 +14,8 @@ import '../util.dart' as util;
 import 'strand.dart';
 
 /// This is needed to make the 5' and 3' ends selectable and listenable.
-class DNAEnd extends Store with Selectable {
+class DNAEnd // extends Store
+    with Selectable {
   BoundSubstrand substrand;
   int offset;
   bool is_5p;
@@ -98,7 +99,7 @@ class BoundSubstrand extends Substrand {
 
   BoundSubstrand() {
     _create_dna_ends();
-    handle_actions();
+//    handle_actions();
   }
 
   _create_dna_ends() {
@@ -106,11 +107,11 @@ class BoundSubstrand extends Substrand {
     dnaend_end = DNAEnd(!forward, this);
   }
 
-  handle_actions() {
-    subscribe_to_stores(this, [dnaend_start, dnaend_end]);
-  }
+//  handle_actions() {
+//    subscribe_to_stores(this, [dnaend_start, dnaend_end]);
+//  }
 
-  register_selectables(SelectableStore store) {
+  register_selectables(SelectablesStore store) {
     store.register(dnaend_end);
     store.register(dnaend_start);
   }

@@ -13,49 +13,57 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="images/favicon.ico">
 
-<!--    <script src="external-libs/pablo.js"></script>-->
+    <!--    <script src="external-libs/pablo.js"></script>-->
 
-<!--    <script src="external-libs/panzoom.min.js"></script>-->
-<!--    <script src="external-libs/panzoom.js"></script>-->
+    <!--    <script src="external-libs/panzoom.min.js"></script>-->
+    <!--    <script src="external-libs/panzoom.js"></script>-->
 
-<!--    <script src="external-libs/brython.js"></script>-->
-<!--    <script src="external-libs/brython_stdlib.js"></script>-->
+    <!--    <script src="external-libs/brython.js"></script>-->
+    <!--    <script src="external-libs/brython_stdlib.js"></script>-->
 
-<!--    <script src="external-libs/pyodide/pyodide.js"></script>-->
+    <!--    <script src="external-libs/pyodide/pyodide.js"></script>-->
 
     <!--    the documentation doesn't say it, but we need to include this reference to split.min.js -->
-<!--    <script src="packages/split/split.min.js"></script>-->
+    <!--    <script src="packages/split/split.min.js"></script>-->
+
 
     <script src="external-libs/simpledrag.js"></script>
-
     <script src="splitpane.js"></script>
+
 
     <script src="packages/codemirror/codemirror.js"></script>
     <script src="packages/codemirror/mode/python/python.js"></script>
+
 
     <script src="packages/react/react.js"></script>
     <script src="packages/react/react_dom.js"></script>
     <!--<script src="packages/react/react_with_react_dom_prod.js"></script>-->
 
 
+    <script src="external-libs/react-dnd/ReactDnD.js"></script>
+    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>
+    <!--    <script src="external-libs/ReactDnD.min.js"></script>-->
+    <!--    <script src="external-libs/ReactDnDHTML5Backend.min.js"></script>-->
+
+
     <script src="external-libs/svg-pan-zoom.js"></script>
-<!--    <script src="external-libs/svg-pan-zoom.min.js"></script>-->
+    <!--    <script src="external-libs/svg-pan-zoom.min.js"></script>-->
     <script src="external-libs/hammer.min.js"></script>
 
-<!--    <script src="external-libs/react-svg-pan-zoom/prop-types.js"></script>-->
-<!--    <script src="external-libs/react-svg-pan-zoom/react-svg-pan-zoom.min.js"></script>-->
 
-<!--    needed for react-svg-pan-zoom since it expects a fixed-size SVG; this package queries the parent container-->
-<!--    <script src="external-libs/autosizer/index.js" type="module"></script>-->
+    <!--    <script src="external-libs/react-svg-pan-zoom/prop-types.js"></script>-->
+    <!--    <script src="external-libs/react-svg-pan-zoom/react-svg-pan-zoom.min.js"></script>-->
+
+    <!--    needed for react-svg-pan-zoom since it expects a fixed-size SVG; this package queries the parent container-->
+    <!--    <script src="external-libs/autosizer/index.js" type="module"></script>-->
 
 
-<!--    <script type="module" src="external-libs/npm/node_modules/react-virtualized-auto-sizer/dist/index.esm.js"></script>-->
+    <!--    <script type="module" src="external-libs/npm/node_modules/react-virtualized-auto-sizer/dist/index.esm.js"></script>-->
 
-<!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.js"></script>-->
-<!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.js"></script>-->
-<!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.min.js"></script>-->
-<!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.min.js"></script>-->
-
+    <!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.min.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.min.js"></script>-->
 
 
 </head>
@@ -66,7 +74,40 @@
 
 <div id="top-container"></div>
 
+<!--<script src="react_dnd_imports.js"></script>-->
+
+<!--<script type="text/javascript">-->
+<!--    const REACT_VERSION = React.version;-->
+
+<!--    var ReactDnD_DndContext = window.ReactDnD.DndContext;-->
+<!--    var ReactDnD_createDndContext = window.ReactDnD.createDndContext;-->
+<!--    var ReactDnD_DndProvider = window.ReactDnD.DndProvider;-->
+<!--    var ReactDnD_DragPreviewImage = window.ReactDnD.DragPreviewImage;-->
+<!--    var ReactDnD_useDrag = window.ReactDnD.useDrag;-->
+<!--    var ReactDnD_useDrop = window.ReactDnD.useDrop;-->
+<!--    var ReactDnD_useDragLayer = window.ReactDnD.useDragLayer;-->
+<!--    var ReactDnD_DragSource = window.ReactDnD.DragSource;-->
+<!--    var ReactDnD_DropTarget = window.ReactDnD.DropTarget;-->
+<!--    var ReactDnd_DragLayer = window.ReactDnD.DragLayer;-->
+<!--    var ReactDnDHTML5Backend_NativeTypes = window.ReactDnDHTML5Backend.NativeTypes;-->
+<!--    var ReactDnDHTML5Backend_getEmptyImage = window.ReactDnDHTML5Backend.getEmptyImage;-->
+<!--    var ReactDnDHTML5Backend_default = window.ReactDnDHTML5Backend.default;-->
+
+
+<!--</script>-->
+
 <script type="text/javascript">
+
+
+    function setup_splits(show_editor) {
+        setup_split_drag('side-pane', 'main-pane', 'side-main-separator');
+        if (show_editor) {
+            setup_split_drag('design-pane', 'editor-pane', 'design-editor-separator');
+        } else {
+            // need to remove style elements that specify width
+            clear_split_drag('design-pane');
+        }
+    }
 
     // function react_uncontrolled_svg_pan_zoom() {
     //     return window.ReactSVGPanZoom.UncontrolledReactSVGPanZoom;
@@ -82,16 +123,6 @@
 
     var main_view_svg_pan_zoom;
     var side_view_svg_pan_zoom;
-
-    function setup_splits(show_editor) {
-        setup_drag('side-pane', 'main-pane', 'side-main-separator');
-        if (show_editor) {
-            setup_drag('design-pane', 'editor-pane', 'design-editor-separator');
-        } else {
-            // need to remove style elements that specify width
-            clear_drag('design-pane');
-        }
-    }
 
     function setup_svg_panzoom() {
         var eventsHandler;
@@ -160,6 +191,7 @@
         var ctrl = false;
         var shift = false;
         var alt = false;
+
         function set_ctrl_shift_alt(event) {
             ctrl = event.ctrlKey;
             shift = event.shiftKey;
@@ -167,13 +199,16 @@
             // console.log('alt: ' + alt);
             // console.log(dart_allow_pan());
         }
+
         window.onkeydown = set_ctrl_shift_alt;
         window.onkeyup = set_ctrl_shift_alt;
         window.onmousedown = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
         window.onmouseup = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
         function before_pan(oldPan, newPan) {
             // return alt && !(ctrl || shift);
-            return !(ctrl || shift);
+            // return !(ctrl || shift);
+            return !document.body.classList.contains('dnd-drag-occurring');
+            // return true;
         }
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
@@ -231,7 +266,7 @@
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
         // of print statement debugging on the server to identify this.
         var pan = main_view_svg_pan_zoom.getPan();
-        return [pan.x,pan.y];
+        return [pan.x, pan.y];
     }
 
     function current_zoom_main() {
@@ -243,7 +278,7 @@
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
         // of print statement debugging on the server to identify this.
         var pan = side_view_svg_pan_zoom.getPan();
-        return [pan.x,pan.y];
+        return [pan.x, pan.y];
     }
 
     function current_zoom_side() {
@@ -256,7 +291,7 @@
         // of print statement debugging on the server to identify this.
         // var pan = main_view_svg_pan_zoom.getPan();
         // return [pan.x,pan.y];
-        return [0,0];
+        return [0, 0];
     }
 
     function current_zoom_new() {
@@ -290,11 +325,7 @@
 
 </script>
 
-
-
 <script src="main.dart.js"></script>
-
-
 
 <!--<script type="text/python" src="compile_script.py"></script>-->
 

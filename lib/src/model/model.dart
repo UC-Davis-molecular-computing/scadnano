@@ -63,8 +63,8 @@ class Model extends Store {
         DNASequencesStore(this._dna_design.strands_store, this.main_view_ui_model.show_dna_store);
     this.mismatches_store =
         MismatchesStore(this._dna_design.strands_store, this.main_view_ui_model.show_mismatches_store);
-    this.show_store = ShowStore(this.main_view_ui_model.show_dna_store, this.main_view_ui_model.show_mismatches_store,
-        this.main_view_ui_model.show_editor_store);
+    this.show_store = ShowStore(this.main_view_ui_model.show_dna_store,
+        this.main_view_ui_model.show_mismatches_store, this.main_view_ui_model.show_editor_store);
     this.design_or_error_store = DesignOrErrorStore(this.dna_design, this.error_message_store);
   }
 
@@ -121,6 +121,8 @@ class Model extends Store {
       Actions.set_error_message(error.cause);
     }
   }
+
+  bool allow_main_view_pan() => main_view_ui_model.allow_pan();
 }
 
 class ErrorMessageStore extends Store {

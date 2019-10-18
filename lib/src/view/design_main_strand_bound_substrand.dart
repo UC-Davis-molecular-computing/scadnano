@@ -18,8 +18,8 @@ part 'design_main_strand_bound_substrand.over_react.g.dart';
 UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
 
 @Props()
-class _$DesignMainBoundSubstrandProps extends FluxUiProps<BoundSubstrand, BoundSubstrand> {
-  String strand_id;
+class _$DesignMainBoundSubstrandProps extends UiProps {
+  BoundSubstrand substrand;
 }
 
 // There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
@@ -28,40 +28,35 @@ const _OPTIMIZE = true;
 //const _OPTIMIZE = false;
 
 @Component()
-class DesignMainBoundSubstrandComponent extends FluxUiComponent<DesignMainBoundSubstrandProps> {
+class DesignMainBoundSubstrandComponent extends UiComponent<DesignMainBoundSubstrandProps> {
   @override
   Map getDefaultProps() => (newProps());
 
+
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    BoundSubstrand substrand = props.substrand;
+    BoundSubstrand next_substrand = nextProps['DesignMainStrandProps.substrand'];
+
+    bool should = substrand != next_substrand;
+//    print('shouldComponentUpdate() for strand ${strand.toString()}');
+//    print(' prev_selected: $prev_selected');
+//    print(' next_selected: $next_selected');
+    return should;
+  }
+
+
   @override
   render() {
-    BoundSubstrand substrand = this.props.store;
-    String strand_id = this.props.strand_id;
+//    BoundSubstrand substrand = this.props.store;
+    BoundSubstrand substrand = this.props.substrand;
     String id = substrand.id();
 
     Helix helix = app.model.dna_design.helices[substrand.helix];
     Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
     Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
-    Strand strand = substrand.strand;
 
     ReactElement substrand_line = (Dom.line()
-//      ..onMouseDown = strand.handle_selection
-//      ..onMouseEnter = ((_) {
-//        if (_OPTIMIZE) {
-//          Element strand_elt = querySelector('#${strand_id}');
-//          strand_elt.classes.add('hover');
-//        } else {
-//          Actions.strand_hover_add(strand);
-//        }
-//      })
-//      ..onMouseLeave = ((_) {
-//        if (_OPTIMIZE) {
-//          Element strand_elt = querySelector('#${strand_id}');
-//          strand_elt.classes.remove('hover');
-//        } else {
-//          Actions.strand_hover_remove(strand);
-//        }
-//        mouse_leave_update_mouseover();
-//      })
       ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..stroke = substrand.strand.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'

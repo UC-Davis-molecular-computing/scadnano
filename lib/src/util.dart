@@ -11,17 +11,19 @@ import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
 
+import 'model/crossover.dart';
 import 'model/helix.dart';
+import 'model/loopout.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'constants.dart' as constants;
 import 'model/bound_substrand.dart';
+import 'model/selectable.dart';
+import 'model/strand.dart';
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
 }
-
-
 
 /// Should only be called once at the start of the program
 Future<Model> model_from_url(String url) async {
@@ -66,7 +68,6 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt, MouseEvent ev) {
   return svg_point;
 }
 
-
 Point<num> transform_mouse_coord_to_svg_current_panzoom_side(Point<num> point) {
   return transform_mouse_coord_to_svg(point, current_pan_side(), current_zoom_side());
 }
@@ -85,8 +86,8 @@ Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zo
 //    ret_x = point.x;
 //    ret_y = point.y;
 //  } else {
-    ret_x = (point.x - pan.x) / zoom;
-    ret_y = (point.y - pan.y) / zoom;
+  ret_x = (point.x - pan.x) / zoom;
+  ret_y = (point.y - pan.y) / zoom;
 //  }
   return Point<num>(ret_x, ret_y);
 }
@@ -105,7 +106,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   return Point<num>(ret_x, ret_y);
 }
 
-transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(
+    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -257,30 +259,13 @@ pprint(Map map) {
   print('}');
 }
 
-/// Unique IDs for parts of model to associate view components to model.
-
-//String id_strand(Strand strand) {
-//  BoundSubstrand first_ss = this
-//      .bound_substrands()
-//      .first;
-//  return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward ? 'forward' : 'reverse'}';
-//}
-//
-//String id_5p(BoundSubstrand substrand) => '5p-end-${id_substrand(substrand)}';
-//
-//String id_3p(BoundSubstrand substrand) => '3p-end-${id_substrand(substrand)}';
-//
-//String id_substrand(BoundSubstrand substrand) =>
-//    'substrand-H${substrand.helix}-O${substrand.start}-${substrand.forward ? 'forward' : 'reverse'}';
-//
-//String id_loopout(Loopout loopout) => 'loopout-${loopout.order()}-${id_strand(loopout.strand)}';
-//
-//String id_crossover(Crossover crossover) =>
-//    'crossover-${id_strand(crossover.prev_substrand.strand)}-${id_strand(crossover.next_substrand.strand)}';
-
-
 String id_insertion(BoundSubstrand substrand, int offset) =>
     'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
-//String loopout_id(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) =>
-//    'loopout-H${prev_ss.helix}-O${prev_ss.offset_3p}-H${next_ss.helix}-O${next_ss.offset_5p}';;
+Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
+  Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};
+  for (var selectable in selected) {
+    selected_all[selectable.runtimeType].add(selectable);
+  }
+  return selected_all;
+}

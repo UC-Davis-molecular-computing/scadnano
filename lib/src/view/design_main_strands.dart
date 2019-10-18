@@ -1,5 +1,6 @@
 import 'package:over_react/over_react.dart';
 
+import '../app.dart';
 import '../model/strand.dart';
 import 'design_main_strand.dart';
 
@@ -18,6 +19,8 @@ class DesignMainStrandsComponent extends FluxUiComponent<DesignMainStrandsProps>
 
   @override
   render() {
+    //TODO: this gets called (unnecessarily??) on mouseup
+//    print('DesignMainStrands.render()');
 //    return (Dom.g()..className = 'strands-main-view')([
 //      for (Strand strand in this.props.store.strands)
 //        (DesignMainStrand()
@@ -27,11 +30,13 @@ class DesignMainStrandsComponent extends FluxUiComponent<DesignMainStrandsProps>
     List strand_elts = [];
     List<Strand> strands = this.props.store.strands;
     for (Strand strand in strands) {
-      var strand_elt = (DesignMainStrand()
-        //TODO: see whether it matters if key stays same even when Strand changes
-        // (toString does not depend on on parts of Strand currently)
-        ..store = strand
-        ..key = strand.toString())();
+      var strand_props = DesignMainStrand()
+      //TODO: see whether it matters if key stays same even when Strand changes
+      // (toString does not depend on all parts of Strand currently)
+        ..strand = strand
+        ..selected = strand.selected()
+        ..key = strand.toString();
+      var strand_elt = strand_props();
       strand_elts.add(strand_elt);
     }
     return (Dom.g()..className = 'strands-main-view')(strand_elts);

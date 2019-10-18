@@ -1,3 +1,4 @@
+import 'package:scadnano/src/model/bound_substrand.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 
 import '../app.dart';
@@ -10,14 +11,14 @@ class Loopout extends Substrand with Selectable {
   int loopout_length;
 
   Loopout(this.loopout_length) {
-    this.handle_actions();
+//    this.handle_actions();
   }
 
-  handle_actions() {
-//    register_selectable(() => app.model.main_view_ui_model.selection.loopouts);
-  }
+//  handle_actions() {
+////    register_selectable(() => app.model.main_view_ui_model.selection.loopouts);
+//  }
 
-  register_selectables(SelectableStore store) {
+  register_selectables(SelectablesStore store) {
     store.register(this);
   }
 
@@ -72,5 +73,17 @@ class Loopout extends Substrand with Selectable {
       constants.loopout_key: this.loopout_length,
     };
     return json_map;
+  }
+
+  int order() => strand.substrands.indexOf(this);
+
+  BoundSubstrand prev_substrand() {
+    int i = order();
+    return i > 0 ? strand.substrands[i - 1] : null;
+  }
+
+  BoundSubstrand next_substrand() {
+    int i = order();
+    return i < strand.substrands.length - 1 ? strand.substrands[i + 1] : null;
   }
 }

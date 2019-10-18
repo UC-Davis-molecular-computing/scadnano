@@ -6,7 +6,7 @@
 var leftLimit = 0;
 var rightLimit = 100;
 
-function setup_drag(left_pane_id, right_pane_id, separator_id) {
+function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
     var leftPane = document.getElementById(left_pane_id);
     var rightPane = document.getElementById(right_pane_id);
     var paneSep = document.getElementById(separator_id);
@@ -38,7 +38,7 @@ function setup_drag(left_pane_id, right_pane_id, separator_id) {
     }, null, 'horizontal');
 }
 
-function clear_drag(pane_id) {
+function clear_split_drag(pane_id) {
     var pane = document.getElementById(pane_id);
     // delete pane.style;
     pane.style = "";

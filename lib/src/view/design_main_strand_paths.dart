@@ -50,7 +50,6 @@ List<ReactElement> _strand_paths(Strand strand) {
   List<ReactElement> paths = [];
   List<ReactElement> ends = []; // add after so clicking on ends takes priority
   var substrand = strand.substrands.first;
-  var strand_id = strand.id();
 
   //TODO: make crossover a component that listens to both BoundSubstrands it connects
   for (int i = 0; i < strand.substrands.length; i++) {
@@ -59,8 +58,8 @@ List<ReactElement> _strand_paths(Strand strand) {
     if (substrand.is_bound_substrand()) {
 
       paths.add((DesignMainBoundSubstrand()
-        ..store = substrand
-        ..strand_id = strand_id
+//        ..store = substrand
+        ..substrand = substrand
         ..key = "bound-substrand-$i"
       )());
 

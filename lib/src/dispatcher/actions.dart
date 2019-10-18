@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:js/js.dart';
+import 'package:scadnano/src/model/dna_design_action_packs.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
@@ -38,9 +39,15 @@ abstract class ReversibleActionPack<A extends Action<P>, P> {
 
   apply() async {
     // for some react this.action(this.payload) does not compile, but we can call the method "call" explicitly
+    print('action applied');
     return await this.action.call(this.payload);
   }
 }
+
+//abstract class ReversibleActionPack {
+//  ReversibleActionPack reverse();
+//  apply();
+//}
 
 /// Represents [Action]s to do in a batch. Useful for having a single action to undo/redo that is a composite
 /// of many small ones, so the user doesn't have to press ctrl+Z multiple times to undo them all.
@@ -64,6 +71,9 @@ class BatchActionPack extends ReversibleActionPack {
 }
 
 class Actions {
+  // all reversible actions go through this Action
+  static final reversible_action = Action<ReversibleActionPack>();
+
   // Save .dna file
   static final save_dna_file = Action<Null>();
 
@@ -96,12 +106,14 @@ class Actions {
   static final loopout_select_toggle = Action<Loopout>();
   static final crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
 
-  static final remove_all_selections = Action<Null>();
+  static final unselect_all = Action<Null>();
   static final select = Action<Selectable>();
   static final select_all = Action<List<Selectable>>();
   static final unselect = Action<Selectable>();
   static final toggle = Action<Selectable>();
   static final toggle_all = Action<List<Selectable>>();
+
+  static final delete_all = Action<DeleteAllParameters>();
 
   // Selection rectangle
   static final create_selection_box_toggling = Action<Point<num>>();

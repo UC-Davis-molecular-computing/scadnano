@@ -101,9 +101,10 @@ class SelectionBoxStore extends Store {
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    Set<SvgElement> elts_overlapping = elts_all.where((elt) => elt.classes.contains('selectable')).toSet();
 
+//    Set<SvgElement> elts_overlapping =
+//        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
     Set<SvgElement> elts_overlapping =
-        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
-//    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+        get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};

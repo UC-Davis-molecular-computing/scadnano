@@ -1,11 +1,11 @@
 import 'package:color/color.dart';
 import 'package:react/react.dart';
-import 'package:scadnano/src/model/select_mode.dart';
-import 'package:scadnano/src/model/selectable.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 
-import '../app.dart';
+import '../dispatcher/actions.dart';
+import 'select_mode.dart';
+import 'selectable.dart';
 import 'crossover.dart';
 import 'strand_ui_model.dart';
 import '../json_serializable.dart';
@@ -26,57 +26,22 @@ class StrandsStore extends Store {
 
   StrandsStore() {
     this._strands = [];
-  }
-}
-
-class IDTFields implements JSONSerializable {
-  String name;
-  String scale;
-  String purification;
-  String plate;
-  String well;
-
-  IDTFields(this.name, this.scale, this.purification);
-
-  Map<String, dynamic> to_json_serializable() {
-    Map<String, dynamic> json_map = {
-      constants.idt_name_key: this.name,
-      constants.idt_scale_key: this.scale,
-      constants.idt_purification_key: this.purification
-    };
-    if (this.plate != null) {
-      json_map[constants.idt_plate_key] = this.plate;
-    }
-    if (this.well != null) {
-      json_map[constants.idt_well_key] = this.well;
-    }
-    return json_map;
+    _handle_actions();
   }
 
-  IDTFields.from_json(Map<String, dynamic> json_map) {
-    var field_name = 'IDTFields';
-    this.name = util.get_value(json_map, constants.idt_name_key, field_name);
-    this.scale = util.get_value(json_map, constants.idt_scale_key, field_name);
-    this.purification = util.get_value(json_map, constants.idt_purification_key, field_name);
-    if (json_map.containsKey(constants.idt_plate_key)) {
-      this.plate = json_map[constants.idt_plate_key];
-    }
-    if (json_map.containsKey(constants.idt_scale_key)) {
-      this.scale = json_map[constants.idt_scale_key];
-    }
-    if (this.plate == null && this.well != null) {
-      throw IllegalDNADesignError("cannot set IDTFields.well to ${this.well} when plate is null\n"
-          "this occurred when reading IDTFields entry:\n${json_map}");
-    }
-    if (this.plate != null && this.well == null) {
-      throw IllegalDNADesignError("cannot set IDTFields.plate to ${this.plate} when well is null\n"
-          "this occurred when reading IDTFields entry:\n${json_map}");
-    }
+  _handle_actions() {
+    triggerOnActionV2(Actions.select);
+    triggerOnActionV2(Actions.select_all);
+    triggerOnActionV2(Actions.unselect);
+    triggerOnActionV2(Actions.toggle);
+    triggerOnActionV2(Actions.toggle_all);
+    triggerOnActionV2(Actions.unselect_all);
   }
+
 }
 
 //class Strand extends SelfListeningStore implements JSONSerializable {
-class Strand extends Store with Selectable implements JSONSerializable {
+class Strand with Selectable implements JSONSerializable {
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color color = null;
@@ -88,23 +53,23 @@ class Strand extends Store with Selectable implements JSONSerializable {
 
   Map<Tuple2<BoundSubstrand, BoundSubstrand>, Crossover> crossovers = {};
 
-  Strand() {
+  Strand([this.substrands, this.color, this.dna_sequence]) {
     this.ui_model = StrandUIModel(this);
-    this.handle_actions();
+//    this.handle_actions();
     this._build_crossovers();
   }
 
-  handle_actions() {
-//    this.register_selectable(() => app.model.main_view_ui_model.selection.strands);
-    for (var ss in substrands) {
-      ss.handle_actions();
-    }
-    for (var crossover in crossovers.values) {
-      crossover.handle_actions();
-    }
-  }
+//  handle_actions() {
+////    this.register_selectable(() => app.model.main_view_ui_model.selection.strands);
+//    for (var ss in substrands) {
+//      ss.handle_actions();
+//    }
+//    for (var crossover in crossovers.values) {
+//      crossover.handle_actions();
+//    }
+//  }
 
-  register_selectables(SelectableStore store) {
+  register_selectables(SelectablesStore store) {
     store.register(this);
     for (var ss in substrands) {
       ss.register_selectables(store);
@@ -223,7 +188,7 @@ class Strand extends Store with Selectable implements JSONSerializable {
     //XXX: need to handle actions for each Strand sub-component at the end,
     // because it requires registering id's with a glboal map, which don't exist
     // until the whole Strand is created.
-    handle_actions();
+//    handle_actions();
   }
 
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
@@ -247,7 +212,8 @@ class Strand extends Store with Selectable implements JSONSerializable {
   }
 }
 
-abstract class Substrand extends Store implements JSONSerializable {
+abstract class Substrand // extends Store
+    implements JSONSerializable {
   // for efficiency but not serialized since it would introduce a JSON cycle
   Strand strand;
 
@@ -270,7 +236,53 @@ abstract class Substrand extends Store implements JSONSerializable {
   /// Order this substrand appears in the Strand
   int order() => strand.substrands.indexOf(this);
 
-  handle_actions();
+//  handle_actions();
 
-  register_selectables(SelectableStore store);
+  register_selectables(SelectablesStore store);
+}
+
+class IDTFields implements JSONSerializable {
+  String name;
+  String scale;
+  String purification;
+  String plate;
+  String well;
+
+  IDTFields(this.name, this.scale, this.purification);
+
+  Map<String, dynamic> to_json_serializable() {
+    Map<String, dynamic> json_map = {
+      constants.idt_name_key: this.name,
+      constants.idt_scale_key: this.scale,
+      constants.idt_purification_key: this.purification
+    };
+    if (this.plate != null) {
+      json_map[constants.idt_plate_key] = this.plate;
+    }
+    if (this.well != null) {
+      json_map[constants.idt_well_key] = this.well;
+    }
+    return json_map;
+  }
+
+  IDTFields.from_json(Map<String, dynamic> json_map) {
+    var field_name = 'IDTFields';
+    this.name = util.get_value(json_map, constants.idt_name_key, field_name);
+    this.scale = util.get_value(json_map, constants.idt_scale_key, field_name);
+    this.purification = util.get_value(json_map, constants.idt_purification_key, field_name);
+    if (json_map.containsKey(constants.idt_plate_key)) {
+      this.plate = json_map[constants.idt_plate_key];
+    }
+    if (json_map.containsKey(constants.idt_scale_key)) {
+      this.scale = json_map[constants.idt_scale_key];
+    }
+    if (this.plate == null && this.well != null) {
+      throw IllegalDNADesignError("cannot set IDTFields.well to ${this.well} when plate is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
+    if (this.plate != null && this.well == null) {
+      throw IllegalDNADesignError("cannot set IDTFields.plate to ${this.plate} when well is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
+  }
 }

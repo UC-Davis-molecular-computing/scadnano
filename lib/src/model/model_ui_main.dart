@@ -22,6 +22,8 @@ class MainViewUIModel {
   ShowEditorStore show_editor_store = ShowEditorStore();
   SelectionBoxStore selection_box_store = SelectionBoxStore();
 
+  bool dragging = false;
+
   bool get show_dna => this.show_dna_store.show_dna;
 
   bool get show_mismatches => this.show_mismatches_store.show_mismatches;
@@ -29,6 +31,8 @@ class MainViewUIModel {
   //TODO: make editing "mode": if editor mode=manual, no code editor. If mode=script, cannot edit design manually.
   //  Then it's ubambiguous what Ctrl+Z should do
   bool get show_editor => this.show_editor_store.show_editor;
+
+  allow_pan() => dragging;
 }
 
 class MainViewSelection {

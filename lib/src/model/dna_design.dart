@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:react/react.dart';
+import 'package:scadnano/src/model/dna_design_action_packs.dart';
 import 'package:scadnano/src/model/selectable.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
@@ -8,6 +10,8 @@ import 'package:meta/meta.dart';
 import '../json_serializable.dart';
 import '../dispatcher/actions.dart';
 import '../app.dart';
+import 'crossover.dart';
+import 'loopout.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'helix.dart';
@@ -44,7 +48,7 @@ class DNADesign extends Store implements JSONSerializable {
 
   List<Strand> get strands => this.strands_store.strands;
 
-  SelectableStore selectable_store = SelectableStore(() => app.model.main_view_ui_model.selection.selections);
+  SelectablesStore selectable_store = SelectablesStore(() => app.model.main_view_ui_model.selection.selections);
 
   Map<BoundSubstrand, List<Mismatch>> _substrand_mismatches_map = {};
 
@@ -69,6 +73,15 @@ class DNADesign extends Store implements JSONSerializable {
     this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
       this.helices_store.helices = new_helices;
     });
+
+    this.strands_store.triggerOnActionV2(Actions.delete_all, (params) {
+      if (params.reverse_deletion) {
+        add_strands(params.strands);
+      } else {
+        remove_strands(params.strands);
+      }
+    });
+
   }
 
   register_selectables() {
@@ -121,6 +134,7 @@ class DNADesign extends Store implements JSONSerializable {
       this.helices[ss.helix].bound_substrands().remove(ss);
     }
   }
+
 
   add_strands(Iterable<Strand> strands) {
     for (Strand strand in strands) {
@@ -184,10 +198,12 @@ class DNADesign extends Store implements JSONSerializable {
 //  DNADesign.from_json(Map<String, dynamic> json_map) {
     //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
 
-    this.version =
-        json_map.containsKey(constants.version_key) ? json_map[constants.version_key] : constants.INITIAL_VERSION;
+    this.version = json_map.containsKey(constants.version_key)
+        ? json_map[constants.version_key]
+        : constants.INITIAL_VERSION;
 
-    this.grid = json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
+    this.grid =
+    json_map.containsKey(constants.grid_key) ? grid_from_string(json_map[constants.grid_key]) : Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       this.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -349,8 +365,8 @@ class DNADesign extends Store implements JSONSerializable {
     return null;
   }
 
-  void _ensure_other_substrand_same_deletion_or_insertion(
-      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
+  void _ensure_other_substrand_same_deletion_or_insertion(BoundSubstrand substrand, BoundSubstrand other_ss,
+      int offset) {
     if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
       throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
           'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
@@ -450,7 +466,7 @@ class Mismatch {
 
   String toString() =>
       'Mismatch(dna_idx=${this.dna_idx}, offset=${this.offset}' +
-      (this.within_insertion < 0 ? ')' : ', within_insertion=${this.within_insertion})');
+          (this.within_insertion < 0 ? ')' : ', within_insertion=${this.within_insertion})');
 }
 
 final Map<int, int> _wc_table = {
@@ -477,8 +493,8 @@ class IllegalDNADesignError implements Exception {
 
   IllegalDNADesignError(String the_cause) {
     this.cause = '**********************\n'
-            '* illegal DNA design *\n'
-            '**********************\n\n' +
+        '* illegal DNA design *\n'
+        '**********************\n\n' +
         the_cause;
   }
 }

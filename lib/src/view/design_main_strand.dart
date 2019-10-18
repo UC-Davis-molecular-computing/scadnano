@@ -26,16 +26,35 @@ const _OPTIMIZE = true;
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
 @Props()
-class _$DesignMainStrandProps extends FluxUiProps<Strand, Strand> {}
+class _$DesignMainStrandProps extends UiProps {
+  Strand strand;
+  bool selected; // needed separately to compare in shouldComponentUpdated, since Strand is mutated in place
+}
 
 @Component()
-class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
+class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
   @override
-  Map getDefaultProps() => (newProps());
+  Map getDefaultProps() => (newProps()..selected = false);
+
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    Strand strand = props.strand;
+    Strand next_strand = nextProps['DesignMainStrandProps.strand'];
+    bool prev_selected = props.selected;
+    bool next_selected = nextProps['DesignMainStrandProps.selected'];
+
+    bool should = strand != next_strand || prev_selected != next_selected;
+//    print('shouldComponentUpdate() for strand ${strand.toString()}');
+//    print(' prev_selected: $prev_selected');
+//    print(' next_selected: $next_selected');
+    return should;
+  }
 
   @override
   render() {
-    Strand strand = this.props.store;
+//    Strand strand = this.props.store;
+    Strand strand = this.props.strand;
+//    print('DesignMainStrand.render(): ${strand.toString()}');
 
     if (strand.substrands.length == 0) {
       return null;
@@ -45,6 +64,7 @@ class DesignMainStrandComponent extends FluxUiComponent<DesignMainStrandProps> {
       if (app.model.select_mode_store.modes.contains(SelectModeChoice.strand)) {
         classname += ' selectable';
       }
+//      if (state.selected) {
       if (strand.selected()) {
         classname += ' selected';
       }

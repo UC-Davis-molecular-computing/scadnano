@@ -8,25 +8,16 @@ import 'selectable.dart';
 import 'bound_substrand.dart';
 
 
-class Crossover extends Store with Selectable {
+class Crossover //extends Store
+    with Selectable {
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
 
   Crossover(this.prev_substrand, this.next_substrand);
 
-  handle_actions() {
-    subscribe_to_stores(this, [prev_substrand, next_substrand]);
-  }
-
-  register_selectables(SelectableStore store) {
+  register_selectables(SelectablesStore store) {
     store.register(this);
   }
-
-  //TODO: Crossover.trigger() gets called when a 5'/3' end "near" it is selected
-//  trigger() {
-//    print('calling Crossover.trigger() on ${id()}');
-//    super.trigger();
-//  }
 
   SelectModeChoice select_mode() => SelectModeChoice.crossover;
 

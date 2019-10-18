@@ -7,6 +7,7 @@ const KEY_CODE_SHIFT = 16;
 const KEY_CODE_CTRL = 17;
 const KEY_CODE_ALT = 18;
 const KEY_CODE_ESC = 27;
+const KEY_CODE_DELETE = 46;
 
 const String INITIAL_VERSION = "0.0.1";
 
