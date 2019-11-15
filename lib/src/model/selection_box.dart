@@ -6,71 +6,82 @@ import 'package:w_flux/w_flux.dart';
 
 import '../app.dart';
 import 'selectable.dart';
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 import '../util.dart' as util;
 
-//TODO: selection box appears even when ephemerally clicking; use drag/drop library (perhaps) or manual
-// checking to ensure it only turns on after a nontrivial drag (e.g, 3 pixels)
+import 'package:built_value/built_value.dart';
 
-//TODO: when lots of items are selected, it is slow to drag around; find out why
+part 'selection_box.g.dart';
 
-class SelectionBoxStore extends Store {
-//class SelectionBoxStore extends ThrottledStore {
-  Point<num> _start = Point<num>(0, 0); // starting coordinate of drag
-  Point<num> _current = Point<num>(0, 0); // current coordinate of drag
-  bool displayed = false; // currently dragging?
-  bool toggling = false; // toggling if Ctrl pressed, otherwise selecting
+const ORIGIN = Point<num>(0, 0);
+
+final DEFAULT_SelectionBoxBuilder = SelectionBoxBuilder()
+  ..start = ORIGIN
+  ..current = ORIGIN
+  ..displayed = false
+  ..toggling = false;
+
+abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> {
+  SelectionBox._();
+
+  factory SelectionBox([void Function(SelectionBoxBuilder) updates]) =>
+      _$SelectionBox((s) => s.replace(DEFAULT_SelectionBoxBuilder.build()));
+
+  Point<num> get start; // starting coordinate of drag
+  Point<num> get current; // current coordinate of drag
+  bool get displayed; // currently dragging?
+  bool get toggling; // toggling if Ctrl pressed, otherwise selecting
   bool get selecting => !toggling;
-  SvgSvgElement parent_svg_elt;
+
+//  SvgSvgElement parent_svg_elt;
 
 //  Set<Selectable> selectedables_selected_at_start = {};
 
-  num get x => min(_start.x, _current.x);
+  num get x => min(start.x, current.x);
 
-  num get y => min(_start.y, _current.y);
+  num get y => min(start.y, current.y);
 
-  num get width => (_start.x - _current.x).abs();
+  num get width => (start.x - current.x).abs();
 
-  num get height => (_start.y - _current.y).abs();
+  num get height => (start.y - current.y).abs();
 
-  SelectionBoxStore() {
-    handle_actions();
-  }
+//  SelectionBox() {
+//    handle_actions();
+//  }
 
   handle_actions() {
-    triggerOnActionV2(Actions.create_selection_box_selecting, (mouse_coord) {
-      toggling = false;
-      start_selection(mouse_coord);
-    });
-
-    triggerOnActionV2(Actions.create_selection_box_toggling, (mouse_coord) {
-      toggling = true;
-      start_selection(mouse_coord);
-    });
-
-    triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
-      var c = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
-      _current = c;
-    });
-
-    triggerOnActionV2(Actions.remove_selection_box, (_) {
-      update_selections();
-      displayed = false;
-    });
+//    triggerOnActionV2(Actions.create_selection_box_selecting, (mouse_coord) {
+//      toggling = false;
+//      start_selection(mouse_coord);
+//    });
+//
+//    triggerOnActionV2(Actions.create_selection_box_toggling, (mouse_coord) {
+//      toggling = true;
+//      start_selection(mouse_coord);
+//    });
+//
+//    triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
+//      var c = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
+//      _current = c;
+//    });
+//
+//    triggerOnActionV2(Actions.remove_selection_box, (_) {
+//      update_selections();
+//      displayed = false;
+//    });
   }
 
-  start_selection(Point<num> mouse_coord) {
-    _start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
-    _current = _start;
-    displayed = true;
-  }
+  SelectionBox start_selection(Point<num> mouse_coord) => rebuild((s) => s
+    ..start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord)
+    ..current = start
+    ..displayed = true);
 
-  static const places = 0;
+  static const DECIMAL_PLACES = 0;
 
-  static rectToString(Rect bbox) => '${bbox.x.toStringAsFixed(places)} '
-      '${bbox.y.toStringAsFixed(places)} '
-      '${bbox.width.toStringAsFixed(places)} '
-      '${bbox.height.toStringAsFixed(places)}';
+  static rectToString(Rect bbox) => '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
+      '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
 
   //XXX: in principle this should be updateable every time the mouse moves and the selection box changes,
   // but in practice, the currently selected items and/or the Actions fired affected the results returned by
@@ -78,9 +89,9 @@ class SelectionBoxStore extends Store {
   // elements are or are not intersecting the rectangle. It does not have this problem to check only at the end of
   // the rectangle dragging, so we leave it like this for now.
   update_selections() {
-    if (parent_svg_elt == null) {
-      parent_svg_elt = querySelector('#main-view-svg') as SvgSvgElement;
-    }
+//    if (parent_svg_elt == null) {
+//      parent_svg_elt = querySelector('#main-view-svg') as SvgSvgElement;
+//    }
 
     RectElement select_box = querySelector('#selection-box') as RectElement;
     if (select_box == null) {
@@ -95,7 +106,7 @@ class SelectionBoxStore extends Store {
     Rect select_box_bbox = select_box.getBBox();
 //    util.transform_rect_svg_to_mouse_coord_main_view(select_box_bbox);
 
-    var selectables_by_id = app.model.dna_design.selectable_store.selectables_by_id;
+    var selectables_by_id = app.model.ui_model.selectables_store.selectables_by_id;
 
 //    var elts_all = parent_svg_elt.getEnclosureList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
@@ -121,7 +132,7 @@ class SelectionBoxStore extends Store {
     List<Selectable> overlapping_now_select_mode_enabled = [];
     for (var obj in overlapping_now) {
 //      print('obj: $obj');
-      if (app.model.select_mode_store.is_selectable(obj)) {
+      if (app.model.ui_model.select_mode_state.is_selectable(obj)) {
         overlapping_now_select_mode_enabled.add(obj);
       }
     }
@@ -134,10 +145,10 @@ class SelectionBoxStore extends Store {
 
     if (toggling) {
 //      print('toggling  overlapping_now: $overlapping_now');
-      Actions.toggle_all(overlapping_now_select_mode_enabled);
+      Actions_OLD.toggle_all(overlapping_now_select_mode_enabled);
     } else {
 //      print('selecting overlapping_now: $overlapping_now');
-      Actions.select_all(overlapping_now_select_mode_enabled);
+      Actions_OLD.select_all(overlapping_now_select_mode_enabled);
     }
   }
 }

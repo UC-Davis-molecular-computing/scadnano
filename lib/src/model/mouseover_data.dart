@@ -1,66 +1,57 @@
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 import 'package:tuple/tuple.dart';
-import 'package:w_flux/w_flux.dart';
 
-import '../dispatcher/actions.dart';
+import 'dna_design.dart';
 import 'helix.dart';
-import 'strand.dart';
 import 'bound_substrand.dart';
-import '../app.dart';
+import 'substrand.dart';
 
-/// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
-class MouseoverParameters {
-  // each tuple is (helix_idx, offset, forward)
-  final List<Tuple3<int, int, bool>> param_list;
+part 'mouseover_data.g.dart';
 
-  MouseoverParameters(this.param_list);
+abstract class MouseoverData implements Built<MouseoverData, MouseoverDataBuilder> {
+  Helix get helix;
 
-  List<MouseoverData> mouseover_data() {
+  int get offset;
+
+  @nullable
+  BoundSubstrand get substrand;
+
+  /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
+  static ListBuilder<MouseoverData> from_params(
+      DNADesign dna_design, Iterable<Tuple3<int, int, bool>> param_list) {
     BoundSubstrand substrand = null;
-    List<MouseoverData> mouseover_datas = [];
-    for (Tuple3<int, int, bool> param in this.param_list) {
+    var mouseover_datas_builder = ListBuilder<MouseoverData>();
+    for (Tuple3<int, int, bool> param in param_list) {
       int helix_idx = param.item1;
       int offset = param.item2;
       bool forward = param.item3;
-      for (Substrand ss in app.model.dna_design.substrands_on_helix(helix_idx)) {
+      for (Substrand ss in dna_design.substrands_on_helix(helix_idx)) {
         if (ss.is_bound_substrand()) {
           var bound_ss = ss as BoundSubstrand;
           if (bound_ss.contains_offset(offset) && bound_ss.forward == forward) {
-            substrand = ss;
+            substrand = bound_ss;
             break;
           }
         }
       }
-      Helix helix = app.model.dna_design.helices[helix_idx];
-      mouseover_datas.add(MouseoverData(helix, offset, substrand));
+      Helix helix = dna_design.helices[helix_idx];
+      mouseover_datas_builder.add(MouseoverData(helix, offset, substrand));
     }
-    return mouseover_datas;
+    return mouseover_datas_builder;
   }
-}
 
-class MouseoverData {
-  final Helix helix;
-  final int offset;
-  final BoundSubstrand substrand;
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MouseoverData(Helix helix, int offset, BoundSubstrand substrand) => MouseoverData.from((b) => b
+    ..helix = helix.toBuilder()
+    ..offset = offset
+    ..substrand = substrand?.toBuilder());
 
-  MouseoverData(this.helix, this.offset, this.substrand);
+  factory MouseoverData.from([void Function(MouseoverDataBuilder) updates]) = _$MouseoverData;
 
-  String toString() =>
-      'MouseoverData(helix=${this.helix.idx()}, offset=${this.offset}, substrand=${this.substrand})';
-}
+  MouseoverData._();
 
-class MouseoverDataStore extends Store {
-  List<MouseoverData> _data = [];
+  static Serializer<MouseoverData> get serializer => _$mouseoverDataSerializer;
 
-  List<MouseoverData> get data => this._data;
-
-  MouseoverDataStore() {
-    triggerOnActionV2<MouseoverParameters>(Actions.update_mouseover_data, (params) {
-      this._data = params.mouseover_data();
-    });
-    triggerOnActionV2<Null>(Actions.remove_mouseover_data, (_) => this._data = []);
-
-    // don't need to update any data, but want to alert listeners that data has changed; this helps to
-    // see the new rotation right away instead of waiting for a mouse move
-    triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation);
-  }
 }

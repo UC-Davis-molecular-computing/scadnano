@@ -1,6 +1,8 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/strand.dart';
 
+import '../model/dna_design.dart';
+import '../model/strand.dart';
+import '../app.dart';
 import '../model/helix.dart';
 import 'design_side_rotation_arrow.dart';
 
@@ -16,8 +18,8 @@ class _$DesignSideRotationProps extends UiProps {
   int offset;
 }
 
-@Component()
-class DesignSideRotationComponent extends UiComponent<DesignSideRotationProps> {
+@Component2()
+class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> {
   @override
   Map getDefaultProps() => (newProps());
 
@@ -27,20 +29,21 @@ class DesignSideRotationComponent extends UiComponent<DesignSideRotationProps> {
     int offset = this.props.offset;
     num radius = this.props.radius;
 
+    DNADesign dna_design = app.model.dna_design;
+    var substrands = dna_design.substrands_on_helix_at(helix.idx, offset);
+
     Strand strand_forward;
     Strand strand_reverse;
-
-    var substrands = helix.substrands_at(offset);
     for (var ss in substrands) {
       if (ss.forward) {
-        strand_forward = ss.strand;
+        strand_forward = app.model.dna_design.substrand_to_strand[ss];
       } else {
-        strand_reverse = ss.strand;
+        strand_reverse = app.model.dna_design.substrand_to_strand[ss];
       }
     }
 
-    var rotation_3p = helix.rotation_3p(offset);
-    var rotation_5p = helix.rotation_5p(offset);
+    var rotation_3p = dna_design.helix_rotation_3p(helix, offset);
+    var rotation_5p = dna_design.helix_rotation_5p(helix, offset);
     var color_3p = strand_forward == null ? 'black' : strand_forward.color.toHexColor().toCssString();
     var color_5p = strand_reverse == null ? 'black' : strand_reverse.color.toHexColor().toCssString();
 

@@ -1,19 +1,19 @@
 import 'package:quiver/core.dart';
-import 'package:scadnano/src/model/composite_stores.dart';
-import 'package:w_flux/w_flux.dart';
 
-import '../app.dart';
 import 'select_mode.dart';
 import 'selectable.dart';
 import 'bound_substrand.dart';
 
+import 'package:built_value/built_value.dart';
 
-class Crossover //extends Store
-    with Selectable {
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
+part 'crossover.g.dart';
 
-  Crossover(this.prev_substrand, this.next_substrand);
+abstract class Crossover with Selectable implements Built<Crossover, CrossoverBuilder> {
+  Crossover._();
+  factory Crossover([void Function(CrossoverBuilder) updates]) = _$Crossover;
+
+  BoundSubstrand get prev_substrand;
+  BoundSubstrand get next_substrand;
 
   register_selectables(SelectablesStore store) {
     store.register(this);
@@ -23,17 +23,5 @@ class Crossover //extends Store
 
   String id() => 'crossover-${prev_substrand.id()}-${next_substrand.id()}';
 
-  @override
-  bool operator ==(other) {
-    if (!(other is Crossover)) {
-      return false;
-    }
-    Crossover other_crossover = other;
-    return this.prev_substrand == other_crossover.prev_substrand &&
-        this.next_substrand == other_crossover.next_substrand;
-  }
-
-  @override
-  int get hashCode => hash2(this.prev_substrand, this.next_substrand);
-
 }
+

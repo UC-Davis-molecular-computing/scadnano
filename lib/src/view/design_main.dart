@@ -1,5 +1,7 @@
 library view_main;
 
+import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
 
 import 'design_main_mismatches.dart';
@@ -8,14 +10,11 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import 'design_main_selection_box.dart';
-
 import '../model/selection_box.dart';
 import '../model/composite_stores.dart';
 import '../model/model.dart';
 import '../model/dna_design.dart';
 import 'react_dnd.dart';
-
-import 'package:over_react/over_react.dart';
 
 part 'design_main.over_react.g.dart';
 
@@ -24,31 +23,40 @@ part 'design_main.over_react.g.dart';
 
 final USING_REACT_DND = false;
 
+UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<Model, _$DesignMainProps>(
+  mapStateToProps: (model) => (DesignMain()..model = model),
+)(DesignMain);
+
 @Factory()
 UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
-class _$DesignMainProps extends FluxUiProps<Model, Model> {}
+class _$DesignMainProps extends UiProps {
+  Model model;
+}
 
-@Component()
-class DesignMainComponent extends FluxUiComponent<DesignMainProps> {
-  @override
-  Map getDefaultProps() => (newProps());
-
+@Component2()
+class DesignMainComponent extends UiComponent2<DesignMainProps> {
   @override
   render() {
-    DNADesign dna_design = this.props.store.dna_design;
-    DNASequencesStore dna_sequences_store = this.props.store.dna_sequences_store;
-    MismatchesStore mismatches_store = this.props.store.mismatches_store;
-    SelectionBoxStore selection_rectangle_store = this.props.store.main_view_ui_model.selection_box_store;
+    Model model = this.props.model;
+
+    if (model.has_error()) {
+      return null;
+    }
 
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')(
-      (DesignMainMouseoverRectHelices()..store = dna_design.helices_store)(),
-      (DesignMainHelices()..store = dna_design.helices_store)(),
-      (DesignMainMismatches()..store = mismatches_store)(),
-      (DesignMainStrands()..store = dna_design.strands_store)(),
-      (DesignMainDNASequences()..store = dna_sequences_store)(),
-      (DesignMainSelectionBox()..store = selection_rectangle_store)(),
+      (DesignMainMouseoverRectHelices()
+        ..helices = model.dna_design.helices)(),
+      (DesignMainHelices()..helices = model.dna_design.helices)(),
+      (DesignMainMismatches()
+        ..show_mismatches = model.ui_model.show_mismatches
+        ..strands = model.dna_design.strands)(),
+      (DesignMainStrands()..strands = model.dna_design.strands)(),
+      (DesignMainDNASequences()
+        ..show_dna = model.ui_model.show_dna
+        ..strands = model.dna_design.strands)(),
+      (DesignMainSelectionBox()..selection_box = model.ui_model.selection_box)(),
     );
 
     if (USING_REACT_DND) {

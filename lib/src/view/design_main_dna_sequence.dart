@@ -22,10 +22,10 @@ class _$DesignMainDNASequenceProps extends UiProps {
   Strand strand;
 }
 
-@Component()
-class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequenceProps> {
-  @override
-  Map getDefaultProps() => (newProps());
+@Component2()
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> {
+//  @override
+//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
@@ -74,7 +74,7 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
     var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}-'
         '${substrand.forward? 'forward': 'reverse'}';
 
-    SvgProps text_props = (Dom.text()
+    return (Dom.text()
 //      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
 //      ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..key = id
@@ -82,13 +82,9 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
       ..className = classname_dna_sequence
       ..x = '${pos.x + x_adjust}'
       ..y = '${pos.y}'
+      ..textLength = '$text_length'
       ..transform = 'rotate(${rotate_degrees} ${rotate_x} ${rotate_y})'
-      ..dy = '$dy');
-    //XXX: for some reason OverReact does not supply textLength as a typed field.
-    text_props.addProp('textLength', '$text_length'); // bug in OverReact
-    ReactElement text_elt = text_props(seq_to_draw);
-
-    return text_elt;
+      ..dy = '$dy')(seq_to_draw);
   }
 
   ReactElement _dna_sequence_on_insertion(BoundSubstrand substrand, int offset, int length) {
@@ -114,16 +110,15 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
       ..href = '#${util.id_insertion(substrand, offset)}'
-//      ..startOffset = start_offset
+      ..startOffset = start_offset
       ..style = style_map);
-    text_path_props.addProp('startOffset', start_offset); // bug in OverReact
     return (Dom.text()
       ..key = 'textelt-${util.id_insertion(substrand, offset)}'
       ..dy = dy)(text_path_props(subseq));
   }
 
   ReactElement _dna_sequence_on_loopout(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) {
-    var subseq = loopout.dna_sequence();
+    var subseq = loopout.dna_sequence;
     var length = subseq.length;
 
     var start_offset = '50%';
@@ -148,9 +143,8 @@ class DesignMainDNASequenceComponent extends UiComponent<DesignMainDNASequencePr
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
       ..href = '#${loopout.id()}'
-//      ..startOffset = start_offset
+      ..startOffset = start_offset
       ..style = style_map);
-    text_path_props.addProp('startOffset', start_offset); // bug in OverReact
     return (Dom.text()
       ..key = 'loopout-text-'
           'H${prev_ss.helix},${prev_ss.offset_3p}-'

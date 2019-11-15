@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 abstract class JSONSerializable {
-  dynamic to_json_serializable();
+  dynamic to_json_serializable({bool suppress_indent = false});
 }
 
 class NoIndent implements JSONSerializable {
@@ -9,12 +9,12 @@ class NoIndent implements JSONSerializable {
 
   NoIndent(this.value);
 
-  dynamic to_json_serializable() => this.value;
+  dynamic to_json_serializable({bool suppress_indent = false}) => this.value;
 }
 
 String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
   var encoder = _SuppressableIndentEncoder(_Replacer(), suppress: suppress_indent);
-  var serializable = obj.to_json_serializable();
+  var serializable = obj.to_json_serializable(suppress_indent: suppress_indent);
   var json_str = encoder.convert(serializable);
   return json_str;
 }

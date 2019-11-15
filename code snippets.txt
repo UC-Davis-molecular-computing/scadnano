@@ -1,0 +1,26 @@
+// bvs (built value with serialization, and support for one field initially)
+abstract class $CLASS_NAME$ implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+  $FIELD_TYPE$ get $FIELD_NAME$;
+  
+  /************************ begin BuiltValue boilerplate ************************/
+  factory $CLASS_NAME$($FIELD_TYPE$ $FIELD_NAME$) => $CLASS_NAME$.from((b) => b..$FIELD_NAME$ = $FIELD_NAME$);
+
+  factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
+
+  $CLASS_NAME$._();
+  
+  static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+}
+
+
+// built value
+import 'package:built_value/built_value.dart';
+
+part '$filename$.g.dart';
+
+abstract class $CLASS_NAME$ implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+  $CLASS_NAME$._();
+
+  factory $CLASS_NAME$([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;  
+  /************************ end BuiltValue boilerplate ************************/
+}

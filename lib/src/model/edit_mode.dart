@@ -1,7 +1,7 @@
 import 'package:w_flux/w_flux.dart';
 
 import '../dispatcher/local_storage.dart' as local_storage;
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 
 class EditModeChoice {
   final String name;
@@ -54,9 +54,10 @@ class EditModeStore extends Store {
   }
 
   void handle_actions() {
-    triggerOnActionV2<EditModeChoice>(Actions.set_edit_mode, (new_mode) {
-      this.mode = new_mode;
-      local_storage.save(local_storage.Storable.edit_mode);
+    triggerOnActionV2<EditModeChoice>(Actions_OLD.set_edit_mode, (new_mode) {
+      //FIXME: implement this
+      //      this.mode = new_mode;
+//      local_storage.save(local_storage.Storable.edit_mode);
     });
   }
 }

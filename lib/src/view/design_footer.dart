@@ -1,6 +1,10 @@
-import 'package:scadnano/src/model/helix.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:over_react/over_react_redux.dart';
 
+import '../model/helix.dart';
+import '../app.dart';
 import '../model/mouseover_data.dart';
+import '../model/model.dart';
 
 //TODO: use tooltips (or something) to give more information on mouse hover than the footer has room for
 
@@ -8,30 +12,40 @@ import 'package:over_react/over_react.dart';
 
 part 'design_footer.over_react.g.dart';
 
+UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<Model, _$DesignFooterProps>(
+  mapStateToProps: (model) => (DesignFooter()
+    ..mouseover_datas = model.ui_model.mouseover_datas),
+)(DesignFooter);
+
 @Factory()
 UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
 @Props()
-class _$DesignFooterProps extends FluxUiProps<MouseoverDataStore, MouseoverDataStore> {}
+class _$DesignFooterProps extends UiProps { // FluxUiProps<MouseoverDataStore, MouseoverDataStore> {
+  BuiltList<MouseoverData> mouseover_datas;
+}
 
-@Component()
-class DesignFooterComponent extends FluxUiComponent<DesignFooterProps> {
+@Component2()
+class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiComponent<DesignFooterProps> {
   @override
   Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    List<MouseoverData> mouseover_datas = this.props.store.data;
+//    List<MouseoverData> mouseover_datas = this.props.store.data;
+    BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
+
     String text = '';
     if (mouseover_datas.length == 1) {
       MouseoverData mouseover_data = mouseover_datas.first;
       Helix helix = mouseover_data.helix;
-      int idx = helix.idx();
+      int idx = helix.idx;
       int offset = mouseover_data.offset;
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.substrand != null) {
         int substrand_length = mouseover_data.substrand.dna_length();
-        var strand = mouseover_data.substrand.strand;
+//        var strand = mouseover_data.substrand.strand;
+        var strand = app.model.dna_design.substrand_to_strand[mouseover_data.substrand];
         text += (', ' +
             'substrand length: ${substrand_length}, ' +
             'strand length: ${strand.dna_length()}, ' +

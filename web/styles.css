@@ -371,7 +371,8 @@ html, body {
 }
 
 .insertion-length {
-    font-size: 5px;
+    font-size: 8px;
+    font-weight: bold;
     text-anchor: middle;
     dominant-baseline: hanging;
 }

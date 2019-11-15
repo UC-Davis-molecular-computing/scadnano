@@ -10,9 +10,12 @@ import 'dart:svg' hide Point;
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/model/ui_model.dart';
 
 import 'model/crossover.dart';
-import 'model/helix.dart';
+import 'model/dna_end.dart';
+import 'model/grid.dart';
+import 'model/grid_position.dart';
 import 'model/loopout.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
@@ -26,29 +29,12 @@ make_dart_function_available_to_js(String js_function_name, Function dart_func) 
 }
 
 /// Should only be called once at the start of the program
-Future<Model> model_from_url(String url) async {
-  Model model = Model.empty();
-
-//  var dna_design = await _dna_design_from_url(url);
+Future<DNADesign> dna_design_from_url(String url) async {
   String content = await file_content(url);
   Map<String, dynamic> parsed_json = jsonDecode(content);
-//  var dna_design = DNADesign.from_json(parsed_json);
-//  var dna_design = DNADesign();
-  model.dna_design.read_from_json(parsed_json);
-//  return dna_design;
-
-//  model.dna_design = dna_design;
-  return model;
+  DNADesign dna_design = DNADesign.from_json(parsed_json);
+  return dna_design;
 }
-
-//Future<DNADesign> _dna_design_from_url(String url) async {
-//  String content = await file_content(url);
-//  Map<String, dynamic> parsed_json = jsonDecode(content);
-////  var dna_design = DNADesign.from_json(parsed_json);
-//  var dna_design = DNADesign();
-//  dna_design.read_from_json(parsed_json);
-//  return dna_design;
-//}
 
 Future<String> file_content(String url) async {
   return await HttpRequest.getString(url).then((content) {
@@ -76,38 +62,25 @@ Point<num> transform_mouse_coord_to_svg_current_panzoom_main(Point<num> point) {
   return transform_mouse_coord_to_svg(point, current_pan_main(), current_zoom_main());
 }
 
+//TODO: this is still scaled wrong with Firefox; may not even be coming from this code, because it's
+// different depending whether the mouse is over the empty helix, or a strand, or a crossover/loopout
+
 /// Transform point by panning and zooming from mouse coordinates to SVG coordinates.
 /// (Actually I needed to do what appears to be the inverse transformation here, not sure why.)
 Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zoom) {
-  num ret_x;
-  num ret_y;
-//  if (browser.isFirefox || browser.isInternetExplorer) {
-//    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
-//    ret_x = point.x;
-//    ret_y = point.y;
-//  } else {
-  ret_x = (point.x - pan.x) / zoom;
-  ret_y = (point.y - pan.y) / zoom;
-//  }
-  return Point<num>(ret_x, ret_y);
+  return (point - pan) * (1.0 / zoom);
 }
 
 Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zoom) {
-  num ret_x;
-  num ret_y;
+  // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
   if (browser.isFirefox || browser.isInternetExplorer) {
-    // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
-    ret_x = point.x;
-    ret_y = point.y;
+    return point;
   } else {
-    ret_x = point.x * zoom + pan.x;
-    ret_y = point.y * zoom + pan.y;
+    return point * zoom + pan;
   }
-  return Point<num>(ret_x, ret_y);
 }
 
-transform_rect(
-    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -141,11 +114,14 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
 Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   num radius = constants.SIDE_HELIX_RADIUS;
   if (grid == Grid.square) {
-    return Point<num>(2 * radius * (gp.h + 1), 2 * radius * (gp.v + 1));
+    return Point<num>(gp.h, gp.v) * 2 * radius;
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-    throw UnimplementedError('hex and honeycomb grids not yet supported');
+    num x = gp.h; // x offset from h
+    x += cos(2 * pi / 6) * (gp.v % 2); // x offset from v
+    num y = sin(2 * pi / 6) * gp.v; // y offset from v
+    return Point<num>(x, y) * 2 * radius;
   } else {
-    throw ArgumentError('cannot convert grid coordinates for grid = Grid.none');
+    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
 }
 
@@ -156,7 +132,10 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
     int h = ((svg_coord.x / (2 * radius)) - 1).round();
     int v = ((svg_coord.y / (2 * radius)) - 1).round();
     int b = 0;
-    return GridPosition(h, v, b);
+    return GridPosition((gp) => gp
+      ..h = h
+      ..v = v
+      ..b = b);
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
     throw UnimplementedError('hex and honeycomb grids not yet supported');
   } else {
@@ -178,6 +157,17 @@ dynamic get_value(Map<String, dynamic> map, String key, String name) {
     throw IllegalDNADesignError('key "${key}" is missing from map describing ${name}:\n  ${map}');
   } else {
     return map[key];
+  }
+}
+
+/// Tries to get value in map associated to [key], returning [default_value] if [key] is not present.
+/// If transformer is given and the key is found in the map, apply transformer to the associated value and return it.
+T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_value,
+    {T Function(U) transformer = null}) {
+  if (!map.containsKey(key)) {
+    return default_value;
+  } else {
+    return transformer == null ? map[key] : transformer(map[key]);
   }
 }
 

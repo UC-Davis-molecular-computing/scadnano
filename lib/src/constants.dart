@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'model/helix.dart';
+import 'model/grid.dart';
 
 // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 const KEY_CODE_SHIFT = 16;
@@ -30,7 +30,7 @@ final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
 
 const SIDE_HELIX_RADIUS = 25.0;
 
-const Grid default_grid = Grid.none;
+const Grid default_grid = Grid.square;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';

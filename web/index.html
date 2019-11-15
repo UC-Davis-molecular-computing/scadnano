@@ -40,8 +40,8 @@
     <!--<script src="packages/react/react_with_react_dom_prod.js"></script>-->
 
 
-    <script src="external-libs/react-dnd/ReactDnD.js"></script>
-    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>
+<!--    <script src="external-libs/react-dnd/ReactDnD.js"></script>-->
+<!--    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>-->
     <!--    <script src="external-libs/ReactDnD.min.js"></script>-->
     <!--    <script src="external-libs/ReactDnDHTML5Backend.min.js"></script>-->
 
@@ -204,6 +204,7 @@
         window.onkeyup = set_ctrl_shift_alt;
         window.onmousedown = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
         window.onmouseup = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
+        // This is needed to prevent panning when Ctrl or Shift key is depressed, to allow selection box to be drawn.
         function before_pan(oldPan, newPan) {
             // return alt && !(ctrl || shift);
             // return !(ctrl || shift);
@@ -217,6 +218,7 @@
             zoomScaleSensitivity: 0.3,
             minZoom: 0.05,
             maxZoom: 20,
+            beforePan: before_pan,
             customEventsHandler: eventsHandler,
             fit: false,
         });

@@ -1,6 +1,8 @@
 import 'dart:html';
 
-import 'actions.dart';
+import 'package:scadnano/src/model/model.dart';
+
+import 'actions_OLD.dart';
 import '../app.dart';
 
 //TODO: exception currently thrown when undoing remove helix
@@ -9,6 +11,9 @@ import '../app.dart';
 class UndoRedo {
   List<ReversibleActionPack> undo_stack;
   List<ReversibleActionPack> redo_stack;
+
+//  List<Model> undo_stack;
+//  List<Model> redo_stack;
 
   UndoRedo() {
     setup_undo_redo_keyboard_listeners();
@@ -40,8 +45,9 @@ class UndoRedo {
   }
 
   apply(ReversibleActionPack action) {
-    if (!app.model.changed_since_last_save) {
-      app.model.changed_since_last_save = true;
+    if (!app.model.ui_model.changed_since_last_save) {
+      //FIXME: send an action to update this bool
+      //app.model.changed_since_last_save = true;
     }
     action.apply();
     redo_stack.clear();
@@ -55,8 +61,9 @@ class UndoRedo {
       reverse_action.apply();
       redo_stack.add(most_recent_action);
       if (undo_stack.isEmpty) {
-        if (!app.model.changed_since_last_save) {
-          app.model.changed_since_last_save = true;
+        if (!app.model.ui_model.changed_since_last_save) {
+          //FIXME: send action
+//          app.model.changed_since_last_save = true;
         }
       }
     }
@@ -64,8 +71,9 @@ class UndoRedo {
 
   redo() {
     if (redo_stack.isNotEmpty) {
-      if (app.model.changed_since_last_save) {
-        app.model.changed_since_last_save = false;
+      if (app.model.ui_model.changed_since_last_save) {
+          //FIXME: send action
+//        app.model.changed_since_last_save = false;
       }
       var action_to_redo = redo_stack.removeLast();
       action_to_redo.apply();

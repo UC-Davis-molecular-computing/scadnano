@@ -6,7 +6,7 @@ import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
 import '../app.dart';
-import '../model/model_ui.dart';
+import '../model/ui_model.dart';
 
 //TODO: compile Python scripts in the browser using pyodide (or something)
 
@@ -100,7 +100,7 @@ class EditorViewComponent {
     // save button
     this.controls_element.children.add(save_button);
     this.save_button.text = "Save";
-    this.save_button.disabled = !app.model.changed_since_last_save;
+    this.save_button.disabled = !app.model.ui_model.changed_since_last_save;
 
     // load button
     this.controls_element.children.add(new LabelElement()..text = "Load:");
@@ -190,7 +190,7 @@ class EditorViewComponent {
 script_save_file() async {
   Blob blob = new Blob([app.model.editor_content], 'text/plain;charset=utf-8');
   String url = Url.createObjectUrlFromBlob(blob);
-  String filename = app.model.editor_view_ui_model.loaded_script_filename;
+  String filename = app.model.ui_model.loaded_script_filename;
   var link = new AnchorElement()
     ..href = url
     ..download = filename;
@@ -216,8 +216,9 @@ request_script_load_file_from_file_chooser(FileUploadInputElement file_chooser) 
 }
 
 script_file_loaded(FileReader file_reader, String filename) {
-  app.model.editor_view_ui_model.loaded_script_filename = filename;
-  app.model.editor_content = file_reader.result;
+  //FIXME: send an action to update the fields loaded_script_filename and editor_content
+//  app.model.ui_model.loaded_script_filename = filename;
+//  app.model.editor_content = file_reader.result;
 //  print('in dart, just put this script file contents into model: ${app.model.editor_content}');
   app.view.editor_view.render();
 }

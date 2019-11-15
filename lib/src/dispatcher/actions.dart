@@ -1,263 +1,457 @@
 @JS()
-library actions;
+library actions2;
 
-import 'dart:async';
 import 'dart:math';
 
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
-import 'package:scadnano/src/model/dna_design_action_packs.dart';
-import 'package:scadnano/src/model/select_mode.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
+import 'package:built_collection/built_collection.dart';
 
-import '../model/selectable.dart';
+import 'serializers.dart';
+import '../model/dna_design.dart';
+import '../model/substrand.dart';
+import '../model/model.dart';
+import '../model/dna_design_action_packs.dart';
+import '../model/select_mode.dart';
+import '../model/select_mode_state.dart';
 import '../model/edit_mode.dart';
 import '../model/helix.dart';
+import '../model/grid_position.dart';
 import '../model/mouseover_data.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
+import 'local_storage.dart';
 
-/// An ActionPack has all the data needed to apply an [Action] (the "payload" in the terminology of w_flux).
-/// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
-/// and the Undo/Redo stack (which needs the Action and payload packed into one object to put on the stack).
-///
-/// A [ReversibleActionPack] is added to the undo stack. Its reverse is applied as it is popped.
-/// Often a ReversibleActionPack will contain more information than is needed simply to apply the Action,
-/// in order also to have enough information to construct its reverse.
-///
-/// A: type of the [Action]
-/// P: payload type for the [Action]
-abstract class ReversibleActionPack<A extends Action<P>, P> {
-  //}extends ActionPack<A, P> {
-  final A action;
-  final P payload;
+part 'actions.g.dart';
 
-  ReversibleActionPack(this.action, this.payload);
-
-  ReversibleActionPack<A, P> reverse();
-
-  apply() async {
-    // for some react this.action(this.payload) does not compile, but we can call the method "call" explicitly
-    print('action applied');
-    return await this.action.call(this.payload);
-  }
+/// [Action]s don't have to implement BuiltValue, but if they do, and they use the serialization mechanism,
+/// this this toJson method will work automatically.
+abstract class Action2 {
+  dynamic toJson() => serializers.serialize(this);
 }
 
-//abstract class ReversibleActionPack {
-//  ReversibleActionPack reverse();
-//  apply();
+/// [Action] that can be undone via the undo stack. (typically changes to the [DNADesign])
+abstract class UndoableAction extends Action2 {}
+
+/// [Action] that should trigger storing of certain [Storable]s to localStorage.
+abstract class StorableAction extends Action2 {
+  Iterable<Storable> storables();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Select modes
+
+abstract class ToggleSelectMode extends StorableAction
+    implements Built<ToggleSelectMode, ToggleSelectModeBuilder> {
+  SelectModeChoice get select_mode_choice;
+
+  Iterable<Storable> storables() => [Storable.select_modes];
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ToggleSelectMode(SelectModeChoice select_mode_choice) =>
+      ToggleSelectMode.from((b) => b..select_mode_choice = select_mode_choice);
+
+  factory ToggleSelectMode.from([void Function(ToggleSelectModeBuilder) updates]) = _$ToggleSelectMode;
+
+  ToggleSelectMode._();
+
+  static Serializer<ToggleSelectMode> get serializer => _$toggleSelectModeSerializer;
+}
+
+abstract class SetSelectModes extends Action2 implements Built<SetSelectModes, SetSelectModesBuilder> {
+  BuiltSet<SelectModeChoice> get select_mode_choices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetSelectModes(SetBuilder<SelectModeChoice> select_mode_choices) =>
+      SetSelectModes.from((b) => b..select_mode_choices = select_mode_choices);
+
+  factory SetSelectModes.from([void Function(SetSelectModesBuilder) updates]) = _$SetSelectModes;
+
+  SetSelectModes._();
+
+  static Serializer<SetSelectModes> get serializer => _$setSelectModesSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Show/hide DNA/mismatches/editor
+
+abstract class SetShowDNA extends Action2 implements Built<SetShowDNA, SetShowDNABuilder> {
+  bool get show_dna;
+
+  factory SetShowDNA(bool show_dna) => SetShowDNA.from((b) => b..show_dna = show_dna);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetShowDNA.from([void Function(SetShowDNABuilder) updates]) = _$SetShowDNA;
+
+  SetShowDNA._();
+
+  static Serializer<SetShowDNA> get serializer => _$setShowDNASerializer;
+}
+
+abstract class SetShowMismatches extends Action2
+    implements Built<SetShowMismatches, SetShowMismatchesBuilder> {
+  bool get show_mismatches;
+
+  factory SetShowMismatches(bool show_mismatches) =>
+      SetShowMismatches.from((b) => b..show_mismatches = show_mismatches);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetShowMismatches.from([void Function(SetShowMismatchesBuilder) updates]) = _$SetShowMismatches;
+
+  SetShowMismatches._();
+
+  static Serializer<SetShowMismatches> get serializer => _$setShowMismatchesSerializer;
+}
+
+abstract class SetShowEditor extends Action2 implements Built<SetShowEditor, SetShowEditorBuilder> {
+  bool get show_editor;
+
+  factory SetShowEditor(bool show_editor) => SetShowEditor.from((b) => b..show_editor = show_editor);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetShowEditor.from([void Function(SetShowEditorBuilder) updates]) = _$SetShowEditor;
+
+  SetShowEditor._();
+
+  static Serializer<SetShowEditor> get serializer => _$setShowEditorSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Save/load files
+
+abstract class SaveDNAFile extends Action2 implements Built<SaveDNAFile, SaveDNAFileBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SaveDNAFile([void Function(SaveDNAFileBuilder) updates]) = _$SaveDNAFile;
+
+  SaveDNAFile._();
+
+  static Serializer<SaveDNAFile> get serializer => _$saveDNAFileSerializer;
+}
+
+abstract class LoadDNAFile extends Action2 implements Built<LoadDNAFile, LoadDNAFileBuilder> {
+  String get content;
+
+  String get filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadDNAFile(String content, String filename) => LoadDNAFile.from((b) => b
+    ..content = content
+    ..filename = filename);
+
+  factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
+
+  LoadDNAFile._();
+
+  static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouseover data (main view)
+
+abstract class MouseoverDataClear extends Action2
+    implements Built<MouseoverDataClear, MouseoverDataClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MouseoverDataClear([void Function(MouseoverDataClearBuilder) updates]) = _$MouseoverDataClear;
+
+  MouseoverDataClear._();
+
+  static Serializer<MouseoverDataClear> get serializer => _$mouseoverDataClearSerializer;
+}
+
+abstract class MouseoverDataUpdate extends Action2
+    implements Built<MouseoverDataUpdate, MouseoverDataUpdateBuilder> {
+  BuiltList<MouseoverData> get mouseover_datas;
+
+  factory MouseoverDataUpdate(DNADesign dna_design, Iterable<Tuple3<int, int, bool>> param_list) {
+    ListBuilder<MouseoverData> mouseover_datas_builder = MouseoverData.from_params(dna_design, param_list);
+    return MouseoverDataUpdate.from((b) => b..mouseover_datas = mouseover_datas_builder);
+  }
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MouseoverDataUpdate.from([void Function(MouseoverDataUpdateBuilder) updates]) =
+      _$MouseoverDataUpdate;
+
+  MouseoverDataUpdate._();
+
+  static Serializer<MouseoverDataUpdate> get serializer => _$mouseoverDataUpdateSerializer;
+}
+
+abstract class HelixRotationSet extends UndoableAction
+    implements Built<HelixRotationSet, HelixRotationSetBuilder> {
+  int get helix_idx;
+
+  double get rotation;
+
+  int get anchor;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixRotationSet(int helix_idx, double rotation, int anchor) => HelixRotationSet.from((b) => b
+    ..helix_idx = helix_idx
+    ..rotation = rotation
+    ..anchor = anchor);
+
+  factory HelixRotationSet.from([void Function(HelixRotationSetBuilder) updates]) = _$HelixRotationSet;
+
+  HelixRotationSet._();
+
+  static Serializer<HelixRotationSet> get serializer => _$helixRotationSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Error message
+
+abstract class ErrorMessageSet extends Action2 implements Built<ErrorMessageSet, ErrorMessageSetBuilder> {
+  String get error_message;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ErrorMessageSet(String error_message) =>
+      ErrorMessageSet.from((b) => b..error_message = error_message);
+
+  factory ErrorMessageSet.from([void Function(ErrorMessageSetBuilder) updates]) = _$ErrorMessageSet;
+
+  ErrorMessageSet._();
+
+  static Serializer<ErrorMessageSet> get serializer => _$errorMessageSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Selection box (side view)
+
+abstract class SideViewSelectionBoxCreateToggling extends Action2
+    implements Built<SideViewSelectionBoxCreateToggling, SideViewSelectionBoxCreateTogglingBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewSelectionBoxCreateToggling(Point<num> point) =>
+      SideViewSelectionBoxCreateToggling.from((b) => b..point = point);
+
+  factory SideViewSelectionBoxCreateToggling.from(
+          [void Function(SideViewSelectionBoxCreateTogglingBuilder) updates]) =
+      _$SideViewSelectionBoxCreateToggling;
+
+  SideViewSelectionBoxCreateToggling._();
+
+  static Serializer<SideViewSelectionBoxCreateToggling> get serializer =>
+      _$sideViewSelectionBoxCreateTogglingSerializer;
+}
+
+abstract class SideViewSelectionBoxCreateSelecting extends Action2
+    implements Built<SideViewSelectionBoxCreateSelecting, SideViewSelectionBoxCreateSelectingBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewSelectionBoxCreateSelecting(Point<num> point) =>
+      SideViewSelectionBoxCreateSelecting.from((b) => b..point = point);
+
+  factory SideViewSelectionBoxCreateSelecting.from(
+          [void Function(SideViewSelectionBoxCreateSelectingBuilder) updates]) =
+      _$SideViewSelectionBoxCreateSelecting;
+
+  SideViewSelectionBoxCreateSelecting._();
+
+  static Serializer<SideViewSelectionBoxCreateSelecting> get serializer =>
+      _$sideViewSelectionBoxCreateSelectingSerializer;
+}
+
+abstract class SideViewSelectionBoxSizeChanged extends Action2
+    implements Built<SideViewSelectionBoxSizeChanged, SideViewSelectionBoxSizeChangedBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewSelectionBoxSizeChanged(Point<num> point) =>
+      SideViewSelectionBoxSizeChanged.from((b) => b..point = point);
+
+  factory SideViewSelectionBoxSizeChanged.from(
+      [void Function(SideViewSelectionBoxSizeChangedBuilder) updates]) = _$SideViewSelectionBoxSizeChanged;
+
+  SideViewSelectionBoxSizeChanged._();
+
+  static Serializer<SideViewSelectionBoxSizeChanged> get serializer =>
+      _$sideViewSelectionBoxSizeChangedSerializer;
+}
+
+abstract class SideViewSelectionBoxRemove extends Action2
+    implements Built<SideViewSelectionBoxRemove, SideViewSelectionBoxRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewSelectionBoxRemove() => SideViewSelectionBoxRemove.from((b) => b);
+
+  factory SideViewSelectionBoxRemove.from([void Function(SideViewSelectionBoxRemoveBuilder) updates]) =
+      _$SideViewSelectionBoxRemove;
+
+  SideViewSelectionBoxRemove._();
+
+  static Serializer<SideViewSelectionBoxRemove> get serializer => _$sideViewSelectionBoxRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Selection box (main view)
+
+abstract class MainViewSelectionBoxCreateToggling extends Action2
+    implements Built<MainViewSelectionBoxCreateToggling, MainViewSelectionBoxCreateTogglingBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MainViewSelectionBoxCreateToggling(Point<num> point) =>
+      MainViewSelectionBoxCreateToggling.from((b) => b..point = point);
+
+  factory MainViewSelectionBoxCreateToggling.from(
+          [void Function(MainViewSelectionBoxCreateTogglingBuilder) updates]) =
+      _$MainViewSelectionBoxCreateToggling;
+
+  MainViewSelectionBoxCreateToggling._();
+
+  static Serializer<MainViewSelectionBoxCreateToggling> get serializer =>
+      _$mainViewSelectionBoxCreateTogglingSerializer;
+}
+
+abstract class MainViewSelectionBoxCreateSelecting extends Action2
+    implements Built<MainViewSelectionBoxCreateSelecting, MainViewSelectionBoxCreateSelectingBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MainViewSelectionBoxCreateSelecting(Point<num> point) =>
+      MainViewSelectionBoxCreateSelecting.from((b) => b..point = point);
+
+  factory MainViewSelectionBoxCreateSelecting.from(
+          [void Function(MainViewSelectionBoxCreateSelectingBuilder) updates]) =
+      _$MainViewSelectionBoxCreateSelecting;
+
+  MainViewSelectionBoxCreateSelecting._();
+
+  static Serializer<MainViewSelectionBoxCreateSelecting> get serializer =>
+      _$mainViewSelectionBoxCreateSelectingSerializer;
+}
+
+abstract class MainViewSelectionBoxSizeChanged extends Action2
+    implements Built<MainViewSelectionBoxSizeChanged, MainViewSelectionBoxSizeChangedBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MainViewSelectionBoxSizeChanged(Point<num> point) =>
+      MainViewSelectionBoxSizeChanged.from((b) => b..point = point);
+
+  factory MainViewSelectionBoxSizeChanged.from(
+      [void Function(MainViewSelectionBoxSizeChangedBuilder) updates]) = _$MainViewSelectionBoxSizeChanged;
+
+  MainViewSelectionBoxSizeChanged._();
+
+  static Serializer<MainViewSelectionBoxSizeChanged> get serializer =>
+      _$mainViewSelectionBoxSizeChangedSerializer;
+}
+
+abstract class MainViewSelectionBoxRemove extends Action2
+    implements Built<MainViewSelectionBoxRemove, MainViewSelectionBoxRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MainViewSelectionBoxRemove() => MainViewSelectionBoxRemove.from((b) => b);
+
+  factory MainViewSelectionBoxRemove.from([void Function(MainViewSelectionBoxRemoveBuilder) updates]) =
+      _$MainViewSelectionBoxRemove;
+
+  MainViewSelectionBoxRemove._();
+
+  static Serializer<MainViewSelectionBoxRemove> get serializer => _$mainViewSelectionBoxRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouse position (side view)
+
+abstract class SideViewMousePositionUpdate extends Action2
+    implements Built<SideViewMousePositionUpdate, SideViewMousePositionUpdateBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewMousePositionUpdate(Point<num> point) =>
+      SideViewMousePositionUpdate.from((b) => b..point = point);
+
+  factory SideViewMousePositionUpdate.from([void Function(SideViewMousePositionUpdateBuilder) updates]) =
+      _$SideViewMousePositionUpdate;
+
+  SideViewMousePositionUpdate._();
+
+  static Serializer<SideViewMousePositionUpdate> get serializer => _$sideViewMousePositionUpdateSerializer;
+}
+
+abstract class SideViewMousePositionRemove extends Action2
+    implements Built<SideViewMousePositionRemove, SideViewMousePositionRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewMousePositionRemove() => SideViewMousePositionRemove.from((b) => b);
+
+  factory SideViewMousePositionRemove.from([void Function(SideViewMousePositionRemoveBuilder) updates]) =
+      _$SideViewMousePositionRemove;
+
+  SideViewMousePositionRemove._();
+
+  static Serializer<SideViewMousePositionRemove> get serializer => _$sideViewMousePositionRemoveSerializer;
+}
+
+//class Actions {
+//  // Save .dna file
+//  *save_dna_file = Action<Null>();
+//
+//  // Load .dna file
+//  *load_dna_file = Action<LoadDNAFileParameters>();
+//
+//  // Mouseover data (main view)
+//  *update_mouseover_data = Action<MouseoverParameters>();
+//  *remove_mouseover_data = Action<Null>();
+//
+//  // Side view position
+//  *update_side_view_mouse_position = Action<Point<num>>();
+//  *remove_side_view_mouse_position = Action<Null>();
+//
+//  // Helix
+//  helix_use = Action<HelixUseActionParameters>();
+//  set_helices = Action<List<Helix>>();
+//  set_helix_rotation = Action<SetHelixRotationActionParameters>();
+//
+//  // Strand
+//  strand_remove = Action<Strand>();
+//  strand_add = Action<Strand>();
+//  strands_remove = Action<Iterable<Strand>>();
+//  strands_add = Action<Iterable<Strand>>();
+//
+//  // Strand UI model
+//  strand_select_toggle = Action<Strand>();
+//  five_prime_select_toggle = Action<BoundSubstrand>();
+//  three_prime_select_toggle = Action<BoundSubstrand>();
+//  loopout_select_toggle = Action<Loopout>();
+//  crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
+//
+//  unselect_all = Action<Null>();
+//  select = Action<Selectable>();
+//  select_all = Action<List<Selectable>>();
+//  unselect = Action<Selectable>();
+//  toggle = Action<Selectable>();
+//  toggle_all = Action<List<Selectable>>();
+//
+//  delete_all = Action<DeleteAllParameters>();
+//
+//  // Selection box
+//  *create_selection_box_toggling = Action<Point<num>>();
+//  *create_selection_box_selecting = Action<Point<num>>();
+//  *selection_box_size_changed = Action<Point<num>>();
+//  *remove_selection_box = Action<Null>();
+//
+//  // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
+//  *set_error_message = Action<String>();
+//
+//  // Edit mode
+//  set_edit_mode = Action<EditModeChoice>();
+//
+//  // Menu
+//  *set_show_dna = Action<bool>();
+//  *set_show_mismatches = Action<bool>();
+//  *set_show_editor = Action<bool>();
+//
+//  // Select modes
+//  *toggle_select_mode = Action<SelectModeChoice>();
+//  *set_select_modes = Action<List<SelectModeChoice>>();
+//
+//  // all reversible actions go through this Action
+//  reversible_action = Action<ReversibleActionPack>();
+//
 //}
-
-/// Represents [Action]s to do in a batch. Useful for having a single action to undo/redo that is a composite
-/// of many small ones, so the user doesn't have to press ctrl+Z multiple times to undo them all.
-/// For example, deleting a [Helix] with [Strand]s on it implies the [Strand]s should be deleted first.
-class BatchActionPack extends ReversibleActionPack {
-  List<ReversibleActionPack> action_packs;
-
-  BatchActionPack(this.action_packs) : super(null, null);
-
-  apply() async {
-    for (var action_pack in this.action_packs) {
-      await action_pack.apply();
-    }
-  }
-
-  BatchActionPack reverse() {
-    // put Actions in reverse order, and reverse each Action
-    List<ReversibleActionPack> reverse = [for (var action_pack in this.action_packs.reversed) action_pack.reverse()];
-    return BatchActionPack(reverse);
-  }
-}
-
-class Actions {
-  // all reversible actions go through this Action
-  static final reversible_action = Action<ReversibleActionPack>();
-
-  // Save .dna file
-  static final save_dna_file = Action<Null>();
-
-  // Load .dna file
-  static final load_dna_file = Action<LoadDNAFileParameters>();
-
-  // Mouseover data (main view)
-  static final update_mouseover_data = Action<MouseoverParameters>();
-  static final remove_mouseover_data = Action<Null>();
-
-  // Side view position
-  static final update_side_view_mouse_position = Action<Point<num>>();
-  static final remove_side_view_mouse_position = Action<Null>();
-
-  // Helix
-  static final helix_use = Action<HelixUseActionParameters>();
-  static final set_helices = Action<List<Helix>>();
-  static final set_helix_rotation = Action<SetHelixRotationActionParameters>();
-
-  // Strand
-  static final strand_remove = Action<Strand>();
-  static final strand_add = Action<Strand>();
-  static final strands_remove = Action<Iterable<Strand>>();
-  static final strands_add = Action<Iterable<Strand>>();
-
-  // Strand UI model
-  static final strand_select_toggle = Action<Strand>();
-  static final five_prime_select_toggle = Action<BoundSubstrand>();
-  static final three_prime_select_toggle = Action<BoundSubstrand>();
-  static final loopout_select_toggle = Action<Loopout>();
-  static final crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
-
-  static final unselect_all = Action<Null>();
-  static final select = Action<Selectable>();
-  static final select_all = Action<List<Selectable>>();
-  static final unselect = Action<Selectable>();
-  static final toggle = Action<Selectable>();
-  static final toggle_all = Action<List<Selectable>>();
-
-  static final delete_all = Action<DeleteAllParameters>();
-
-  // Selection rectangle
-  static final create_selection_box_toggling = Action<Point<num>>();
-  static final create_selection_box_selecting = Action<Point<num>>();
-  static final selection_box_size_changed = Action<Point<num>>();
-  static final remove_selection_box = Action<Null>();
-
-  // Errors (so there's no DNADesign to display, e.g., parsing error reading JSON file)
-  static final set_error_message = Action<String>();
-
-  // Edit mode
-  static final set_edit_mode = Action<EditModeChoice>();
-
-  // Menu
-  static final set_show_dna = Action<bool>();
-  static final set_show_mismatches = Action<bool>();
-  static final set_show_editor = Action<bool>();
-
-  // Select modes
-  static final toggle_select_mode = Action<SelectModeChoice>();
-  static final set_select_modes = Action<List<SelectModeChoice>>();
-//  static final add_select_mode = Action<SelectModeChoice>();
-//  static final remove_select_mode = Action<SelectModeChoice>();
-}
-
-/// w_flux [Store] that can listen specifically to [Action]s whose payload is itself and only calls trigger() for those.
-/// This avoids unnecessary re-rendering when a select or toggle action is dispatched, so only the element that was
-/// selected or unselected is rendered.
-class SelfListeningStore extends Store {
-  /// execute on_action if payload == this object
-  trigger_on_action_if_this<T extends SelfListeningStore>(Action<T> action, [FutureOr<dynamic> on_action(T payload)]) {
-    action.listen((the_payload) {
-      if (the_payload == this) {
-        on_action.call(the_payload);
-        this.trigger();
-      }
-    });
-  }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-// Load .dna file
-class LoadDNAFileParameters {
-  final String content;
-  final String filename;
-
-  LoadDNAFileParameters(this.content, this.filename);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-// Strand actions
-class StrandRemoveActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
-  Strand strand;
-
-  StrandRemoveActionPack(this.strand) : super(Actions.strand_remove, strand);
-
-  @override
-  ReversibleActionPack<Action<Strand>, Strand> reverse() {
-    return StrandAddActionPack(this.strand);
-  }
-}
-
-class StrandAddActionPack extends ReversibleActionPack<Action<Strand>, Strand> {
-  Strand strand;
-
-  StrandAddActionPack(this.strand) : super(Actions.strand_add, strand);
-
-  @override
-  ReversibleActionPack<Action<Strand>, Strand> reverse() {
-    return StrandRemoveActionPack(this.strand);
-  }
-}
-
-class StrandsRemoveActionPack extends ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> {
-  Iterable<Strand> strands;
-
-  StrandsRemoveActionPack(this.strands) : super(Actions.strands_remove, strands);
-
-  @override
-  ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> reverse() {
-    return StrandsAddActionPack(this.strands);
-  }
-}
-
-class StrandsAddActionPack extends ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> {
-  Iterable<Strand> strands;
-
-  StrandsAddActionPack(this.strands) : super(Actions.strands_add, strands);
-
-  @override
-  ReversibleActionPack<Action<Iterable<Strand>>, Iterable<Strand>> reverse() {
-    return StrandsRemoveActionPack(this.strands);
-  }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix actions
-
-class SetHelixRotationActionParameters {
-  final int idx;
-  final int anchor;
-  final num rotation;
-
-  final int old_anchor;
-  final num old_rotation;
-
-  SetHelixRotationActionParameters(this.idx, this.anchor, this.rotation, this.old_anchor, this.old_rotation);
-
-  SetHelixRotationActionParameters reverse() =>
-      SetHelixRotationActionParameters(this.idx, this.old_anchor, this.old_rotation, this.anchor, this.rotation);
-}
-
-class SetHelixRotationActionPack
-    extends ReversibleActionPack<Action<SetHelixRotationActionParameters>, SetHelixRotationActionParameters> {
-  SetHelixRotationActionParameters params;
-
-  SetHelixRotationActionPack(this.params) : super(Actions.set_helix_rotation, params);
-
-  @override
-  SetHelixRotationActionPack reverse() => SetHelixRotationActionPack(this.params.reverse());
-}
-
-class HelixUseActionParameters {
-  final bool create;
-  final GridPosition grid_position;
-  final int idx;
-  final int max_offset;
-  final int min_offset;
-  final int major_tick_distance;
-  final List<int> major_ticks;
-
-  HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset,
-      {this.min_offset = 0, this.major_tick_distance = -1, this.major_ticks = null});
-
-  HelixUseActionParameters reverse() =>
-      HelixUseActionParameters(!this.create, this.grid_position, this.idx, this.max_offset,
-          min_offset: this.min_offset, major_tick_distance: this.major_tick_distance, major_ticks: this.major_ticks);
-}
-
-class HelixUseActionPack extends ReversibleActionPack<Action<HelixUseActionParameters>, HelixUseActionParameters> {
-  HelixUseActionParameters params;
-
-  HelixUseActionPack(this.params) : super(Actions.helix_use, params);
-
-  @override
-  HelixUseActionPack reverse() => HelixUseActionPack(this.params.reverse());
-}

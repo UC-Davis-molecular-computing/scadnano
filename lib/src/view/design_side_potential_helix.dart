@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../dispatcher/actions.dart';
-import '../model/helix.dart';
+import '../dispatcher/actions_OLD.dart';
+import '../model/grid.dart';
+import '../model/grid_position.dart';
 import '../model/model_ui_side.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
@@ -15,21 +16,21 @@ part 'design_side_potential_helix.over_react.g.dart';
 UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSidePotentialHelix;
 
 @Props()
-class _$DesignSidePotentialHelixProps
-    extends FluxUiProps<SideViewMousePositionStore, SideViewMousePositionStore> {
+class _$DesignSidePotentialHelixProps extends UiProps { //FluxUiProps<SideViewMousePositionStore, SideViewMousePositionStore> {
   Grid grid;
   Set<GridPosition> existing_helix_grid_positions;
+  Point<num> mouse_svg_pos;
 }
 
-@Component()
-class DesignSidePotentialHelixComponent extends FluxUiComponent<DesignSidePotentialHelixProps> {
+@Component2()
+class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> { // FluxUiComponent<DesignSidePotentialHelixProps> {
   @override
   Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    Point<num> svg_pos = this.props.store.pos;
-    if (svg_pos == null) {
+    Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
+    if (mouse_svg_pos == null) {
       return null;
     }
 
@@ -41,7 +42,7 @@ class DesignSidePotentialHelixComponent extends FluxUiComponent<DesignSidePotent
     }
 
     if (grid == Grid.square) {
-      GridPosition grid_pos = util.side_view_svg_to_grid(grid, svg_pos);
+      GridPosition grid_pos = util.side_view_svg_to_grid(grid, mouse_svg_pos);
       if (this.props.existing_helix_grid_positions.contains(grid_pos)) {
         return null;
       } else {

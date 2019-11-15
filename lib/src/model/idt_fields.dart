@@ -1,0 +1,74 @@
+import '../constants.dart' as constants;
+import '../util.dart' as util;
+import '../json_serializable.dart';
+import 'dna_design.dart';
+
+import 'package:built_value/built_value.dart';
+
+part 'idt_fields.g.dart';
+
+abstract class IDTFields implements Built<IDTFields, IDTFieldsBuilder> {
+  IDTFields._();
+
+  factory IDTFields([void Function(IDTFieldsBuilder) updates]) = _$IDTFields;
+
+//}
+
+//class IDTFields implements JSONSerializable {
+  String get name;
+
+  String get scale;
+
+  String get purification;
+
+  @nullable
+  String get plate;
+
+  @nullable
+  String get well;
+
+//  IDTFields(this.name, this.scale, this.purification);
+
+  Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
+    Map<String, dynamic> json_map = {
+      constants.idt_name_key: this.name,
+      constants.idt_scale_key: this.scale,
+      constants.idt_purification_key: this.purification
+    };
+    if (this.plate != null) {
+      json_map[constants.idt_plate_key] = this.plate;
+    }
+    if (this.well != null) {
+      json_map[constants.idt_well_key] = this.well;
+    }
+    return json_map;
+  }
+
+  static IDTFields from_json(Map<String, dynamic> json_map) {
+    var field_name = 'IDTFields';
+    var name = util.get_value(json_map, constants.idt_name_key, field_name);
+    var scale = util.get_value(json_map, constants.idt_scale_key, field_name);
+    var purification = util.get_value(json_map, constants.idt_purification_key, field_name);
+    var plate, well;
+    if (json_map.containsKey(constants.idt_plate_key)) {
+      plate = json_map[constants.idt_plate_key];
+    }
+    if (json_map.containsKey(constants.idt_well_key)) {
+      well = json_map[constants.idt_well_key];
+    }
+    if (plate == null && well != null) {
+      throw IllegalDNADesignError("cannot set IDTFields.well to ${well} when plate is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
+    if (plate != null && well == null) {
+      throw IllegalDNADesignError("cannot set IDTFields.plate to ${plate} when well is null\n"
+          "this occurred when reading IDTFields entry:\n${json_map}");
+    }
+    return new IDTFields((idt) => idt
+      ..name = name
+      ..scale = scale
+      ..purification = purification
+      ..plate = plate
+      ..well = well);
+  }
+}

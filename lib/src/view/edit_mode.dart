@@ -1,5 +1,5 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
+import 'package:scadnano/src/dispatcher/actions_OLD.dart';
 import 'package:scadnano/src/model/edit_mode.dart';
 
 part 'edit_mode.over_react.g.dart';
@@ -22,7 +22,7 @@ class EditModeComponent extends FluxUiComponent<EditModeProps> {
 
   ReactElement _button_for_choice(EditModeChoice mode) {
     return (Dom.button()
-      ..onClick = ((_) => Actions.set_edit_mode(mode))
+      ..onClick = ((_) => Actions_OLD.set_edit_mode(mode))
       ..className = 'mode-button ' +
           (this.props.store.mode == mode ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
       ..key = mode.name)(mode.name);

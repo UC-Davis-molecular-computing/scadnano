@@ -1,4 +1,5 @@
 import 'package:over_react/over_react.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../model/composite_stores.dart';
 import '../model/strand.dart';
@@ -10,21 +11,27 @@ part 'design_main_dna_sequences.over_react.g.dart';
 UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
 
 @Props()
-class _$DesignMainDNASequencesProps extends FluxUiProps<DNASequencesStore, DNASequencesStore> {}
+class _$DesignMainDNASequencesProps extends UiProps { // FluxUiProps<DNASequencesStore, DNASequencesStore> {
+  bool show_dna;
+  BuiltList<Strand> strands;
+}
 
-@Component()
-class DesignMainDNASequencesComponent extends FluxUiComponent<DesignMainDNASequencesProps> {
+@Component2()
+class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> { // FluxUiComponent<DesignMainDNASequencesProps> {
   @override
   Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    if (!this.props.store.show_dna_store.show_dna) {
+    bool show_dna = this.props.show_dna;
+    BuiltList<Strand> strands = this.props.strands;
+
+    if (!show_dna) {
       return null;
     } else {
       return (Dom.g()
         ..className = 'dna-sequences-main-view')([
-        for (Strand strand in this.props.store.strands_store.strands)
+        for (Strand strand in strands)
           if (strand.dna_sequence != null)
             (DesignMainDNASequence()
               ..key = strand.toString()
@@ -34,3 +41,4 @@ class DesignMainDNASequencesComponent extends FluxUiComponent<DesignMainDNASeque
     }
   }
 }
+

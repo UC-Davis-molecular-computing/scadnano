@@ -1,10 +1,11 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 import '../model/helix.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
@@ -20,6 +21,7 @@ UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMain
 @Props()
 class _$DesignMainBoundSubstrandProps extends UiProps {
   BoundSubstrand substrand;
+  Color color;
 }
 
 // There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
@@ -27,23 +29,22 @@ class _$DesignMainBoundSubstrandProps extends UiProps {
 const _OPTIMIZE = true;
 //const _OPTIMIZE = false;
 
-@Component()
-class DesignMainBoundSubstrandComponent extends UiComponent<DesignMainBoundSubstrandProps> {
-  @override
-  Map getDefaultProps() => (newProps());
+@Component2()
+class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps> {
+//  @override
+//  Map getDefaultProps() => (newProps());
 
-
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    BoundSubstrand substrand = props.substrand;
-    BoundSubstrand next_substrand = nextProps['DesignMainStrandProps.substrand'];
-
-    bool should = substrand != next_substrand;
-//    print('shouldComponentUpdate() for strand ${strand.toString()}');
-//    print(' prev_selected: $prev_selected');
-//    print(' next_selected: $next_selected');
-    return should;
-  }
+//  @override
+//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+//    BoundSubstrand substrand = props.substrand;
+//    BoundSubstrand next_substrand = nextProps['DesignMainStrandProps.substrand'];
+//
+//    bool should = substrand != next_substrand;
+////    print('shouldComponentUpdate() for strand ${strand.toString()}');
+////    print(' prev_selected: $prev_selected');
+////    print(' next_selected: $next_selected');
+//    return should;
+//  }
 
 
   @override
@@ -56,9 +57,9 @@ class DesignMainBoundSubstrandComponent extends UiComponent<DesignMainBoundSubst
     Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
     Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
 
-    ReactElement substrand_line = (Dom.line()
+    return (Dom.line()
       ..onMouseMove = ((event) => update_mouseover(event, helix))
-      ..stroke = substrand.strand.color.toRgbColor().toCssString()
+      ..stroke = props.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
       ..x2 = '${end_svg.x}'
@@ -66,6 +67,5 @@ class DesignMainBoundSubstrandComponent extends UiComponent<DesignMainBoundSubst
       ..key = id
       ..id = id
       ..className = 'substrand-line')();
-    return substrand_line;
   }
 }

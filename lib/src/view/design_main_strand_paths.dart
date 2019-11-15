@@ -16,7 +16,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
-import 'design_main_strand_paths_crossover.dart';
+import 'design_main_strand_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
@@ -28,10 +28,10 @@ class _$DesignMainStrandPathsProps extends UiProps {
   Strand strand;
 }
 
-@Component()
-class DesignMainStrandPathsComponent extends UiComponent<DesignMainStrandPathsProps> {
-  @override
-  Map getDefaultProps() => (newProps());
+@Component2()
+class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> {
+//  @override
+//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
@@ -56,38 +56,43 @@ List<ReactElement> _strand_paths(Strand strand) {
     substrand = strand.substrands[i];
 
     if (substrand.is_bound_substrand()) {
-
       paths.add((DesignMainBoundSubstrand()
 //        ..store = substrand
         ..substrand = substrand
-        ..key = "bound-substrand-$i"
-      )());
+        ..color = strand.color
+        ..key = "bound-substrand-$i")());
 
       ends.add((DesignMain5pEnd()
-        ..store = substrand
+//        ..store = substrand
+        ..substrand = substrand
+        ..color = strand.color
         ..is_first_substrand = (i == 0)
         ..key = "5'-end-$i")());
 
       ends.add((DesignMain3pEnd()
-        ..store = substrand
+//        ..store = substrand
+        ..substrand = substrand
+        ..color = strand.color
         ..is_last_substrand = (i == strand.substrands.length - 1)
         ..key = "3'-end-$i")());
 
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand()) {
         BoundSubstrand prev_ss = substrand;
         BoundSubstrand next_ss = strand.substrands[i + 1];
-        var pair = Tuple2<BoundSubstrand,BoundSubstrand>(prev_ss, next_ss);
-        Crossover crossover = strand.crossovers[pair];
+        Crossover crossover = Crossover((c) => c
+          ..prev_substrand = prev_ss.toBuilder()
+          ..next_substrand = next_ss.toBuilder());
 
-        paths.add((DesignMainStrandPathsCrossover()
-          ..store = crossover
+        paths.add((DesignMainStrandCrossover()
+          ..crossover = crossover
           ..strand = strand
           ..key = 'crossover-paths-$i')());
       }
-
     } else {
       paths.add((DesignMainLoopout()
-        ..store = substrand
+//        ..store = substrand
+        ..loopout = substrand
+        ..color = strand.color
         ..substrand_idx = i
         ..key = "loopout-$i")());
     }

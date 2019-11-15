@@ -5,8 +5,11 @@ import 'dart:html';
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:scadnano/src/model/model.dart';
+import 'package:over_react/over_react_redux.dart';
+import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/select_mode_state.dart';
 
+import '../model/model.dart';
 import 'design.dart';
 import 'edit_mode.dart';
 import 'select_mode.dart';
@@ -44,8 +47,6 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 class View {
   final DivElement root_element;
 
-  final Model model;
-
   DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINER_ID};
   DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
@@ -59,9 +60,11 @@ class View {
   DesignViewComponent design_view;
   EditorViewComponent editor_view;
 
-  bool currently_showing_editor = app.model.show_editor;
+  bool currently_showing_editor;
 
-  View(this.root_element, this.model) {
+  View(this.root_element) {
+    currently_showing_editor = app.model.ui_model.show_editor;
+
     this.root_element.children.add(menu_element);
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
@@ -78,7 +81,7 @@ class View {
 //    this.nonmenu_panes_container_element.children.add(edit_mode_element);
 //    this.nonmenu_panes_container_element.children.add(select_mode_element);
 
-    this.design_view = DesignViewComponent(design_element, this.model);
+    this.design_view = DesignViewComponent(design_element);
 
 //    this.editor_view = EditorViewComponent(editor_element);
 
@@ -93,10 +96,38 @@ class View {
   /// using the notifier streams defined in Controller.
   render() {
 //    this.update_showing_editor();
-    react_dom.render((Menu()..store = app.model.show_store)(), this.menu_element);
-    this.design_view.render();
-    react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
-    react_dom.render((SelectMode()..store = app.model.select_mode_store)(), this.select_mode_element);
+
+//    react_dom.render(
+//      (Menu()
+//        ..show_dna = app.model.show_dna
+//        ..show_mismatches = app.model.show_dna)(),
+//      this.menu_element,
+//    );
+
+    react_dom.render(
+      ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedMenu()(),
+        ),
+      ),
+      this.menu_element,
+    );
+
+    this.design_view.render(app.model);
+
+//    react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
+
+    react_dom.render(
+      ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedSelectMode()(),
+        ),
+      ),
+      this.select_mode_element,
+    );
+
+//    react_dom.render(
+//        (SelectMode()..select_mode_state = app.model.select_mode_store)(), this.select_mode_element);
 
 //    if (app.model.show_editor) {
 //      this.editor_view.render();

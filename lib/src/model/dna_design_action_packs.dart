@@ -1,11 +1,12 @@
 import 'package:w_flux/src/action.dart';
 
 import '../app.dart';
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 
 import 'bound_substrand.dart';
 import 'crossover.dart';
 import 'dna_design.dart';
+import 'dna_end.dart';
 import 'helix.dart';
 import 'loopout.dart';
 import 'selectable.dart';
@@ -40,7 +41,7 @@ class DeleteAllActionPack extends ReversibleActionPack<Action<DeleteAllParameter
 
   bool get reverse_deletion => params.reverse_deletion;
 
-  DeleteAllActionPack(this.params) : super(Actions.delete_all, params);
+  DeleteAllActionPack(this.params) : super(Actions_OLD.delete_all, params);
 
   @override
   DeleteAllActionPack reverse() {
@@ -51,17 +52,18 @@ class DeleteAllActionPack extends ReversibleActionPack<Action<DeleteAllParameter
   }
 
   delete_strand(Strand strand) {
-    for (var substrand in strand.bound_substrands()) {
-      Helix helix = dna_design.helices[substrand.helix];
-      helix.bound_substrands().remove(substrand);
-    }
-    dna_design.strands.remove(strand);
+    //TODO: implement this
+//    for (var substrand in strand.bound_substrands()) {
+//      Helix helix = dna_design.helices[substrand.helix];
+//      dna_design.substrands_on_helix(helix.idx).remove(substrand);
+//    }
+//    dna_design.strands.remove(strand);
   }
 
   delete_crossover(Crossover crossover) {
     BoundSubstrand prev_substrand = crossover.prev_substrand;
     BoundSubstrand next_substrand = crossover.next_substrand;
-    Strand strand = prev_substrand.strand;
+//    Strand strand = prev_substrand.strand;
 //    Strand strand_next = Strand(sub);
     //TODO: finish this
   }
@@ -102,7 +104,9 @@ split_selectables_by_type(List<Selectable> selected_items, Set<Strand> strands, 
     } else if (selectable is DNAEnd) {
       // deleting end means deleting whole substrand it's on
       DNAEnd end = selectable;
-      substrands.add(end.substrand);
+      BoundSubstrand substrand = app.model.dna_design.end_to_substrand[end];
+      substrands.add(substrand);
+//      substrands.add(end.substrand);
     }
   }
 }
@@ -116,13 +120,19 @@ trim_selectables_to_delete(
   // is easier to read.
 
   // remove parts of Strands that will be removed
-  crossovers.removeWhere((crossover) => strands.contains(crossover.prev_substrand.strand));
-  loopouts.removeWhere((loopout) => strands.contains(loopout.strand));
-  substrands.removeWhere((substrand) => strands.contains(substrand.strand));
+//  crossovers.removeWhere((crossover) => strands.contains(crossover.prev_substrand.strand));
+//  loopouts.removeWhere((loopout) => strands.contains(loopout.strand));
+//  substrands.removeWhere((substrand) => strands.contains(substrand.strand));
+  var substrands_to_remove = {for (var strand in strands) for (var ss in strand.bound_substrands()) ss};
+  var loopouts_to_remove = {for (var strand in strands) for (var l in strand.loopouts()) l};
+  var crossovers_to_remove = {for (var strand in strands) for (var c in strand.crossovers) c};
+  substrands.removeAll(substrands_to_remove);
+  loopouts.removeAll(loopouts_to_remove);
+  crossovers.removeAll(crossovers_to_remove);
 
   // remove crossovers and loopouts whose adjacent substrands will be removed
   crossovers.removeWhere((crossover) =>
       substrands.contains(crossover.prev_substrand) || substrands.contains(crossover.next_substrand));
   loopouts.removeWhere((loopout) =>
-      substrands.contains(loopout.prev_substrand()) || substrands.contains(loopout.next_substrand()));
+      substrands.contains(loopout.prev_substrand) || substrands.contains(loopout.next_substrand));
 }

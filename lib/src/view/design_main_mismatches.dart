@@ -1,5 +1,5 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/composite_stores.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../model/dna_design.dart';
 import '../app.dart';
@@ -13,31 +13,35 @@ part 'design_main_mismatches.over_react.g.dart';
 UiFactory<DesignMainMismatchesProps> DesignMainMismatches = _$DesignMainMismatches;
 
 @Props()
-class _$DesignMainMismatchesProps extends FluxUiProps<MismatchesStore, MismatchesStore> {
+class _$DesignMainMismatchesProps extends UiProps { //FluxUiProps<MismatchesStore, MismatchesStore> {
   bool show_mismatches;
+  BuiltList<Strand> strands;
 }
 
-@Component()
-class DesignMainMismatchesComponent extends FluxUiComponent<DesignMainMismatchesProps> {
-  @override
-  Map getDefaultProps() => (newProps());
+@Component2()
+class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> { // FluxUiComponent<DesignMainMismatchesProps> {
+//  @override
+//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    if (!this.props.store.show_mismatches_store.show_mismatches) {
+    bool show_mismatches = this.props.show_mismatches;
+    BuiltList<Strand> strands = this.props.strands;
+
+    if (!show_mismatches) {
       return null;
     } else {
-      List<ReactElement> mismatch_components = this._create_mismatch_components();
+      List<ReactElement> mismatch_components = this._create_mismatch_components(strands);
       return (Dom.g()..className = 'mismatches-main-view')(mismatch_components);
     }
   }
 
-  List<ReactElement> _create_mismatch_components() {
+  List<ReactElement> _create_mismatch_components(BuiltList<Strand> strands) {
     List<ReactElement> mismatch_components = [];
     Set<String> keys = {};
-    for (Strand strand in this.props.store.strands_store.strands) {
+    for (Strand strand in strands) {
       for (BoundSubstrand substrand in strand.bound_substrands()) {
-        List<Mismatch> mismatches = app.model.dna_design.mismatches_on_substrand(substrand);
+        BuiltList<Mismatch> mismatches = app.model.dna_design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
           var helix = app.model.dna_design.helices[substrand.helix];
           var base_svg_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);

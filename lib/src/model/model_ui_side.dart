@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:w_flux/w_flux.dart';
 
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 import 'helix.dart';
 
 class SideViewSelection {
@@ -11,18 +11,19 @@ class SideViewSelection {
 
 class SideViewUIModel {
   SideViewSelection selection = SideViewSelection();
-  SideViewMousePositionStore side_view_mouse_position_store = SideViewMousePositionStore();
+//  SideViewMousePositionStore side_view_mouse_position_store = SideViewMousePositionStore();
 }
 
-class SideViewMousePositionStore extends Store {
-  Point<num> pos = null;
-
-  SideViewMousePositionStore() {
-    this.triggerOnActionV2(Actions.update_side_view_mouse_position, (point) {
-      this.pos = point;
-    });
-    this.triggerOnActionV2(Actions.remove_side_view_mouse_position, (_) {
-      this.pos = null;
-    });
-  }
-}
+//class SideViewMousePositionStore extends Store {
+//  Point<num> pos = null;
+//
+//  SideViewMousePositionStore() {
+//    //FIXME: implement these
+//    this.triggerOnActionV2(Actions.update_side_view_mouse_position, (point) {
+//      this.pos = point;
+//    });
+//    this.triggerOnActionV2(Actions.remove_side_view_mouse_position, (_) {
+//      this.pos = null;
+//    });
+//  }
+//}

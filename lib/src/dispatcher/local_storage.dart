@@ -1,42 +1,53 @@
 import 'dart:convert';
 import 'dart:html';
 
-import 'package:scadnano/src/model/edit_mode.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:redux/redux.dart';
 
+import '../model/edit_mode.dart';
+import '../model/model.dart';
+import '../model/select_mode.dart';
 import '../app.dart';
-import 'actions.dart';
+import 'actions.dart' as actions;
+
+part 'local_storage.g.dart';
 
 //TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
 
-/// Aspects of model that can be stored in localStorage.
-/// This constitutes more than is saved in jsonStorage, including things like
-/// parts of the *UIModels, i.e., where certain visual elements are located.
-class Storable {
-  final String key;
+/// Aspects of model that can be stored in localStorage. (More like a StorableType; the thing stored is
+/// somewhere in the Model, and this is an "ID" associated with it.
+class Storable extends EnumClass {
+  const Storable._(String name) : super(name);
 
-  Storable(this.key);
+  static const Storable show_dna = _$show_dna;
+  static const Storable show_mismatches = _$show_mismatches;
+  static const Storable show_editor = _$show_editor;
+  static const Storable edit_mode = _$edit_mode;
+  static const Storable select_modes = _$select_modes;
 
-  static final show_dna = Storable('show_dna');
-  static final edit_mode = Storable('edit_mode');
-  static final select_mode = Storable('select_mode');
+  static BuiltSet<Storable> get values => _$values;
 
-  static final values = [show_dna, edit_mode, select_mode];
+  static Storable valueOf(String name) => _$valueOf(name);
 }
 
 const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 save(Storable storable) {
-  String storable_key = _LOCAL_STORAGE_PREFIX + storable.key;
+  String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
+  String value_string;
+
   if (storable == Storable.show_dna) {
-    window.localStorage[storable_key] = app.model.main_view_ui_model.show_dna.toString();
-
+    value_string = app.model.ui_model.show_dna.toString();
+  } else if (storable == Storable.show_mismatches) {
+    value_string = app.model.ui_model.show_mismatches.toString();
   } else if (storable == Storable.edit_mode) {
-    window.localStorage[storable_key] = app.model.edit_mode_store.to_json();
-
-  } else if (storable == Storable.select_mode) {
-    window.localStorage[storable_key] = app.model.select_mode_store.to_json();
+    value_string = app.model.ui_model.show_editor.toString();
+  } else if (storable == Storable.select_modes) {
+    value_string = app.model.ui_model.select_mode_state.to_json();
   }
+
+  window.localStorage[storable_key] = value_string;
 }
 
 restore(Storable storable) {
@@ -48,22 +59,34 @@ restore(Storable storable) {
 }
 
 _restore(Storable storable) {
-  String storable_key = _LOCAL_STORAGE_PREFIX + storable.key;
+  String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
   if (window.localStorage.containsKey(storable_key)) {
     var value = window.localStorage[storable_key];
 
+    actions.Action2 action = null;
+
     if (storable == Storable.show_dna) {
-      Actions.set_show_dna(value == 'true');
+//      action = actions.SetShowDNA.from((s) => s..show_dna = (value == 'true'));
+      action = actions.SetShowDNA(value == 'true');
+
+    } else if (storable == Storable.show_mismatches) {
+      action = actions.SetShowMismatches(value == 'true');
+
+    } else if (storable == Storable.show_editor) {
+      action = actions.SetShowEditor(value == 'true');
 
     } else if (storable == Storable.edit_mode) {
       EditModeChoice mode = EditModeChoice.from_json(value);
-      Actions.set_edit_mode(mode);
+      //FIXME: implement this
 
-    } else if (storable == Storable.select_mode) {
+    } else if (storable == Storable.select_modes) {
       List<dynamic> mode_names = jsonDecode(value);
       List<SelectModeChoice> modes = mode_names.map((name) => SelectModeChoice.from_json(name)).toList();
-      Actions.set_select_modes(modes);
+      action = actions.SetSelectModes(SetBuilder<SelectModeChoice>(modes));
+    }
 
+    if (action != null) {
+      app.store.dispatch(action);
     }
   }
 }
@@ -77,5 +100,14 @@ save_all_local_storage() {
 restore_all_local_storage() {
   for (Storable storable in Storable.values) {
     restore(storable);
+  }
+}
+
+middleware_local_storage(Store<Model> store, dynamic action, NextDispatcher next) {
+  next(action);
+  if (action is actions.StorableAction) {
+    for (var storable in action.storables()) {
+      save(storable);
+    }
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:tuple/tuple.dart';
 
-import '../dispatcher/actions.dart';
+import '../dispatcher/actions_OLD.dart';
 import '../model/select_mode.dart';
 import '../app.dart';
 import '../model/strand.dart';
@@ -31,11 +32,12 @@ class _$DesignMainStrandProps extends UiProps {
   bool selected; // needed separately to compare in shouldComponentUpdated, since Strand is mutated in place
 }
 
-@Component()
-class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
+@Component2()
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   @override
   Map getDefaultProps() => (newProps()..selected = false);
 
+  //TODO: this shouldn't be necessary with Redux/React
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
     Strand strand = props.strand;
@@ -52,7 +54,6 @@ class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
 
   @override
   render() {
-//    Strand strand = this.props.store;
     Strand strand = this.props.strand;
 //    print('DesignMainStrand.render(): ${strand.toString()}');
 
@@ -61,7 +62,7 @@ class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
     } else {
       //TODO: make strand selectable, but decide how it will interact with selecting other elements.
       var classname = 'strand';
-      if (app.model.select_mode_store.modes.contains(SelectModeChoice.strand)) {
+      if (app.model.ui_model.select_mode_state.modes.contains(SelectModeChoice.strand)) {
         classname += ' selectable';
       }
 //      if (state.selected) {
@@ -70,11 +71,10 @@ class DesignMainStrandComponent extends UiComponent<DesignMainStrandProps> {
       }
 
       var strand_id = strand.id();
-      var attr = Dom.g()
+      return (Dom.g()
         ..id = strand_id
-        ..className = classname;
-      attr.addProp('onPointerDown', strand.handle_selection);
-      return attr([
+        ..onPointerDown = strand.handle_selection
+        ..className = classname)([
         (DesignMainStrandPaths()
           ..strand = strand
           ..key = 'strand-paths')(),
@@ -90,7 +90,7 @@ List<ReactElement> _insertion_paths(Strand strand) {
   for (BoundSubstrand substrand in strand.bound_substrands()) {
     for (var insertion in substrand.insertions) {
       int offset = insertion.item1;
-      ReactElement insertion_path = _insertion_path(substrand, offset);
+      ReactElement insertion_path = _insertion_path(substrand, offset, strand.color);
       ReactElement text_num_insertions = _svg_text_number_of_insertions(insertion, substrand, offset);
       paths.add(insertion_path);
       paths.add(text_num_insertions);
@@ -99,7 +99,7 @@ List<ReactElement> _insertion_paths(Strand strand) {
   return paths;
 }
 
-ReactElement _insertion_path(BoundSubstrand substrand, int offset) {
+ReactElement _insertion_path(BoundSubstrand substrand, int offset, Color color) {
   var helix = app.model.dna_design.helices[substrand.helix];
   Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
 
@@ -130,7 +130,7 @@ ReactElement _insertion_path(BoundSubstrand substrand, int offset) {
     ..key = id
     ..id = id
     ..className = 'insertion-line'
-    ..stroke = substrand.strand.color.toRgbColor().toCssString()
+    ..stroke = color.toRgbColor().toCssString()
     ..fill = 'none'
     ..d = 'M $x0 $y0 '
         'C $x1 $y1, $x2 $y2, $x3 $y2 '
@@ -138,8 +138,7 @@ ReactElement _insertion_path(BoundSubstrand substrand, int offset) {
   return insertion_path;
 }
 
-ReactElement _svg_text_number_of_insertions(
-    Tuple2<int, int> insertion, BoundSubstrand substrand, int offset) {
+ReactElement _svg_text_number_of_insertions(Tuple2<int, int> insertion, BoundSubstrand substrand, int offset) {
   // write number of insertions inside insertion loop
   int length = insertion.item2;
 
@@ -152,8 +151,8 @@ ReactElement _svg_text_number_of_insertions(
   String key = 'num-insertion-H${substrand.helix}-${offset}';
   SvgProps text_path_props = Dom.textPath()
     ..className = 'insertion-length'
+    ..startOffset = '50%'
     ..href = '#${util.id_insertion(substrand, offset)}';
-  text_path_props.addProp('startOffset', '50%');
   return (Dom.text()
     ..key = key
     ..id = key

@@ -1,5 +1,11 @@
-scp build/* doty@set.cs.ucdavis.edu:public_html/scadnano/
-scp build/examples/*.py doty@set.cs.ucdavis.edu:public_html/scadnano/examples/
-scp build/examples/output_designs/*.dna doty@set.cs.ucdavis.edu:public_html/scadnano/examples/output_designs/
-scp build/external-libs/* doty@set.cs.ucdavis.edu:public_html/scadnano/external-libs/
-scp build/images/* doty@set.cs.ucdavis.edu:public_html/scadnano/images/
+source ./define_root_dir.sh
+
+UP_DIR="$ROOT_DIR/"
+
+echo uploading to $UP_DIR
+
+scp build/* "$UP_DIR"
+scp build/examples/*.py $UP_DIR
+scp build/examples/output_designs/*.dna $UP_DIR
+scp build/external-libs/* $UP_DIR
+scp build/images/* $UP_DIR

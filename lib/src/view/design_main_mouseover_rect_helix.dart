@@ -4,13 +4,19 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/model/mouseover_data.dart';
 import 'package:tuple/tuple.dart';
+import 'package:built_collection/built_collection.dart';
 
+import '../model/dna_design.dart';
+import '../model/model.dart';
+import '../app.dart';
+import '../dispatcher/actions_OLD.dart';
+import '../model/mouseover_data.dart';
 import '../model/helix.dart';
 import '../util.dart' as util;
+import '../dispatcher/actions.dart' as actions;
 
 part 'design_main_mouseover_rect_helix.over_react.g.dart';
 
@@ -20,23 +26,28 @@ const _CLASS = 'helix-mouseover';
 const DEBUG_PRINT_MOUSEOVER = false;
 //const DEBUG_PRINT_MOUSEOVER = true;
 
+//UiFactory<_$DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
+//    connect<Model, _$DesignMainMouseoverRectHelixProps>(
+//  mapStateToProps: (model) => (DesignMainMouseoverRectHelix()..dna_design = model.dna_design),
+//)(DesignMainMouseoverRectHelix);
+
 @Factory()
 UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$DesignMainMouseoverRectHelix;
 
 @Props()
 class _$DesignMainMouseoverRectHelixProps extends UiProps {
+//  DNADesign dna_design;
   Helix helix;
 }
 
-@Component()
-class DesignMainMouseoverRectHelixComponent extends UiComponent<DesignMainMouseoverRectHelixProps> {
-  @override
-  Map getDefaultProps() => (newProps());
+@Component2()
+class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
 
   @override
   render() {
-    String id = '$_ID_PREFIX-${this.props.helix.idx()}';
+    String id = '$_ID_PREFIX-${this.props.helix.idx}';
     Helix helix = this.props.helix;
+
     var width = helix.svg_width();
     var height = helix.svg_height();
     return (Dom.rect()
@@ -46,17 +57,21 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent<DesignMainMouseo
       ..width = '$width'
       ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseMove = ((event) => update_mouseover(event, this.props.helix))
+      ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..id = id
       ..className = _CLASS)();
   }
 }
 
 mouse_leave_update_mouseover() {
-  Actions.remove_mouseover_data();
+  app.store.dispatch(actions.MouseoverDataClear());
+//  Actions.remove_mouseover_data();
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+//FIXME: what's the proper way to do this?
+  DNADesign dna_design = app.model.dna_design;
+
   MouseEvent event = event_syn.nativeEvent;
 
   //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
@@ -70,7 +85,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
 
-  int helix_idx = helix.idx();
+  int helix_idx = helix.idx;
   int offset = helix.svg_x_to_offset(svg_x);
   bool forward = helix.svg_y_is_forward(svg_y);
 
@@ -89,6 +104,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
         'forward = ${forward}');
   }
 
-  var params = MouseoverParameters([Tuple3(helix_idx, offset, forward)]);
-  Actions.update_mouseover_data(params);
+  app.store.dispatch(actions.MouseoverDataUpdate(
+      dna_design, BuiltList<Tuple3<int, int, bool>>([Tuple3(helix_idx, offset, forward)])));
+//    var params = MouseoverParameters(BuiltList<Tuple3<int, int, bool>>([Tuple3(helix_idx, offset, forward)]));
+//  Actions.update_mouseover_data(params);
 }

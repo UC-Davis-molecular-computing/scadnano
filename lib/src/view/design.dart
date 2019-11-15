@@ -7,10 +7,11 @@ import 'dart:svg' as svg;
 
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
+import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 
 import '../model/dna_design_action_packs.dart' as dna_design_action_packs;
-import '../dispatcher/actions.dart';
 import '../model/model.dart';
 import '../model/selectable.dart';
 import '../app.dart';
@@ -20,6 +21,8 @@ import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
 import '../constants.dart' as constants;
+import '../dispatcher/actions.dart' as actions;
+import '../dispatcher/actions_OLD.dart';
 
 const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 //const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
@@ -30,6 +33,8 @@ const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
 const MAIN_VIEW_SVG_ID = 'main-view-svg';
+
+enum DraggableComponent { main, side }
 
 class DesignViewComponent {
   DivElement root_element;
@@ -51,9 +56,7 @@ class DesignViewComponent {
 
   bool svg_panzoom_has_been_set_up = false;
 
-  Model model;
-
-  DesignViewComponent(this.root_element, this.model) {
+  DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
     var side_main_separator = DivElement()
       ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
@@ -101,43 +104,48 @@ class DesignViewComponent {
     design_above_footer_pane.children.add(main_pane);
     setup_splits(false);
 
-    this.error_message_component = ErrorMessageComponent(error_message_pane, this.model.error_message_store);
+    this.error_message_component = ErrorMessageComponent(error_message_pane);
 
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
     handle_main_view_keyboard_mouse_events();
 
-    app.model.design_or_error_store.listen((_) => this.render());
+//    app.model.design_or_error_store.listen((_) => this.render());
   }
 
-  Draggable draggable_main_view_svg;
+  Map<DraggableComponent, Draggable> draggables = {
+    DraggableComponent.main: null,
+    DraggableComponent.side: null,
+  };
 
   handle_main_view_keyboard_mouse_events() {
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
       if ((ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) && !ev.repeat) {
-        install_draggable_main_view();
+        install_draggable(true, DraggableComponent.main, main_view_svg);
+        install_draggable(false, DraggableComponent.side, side_view_svg);
       }
 
       if (ev.which == constants.KEY_CODE_ESC) {
-        Actions.unselect_all();
+        Actions_OLD.unselect_all();
       }
 
       if (ev.which == constants.KEY_CODE_DELETE) {
-        List<Selectable> selected = app.model.main_view_ui_model.selection.selections.toList();
+        //FIXME:
+//        List<Selectable> selected = app.model.ui_model.selection.selections.toList();
+//        dna_design_action_packs.delete_all(app.model.dna_design, selected);
         //XXX: we call a method on DNADesign directly here rather than firing an Action. That method will
         // do the work of determining which selections are redundant and only fire a reversible Action
         // for what remains after the set is trimmed.
-//        app.model.dna_design.delete_all(selected);
-        dna_design_action_packs.delete_all(app.model.dna_design, selected);
       }
     });
 
     window.onKeyUp.listen((ev) {
       if (ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) {
-        uninstall_draggable_main_view();
+        uninstall_draggable(true, DraggableComponent.main);
+        uninstall_draggable(false, DraggableComponent.side);
       }
     });
 
@@ -146,68 +154,93 @@ class DesignViewComponent {
     // finish the box
     main_view_svg.onMouseUp.listen((ev) {
       //TODO: add some logic to make sure we didn't just get done moving a selected item/group of items
-      if (!(ev.ctrlKey || ev.shiftKey) && app.model.dna_design.selectable_store.selected_items.isNotEmpty) {
-        Actions.unselect_all();
+      if (!(ev.ctrlKey || ev.shiftKey) && app.model.ui_model.selectables_store.selected_items.isNotEmpty) {
+        Actions_OLD.unselect_all();
+      }
+    });
+    side_view_svg.onMouseUp.listen((ev) {
+      if (!(ev.ctrlKey || ev.shiftKey)) {
+        //FIXME: unselect helices
+//        Actions_OLD.unselect_all();
       }
     });
   }
 
-  uninstall_draggable_main_view() {
-    if (draggable_main_view_svg != null) {
-      draggable_main_view_svg.destroy();
-      draggable_main_view_svg = null;
-      if (app.model.main_view_ui_model.selection_box_store.displayed) {
-        Actions.remove_selection_box();
+  uninstall_draggable(bool main_view, DraggableComponent draggable_component) {
+    if (draggables[draggable_component] != null) {
+      draggables[draggable_component].destroy();
+      draggables[draggable_component] = null;
+      // class .dnd-drag-occurring not removed if Shift or Ctrl key depressed while mouse is lifted,
+      // so we need to remove it manually just in case
+      document.body.classes.remove('dnd-drag-occurring');
+//      if (app.model.ui_model.selection_box_store.displayed) {
+      if (!main_view && app.model.ui_model.selection_box_side_view.displayed) {
+        app.store.dispatch(actions.SideViewSelectionBoxRemove());
+      } else if (main_view && app.model.ui_model.selection_box.displayed) {
+        app.store.dispatch(actions.MainViewSelectionBoxRemove());
       }
     }
   }
 
-  install_draggable_main_view() {
-    if (draggable_main_view_svg != null) {
+  install_draggable(bool main_view, DraggableComponent draggable_component, svg.SvgSvgElement view_svg) {
+    if (draggables[draggable_component] != null) {
       return;
     }
 
-    draggable_main_view_svg = Draggable(main_view_svg);
+    var draggable = draggables[draggable_component] = Draggable(view_svg);
 
-//    main_view_svg.onMouseDown.listen((MouseEvent ev) {
-    draggable_main_view_svg.onDragStart.listen((DraggableEvent draggable_event) {
+    draggable.onDragStart.listen((DraggableEvent draggable_event) {
       MouseEvent ev = draggable_event.originalEvent;
+      actions.Action2 action;
+      Point<num> point = ev.offset;
       if (ev.ctrlKey) {
-        Actions.create_selection_box_toggling(ev.offset);
+        action = main_view
+            ? actions.MainViewSelectionBoxCreateToggling(point)
+            : actions.SideViewSelectionBoxCreateToggling(point);
       } else if (ev.shiftKey) {
-        Actions.create_selection_box_selecting(ev.offset);
+        action = main_view
+            ? actions.MainViewSelectionBoxCreateSelecting(point)
+            : actions.SideViewSelectionBoxCreateSelecting(point);
       } else if (ev.button == 0) {
         // detects left mouse button: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
-        Actions.unselect_all();
+        //FIXME: implement this
+//        Actions_OLD.unselect_all();
+      }
+      if (action != null) {
+        app.store.dispatch(action);
       }
     });
 
     //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
 //    main_view_svg.onMouseMove.listen((MouseEvent ev) {
-    draggable_main_view_svg.onDrag.listen((DraggableEvent draggable_event) {
+    draggable.onDrag.listen((DraggableEvent draggable_event) {
       MouseEvent ev = draggable_event.originalEvent;
 
       if (ev.ctrlKey || ev.shiftKey) {
         //XXX: need to take care to transform mouse coordinates in transformed SVG element
-        Point<num> svg_point = util.untransformed_svg_point(main_view_svg, ev);
-        Actions.selection_box_size_changed(svg_point);
+        Point<num> svg_point = util.untransformed_svg_point(view_svg, ev);
+        var action = main_view
+            ? actions.MainViewSelectionBoxSizeChanged(svg_point)
+            : actions.SideViewSelectionBoxSizeChanged(svg_point);
+        app.store.dispatch(action);
+//        Actions_OLD.selection_box_size_changed(svg_point);
       }
     });
 
 //    main_view_svg.onMouseUp.listen((MouseEvent ev) {
-    draggable_main_view_svg.onDragEnd.listen((DraggableEvent draggable_event) {
-      MouseEvent ev = draggable_event.originalEvent;
-
-      Actions.remove_selection_box();
+    draggable.onDragEnd.listen((DraggableEvent draggable_event) {
+      var action = main_view ? actions.MainViewSelectionBoxRemove() : actions.SideViewSelectionBoxRemove();
+      app.store.dispatch(action);
+//      Actions_OLD.remove_selection_box();
     });
   }
 
-  render() {
+  render(Model model) {
     this.root_element.children.clear();
 
-    if (this.model.has_error()) {
+    if (model.has_error()) {
       this.root_element.children.addAll([this.error_message_pane]);
-      this.error_message_component.render();
+      this.error_message_component.render(model.error_message);
     } else {
       this.root_element.children.add(this.design_above_footer_pane);
       this.root_element.children.add(this.footer_separator);
@@ -242,17 +275,34 @@ class DesignViewComponent {
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
 
       react_dom.render(
-          (DesignSide()
-            ..store = app.model.dna_design.helices_store
-            ..mouseover_data_store = app.model.main_view_ui_model.mouse_over_store
-            ..side_view_mouse_position_store = app.model.side_view_ui_model.side_view_mouse_position_store
-            ..grid = app.model.dna_design.grid)(),
-          querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'));
-
-      react_dom.render((DesignMain()..store = app.model)(), querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'));
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignSide()(),
+          ),
+        ),
+        querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
+      );
 
       react_dom.render(
-          (DesignFooter()..store = app.model.main_view_ui_model.mouse_over_store)(), this.footer_element);
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignMain()(),
+          ),
+        ),
+        querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
+      );
+
+      react_dom.render(
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignFooter()(),
+          ),
+        ),
+        this.footer_element,
+      );
+
+//      react_dom.render(
+//          (DesignFooter()..mouseover_datas = app.model.ui_model.mouseover_datas)(), this.footer_element);
 
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
@@ -293,12 +343,12 @@ class DesignViewComponent {
   }
 
   side_view_mouse_leave_update_mouseover() {
-    Actions.remove_side_view_mouse_position();
+    app.store.dispatch(actions.SideViewMousePositionRemove());
   }
 
   side_view_update_mouseover(MouseEvent event) {
-    if (!event.ctrlKey) {
-      Actions.remove_side_view_mouse_position();
+    if (!(event.ctrlKey || event.shiftKey || event.altKey)) {
+      app.store.dispatch(actions.SideViewMousePositionRemove());
       return;
     }
 
@@ -318,25 +368,26 @@ class DesignViewComponent {
           'svg_y = ${svg_coord.y.toStringAsFixed(2)},   ');
     }
 
-    Actions.update_side_view_mouse_position(svg_coord);
+    app.store.dispatch(actions.SideViewMousePositionUpdate(svg_coord));
   }
 }
 
 class ErrorMessageComponent {
   DivElement root_element;
-  ErrorMessageStore error_message_store;
 
-  ErrorMessageComponent(this.root_element, this.error_message_store) {
+//  ErrorMessageStore error_message_store;
+
+  ErrorMessageComponent(this.root_element) {
     this.root_element.attributes = {'class': 'error-message'};
-    this.error_message_store.listen((_) => this.render());
+//    this.error_message_store.listen((_) => this.render());
   }
 
-  render() {
+  render(String error_message) {
     this.root_element.children.clear();
-    if (this.error_message_store.has_error()) {
+    if (error_message != null && error_message.length > 0) {
       var pre = PreElement();
       var escaper = HtmlEscape();
-      var escaped_error_message = escaper.convert(this.error_message_store.error_message);
+      var escaped_error_message = escaper.convert(error_message);
       pre.setInnerHtml(escaped_error_message);
       this.root_element.children.add(pre);
     }
