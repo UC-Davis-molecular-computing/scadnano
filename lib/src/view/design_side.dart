@@ -12,7 +12,8 @@ import '../model/helix.dart';
 import '../model/grid.dart';
 import '../model/grid_position.dart';
 import 'design_side_potential_helix.dart';
-import 'design_side_selection_box.dart';
+import 'selection_box_view.dart';
+import '../util.dart' as util;
 
 part 'design_side.over_react.g.dart';
 
@@ -54,12 +55,13 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     }
 
 //    print('rendering side view');
+
     SelectionBox selection_box = props.selection_box;
     Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
     BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
     Map<Helix, MouseoverData> helix_to_mouseover_data = {for (var mod in mouseover_datas) mod.helix: mod};
-//    List<Helix> helices = this.props.store.helices;
     BuiltList<Helix> helices = this.props.helices;
+
     //TODO: it's not well-defined what to do when grid=none and there is no grid position for helices
     List helices_components = [
       for (var helix in helices)
@@ -73,13 +75,18 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
+
+    num stroke_width = 2.0 / util.current_zoom_side();
+
     return (Dom.g()..className = 'side-view')(
       (DesignSidePotentialHelix()
         ..grid = this.props.grid
         ..existing_helix_grid_positions = existing_helix_grid_positions
         ..mouse_svg_pos = mouse_svg_pos)(),
       (Dom.g()..className = 'helices-side-view')(helices_components),
-      (DesignSideSelectionBox()..selection_box = selection_box)(),
+      (SelectionBoxView()
+        ..selection_box = selection_box
+        ..stroke_width = stroke_width)(),
     );
   }
 }

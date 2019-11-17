@@ -388,6 +388,51 @@ abstract class SideViewMousePositionRemove extends Action2
   static Serializer<SideViewMousePositionRemove> get serializer => _$sideViewMousePositionRemoveSerializer;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helix select (side view)
+
+abstract class HelicesSelectedToggle implements Built<HelicesSelectedToggle, HelicesSelectedToggleBuilder> {
+  BuiltSet<int> get helices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelicesSelectedToggle(BuiltSet<int> helices) =>
+      HelicesSelectedToggle.from((b) => b..helices = helices.toBuilder());
+
+  factory HelicesSelectedToggle.from([void Function(HelicesSelectedToggleBuilder) updates]) =
+      _$HelicesSelectedToggle;
+
+  HelicesSelectedToggle._();
+
+  static Serializer<HelicesSelectedToggle> get serializer => _$helicesSelectedToggleSerializer;
+}
+
+abstract class HelicesSelectedSelect implements Built<HelicesSelectedSelect, HelicesSelectedSelectBuilder> {
+  BuiltSet<int> get helices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelicesSelectedSelect(BuiltSet<int> helices) =>
+      HelicesSelectedSelect.from((b) => b..helices = helices.toBuilder());
+
+  factory HelicesSelectedSelect.from([void Function(HelicesSelectedSelectBuilder) updates]) =
+      _$HelicesSelectedSelect;
+
+  HelicesSelectedSelect._();
+
+  static Serializer<HelicesSelectedSelect> get serializer => _$helicesSelectedSelectSerializer;
+}
+
+abstract class HelicesSelectedClear implements Built<HelicesSelectedClear, HelicesSelectedClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelicesSelectedClear() => HelicesSelectedClear.from((b) => b);
+
+  factory HelicesSelectedClear.from([void Function(HelicesSelectedClearBuilder) updates]) =
+      _$HelicesSelectedClear;
+
+  HelicesSelectedClear._();
+
+  static Serializer<HelicesSelectedClear> get serializer => _$helicesSelectedClearSerializer;
+}
+
 //class Actions {
 //  // Save .dna file
 //  *save_dna_file = Action<Null>();

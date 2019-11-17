@@ -6,6 +6,8 @@
 var leftLimit = 0;
 var rightLimit = 100;
 
+const _LOCAL_STORAGE_PREFIX = "scadnano:";
+
 function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
     var leftPane = document.getElementById(left_pane_id);
     var rightPane = document.getElementById(right_pane_id);
@@ -34,6 +36,9 @@ function setup_split_drag(left_pane_id, right_pane_id, separator_id) {
         var right = (100-cur-1);
         leftPane.style.width = cur + '%';
         rightPane.style.width = right + '%';
+
+        var side_pane_width_key = _LOCAL_STORAGE_PREFIX + 'side_pane_width';
+        window.localStorage[side_pane_width_key] = leftPane.style.width;
 
     }, null, 'horizontal');
 }

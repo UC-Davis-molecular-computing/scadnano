@@ -40,8 +40,8 @@
     <!--<script src="packages/react/react_with_react_dom_prod.js"></script>-->
 
 
-<!--    <script src="external-libs/react-dnd/ReactDnD.js"></script>-->
-<!--    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>-->
+    <!--    <script src="external-libs/react-dnd/ReactDnD.js"></script>-->
+    <!--    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>-->
     <!--    <script src="external-libs/ReactDnD.min.js"></script>-->
     <!--    <script src="external-libs/ReactDnDHTML5Backend.min.js"></script>-->
 
@@ -267,24 +267,46 @@
         //XXX: dartdevc can handle passing the object pan directly, but the release version requires
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
         // of print statement debugging on the server to identify this.
-        var pan = main_view_svg_pan_zoom.getPan();
+        var pan;
+        if ('undefined' !== typeof main_view_svg_pan_zoom) {
+            pan = main_view_svg_pan_zoom.getPan();
+        } else {
+            pan = {x: 0, y: 0};
+            console.log('using default pan for main');
+        }
         return [pan.x, pan.y];
-    }
-
-    function current_zoom_main() {
-        return main_view_svg_pan_zoom.getZoom();
     }
 
     function current_pan_side() {
         //XXX: dartdevc can handle passing the object pan directly, but the release version requires
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
         // of print statement debugging on the server to identify this.
-        var pan = side_view_svg_pan_zoom.getPan();
+        var pan;
+        if ('undefined' !== typeof side_view_svg_pan_zoom) {
+            pan = side_view_svg_pan_zoom.getPan();
+        } else {
+            pan = {x: 0, y: 0};
+            console.log('using default pan for side');
+        }
         return [pan.x, pan.y];
     }
 
+    function current_zoom_main() {
+        if ('undefined' !== typeof main_view_svg_pan_zoom) {
+            return main_view_svg_pan_zoom.getZoom();
+        } else {
+            console.log('using default zoom for main');
+            return 1;
+        }
+    }
+
     function current_zoom_side() {
-        return side_view_svg_pan_zoom.getZoom();
+        if ('undefined' !== typeof side_view_svg_pan_zoom) {
+            return side_view_svg_pan_zoom.getZoom();
+        } else {
+            console.log('using default zoom for side');
+            return 1;
+        }
     }
 
     function current_pan_new() {

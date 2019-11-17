@@ -20,6 +20,7 @@ import 'design_side.dart';
 import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
+import '../dispatcher/local_storage.dart' as local_storage;
 import '../constants.dart' as constants;
 import '../dispatcher/actions.dart' as actions;
 import '../dispatcher/actions_OLD.dart';
@@ -109,9 +110,21 @@ class DesignViewComponent {
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
+    set_side_main_pane_widths();
     handle_main_view_keyboard_mouse_events();
 
 //    app.model.design_or_error_store.listen((_) => this.render());
+  }
+
+  void set_side_main_pane_widths() {
+    String side_pane_width = local_storage.side_pane_width();
+    if (side_pane_width == null) {
+      side_pane_width = constants.default_side_pane_width;
+    }
+    num main_pane_width_int = 100.0 - num.parse(side_pane_width.substring(0,side_pane_width.length-1));
+    String main_pane_width = '${main_pane_width_int.toString()}%';
+    side_pane.setAttribute('style', 'width: $side_pane_width');
+    main_pane.setAttribute('style', 'width: $main_pane_width');
   }
 
   Map<DraggableComponent, Draggable> draggables = {
@@ -176,7 +189,7 @@ class DesignViewComponent {
 //      if (app.model.ui_model.selection_box_store.displayed) {
       if (!main_view && app.model.ui_model.selection_box_side_view.displayed) {
         app.store.dispatch(actions.SideViewSelectionBoxRemove());
-      } else if (main_view && app.model.ui_model.selection_box.displayed) {
+      } else if (main_view && app.model.ui_model.selection_box_main_view.displayed) {
         app.store.dispatch(actions.MainViewSelectionBoxRemove());
       }
     }
@@ -190,18 +203,32 @@ class DesignViewComponent {
     var draggable = draggables[draggable_component] = Draggable(view_svg);
 
     draggable.onDragStart.listen((DraggableEvent draggable_event) {
-      MouseEvent ev = draggable_event.originalEvent;
+      MouseEvent event = draggable_event.originalEvent;
       actions.Action2 action;
-      Point<num> point = ev.offset;
-      if (ev.ctrlKey) {
+
+
+//      Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
+//      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
+      Point<num> point = event.offset;
+      if (main_view) {
+        //FIXME: this works for side view but is offset for main view; see selection_box.dart comments
+        // code that worked previously for main view didn't work for side view
+        point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
+//        Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
+//        point = mouse_point;
+      } else {
+        point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
+      }
+
+      if (event.ctrlKey) {
         action = main_view
             ? actions.MainViewSelectionBoxCreateToggling(point)
             : actions.SideViewSelectionBoxCreateToggling(point);
-      } else if (ev.shiftKey) {
+      } else if (event.shiftKey) {
         action = main_view
             ? actions.MainViewSelectionBoxCreateSelecting(point)
             : actions.SideViewSelectionBoxCreateSelecting(point);
-      } else if (ev.button == 0) {
+      } else if (event.button == 0) {
         // detects left mouse button: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         //FIXME: implement this
 //        Actions_OLD.unselect_all();
@@ -214,14 +241,21 @@ class DesignViewComponent {
     //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
 //    main_view_svg.onMouseMove.listen((MouseEvent ev) {
     draggable.onDrag.listen((DraggableEvent draggable_event) {
-      MouseEvent ev = draggable_event.originalEvent;
+      MouseEvent event = draggable_event.originalEvent;
 
-      if (ev.ctrlKey || ev.shiftKey) {
+//      Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
+//      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
+      Point<num> point = event.offset;
+      if (!main_view) {
+        point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
+      }
+
+      if (event.ctrlKey || event.shiftKey) {
         //XXX: need to take care to transform mouse coordinates in transformed SVG element
-        Point<num> svg_point = util.untransformed_svg_point(view_svg, ev);
+//        Point<num> svg_point = util.untransformed_svg_point(view_svg, ev);
         var action = main_view
-            ? actions.MainViewSelectionBoxSizeChanged(svg_point)
-            : actions.SideViewSelectionBoxSizeChanged(svg_point);
+            ? actions.MainViewSelectionBoxSizeChanged(point)
+            : actions.SideViewSelectionBoxSizeChanged(point);
         app.store.dispatch(action);
 //        Actions_OLD.selection_box_size_changed(svg_point);
       }
@@ -301,9 +335,6 @@ class DesignViewComponent {
         this.footer_element,
       );
 
-//      react_dom.render(
-//          (DesignFooter()..mouseover_datas = app.model.ui_model.mouseover_datas)(), this.footer_element);
-
       if (!svg_panzoom_has_been_set_up) {
         setup_svg_panzoom_js();
         svg_panzoom_has_been_set_up = true;
@@ -347,17 +378,20 @@ class DesignViewComponent {
   }
 
   side_view_update_mouseover(MouseEvent event) {
-    if (!(event.ctrlKey || event.shiftKey || event.altKey)) {
-      app.store.dispatch(actions.SideViewMousePositionRemove());
+    if (!event.altKey) {
+      //FIXME: what condition to check to ensure we aren't sending too many of these actions?
+      if (app.model.ui_model.mouse_svg_pos_side_view != null) {
+        app.store.dispatch(actions.SideViewMousePositionRemove());
+      }
       return;
     }
 
     Point<num> mouse_point = util.untransformed_svg_point(side_view_svg, event);
-    Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
-//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_side(event.offset);
+    Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(mouse_point, false);
+//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(event.offset, false);
 
     if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
-      Point<num> pan = util.current_pan_side();
+      Point<num> pan = util.current_pan(false);
       num zoom = util.current_zoom_side();
       print('mouse event: '
           'x = ${event.offset.x},   '

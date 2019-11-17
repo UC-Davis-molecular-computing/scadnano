@@ -55,6 +55,8 @@ const compile_button_id = 'compile';
 const default_helix_rotation = -pi / 2.0;
 const default_helix_rotation_anchor = 0;
 
+const default_side_pane_width = '8%';
+
 /////////////////////////////////////////////////////////////
 // JSON keys
 

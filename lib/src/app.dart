@@ -3,12 +3,14 @@ library app;
 
 import 'dart:html';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/dispatcher/actions.dart';
+import 'package:scadnano/src/model/dna_end.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 
 import 'model/dna_design.dart';
@@ -22,6 +24,7 @@ import 'view/view.dart';
 import 'dispatcher/model_reducer.dart';
 import 'dispatcher/local_storage.dart' as local_storage;
 import 'dispatcher/actions.dart' as actions;
+import 'built_intern.dart';
 
 App app = App();
 
@@ -36,11 +39,6 @@ class App {
   UndoRedo undo_redo = UndoRedo();
 
   start() async {
-//    var t = actions.ToggleSelectMode((t) => t..select_mode_choice = SelectModeChoice.loopout);
-//    var j = t.toJson();
-//    print(j);
-
-//    var s = actions.SetShowDNA(show_dna: true);
 
     await initialize_model();
 
@@ -73,9 +71,9 @@ class App {
           ..editor_content = initial_editor_content)
         .build();
 
-    store = Store<Model>(model_reducer, initialState: model, middleware: [
-//    store = DevToolsStore<Model>(model_reducer, initialState: Model(), middleware: [
-//      overReactReduxDevToolsMiddleware,
+//    store = Store<Model>(model_reducer, initialState: model, middleware: [
+    store = DevToolsStore<Model>(model_reducer, initialState: Model(), middleware: [
+      overReactReduxDevToolsMiddleware,
       local_storage.middleware_local_storage,
     ]);
   }

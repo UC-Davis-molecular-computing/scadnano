@@ -80,7 +80,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   if (browser.isFirefox) {
     svg_coord = event.offset;
   } else {
-    svg_coord = util.transform_mouse_coord_to_svg_current_panzoom_main(event.offset);
+    svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
   }
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
@@ -90,7 +90,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   bool forward = helix.svg_y_is_forward(svg_y);
 
   if (DEBUG_PRINT_MOUSEOVER) {
-    Point<num> pan = util.current_pan_main();
+    Point<num> pan = util.current_pan(true);
     num zoom = util.current_zoom_main();
     print('mouse event: '
         'x = ${event.offset.x},   '

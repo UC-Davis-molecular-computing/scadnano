@@ -47,7 +47,17 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     MouseoverData mouseover_data_next = nextProps['DesignSideHelixProps.mouseover_data'];
     Helix helix = props.helix;
     MouseoverData mouseover_data = props.mouseover_data;
-    return helix != helix_next || mouseover_data != mouseover_data_next;
+    bool should = helix != helix_next || mouseover_data != mouseover_data_next;
+//    print('  should DesignSideHelix update? ${should}');
+    if (should) {
+//      print('  helix == helix_next:                   ${helix == helix_next}');
+//      print('  mouseover_data == mouseover_data_next: ${mouseover_data == mouseover_data_next}');
+//      print('  helix = ${helix}');
+//      print('  helix_next = ${helix_next}');
+//      print('  mouseover_data = ${mouseover_data}');
+//      print('  mouseover_data_next = ${mouseover_data_next}');
+    }
+    return should;
   }
 
   @override

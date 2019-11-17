@@ -54,12 +54,8 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt, MouseEvent ev) {
   return svg_point;
 }
 
-Point<num> transform_mouse_coord_to_svg_current_panzoom_side(Point<num> point) {
-  return transform_mouse_coord_to_svg(point, current_pan_side(), current_zoom_side());
-}
-
-Point<num> transform_mouse_coord_to_svg_current_panzoom_main(Point<num> point) {
-  return transform_mouse_coord_to_svg(point, current_pan_main(), current_zoom_main());
+Point<num> transform_mouse_coord_to_svg_current_panzoom(Point<num> point, bool is_main) {
+  return transform_mouse_coord_to_svg(point, current_pan(is_main), current_zoom(is_main));
 }
 
 //TODO: this is still scaled wrong with Firefox; may not even be coming from this code, because it's
@@ -104,43 +100,46 @@ transform_rect_svg_to_mouse_coord(Rect rect, Point<num> pan, num zoom) {
 }
 
 transform_rect_mouse_coord_to_svg_main_view(Rect rect) {
-  transform_rect_mouse_coord_to_svg(rect, current_pan_main(), current_zoom_main());
+  transform_rect_mouse_coord_to_svg(rect, current_pan(true), current_zoom(true));
 }
 
 transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
-  transform_rect_svg_to_mouse_coord(rect, current_pan_main(), current_zoom_main());
+  transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
 Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   num radius = constants.SIDE_HELIX_RADIUS;
+  Point<num> point;
   if (grid == Grid.square) {
-    return Point<num>(gp.h, gp.v) * 2 * radius;
+    point = Point<num>(gp.h, gp.v);
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
     num x = gp.h; // x offset from h
     x += cos(2 * pi / 6) * (gp.v % 2); // x offset from v
     num y = sin(2 * pi / 6) * gp.v; // y offset from v
-    return Point<num>(x, y) * 2 * radius;
+    point = Point<num>(x, y);
   } else {
     throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
+  return point * 2 * radius;
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
+  int h,v,b;
   if (grid == Grid.square) {
-    int h = ((svg_coord.x / (2 * radius)) - 1).round();
-    int v = ((svg_coord.y / (2 * radius)) - 1).round();
-    int b = 0;
-    return GridPosition((gp) => gp
-      ..h = h
-      ..v = v
-      ..b = b);
+    h = (svg_coord.x / (2 * radius)).round();
+    v = (svg_coord.y / (2 * radius)).round();
+    b = 0;
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
     throw UnimplementedError('hex and honeycomb grids not yet supported');
   } else {
     throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
   }
+  return GridPosition((gp) => gp
+    ..h = h
+    ..v = v
+    ..b = b);
 }
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
@@ -181,24 +180,21 @@ external ImageElement cache_svg(String svg_elt_id);
 @JS(constants.js_function_name_current_zoom_main)
 external num current_zoom_main();
 
-@JS(constants.js_function_name_current_pan_main)
-external List<num> current_pan_main_js();
-
-Point<num> current_pan_main() {
-  var ret = current_pan_main_js();
-  return Point<num>(ret[0], ret[1]);
-}
-
 @JS(constants.js_function_name_current_zoom_side)
 external num current_zoom_side();
+
+@JS(constants.js_function_name_current_pan_main)
+external List<num> current_pan_main_js();
 
 @JS(constants.js_function_name_current_pan_side)
 external List<num> current_pan_side_js();
 
-Point<num> current_pan_side() {
-  var ret = current_pan_side_js();
+Point<num> current_pan(bool is_main) {
+  var ret = is_main? current_pan_main_js() : current_pan_side_js();
   return Point<num>(ret[0], ret[1]);
 }
+
+num current_zoom(bool is_main) => is_main? current_zoom_main() : current_zoom_side();
 
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {

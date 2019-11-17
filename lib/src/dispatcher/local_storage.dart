@@ -10,6 +10,7 @@ import '../model/model.dart';
 import '../model/select_mode.dart';
 import '../app.dart';
 import 'actions.dart' as actions;
+import '../constants.dart' as constants;
 
 part 'local_storage.g.dart';
 
@@ -48,6 +49,15 @@ save(Storable storable) {
   }
 
   window.localStorage[storable_key] = value_string;
+}
+
+String side_pane_width() {
+  String key = _LOCAL_STORAGE_PREFIX + 'side_pane_width';
+  if (window.localStorage.containsKey(key)) {
+    return window.localStorage[key];
+  } else {
+    return null;
+  }
 }
 
 restore(Storable storable) {

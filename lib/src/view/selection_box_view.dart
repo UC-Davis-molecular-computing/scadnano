@@ -1,30 +1,34 @@
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/model/selection_box.dart';
 
 import '../dispatcher/actions_OLD.dart';
 import '../model/selection_box.dart';
 import '../util.dart' as util;
 
-part 'design_side_selection_box.over_react.g.dart';
+part 'selection_box_view.over_react.g.dart';
+
+
 
 @Factory()
-UiFactory<DesignSideSelectionBoxProps> DesignSideSelectionBox = _$DesignSideSelectionBox;
+UiFactory<SelectionBoxViewProps> SelectionBoxView = _$SelectionBoxView;
 
 @Props()
-class _$DesignSideSelectionBoxProps extends UiProps { // FluxUiProps<SelectionBoxStore, SelectionBoxStore> {}
+class _$SelectionBoxViewProps extends UiProps {
   SelectionBox selection_box;
+  num stroke_width;
 }
 
 @Component2()
-class DesignSideSelectionBoxComponent extends UiComponent2<DesignSideSelectionBoxProps> { // FluxUiComponent<DesignSideSelectionBoxProps> {
+class SelectionBoxViewComponent extends UiComponent2<SelectionBoxViewProps> {
 //  @override
 //  void componentDidUpdate(Map prevProps, Map prevState) {
 //    super.componentDidUpdate(prevProps, prevState);
 //    print('selection box componentDidUpdate');
-//    var store = prevProps['DesignSideSelectionBox.selection_box'];
+//    var store = prevProps['SelectionBoxView.selection_box'];
 //    var x_p = store.x;
-//    var y_p = prevProps['DesignSideSelectionBox.selection_box'].y;
-//    var w_p = prevProps['DesignSideSelectionBox.selection_box'].width;
-//    var h_p = prevProps['DesignSideSelectionBox.selection_box'].height;
+//    var y_p = prevProps['SelectionBoxView.selection_box'].y;
+//    var w_p = prevProps['SelectionBoxView.selection_box'].width;
+//    var h_p = prevProps['SelectionBoxView.selection_box'].height;
 //    var x = this.props.selection_box.x;
 //    var y = this.props.selection_box.y;
 //    var w = this.props.selection_box.width;
@@ -41,12 +45,13 @@ class DesignSideSelectionBoxComponent extends UiComponent2<DesignSideSelectionBo
     if (!box.displayed) {
       return null;
     } else {
+      num stroke_width = props.stroke_width;
       return (Dom.rect()
         ..x = box.x
         ..y = box.y
         ..width = box.width
         ..height = box.height
-        ..strokeWidth = 2.0 / util.current_zoom_main()
+        ..strokeWidth = stroke_width
         ..id = 'selection-box-side'
         ..className = 'selection-box')();
     }

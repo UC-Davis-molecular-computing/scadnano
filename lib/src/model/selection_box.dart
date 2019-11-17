@@ -21,6 +21,8 @@ final DEFAULT_SelectionBoxBuilder = SelectionBoxBuilder()
   ..displayed = false
   ..toggling = false;
 
+final DEFAULT_SelectionBox = DEFAULT_SelectionBoxBuilder.build();
+
 abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
@@ -71,8 +73,9 @@ abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> 
 //    });
   }
 
-  SelectionBox start_selection(Point<num> mouse_coord) => rebuild((s) => s
-    ..start = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord)
+  SelectionBox start_selection(Point<num> point, bool toggling) => rebuild((s) => s
+    ..start = point
+    ..toggling = toggling
     ..current = start
     ..displayed = true);
 

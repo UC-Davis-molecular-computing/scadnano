@@ -14,7 +14,9 @@ import '../model/selection_box.dart';
 import '../model/composite_stores.dart';
 import '../model/model.dart';
 import '../model/dna_design.dart';
+import 'selection_box_view.dart';
 import 'react_dnd.dart';
+import '../util.dart' as util;
 
 part 'design_main.over_react.g.dart';
 
@@ -45,9 +47,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       return null;
     }
 
+    num stroke_width = 2.0 / util.current_zoom_main();
+
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')(
-      (DesignMainMouseoverRectHelices()
-        ..helices = model.dna_design.helices)(),
+      (DesignMainMouseoverRectHelices()..helices = model.dna_design.helices)(),
       (DesignMainHelices()..helices = model.dna_design.helices)(),
       (DesignMainMismatches()
         ..show_mismatches = model.ui_model.show_mismatches
@@ -56,7 +59,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       (DesignMainDNASequences()
         ..show_dna = model.ui_model.show_dna
         ..strands = model.dna_design.strands)(),
-      (DesignMainSelectionBox()..selection_box = model.ui_model.selection_box)(),
+      (SelectionBoxView()
+        ..selection_box = model.ui_model.selection_box_main_view
+        ..stroke_width = stroke_width)(),
     );
 
     if (USING_REACT_DND) {

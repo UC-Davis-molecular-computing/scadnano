@@ -5,6 +5,7 @@ import 'package:quiver/core.dart' as quiver;
 import 'package:w_flux/w_flux.dart';
 
 import '../json_serializable.dart';
+import 'selectable.dart';
 import 'strand.dart';
 import '../dispatcher/actions_OLD.dart';
 import 'grid_position.dart';

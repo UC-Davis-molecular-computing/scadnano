@@ -21,10 +21,18 @@ class _$DesignSideRotationProps extends UiProps {
 @Component2()
 class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> {
   @override
-  Map getDefaultProps() => (newProps());
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    Helix helix_next = nextProps['DesignSideHelixProps.helix'];
+    int offset_next = nextProps['DesignSideHelixProps.offset'];
+    Helix helix = props.helix;
+    int offset = props.offset;
+//    print('  should DesignSideRotation update? ${helix != helix_next || offset != offset_next}');
+    return helix != helix_next || offset != offset_next;
+  }
 
   @override
   render() {
+//    print('rendering rotation');
     Helix helix = this.props.helix;
     int offset = this.props.offset;
     num radius = this.props.radius;
