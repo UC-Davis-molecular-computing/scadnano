@@ -10,7 +10,7 @@ import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import 'serializers.dart';
+import '../serializers.dart';
 import '../model/dna_design.dart';
 import '../model/substrand.dart';
 import '../model/model.dart';
@@ -31,7 +31,7 @@ part 'actions.g.dart';
 /// [Action]s don't have to implement BuiltValue, but if they do, and they use the serialization mechanism,
 /// this this toJson method will work automatically.
 abstract class Action2 {
-  dynamic toJson() => serializers.serialize(this);
+  dynamic toJson();
 }
 
 /// [Action] that can be undone via the undo stack. (typically changes to the [DNADesign])
@@ -46,6 +46,7 @@ abstract class StorableAction extends Action2 {
 // Select modes
 
 abstract class ToggleSelectMode extends StorableAction
+    with BuiltJsonSerializable
     implements Built<ToggleSelectMode, ToggleSelectModeBuilder> {
   SelectModeChoice get select_mode_choice;
 
@@ -62,7 +63,9 @@ abstract class ToggleSelectMode extends StorableAction
   static Serializer<ToggleSelectMode> get serializer => _$toggleSelectModeSerializer;
 }
 
-abstract class SetSelectModes extends Action2 implements Built<SetSelectModes, SetSelectModesBuilder> {
+abstract class SetSelectModes extends Action2
+    with BuiltJsonSerializable
+    implements Built<SetSelectModes, SetSelectModesBuilder> {
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -79,7 +82,9 @@ abstract class SetSelectModes extends Action2 implements Built<SetSelectModes, S
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show/hide DNA/mismatches/editor
 
-abstract class SetShowDNA extends Action2 implements Built<SetShowDNA, SetShowDNABuilder> {
+abstract class SetShowDNA extends Action2
+    with BuiltJsonSerializable
+    implements Built<SetShowDNA, SetShowDNABuilder> {
   bool get show_dna;
 
   factory SetShowDNA(bool show_dna) => SetShowDNA.from((b) => b..show_dna = show_dna);
@@ -93,6 +98,7 @@ abstract class SetShowDNA extends Action2 implements Built<SetShowDNA, SetShowDN
 }
 
 abstract class SetShowMismatches extends Action2
+    with BuiltJsonSerializable
     implements Built<SetShowMismatches, SetShowMismatchesBuilder> {
   bool get show_mismatches;
 
@@ -107,7 +113,9 @@ abstract class SetShowMismatches extends Action2
   static Serializer<SetShowMismatches> get serializer => _$setShowMismatchesSerializer;
 }
 
-abstract class SetShowEditor extends Action2 implements Built<SetShowEditor, SetShowEditorBuilder> {
+abstract class SetShowEditor extends Action2
+    with BuiltJsonSerializable
+    implements Built<SetShowEditor, SetShowEditorBuilder> {
   bool get show_editor;
 
   factory SetShowEditor(bool show_editor) => SetShowEditor.from((b) => b..show_editor = show_editor);
@@ -123,7 +131,9 @@ abstract class SetShowEditor extends Action2 implements Built<SetShowEditor, Set
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
-abstract class SaveDNAFile extends Action2 implements Built<SaveDNAFile, SaveDNAFileBuilder> {
+abstract class SaveDNAFile extends Action2
+    with BuiltJsonSerializable
+    implements Built<SaveDNAFile, SaveDNAFileBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory SaveDNAFile([void Function(SaveDNAFileBuilder) updates]) = _$SaveDNAFile;
 
@@ -132,7 +142,9 @@ abstract class SaveDNAFile extends Action2 implements Built<SaveDNAFile, SaveDNA
   static Serializer<SaveDNAFile> get serializer => _$saveDNAFileSerializer;
 }
 
-abstract class LoadDNAFile extends Action2 implements Built<LoadDNAFile, LoadDNAFileBuilder> {
+abstract class LoadDNAFile extends Action2
+    with BuiltJsonSerializable
+    implements Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   String get filename;
@@ -153,6 +165,7 @@ abstract class LoadDNAFile extends Action2 implements Built<LoadDNAFile, LoadDNA
 // Mouseover data (main view)
 
 abstract class MouseoverDataClear extends Action2
+    with BuiltJsonSerializable
     implements Built<MouseoverDataClear, MouseoverDataClearBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverDataClear([void Function(MouseoverDataClearBuilder) updates]) = _$MouseoverDataClear;
@@ -163,11 +176,12 @@ abstract class MouseoverDataClear extends Action2
 }
 
 abstract class MouseoverDataUpdate extends Action2
+    with BuiltJsonSerializable
     implements Built<MouseoverDataUpdate, MouseoverDataUpdateBuilder> {
   BuiltList<MouseoverData> get mouseover_datas;
 
-  factory MouseoverDataUpdate(DNADesign dna_design, Iterable<Tuple3<int, int, bool>> param_list) {
-    ListBuilder<MouseoverData> mouseover_datas_builder = MouseoverData.from_params(dna_design, param_list);
+  factory MouseoverDataUpdate(DNADesign dna_design, Iterable<MouseoverParams> params) {
+    ListBuilder<MouseoverData> mouseover_datas_builder = MouseoverData.from_params(dna_design, params);
     return MouseoverDataUpdate.from((b) => b..mouseover_datas = mouseover_datas_builder);
   }
 
@@ -181,6 +195,7 @@ abstract class MouseoverDataUpdate extends Action2
 }
 
 abstract class HelixRotationSet extends UndoableAction
+    with BuiltJsonSerializable
     implements Built<HelixRotationSet, HelixRotationSetBuilder> {
   int get helix_idx;
 
@@ -201,10 +216,40 @@ abstract class HelixRotationSet extends UndoableAction
   static Serializer<HelixRotationSet> get serializer => _$helixRotationSetSerializer;
 }
 
+// set helix rotation at anchor to point at helix_other
+abstract class HelixRotationSetAtOther
+    with BuiltJsonSerializable
+    implements Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
+  int get helix_idx;
+
+  int get helix_other_idx;
+
+  bool get forward;
+
+  int get anchor;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixRotationSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
+      HelixRotationSetAtOther.from((b) => b
+        ..helix_idx = helix_idx
+        ..helix_other_idx = helix_other_idx
+        ..forward = forward
+        ..anchor = anchor);
+
+  factory HelixRotationSetAtOther.from([void Function(HelixRotationSetAtOtherBuilder) updates]) =
+      _$HelixRotationSetAtOther;
+
+  HelixRotationSetAtOther._();
+
+  static Serializer<HelixRotationSetAtOther> get serializer => _$helixRotationSetAtOtherSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Error message
 
-abstract class ErrorMessageSet extends Action2 implements Built<ErrorMessageSet, ErrorMessageSetBuilder> {
+abstract class ErrorMessageSet extends Action2
+    with BuiltJsonSerializable
+    implements Built<ErrorMessageSet, ErrorMessageSetBuilder> {
   String get error_message;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -222,6 +267,7 @@ abstract class ErrorMessageSet extends Action2 implements Built<ErrorMessageSet,
 // Selection box (side view)
 
 abstract class SideViewSelectionBoxCreateToggling extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewSelectionBoxCreateToggling, SideViewSelectionBoxCreateTogglingBuilder> {
   Point<num> get point;
 
@@ -240,6 +286,7 @@ abstract class SideViewSelectionBoxCreateToggling extends Action2
 }
 
 abstract class SideViewSelectionBoxCreateSelecting extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewSelectionBoxCreateSelecting, SideViewSelectionBoxCreateSelectingBuilder> {
   Point<num> get point;
 
@@ -258,6 +305,7 @@ abstract class SideViewSelectionBoxCreateSelecting extends Action2
 }
 
 abstract class SideViewSelectionBoxSizeChanged extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewSelectionBoxSizeChanged, SideViewSelectionBoxSizeChangedBuilder> {
   Point<num> get point;
 
@@ -275,6 +323,7 @@ abstract class SideViewSelectionBoxSizeChanged extends Action2
 }
 
 abstract class SideViewSelectionBoxRemove extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewSelectionBoxRemove, SideViewSelectionBoxRemoveBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory SideViewSelectionBoxRemove() => SideViewSelectionBoxRemove.from((b) => b);
@@ -291,6 +340,7 @@ abstract class SideViewSelectionBoxRemove extends Action2
 // Selection box (main view)
 
 abstract class MainViewSelectionBoxCreateToggling extends Action2
+    with BuiltJsonSerializable
     implements Built<MainViewSelectionBoxCreateToggling, MainViewSelectionBoxCreateTogglingBuilder> {
   Point<num> get point;
 
@@ -309,6 +359,7 @@ abstract class MainViewSelectionBoxCreateToggling extends Action2
 }
 
 abstract class MainViewSelectionBoxCreateSelecting extends Action2
+    with BuiltJsonSerializable
     implements Built<MainViewSelectionBoxCreateSelecting, MainViewSelectionBoxCreateSelectingBuilder> {
   Point<num> get point;
 
@@ -327,6 +378,7 @@ abstract class MainViewSelectionBoxCreateSelecting extends Action2
 }
 
 abstract class MainViewSelectionBoxSizeChanged extends Action2
+    with BuiltJsonSerializable
     implements Built<MainViewSelectionBoxSizeChanged, MainViewSelectionBoxSizeChangedBuilder> {
   Point<num> get point;
 
@@ -344,6 +396,7 @@ abstract class MainViewSelectionBoxSizeChanged extends Action2
 }
 
 abstract class MainViewSelectionBoxRemove extends Action2
+    with BuiltJsonSerializable
     implements Built<MainViewSelectionBoxRemove, MainViewSelectionBoxRemoveBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory MainViewSelectionBoxRemove() => MainViewSelectionBoxRemove.from((b) => b);
@@ -360,6 +413,7 @@ abstract class MainViewSelectionBoxRemove extends Action2
 // Mouse position (side view)
 
 abstract class SideViewMousePositionUpdate extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewMousePositionUpdate, SideViewMousePositionUpdateBuilder> {
   Point<num> get point;
 
@@ -376,6 +430,7 @@ abstract class SideViewMousePositionUpdate extends Action2
 }
 
 abstract class SideViewMousePositionRemove extends Action2
+    with BuiltJsonSerializable
     implements Built<SideViewMousePositionRemove, SideViewMousePositionRemoveBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory SideViewMousePositionRemove() => SideViewMousePositionRemove.from((b) => b);
@@ -391,7 +446,9 @@ abstract class SideViewMousePositionRemove extends Action2
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix select (side view)
 
-abstract class HelicesSelectedToggle implements Built<HelicesSelectedToggle, HelicesSelectedToggleBuilder> {
+abstract class HelicesSelectedToggle
+    with BuiltJsonSerializable
+    implements Built<HelicesSelectedToggle, HelicesSelectedToggleBuilder> {
   BuiltSet<int> get helices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -406,7 +463,9 @@ abstract class HelicesSelectedToggle implements Built<HelicesSelectedToggle, Hel
   static Serializer<HelicesSelectedToggle> get serializer => _$helicesSelectedToggleSerializer;
 }
 
-abstract class HelicesSelectedSelect implements Built<HelicesSelectedSelect, HelicesSelectedSelectBuilder> {
+abstract class HelicesSelectedSelect
+    with BuiltJsonSerializable
+    implements Built<HelicesSelectedSelect, HelicesSelectedSelectBuilder> {
   BuiltSet<int> get helices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -421,7 +480,9 @@ abstract class HelicesSelectedSelect implements Built<HelicesSelectedSelect, Hel
   static Serializer<HelicesSelectedSelect> get serializer => _$helicesSelectedSelectSerializer;
 }
 
-abstract class HelicesSelectedClear implements Built<HelicesSelectedClear, HelicesSelectedClearBuilder> {
+abstract class HelicesSelectedClear
+    with BuiltJsonSerializable
+    implements Built<HelicesSelectedClear, HelicesSelectedClearBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory HelicesSelectedClear() => HelicesSelectedClear.from((b) => b);
 
@@ -451,7 +512,7 @@ abstract class HelicesSelectedClear implements Built<HelicesSelectedClear, Helic
 //  // Helix
 //  helix_use = Action<HelixUseActionParameters>();
 //  set_helices = Action<List<Helix>>();
-//  set_helix_rotation = Action<SetHelixRotationActionParameters>();
+//  *set_helix_rotation = Action<SetHelixRotationActionParameters>();
 //
 //  // Strand
 //  strand_remove = Action<Strand>();

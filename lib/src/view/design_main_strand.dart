@@ -89,7 +89,7 @@ List<ReactElement> _insertion_paths(Strand strand) {
   List<ReactElement> paths = [];
   for (BoundSubstrand substrand in strand.bound_substrands()) {
     for (var insertion in substrand.insertions) {
-      int offset = insertion.item1;
+      int offset = insertion.offset;
       ReactElement insertion_path = _insertion_path(substrand, offset, strand.color);
       ReactElement text_num_insertions = _svg_text_number_of_insertions(insertion, substrand, offset);
       paths.add(insertion_path);
@@ -138,9 +138,9 @@ ReactElement _insertion_path(BoundSubstrand substrand, int offset, Color color) 
   return insertion_path;
 }
 
-ReactElement _svg_text_number_of_insertions(Tuple2<int, int> insertion, BoundSubstrand substrand, int offset) {
+ReactElement _svg_text_number_of_insertions(Insertion insertion, BoundSubstrand substrand, int offset) {
   // write number of insertions inside insertion loop
-  int length = insertion.item2;
+  int length = insertion.length;
 
   var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
   if (browser.isFirefox) {

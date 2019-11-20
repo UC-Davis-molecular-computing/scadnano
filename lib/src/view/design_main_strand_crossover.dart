@@ -44,22 +44,25 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
       for (var ss in [prev_substrand, next_substrand]) {
         var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
         int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-        _set_rotation_for_substrand_from_crossover(ss, other_ss, anchor);
+
+        var action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
+        app.store.dispatch(action);
+//        _set_rotation_for_substrand_from_crossover(ss, other_ss, anchor);
       }
     }
 
     update_mouseover_crossover() {
-      List<Tuple3<int, int, bool>> param_list = [];
+      List<MouseoverParams> param_list = [];
       for (var ss in [prev_substrand, next_substrand]) {
         //FIXME: better way to get dna_design
         Helix helix = app.model.dna_design.helices[ss.helix];
         int offset = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
         bool forward = ss.forward;
-        param_list.add(Tuple3<int, int, bool>(helix.idx, offset, forward));
+        param_list.add(MouseoverParams(helix.idx, offset, forward));
       }
 
       app.store.dispatch(
-          actions.MouseoverDataUpdate(app.model.dna_design, BuiltList<Tuple3<int, int, bool>>(param_list)));
+          actions.MouseoverDataUpdate(app.model.dna_design, BuiltList<MouseoverParams>(param_list)));
 //      var params = MouseoverParameters(BuiltList<Tuple3<int, int, bool>>(param_list));
 //      Actions.update_mouseover_data(params);
     }
@@ -88,7 +91,10 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
       ..className = classname_this_curve
 //      ..onMouseDown = ((ev) => ev.ctrlKey || ev.shiftKey ? crossover.handle_selection(ev) : handle_crossover_click())
       ..onMouseEnter = ((_) => update_mouseover_crossover())
-      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+//      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+      ..onMouseLeave = ((_) {
+        mouse_leave_update_mouseover();
+      })
       ..onPointerDown = ((ev) => ev.nativeEvent.ctrlKey || ev.nativeEvent.shiftKey
           ? crossover.handle_selection(ev)
           : handle_crossover_click())
@@ -98,6 +104,26 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
   }
 }
 
+//_set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
+////  bool crossover_up = ss.helix > other_ss.helix;
+////  num rotation = crossover_up ? 0 : pi;
+//
+//
+//
+//  if (!ss.forward) {
+//    rotation = (rotation - radians(150)) % (2 * pi);
+//  }
+//
+//  var helix_rotation_action = actions.HelixRotationSet(ss.helix, rotation, anchor);
+//
+//  //FIXME: on the second call model is null, possibly because we aren't intended to access a global
+//  // variable in this way. Try making this a connected component and call dispatch that way
+//  app.store.dispatch(helix_rotation_action);
+//}
+
+//XXX: restore this code if the above fails. Above only worked for crossovers one on top of the other in
+// the square lattice.
+
 _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand other_ss, int anchor) {
   bool crossover_up = ss.helix > other_ss.helix;
   num rotation = crossover_up ? 0 : pi;
@@ -106,17 +132,10 @@ _set_rotation_for_substrand_from_crossover(BoundSubstrand ss, BoundSubstrand oth
   }
 
   var helix_rotation_action = actions.HelixRotationSet(ss.helix, rotation, anchor);
-  Model model = app.model;
+
   //FIXME: on the second call model is null, possibly because we aren't intended to access a global
   // variable in this way. Try making this a connected component and call dispatch that way
   app.store.dispatch(helix_rotation_action);
-
-//  Helix helix = app.model.dna_design.helices[helix_idx];
-//  num old_rotation = helix.rotation;
-//  int old_anchor = helix.rotation_anchor;
-//  var params = SetHelixRotationActionParameters(helix_idx, anchor, rotation, old_anchor, old_rotation);
-//  var action_pack = SetHelixRotationActionPack(params);
-//  app.send_action(action_pack);
 }
 
 String degrees_str(num radians, [int decimal_places = 2]) =>

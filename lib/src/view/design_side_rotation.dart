@@ -26,16 +26,19 @@ class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> 
     int offset_next = nextProps['DesignSideHelixProps.offset'];
     Helix helix = props.helix;
     int offset = props.offset;
-//    print('  should DesignSideRotation update? ${helix != helix_next || offset != offset_next}');
-    return helix != helix_next || offset != offset_next;
+//    print('should DesignSideRotation update? ${!(helix == helix_next && offset == offset_next)}');
+//    print('  helix == helix_next?            ${helix == helix_next}');
+//    print('  offset == offset_next?          ${offset == offset_next}');
+    return !(helix == helix_next && offset == offset_next);
   }
 
   @override
   render() {
-//    print('rendering rotation');
     Helix helix = this.props.helix;
     int offset = this.props.offset;
     num radius = this.props.radius;
+
+//    print('rendering rotation on helix ${helix.idx}');
 
     DNADesign dna_design = app.model.dna_design;
     var substrands = dna_design.substrands_on_helix_at(helix.idx, offset);
@@ -58,12 +61,12 @@ class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> 
     return Dom.g()(
       (DesignSideRotationArrow()
         ..radius = radius
-        ..angle = rotation_3p
+        ..angle_degrees = rotation_3p
         ..color = color_3p
         ..className = 'rotation-arrow')(),
       (DesignSideRotationArrow()
         ..radius = radius
-        ..angle = rotation_5p
+        ..angle_degrees = rotation_5p
         ..color = color_5p
         ..className = 'rotation-arrow')(),
     );

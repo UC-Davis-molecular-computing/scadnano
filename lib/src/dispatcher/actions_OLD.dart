@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:js/js.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../model/dna_design_action_packs.dart';
 import '../model/select_mode.dart';
@@ -228,7 +229,7 @@ class HelixUseActionParameters {
   final int max_offset;
   final int min_offset;
   final int major_tick_distance;
-  final List<int> major_ticks;
+  final BuiltList<int> major_ticks;
 
   HelixUseActionParameters(this.create, this.grid_position, this.idx, this.max_offset,
       {this.min_offset = 0, this.major_tick_distance = -1, this.major_ticks = null});

@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:built_value/serializer.dart';
 import 'package:react/react.dart';
+import 'package:scadnano/src/serializers.dart';
 import 'package:tuple/tuple.dart';
-import 'package:meta/meta.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../app.dart';
 import 'dna_end.dart';
@@ -17,11 +19,38 @@ import 'package:built_value/built_value.dart';
 
 part 'bound_substrand.g.dart';
 
+abstract class Insertion
+    with BuiltJsonSerializable
+    implements Built<Insertion, InsertionBuilder>, JSONSerializable {
+  int get offset;
+
+  int get length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Insertion(int offset, int count) => Insertion.from((b) => b
+    ..offset = offset
+    ..length = count);
+
+  factory Insertion.from([void Function(InsertionBuilder) updates]) = _$Insertion;
+
+  Insertion._();
+
+  static Serializer<Insertion> get serializer => _$insertionSerializer;
+
+  dynamic toJson() => [offset, length];
+
+  dynamic to_json_serializable({bool suppress_indent = false}) => toJson();
+
+  Insertion fromJson(List list) => Insertion(list[0], list[1]);
+}
+
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
 /// BoundSubstrand that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
 abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
   BoundSubstrand._();
+
+  static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
 
   factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
 
@@ -33,9 +62,9 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
 
   int get end;
 
-  List<int> get deletions;
+  BuiltList<int> get deletions;
 
-  List<Tuple2<int, int>> get insertions; // elt: Pair(offset, num insertions)
+  BuiltList<Insertion> get insertions; // elt: Pair(offset, num insertions)
 
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
@@ -103,10 +132,12 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(this.insertions.map((insertion) => insertion.toList()));
+      json_map[constants.insertions_key] = List<dynamic>.from(this
+          .insertions
+          .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
 
-    return suppress_indent? NoIndent(json_map) : json_map;
+    return suppress_indent ? NoIndent(json_map) : json_map;
   }
 
   static BoundSubstrandBuilder from_json(Map<String, dynamic> json_map) {
@@ -120,21 +151,21 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
 //    List<Tuple2<int, int>> insertions =
 //        json_map.containsKey(constants.insertions_key) ? parse_json_insertions(json_map[constants.insertions_key]) : [];
     var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
-    var insertions = parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
+    var insertions =
+        parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
     return BoundSubstrandBuilder()
       ..forward = forward
       ..helix = helix
       ..start = start
       ..end = end
-      ..deletions = deletions
-      ..insertions = insertions;
+      ..deletions = ListBuilder<int>(deletions)
+      ..insertions = ListBuilder<Insertion>(insertions);
   }
 
-  static List<Tuple2<int, int>> parse_json_insertions(json_encoded_insertions) {
+  static BuiltList<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
-    return List<Tuple2<int, int>>.from(
-        json_encoded_insertions.map((insertion) => Tuple2<int, int>.fromList(insertion)));
+    return BuiltList<Insertion>(json_encoded_insertions.map((list) => Insertion(list[0], list[1])));
   }
 
   /// 5' end, INCLUSIVE
@@ -200,8 +231,8 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     var deletions_set = this.deletions.toSet();
     var insertions_map = Map<int, int>.fromIterable(
       this.insertions,
-      key: (insertion) => insertion.item1,
-      value: (insertion) => insertion.item2,
+      key: (insertion) => insertion.offset,
+      value: (insertion) => insertion.length,
     );
 
     int seq_idx = 0;
@@ -241,11 +272,9 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
         length_increase -= 1;
       }
     }
-    for (Tuple2<int, int> insertion in this.insertions) {
-      int insertion_offset = insertion.item1;
-      int insertion_length = insertion.item2;
-      if (this._between_5p_and_offset(insertion_offset, offset_edge)) {
-        length_increase += insertion_length;
+    for (var insertion in this.insertions) {
+      if (this._between_5p_and_offset(insertion.offset, offset_edge)) {
+        length_increase += insertion.length;
       }
     }
 
@@ -254,8 +283,8 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     if (!offset_closer_to_5p) {
       var insertion_map = Map<int, int>.fromIterable(
         this.insertions,
-        key: (insertion) => insertion.item1,
-        value: (insertion) => insertion.item2,
+        key: (insertion) => insertion.offset,
+        value: (insertion) => insertion.length,
       );
       if (insertion_map.containsKey(offset_edge)) {
         int insertion_length = insertion_map[offset_edge];
@@ -275,16 +304,18 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     return num_insertions_in_list(insertions);
   }
 
-  static int num_insertions_in_list(List<Tuple2<int, int>> insertions) {
+  static int num_insertions_in_list(Iterable<Insertion> insertions) {
     int num = 0;
-    for (Tuple2<int, int> insertion in insertions) {
-      num += insertion.item2;
+    for (Insertion insertion in insertions) {
+      num += insertion.length;
     }
     return num;
   }
 
   bool overlaps(BoundSubstrand other) {
-    return (this.helix == other.helix && this.forward == (!other.forward) && this.compute_overlap(other).item1 >= 0);
+    return (this.helix == other.helix &&
+        this.forward == (!other.forward) &&
+        this.compute_overlap(other).item1 >= 0);
   }
 
   Tuple2<int, int> compute_overlap(BoundSubstrand other) {
@@ -298,8 +329,8 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
   }
 
   bool contains_insertion_at(int offset) {
-    for (Tuple2<int, int> insertion in this.insertions) {
-      if (offset == insertion.item1) {
+    for (var insertion in this.insertions) {
+      if (offset == insertion.offset) {
         return true;
       }
     }

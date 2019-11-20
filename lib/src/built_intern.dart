@@ -1,5 +1,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/serializers.dart';
 
 Set<Built> _cache_built_value = {};
 Set<BuiltList> _cache_built_list = {};

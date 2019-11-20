@@ -17,3 +17,5 @@ for directory in build/packages/*; do
     fi
 done
 
+rm -rf build/external-libs/pyodide
+

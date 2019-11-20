@@ -9,15 +9,13 @@ UiFactory<DesignSideRotationArrowProps> DesignSideRotationArrow = _$DesignSideRo
 
 @Props()
 class _$DesignSideRotationArrowProps extends UiProps {
-  double angle;
+  double angle_degrees;
   double radius;
   String color;
 }
 
 @Component()
 class DesignSideRotationArrowComponent extends UiComponent<DesignSideRotationArrowProps> {
-  @override
-  Map getDefaultProps() => (newProps());
 
   @override
   render() {
@@ -35,7 +33,9 @@ class DesignSideRotationArrowComponent extends UiComponent<DesignSideRotationArr
         'L 0 -${mag} '
         'm -${mag / 6.0} ${mag / 4.0} '
         'L 0 -${mag} ';
-    num angle_degrees = this.props.angle * 360.0 / (2 * pi);
+
+//    num angle_degrees = this.props.angle * 360.0 / (2 * pi);
+    num angle_degrees = this.props.angle_degrees;
 
     return (Dom.path()
       ..transform = 'rotate($angle_degrees)'

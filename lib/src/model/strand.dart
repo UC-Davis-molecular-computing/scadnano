@@ -172,7 +172,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
         BoundSubstrandBuilder ssb = BoundSubstrand.from_json(substrand_json);
         ssb.is_first = (i == 0);
         ssb.is_last = (i == substrand_jsons.length - 1);
-        int num_insertions = BoundSubstrand.num_insertions_in_list(ssb.insertions);
+        int num_insertions = BoundSubstrand.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
         end_idx_ss = start_idx_ss + dna_length;
         bound_substrands[i] = ssb.build();

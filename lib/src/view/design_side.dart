@@ -54,13 +54,19 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
       return null;
     }
 
-//    print('rendering side view');
-
     SelectionBox selection_box = props.selection_box;
     Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
     BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
-    Map<Helix, MouseoverData> helix_to_mouseover_data = {for (var mod in mouseover_datas) mod.helix: mod};
+    Map<int, MouseoverData> helix_idx_to_mouseover_data = {
+      for (var mod in mouseover_datas) mod.helix.idx: mod
+    };
     BuiltList<Helix> helices = this.props.helices;
+
+//    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
+//        'DesignSide.render()  using helices:\n${helices}');
+//
+//    print('DesignSide.render() called');
+//    print('  DesignSide.props.helix_to_mouseover_data = ${helix_idx_to_mouseover_data}');
 
     //TODO: it's not well-defined what to do when grid=none and there is no grid position for helices
     List helices_components = [
@@ -71,7 +77,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
           ..grid_position = helix.grid_position
           ..grid = this.props.grid
 //          ..mouseover_datas = mouseover_datas
-          ..mouseover_data = helix_to_mouseover_data[helix]
+          ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};

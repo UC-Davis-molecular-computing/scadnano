@@ -1,10 +1,14 @@
 import 'dart:math';
 
+import 'package:built_value/serializer.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:quiver/core.dart' as quiver;
-import 'package:w_flux/w_flux.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/model/position3d.dart';
 
 import '../json_serializable.dart';
+import '../serializers.dart';
+import 'grid.dart';
 import 'selectable.dart';
 import 'strand.dart';
 import '../dispatcher/actions_OLD.dart';
@@ -17,8 +21,10 @@ import 'package:built_value/built_value.dart';
 part 'helix.g.dart';
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
-abstract class Helix implements Built<Helix, HelixBuilder> {
+abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBuilder> {
   Helix._();
+
+  static Serializer<Helix> get serializer => _$helixSerializer;
 
   factory Helix([void Function(HelixBuilder) updates]) = _$Helix;
 
@@ -30,11 +36,16 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
   /// position within square/hex/honeycomb integer grid (side view)
   GridPosition get grid_position;
 
+  Grid get grid;
+
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
   Point<num> get svg_position;
+
+  @nullable
+  Position3D get position;
 
   double get rotation; //= constants.default_helix_rotation;
   int get rotation_anchor; // = constants.default_helix_rotation_anchor;
@@ -49,7 +60,33 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
   int get major_tick_distance;
 
   @nullable
-  List<int> get major_ticks;
+  BuiltList<int> get major_ticks;
+
+//  @override
+//  String toString() =>
+//      super.toString().replaceFirst(r'helix=[+-]?\d+(\.\d+)?', 'helix=${util.to_degrees(rotation)}');
+
+  /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
+  /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
+  Position3D position3d() {
+    if (position != null) {
+      return position;
+    }
+    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
+    num z = grid_position.b * constants.BASE_WIDTH_SVG;
+    return Position3D(x: svg_pos.x, y: svg_pos.y, z: z, pitch: 0, roll: 0, yaw: 0);
+  }
+
+  /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
+  num angle_to(Helix other) {
+    var pos1 = position3d();
+    var pos2 = other.position3d();
+    num x = pos2.x - pos1.x;
+    num y = pos2.y - pos1.y;
+    // need to flip by 180 (by adding pi radians) since we are using SVG "reverse y" coordinates
+    num angle_radians = (atan2(x, y) + pi) % (2 * pi);
+    return util.to_degrees(angle_radians);
+  }
 
   bool has_major_tick_distance() => this.major_tick_distance != null;
 
@@ -69,7 +106,8 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
     Map<String, dynamic> json_map = {};
 
     if (this.has_grid_position()) {
-      json_map[constants.grid_position_key] = this.grid_position;
+      json_map[constants.grid_position_key] =
+          this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
     if (this.has_nondefault_svg_position()) {
@@ -92,7 +130,7 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
       json_map[constants.rotation_anchor_key] = this.rotation_anchor;
     }
 
-    return suppress_indent? NoIndent(json_map) : json_map;
+    return suppress_indent ? NoIndent(json_map) : json_map;
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
@@ -185,7 +223,8 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
-      helix_builder.major_ticks = List<int>.from(json_map[constants.major_ticks_key]);
+      helix_builder.major_ticks = ListBuilder<int>(List<int>.from(json_map[constants.major_ticks_key]));
+//      helix_builder.major_ticks = List<int>.from(json_map[constants.major_ticks_key]);
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
@@ -210,10 +249,13 @@ abstract class Helix implements Built<Helix, HelixBuilder> {
       helix_builder.max_offset = json_map[constants.max_offset_key];
     }
 
-    helix_builder.rotation = util.get_value_with_default(json_map, constants.rotation_key, 0);
-    helix_builder.rotation_anchor = util.get_value_with_default(json_map, constants.rotation_anchor_key, 0);
+    helix_builder.rotation =
+        util.get_value_with_default(json_map, constants.rotation_key, constants.default_helix_rotation);
+    helix_builder.rotation_anchor = util.get_value_with_default(
+        json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
 
-    //TODO: set fields here
+    helix_builder.position = util.get_value_with_default(json_map, 'position', null);
+
     return helix_builder;
   }
 

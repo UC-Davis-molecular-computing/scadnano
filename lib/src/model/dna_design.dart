@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:react/react.dart';
+import 'package:redux/redux.dart';
 import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
@@ -21,6 +22,7 @@ import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
+import '../dispatcher/actions.dart' as actions;
 
 part 'dna_design.g.dart';
 
@@ -315,6 +317,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       if (helix_builder.grid_position == null) {
         helix_builder.grid_position = DNADesign._default_grid_position(idx);
       }
+      helix_builder.grid = dna_design_builder.grid;
       helix_builders.add(helix_builder);
       idx++;
     }
@@ -503,7 +506,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Return [Substrand]s at [offset].
   BuiltSet<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) {
     var substrands_at_offset = SetBuilder<BoundSubstrand>({
-      for (var substrand in this.helix_idx_to_substrands[helix_idx]) if (substrand.contains_offset(offset)) substrand
+      for (var substrand in this.helix_idx_to_substrands[helix_idx])
+        if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
   }
@@ -538,7 +542,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     Set<int> deletions_intersecting = {};
-    Set<Tuple2<int, int>> insertions_intersecting = {};
+    Set<Insertion> insertions_intersecting = {};
     for (var ss in substrands_intersecting) {
       for (var deletion in ss.deletions) {
         if (start <= deletion && deletion <= end) {
@@ -546,7 +550,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         }
       }
       for (var insertion in ss.insertions) {
-        if (start <= insertion.item1 && insertion.item1 <= end) {
+        if (start <= insertion.offset && insertion.offset <= end) {
           insertions_intersecting.add(insertion);
         }
       }
@@ -554,7 +558,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     int total_insertion_length = 0;
     for (var insertion in insertions_intersecting) {
-      total_insertion_length += insertion.item2;
+      total_insertion_length += insertion.length;
     }
 
     int dna_length = end - start + 1 - deletions_intersecting.length + total_insertion_length;
@@ -572,12 +576,18 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     } else {
       num_bases = 0;
     }
-    num rad = (helix.rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
-    return rad;
+//    num rad = (helix.rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
+//    return rad;
+//    num rad = (util.to_radians(helix.rotation) + (2 * pi * num_bases / 10.5)) % (2 * pi);
+//    return util.to_degrees(rad);
+    num rot = (helix.rotation + (360 * num_bases / 10.5)) % (360);
+    return rot;
   }
 
   /// in radians;  3' rotation + 150 degrees
-  double helix_rotation_5p(Helix helix, int offset) => this.helix_rotation_3p(helix, offset) + (2 * pi * 150.0 / 360.0);
+  double helix_rotation_5p(Helix helix, int offset) =>
+//      this.helix_rotation_3p(helix, offset) + (2 * pi * 150.0 / 360.0);
+      this.helix_rotation_3p(helix, offset) + 150;
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;
@@ -602,7 +612,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   bool helix_has_substrands(Helix helix) => this.helix_idx_to_substrands[helix.idx].isNotEmpty;
 }
 
-BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(int num_helices, Iterable<Strand> strands) {
+BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
+    int num_helices, Iterable<Strand> strands) {
   var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
   for (int _ = 0; _ < num_helices; _++) {
     helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
@@ -630,7 +641,8 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset = substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+      var max_offset =
+          substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -639,7 +651,8 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var min_offset = substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+      var min_offset =
+          substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }
@@ -722,20 +735,4 @@ Color parse_json_color(Object json_obj) {
     throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
         '${json_obj.runtimeType}:\n${json_obj}');
   }
-}
-
-DNADesign dna_design_reducer([DNADesign dna_design, action]) {
-  DNADesign new_dna_design = dna_design;
-
-  if (action is HelixRotationSet) {
-    Helix helix_new = dna_design.helices[action.helix_idx].rebuild((h) => h
-      ..rotation = action.rotation
-      ..rotation_anchor = action.anchor);
-    ListBuilder<Helix> helix_list_builder = dna_design.helices.toBuilder();
-    helix_list_builder[action.helix_idx] = helix_new;
-
-    new_dna_design = dna_design.rebuild((d) => d..helices = helix_list_builder);
-  }
-
-  return new_dna_design;
 }

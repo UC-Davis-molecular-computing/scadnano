@@ -47,16 +47,16 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     MouseoverData mouseover_data_next = nextProps['DesignSideHelixProps.mouseover_data'];
     Helix helix = props.helix;
     MouseoverData mouseover_data = props.mouseover_data;
-    bool should = helix != helix_next || mouseover_data != mouseover_data_next;
-//    print('  should DesignSideHelix update? ${should}');
-    if (should) {
+    bool should = !(helix == helix_next && mouseover_data == mouseover_data_next);
+//    print('should DesignSideHelix update for helix=${helix.idx}?          ${should}');
+//    if (should) {
 //      print('  helix == helix_next:                   ${helix == helix_next}');
 //      print('  mouseover_data == mouseover_data_next: ${mouseover_data == mouseover_data_next}');
 //      print('  helix = ${helix}');
 //      print('  helix_next = ${helix_next}');
 //      print('  mouseover_data = ${mouseover_data}');
 //      print('  mouseover_data_next = ${mouseover_data_next}');
-    }
+//    }
     return should;
   }
 
@@ -81,18 +81,17 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
         ..key = 'text')(this.props.helix.idx.toString()),
     ];
 
-//    for (MouseoverData mouseover_data in mouseover_datas) {
-//      if (mouseover_data.helix.idx == this.props.helix.idx) {
+//    print('checking mouseover data');
     if (mouseover_data != null) {
+//      print('mouseover data not null; creating DesignSideRotation now');
       assert(mouseover_data.helix.idx == this.props.helix.idx);
-      children.add((DesignSideRotation()
+      var rot_component = (DesignSideRotation()
         ..radius = constants.SIDE_HELIX_RADIUS
         ..helix = mouseover_data.helix
         ..offset = mouseover_data.offset
         ..key = 'rotation'
-        ..className = '$SIDE_VIEW_PREFIX-helix-rotation')());
-//      }
-//    }
+        ..className = '$SIDE_VIEW_PREFIX-helix-rotation')();
+      children.add(rot_component);
     }
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);

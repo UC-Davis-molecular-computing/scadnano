@@ -7,15 +7,16 @@ import 'dart:js' as js;
 import 'dart:math';
 import 'dart:svg' hide Point;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/model/ui_model.dart';
 
 import 'model/crossover.dart';
 import 'model/dna_end.dart';
 import 'model/grid.dart';
 import 'model/grid_position.dart';
+import 'model/helix.dart';
 import 'model/loopout.dart';
 import 'model/model.dart';
 import 'model/dna_design.dart';
@@ -23,6 +24,7 @@ import 'constants.dart' as constants;
 import 'model/bound_substrand.dart';
 import 'model/selectable.dart';
 import 'model/strand.dart';
+import 'dispatcher/actions.dart' as actions;
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
@@ -76,7 +78,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   }
 }
 
-transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(
+    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -118,7 +121,8 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
     num y = sin(2 * pi / 6) * gp.v; // y offset from v
     point = Point<num>(x, y);
   } else {
-    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+    throw ArgumentError(
+        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return point * 2 * radius;
 }
@@ -126,7 +130,7 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
-  int h,v,b;
+  int h, v, b;
   if (grid == Grid.square) {
     h = (svg_coord.x / (2 * radius)).round();
     v = (svg_coord.y / (2 * radius)).round();
@@ -190,11 +194,11 @@ external List<num> current_pan_main_js();
 external List<num> current_pan_side_js();
 
 Point<num> current_pan(bool is_main) {
-  var ret = is_main? current_pan_main_js() : current_pan_side_js();
+  var ret = is_main ? current_pan_main_js() : current_pan_side_js();
   return Point<num>(ret[0], ret[1]);
 }
 
-num current_zoom(bool is_main) => is_main? current_zoom_main() : current_zoom_side();
+num current_zoom(bool is_main) => is_main ? current_zoom_main() : current_zoom_side();
 
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
@@ -254,4 +258,20 @@ Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
     selected_all[selectable.runtimeType].add(selectable);
   }
   return selected_all;
+}
+
+num to_degrees(num radians) => radians * 360 / (2 * pi);
+
+num to_radians(num degrees) => degrees * 2 * pi / 360;
+
+num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetAtOther action) {
+  Helix helix = helices[action.helix_idx];
+  Helix helix_other = helices[action.helix_other_idx];
+
+  num rotation = helix.angle_to(helix_other);
+  if (!action.forward) {
+    rotation = (rotation - 150) % 360;
+  }
+
+  return rotation;
 }

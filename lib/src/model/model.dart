@@ -17,6 +17,8 @@ import 'package:built_value/built_value.dart';
 
 part 'model.g.dart';
 
+//TODO: replace calls to toBuilder with replace: https://github.com/google/built_value.dart/issues/424
+
 final DEFAULT_ModelBuilder = ModelBuilder()
   ..ui_model = DEFAULT_UIModelBuilder
   ..error_message = ""
@@ -39,7 +41,7 @@ abstract class Model implements Built<Model, ModelBuilder> {
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    return this.dna_design.to_json_serializable();
+    return this.dna_design.to_json_serializable(suppress_indent: false);
   }
 
   bool has_error() => error_message != null && error_message.length > 0;

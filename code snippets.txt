@@ -1,5 +1,5 @@
 // bvs (built value with serialization, and support for one field initially)
-abstract class $CLASS_NAME$ implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+abstract class $CLASS_NAME$ with BuiltJsonSerializable implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   $FIELD_TYPE$ get $FIELD_NAME$;
   
   /************************ begin BuiltValue boilerplate ************************/
@@ -11,6 +11,10 @@ abstract class $CLASS_NAME$ implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> 
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
 }
+
+settings for calculated fields:
+FIELD_NAME =         snakeCase(FIELD_TYPE)
+LOWER_CLASS_NAME =   decapitalize(CLASS_NAME)
 
 
 // built value

@@ -36,8 +36,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         var bound_ss = substrand as BoundSubstrand;
         dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
         for (var insertion in bound_ss.insertions) {
-          int offset = insertion.item1;
-          int length = insertion.item2;
+          int offset = insertion.offset;
+          int length = insertion.length;
           dna_sequence_elts.add(this._dna_sequence_on_insertion(bound_ss, offset, length));
         }
       } else {

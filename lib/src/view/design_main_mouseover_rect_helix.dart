@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/serializers.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -65,7 +66,6 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
 
 mouse_leave_update_mouseover() {
   app.store.dispatch(actions.MouseoverDataClear());
-//  Actions.remove_mouseover_data();
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
@@ -104,8 +104,26 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
         'forward = ${forward}');
   }
 
+  var mouseover_params = MouseoverParams(helix_idx, offset, forward);
+
+//  print('mouseover_params.toJson() = ${mouseover_params.toJson()}');
+//
+//  var gp = helix.grid_position;
+//  var gp_ser = standard_serializers.serialize(gp);
+//  print('standard_serializers.serialize(gp) = ${gp_ser}');
+//
+//  var helix_serialized = standard_serializers.serialize(helix);
+//  print('standard_serializers.serialize(helix) = ${helix_serialized}');
+//
+//  var mouseover_datas = MouseoverData.from_params(dna_design, [mouseover_params]);
+//  print('mouseover_datas[0].toJson = ${mouseover_datas[0].toJson()}');
+//  var action = actions.MouseoverDataUpdate(
+//      dna_design, BuiltList<MouseoverParams>([MouseoverParams(helix_idx, offset, forward)]));
+//  print('action.toJson() = ${action.toJson()}');
+
+
   app.store.dispatch(actions.MouseoverDataUpdate(
-      dna_design, BuiltList<Tuple3<int, int, bool>>([Tuple3(helix_idx, offset, forward)])));
+      dna_design, BuiltList<MouseoverParams>([mouseover_params])));
 //    var params = MouseoverParameters(BuiltList<Tuple3<int, int, bool>>([Tuple3(helix_idx, offset, forward)]));
 //  Actions.update_mouseover_data(params);
 }
