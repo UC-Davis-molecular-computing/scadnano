@@ -26,8 +26,17 @@ class _$DesignMainHelixProps extends UiProps {
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
 
   @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    Helix helix_next = nextProps['DesignMainHelixProps.helix'];
+    Helix helix = props.helix;
+//    print('should update for helix = ${helix.idx}? ${helix != helix_next}');
+    return helix != helix_next;
+  }
+
+  @override
   render() {
     Helix helix = this.props.helix;
+
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
@@ -59,7 +68,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
 //        ..y = '$cy')('$idx'),
       (Dom.g()
         ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-        ..onMouseMove = ((event) => update_mouseover(event, helix))
+        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
         ..className = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'

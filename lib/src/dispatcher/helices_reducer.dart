@@ -35,6 +35,10 @@ BuiltList<Helix> helix_rotation_set_at_other_reducer(
     ..rotation = rotation
     ..rotation_anchor = action.anchor);
 
+  print('*'*80);
+  print('helix ${helix.idx} old angle = ${helix.rotation} anchor = ${helix.rotation_anchor} position3d() = ${helix.position3d()}');
+  print('helix ${helix.idx} new angle = ${helix_new.rotation} anchor = ${helix_new.rotation_anchor} position3d() = ${helix_new.position3d()}');
+
   // create new helices
   var helices_builder = helices.toBuilder();
   helices_builder[action.helix_idx] = helix_new;

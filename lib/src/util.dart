@@ -275,3 +275,4 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
 
   return rotation;
 }
+

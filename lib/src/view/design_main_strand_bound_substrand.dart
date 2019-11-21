@@ -58,7 +58,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
     Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
 
     return (Dom.line()
-      ..onMouseMove = ((event) => update_mouseover(event, helix))
+      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
       ..stroke = props.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'

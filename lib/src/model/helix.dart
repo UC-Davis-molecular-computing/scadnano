@@ -33,6 +33,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// by default.
   int get idx;
 
+  int get display_order;
+
   /// position within square/hex/honeycomb integer grid (side view)
   GridPosition get grid_position;
 
@@ -83,8 +85,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     var pos2 = other.position3d();
     num x = pos2.x - pos1.x;
     num y = pos2.y - pos1.y;
-    // need to flip by 180 (by adding pi radians) since we are using SVG "reverse y" coordinates
-    num angle_radians = (atan2(x, y) + pi) % (2 * pi);
+    num angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
     return util.to_degrees(angle_radians);
   }
 
@@ -168,10 +169,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   GridPosition default_grid_position() => GridPosition((gp) => gp
     ..h = 0
-    ..v = this.idx
+    ..v = this.display_order
     ..b = 0);
 
-  Point<num> default_svg_position() => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.idx);
+  Point<num> default_svg_position() =>
+      Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.display_order);
 
   bool has_grid_position() => this.grid_position != null;
 

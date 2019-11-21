@@ -14,8 +14,8 @@ class _$DesignSideRotationArrowProps extends UiProps {
   String color;
 }
 
-@Component()
-class DesignSideRotationArrowComponent extends UiComponent<DesignSideRotationArrowProps> {
+@Component2()
+class DesignSideRotationArrowComponent extends UiComponent2<DesignSideRotationArrowProps> {
 
   @override
   render() {

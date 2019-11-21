@@ -67,6 +67,7 @@ const grid_key = 'grid';
 const major_tick_distance_key = 'major_tick_distance';
 const major_ticks_key = 'major_ticks';
 const helices_key = 'helices';
+const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 

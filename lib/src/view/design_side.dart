@@ -20,7 +20,7 @@ part 'design_side.over_react.g.dart';
 // The react/redux stuff keeps going in the background even if we don't render it. To prevent a crash when
 // there is an error message to display instead of a DNADesign (since the components for DesignSide and DesignMain
 // are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when model has an error.
-UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<Model, _$DesignSideProps>(
+UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<Model, DesignSideProps>(
   mapStateToProps: (model) => (DesignSide()
     ..helices = model.has_error() ? null : model.dna_design.helices
     ..mouseover_datas = model.has_error() ? null : model.ui_model.mouseover_datas
@@ -28,6 +28,8 @@ UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<Model, _$DesignSidePr
     ..grid = model.has_error() ? null : model.dna_design.grid
     ..selection_box = model.has_error() ? null : model.ui_model.selection_box_side_view),
 )(DesignSide);
+
+
 
 @Factory()
 UiFactory<DesignSideProps> DesignSide = _$DesignSide;

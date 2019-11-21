@@ -15,12 +15,15 @@ import 'package:scadnano/src/dispatcher/actions.dart';
 import 'package:scadnano/src/json_serializable.dart';
 import 'package:scadnano/src/model/dna_end.dart';
 import 'package:scadnano/src/model/select_mode.dart';
+import 'package:scadnano/src/test_built_value.dart';
 
 import 'model/dna_design.dart';
+import 'model/helix.dart';
 import 'model/model.dart';
 import 'dispatcher/actions_OLD.dart';
 
 //import 'dispatcher/model_reducer.dart';
+import 'model/mouseover_data.dart';
 import 'serializers.dart';
 import 'util.dart' as util;
 import 'dispatcher/undo_redo.dart';
@@ -32,8 +35,15 @@ import 'built_intern.dart';
 
 App app = App();
 
-extension BuiltListSerializable<E> on BuiltList<E> {
-  dynamic toJson() => this.toList();
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
+
+const RUN_TEST_CODE_INSTEAD_OF_APP = false;
+//  const TEST = true;
+
+test_stuff() async {
+  var v = TestBuiltValue(5, null, null);
+  print(v);
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -46,25 +56,8 @@ class App {
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
 
-//    bool TEST = true;
-  bool TEST = false;
-
-  test_stuff() async {
-    var deletions = [2,5].build(); //BuiltList<int>([2, 5]);
-    print('deletions.runtimeType = ${deletions.runtimeType}');
-    print('deletions                                    = $deletions');
-    print('serializers.serialize(deletions)             = ${serializers.serialize(deletions)}');
-//    print('deletions.toJson()                           = ${deletions.toJson()}');
-//    print('jsonEncode(serializers.serialize(deletions)) = ${jsonEncode(serializers.serialize(deletions))}');
-//    print('jsonEncode(deletions)                        = ${jsonEncode(deletions)}');
-
-    s = DevToolsStore<BuiltList<int>>((m, _) => m, initialState: deletions, middleware: [
-      overReactReduxDevToolsMiddleware,
-    ]);
-  }
-
   start() async {
-    if (TEST) {
+    if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
       await initialize_model();
@@ -91,15 +84,30 @@ class App {
 //    String filename = 'examples/output_designs/2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
 //    String filename = 'examples/output_designs/1_staple_1_helix_origami_mismatches.dna';
 
-    DNADesign dna_design = await util.dna_design_from_url(filename);
+    DNADesign dna_design;
+    String error_message;
+    try {
+      dna_design = await util.dna_design_from_url(filename);
+    } on IllegalDNADesignError catch (error) {
+      error_message = error.cause;
+    }
 
 //    String initial_editor_content = await util.file_content(filename);
     String initial_editor_content = "";
 
-    Model model = (DEFAULT_ModelBuilder
-          ..dna_design.replace(dna_design)
-          ..editor_content = initial_editor_content)
-        .build();
+    Model model;
+
+    if (error_message == null) {
+      model = (DEFAULT_ModelBuilder
+            ..dna_design.replace(dna_design)
+            ..editor_content = initial_editor_content)
+          .build();
+    } else {
+      model = (DEFAULT_ModelBuilder
+            ..error_message = error_message
+            ..editor_content = initial_editor_content)
+          .build();
+    }
 
 //    print('helix 0 = ${dna_design.helices[0]}');
 //    print('helix 1 = ${dna_design.helices[1]}');
@@ -108,11 +116,16 @@ class App {
 //    print('model.toJson().runtimeType: ${model.toJson().runtimeType}');
 //    print('jsonEncode(model): ${jsonEncode(model)}');
 
-    store = Store<Model>(model_reducer, initialState: model, middleware: [
-//    store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: [
-//      overReactReduxDevToolsMiddleware,
-      local_storage.middleware_local_storage,
-    ]);
+    if (USE_REDUX_DEV_TOOLS) {
+      store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: [
+        overReactReduxDevToolsMiddleware,
+        local_storage.middleware_local_storage,
+      ]);
+    } else {
+      store = Store<Model>(model_reducer, initialState: model, middleware: [
+        local_storage.middleware_local_storage,
+      ]);
+    }
   }
 
   send_action(ReversibleActionPack action_pack) {

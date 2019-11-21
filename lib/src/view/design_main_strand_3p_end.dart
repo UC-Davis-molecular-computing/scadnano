@@ -88,7 +88,7 @@ class DesignMain3pEndComponent extends UiComponent2<DesignMain3pEndProps> {
     var attr = Dom.polygon()
 //          ..onMouseDown = substrand.dnaend_3p.handle_selection
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseMove = ((event) => update_mouseover(event, helix))
+      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
       ..onPointerDown = substrand.dnaend_3p.handle_selection
       ..className = classname
       ..points = points

@@ -58,7 +58,7 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
       ..width = '$width'
       ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseMove = ((event) => update_mouseover(event, helix))
+      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
       ..id = id
       ..className = _CLASS)();
   }
@@ -68,9 +68,10 @@ mouse_leave_update_mouseover() {
   app.store.dispatch(actions.MouseoverDataClear());
 }
 
-update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+update_mouseover(SyntheticMouseEvent event_syn, int helix_idx) {
 //FIXME: what's the proper way to do this?
   DNADesign dna_design = app.model.dna_design;
+  Helix helix = dna_design.helices[helix_idx];
 
   MouseEvent event = event_syn.nativeEvent;
 
@@ -85,7 +86,6 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
 
-  int helix_idx = helix.idx;
   int offset = helix.svg_x_to_offset(svg_x);
   bool forward = helix.svg_y_is_forward(svg_y);
 

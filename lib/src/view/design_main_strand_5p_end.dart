@@ -82,7 +82,7 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
       SvgProps attr = (Dom.rect()
 //      ..onMouseDown = substrand.dnaend_5p.handle_selection
         ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-        ..onMouseMove = ((event) => update_mouseover(event, helix))
+        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
         ..onPointerDown = substrand.dnaend_5p.handle_selection
         ..className = classname
         ..x = '${pos.x - 3.5}'

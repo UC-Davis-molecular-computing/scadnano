@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:react/react.dart';
 import 'package:redux/redux.dart';
@@ -307,21 +308,48 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     List<HelixBuilder> helix_builders = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
+    int num_helices = deserialized_helices_list.length;
+
+    // create HelixBuilders
     int idx = 0;
     for (var helix_json in deserialized_helices_list) {
       HelixBuilder helix_builder = Helix.from_json(helix_json);
       helix_builder.idx = idx;
-      if (helix_builder.svg_position == null) {
-        helix_builder.svg_position = DNADesign._default_svg_position(idx);
-      }
-      if (helix_builder.grid_position == null) {
-        helix_builder.grid_position = DNADesign._default_grid_position(idx);
-      }
       helix_builder.grid = dna_design_builder.grid;
       helix_builders.add(helix_builder);
       idx++;
     }
 
+    // view order of helices
+    List<int> identity_permutation = [for (int i = 0; i < num_helices; i++) i];
+    List<int> helices_view_order = List<int>.from(
+        util.get_value_with_default(json_map, constants.helices_view_order_key, identity_permutation));
+    if (helices_view_order.length != num_helices) {
+      throw IllegalDNADesignError('length of helices (${num_helices}) does not match '
+          'length of helices_view_order (${helices_view_order.length})');
+    }
+    var helices_view_order_sorted = List<int>.from(helices_view_order);
+    helices_view_order_sorted.sort();
+    if (!ListEquality().equals(helices_view_order_sorted, identity_permutation)) {
+      throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation');
+    }
+    for (int i = 0; i < helices_view_order.length; i++) {
+      int i_unsorted = helices_view_order[i];
+      var helix_builder = helix_builders[i_unsorted];
+      int display_order = i;
+      helix_builder.display_order = display_order;
+      if (helix_builder.svg_position == null) {
+        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
+      }
+      if (helix_builder.grid_position == null) {
+        helix_builder.grid_position = DNADesign._default_grid_position(display_order);
+      }
+//      if (helix_builder.svg_position == null) {
+//        helix_builder.svg_position = helix_builder.build().default_svg_position();
+//      }
+    }
+
+    // strands
     List<Strand> strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
@@ -329,7 +357,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       strands.add(strand);
     }
 //    dna_design.strands_store.strands = strands;
-    dna_design_builder.strands = ListBuilder<Strand>(strands);
+    dna_design_builder.strands.replace(strands);
 
     //XXX: order of these is important because each uses the data calculated from the previous
 //    this._set_helices_idxs();
@@ -337,22 +365,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //    dna_design_builder._build_helix_idx_to_substrands_list(helix_builders.length);
     _set_helices_min_max_offsets(helix_builders, dna_design_builder.strands.build());
 
+    // build Helices
     List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
 //    dna_design.helices_store.helices = helices;
-    dna_design_builder.helices = ListBuilder<Helix>(helices);
+    dna_design_builder.helices.replace(helices);
 
-    //TODO: maybe move strand (and maybe helix) functionality into stores
-//    dna_design_builder._build_substrand_mismatches_map();
-//    dna_design_builder._build_end_to_substrand_map();
-//    dna_design_builder._build_substrand_to_strand_map();
-//    dna_design_builder._check_legal_design();
-
-//    FIXME: side view does not re-render on file load unless this is explicitly triggered
-//    dna_design.helices_store.trigger();
-
-//    dna_design_builder.register_selectables();
-
-//    return dna_design_builder.build()..register_selectables();
     return dna_design_builder.build();
   }
 

@@ -66,8 +66,10 @@ abstract class MouseoverData with BuiltJsonSerializable implements Built<Mouseov
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverData(Helix helix, int offset, BoundSubstrand substrand) => MouseoverData.from((b) => b
     ..helix.replace(helix)
+//    ..substrand.replace(substrand)
+    ..substrand = substrand?.toBuilder()
     ..offset = offset
-    ..substrand.replace(substrand));
+  );
 
   factory MouseoverData.from([void Function(MouseoverDataBuilder) updates]) = _$MouseoverData;
 
