@@ -11,13 +11,14 @@ import '../model/model.dart';
 import '../actions/actions.dart' as actions;
 import 'util_reducer.dart';
 
+// These involve direct manipulation of the undo/redo stacks.
 Reducer<Model> undo_redo_reducer = combineReducers([
   TypedReducer<Model, actions.Undo>(undo_reducer),
   TypedReducer<Model, actions.Redo>(redo_reducer),
   TypedReducer<Model, actions.UndoRedoClear>(undo_redo_clear_reducer),
-//  TypedReducer<Model, actions.UndoableAction>(undoable_action_typed_reducer),
 ]);
 
+// This logs Undoable actions on the undo stack.
 Reducer<Model> undoable_action_reducer = combineReducers([
   TypedReducer<Model, actions.UndoableAction>(undoable_action_typed_reducer),
 ]);
@@ -34,7 +35,6 @@ Model undo_reducer(Model model, actions.Undo action) {
     DNADesign dna_design_prev = undo_stack.removeLast();
     redo_stack.add(dna_design_curr);
 
-    //XXX: I shouldn't be doing a side effect here, but this is easier to check for than in middleware
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
     Model new_model = model.rebuild((m) => m
@@ -76,19 +76,8 @@ Model redo_reducer(Model model, actions.Redo action) {
 Model undo_redo_clear_reducer(Model model, actions.UndoRedoClear action) =>
     model.rebuild((m) => m..undo_redo.replace(UndoRedo()));
 
-Model undoable_action_typed_reducer(Model model, actions.UndoableAction action) {
-  // If BatchAction, UndoRedo takes responsibility for applying the constituent Actions.
-  // Otherwise we let other reducers handle the UndoableAction
-  Model new_model = model;
-
-  //XXX: skip_undo defaults to null, not false
-//  if (action.skip_undo != true) {
-    UndoRedo undo_redo = model.undo_redo;
-    new_model = new_model.rebuild((m) => m
-      ..undo_redo.replace(undo_redo.rebuild((u) => u
-        ..undo_stack.add(model.dna_design)
-        ..redo_stack.clear())));
-//  }
-
-  return new_model;
-}
+Model undoable_action_typed_reducer(Model model, actions.UndoableAction action) =>
+  model.rebuild((m) => m
+    ..undo_redo.replace(model.undo_redo.rebuild((u) => u
+      ..undo_stack.add(model.dna_design)
+      ..redo_stack.clear())));

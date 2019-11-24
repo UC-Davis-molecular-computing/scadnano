@@ -13,7 +13,7 @@ import '../model/undo_redo.dart';
 import '../util.dart' as util;
 
 Model model_reducer(Model model, action) {
-  // If wrapped in SkipUndo, unpack it and remember we shouldn't push onto undo stack.
+  // If wrapped in SkipUndo, unpack it and remember undoable_action_reducer shouldn't push onto undo stack.
   bool modify_undo_redo_stacks = true;
   if (action is actions.SkipUndo) {
     modify_undo_redo_stacks = false;
@@ -53,8 +53,6 @@ Model model_reducer(Model model, action) {
   if (action is actions.BatchAction) {
     for (actions.UndoableAction atomic_action in action.actions) {
       model = model_reducer(model, actions.SkipUndo(atomic_action));
-//      actions.UndoableAction atomic_action_skip_undo = atomic_action.rebuild((a) => a..skip_undo = true);
-//      batch_action_model = model_reducer(batch_action_model, atomic_action_skip_undo);
     }
   }
 
@@ -62,11 +60,6 @@ Model model_reducer(Model model, action) {
     // this is a check on myself since null is implicitly returned when there is no return statement
     throw ArgumentError('reducer returned a null model, which is disallowed');
   }
-
-  print('*'*100);
-  print('undo stack: ${model.undo_redo.undo_stack}');
-  print('-'*100);
-  print('redo stack: ${model.undo_redo.redo_stack}');
 
   return model;
 }
