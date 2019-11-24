@@ -17,30 +17,6 @@ import 'substrand.dart';
 
 part 'strand.g.dart';
 
-//class StrandsStore extends Store {
-//  List<Strand> _strands;
-//
-//  List<Strand> get strands => this._strands;
-//
-//  set strands(List<Strand> new_strands) {
-//    this._strands = new_strands;
-//  }
-//
-//  StrandsStore() {
-//    this._strands = [];
-//    _handle_actions();
-//  }
-//
-//  _handle_actions() {
-//    triggerOnActionV2(Actions.select);
-//    triggerOnActionV2(Actions.select_all);
-//    triggerOnActionV2(Actions.unselect);
-//    triggerOnActionV2(Actions.toggle);
-//    triggerOnActionV2(Actions.toggle_all);
-//    triggerOnActionV2(Actions.unselect_all);
-//  }
-//}
-
 abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, JSONSerializable {
   Strand._();
 
@@ -113,8 +89,9 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     var json_map = Map<String, dynamic>();
 
     if (this.color != null) {
-      var color_json = this.color.toRgbColor().toMap();
-      json_map[constants.color_key] = suppress_indent ? NoIndent(color_json) : color_json;
+      var color_rgb = color.toRgbColor();
+      String color_json = color_rgb.toCssString();
+      json_map[constants.color_key] = color_json;
     }
 
     if (this.dna_sequence != null) {

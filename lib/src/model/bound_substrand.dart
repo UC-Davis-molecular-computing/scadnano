@@ -128,7 +128,7 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
       constants.end_key: this.end,
     };
     if (this.deletions.isNotEmpty) {
-      json_map[constants.deletions_key] = this.deletions;
+      json_map[constants.deletions_key] = List<dynamic>.from(this.deletions);
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List

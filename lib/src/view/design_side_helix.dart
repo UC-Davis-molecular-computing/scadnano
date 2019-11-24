@@ -73,7 +73,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     Position3D pos3d = helix.position3d();
     Point<num> center = Point<num>(pos3d.x, pos3d.y);
     bool selected = props.selected;
-    print('center of helix ${helix.idx}: (${center.x},${center.y})');
 
 //    center = util.side_view_grid_to_svg(this.props.grid_position, this.props.grid);
 

@@ -6,8 +6,6 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
-import 'package:scadnano/src/model/selection_box.dart';
-import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -25,7 +23,7 @@ import '../model/mouseover_data.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
-import '../middleware/local_storage_middleware.dart';
+import '../middleware/local_storage.dart';
 
 part 'actions.g.dart';
 
@@ -224,7 +222,7 @@ abstract class HelixRotationSet extends UndoableAction
 }
 
 // set helix rotation at anchor to point at helix_other
-abstract class HelixRotationSetAtOther
+abstract class HelixRotationSetAtOther extends UndoableAction
     with BuiltJsonSerializable
     implements Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
   int get helix_idx;
@@ -529,6 +527,42 @@ abstract class ExportSvgSide with BuiltJsonSerializable implements Built<ExportS
   ExportSvgSide._();
 
   static Serializer<ExportSvgSide> get serializer => _$exportSvgSideSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Undo/Redo
+
+abstract class Undo extends Action2 with BuiltJsonSerializable implements Built<Undo, UndoBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Undo() => Undo.from((b) => b);
+
+  factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
+
+  Undo._();
+
+  static Serializer<Undo> get serializer => _$undoSerializer;
+}
+
+abstract class Redo extends Action2 with BuiltJsonSerializable implements Built<Redo, RedoBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Redo() => Redo.from((b) => b);
+
+  factory Redo.from([void Function(RedoBuilder) updates]) = _$Redo;
+
+  Redo._();
+
+  static Serializer<Redo> get serializer => _$redoSerializer;
+}
+
+abstract class UndoRedoClear with BuiltJsonSerializable implements Built<UndoRedoClear, UndoRedoClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory UndoRedoClear( ) => UndoRedoClear.from((b) => b);
+
+  factory UndoRedoClear.from([void Function(UndoRedoClearBuilder) updates]) = _$UndoRedoClear;
+
+  UndoRedoClear._();
+
+  static Serializer<UndoRedoClear> get serializer => _$undoRedoClearSerializer;
 }
 
 //class Actions {

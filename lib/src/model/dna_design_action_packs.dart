@@ -88,7 +88,7 @@ delete_all(DNADesign dna_design, List<Selectable> selected_items) {
 
   var delete_all_params =
       DeleteAllParameters(dna_design, strands, crossovers, loopouts, substrands);
-  app.send_action(DeleteAllActionPack(delete_all_params));
+//  app.send_action(DeleteAllActionPack(delete_all_params));
 //    Actions.delete_all(delete_all_params);
 }
 

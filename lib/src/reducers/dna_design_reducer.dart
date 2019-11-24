@@ -6,7 +6,7 @@ import 'helices_reducer.dart';
 
 Reducer<DNADesign> dna_design_reducer = combineReducers([
   TypedReducer<DNADesign, actions.ErrorMessageSet>(error_message_set_reducer),
-  TypedReducer<DNADesign, dynamic>(dna_design_composed_reducer),
+  TypedReducer<DNADesign, actions.Action2>(dna_design_composed_reducer),
 ]);
 
 DNADesign dna_design_composed_reducer(DNADesign dna_design, action) =>

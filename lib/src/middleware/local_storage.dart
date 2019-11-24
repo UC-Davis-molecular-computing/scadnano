@@ -11,7 +11,7 @@ import '../model/select_mode.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 
-part 'local_storage_middleware.g.dart';
+part 'local_storage.g.dart';
 
 //TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
 

@@ -299,8 +299,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   bool has_nondefault_min_offset(Helix helix) {
-    int min_ss_offset = -1;
+    int min_ss_offset = null;
     for (var ss in substrands_on_helix(helix.idx)) {
+      if (min_ss_offset == null) {
+        min_ss_offset = ss.start;
+      }
       if (min_ss_offset > ss.start) {
         min_ss_offset = ss.start;
       }

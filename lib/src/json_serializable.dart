@@ -10,6 +10,10 @@ class NoIndent implements JSONSerializable {
   NoIndent(this.value);
 
   dynamic to_json_serializable({bool suppress_indent = false}) => this.value;
+
+//  dynamic toJson() => this.value;
+
+  String toString() => 'NoIndent(\n  ${value}\n)';
 }
 
 String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {

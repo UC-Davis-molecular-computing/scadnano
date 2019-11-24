@@ -1,6 +1,6 @@
 import 'package:w_flux/w_flux.dart';
 
-import '../middleware/local_storage_middleware.dart' as local_storage;
+import '../middleware/local_storage.dart' as local_storage;
 import '../actions/actions_OLD.dart';
 
 class EditModeChoice {

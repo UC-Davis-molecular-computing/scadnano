@@ -20,7 +20,7 @@ import 'design_side.dart';
 import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
-import '../middleware/local_storage_middleware.dart' as local_storage;
+import '../middleware/local_storage.dart' as local_storage;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 

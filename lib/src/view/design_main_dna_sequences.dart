@@ -33,7 +33,8 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
         ..className = 'dna-sequences-main-view')([
         for (Strand strand in strands)
           if (strand.dna_sequence != null)
-            (DesignMainDNASequence()
+//            (DesignMainDNASequence()
+            (ConnectedDesignMainDNASequence()
               ..key = strand.toString()
               ..className = 'strand-dna-sequence-elts'
               ..strand = strand)()

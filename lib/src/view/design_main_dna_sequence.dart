@@ -2,9 +2,12 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
+import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:tuple/tuple.dart';
 
+import '../model/model.dart';
 import '../app.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
@@ -14,31 +17,43 @@ import '../util.dart' as util;
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
+UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
+    connect<Model, DesignMainDNASequenceProps>(
+  mapStateToProps: (model) =>
+      (DesignMainDNASequence()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+)(DesignMainDNASequence);
+
 @Factory()
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
 
 @Props()
 class _$DesignMainDNASequenceProps extends UiProps {
   Strand strand;
+  BuiltSet<int> side_selected_helix_idxs;
 }
+
+bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
+    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
 
 @Component2()
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
+    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
+
     List<ReactElement> dna_sequence_elts = [];
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_bound_substrand()) {
-        var bound_ss = substrand as BoundSubstrand;
-        dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
-        for (var insertion in bound_ss.insertions) {
-          int offset = insertion.offset;
-          int length = insertion.length;
-          dna_sequence_elts.add(this._dna_sequence_on_insertion(bound_ss, offset, length));
+        if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
+          var bound_ss = substrand as BoundSubstrand;
+          dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
+          for (var insertion in bound_ss.insertions) {
+            int offset = insertion.offset;
+            int length = insertion.length;
+            dna_sequence_elts.add(this._dna_sequence_on_insertion(bound_ss, offset, length));
+          }
         }
       } else {
         assert(0 < i);
@@ -46,7 +61,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         var loopout = substrand as Loopout;
         BoundSubstrand prev_ss = this.props.strand.substrands[i - 1];
         BoundSubstrand next_ss = this.props.strand.substrands[i + 1];
-        dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
+        if (draw_bound_ss(prev_ss, side_selected_helix_idxs) &&
+            draw_bound_ss(next_ss, side_selected_helix_idxs)) {
+          dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
+        }
       }
     }
     return (Dom.g()..className = 'strand-dna-sequence')(dna_sequence_elts);
@@ -72,7 +90,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
     var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 0.342);
     var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}-'
-        '${substrand.forward? 'forward': 'reverse'}';
+        '${substrand.forward ? 'forward' : 'reverse'}';
 
     return (Dom.text()
 //      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())

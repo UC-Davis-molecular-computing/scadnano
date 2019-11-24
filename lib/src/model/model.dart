@@ -1,29 +1,31 @@
 import 'dart:core';
 
-
 import 'ui_model.dart';
 import 'dna_design.dart';
 
 import 'package:built_value/built_value.dart';
 
-part 'model.g.dart';
+import 'undo_redo.dart';
 
+part 'model.g.dart';
 
 //TODO: replace calls to toBuilder with replace: https://github.com/google/built_value.dart/issues/424
 
 final DEFAULT_ModelBuilder = ModelBuilder()
   ..ui_model = DEFAULT_UIModelBuilder
   ..error_message = ""
-  ..editor_content = "";
+  ..editor_content = ""
+  ..undo_redo = DEFAULT_UndoRedoBuilder;
 
 abstract class Model implements Built<Model, ModelBuilder> {
   Model._();
 
-  factory Model([void Function(ModelBuilder) updates]) =>
-      _$Model((m) => m..replace(DEFAULT_ModelBuilder.build()));
+  factory Model([void Function(ModelBuilder) updates]) => _$Model((m) => m..replace(DEFAULT_ModelBuilder.build()));
 
   @nullable
   DNADesign get dna_design;
+
+  UndoRedo get undo_redo;
 
   UIModel get ui_model;
 

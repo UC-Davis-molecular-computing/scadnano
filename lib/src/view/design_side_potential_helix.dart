@@ -68,6 +68,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     var params = HelixUseActionParameters(true, grid_pos, idx, max_offset);
     var helix_use_action_pack = HelixUseActionPack(params);
 
-    app.send_action(helix_use_action_pack);
+    //FIXME: implement this
+//    app.send_action(helix_use_action_pack);
   }
 }

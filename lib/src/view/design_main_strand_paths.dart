@@ -15,7 +15,6 @@ import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
 import '../constants.dart' as constants;
-import '../util.dart' as util;
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
