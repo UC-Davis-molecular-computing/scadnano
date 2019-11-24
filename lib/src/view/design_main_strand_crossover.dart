@@ -38,14 +38,15 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
     BoundSubstrand next_substrand = crossover.next_substrand;
 
     handle_crossover_click() {
+      List<actions.UndoableAction> rotation_actions = [];
       for (var ss in [prev_substrand, next_substrand]) {
         var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
         int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-
-        var action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
-        app.store.dispatch(action);
-//        _set_rotation_for_substrand_from_crossover(ss, other_ss, anchor);
+        var rotation_action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
+        rotation_actions.add(rotation_action);
       }
+      var action = actions.BatchAction(rotation_actions);
+      app.store.dispatch(action);
     }
 
     update_mouseover_crossover() {
@@ -60,8 +61,6 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
 
       app.store.dispatch(
           actions.MouseoverDataUpdate(app.model.dna_design, BuiltList<MouseoverParams>(param_list)));
-//      var params = MouseoverParameters(BuiltList<Tuple3<int, int, bool>>(param_list));
-//      Actions.update_mouseover_data(params);
     }
 
 //    handle_crossover_ctrl_click() {
@@ -82,7 +81,7 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
     var color = strand.color.toRgbColor().toCssString();
     var id = crossover.id();
 
-    var attr = Dom.path()
+    return (Dom.path()
       ..d = path
       ..stroke = color
       ..className = classname_this_curve
@@ -96,8 +95,7 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
           ? crossover.handle_selection(ev)
           : handle_crossover_click())
       ..id = id
-      ..key = id;
-    return attr();
+      ..key = id)();
   }
 }
 

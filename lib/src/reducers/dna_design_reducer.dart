@@ -3,11 +3,21 @@ import 'package:redux/redux.dart';
 import '../model/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';
+//
+//Reducer<DNADesign> dna_design_reducer = combineReducers([
+//  TypedReducer<DNADesign, actions.ErrorMessageSet>(error_message_set_reducer),
+//  TypedReducer<DNADesign, actions.Action2>(dna_design_composed_reducer),
+//]);
 
-Reducer<DNADesign> dna_design_reducer = combineReducers([
-  TypedReducer<DNADesign, actions.ErrorMessageSet>(error_message_set_reducer),
-  TypedReducer<DNADesign, actions.Action2>(dna_design_composed_reducer),
-]);
+DNADesign dna_design_reducer(DNADesign dna_design, action) {
+  if (action is actions.ErrorMessageSet) {
+    return error_message_set_reducer(dna_design, action);
+  } else if (action is actions.Action2) {
+    return dna_design_composed_reducer(dna_design, action);
+  } else {
+    return dna_design;
+  }
+}
 
 DNADesign dna_design_composed_reducer(DNADesign dna_design, action) =>
     dna_design.rebuild((d) => d..helices.replace(helices_reducer(dna_design.helices, action)));

@@ -46,14 +46,17 @@ class MenuComponent extends UiComponent2<MenuProps> {
     bool show_mismatches = this.props.show_mismatches;
 //    bool show_editor = this.props.store.show_editor_store.show_editor;
 
-    return Dom.div()(
+    return (Dom.div())(
+      (Dom.label()
+        ..className = 'app-name menu-item'
+        ..key = 'title-label')('scadnano'),
       //XXX: I like to keep this button around to simulate random things that require user interaction
-        (Dom.button()
-          ..onClick = (_) {
-            print('app.model.ui_model.side_selected_helices: ${app.model.ui_model.side_selected_helix_idxs}');
-          }
-          ..key = 'dummy'
-          ..className = 'dummy-button')('Dummy'),
+      (Dom.button()
+        ..onClick = (_) {
+          print('app.model.ui_model.side_selected_helices: ${app.model.ui_model.side_selected_helix_idxs}');
+        }
+        ..key = 'dummy'
+        ..className = 'dummy-button menu-item')('Dummy'),
       (Dom.button()
         ..className = 'menu-item'
         ..onClick = (_) {

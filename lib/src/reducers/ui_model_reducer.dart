@@ -19,8 +19,7 @@ import 'selection_reducer.dart';
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 UIModel ui_model_reducer(UIModel ui_model, action) => ui_model.rebuild((u) => u
-  ..changed_since_last_save = TypedReducer<bool, actions.UndoableAction>(changed_since_last_save_reducer)(
-      ui_model.changed_since_last_save, action)
+  ..changed_since_last_save = changed_since_last_save_reducer(ui_model.changed_since_last_save, action)
   ..select_mode_state.replace(select_mode_state_reducer(ui_model.select_mode_state, action))
   ..show_dna = TypedReducer<bool, actions.SetShowDNA>(show_dna_reducer)(ui_model.show_dna, action)
   ..show_mismatches =
@@ -42,7 +41,16 @@ bool show_editor_reducer(bool prev_show, actions.SetShowEditor action) => action
 
 bool show_mouseover_rect_reducer(bool prev_show, actions.SetShowMouseoverRect action) => action.show;
 
-bool changed_since_last_save_reducer(bool changed_since_last_save, actions.UndoableAction action) => true;
+Reducer<bool> changed_since_last_save_reducer = combineReducers([
+  TypedReducer<bool, actions.UndoableAction>(changed_since_last_save_undoable_action_reducer),
+  TypedReducer<bool, actions.SaveDNAFile>(changed_since_last_save_just_saved_reducer),
+]);
+
+bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save, actions.UndoableAction action) =>
+    true;
+
+bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
+    false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover_data reducer

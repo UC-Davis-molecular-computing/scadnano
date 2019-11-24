@@ -2,7 +2,9 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/reducers/model_reducer.dart';
 
+import '../app.dart';
 import '../model/dna_design.dart';
 import '../model/undo_redo.dart';
 import '../model/model.dart';
@@ -13,7 +15,11 @@ Reducer<Model> undo_redo_reducer = combineReducers([
   TypedReducer<Model, actions.Undo>(undo_reducer),
   TypedReducer<Model, actions.Redo>(redo_reducer),
   TypedReducer<Model, actions.UndoRedoClear>(undo_redo_clear_reducer),
-  TypedReducer<Model, actions.UndoableAction>(undo_redo_undoable_action_reducer),
+//  TypedReducer<Model, actions.UndoableAction>(undoable_action_typed_reducer),
+]);
+
+Reducer<Model> undoable_action_reducer = combineReducers([
+  TypedReducer<Model, actions.UndoableAction>(undoable_action_typed_reducer),
 ]);
 
 Model undo_reducer(Model model, actions.Undo action) {
@@ -70,53 +76,19 @@ Model redo_reducer(Model model, actions.Redo action) {
 Model undo_redo_clear_reducer(Model model, actions.UndoRedoClear action) =>
     model.rebuild((m) => m..undo_redo.replace(UndoRedo()));
 
-Model undo_redo_undoable_action_reducer(Model model, actions.UndoableAction action) {
-  print('undo_redo pushing to undo stack');
-  UndoRedo undo_redo = model.undo_redo;
-  return model.rebuild((m) => m
-    ..undo_redo.replace(undo_redo.rebuild((u) => u
-      ..undo_stack.add(model.dna_design)
-      ..redo_stack.clear())));
+Model undoable_action_typed_reducer(Model model, actions.UndoableAction action) {
+  // If BatchAction, UndoRedo takes responsibility for applying the constituent Actions.
+  // Otherwise we let other reducers handle the UndoableAction
+  Model new_model = model;
+
+  //XXX: skip_undo defaults to null, not false
+//  if (action.skip_undo != true) {
+    UndoRedo undo_redo = model.undo_redo;
+    new_model = new_model.rebuild((m) => m
+      ..undo_redo.replace(undo_redo.rebuild((u) => u
+        ..undo_stack.add(model.dna_design)
+        ..redo_stack.clear())));
+//  }
+
+  return new_model;
 }
-
-//=>
-//    undo_redo.rebuild((u) => u
-//      ..undo_stack.add(model.dna_design)
-//      ..redo_stack.clear());
-
-//  apply(ReversibleActionPack action) {
-//    if (!app.model.ui_model.changed_since_last_save) {
-//      //FIXME: send an action to update this bool
-//      //app.model.changed_since_last_save = true;
-//    }
-//    action.apply();
-//    redo_stack.clear();
-//    undo_stack.add(action);
-//  }
-//
-//  undo() {
-//    if (undo_stack.isNotEmpty) {
-//      var most_recent_action = undo_stack.removeLast();
-//      var reverse_action = most_recent_action.reverse();
-//      reverse_action.apply();
-//      redo_stack.add(most_recent_action);
-//      if (undo_stack.isEmpty) {
-//        if (!app.model.ui_model.changed_since_last_save) {
-//          //FIXME: send action
-////          app.model.changed_since_last_save = true;
-//        }
-//      }
-//    }
-//  }
-//
-//  redo() {
-//    if (redo_stack.isNotEmpty) {
-//      if (app.model.ui_model.changed_since_last_save) {
-//        //FIXME: send action
-////        app.model.changed_since_last_save = false;
-//      }
-//      var action_to_redo = redo_stack.removeLast();
-//      action_to_redo.apply();
-//      undo_stack.add(action_to_redo);
-//    }
-//  }

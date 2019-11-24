@@ -24,15 +24,14 @@ import 'actions/actions.dart' as actions;
 
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
-//  const TEST = true;
+//const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
 test_stuff() async {
-  var v = TestBuiltValue(5, null, null);
-  print(v);
+
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -67,13 +66,18 @@ class App {
   }
 
   initialize_model() async {
-    String filename = 'examples/output_designs/2_staple_2_helix_origami_deletions_insertions.dna';
-//    String filename = 'examples/output_designs/1_staple_1_helix_origami.dna';
-//    String filename = 'examples/output_designs/16_helix_origami_rectangle.dna';
-//    String filename = 'examples/output_designs/6_helix_origami_rectangle.dna';
-//    String filename = 'examples/output_designs/loopouts_all_types.dna';
-//    String filename = 'examples/output_designs/2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
-//    String filename = 'examples/output_designs/1_staple_1_helix_origami_mismatches.dna';
+    String relative_filename = '2_staple_2_helix_origami_deletions_insertions.dna';
+//    String relative_filename = '1_staple_1_helix_origami.dna';
+//    String relative_filename = '16_helix_origami_rectangle.dna';
+//    String relative_filename = '6_helix_origami_rectangle.dna';
+//    String relative_filename = 'loopouts_all_types.dna';
+//    String relative_filename = '2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
+//    String relative_filename = '1_staple_1_helix_origami_mismatches.dna';
+
+    document.title = relative_filename;
+
+    String directory = 'examples/output_designs/';
+    String filename = directory + relative_filename;
 
     DNADesign dna_design;
     String error_message;
@@ -129,7 +133,6 @@ class App {
   make_dart_functions_available_to_js(Model model) {
     util.make_dart_function_available_to_js('dart_allow_pan', model.allow_main_view_pan);
   }
-
 }
 
 setup_undo_redo_keyboard_listeners() {
