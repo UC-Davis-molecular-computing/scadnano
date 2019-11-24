@@ -1,7 +1,7 @@
 import 'package:w_flux/w_flux.dart';
 
-import '../dispatcher/local_storage.dart' as local_storage;
-import '../dispatcher/actions_OLD.dart';
+import '../middleware/local_storage_middleware.dart' as local_storage;
+import '../actions/actions_OLD.dart';
 
 class EditModeChoice {
   final String name;

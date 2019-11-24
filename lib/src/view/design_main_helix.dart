@@ -67,8 +67,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
 //        ..x = '$cx'
 //        ..y = '$cy')('$idx'),
       (Dom.g()
-        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
+//        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+//        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
         ..className = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'

@@ -6,18 +6,14 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/serializers.dart';
-import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/dna_design.dart';
 import '../model/model.dart';
 import '../app.dart';
-import '../dispatcher/actions_OLD.dart';
 import '../model/mouseover_data.dart';
 import '../model/helix.dart';
 import '../util.dart' as util;
-import '../dispatcher/actions.dart' as actions;
+import '../actions/actions.dart' as actions;
 
 part 'design_main_mouseover_rect_helix.over_react.g.dart';
 
@@ -27,38 +23,73 @@ const _CLASS = 'helix-mouseover';
 const DEBUG_PRINT_MOUSEOVER = false;
 //const DEBUG_PRINT_MOUSEOVER = true;
 
-//UiFactory<_$DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
-//    connect<Model, _$DesignMainMouseoverRectHelixProps>(
-//  mapStateToProps: (model) => (DesignMainMouseoverRectHelix()..dna_design = model.dna_design),
-//)(DesignMainMouseoverRectHelix);
+UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
+    connect<Model, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (model, props) {
+  Helix helix = model.dna_design.helices[props.helix_idx];
+  BuiltList<MouseoverData> mouseover_datas = model.ui_model.mouseover_datas;
+  bool show = model.ui_model.show_mouseover_rect;
+//  print('connecting DesignMainMouseoverRectHelix');
+  return DesignMainMouseoverRectHelix()
+    ..helix = helix
+    ..show = show
+    ..mouseover_datas = mouseover_datas;
+})(DesignMainMouseoverRectHelix);
+
+//UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
+//connect<Model, DesignMainMouseoverRectHelixProps>(
+//    mapStateToPropsWithOwnProps: (model, props) =>
+//    DesignMainMouseoverRectHelix()
+//      ..helix = model.dna_design.helices[props.helix_idx]
+//      ..mouseover_datas = model.ui_model.mouseover_datas)(DesignMainMouseoverRectHelix);
+
+//UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
+//    connect<Model, DesignMainMouseoverRectHelixProps>(
+//        mapStateToProps: (model) => DesignMainMouseoverRectHelix()
+//          ..helix = model.dna_design.helices[0]
+//          ..mouseover_datas = model.ui_model.mouseover_datas)(DesignMainMouseoverRectHelix);
 
 @Factory()
 UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$DesignMainMouseoverRectHelix;
 
 @Props()
 class _$DesignMainMouseoverRectHelixProps extends UiProps {
-//  DNADesign dna_design;
+  int helix_idx;
   Helix helix;
+  bool show;
+  BuiltList<MouseoverData> mouseover_datas;
 }
 
 @Component2()
 class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    int helix_idx = props.helix_idx;
+    int helix_idx_next = nextProps['DesignMainMouseoverRectHelixProps.helix_idx'];
+    bool show = props.show;
+    bool show_next = nextProps['DesignMainMouseoverRectHelixProps.show'];
+    return !(helix_idx == helix_idx_next && show == show_next);
+  }
 
   @override
   render() {
-    String id = '$_ID_PREFIX-${this.props.helix.idx}';
-    Helix helix = this.props.helix;
+//    print('rendering DesignMainMouseoverRectHelix');
+    int helix_idx = props.helix_idx;
+    Helix helix = props.helix;
+    BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
+
+    String id = '$_ID_PREFIX-${helix.idx}';
 
     var width = helix.svg_width();
     var height = helix.svg_height();
     return (Dom.rect()
-      ..transform = this.props.helix.translate()
+      ..transform = helix.translate()
       ..x = '0'
       ..y = '0'
       ..width = '$width'
       ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
+      ..onMouseEnter = ((event) => update_mouseover(event, helix, mouseover_datas))
+      ..onMouseMove = ((event) => update_mouseover(event, helix, mouseover_datas))
       ..id = id
       ..className = _CLASS)();
   }
@@ -68,10 +99,9 @@ mouse_leave_update_mouseover() {
   app.store.dispatch(actions.MouseoverDataClear());
 }
 
-update_mouseover(SyntheticMouseEvent event_syn, int helix_idx) {
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
 //FIXME: what's the proper way to do this?
-  DNADesign dna_design = app.model.dna_design;
-  Helix helix = dna_design.helices[helix_idx];
+//  Helix helix = dna_design.helices[helix_idx];
 
   MouseEvent event = event_syn.nativeEvent;
 
@@ -99,31 +129,42 @@ update_mouseover(SyntheticMouseEvent event_syn, int helix_idx) {
         'zoom = ${zoom.toStringAsFixed(2)},   '
         'svg_x = ${svg_x.toStringAsFixed(2)},   '
         'svg_y = ${svg_y.toStringAsFixed(2)},   '
-        'helix = ${helix_idx},   '
+        'helix = ${helix.idx},   '
         'offset = ${offset},   '
         'forward = ${forward}');
   }
 
-  var mouseover_params = MouseoverParams(helix_idx, offset, forward);
+  var mouseover_params = MouseoverParams(helix.idx, offset, forward);
 
-//  print('mouseover_params.toJson() = ${mouseover_params.toJson()}');
-//
-//  var gp = helix.grid_position;
-//  var gp_ser = standard_serializers.serialize(gp);
-//  print('standard_serializers.serialize(gp) = ${gp_ser}');
-//
-//  var helix_serialized = standard_serializers.serialize(helix);
-//  print('standard_serializers.serialize(helix) = ${helix_serialized}');
-//
-//  var mouseover_datas = MouseoverData.from_params(dna_design, [mouseover_params]);
-//  print('mouseover_datas[0].toJson = ${mouseover_datas[0].toJson()}');
-//  var action = actions.MouseoverDataUpdate(
-//      dna_design, BuiltList<MouseoverParams>([MouseoverParams(helix_idx, offset, forward)]));
-//  print('action.toJson() = ${action.toJson()}');
+  //FIXME
+  var dna_design = app.model.dna_design;
 
-
-  app.store.dispatch(actions.MouseoverDataUpdate(
-      dna_design, BuiltList<MouseoverParams>([mouseover_params])));
-//    var params = MouseoverParameters(BuiltList<Tuple3<int, int, bool>>([Tuple3(helix_idx, offset, forward)]));
-//  Actions.update_mouseover_data(params);
+  if (needs_update(mouseover_params, mouseover_datas)) {
+//    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+    app.store.dispatch(
+        actions.MouseoverDataUpdate(dna_design, BuiltList<MouseoverParams>([mouseover_params])));
+  }
 }
+
+// only needs updating if the MouseoverData that would be created is not already in the list
+bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mouseover_datas) {
+  bool needs = true;
+  for (var mouseover_data in mouseover_datas) {
+    if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
+        mouseover_data.offset == mouseover_params.offset &&
+        mouseover_data.substrand?.forward == mouseover_params.forward) {
+      needs = false;
+    }
+//    else {
+//      print("need to print because "
+//          "mouseover_data.helix.idx = ${mouseover_data.helix.idx} "
+//          "mouseover_params.helix_idx = ${mouseover_params.helix_idx} "
+//          "mouseover_data.offset = ${mouseover_data.offset} "
+//          "mouseover_params.offset = ${mouseover_params.offset} "
+//          "mouseover_data.substrand.forward = ${mouseover_data.substrand.forward} "
+//          "mouseover_params.forward = ${mouseover_params.forward}");
+//    }
+  }
+  return needs;
+}
+

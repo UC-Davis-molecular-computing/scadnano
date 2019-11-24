@@ -189,11 +189,13 @@
         };
 
         var ctrl = false;
+        var meta = false;
         var shift = false;
         var alt = false;
 
         function set_ctrl_shift_alt(event) {
             ctrl = event.ctrlKey;
+            meta = event.metaKey;
             shift = event.shiftKey;
             alt = event.altKey;
             // console.log('alt: ' + alt);

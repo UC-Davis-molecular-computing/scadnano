@@ -3,15 +3,10 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/select_mode.dart';
 
-import '../dispatcher/actions_OLD.dart';
 import '../model/helix.dart';
-import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../app.dart';
-import 'design_main_mouseover_rect_helix.dart';
-import '../util.dart' as util;
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
 
@@ -58,7 +53,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
     Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
 
     return (Dom.line()
-      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
+//      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
       ..stroke = props.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'

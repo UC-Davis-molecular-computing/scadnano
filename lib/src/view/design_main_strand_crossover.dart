@@ -1,12 +1,9 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/model.dart';
 import 'package:scadnano/src/model/select_mode.dart';
-import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../dispatcher/actions_OLD.dart';
 import '../model/crossover.dart';
 import '../model/helix.dart';
 import '../model/mouseover_data.dart';
@@ -15,7 +12,7 @@ import '../model/bound_substrand.dart';
 import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
-import '../dispatcher/actions.dart' as actions;
+import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -95,7 +92,7 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
       ..onMouseLeave = ((_) {
         mouse_leave_update_mouseover();
       })
-      ..onPointerDown = ((ev) => ev.nativeEvent.ctrlKey || ev.nativeEvent.shiftKey
+      ..onPointerDown = ((ev) => ev.nativeEvent.ctrlKey || ev.nativeEvent.metaKey || ev.nativeEvent.shiftKey
           ? crossover.handle_selection(ev)
           : handle_crossover_click())
       ..id = id
@@ -114,7 +111,7 @@ class DesignMainStrandCrossoverComponent extends UiComponent2<DesignMainStrandCr
 //    rotation = (rotation - radians(150)) % (2 * pi);
 //  }
 //
-//  var helix_rotation_action = actions.HelixRotationSet(ss.helix, rotation, anchor);
+//  var helix_rotation_action = dispatcher.HelixRotationSet(ss.helix, rotation, anchor);
 //
 //  //FIXME: on the second call model is null, possibly because we aren't intended to access a global
 //  // variable in this way. Try making this a connected component and call dispatch that way

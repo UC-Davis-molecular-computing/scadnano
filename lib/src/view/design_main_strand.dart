@@ -3,17 +3,17 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:tuple/tuple.dart';
+import 'package:built_collection/built_collection.dart';
 
-import '../dispatcher/actions_OLD.dart';
+import '../model/model.dart';
 import '../model/select_mode.dart';
 import '../app.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
-import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
@@ -23,12 +23,17 @@ part 'design_main_strand.over_react.g.dart';
 const _OPTIMIZE = true;
 //const _OPTIMIZE = false;
 
+UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<Model, DesignMainStrandProps>(
+  mapStateToProps: (model) => (DesignMainStrand()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+)(DesignMainStrand);
+
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
 @Props()
 class _$DesignMainStrandProps extends UiProps {
   Strand strand;
+  BuiltSet<int> side_selected_helix_idxs;
   bool selected; // needed separately to compare in shouldComponentUpdated, since Strand is mutated in place
 }
 
@@ -44,8 +49,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     Strand next_strand = nextProps['DesignMainStrandProps.strand'];
     bool prev_selected = props.selected;
     bool next_selected = nextProps['DesignMainStrandProps.selected'];
+    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
+    BuiltSet<int> side_selected_helix_idxs_next = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
 
-    bool should = strand != next_strand || prev_selected != next_selected;
+    bool should = !(strand == next_strand &&
+        prev_selected == next_selected &&
+        side_selected_helix_idxs == side_selected_helix_idxs_next);
 //    print('shouldComponentUpdate() for strand ${strand.toString()}');
 //    print(' prev_selected: $prev_selected');
 //    print(' next_selected: $next_selected');
@@ -54,7 +63,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
 
   @override
   render() {
-    Strand strand = this.props.strand;
+    Strand strand = props.strand;
+    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
 //    print('DesignMainStrand.render(): ${strand.toString()}');
 
     if (strand.substrands.length == 0) {
@@ -75,25 +85,31 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
         ..id = strand_id
         ..onPointerDown = strand.handle_selection
         ..className = classname)([
-        (DesignMainStrandPaths()
+//        (DesignMainStrandPaths()
+        (ConnectedDesignMainStrandPaths()
           ..strand = strand
           ..key = 'strand-paths')(),
-        ..._insertion_paths(strand),
-        ..._deletion_paths(strand),
+        ..._insertion_paths(strand, side_selected_helix_idxs),
+        ..._deletion_paths(strand, side_selected_helix_idxs),
       ]);
     }
   }
 }
 
-List<ReactElement> _insertion_paths(Strand strand) {
+bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
+    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
+
+List<ReactElement> _insertion_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
   List<ReactElement> paths = [];
   for (BoundSubstrand substrand in strand.bound_substrands()) {
-    for (var insertion in substrand.insertions) {
-      int offset = insertion.offset;
-      ReactElement insertion_path = _insertion_path(substrand, offset, strand.color);
-      ReactElement text_num_insertions = _svg_text_number_of_insertions(insertion, substrand, offset);
-      paths.add(insertion_path);
-      paths.add(text_num_insertions);
+    if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
+      for (var insertion in substrand.insertions) {
+        int offset = insertion.offset;
+        ReactElement insertion_path = _insertion_path(substrand, offset, strand.color);
+        ReactElement text_num_insertions = _svg_text_number_of_insertions(insertion, substrand, offset);
+        paths.add(insertion_path);
+        paths.add(text_num_insertions);
+      }
     }
   }
   return paths;
@@ -159,12 +175,14 @@ ReactElement _svg_text_number_of_insertions(Insertion insertion, BoundSubstrand 
     ..dy = dy_text)(text_path_props('${length}'));
 }
 
-List<ReactElement> _deletion_paths(Strand strand) {
+List<ReactElement> _deletion_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
   List<ReactElement> deletions = [];
   for (BoundSubstrand substrand in strand.bound_substrands()) {
-    for (var deletion in substrand.deletions) {
-      ReactElement deletion_path = _deletion_path(substrand, deletion, strand);
-      deletions.add(deletion_path);
+    if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
+      for (var deletion in substrand.deletions) {
+        ReactElement deletion_path = _deletion_path(substrand, deletion, strand);
+        deletions.add(deletion_path);
+      }
     }
   }
   return deletions;

@@ -22,24 +22,18 @@ class _$DesignMainMouseoverRectHelicesProps extends UiProps { // FluxUiProps<Hel
 
 @Component2()
 class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMouseoverRectHelicesProps> { // FluxUiComponent<DesignMainMouseoverRectHelicesProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
-//    List<Helix> helices = this.props.store.helices;
     BuiltList<Helix> helices = this.props.helices;
-    int idx = 0;
     return (Dom.g()
-//      ..onMouseMove = _trigger_mouse_move
       ..id = _ID
       ..className = _CLASS)([
       for (Helix helix in helices)
-        (DesignMainMouseoverRectHelix()
-//        (ConnectedDesignMainMouseoverRectHelix()
-//          ..dna_design = app.model.dna_design
-          ..helix = helix
-          ..key = idx++)()
+//        (DesignMainMouseoverRectHelix()
+        (ConnectedDesignMainMouseoverRectHelix()
+          ..helix_idx = helix.idx
+          ..key = helix.idx)()
     ]);
   }
 }

@@ -81,8 +81,8 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
       //TODO: replace string-based prop setting below when OverReact repo is updated to include typed properties
       SvgProps attr = (Dom.rect()
 //      ..onMouseDown = substrand.dnaend_5p.handle_selection
-        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
+//        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
+//        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
         ..onPointerDown = substrand.dnaend_5p.handle_selection
         ..className = classname
         ..x = '${pos.x - 3.5}'

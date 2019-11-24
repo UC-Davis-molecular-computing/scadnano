@@ -2,12 +2,10 @@ import 'dart:html';
 import 'dart:svg' hide Point;
 import 'dart:math';
 
-import 'package:w_flux/w_flux.dart';
-
 import '../app.dart';
+import '../serializers.dart';
 import 'selectable.dart';
-import '../dispatcher/actions_OLD.dart';
-import '../util.dart' as util;
+import '../actions/actions_OLD.dart';
 
 import 'package:built_value/built_value.dart';
 
@@ -23,7 +21,7 @@ final DEFAULT_SelectionBoxBuilder = SelectionBoxBuilder()
 
 final DEFAULT_SelectionBox = DEFAULT_SelectionBoxBuilder.build();
 
-abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> {
+abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
   factory SelectionBox([void Function(SelectionBoxBuilder) updates]) =>
@@ -47,32 +45,6 @@ abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> 
 
   num get height => (start.y - current.y).abs();
 
-//  SelectionBox() {
-//    handle_actions();
-//  }
-
-  handle_actions() {
-//    triggerOnActionV2(Actions.create_selection_box_selecting, (mouse_coord) {
-//      toggling = false;
-//      start_selection(mouse_coord);
-//    });
-//
-//    triggerOnActionV2(Actions.create_selection_box_toggling, (mouse_coord) {
-//      toggling = true;
-//      start_selection(mouse_coord);
-//    });
-//
-//    triggerOnActionV2(Actions.selection_box_size_changed, (mouse_coord) {
-//      var c = util.transform_mouse_coord_to_svg_current_panzoom_main(mouse_coord);
-//      _current = c;
-//    });
-//
-//    triggerOnActionV2(Actions.remove_selection_box, (_) {
-//      update_selections();
-//      displayed = false;
-//    });
-  }
-
   SelectionBox start_selection(Point<num> point, bool toggling) => rebuild((s) => s
     ..start = point
     ..toggling = toggling
@@ -81,11 +53,13 @@ abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> 
 
   static const DECIMAL_PLACES = 0;
 
-  static rectToString(Rect bbox) => '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
+  static rectToString(Rect bbox) => ''
+      '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
 
+  //TODO: update this code to handle side view or main view, and call it from view/design.dart when drag ends
   //XXX: in principle this should be updateable every time the mouse moves and the selection box changes,
   // but in practice, the currently selected items and/or the Actions fired affected the results returned by
   // getIntersectionList, getEnclosureList, checkIntersection, checkEnclosure, so that they would falsely say certain
@@ -117,8 +91,7 @@ abstract class SelectionBox implements Built<SelectionBox, SelectionBoxBuilder> 
 
 //    Set<SvgElement> elts_overlapping =
 //        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
-    Set<SvgElement> elts_overlapping =
-        get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
@@ -192,8 +165,7 @@ get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(
-    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

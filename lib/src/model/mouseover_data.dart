@@ -1,8 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:tuple/tuple.dart';
 
 import '../serializers.dart';
 import 'dna_design.dart';
@@ -12,16 +10,18 @@ import 'substrand.dart';
 
 part 'mouseover_data.g.dart';
 
-abstract class MouseoverParams with BuiltJsonSerializable implements Built<MouseoverParams, MouseoverParamsBuilder> {
-  int get helix;
+abstract class MouseoverParams
+    with BuiltJsonSerializable
+    implements Built<MouseoverParams, MouseoverParamsBuilder> {
+  int get helix_idx;
 
   int get offset;
 
   bool get forward;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverParams(int helix, int offset, bool forward) => MouseoverParams.from((b) => b
-    ..helix = helix
+  factory MouseoverParams(int helix_idx, int offset, bool forward) => MouseoverParams.from((b) => b
+    ..helix_idx = helix_idx
     ..offset = offset
     ..forward = forward);
 
@@ -32,7 +32,9 @@ abstract class MouseoverParams with BuiltJsonSerializable implements Built<Mouse
   static Serializer<MouseoverParams> get serializer => _$mouseoverParamsSerializer;
 }
 
-abstract class MouseoverData with BuiltJsonSerializable implements Built<MouseoverData, MouseoverDataBuilder> {
+abstract class MouseoverData
+    with BuiltJsonSerializable
+    implements Built<MouseoverData, MouseoverDataBuilder> {
   Helix get helix;
 
   int get offset;
@@ -45,7 +47,7 @@ abstract class MouseoverData with BuiltJsonSerializable implements Built<Mouseov
     BoundSubstrand substrand = null;
     var mouseover_datas_builder = ListBuilder<MouseoverData>();
     for (var param in params) {
-      int helix_idx = param.helix;
+      int helix_idx = param.helix_idx;
       int offset = param.offset;
       bool forward = param.forward;
       for (Substrand ss in dna_design.substrands_on_helix(helix_idx)) {
@@ -68,8 +70,7 @@ abstract class MouseoverData with BuiltJsonSerializable implements Built<Mouseov
     ..helix.replace(helix)
 //    ..substrand.replace(substrand)
     ..substrand = substrand?.toBuilder()
-    ..offset = offset
-  );
+    ..offset = offset);
 
   factory MouseoverData.from([void Function(MouseoverDataBuilder) updates]) = _$MouseoverData;
 

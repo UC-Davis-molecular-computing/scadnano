@@ -17,8 +17,13 @@ class _$DesignMainStrandsProps extends UiProps { // FluxUiProps<StrandsStore, St
 
 @Component2()
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> { // FluxUiComponent<DesignMainStrandsProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
+
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    BuiltList<Strand> strands = props.strands;
+    BuiltList<Strand> strands_next = nextProps['DesignMainStrandsProps.strands'];
+    return !(strands == strands_next);
+  }
 
   @override
   render() {
@@ -36,11 +41,10 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> { 
 
     List strand_elts = [];
     for (Strand strand in strands) {
-      var strand_props = DesignMainStrand()
-      //TODO: see whether it matters if key stays same even when Strand changes
-      // (toString does not depend on all parts of Strand currently)
+      var strand_props =
+//      DesignMainStrand()
+      ConnectedDesignMainStrand()
         ..strand = strand
-        ..selected = strand.selected()
         ..key = strand.toString();
       var strand_elt = strand_props();
       strand_elts.add(strand_elt);

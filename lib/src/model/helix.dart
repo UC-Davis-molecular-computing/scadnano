@@ -2,16 +2,13 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:quiver/core.dart' as quiver;
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/model/position3d.dart';
 
 import '../json_serializable.dart';
 import '../serializers.dart';
 import 'grid.dart';
-import 'selectable.dart';
 import 'strand.dart';
-import '../dispatcher/actions_OLD.dart';
 import 'grid_position.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -33,6 +30,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// by default.
   int get idx;
 
+  // This is inferred from DNADesign.helices_view_order and is here for convenience, but isn't serialized.
   int get display_order;
 
   /// position within square/hex/honeycomb integer grid (side view)
@@ -107,21 +105,12 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     Map<String, dynamic> json_map = {};
 
     if (this.has_grid_position()) {
-      json_map[constants.grid_position_key] =
-          this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.grid_position_key] = this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
     if (this.has_nondefault_svg_position()) {
       json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
     }
-
-//    if (this.has_max_offset() && this.has_nondefault_max_offset) {
-//      json_map[constants.max_offset_key] = this.max_offset;
-//    }
-//
-//    if (this.has_min_offset() && this.has_nondefault_min_offset) {
-//      json_map[constants.min_offset_key] = this.min_offset;
-//    }
 
     if (this.has_nondefault_rotation()) {
       json_map[constants.rotation_key] = this.rotation;
@@ -172,8 +161,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     ..v = this.display_order
     ..b = 0);
 
-  Point<num> default_svg_position() =>
-      Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.display_order);
+  Point<num> default_svg_position() => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.display_order);
 
   bool has_grid_position() => this.grid_position != null;
 
@@ -194,26 +182,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   bool has_min_offset() => this.min_offset != null;
 
-//  bool has_nondefault_max_offset() {
-//    int max_ss_offset = -1;
-//    for (var ss in this._substrands) {
-//      if (max_ss_offset < ss.end) {
-//        max_ss_offset = ss.end;
-//      }
-//    }
-//    return this.max_offset != max_ss_offset;
-//  }
-//
-//  bool has_nondefault_min_offset() {
-//    int min_ss_offset = -1;
-//    for (var ss in this._substrands) {
-//      if (min_ss_offset > ss.start) {
-//        min_ss_offset = ss.start;
-//      }
-//    }
-//    return this.min_offset != min_ss_offset;
-//  }
-
   //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines
   //  in main view
 
@@ -232,8 +200,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
     }
@@ -253,10 +220,12 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     helix_builder.rotation =
         util.get_value_with_default(json_map, constants.rotation_key, constants.default_helix_rotation);
-    helix_builder.rotation_anchor = util.get_value_with_default(
-        json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
+    helix_builder.rotation_anchor =
+        util.get_value_with_default(json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
 
-    helix_builder.position = util.get_value_with_default(json_map, 'position', null);
+    Position3D position = util.get_value_with_default(json_map, constants.position3d_key, null,
+        transformer: (map) => Position3D.from_json(map));
+    helix_builder.position = position?.toBuilder();
 
     return helix_builder;
   }

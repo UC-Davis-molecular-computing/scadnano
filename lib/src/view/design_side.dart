@@ -23,13 +23,12 @@ part 'design_side.over_react.g.dart';
 UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<Model, DesignSideProps>(
   mapStateToProps: (model) => (DesignSide()
     ..helices = model.has_error() ? null : model.dna_design.helices
+    ..helix_idxs_selected = model.has_error() ? null : model.ui_model.side_selected_helix_idxs
     ..mouseover_datas = model.has_error() ? null : model.ui_model.mouseover_datas
     ..mouse_svg_pos = model.has_error() ? null : model.ui_model.mouse_svg_pos_side_view
     ..grid = model.has_error() ? null : model.dna_design.grid
     ..selection_box = model.has_error() ? null : model.ui_model.selection_box_side_view),
 )(DesignSide);
-
-
 
 @Factory()
 UiFactory<DesignSideProps> DesignSide = _$DesignSide;
@@ -37,6 +36,7 @@ UiFactory<DesignSideProps> DesignSide = _$DesignSide;
 @Props()
 class _$DesignSideProps extends UiProps {
   BuiltList<Helix> helices;
+  BuiltSet<int> helix_idxs_selected;
   BuiltList<MouseoverData> mouseover_datas;
   Point<num> mouse_svg_pos;
   Grid grid;
@@ -59,10 +59,9 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     SelectionBox selection_box = props.selection_box;
     Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
     BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
-    Map<int, MouseoverData> helix_idx_to_mouseover_data = {
-      for (var mod in mouseover_datas) mod.helix.idx: mod
-    };
+    Map<int, MouseoverData> helix_idx_to_mouseover_data = {for (var mod in mouseover_datas) mod.helix.idx: mod};
     BuiltList<Helix> helices = this.props.helices;
+    BuiltSet<int> helix_idxs_selected = this.props.helix_idxs_selected;
 
 //    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
 //        'DesignSide.render()  using helices:\n${helices}');
@@ -73,11 +72,12 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     //TODO: it's not well-defined what to do when grid=none and there is no grid position for helices
     List helices_components = [
       for (var helix in helices)
-//        (DesignSideHelix()
-        (ConnectedDesignSideHelix()
+        (DesignSideHelix()
+//        (ConnectedDesignSideHelix()
           ..helix = helix
           ..grid_position = helix.grid_position
           ..grid = this.props.grid
+          ..selected = helix_idxs_selected.contains(helix.idx)
 //          ..mouseover_datas = mouseover_datas
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
@@ -86,15 +86,20 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
 
     num stroke_width = 2.0 / util.current_zoom_side();
 
-    return (Dom.g()..className = 'side-view')(
+    return (Dom.g()..className = 'side-view')([
       (DesignSidePotentialHelix()
         ..grid = this.props.grid
         ..existing_helix_grid_positions = existing_helix_grid_positions
-        ..mouse_svg_pos = mouse_svg_pos)(),
-      (Dom.g()..className = 'helices-side-view')(helices_components),
-      (SelectionBoxView()
-        ..selection_box = selection_box
-        ..stroke_width = stroke_width)(),
-    );
+        ..mouse_svg_pos = mouse_svg_pos
+        ..key = 'potential-helix')(),
+      (Dom.g()
+        ..className = 'helices-side-view'
+        ..key = 'helices-side-view')(helices_components),
+      if (selection_box != null && selection_box.displayed)
+        (SelectionBoxView()
+          ..selection_box = selection_box
+          ..stroke_width = stroke_width
+          ..key = 'selection-box')(),
+    ]);
   }
 }

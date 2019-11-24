@@ -3,12 +3,7 @@ import 'dart:html';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
-
-import '../dispatcher/actions_OLD.dart';
-import '../dispatcher/local_storage.dart' as local_storage;
-import 'selectable.dart';
 
 part 'select_mode.g.dart';
 

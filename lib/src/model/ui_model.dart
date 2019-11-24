@@ -2,17 +2,11 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
-import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
 
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'selectable.dart';
-import '../dispatcher/actions_OLD.dart';
-import '../dispatcher/local_storage.dart' as local_storage;
-import '../dispatcher/actions.dart' as actions;
-import '../util.dart' as util;
-import '../built_intern.dart';
 
 import 'selection_box.dart';
 
@@ -26,10 +20,11 @@ final DEFAULT_UIModelBuilder = UIModelBuilder()
   ..selection_box_main_view = DEFAULT_SelectionBoxBuilder
   ..selection_box_side_view = DEFAULT_SelectionBoxBuilder
   ..selectables_store = SelectablesStoreBuilder()
-  ..side_selected_helices = SetBuilder<int>()
+  ..side_selected_helix_idxs = SetBuilder<int>()
   ..show_dna = false
   ..show_editor = false
   ..show_mismatches = true
+  ..show_mouseover_rect = false
   ..changed_since_last_save = false
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
@@ -47,7 +42,7 @@ abstract class UIModel implements Built<UIModel, UIModelBuilder> {
   SelectablesStore get selectables_store;
 
   /// Special case for helices, which can always be selected, but only in the side view.
-  BuiltSet<int> get side_selected_helices;
+  BuiltSet<int> get side_selected_helix_idxs;
 
   String get loaded_filename;
 
@@ -58,6 +53,8 @@ abstract class UIModel implements Built<UIModel, UIModelBuilder> {
   bool get show_mismatches;
 
   bool get show_editor;
+
+  bool get show_mouseover_rect;
 
   bool get dragging;
 

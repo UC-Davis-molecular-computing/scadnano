@@ -5,8 +5,6 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 
-import '../dispatcher/actions_OLD.dart';
-import '../model/strand.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
 import '../app.dart';
@@ -111,7 +109,8 @@ ReactElement _hairpin_arc(
 
   String id = loopout.id();
   ReactElement arc = (Dom.path()
-    ..onMouseDown = ((event) => event.ctrlKey ? Actions_OLD.loopout_select_toggle(loopout) : null)
+  //FIXME: implement this
+//    ..onMouseDown = ((event) => event.ctrlKey ? Actions_OLD.loopout_select_toggle(loopout) : null)
     ..className = classname
     ..stroke = color.toRgbColor().toCssString()
     ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'

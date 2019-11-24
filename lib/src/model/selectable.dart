@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 
 import '../app.dart';
-import '../dispatcher/actions_OLD.dart';
+import '../actions/actions_OLD.dart';
 import 'select_mode.dart';
 
 import 'package:built_value/built_value.dart';
@@ -117,10 +117,10 @@ mixin Selectable {
 
   //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
-  // ctrlKey and shiftKey properties we need to check for.
+  // ctrlKey, metaKey, and shiftKey properties we need to check for.
   handle_selection(event) {
     if (app.model.ui_model.select_mode_state.is_selectable(this)) {
-      if (event.nativeEvent.ctrlKey) {
+      if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
         Actions_OLD.toggle(this);
       } else if (event.nativeEvent.shiftKey) {
         Actions_OLD.select(this);

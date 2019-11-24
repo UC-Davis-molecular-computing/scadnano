@@ -15,6 +15,8 @@ class Grid extends EnumClass {
   static Grid valueOf(String name) => _$valueOf(name);
 
   String to_json() => name;
+
+  bool is_none() => this == none;
 }
 
 //enum Grid { square, hex, honeycomb, none }

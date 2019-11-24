@@ -2,12 +2,12 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/model/model.dart';
+import 'package:scadnano/src/model/position3d.dart';
 
+import '../actions/actions_OLD.dart';
 import '../model/dna_design.dart';
-import '../dispatcher/actions_OLD.dart';
 import '../model/mouseover_data.dart';
 import '../model/bound_substrand.dart';
 import '../app.dart';
@@ -15,7 +15,7 @@ import '../model/helix.dart';
 import '../model/grid.dart';
 import '../model/grid_position.dart';
 import 'design_side_rotation.dart';
-import '../util.dart' as util;
+import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 
 part 'design_side_helix.over_react.g.dart';
@@ -34,20 +34,22 @@ class _$DesignSideHelixProps extends UiProps with ConnectPropsMixin {
   Helix helix;
   GridPosition grid_position;
   Grid grid;
+  bool selected;
   MouseoverData mouseover_data;
 }
 
 @Component2()
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
 
-  //FIXME: this shouldn't be necessary since Redux and/or React should be doing this comparison for me
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
     Helix helix_next = nextProps['DesignSideHelixProps.helix'];
     MouseoverData mouseover_data_next = nextProps['DesignSideHelixProps.mouseover_data'];
+    bool selected_next = nextProps['DesignSideHelixProps.selected'];
     Helix helix = props.helix;
     MouseoverData mouseover_data = props.mouseover_data;
-    bool should = !(helix == helix_next && mouseover_data == mouseover_data_next);
+    bool selected = props.selected;
+    bool should = !(helix == helix_next && mouseover_data == mouseover_data_next && selected == selected_next);
 //    print('should DesignSideHelix update for helix=${helix.idx}?          ${should}');
 //    if (should) {
 //      print('  helix == helix_next:                   ${helix == helix_next}');
@@ -62,16 +64,27 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
 
   @override
   render() {
-//    print('rendering helix ${props.helix.idx}');
+//    print('rendering side helix ${props.helix.idx}');
     MouseoverData mouseover_data = this.props.mouseover_data;
 //    print('  mouseover_data: $mouseover_data');
 
-    Point<num> center = util.side_view_grid_to_svg(this.props.grid_position, this.props.grid);
     Helix helix = this.props.helix;
+
+    Position3D pos3d = helix.position3d();
+    Point<num> center = Point<num>(pos3d.x, pos3d.y);
+    bool selected = props.selected;
+    print('center of helix ${helix.idx}: (${center.x},${center.y})');
+
+//    center = util.side_view_grid_to_svg(this.props.grid_position, this.props.grid);
+
+    String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';
+    if (selected) {
+      classname_circle += ' selected';
+    }
 
     var children = [
       (Dom.circle()
-        ..className = '$SIDE_VIEW_PREFIX-helix-circle'
+        ..className = classname_circle
         ..r = '${constants.SIDE_HELIX_RADIUS}'
         ..onClick = ((e) => this._handle_click(e, helix))
         ..key = 'circle')(),
@@ -98,10 +111,16 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {
-    if (!event.ctrlKey) {
-      return;
+    if (event.altKey) {
+      _remove_helix(event, helix);
+    } else if (event.shiftKey) {
+      app.store.dispatch(actions.HelixSelect(helix.idx, false));
+    } else if (event.ctrlKey || event.metaKey) {
+      app.store.dispatch(actions.HelixSelect(helix.idx, true));
     }
+  }
 
+  _remove_helix(SyntheticMouseEvent event, Helix helix) {
     List<ReversibleActionPack> action_packs_for_batch = [];
     //FIXME: don't reach into global variable
     DNADesign dna_design = app.model.dna_design;

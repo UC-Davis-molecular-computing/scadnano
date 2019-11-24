@@ -18,13 +18,13 @@ import 'model/grid.dart';
 import 'model/grid_position.dart';
 import 'model/helix.dart';
 import 'model/loopout.dart';
-import 'model/model.dart';
 import 'model/dna_design.dart';
 import 'constants.dart' as constants;
 import 'model/bound_substrand.dart';
 import 'model/selectable.dart';
+import 'model/selection_box.dart';
 import 'model/strand.dart';
-import 'dispatcher/actions.dart' as actions;
+import 'actions/actions.dart' as actions;
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
@@ -78,8 +78,7 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   }
 }
 
-transform_rect(
-    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -117,12 +116,13 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
     point = Point<num>(gp.h, gp.v);
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
     num x = gp.h; // x offset from h
-    x += cos(2 * pi / 6) * (gp.v % 2); // x offset from v
+    if (gp.v % 2 == 1) {
+      x += cos(2 * pi / 6); // x offset from v
+    }
     num y = sin(2 * pi / 6) * gp.v; // y offset from v
     point = Point<num>(x, y);
   } else {
-    throw ArgumentError(
-        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return point * 2 * radius;
 }
@@ -130,20 +130,31 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
-  int h, v, b;
-  if (grid == Grid.square) {
-    h = (svg_coord.x / (2 * radius)).round();
-    v = (svg_coord.y / (2 * radius)).round();
-    b = 0;
-  } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-    throw UnimplementedError('hex and honeycomb grids not yet supported');
-  } else {
+  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
+  int h, v;
+  int b = 0;
+  if (grid.is_none()) {
     throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
+  } else if (grid == Grid.square) {
+    h = x.round();
+    v = y.round();
+  } else if (grid == Grid.honeycomb || grid == Grid.hex) {
+    v = (y / sin(2 * pi / 6)).round();
+    if (v % 2 == 1) {
+      x -= cos(2 * pi / 6); // x offset from v
+    }
+    h = x.round();
   }
   return GridPosition((gp) => gp
     ..h = h
     ..v = v
     ..b = b);
+}
+
+/// Indicates if given hex position is in the honeycome lattice.
+bool in_honeycomb_lattice(GridPosition pos) {
+  int x = pos.h, y = pos.v;
+  return !(((y % 2 == 0) && (x % 3 == 0)) || ((y % 2 == 1) && (x % 3 == 1)));
 }
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
@@ -170,7 +181,11 @@ T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_v
   if (!map.containsKey(key)) {
     return default_value;
   } else {
-    return transformer == null ? map[key] : transformer(map[key]);
+    if (transformer == null) {
+      return map[key];
+    } else {
+      return transformer(map[key]);
+    }
   }
 }
 
@@ -208,11 +223,9 @@ bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
   return is_hairpin;
 }
 
-save_file(String default_filename, String content) async {
-//  String json_dna_design_text = json_encode(app.model.dna_design);
-  Blob blob = new Blob([content], 'text/plain;charset=utf-8');
+save_file(String default_filename, String content, {String blob_type = 'text/plain;charset=utf-8'}) async {
+  Blob blob = new Blob([content], blob_type);
   String url = Url.createObjectUrlFromBlob(blob);
-//  String filename = app.model.menu_view_ui_model.loaded_filename;
   var link = new AnchorElement()
     ..href = url
     ..download = default_filename;
@@ -276,3 +289,121 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
   return rotation;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// intersection geometry
+
+class Box {
+  num height;
+  num width;
+  num x;
+  num y;
+
+  factory Box.from(Rect svg_rect) => Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
+
+  factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
+
+  Box(this.x, this.y, {num height = null, num width = null, num x2 = null, num y2 = null}) {
+    if (width == null && x2 == null) {
+      throw ArgumentError('at least one of height or x2 must be non-null');
+    } else if (x2 == null) {
+      this.width = width;
+    } else if (width == null) {
+      this.width = x2 - x;
+    }
+
+    if (height == null && y2 == null) {
+      throw ArgumentError('at least one of height or x2 must be non-null');
+    } else if (y2 == null) {
+      this.height = height;
+    } else if (height == null) {
+      this.height = y2 - y;
+    }
+  }
+
+  num get x2 => x + width;
+
+  num get y2 => y + height;
+
+  set x2(num x2new) {
+    width = x2new - x;
+  }
+
+  set y2(num y2new) {
+    height = y2new - y;
+  }
+}
+
+// gets list of elements associated to Selectables that intersect select_box_bbox
+List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
+    generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
+
+// gets list of elements associated to Selectables that intersect select_box_bbox
+List<E> enclosure_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
+    generalized_intersection_list(elts, bboxes, select_box, interval_contained);
+
+// indicates if (l1,h1) intersect (l2,h2) \neq empty
+bool intervals_overlap(num l1, num h1, num l2, num h2) {
+  return h1 >= l2 && h2 >= l1;
+}
+
+// indicates if (l1,h1) \subseteq (l2,h2)
+bool interval_contained(num l1, num h1, num l2, num h2) {
+  return l1 >= l2 && h1 <= h2;
+}
+
+List<E> generalized_intersection_list<E>(
+    List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+  if (elts.length != bboxes.length) {
+    throw ArgumentError('elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
+  }
+  List<E> elts_intersecting = [];
+  for (int i = 0; i < elts.length; i++) {
+    Box elt_bbox = bboxes[i];
+    E elt = elts[i];
+    if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
+      elts_intersecting.add(elt);
+    }
+  }
+  return elts_intersecting;
+}
+
+bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+  num elt_x2 = elt_bbox.x + elt_bbox.width;
+  num select_box_x2 = select_box.x + select_box.width;
+  num elt_y2 = elt_bbox.y + elt_bbox.height;
+  num select_box_y2 = select_box.y + select_box.height;
+  return overlap(elt_bbox.x, elt_x2, select_box.x, select_box_x2) &&
+      overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
+}
+
+//// gets list of elements associated to Selectables that intersect select_box_bbox
+//List<SvgElement> get_intersection_list(Rect select_box_bbox) {
+//  return get_generalized_intersection_list(select_box_bbox, intervals_overlap);
+//}
+//
+//// gets list of elements associated to Selectables that intersect select_box_bbox
+//List<SvgElement> get_enclosure_list(Rect select_box_bbox) {
+//  return get_generalized_intersection_list(select_box_bbox, interval_contained);
+//}
+//
+//get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+//  List<SvgElement> elts_intersecting = [];
+//  List<Element> selectable_elts = querySelectorAll('.selectable');
+//  for (GraphicsElement elt in selectable_elts) {
+//    Rect elt_bbox = elt.getBBox();
+////    util.transform_rect_svg_to_mouse_coord_main_view(elt_bbox);
+//    if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
+//      elts_intersecting.add(elt);
+//    }
+//  }
+//  return elts_intersecting;
+//}
+//
+//bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+//  num elt_x2 = elt_bbox.x + elt_bbox.width;
+//  num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
+//  num elt_y2 = elt_bbox.y + elt_bbox.height;
+//  num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
+//  return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
+//      overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
+//}

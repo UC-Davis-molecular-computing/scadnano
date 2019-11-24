@@ -1,7 +1,7 @@
 import 'package:w_flux/src/action.dart';
 
 import '../app.dart';
-import '../dispatcher/actions_OLD.dart';
+import '../actions/actions_OLD.dart';
 
 import 'bound_substrand.dart';
 import 'crossover.dart';

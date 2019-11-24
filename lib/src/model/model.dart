@@ -1,21 +1,13 @@
-import 'dart:convert';
 import 'dart:core';
 
-import 'package:scadnano/src/dispatcher/actions.dart' as actions;
 
-import '../dispatcher/actions_OLD.dart';
-import '../json_serializable.dart';
-import 'edit_mode.dart';
-import 'select_mode.dart';
 import 'ui_model.dart';
-import '../app.dart';
 import 'dna_design.dart';
-import 'select_mode_state.dart';
-import '../util.dart' as util;
 
 import 'package:built_value/built_value.dart';
 
 part 'model.g.dart';
+
 
 //TODO: replace calls to toBuilder with replace: https://github.com/google/built_value.dart/issues/424
 

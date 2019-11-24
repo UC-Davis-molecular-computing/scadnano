@@ -5,7 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../dispatcher/actions.dart' as actions;
+import '../actions/actions.dart' as actions;
 import 'select_mode.dart';
 import 'selectable.dart';
 

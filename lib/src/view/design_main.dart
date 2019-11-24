@@ -48,21 +48,34 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
     }
 
     num stroke_width = 2.0 / util.current_zoom_main();
+    SelectionBox selection_box = model.ui_model.selection_box_main_view;
 
-    ReactElement main_elt = (Dom.g()..id = 'main-view-group')(
-      (DesignMainMouseoverRectHelices()..helices = model.dna_design.helices)(),
-      (DesignMainHelices()..helices = model.dna_design.helices)(),
+    ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
+      (DesignMainHelices()
+        ..helices = model.dna_design.helices
+        ..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs
+        ..key = 'helices')(),
       (DesignMainMismatches()
         ..show_mismatches = model.ui_model.show_mismatches
-        ..strands = model.dna_design.strands)(),
-      (DesignMainStrands()..strands = model.dna_design.strands)(),
+        ..strands = model.dna_design.strands
+        ..key = 'mismatches')(),
+      (DesignMainStrands()
+        ..strands = model.dna_design.strands
+        ..key = 'strands')(),
       (DesignMainDNASequences()
         ..show_dna = model.ui_model.show_dna
-        ..strands = model.dna_design.strands)(),
-      (SelectionBoxView()
-        ..selection_box = model.ui_model.selection_box_main_view
-        ..stroke_width = stroke_width)(),
-    );
+        ..strands = model.dna_design.strands
+        ..key = 'dna')(),
+      if (selection_box != null && selection_box.displayed)
+        (SelectionBoxView()
+          ..selection_box = selection_box
+          ..stroke_width = stroke_width
+          ..key = 'selection_box')(),
+      if (model.ui_model.show_mouseover_rect)
+        (DesignMainMouseoverRectHelices()
+          ..helices = model.dna_design.helices
+          ..key = 'mouseover_rect')(),
+    ]);
 
     if (USING_REACT_DND) {
       ReactComponent dnd_provider_comp = DndProvider({'backend': HTML5Backend}, main_elt);

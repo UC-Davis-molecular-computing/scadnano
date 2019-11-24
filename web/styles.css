@@ -302,6 +302,11 @@ html, body {
     filter: url("#shadow");
 }
 
+.selected.side-view-helix-circle {
+    stroke: red;
+    fill: hotpink;
+}
+
 .selected.five-prime-end,
 .selected.three-prime-end,
 .selected.five-prime-end-first-substrand,

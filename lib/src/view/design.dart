@@ -20,10 +20,9 @@ import 'design_side.dart';
 import '../util.dart' as util;
 import 'design_main.dart';
 import 'design_footer.dart';
-import '../dispatcher/local_storage.dart' as local_storage;
+import '../middleware/local_storage_middleware.dart' as local_storage;
 import '../constants.dart' as constants;
-import '../dispatcher/actions.dart' as actions;
-import '../dispatcher/actions_OLD.dart';
+import '../actions/actions.dart' as actions;
 
 const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 //const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = true;
@@ -59,8 +58,7 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -111,7 +109,7 @@ class DesignViewComponent {
     main_pane.children.add(main_view_svg);
 
     set_side_main_pane_widths();
-    handle_main_view_keyboard_mouse_events();
+    handle_keyboard_mouse_events();
 
 //    app.model.design_or_error_store.listen((_) => this.render());
   }
@@ -121,7 +119,7 @@ class DesignViewComponent {
     if (side_pane_width == null) {
       side_pane_width = constants.default_side_pane_width;
     }
-    num main_pane_width_int = 100.0 - num.parse(side_pane_width.substring(0,side_pane_width.length-1));
+    num main_pane_width_int = 100.0 - num.parse(side_pane_width.substring(0, side_pane_width.length - 1));
     String main_pane_width = '${main_pane_width_int.toString()}%';
     side_pane.setAttribute('style', 'width: $side_pane_width');
     main_pane.setAttribute('style', 'width: $main_pane_width');
@@ -132,20 +130,28 @@ class DesignViewComponent {
     DraggableComponent.side: null,
   };
 
-  handle_main_view_keyboard_mouse_events() {
+  handle_keyboard_mouse_events() {
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
-      if ((ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) && !ev.repeat) {
+      int key = ev.which;
+      if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
+              key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+              key == constants.KEY_CODE_SELECT) &&
+          !ev.repeat) {
         install_draggable(true, DraggableComponent.main, main_view_svg);
         install_draggable(false, DraggableComponent.side, side_view_svg);
       }
 
-      if (ev.which == constants.KEY_CODE_ESC) {
-        Actions_OLD.unselect_all();
+      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+        app.store.dispatch(actions.SetShowMouseoverRect(true));
       }
 
-      if (ev.which == constants.KEY_CODE_DELETE) {
+      if (key == constants.KEY_CODE_ESC) {
+//        Actions_OLD.unselect_all();
+      }
+
+      if (key == constants.KEY_CODE_DELETE) {
         //FIXME:
 //        List<Selectable> selected = app.model.ui_model.selection.selections.toList();
 //        dna_design_action_packs.delete_all(app.model.dna_design, selected);
@@ -156,9 +162,17 @@ class DesignViewComponent {
     });
 
     window.onKeyUp.listen((ev) {
-      if (ev.which == constants.KEY_CODE_CTRL || ev.which == constants.KEY_CODE_SHIFT) {
+      int key = ev.which;
+      if (key == constants.KEY_CODE_TOGGLE_SELECT ||
+          key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+          key == constants.KEY_CODE_SELECT) {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
+      }
+      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+        app.store.dispatch(actions.SetShowMouseoverRect(false));
+        // removes mouseover even if on crossover even though we don't want that. Oh well
+        app.store.dispatch(actions.MouseoverDataClear());
       }
     });
 
@@ -167,14 +181,15 @@ class DesignViewComponent {
     // finish the box
     main_view_svg.onMouseUp.listen((ev) {
       //TODO: add some logic to make sure we didn't just get done moving a selected item/group of items
-      if (!(ev.ctrlKey || ev.shiftKey) && app.model.ui_model.selectables_store.selected_items.isNotEmpty) {
-        Actions_OLD.unselect_all();
+      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey) &&
+          app.model.ui_model.selectables_store.selected_items.isNotEmpty) {
+//        Actions_OLD.unselect_all();
       }
     });
     side_view_svg.onMouseUp.listen((ev) {
-      if (!(ev.ctrlKey || ev.shiftKey)) {
-        //FIXME: unselect helices
-//        Actions_OLD.unselect_all();
+      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
+        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
+//        app.store.dispatch(actions.HelicesSelectedClear());
       }
     });
   }
@@ -206,7 +221,6 @@ class DesignViewComponent {
       MouseEvent event = draggable_event.originalEvent;
       actions.Action2 action;
 
-
 //      Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
 //      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
       Point<num> point = event.offset;
@@ -220,7 +234,7 @@ class DesignViewComponent {
         point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
       }
 
-      if (event.ctrlKey) {
+      if (event.ctrlKey || event.metaKey) {
         action = main_view
             ? actions.MainViewSelectionBoxCreateToggling(point)
             : actions.SideViewSelectionBoxCreateToggling(point);
@@ -239,33 +253,30 @@ class DesignViewComponent {
     });
 
     //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
-//    main_view_svg.onMouseMove.listen((MouseEvent ev) {
     draggable.onDrag.listen((DraggableEvent draggable_event) {
       MouseEvent event = draggable_event.originalEvent;
 
-//      Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
-//      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
       Point<num> point = event.offset;
       if (!main_view) {
         point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
       }
 
-      if (event.ctrlKey || event.shiftKey) {
-        //XXX: need to take care to transform mouse coordinates in transformed SVG element
-//        Point<num> svg_point = util.untransformed_svg_point(view_svg, ev);
-        var action = main_view
-            ? actions.MainViewSelectionBoxSizeChanged(point)
-            : actions.SideViewSelectionBoxSizeChanged(point);
+      if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        var action =
+            main_view ? actions.MainViewSelectionBoxSizeChanged(point) : actions.SideViewSelectionBoxSizeChanged(point);
         app.store.dispatch(action);
-//        Actions_OLD.selection_box_size_changed(svg_point);
       }
     });
 
-//    main_view_svg.onMouseUp.listen((MouseEvent ev) {
     draggable.onDragEnd.listen((DraggableEvent draggable_event) {
-      var action = main_view ? actions.MainViewSelectionBoxRemove() : actions.SideViewSelectionBoxRemove();
-      app.store.dispatch(action);
-//      Actions_OLD.remove_selection_box();
+      if (main_view) {
+        //TODO: adjust selections for main view
+        app.store.dispatch(actions.MainViewSelectionBoxRemove());
+      } else {
+        // call this first so selection box is still in model when selections are made
+        app.store.dispatch(actions.HelixSelectionsAdjust());
+        app.store.dispatch(actions.SideViewSelectionBoxRemove());
+      }
     });
   }
 
@@ -379,7 +390,7 @@ class DesignViewComponent {
 
   side_view_update_mouseover(MouseEvent event) {
     if (!event.altKey) {
-      //FIXME: what condition to check to ensure we aren't sending too many of these actions?
+      //FIXME: what condition to check to ensure we aren't sending too many of these dispatcher?
       if (app.model.ui_model.mouse_svg_pos_side_view != null) {
         app.store.dispatch(actions.SideViewMousePositionRemove());
       }

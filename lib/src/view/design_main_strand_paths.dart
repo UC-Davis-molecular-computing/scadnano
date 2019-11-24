@@ -2,7 +2,9 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:tuple/tuple.dart';
+import 'package:over_react/over_react_redux.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/model/model.dart';
 
 import '../model/crossover.dart';
 import 'design_main_strand_3p_end.dart';
@@ -20,26 +22,35 @@ import 'design_main_strand_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
+UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths = connect<Model, DesignMainStrandPathsProps>(
+  mapStateToProps: (model) =>
+  (DesignMainStrandPaths()
+    ..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+)(DesignMainStrandPaths);
+
 @Factory()
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
 
 @Props()
 class _$DesignMainStrandPathsProps extends UiProps {
   Strand strand;
+  BuiltSet<int> side_selected_helix_idxs;
 }
 
 @Component2()
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
-    return (Dom.g()..className = 'strand-paths')(_strand_paths(this.props.strand));
+    return (Dom.g()
+      ..className = 'strand-paths')(_strand_paths(props.strand, props.side_selected_helix_idxs));
   }
 }
 
-List<ReactElement> _strand_paths(Strand strand) {
+bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
+    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
+
+List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
   if (strand.substrands.first is Loopout) {
     throw StrandError(strand, 'loopouts at beginning of strand not supported');
   }
@@ -51,50 +62,60 @@ List<ReactElement> _strand_paths(Strand strand) {
   List<ReactElement> ends = []; // add after so clicking on ends takes priority
   var substrand = strand.substrands.first;
 
-  //TODO: make crossover a component that listens to both BoundSubstrands it connects
+  bool draw_prev_ss = false;
   for (int i = 0; i < strand.substrands.length; i++) {
     substrand = strand.substrands[i];
 
     if (substrand.is_bound_substrand()) {
-      paths.add((DesignMainBoundSubstrand()
-//        ..store = substrand
-        ..substrand = substrand
-        ..color = strand.color
-        ..key = "bound-substrand-$i")());
+      BoundSubstrand bound_ss = substrand as BoundSubstrand;
+      bool draw_cur_ss = draw_bound_ss(bound_ss, side_selected_helix_idxs);
+      draw_prev_ss = draw_cur_ss;
+      if (draw_cur_ss) {
+        paths.add((DesignMainBoundSubstrand()
+          ..substrand = substrand
+          ..color = strand.color
+          ..key = "bound-substrand-$i")());
 
-      ends.add((DesignMain5pEnd()
-//        ..store = substrand
-        ..substrand = substrand
-        ..color = strand.color
-        ..is_first_substrand = (i == 0)
-        ..key = "5'-end-$i")());
+        ends.add((DesignMain5pEnd()
+          ..substrand = substrand
+          ..color = strand.color
+          ..is_first_substrand = (i == 0)
+          ..key = "5'-end-$i")());
 
-      ends.add((DesignMain3pEnd()
-//        ..store = substrand
-        ..substrand = substrand
-        ..color = strand.color
-        ..is_last_substrand = (i == strand.substrands.length - 1)
-        ..key = "3'-end-$i")());
+        ends.add((DesignMain3pEnd()
+          ..substrand = substrand
+          ..color = strand.color
+          ..is_last_substrand = (i == strand.substrands.length - 1)
+          ..key = "3'-end-$i")());
+      }
 
-      if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand()) {
+      if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {
         BoundSubstrand prev_ss = substrand;
         BoundSubstrand next_ss = strand.substrands[i + 1];
-        Crossover crossover = Crossover((c) => c
-          ..prev_substrand = prev_ss.toBuilder()
-          ..next_substrand = next_ss.toBuilder());
+        bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
 
-        paths.add((DesignMainStrandCrossover()
-          ..crossover = crossover
-          ..strand = strand
-          ..key = 'crossover-paths-$i')());
+        if (draw_next_ss) {
+          Crossover crossover = Crossover((c) =>
+          c
+            ..prev_substrand = prev_ss.toBuilder()
+            ..next_substrand = next_ss.toBuilder());
+
+          paths.add((DesignMainStrandCrossover()
+            ..crossover = crossover
+            ..strand = strand
+            ..key = 'crossover-paths-$i')());
+        }
       }
     } else {
-      paths.add((DesignMainLoopout()
-//        ..store = substrand
-        ..loopout = substrand
-        ..color = strand.color
-        ..substrand_idx = i
-        ..key = "loopout-$i")());
+      BoundSubstrand next_ss = strand.substrands[i + 1];
+      bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
+      if (draw_prev_ss && draw_next_ss) {
+        paths.add((DesignMainLoopout()
+          ..loopout = substrand
+          ..color = strand.color
+          ..substrand_idx = i
+          ..key = "loopout-$i")());
+      }
     }
   }
 

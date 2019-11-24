@@ -1,13 +1,16 @@
-import 'dart:math';
+import 'package:platform_detect/platform_detect.dart';
 
 import 'model/grid.dart';
 
 // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-const KEY_CODE_SHIFT = 16;
-const KEY_CODE_CTRL = 17;
+const KEY_CODE_SELECT = 16; // Shift
+final KEY_CODE_TOGGLE_SELECT_MAC = browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
+const KEY_CODE_TOGGLE_SELECT = 17; // Ctrl
 const KEY_CODE_ALT = 18;
 const KEY_CODE_ESC = 27;
 const KEY_CODE_DELETE = 46;
+
+const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = 77; // m
 
 const String INITIAL_VERSION = "0.0.1";
 
@@ -79,7 +82,7 @@ const rotation_key = 'rotation';
 const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
-//const position_key = 'position'; // support in the future
+const position3d_key = 'position'; // support in the future
 
 // Strand keys
 const color_key = 'color';

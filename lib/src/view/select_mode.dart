@@ -2,7 +2,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
 import '../model/model.dart';
-import '../dispatcher/actions.dart' as actions;
+import '../actions/actions.dart' as actions;
 import '../model/select_mode.dart';
 import '../model/select_mode_state.dart';
 

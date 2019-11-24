@@ -15,20 +15,31 @@ UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
 @Props()
 class _$DesignMainHelicesProps extends UiProps {
   BuiltList<Helix> helices;
+  BuiltSet<int> side_selected_helix_idxs;
 }
 
 @Component2()
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> {
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    var helices = props.helices;
+    var side_selected_helix_idxs = props.side_selected_helix_idxs;
+    BuiltList<Helix> helices_next = nextProps['DesignMainHelicesProps.helices'];
+    BuiltSet<int> side_selected_helix_idxs_next = nextProps['DesignMainHelicesProps.side_selected_helix_idxs'];;
+    return !(helices == helices_next && side_selected_helix_idxs == side_selected_helix_idxs_next);
+  }
 
   @override
   render() {
     BuiltList<Helix> helices = props.helices;
+    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
 
     return (Dom.g()..className = 'helices-main-view')([
       for (Helix helix in helices)
-        (DesignMainHelix()
-          ..helix = helix
-          ..key = helix.idx)()
+        if (side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(helix.idx))
+          (DesignMainHelix()
+            ..helix = helix
+            ..key = helix.idx)()
     ]);
   }
 }

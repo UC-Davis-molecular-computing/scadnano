@@ -21,6 +21,9 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   num get yaw;
 
+  factory Position3D.from_json(Map<String, dynamic> map) =>
+      Position3D(x: map['x'], y: map['y'], z: map['z'], pitch: map['pitch'], roll: map['roll'], yaw: map['yaw']);
+
   /************************ begin BuiltValue boilerplate ************************/
   factory Position3D({num x = 0, num y = 0, num z = 0, num pitch = 0, num roll = 0, num yaw = 0}) =>
       Position3D.from((b) => b

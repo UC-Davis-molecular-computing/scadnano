@@ -1,23 +1,24 @@
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
-import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
-import 'package:scadnano/src/model/helix.dart';
-import 'package:scadnano/src/model/mouseover_data.dart';
-import 'package:scadnano/src/model/position3d.dart';
 
+import 'model/helix.dart';
+import 'model/mouseover_data.dart';
+import 'model/position3d.dart';
+import 'model/select_mode.dart';
 import 'model/bound_substrand.dart';
 import 'model/grid_position.dart';
-import 'model/select_mode.dart';
-import 'dispatcher/actions.dart';
+import 'actions/actions.dart';
+import 'model/selection_box.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor([
   ToggleSelectMode,
   SetSelectModes,
+  SelectionBox,
   SetShowDNA,
   SetShowMismatches,
   SetShowEditor,

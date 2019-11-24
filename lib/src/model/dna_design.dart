@@ -2,20 +2,12 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
-import 'package:react/react.dart';
-import 'package:redux/redux.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:tuple/tuple.dart';
-import 'package:w_flux/w_flux.dart';
 import 'package:color/color.dart';
-import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'dna_end.dart';
 import 'grid_position.dart';
-import 'selectable.dart';
 import '../json_serializable.dart';
-import '../app.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'helix.dart';
@@ -23,7 +15,7 @@ import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
-import '../dispatcher/actions.dart' as actions;
+import '../actions/actions.dart' as actions;
 
 part 'dna_design.g.dart';
 
@@ -275,14 +267,50 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
-    json_map[constants.helices_key] = [
+    List<dynamic> helix_jsons = json_map[constants.helices_key] = [
       for (var helix in this.helices) helix.to_json_serializable(suppress_indent: suppress_indent)
     ];
     json_map[constants.strands_key] = [
       for (var strand in this.strands) strand.to_json_serializable(suppress_indent: suppress_indent)
     ];
 
+    for (int i = 0; i < helices.length; i++) {
+      var helix = helices[i];
+      var helix_json = helix_jsons[i];
+      if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
+        helix_json[constants.max_offset_key] = helix.max_offset;
+      }
+      if (helix.has_min_offset() && has_nondefault_min_offset(helix)) {
+        helix_json[constants.min_offset_key] = helix.min_offset;
+      }
+    }
+
     return json_map;
+  }
+
+  bool has_nondefault_max_offset(Helix helix) {
+    int max_ss_offset = -1;
+    for (var ss in substrands_on_helix(helix.idx)) {
+      if (max_ss_offset < ss.end) {
+        max_ss_offset = ss.end;
+      }
+    }
+    return helix.max_offset != max_ss_offset;
+  }
+
+  bool has_nondefault_min_offset(Helix helix) {
+    int min_ss_offset = -1;
+    for (var ss in substrands_on_helix(helix.idx)) {
+      if (min_ss_offset > ss.start) {
+        min_ss_offset = ss.start;
+      }
+    }
+    // if all offsets are nonnegative, default min_offset is 0; otherwise it is minimum offset
+    if (min_ss_offset >= 0) {
+      return helix.min_offset != 0;
+    } else {
+      return helix.min_offset != min_ss_offset;
+    }
   }
 
   /// Replace this DNADesign with the one described in json_map.

@@ -1,7 +1,7 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/dispatcher/actions_OLD.dart';
-import 'package:scadnano/src/model/edit_mode.dart';
 
+import '../model/edit_mode.dart';
+import '../actions/actions_OLD.dart';
 part 'edit_mode.over_react.g.dart';
 
 @Factory()

@@ -1,6 +1,11 @@
 #pub.bat global activate webdev
+
+bash compile-readme.sh
+
 echo "running webdev directly, but if it fails, try first running" 
 echo "  pub.bat global activate webdev"
+
+rm -rf build/ # lately getting a build crash every other time we compile
 webdev.bat build #--no-release
 
 # most packages appear not to be needed for the production version of the app

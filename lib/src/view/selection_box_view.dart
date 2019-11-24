@@ -1,9 +1,6 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/selection_box.dart';
 
-import '../dispatcher/actions_OLD.dart';
 import '../model/selection_box.dart';
-import '../util.dart' as util;
 
 part 'selection_box_view.over_react.g.dart';
 

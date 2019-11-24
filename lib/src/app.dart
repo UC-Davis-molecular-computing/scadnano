@@ -2,36 +2,24 @@
 library app;
 
 import 'dart:html';
-import 'dart:convert';
 
-import 'package:built_collection/built_collection.dart';
-import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
-import 'package:scadnano/src/dispatcher/actions.dart';
-import 'package:scadnano/src/json_serializable.dart';
-import 'package:scadnano/src/model/dna_end.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:scadnano/src/test_built_value.dart';
 
 import 'model/dna_design.dart';
-import 'model/helix.dart';
 import 'model/model.dart';
-import 'dispatcher/actions_OLD.dart';
+import 'actions/actions_OLD.dart';
 
-//import 'dispatcher/model_reducer.dart';
-import 'model/mouseover_data.dart';
-import 'serializers.dart';
 import 'util.dart' as util;
-import 'dispatcher/undo_redo.dart';
+import 'middleware/undo_redo.dart';
 import 'view/view.dart';
-import 'dispatcher/model_reducer.dart';
-import 'dispatcher/local_storage.dart' as local_storage;
-import 'dispatcher/actions.dart' as actions;
-import 'built_intern.dart';
+import 'reducers/model_reducer.dart';
+import 'middleware/local_storage_middleware.dart';
+import 'middleware/all_middleware.dart';
 
 App app = App();
 
@@ -63,7 +51,7 @@ class App {
       await initialize_model();
 
 //    util.save_editor_content_to_js_context(model.editor_content);
-      local_storage.restore_all_local_storage();
+      restore_all_local_storage();
       this.setup_warning_before_unload();
 
       make_dart_functions_available_to_js(model);
@@ -109,22 +97,11 @@ class App {
           .build();
     }
 
-//    print('helix 0 = ${dna_design.helices[0]}');
-//    print('helix 1 = ${dna_design.helices[1]}');
-
-//    print('model.toJson(): ${model.toJson()}');
-//    print('model.toJson().runtimeType: ${model.toJson().runtimeType}');
-//    print('jsonEncode(model): ${jsonEncode(model)}');
-
     if (USE_REDUX_DEV_TOOLS) {
-      store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: [
-        overReactReduxDevToolsMiddleware,
-        local_storage.middleware_local_storage,
-      ]);
+      var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
+      store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: middleware_plus);
     } else {
-      store = Store<Model>(model_reducer, initialState: model, middleware: [
-        local_storage.middleware_local_storage,
-      ]);
+      store = Store<Model>(model_reducer, initialState: model, middleware: all_middleware);
     }
   }
 
