@@ -58,7 +58,8 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()
+      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -114,7 +115,7 @@ class DesignViewComponent {
 //    app.model.design_or_error_store.listen((_) => this.render());
   }
 
-  void set_side_main_pane_widths() {
+  set_side_main_pane_widths() {
     String side_pane_width = local_storage.side_pane_width();
     if (side_pane_width == null) {
       side_pane_width = constants.default_side_pane_width;
@@ -143,7 +144,7 @@ class DesignViewComponent {
         install_draggable(false, DraggableComponent.side, side_view_svg);
       }
 
-      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
         app.store.dispatch(actions.SetShowMouseoverRect(true));
       }
 
@@ -169,7 +170,7 @@ class DesignViewComponent {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
       }
-      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
         app.store.dispatch(actions.SetShowMouseoverRect(false));
         // removes mouseover even if on crossover even though we don't want that. Oh well
         app.store.dispatch(actions.MouseoverDataClear());
@@ -262,8 +263,9 @@ class DesignViewComponent {
       }
 
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        var action =
-            main_view ? actions.MainViewSelectionBoxSizeChanged(point) : actions.SideViewSelectionBoxSizeChanged(point);
+        var action = main_view
+            ? actions.MainViewSelectionBoxSizeChanged(point)
+            : actions.SideViewSelectionBoxSizeChanged(point);
         app.store.dispatch(action);
       }
     });
@@ -281,16 +283,13 @@ class DesignViewComponent {
   }
 
   render(Model model) {
-    this.root_element.children.clear();
-
     if (model.has_error()) {
-      this.root_element.children.addAll([this.error_message_pane]);
+      if (!this.root_element.children.contains(this.error_message_pane)) {
+        this.root_element.children.clear();
+        this.root_element.children.add(this.error_message_pane);
+      }
       this.error_message_component.render(model.error_message);
     } else {
-      this.root_element.children.add(this.design_above_footer_pane);
-      this.root_element.children.add(this.footer_separator);
-      this.root_element.children.add(this.footer_element);
-
 //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
 //        {
 //          'width': '100%',
@@ -318,6 +317,13 @@ class DesignViewComponent {
 //        ),
 //      );
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
+
+      if (this.root_element.children.contains(this.error_message_pane)) {
+        this.root_element.children.clear();
+        this.root_element.children.add(this.design_above_footer_pane);
+        this.root_element.children.add(this.footer_separator);
+        this.root_element.children.add(this.footer_element);
+      }
 
       react_dom.render(
         ErrorBoundary()(
@@ -385,7 +391,9 @@ class DesignViewComponent {
   }
 
   side_view_mouse_leave_update_mouseover() {
-    app.store.dispatch(actions.SideViewMousePositionRemove());
+    if (app.model.ui_model.mouse_svg_pos_side_view != null) {
+      app.store.dispatch(actions.SideViewMousePositionRemove());
+    }
   }
 
   side_view_update_mouseover(MouseEvent event) {

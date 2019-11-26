@@ -8,11 +8,10 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
-import 'package:scadnano/src/test_built_value.dart';
+import 'package:over_react/over_react.dart' as react;
 
 import 'model/dna_design.dart';
 import 'model/model.dart';
-import 'actions/actions_OLD.dart';
 
 import 'util.dart' as util;
 import 'model/undo_redo.dart';
@@ -22,10 +21,11 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'actions/actions.dart' as actions;
 
+// global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -48,6 +48,8 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
+      react.setClientConfiguration();
+
       await initialize_model();
 
       setup_undo_redo_keyboard_listeners();
@@ -61,7 +63,7 @@ class App {
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
 
-      this.view.render();
+      this.view.render(model);
     }
   }
 

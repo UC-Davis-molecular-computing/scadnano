@@ -90,19 +90,8 @@ class View {
 //    this.render();
   }
 
-  /// This should be called whenever app.model is set to a new object,
-  /// to redraw the entire app. It should NOT be called when the model changes
-  /// in place. Instead, individual view elements should be notified as needed,
-  /// using the notifier streams defined in Controller.
-  render() {
+  render(Model model) {
 //    this.update_showing_editor();
-
-//    react_dom.render(
-//      (Menu()
-//        ..show_dna = app.model.show_dna
-//        ..show_mismatches = app.model.show_dna)(),
-//      this.menu_element,
-//    );
 
     react_dom.render(
       ErrorBoundary()(
@@ -113,7 +102,7 @@ class View {
       this.menu_element,
     );
 
-    this.design_view.render(app.model);
+    this.design_view.render(model);
 
 //    react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
 

@@ -1,3 +1,50 @@
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// OverReact 
+
+// ordc (OverReact connected component (just boilerplate for connection, not whole component))
+
+import 'package:over_react/over_react_redux.dart';
+
+import '../model/model.dart';
+
+UiFactory<$CLASS_NAME$Props> Connected$CLASS_NAME$ =
+    connect<Model, $CLASS_NAME$Props>(mapStateToProps: (model) {
+  
+  return $CLASS_NAME$();
+})($CLASS_NAME$);
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// built_value
+
+settings for calculated fields:
+FIELD_NAME =         snakeCase(FIELD_TYPE)
+LOWER_CLASS_NAME =   decapitalize(CLASS_NAME)
+
+
+// bvsa (built value Action with serialization, and support for one field initially)
+abstract class $CLASS_NAME$ 
+    with BuiltJsonSerializable 
+    implements Action2, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+  $FIELD_TYPE$ get $FIELD_NAME$;
+  
+  /************************ begin BuiltValue boilerplate ************************/
+  factory $CLASS_NAME$($FIELD_TYPE$ $FIELD_NAME$) => $CLASS_NAME$.from((b) => b..$FIELD_NAME$ = $FIELD_NAME$);
+
+  factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
+
+  $CLASS_NAME$._();
+  
+  static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+}
+
+
+
 // bvs (built value with serialization, and support for one field initially)
 abstract class $CLASS_NAME$ with BuiltJsonSerializable implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   $FIELD_TYPE$ get $FIELD_NAME$;
@@ -12,12 +59,9 @@ abstract class $CLASS_NAME$ with BuiltJsonSerializable implements Built<$CLASS_N
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
 }
 
-settings for calculated fields:
-FIELD_NAME =         snakeCase(FIELD_TYPE)
-LOWER_CLASS_NAME =   decapitalize(CLASS_NAME)
 
 
-// built value
+// bv (built value)
 import 'package:built_value/built_value.dart';
 
 part '$filename$.g.dart';

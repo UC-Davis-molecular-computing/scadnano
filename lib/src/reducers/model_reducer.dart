@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:redux/redux.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../model/dna_design.dart';
 import 'ui_model_reducer.dart';
@@ -10,7 +11,6 @@ import 'undo_redo_reducer.dart';
 import '../actions/actions.dart' as actions;
 import '../model/model.dart';
 import '../model/undo_redo.dart';
-import '../util.dart' as util;
 
 Model model_reducer(Model model, action) {
   // If wrapped in SkipUndo, unpack it and remember undoable_action_reducer shouldn't push onto undo stack.
@@ -38,7 +38,8 @@ Model model_reducer(Model model, action) {
   model = model.rebuild((m) => m
     ..dna_design.replace(dna_design_reducer(model.dna_design, action))
     ..ui_model.replace(ui_model_reducer(model.ui_model, action))
-    ..error_message = TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(model.error_message, action)
+    ..error_message =
+        TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(model.error_message, action)
     ..editor_content = editor_content_reducer(model.editor_content, action));
 
   // "global" reducers operate on a slice of the model but need another part of the model
@@ -70,10 +71,10 @@ Model export_svg_reducer(Model model, actions.ExportSvgMain action) {
 
 Model load_dna_file_reducer(Model model, actions.LoadDNAFile action) {
   Map<String, dynamic> map = jsonDecode(action.content);
-  DNADesign dna_design;
+  DNADesign dna_design_new;
   String error_message;
   try {
-    dna_design = DNADesign.from_json(map);
+    dna_design_new = DNADesign.from_json(map);
   } on IllegalDNADesignError catch (error) {
     error_message = error.cause;
   }
@@ -85,13 +86,20 @@ Model load_dna_file_reducer(Model model, actions.LoadDNAFile action) {
       ..dna_design = null
       ..ui_model.changed_since_last_save = false
       ..error_message = error_message);
-  } else if (dna_design != null) {
+  } else if (dna_design_new != null) {
+    // remove selected helices from
+    BuiltSet<int> side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs;
+    if (dna_design_new.helices.length < model.dna_design.helices.length) {
+      side_selected_helix_idxs = side_selected_helix_idxs
+          .rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
+    }
     new_model = model.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..dna_design = dna_design.toBuilder()
+      ..dna_design = dna_design_new.toBuilder()
       ..ui_model.update((u) => u
         ..changed_since_last_save = false
-        ..loaded_filename = action.filename)
+        ..loaded_filename = action.filename
+        ..side_selected_helix_idxs.replace(side_selected_helix_idxs))
       ..error_message = "");
   } else {
     throw AssertionError("This line should be unreachable");

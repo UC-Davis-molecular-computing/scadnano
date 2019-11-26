@@ -6,9 +6,9 @@ import 'model/grid.dart';
 const KEY_CODE_SELECT = 16; // Shift
 final KEY_CODE_TOGGLE_SELECT_MAC = browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
 const KEY_CODE_TOGGLE_SELECT = 17; // Ctrl
-const KEY_CODE_ALT = 18;
-const KEY_CODE_ESC = 27;
-const KEY_CODE_DELETE = 46;
+const KEY_CODE_ALT = 18; // Alt
+const KEY_CODE_ESC = 27; // Esc
+const KEY_CODE_DELETE = 46; // Delete
 
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = 77; // m
 

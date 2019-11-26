@@ -354,7 +354,8 @@ html, body {
 
 .crossover-curve {
     stroke-width: 4;
-    stroke-dasharray: 2;
+    /*stroke-dasharray: 2;*/
+    stroke-opacity: 0.3;
     fill: none;
 }
 

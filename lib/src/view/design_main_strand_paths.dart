@@ -99,7 +99,8 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
             ..prev_substrand = prev_ss.toBuilder()
             ..next_substrand = next_ss.toBuilder());
 
-          paths.add((DesignMainStrandCrossover()
+//          paths.add((DesignMainStrandCrossover()
+          paths.add((ConnectedDesignMainStrandCrossover()
             ..crossover = crossover
             ..strand = strand
             ..key = 'crossover-paths-$i')());

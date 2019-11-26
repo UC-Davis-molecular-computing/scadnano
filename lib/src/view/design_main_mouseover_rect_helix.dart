@@ -28,7 +28,6 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
   Helix helix = model.dna_design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = model.ui_model.mouseover_datas;
   bool show = model.ui_model.show_mouseover_rect;
-//  print('connecting DesignMainMouseoverRectHelix');
   return DesignMainMouseoverRectHelix()
     ..helix = helix
     ..show = show
