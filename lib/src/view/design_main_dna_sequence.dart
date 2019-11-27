@@ -32,7 +32,7 @@ class _$DesignMainDNASequenceProps extends UiProps {
   BuiltSet<int> side_selected_helix_idxs;
 }
 
-bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
+bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
 
 @Component2()
@@ -46,7 +46,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_bound_substrand()) {
-        if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
+        if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
           var bound_ss = substrand as BoundSubstrand;
           dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
           for (var insertion in bound_ss.insertions) {
@@ -61,8 +61,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         var loopout = substrand as Loopout;
         BoundSubstrand prev_ss = this.props.strand.substrands[i - 1];
         BoundSubstrand next_ss = this.props.strand.substrands[i + 1];
-        if (draw_bound_ss(prev_ss, side_selected_helix_idxs) &&
-            draw_bound_ss(next_ss, side_selected_helix_idxs)) {
+        if (should_draw_bound_ss(prev_ss, side_selected_helix_idxs) &&
+            should_draw_bound_ss(next_ss, side_selected_helix_idxs)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
         }
       }

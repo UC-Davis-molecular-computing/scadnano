@@ -1,10 +1,9 @@
 import 'dart:core';
 
-import 'ui_model.dart';
-import 'dna_design.dart';
-
 import 'package:built_value/built_value.dart';
 
+import 'dna_design.dart';
+import 'ui_model.dart';
 import 'undo_redo.dart';
 
 part 'model.g.dart';
@@ -35,7 +34,10 @@ abstract class Model implements Built<Model, ModelBuilder> {
 
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
-    return this.dna_design.to_json_serializable(suppress_indent: false);
+    Map<String,dynamic> map = {};
+    map['dna_design'] = this.dna_design.to_json_serializable(suppress_indent: false);
+    map['ui_model'] = this.ui_model.toJson();
+    return map;
   }
 
   bool has_error() => error_message != null && error_message.length > 0;

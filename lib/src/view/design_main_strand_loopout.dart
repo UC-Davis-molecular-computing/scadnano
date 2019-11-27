@@ -14,6 +14,8 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
+//TODO: show mouseover data in footer when mouse is on loopout (also crossover)
+
 @Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
@@ -33,13 +35,9 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { 
   render() {
     Loopout loopout = this.props.loopout;
     int substrand_idx = this.props.substrand_idx;
-//    Strand strand = loopout.strand;
+    Color color = props.color;
 
     assert(0 < substrand_idx);
-//    assert(substrand_idx < strand.substrands.length - 1);
-
-//    var prev_ss = strand.substrands[substrand_idx - 1] as BoundSubstrand;
-//    var next_ss = strand.substrands[substrand_idx + 1] as BoundSubstrand;
     var prev_ss = loopout.prev_substrand;
     var next_ss = loopout.next_substrand;
 
@@ -53,11 +51,10 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { 
 
     if (util.is_hairpin(prev_ss, next_ss)) {
       // special case for hairpin so it's not a short straight line
-      return _hairpin_arc(prev_ss, next_ss, loopout, classname, props.color);
+      return _hairpin_arc(prev_ss, next_ss, loopout, classname, color);
     } else {
       String path = crossover_path_description(prev_ss, next_ss);
       String id = loopout.id();
-//      String color = strand.color.toRgbColor().toCssString();
 
       //TODO: find way to not repeat ourselves by reusing the Selectable logic between components
       // loopout, crossover, 5p-end, 3p-end, strand
@@ -71,7 +68,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { 
       return (Dom.path()
 //        ..onMouseDown = loopout.handle_selection // use with mixin Selectable
         ..d = path
-        ..stroke = props.color.toRgbColor().toCssString()
+        ..stroke = color.toRgbColor().toCssString()
         ..onPointerDown = loopout.handle_selection
         ..className = classname
         ..id = id

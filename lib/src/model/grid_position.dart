@@ -1,5 +1,4 @@
 import 'package:built_value/serializer.dart';
-import 'package:quiver/core.dart' as quiver;
 
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/serializers.dart';

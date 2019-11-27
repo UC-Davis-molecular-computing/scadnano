@@ -327,9 +327,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     dna_design_builder.grid =
         util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
 
+    //FIXME: figure out why loopouts_all_types.dna is not properly auto-calculating max_offset of Helix 2
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
-    } else if (json_map.containsKey(constants.grid_key)) {
+    } else if (!dna_design_builder.grid.is_none()) {
       if (dna_design_builder.grid == Grid.hex || dna_design_builder.grid == Grid.honeycomb) {
         dna_design_builder.major_tick_distance = 7;
       } else {
@@ -681,6 +682,7 @@ BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
+//FIXME: this isn't working properly for loading loopouts_all_types.dna
 _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
   var helix_idx_to_substrands = _construct_helix_idx_to_substrands_map(helix_builders.length, strands);
 

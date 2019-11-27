@@ -24,8 +24,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;

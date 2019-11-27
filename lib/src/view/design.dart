@@ -98,6 +98,8 @@ class DesignViewComponent {
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
     this.root_element.children.add(design_above_footer_pane);
+    this.root_element.children.add(this.footer_separator);
+    this.root_element.children.add(this.footer_element);
 
     design_above_footer_pane.children.add(side_pane);
     design_above_footer_pane.children.add(side_main_separator);
@@ -318,7 +320,7 @@ class DesignViewComponent {
 //      );
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);
 
-      if (this.root_element.children.contains(this.error_message_pane)) {
+      if (!this.root_element.children.contains(this.design_above_footer_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.design_above_footer_pane);
         this.root_element.children.add(this.footer_separator);

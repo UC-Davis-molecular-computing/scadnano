@@ -21,10 +21,10 @@ import 'design_main_strand_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths = connect<Model, DesignMainStrandPathsProps>(
+UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
+    connect<Model, DesignMainStrandPathsProps>(
   mapStateToProps: (model) =>
-  (DesignMainStrandPaths()
-    ..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+      (DesignMainStrandPaths()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
 )(DesignMainStrandPaths);
 
 @Factory()
@@ -38,11 +38,9 @@ class _$DesignMainStrandPathsProps extends UiProps {
 
 @Component2()
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> {
-
   @override
   render() {
-    return (Dom.g()
-      ..className = 'strand-paths')(_strand_paths(props.strand, props.side_selected_helix_idxs));
+    return (Dom.g()..className = 'strand-paths')(_strand_paths(props.strand, props.side_selected_helix_idxs));
   }
 }
 
@@ -94,8 +92,7 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
         bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
 
         if (draw_next_ss) {
-          Crossover crossover = Crossover((c) =>
-          c
+          Crossover crossover = Crossover((c) => c
             ..prev_substrand = prev_ss.toBuilder()
             ..next_substrand = next_ss.toBuilder());
 

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:scadnano/src/json_serializable.dart';
 
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -73,6 +74,10 @@ abstract class UIModel implements Built<UIModel, UIModelBuilder> {
   bool get changed_since_last_save;
 
   bool allow_pan() => dragging;
+
+  dynamic toJson() {
+    return "not implemented yet";
+  }
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';
