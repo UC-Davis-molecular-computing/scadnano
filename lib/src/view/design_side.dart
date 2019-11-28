@@ -45,10 +45,6 @@ class _$DesignSideProps extends UiProps {
 
 @Component2()
 class DesignSideComponent extends UiComponent2<DesignSideProps> {
-  // FluxUiComponent<DesignSideProps> {
-  @override
-  Map getDefaultProps() => (newProps());
-
   @override
   render() {
     if (props.helices == null) {
@@ -57,17 +53,14 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     }
 
     SelectionBox selection_box = props.selection_box;
-    Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
-    BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
+    Point<num> mouse_svg_pos = props.mouse_svg_pos;
+    BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
     Map<int, MouseoverData> helix_idx_to_mouseover_data = {for (var mod in mouseover_datas) mod.helix.idx: mod};
-    BuiltList<Helix> helices = this.props.helices;
-    BuiltSet<int> helix_idxs_selected = this.props.helix_idxs_selected;
+    BuiltList<Helix> helices = props.helices;
+    BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
-//    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
-//        'DesignSide.render()  using helices:\n${helices}');
-//
-//    print('DesignSide.render() called');
-//    print('  DesignSide.props.helix_to_mouseover_data = ${helix_idx_to_mouseover_data}');
+    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
+        'DesignSide.render()  using helices:\n${helices}');
 
     //TODO: it's not well-defined what to do when grid=none and there is no grid position for helices
     List helices_components = [
@@ -84,8 +77,6 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
 
-    num stroke_width = 2.0 / util.current_zoom_side();
-
     return (Dom.g()..className = 'side-view')([
       (DesignSidePotentialHelix()
         ..grid = this.props.grid
@@ -98,7 +89,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
       if (selection_box != null && selection_box.displayed)
         (SelectionBoxView()
           ..selection_box = selection_box
-          ..stroke_width = stroke_width
+          ..stroke_width = 2.0 / util.current_zoom_side()
           ..key = 'selection-box')(),
     ]);
   }

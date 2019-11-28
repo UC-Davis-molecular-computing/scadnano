@@ -53,8 +53,7 @@ abstract class SkipUndo with BuiltJsonSerializable implements Action2, Built<Ski
   UndoableAction get undoable_action;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SkipUndo(UndoableAction undoable_action) =>
-      SkipUndo.from((b) => b..undoable_action = undoable_action);
+  factory SkipUndo(UndoableAction undoable_action) => SkipUndo.from((b) => b..undoable_action = undoable_action);
 
   factory SkipUndo.from([void Function(SkipUndoBuilder) updates]) = _$SkipUndo;
 
@@ -84,6 +83,9 @@ abstract class BatchAction
   BatchAction._();
 
   static Serializer<BatchAction> get serializer => _$batchActionSerializer;
+
+  @override
+  dynamic toJson() => {'actions': actions.toList()};
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,9 +128,7 @@ abstract class SetSelectModes
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show/hide DNA/mismatches/editor
 
-abstract class SetShowDNA
-    with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowDNA, SetShowDNABuilder> {
+abstract class SetShowDNA with BuiltJsonSerializable implements StorableAction, Built<SetShowDNA, SetShowDNABuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.show_dna];
@@ -180,9 +180,7 @@ abstract class SetShowEditor
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
-abstract class SaveDNAFile
-    with BuiltJsonSerializable
-    implements Action2, Built<SaveDNAFile, SaveDNAFileBuilder> {
+abstract class SaveDNAFile with BuiltJsonSerializable implements Action2, Built<SaveDNAFile, SaveDNAFileBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory SaveDNAFile([void Function(SaveDNAFileBuilder) updates]) = _$SaveDNAFile;
 
@@ -191,9 +189,7 @@ abstract class SaveDNAFile
   static Serializer<SaveDNAFile> get serializer => _$saveDNAFileSerializer;
 }
 
-abstract class LoadDNAFile
-    with BuiltJsonSerializable
-    implements Action2, Built<LoadDNAFile, LoadDNAFileBuilder> {
+abstract class LoadDNAFile with BuiltJsonSerializable implements Action2, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   String get filename;
@@ -235,8 +231,7 @@ abstract class MouseoverDataUpdate
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverDataUpdate.from([void Function(MouseoverDataUpdateBuilder) updates]) =
-      _$MouseoverDataUpdate;
+  factory MouseoverDataUpdate.from([void Function(MouseoverDataUpdateBuilder) updates]) = _$MouseoverDataUpdate;
 
   MouseoverDataUpdate._();
 
@@ -302,8 +297,7 @@ abstract class ErrorMessageSet
   String get error_message;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ErrorMessageSet(String error_message) =>
-      ErrorMessageSet.from((b) => b..error_message = error_message);
+  factory ErrorMessageSet(String error_message) => ErrorMessageSet.from((b) => b..error_message = error_message);
 
   factory ErrorMessageSet.from([void Function(ErrorMessageSetBuilder) updates]) = _$ErrorMessageSet;
 
@@ -324,8 +318,7 @@ abstract class SideViewSelectionBoxCreateToggling
   factory SideViewSelectionBoxCreateToggling(Point<num> point) =>
       SideViewSelectionBoxCreateToggling.from((b) => b..point = point);
 
-  factory SideViewSelectionBoxCreateToggling.from(
-          [void Function(SideViewSelectionBoxCreateTogglingBuilder) updates]) =
+  factory SideViewSelectionBoxCreateToggling.from([void Function(SideViewSelectionBoxCreateTogglingBuilder) updates]) =
       _$SideViewSelectionBoxCreateToggling;
 
   SideViewSelectionBoxCreateToggling._();
@@ -336,9 +329,7 @@ abstract class SideViewSelectionBoxCreateToggling
 
 abstract class SideViewSelectionBoxCreateSelecting
     with BuiltJsonSerializable
-    implements
-        Action2,
-        Built<SideViewSelectionBoxCreateSelecting, SideViewSelectionBoxCreateSelectingBuilder> {
+    implements Action2, Built<SideViewSelectionBoxCreateSelecting, SideViewSelectionBoxCreateSelectingBuilder> {
   Point<num> get point;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -346,8 +337,7 @@ abstract class SideViewSelectionBoxCreateSelecting
       SideViewSelectionBoxCreateSelecting.from((b) => b..point = point);
 
   factory SideViewSelectionBoxCreateSelecting.from(
-          [void Function(SideViewSelectionBoxCreateSelectingBuilder) updates]) =
-      _$SideViewSelectionBoxCreateSelecting;
+      [void Function(SideViewSelectionBoxCreateSelectingBuilder) updates]) = _$SideViewSelectionBoxCreateSelecting;
 
   SideViewSelectionBoxCreateSelecting._();
 
@@ -364,13 +354,12 @@ abstract class SideViewSelectionBoxSizeChanged
   factory SideViewSelectionBoxSizeChanged(Point<num> point) =>
       SideViewSelectionBoxSizeChanged.from((b) => b..point = point);
 
-  factory SideViewSelectionBoxSizeChanged.from(
-      [void Function(SideViewSelectionBoxSizeChangedBuilder) updates]) = _$SideViewSelectionBoxSizeChanged;
+  factory SideViewSelectionBoxSizeChanged.from([void Function(SideViewSelectionBoxSizeChangedBuilder) updates]) =
+      _$SideViewSelectionBoxSizeChanged;
 
   SideViewSelectionBoxSizeChanged._();
 
-  static Serializer<SideViewSelectionBoxSizeChanged> get serializer =>
-      _$sideViewSelectionBoxSizeChangedSerializer;
+  static Serializer<SideViewSelectionBoxSizeChanged> get serializer => _$sideViewSelectionBoxSizeChangedSerializer;
 }
 
 abstract class SideViewSelectionBoxRemove
@@ -399,8 +388,7 @@ abstract class MainViewSelectionBoxCreateToggling
   factory MainViewSelectionBoxCreateToggling(Point<num> point) =>
       MainViewSelectionBoxCreateToggling.from((b) => b..point = point);
 
-  factory MainViewSelectionBoxCreateToggling.from(
-          [void Function(MainViewSelectionBoxCreateTogglingBuilder) updates]) =
+  factory MainViewSelectionBoxCreateToggling.from([void Function(MainViewSelectionBoxCreateTogglingBuilder) updates]) =
       _$MainViewSelectionBoxCreateToggling;
 
   MainViewSelectionBoxCreateToggling._();
@@ -411,9 +399,7 @@ abstract class MainViewSelectionBoxCreateToggling
 
 abstract class MainViewSelectionBoxCreateSelecting
     with BuiltJsonSerializable
-    implements
-        Action2,
-        Built<MainViewSelectionBoxCreateSelecting, MainViewSelectionBoxCreateSelectingBuilder> {
+    implements Action2, Built<MainViewSelectionBoxCreateSelecting, MainViewSelectionBoxCreateSelectingBuilder> {
   Point<num> get point;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -421,8 +407,7 @@ abstract class MainViewSelectionBoxCreateSelecting
       MainViewSelectionBoxCreateSelecting.from((b) => b..point = point);
 
   factory MainViewSelectionBoxCreateSelecting.from(
-          [void Function(MainViewSelectionBoxCreateSelectingBuilder) updates]) =
-      _$MainViewSelectionBoxCreateSelecting;
+      [void Function(MainViewSelectionBoxCreateSelectingBuilder) updates]) = _$MainViewSelectionBoxCreateSelecting;
 
   MainViewSelectionBoxCreateSelecting._();
 
@@ -439,13 +424,12 @@ abstract class MainViewSelectionBoxSizeChanged
   factory MainViewSelectionBoxSizeChanged(Point<num> point) =>
       MainViewSelectionBoxSizeChanged.from((b) => b..point = point);
 
-  factory MainViewSelectionBoxSizeChanged.from(
-      [void Function(MainViewSelectionBoxSizeChangedBuilder) updates]) = _$MainViewSelectionBoxSizeChanged;
+  factory MainViewSelectionBoxSizeChanged.from([void Function(MainViewSelectionBoxSizeChangedBuilder) updates]) =
+      _$MainViewSelectionBoxSizeChanged;
 
   MainViewSelectionBoxSizeChanged._();
 
-  static Serializer<MainViewSelectionBoxSizeChanged> get serializer =>
-      _$mainViewSelectionBoxSizeChangedSerializer;
+  static Serializer<MainViewSelectionBoxSizeChanged> get serializer => _$mainViewSelectionBoxSizeChangedSerializer;
 }
 
 abstract class MainViewSelectionBoxRemove
@@ -471,8 +455,7 @@ abstract class SideViewMousePositionUpdate
   Point<num> get point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SideViewMousePositionUpdate(Point<num> point) =>
-      SideViewMousePositionUpdate.from((b) => b..point = point);
+  factory SideViewMousePositionUpdate(Point<num> point) => SideViewMousePositionUpdate.from((b) => b..point = point);
 
   factory SideViewMousePositionUpdate.from([void Function(SideViewMousePositionUpdateBuilder) updates]) =
       _$SideViewMousePositionUpdate;
@@ -499,9 +482,7 @@ abstract class SideViewMousePositionRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix select (side view)
 
-abstract class HelixSelect
-    with BuiltJsonSerializable
-    implements Action2, Built<HelixSelect, HelixSelectBuilder> {
+abstract class HelixSelect with BuiltJsonSerializable implements Action2, Built<HelixSelect, HelixSelectBuilder> {
   int get helix_idx;
 
   bool get toggle;
@@ -524,8 +505,7 @@ abstract class HelicesSelectedClear
   /************************ begin BuiltValue boilerplate ************************/
   factory HelicesSelectedClear() => HelicesSelectedClear.from((b) => b);
 
-  factory HelicesSelectedClear.from([void Function(HelicesSelectedClearBuilder) updates]) =
-      _$HelicesSelectedClear;
+  factory HelicesSelectedClear.from([void Function(HelicesSelectedClearBuilder) updates]) = _$HelicesSelectedClear;
 
   HelicesSelectedClear._();
 
@@ -538,8 +518,7 @@ abstract class HelixSelectionsAdjust
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixSelectionsAdjust() => HelixSelectionsAdjust.from((b) => b);
 
-  factory HelixSelectionsAdjust.from([void Function(HelixSelectionsAdjustBuilder) updates]) =
-      _$HelixSelectionsAdjust;
+  factory HelixSelectionsAdjust.from([void Function(HelixSelectionsAdjustBuilder) updates]) = _$HelixSelectionsAdjust;
 
   HelixSelectionsAdjust._();
 
@@ -557,8 +536,7 @@ abstract class SetShowMouseoverRect
   /************************ begin BuiltValue boilerplate ************************/
   factory SetShowMouseoverRect(bool show) => SetShowMouseoverRect.from((b) => b..show = show);
 
-  factory SetShowMouseoverRect.from([void Function(SetShowMouseoverRectBuilder) updates]) =
-      _$SetShowMouseoverRect;
+  factory SetShowMouseoverRect.from([void Function(SetShowMouseoverRectBuilder) updates]) = _$SetShowMouseoverRect;
 
   SetShowMouseoverRect._();
 
@@ -568,9 +546,7 @@ abstract class SetShowMouseoverRect
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 
-abstract class ExportSvgMain
-    with BuiltJsonSerializable
-    implements Action2, Built<ExportSvgMain, ExportSvgMainBuilder> {
+abstract class ExportSvgMain with BuiltJsonSerializable implements Action2, Built<ExportSvgMain, ExportSvgMainBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportSvgMain() => ExportSvgMain.from((b) => b);
 
@@ -581,9 +557,7 @@ abstract class ExportSvgMain
   static Serializer<ExportSvgMain> get serializer => _$exportSvgMainSerializer;
 }
 
-abstract class ExportSvgSide
-    with BuiltJsonSerializable
-    implements Action2, Built<ExportSvgSide, ExportSvgSideBuilder> {
+abstract class ExportSvgSide with BuiltJsonSerializable implements Action2, Built<ExportSvgSide, ExportSvgSideBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportSvgSide() => ExportSvgSide.from((b) => b);
 
@@ -619,9 +593,7 @@ abstract class Redo with BuiltJsonSerializable implements Action2, Built<Redo, R
   static Serializer<Redo> get serializer => _$redoSerializer;
 }
 
-abstract class UndoRedoClear
-    with BuiltJsonSerializable
-    implements Action2, Built<UndoRedoClear, UndoRedoClearBuilder> {
+abstract class UndoRedoClear with BuiltJsonSerializable implements Action2, Built<UndoRedoClear, UndoRedoClearBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory UndoRedoClear() => UndoRedoClear.from((b) => b);
 

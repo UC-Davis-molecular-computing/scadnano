@@ -56,6 +56,12 @@ part 'serializers.g.dart';
   MouseoverDataUpdate,
   MouseoverDataClear,
   Grid,
+  BatchAction,
+  HelixRotationSet,
+  HelixRotationSetAtOther,
+  Undo,
+  Redo,
+  UndoRedoClear,
 ])
 Serializers serializers = _$serializers;
 

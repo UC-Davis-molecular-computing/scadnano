@@ -33,7 +33,7 @@ abstract class Model implements Built<Model, ModelBuilder> {
   /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
     Map<String,dynamic> map = {};
-    map['dna_design'] = dna_design.to_json_serializable(suppress_indent: false);
+    map['dna_design'] = dna_design?.to_json_serializable(suppress_indent: false);
     map['ui_model'] = ui_model.toJson();
     map['error_message'] = error_message;
     map['editor_content'] = editor_content;

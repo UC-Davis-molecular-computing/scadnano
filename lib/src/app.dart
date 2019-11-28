@@ -106,10 +106,6 @@ class App {
           .build();
     }
 
-    print('model.ui_model.toJson() = ${model.ui_model.toJson()}');
-    print('model.toJson() = ${model.toJson()}');
-
-
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
       store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: middleware_plus);

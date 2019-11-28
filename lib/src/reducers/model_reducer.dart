@@ -57,10 +57,6 @@ Model model_reducer(Model model, action) {
     }
   }
 
-  if (action is actions.MouseoverDataUpdate) {
-    print('model.toJson() after actions.MouseoverDataUpdate = ${model.toJson()}');
-  }
-
   if (model == null) {
     // this is a check on myself since null is implicitly returned when there is no return statement
     throw ArgumentError('reducer returned a null model, which is disallowed');
@@ -93,7 +89,7 @@ Model load_dna_file_reducer(Model model, actions.LoadDNAFile action) {
   } else if (dna_design_new != null) {
     // remove selected helices from
     BuiltSet<int> side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs;
-    if (dna_design_new.helices.length < model.dna_design.helices.length) {
+    if (model.dna_design != null && dna_design_new.helices.length < model.dna_design.helices.length) {
       side_selected_helix_idxs = side_selected_helix_idxs
           .rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
     }

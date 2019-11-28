@@ -308,8 +308,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         min_ss_offset = ss.start;
       }
     }
-    // if all offsets are nonnegative, default min_offset is 0; otherwise it is minimum offset
-    if (min_ss_offset >= 0) {
+    // if all offsets are nonnegative (or there are none because there are no substrands, i.e., min_ss_offset == null),
+    // then default min_offset is 0; otherwise it is minimum offset
+    if (min_ss_offset == null || min_ss_offset >= 0) {
       return helix.min_offset != 0;
     } else {
       return helix.min_offset != min_ss_offset;
