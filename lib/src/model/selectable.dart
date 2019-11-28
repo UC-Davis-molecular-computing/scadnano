@@ -1,10 +1,12 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 
+import '../serializers.dart';
 import '../app.dart';
 import '../actions/actions_OLD.dart';
 import 'select_mode.dart';
 
-import 'package:built_value/built_value.dart';
 
 part 'selectable.g.dart';
 
@@ -12,10 +14,15 @@ final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
   ..selectables_by_id = MapBuilder<String, Selectable>()
   ..selected_items = SetBuilder<Selectable>();
 
-abstract class SelectablesStore implements Built<SelectablesStore, SelectablesStoreBuilder> {
+
+abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
   SelectablesStore._();
 
   factory SelectablesStore([void Function(SelectablesStoreBuilder) updates]) = _$SelectablesStore;
+
+  static Serializer<SelectablesStore> get serializer => _$selectablesStoreSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   BuiltMap<String, Selectable> get selectables_by_id;
 

@@ -57,6 +57,10 @@ Model model_reducer(Model model, action) {
     }
   }
 
+  if (action is actions.MouseoverDataUpdate) {
+    print('model.toJson() after actions.MouseoverDataUpdate = ${model.toJson()}');
+  }
+
   if (model == null) {
     // this is a check on myself since null is implicitly returned when there is no return statement
     throw ArgumentError('reducer returned a null model, which is disallowed');

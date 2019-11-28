@@ -22,17 +22,17 @@ dependencies:
 #  built_value: ^7.0.0
   built_value: ^6.8.2
   react: ^5.1.0
-#  over_react: ^3.1.0
+  over_react: ^3.1.0
 
 dependency_overrides:
 #  react:
 #    git:
 #      url: https://github.com/cleandart/react-dart
 #      ref: 5.1.0-wip
-  over_react:
-    git:
-      url: https://github.com/Workiva/over_react
-      ref: master
+#  over_react:
+#    git:
+#      url: https://github.com/Workiva/over_react
+#      ref: master
 #      ref: 4d6bab5b30c3354d34260ef0c9250209f5da3764
 
 dev_dependencies:

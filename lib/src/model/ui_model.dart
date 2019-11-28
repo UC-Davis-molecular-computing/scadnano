@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
-import 'package:scadnano/src/json_serializable.dart';
+import 'package:scadnano/src/serializers.dart';
 
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -29,7 +29,7 @@ final DEFAULT_UIModelBuilder = UIModelBuilder()
   ..changed_since_last_save = false
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
-abstract class UIModel implements Built<UIModel, UIModelBuilder> {
+abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIModelBuilder> {
   UIModel._();
 
   factory UIModel([void Function(UIModelBuilder) updates]) =>
@@ -75,9 +75,6 @@ abstract class UIModel implements Built<UIModel, UIModelBuilder> {
 
   bool allow_pan() => dragging;
 
-  dynamic toJson() {
-    return "not implemented yet";
-  }
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

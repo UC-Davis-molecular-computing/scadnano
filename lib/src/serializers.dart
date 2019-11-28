@@ -4,6 +4,10 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 
+import 'package:scadnano/src/model/selectable.dart';
+import 'package:scadnano/src/model/ui_model.dart';
+import 'package:scadnano/src/view/select_mode.dart';
+import 'model/grid.dart';
 import 'model/helix.dart';
 import 'model/mouseover_data.dart';
 import 'model/position3d.dart';
@@ -12,6 +16,7 @@ import 'model/bound_substrand.dart';
 import 'model/grid_position.dart';
 import 'actions/actions.dart';
 import 'model/selection_box.dart';
+import 'model/select_mode_state.dart';
 
 part 'serializers.g.dart';
 
@@ -42,9 +47,15 @@ part 'serializers.g.dart';
   GridPosition,
   Position3D,
   Point,
-//  BuiltList,
-//  BuiltSet,
-//  BuiltMap,
+  UIModel,
+  SelectablesStore,
+  SelectionBox,
+  SelectModeChoice,
+  SelectModeState,
+  SetShowMouseoverRect,
+  MouseoverDataUpdate,
+  MouseoverDataClear,
+  Grid,
 ])
 Serializers serializers = _$serializers;
 

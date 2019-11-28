@@ -2,6 +2,8 @@ import 'dart:html';
 import 'dart:svg' hide Point;
 import 'dart:math';
 
+import 'package:built_value/serializer.dart';
+
 import '../app.dart';
 import '../serializers.dart';
 import 'selectable.dart';
@@ -21,11 +23,16 @@ final DEFAULT_SelectionBoxBuilder = SelectionBoxBuilder()
 
 final DEFAULT_SelectionBox = DEFAULT_SelectionBoxBuilder.build();
 
+
 abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
   factory SelectionBox([void Function(SelectionBoxBuilder) updates]) =>
       _$SelectionBox((s) => s.replace(DEFAULT_SelectionBoxBuilder.build()));
+
+  static Serializer<SelectionBox> get serializer => _$selectionBoxSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   Point<num> get start; // starting coordinate of drag
   Point<num> get current; // current coordinate of drag

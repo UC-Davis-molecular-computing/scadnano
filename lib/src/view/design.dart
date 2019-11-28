@@ -173,9 +173,14 @@ class DesignViewComponent {
         uninstall_draggable(false, DraggableComponent.side);
       }
       if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
-        app.store.dispatch(actions.SetShowMouseoverRect(false));
+        if (app.model.ui_model.show_mouseover_rect) {
+          app.store.dispatch(actions.SetShowMouseoverRect(false));
+        }
         // removes mouseover even if on crossover even though we don't want that. Oh well
-        app.store.dispatch(actions.MouseoverDataClear());
+
+        if (app.model.ui_model.mouseover_datas.isNotEmpty) {
+          app.store.dispatch(actions.MouseoverDataClear());
+        }
       }
     });
 

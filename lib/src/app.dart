@@ -24,8 +24,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -105,6 +105,10 @@ class App {
             ..editor_content = initial_editor_content)
           .build();
     }
+
+    print('model.ui_model.toJson() = ${model.ui_model.toJson()}');
+    print('model.toJson() = ${model.toJson()}');
+
 
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];

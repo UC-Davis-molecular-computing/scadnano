@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:built_value/serializer.dart';
 import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
@@ -15,11 +16,16 @@ final DEFAULT_SelectModeStateBuilder = SelectModeStateBuilder()
   ..modes = SetBuilder<SelectModeChoice>(
       SelectModeChoice.strand_parts.asList() + [SelectModeChoice.staple, SelectModeChoice.scaffold]);
 
+
+
 abstract class SelectModeState implements Built<SelectModeState, SelectModeStateBuilder> {
   SelectModeState._();
 
   factory SelectModeState([void Function(SelectModeStateBuilder) updates]) =>
       _$SelectModeState((s) => s..replace(DEFAULT_SelectModeStateBuilder.build()));
+
+  static Serializer<SelectModeState> get serializer => _$selectModeStateSerializer;
+  /************************ begin BuiltValue boilerplate ************************/
 
   BuiltSet<SelectModeChoice> get modes;
 

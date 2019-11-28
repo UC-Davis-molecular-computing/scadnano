@@ -1,5 +1,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:built_value/serializer.dart';
 
 part 'grid.g.dart';
 
@@ -17,6 +18,8 @@ class Grid extends EnumClass {
   String to_json() => name;
 
   bool is_none() => this == none;
+
+  static Serializer<Grid> get serializer => _$gridSerializer;
 }
 
 //enum Grid { square, hex, honeycomb, none }
