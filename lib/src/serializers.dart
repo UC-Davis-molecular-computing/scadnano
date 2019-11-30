@@ -62,6 +62,10 @@ part 'serializers.g.dart';
   Undo,
   Redo,
   UndoRedoClear,
+  SideViewMouseGridPositionUpdate,
+  SideViewMouseGridPositionClear,
+  HelixSelectionsAdjust,
+  HelixSelectionsClear,
 ])
 Serializers serializers = _$serializers;
 

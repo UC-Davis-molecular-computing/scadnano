@@ -156,10 +156,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return relative_y < 10;
   }
 
-  GridPosition default_grid_position() => GridPosition((gp) => gp
-    ..h = 0
-    ..v = this.display_order
-    ..b = 0);
+  GridPosition default_grid_position() => GridPosition(0, this.display_order);
 
   Point<num> default_svg_position() => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.display_order);
 

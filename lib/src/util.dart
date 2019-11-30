@@ -11,6 +11,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/view/design.dart';
 
 import 'model/crossover.dart';
 import 'model/dna_end.dart';
@@ -44,16 +45,38 @@ Future<String> file_content(String url) async {
   });
 }
 
-/// Gets untransformed coordinates of mouse event in svg_elt.
+/// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<num> untransformed_svg_point(SvgSvgElement svg_elt, MouseEvent ev) {
+Point<num> untransformed_svg_point(SvgSvgElement svg_elt, {Point<num> mouse_pos = null, MouseEvent event = null}) {
   var svg_point_SVG = svg_elt.createSvgPoint();
-  svg_point_SVG.x = ev.client.x;
-  svg_point_SVG.y = ev.client.y;
+  if (mouse_pos == null) {
+    assert(event != null);
+    mouse_pos = event.client;
+  }
+  svg_point_SVG.x = mouse_pos.x;
+  svg_point_SVG.y = mouse_pos.y;
   svg_point_SVG = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
   Point<num> svg_point = Point<num>(svg_point_SVG.x, svg_point_SVG.y);
   return svg_point;
+}
+
+/// Gets untransformed coordinates of mouse event in svg_elt.
+/// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
+/// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
+Point<num> transformed_svg_point(SvgSvgElement svg_elt, bool is_main,
+    {Point<num> mouse_pos = null, MouseEvent event = null}) {
+  var svg_pos_untransformed = untransformed_svg_point(svg_elt, mouse_pos: mouse_pos, event: event);
+  var svg_pos = transform_mouse_coord_to_svg_current_panzoom(svg_pos_untransformed, is_main);
+  return svg_pos;
+}
+
+/// Gets grid position of mouse cursor in side view.
+GridPosition grid_position_of_mouse_in_side_view(Grid grid, {Point<num> mouse_pos = null, MouseEvent event = null}) {
+  SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
+  var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
+  var grid_pos = side_view_svg_to_grid(grid, svg_pos);
+  return grid_pos;
 }
 
 Point<num> transform_mouse_coord_to_svg_current_panzoom(Point<num> point, bool is_main) {
@@ -145,10 +168,7 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
     }
     h = x.round();
   }
-  return GridPosition((gp) => gp
-    ..h = h
-    ..v = v
-    ..b = b);
+  return GridPosition(h, v, b);
 }
 
 /// Indicates if given hex position is in the honeycome lattice.

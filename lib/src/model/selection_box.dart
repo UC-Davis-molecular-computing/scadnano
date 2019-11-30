@@ -15,20 +15,15 @@ part 'selection_box.g.dart';
 
 const ORIGIN = Point<num>(0, 0);
 
-final DEFAULT_SelectionBoxBuilder = SelectionBoxBuilder()
-  ..start = ORIGIN
-  ..current = ORIGIN
-  ..displayed = false
-  ..toggling = false;
-
-final DEFAULT_SelectionBox = DEFAULT_SelectionBoxBuilder.build();
-
-
 abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
-  factory SelectionBox([void Function(SelectionBoxBuilder) updates]) =>
-      _$SelectionBox((s) => s.replace(DEFAULT_SelectionBoxBuilder.build()));
+  factory SelectionBox(Point<num> start, bool toggling) => SelectionBox.from((b) => b
+    ..start = start
+    ..toggling = toggling
+    ..current = start);
+
+  factory SelectionBox.from([void Function(SelectionBoxBuilder) updates]) = _$SelectionBox;
 
   static Serializer<SelectionBox> get serializer => _$selectionBoxSerializer;
 
@@ -36,7 +31,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   Point<num> get start; // starting coordinate of drag
   Point<num> get current; // current coordinate of drag
-  bool get displayed; // currently dragging?
+//  bool get displayed; // currently dragging?
   bool get toggling; // toggling if Ctrl pressed, otherwise selecting
   bool get selecting => !toggling;
 
@@ -52,11 +47,11 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   num get height => (start.y - current.y).abs();
 
-  SelectionBox start_selection(Point<num> point, bool toggling) => rebuild((s) => s
-    ..start = point
-    ..toggling = toggling
-    ..current = start
-    ..displayed = true);
+//  SelectionBox start_selection(Point<num> point, bool toggling) => rebuild((s) => s
+//    ..start = point
+//    ..toggling = toggling
+//    ..current = start
+//    ..displayed = true);
 
   static const DECIMAL_PLACES = 0;
 

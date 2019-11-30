@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+//TODO: to_json_serializable gets called very often by overReactReduxDevToolsMiddleware
+// figure out a way to memoize the call (should be straightforward since objects implementing it are immutable)
+
 abstract class JSONSerializable {
   dynamic to_json_serializable({bool suppress_indent = false});
 }

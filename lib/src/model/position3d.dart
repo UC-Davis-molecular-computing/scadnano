@@ -3,7 +3,7 @@ import 'package:built_value/serializer.dart';
 import 'package:codemirror/codemirror.dart';
 import 'package:over_react/over_react.dart';
 
-import '../built_intern.dart';
+//import '../built_intern.dart';
 import '../serializers.dart';
 
 part 'position3d.g.dart';

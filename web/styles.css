@@ -427,6 +427,11 @@ html, body {
     stroke: goldenrod;
 }
 
+.side-view-potential-helix-disallowed-position {
+    fill: red;
+    /*stroke: darkred;*/
+}
+
 .main-view-helix-text {
     font-family: Helvetica, serif;
     font-size: 36pt;

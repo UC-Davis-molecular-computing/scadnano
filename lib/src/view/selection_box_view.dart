@@ -4,8 +4,6 @@ import '../model/selection_box.dart';
 
 part 'selection_box_view.over_react.g.dart';
 
-
-
 @Factory()
 UiFactory<SelectionBoxViewProps> SelectionBoxView = _$SelectionBoxView;
 
@@ -39,18 +37,14 @@ class SelectionBoxViewComponent extends UiComponent2<SelectionBoxViewProps> {
   render() {
     SelectionBox box = props.selection_box;
 
-    if (!box.displayed) {
-      return null;
-    } else {
-      num stroke_width = props.stroke_width;
-      return (Dom.rect()
-        ..x = box.x
-        ..y = box.y
-        ..width = box.width
-        ..height = box.height
-        ..strokeWidth = stroke_width
-        ..id = 'selection-box-side'
-        ..className = 'selection-box')();
-    }
+    num stroke_width = props.stroke_width;
+    return (Dom.rect()
+      ..x = box.x
+      ..y = box.y
+      ..width = box.width
+      ..height = box.height
+      ..strokeWidth = stroke_width
+      ..id = 'selection-box-side'
+      ..className = 'selection-box')();
   }
 }

@@ -9,11 +9,8 @@ import 'design_main_helices.dart';
 import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
-import 'design_main_selection_box.dart';
 import '../model/selection_box.dart';
-import '../model/composite_stores.dart';
 import '../model/model.dart';
-import '../model/dna_design.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';
 import '../util.dart' as util;
@@ -41,7 +38,7 @@ class _$DesignMainProps extends UiProps {
 class DesignMainComponent extends UiComponent2<DesignMainProps> {
   @override
   render() {
-    Model model = this.props.model;
+    Model model = props.model;
 
     if (model.has_error()) {
       return null;
@@ -66,7 +63,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..show_dna = model.ui_model.show_dna
         ..strands = model.dna_design.strands
         ..key = 'dna')(),
-      if (selection_box != null && selection_box.displayed)
+      if (selection_box != null)
         (SelectionBoxView()
           ..selection_box = selection_box
           ..stroke_width = stroke_width

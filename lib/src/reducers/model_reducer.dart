@@ -26,7 +26,7 @@ Model model_reducer(Model model, action) {
   }
 
   //XXX: I had a lot of bugs when I introduced local variables to track all the updates to the model below.
-  // Just updating the variable model seems safer.
+  // Repeatedly updating the variable model seems safer.
 
   // crucial that this is done first so dna_design holds the "current" value (not next)
   model = undo_redo_reducer(model, action);
@@ -44,12 +44,12 @@ Model model_reducer(Model model, action) {
 
   // "global" reducers operate on a slice of the model but need another part of the model
   // we pass the "old" parts of the model, since we don't want dispatcher to assume they will be applied
-  // in a certain order. For consistency, everyone gets the version of the model before any dispatcher applied.
+  // in a certain order. For consistency, everyone gets the version of the model before any action was applied.
   model = model.rebuild((m) => m..ui_model.replace(ui_model_global_reducer(model.ui_model, model, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
   // So we set a variable telling the Undo reducer not to put anything on the stack for any of these atomic actions.
-  // (However, it has already put something on the stack above for the BatchAction itself.
+  // However, it has already put something on the stack above for the BatchAction itself.
   // This seems like it belongs in undo_redo_reducer, but the logic was tricky to handle, so we make a special case.
   if (action is actions.BatchAction) {
     for (actions.UndoableAction atomic_action in action.actions) {
@@ -63,10 +63,6 @@ Model model_reducer(Model model, action) {
   }
 
   return model;
-}
-
-Model export_svg_reducer(Model model, actions.ExportSvgMain action) {
-  //TODO: implement SVG export (as middleware, not reducer)
 }
 
 Model load_dna_file_reducer(Model model, actions.LoadDNAFile action) {

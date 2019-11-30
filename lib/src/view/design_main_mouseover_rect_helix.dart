@@ -27,25 +27,14 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
     connect<Model, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (model, props) {
   Helix helix = model.dna_design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = model.ui_model.mouseover_datas;
+//  print('ConnectedDesignMainMouseoverRectHelix connect');
+//  print('  model.ui_model.mouseover_datas: ${model.ui_model.mouseover_datas}');
   bool show = model.ui_model.show_mouseover_rect;
   return DesignMainMouseoverRectHelix()
     ..helix = helix
     ..show = show
     ..mouseover_datas = mouseover_datas;
 })(DesignMainMouseoverRectHelix);
-
-//UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
-//connect<Model, DesignMainMouseoverRectHelixProps>(
-//    mapStateToPropsWithOwnProps: (model, props) =>
-//    DesignMainMouseoverRectHelix()
-//      ..helix = model.dna_design.helices[props.helix_idx]
-//      ..mouseover_datas = model.ui_model.mouseover_datas)(DesignMainMouseoverRectHelix);
-
-//UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
-//    connect<Model, DesignMainMouseoverRectHelixProps>(
-//        mapStateToProps: (model) => DesignMainMouseoverRectHelix()
-//          ..helix = model.dna_design.helices[0]
-//          ..mouseover_datas = model.ui_model.mouseover_datas)(DesignMainMouseoverRectHelix);
 
 @Factory()
 UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$DesignMainMouseoverRectHelix;
@@ -72,7 +61,6 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
   @override
   render() {
 //    print('rendering DesignMainMouseoverRectHelix');
-    int helix_idx = props.helix_idx;
     Helix helix = props.helix;
     BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
 
@@ -87,8 +75,11 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
       ..width = '$width'
       ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-      ..onMouseEnter = ((event) => update_mouseover(event, helix, mouseover_datas))
-      ..onMouseMove = ((event) => update_mouseover(event, helix, mouseover_datas))
+      //XXX: it matters that we reference props.mouseover_datas, not a local variable
+      // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
+      // otherwise the callback is not updated until render executes again
+      ..onMouseEnter = ((event) => update_mouseover(event, helix, props.mouseover_datas))
+      ..onMouseMove = ((event) => update_mouseover(event, helix, props.mouseover_datas))
       ..id = id
       ..className = _CLASS)();
   }
@@ -99,8 +90,6 @@ mouse_leave_update_mouseover() {
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
-//FIXME: what's the proper way to do this?
-//  Helix helix = dna_design.helices[helix_idx];
 
   MouseEvent event = event_syn.nativeEvent;
 
@@ -142,13 +131,23 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
 //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     app.store.dispatch(
         actions.MouseoverDataUpdate(dna_design, BuiltList<MouseoverParams>([mouseover_params])));
+  } else {
+//    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
   }
 }
 
 // only needs updating if the MouseoverData that would be created is not already in the list
 bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mouseover_datas) {
   bool needs = true;
+//  print('needs update?');
+//  print('  mouseover_datas: ${mouseover_datas}');
   for (var mouseover_data in mouseover_datas) {
+//    print('  old helix.idx: ${mouseover_data.helix.idx}');
+//    print('  new helix.idx: ${mouseover_params.helix_idx}');
+//    print('  old offset: ${mouseover_data.offset}');
+//    print('  new offset: ${mouseover_params.offset}');
+//    print('  old forward: ${mouseover_data.substrand?.forward}');
+//    print('  new forward: ${mouseover_params.forward}');
     if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
         mouseover_data.offset == mouseover_params.offset &&
         mouseover_data.substrand?.forward == mouseover_params.forward) {

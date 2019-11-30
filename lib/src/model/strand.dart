@@ -1,5 +1,4 @@
 import 'package:color/color.dart';
-import 'package:w_flux/w_flux.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 

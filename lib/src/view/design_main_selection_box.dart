@@ -37,7 +37,7 @@ class DesignMainSelectionBoxComponent extends UiComponent2<DesignMainSelectionBo
   render() {
     SelectionBox box = props.selection_box;
 
-    if (!box.displayed) {
+    if (box == null) {
       return null;
     } else {
       return (Dom.rect()

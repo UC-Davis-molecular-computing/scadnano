@@ -479,6 +479,37 @@ abstract class SideViewMousePositionRemove
   static Serializer<SideViewMousePositionRemove> get serializer => _$sideViewMousePositionRemoveSerializer;
 }
 
+abstract class SideViewMouseGridPositionUpdate
+    with BuiltJsonSerializable
+    implements Action2, Built<SideViewMouseGridPositionUpdate, SideViewMouseGridPositionUpdateBuilder> {
+  GridPosition get grid_position;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewMouseGridPositionUpdate(GridPosition grid_position) =>
+      SideViewMouseGridPositionUpdate.from((b) => b..grid_position.replace(grid_position));
+
+  factory SideViewMouseGridPositionUpdate.from([void Function(SideViewMouseGridPositionUpdateBuilder) updates]) =
+      _$SideViewMouseGridPositionUpdate;
+
+  SideViewMouseGridPositionUpdate._();
+
+  static Serializer<SideViewMouseGridPositionUpdate> get serializer => _$sideViewMouseGridPositionUpdateSerializer;
+}
+
+abstract class SideViewMouseGridPositionClear
+    with BuiltJsonSerializable
+    implements Action2, Built<SideViewMouseGridPositionClear, SideViewMouseGridPositionClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SideViewMouseGridPositionClear() => SideViewMouseGridPositionClear.from((b) => b);
+
+  factory SideViewMouseGridPositionClear.from([void Function(SideViewMouseGridPositionClearBuilder) updates]) =
+      _$SideViewMouseGridPositionClear;
+
+  SideViewMouseGridPositionClear._();
+
+  static Serializer<SideViewMouseGridPositionClear> get serializer => _$sideViewMouseGridPositionClearSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix select (side view)
 
@@ -499,17 +530,17 @@ abstract class HelixSelect with BuiltJsonSerializable implements Action2, Built<
   static Serializer<HelixSelect> get serializer => _$helixSelectSerializer;
 }
 
-abstract class HelicesSelectedClear
+abstract class HelixSelectionsClear
     with BuiltJsonSerializable
-    implements Action2, Built<HelicesSelectedClear, HelicesSelectedClearBuilder> {
+    implements Action2, Built<HelixSelectionsClear, HelixSelectionsClearBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelicesSelectedClear() => HelicesSelectedClear.from((b) => b);
+  factory HelixSelectionsClear() => HelixSelectionsClear.from((b) => b);
 
-  factory HelicesSelectedClear.from([void Function(HelicesSelectedClearBuilder) updates]) = _$HelicesSelectedClear;
+  factory HelixSelectionsClear.from([void Function(HelixSelectionsClearBuilder) updates]) = _$HelixSelectionsClear;
 
-  HelicesSelectedClear._();
+  HelixSelectionsClear._();
 
-  static Serializer<HelicesSelectedClear> get serializer => _$helicesSelectedClearSerializer;
+  static Serializer<HelixSelectionsClear> get serializer => _$helixSelectionsClearSerializer;
 }
 
 abstract class HelixSelectionsAdjust
@@ -602,6 +633,28 @@ abstract class UndoRedoClear with BuiltJsonSerializable implements Action2, Buil
   UndoRedoClear._();
 
   static Serializer<UndoRedoClear> get serializer => _$undoRedoClearSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Throttle
+
+abstract class ThrottledAction
+    with BuiltJsonSerializable
+    implements Action2, Built<ThrottledAction, ThrottledActionBuilder> {
+  Action2 get action;
+
+  num get interval_sec;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ThrottledAction(Action2 action, num interval_sec) => ThrottledAction.from((b) => b
+    ..action = action
+    ..interval_sec = interval_sec);
+
+  factory ThrottledAction.from([void Function(ThrottledActionBuilder) updates]) = _$ThrottledAction;
+
+  ThrottledAction._();
+
+  static Serializer<ThrottledAction> get serializer => _$throttledActionSerializer;
 }
 
 //class Actions {

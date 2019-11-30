@@ -1,6 +1,6 @@
 #pub.bat global activate webdev
 
-bash compile-readme.sh
+bash compile-upload-readme.sh
 
 echo "running webdev directly, but if it fails, try first running" 
 echo "  pub.bat global activate webdev"

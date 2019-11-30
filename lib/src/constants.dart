@@ -1,16 +1,14 @@
+import 'dart:html';
+
 import 'package:platform_detect/platform_detect.dart';
 
 import 'model/grid.dart';
 
-// https://css-tricks.com/snippets/javascript/javascript-keycodes/
-const KEY_CODE_SELECT = 16; // Shift
+const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
+const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.M;
 final KEY_CODE_TOGGLE_SELECT_MAC = browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
-const KEY_CODE_TOGGLE_SELECT = 17; // Ctrl
-const KEY_CODE_ALT = 18; // Alt
-const KEY_CODE_ESC = 27; // Esc
-const KEY_CODE_DELETE = 46; // Delete
-
-const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = 77; // m
+const KEY_CODE_SELECT = KeyCode.SHIFT;
+const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
 
 const String INITIAL_VERSION = "0.0.1";
 

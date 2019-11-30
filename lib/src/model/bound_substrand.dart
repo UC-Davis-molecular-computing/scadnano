@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:react/react.dart';
 import 'package:scadnano/src/serializers.dart';
@@ -15,7 +16,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 
-import 'package:built_value/built_value.dart';
+import '../built_intern.dart';
 
 part 'bound_substrand.g.dart';
 
@@ -25,6 +26,12 @@ abstract class Insertion
   int get offset;
 
   int get length;
+
+  dynamic toJson() => [offset, length];
+
+  dynamic to_json_serializable({bool suppress_indent = false}) => toJson();
+
+  Insertion fromJson(List list) => Insertion(list[0], list[1]);
 
   /************************ begin BuiltValue boilerplate ************************/
   factory Insertion(int offset, int count) => Insertion.from((b) => b
@@ -36,12 +43,6 @@ abstract class Insertion
   Insertion._();
 
   static Serializer<Insertion> get serializer => _$insertionSerializer;
-
-  dynamic toJson() => [offset, length];
-
-  dynamic to_json_serializable({bool suppress_indent = false}) => toJson();
-
-  Insertion fromJson(List list) => Insertion(list[0], list[1]);
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
@@ -53,6 +54,16 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
 
   factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
+
+//  static void _finalizeBuilder(void Function(BoundSubstrandBuilder builder)) {
+//  static void _finalizeBuilder(BoundSubstrandBuilder builder) {
+////    BoundSubstrand bss = builder.build();
+////    BoundSubstrand bss_interned = intern(bss);
+//    BoundSubstrand bss_interned = build_interned(builder);
+//    builder.replace(bss_interned);
+//  }
+
+  /******************************* end built_value boilerplate ************************************/
 
   int get helix;
 
@@ -74,7 +85,6 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
 
   bool get is_last;
 
-  //XXX: important not to access these until helix, forward, start, end, is_first, and is_last have been set
   @memoized
   DNAEnd get dnaend_start => DNAEnd((e) => e
     ..is_5p = forward

@@ -1,15 +1,18 @@
 @JS()
 library app;
 
+import 'dart:async';
 import 'dart:html';
 
 import 'package:js/js.dart';
+import 'package:js/js_util.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 
+import 'package:scadnano/src/model/bound_substrand.dart';
 import 'model/dna_design.dart';
 import 'model/model.dart';
 
@@ -31,7 +34,32 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
 test_stuff() async {
+  print('hi');
+  BoundSubstrand ss1 = BoundSubstrand((s) => s
+    ..helix = 3
+    ..forward = false
+    ..start = 16
+    ..end = 32
+    ..deletions.replace([])
+    ..insertions.replace([])
+    ..is_first = true
+    ..is_last = false);
 
+//  BoundSubstrand ss2 = BoundSubstrand((s) => s
+//    ..helix = 3
+//    ..forward = false
+//    ..start = 16
+//    ..end = 32
+//    ..deletions.replace([])
+//    ..insertions.replace([])
+//    ..is_first = true
+//    ..is_last = false);
+//  int h1 = ss1.hashCode;
+//  int h2 = ss2.hashCode;
+//  print('ss1.hashCode: ${ss1.hashCode}');
+//  print('ss2.hashCode: ${ss2.hashCode}');
+//  print('ss1 == ss2:         ${ss1 == ss2}');
+//  print('identical(ss1,ss2): ${identical(ss1,ss2)}');
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -48,6 +76,11 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
+//      Timer.periodic(new Duration(seconds: 1), (timer) {
+//        print('${document.hasFocus()}');
+//      });
+//      document.onVisibilityChange.listen((ev) => print('visibility changed: $ev'));
+
       react.setClientConfiguration();
 
       await initialize_model();
@@ -68,18 +101,19 @@ class App {
   }
 
   initialize_model() async {
-    String relative_filename = '2_staple_2_helix_origami_deletions_insertions.dna';
-//    String relative_filename = '1_staple_1_helix_origami.dna';
-//    String relative_filename = '16_helix_origami_rectangle.dna';
-//    String relative_filename = '6_helix_origami_rectangle.dna';
-//    String relative_filename = 'loopouts_all_types.dna';
-//    String relative_filename = '2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
-//    String relative_filename = '1_staple_1_helix_origami_mismatches.dna';
+    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
+//    String filename_in_directory = '16_helix_origami_rectangle.dna';
+//    String filename_in_directory = '1_staple_1_helix_origami.dna';
+//    String filename_in_directory = '6_helix_bundle_honeycomb.dna';
+//    String filename_in_directory = '6_helix_origami_rectangle.dna';
+//    String filename_in_directory = 'loopouts_all_types.dna';
+//    String filename_in_directory = '2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
+//    String filename_in_directory = '1_staple_1_helix_origami_mismatches.dna';
 
-    document.title = relative_filename;
+    document.title = filename_in_directory;
 
     String directory = 'examples/output_designs/';
-    String filename = directory + relative_filename;
+    String filename = directory + filename_in_directory;
 
     DNADesign dna_design;
     String error_message;
@@ -112,16 +146,18 @@ class App {
     } else {
       store = Store<Model>(model_reducer, initialState: model, middleware: all_middleware);
     }
-  }
 
-//  send_action(ReversibleActionPack action_pack) {
-////    if (action_pack is ReversibleActionPack) {
-////      ReversibleActionPack rev_action_pack = action_pack;
-//    this.undo_redo.apply(action_pack);
-////    } else {
-////      action_pack.apply();
-////    }
-//  }
+    void thunk_action(Store<Model> store) async {
+//      print('thunk_action dispatched');
+      final String searchResults = await new Future.delayed(
+        new Duration(seconds: 1),
+            () => "Search Results",
+      );
+      store.dispatch(searchResults);
+    }
+
+    store.dispatch(thunk_action);
+  }
 
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((Event event) {

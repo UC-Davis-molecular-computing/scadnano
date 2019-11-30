@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/serializers.dart';
 
+import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'selectable.dart';
@@ -18,8 +19,8 @@ final DEFAULT_UIModelBuilder = UIModelBuilder()
   ..loaded_script_filename = default_script_filename()
   ..dragging = false
   ..mouseover_datas = ListBuilder<MouseoverData>()
-  ..selection_box_main_view = DEFAULT_SelectionBoxBuilder
-  ..selection_box_side_view = DEFAULT_SelectionBoxBuilder
+  ..selection_box_main_view = null
+  ..selection_box_side_view = null
   ..selectables_store = SelectablesStoreBuilder()
   ..side_selected_helix_idxs = SetBuilder<int>()
   ..show_dna = false
@@ -27,6 +28,7 @@ final DEFAULT_UIModelBuilder = UIModelBuilder()
   ..show_mismatches = true
   ..show_mouseover_rect = false
   ..changed_since_last_save = false
+  ..side_view_grid_position_mouse_cursor = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
 abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIModelBuilder> {
@@ -59,14 +61,19 @@ abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIMo
 
   bool get dragging;
 
+  @nullable
   SelectionBox get selection_box_main_view;
 
+  @nullable
   SelectionBox get selection_box_side_view;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
-  @nullable // null when Ctrl not pressed or mouse outside of side view
-  Point<num> get mouse_svg_pos_side_view;
+//  @nullable // null when Alt not pressed or mouse outside of side view
+//  Point<num> get mouse_svg_pos_side_view;
+
+  @nullable // null when Alt not pressed or mouse outside of side view
+  GridPosition get side_view_grid_position_mouse_cursor;
 
   SelectModeState get select_mode_state;
 
@@ -74,7 +81,6 @@ abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIMo
   bool get changed_since_last_save;
 
   bool allow_pan() => dragging;
-
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

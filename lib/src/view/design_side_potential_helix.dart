@@ -17,42 +17,44 @@ UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSide
 @Props()
 class _$DesignSidePotentialHelixProps extends UiProps {
   Grid grid;
-  Set<GridPosition> existing_helix_grid_positions;
-  Point<num> mouse_svg_pos;
+  GridPosition grid_position;
+//  Set<GridPosition> existing_helix_grid_positions;
+//  Point<num> mouse_svg_pos;
 }
 
 @Component2()
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {
-    Point<num> mouse_svg_pos = this.props.mouse_svg_pos;
-    if (mouse_svg_pos == null) {
-      return null;
-    }
+
+
+//    Point<num> mouse_svg_pos = props.mouse_svg_pos;
+//    if (mouse_svg_pos == null) {
+//      return null;
+//    }
 
     Point<num> svg_ideal_pos;
-    Grid grid = this.props.grid;
-    GridPosition grid_pos = null;
+    Grid grid = props.grid;
+    GridPosition grid_position = props.grid_position;
+    bool allowed_grid_position = true;
 
     if (grid.is_none()) {
-      svg_ideal_pos = mouse_svg_pos;
+      //FIXME: find a way to implement off-grid
+      throw UnsupportedError('currently unsupported to draw potential helix with Grid.none');
+//      svg_ideal_pos = mouse_svg_pos;
     } else {
-      grid_pos = util.side_view_svg_to_grid(grid, mouse_svg_pos);
-      if (this.props.existing_helix_grid_positions.contains(grid_pos)) {
-        return null;
+      if (grid == Grid.honeycomb && !util.in_honeycomb_lattice(grid_position)) {
+        allowed_grid_position = false;
       }
-      if (grid == Grid.honeycomb && !util.in_honeycomb_lattice(grid_pos)) {
-        return null;
-      }
-      svg_ideal_pos = util.side_view_grid_to_svg(grid_pos, grid);
+      svg_ideal_pos = util.side_view_grid_to_svg(grid_position, grid);
     }
 
     return (Dom.circle()
       ..cx = svg_ideal_pos.x
       ..cy = svg_ideal_pos.y
       ..r = '${constants.SIDE_HELIX_RADIUS}'
-      ..onClick = ((e) => this._handle_click(e, grid_pos))
-      ..className = 'side-view-potential-helix')();
+      ..onClick = ((e) => this._handle_click(e, grid_position))
+      ..className = allowed_grid_position? 'side-view-potential-helix': 'side-view-potential-helix-disallowed-position')();
   }
 
   _handle_click(SyntheticMouseEvent event, GridPosition grid_pos) {

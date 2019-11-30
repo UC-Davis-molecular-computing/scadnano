@@ -11,9 +11,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 
-import '../model/dna_design_action_packs.dart' as dna_design_action_packs;
 import '../model/model.dart';
-import '../model/selectable.dart';
 import '../app.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -56,10 +54,12 @@ class DesignViewComponent {
 
   bool svg_panzoom_has_been_set_up = false;
 
+  Point<num> side_view_mouse_position = Point<num>(0, 0);
+  Set<int> keys_pressed = {};
+
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -68,10 +68,6 @@ class DesignViewComponent {
         'width': '100%',
         'height': '100%',
       };
-    side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
-    side_view_svg.onMouseMove.listen((event) {
-      side_view_update_mouseover(event);
-    });
 
     main_view_svg = svg.SvgSvgElement()
       ..attributes = {
@@ -134,10 +130,21 @@ class DesignViewComponent {
   };
 
   handle_keyboard_mouse_events() {
+    side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
+    side_view_svg.onMouseMove.listen((event) {
+      side_view_mouse_position = event.client;
+      side_view_update_mouseover(event: event);
+    });
+
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
       int key = ev.which;
+
+      if (!ev.repeat) {
+        keys_pressed.add(key);
+      }
+
       if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
               key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
               key == constants.KEY_CODE_SELECT) &&
@@ -146,15 +153,21 @@ class DesignViewComponent {
         install_draggable(false, DraggableComponent.side, side_view_svg);
       }
 
+      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX && !ev.repeat) {
+        side_view_update_mouseover(mouse_pos: side_view_mouse_position);
+      }
+
       if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
         app.store.dispatch(actions.SetShowMouseoverRect(true));
       }
 
-      if (key == constants.KEY_CODE_ESC) {
-//        Actions_OLD.unselect_all();
+      if (key == KeyCode.ESC) {
+        if (app.model.ui_model.side_selected_helix_idxs.isNotEmpty) {
+          app.store.dispatch(actions.HelixSelectionsClear());
+        }
       }
 
-      if (key == constants.KEY_CODE_DELETE) {
+      if (key == KeyCode.DELETE) {
         //FIXME:
 //        List<Selectable> selected = app.model.ui_model.selection.selections.toList();
 //        dna_design_action_packs.delete_all(app.model.dna_design, selected);
@@ -166,6 +179,9 @@ class DesignViewComponent {
 
     window.onKeyUp.listen((ev) {
       int key = ev.which;
+
+      keys_pressed.remove(key);
+
       if (key == constants.KEY_CODE_TOGGLE_SELECT ||
           key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
           key == constants.KEY_CODE_SELECT) {
@@ -181,6 +197,10 @@ class DesignViewComponent {
         if (app.model.ui_model.mouseover_datas.isNotEmpty) {
           app.store.dispatch(actions.MouseoverDataClear());
         }
+      }
+
+      if (key == KeyCode.ALT) {
+        app.store.dispatch(actions.SideViewMouseGridPositionClear());
       }
     });
 
@@ -210,9 +230,9 @@ class DesignViewComponent {
       // so we need to remove it manually just in case
       document.body.classes.remove('dnd-drag-occurring');
 //      if (app.model.ui_model.selection_box_store.displayed) {
-      if (!main_view && app.model.ui_model.selection_box_side_view.displayed) {
+      if (!main_view && app.model.ui_model.selection_box_side_view != null) {
         app.store.dispatch(actions.SideViewSelectionBoxRemove());
-      } else if (main_view && app.model.ui_model.selection_box_main_view.displayed) {
+      } else if (main_view && app.model.ui_model.selection_box_main_view != null) {
         app.store.dispatch(actions.MainViewSelectionBoxRemove());
       }
     }
@@ -229,18 +249,7 @@ class DesignViewComponent {
       MouseEvent event = draggable_event.originalEvent;
       actions.Action2 action;
 
-//      Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
-//      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_side(mouse_point);
-      Point<num> point = event.offset;
-      if (main_view) {
-        //FIXME: this works for side view but is offset for main view; see selection_box.dart comments
-        // code that worked previously for main view didn't work for side view
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
-//        Point<num> mouse_point = util.untransformed_svg_point(view_svg, event);
-//        point = mouse_point;
-      } else {
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, main_view);
-      }
+      Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom(event.offset, main_view);
 
       if (event.ctrlKey || event.metaKey) {
         action = main_view
@@ -256,6 +265,7 @@ class DesignViewComponent {
 //        Actions_OLD.unselect_all();
       }
       if (action != null) {
+//        print('     start point: ${point.x.toStringAsFixed(1)},${point.y.toStringAsFixed(1)}');
         app.store.dispatch(action);
       }
     });
@@ -270,10 +280,9 @@ class DesignViewComponent {
       }
 
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        var action = main_view
-            ? actions.MainViewSelectionBoxSizeChanged(point)
-            : actions.SideViewSelectionBoxSizeChanged(point);
-        app.store.dispatch(action);
+        var action =
+            main_view ? actions.MainViewSelectionBoxSizeChanged(point) : actions.SideViewSelectionBoxSizeChanged(point);
+        app.store.dispatch(actions.ThrottledAction(action, 1/60.0));
       }
     });
 
@@ -398,37 +407,24 @@ class DesignViewComponent {
   }
 
   side_view_mouse_leave_update_mouseover() {
-    if (app.model.ui_model.mouse_svg_pos_side_view != null) {
-      app.store.dispatch(actions.SideViewMousePositionRemove());
+    if (app.model.ui_model.side_view_grid_position_mouse_cursor != null) {
+      app.store.dispatch(actions.SideViewMouseGridPositionClear());
     }
   }
 
-  side_view_update_mouseover(MouseEvent event) {
-    if (!event.altKey) {
-      //FIXME: what condition to check to ensure we aren't sending too many of these dispatcher?
-      if (app.model.ui_model.mouse_svg_pos_side_view != null) {
-        app.store.dispatch(actions.SideViewMousePositionRemove());
+  side_view_update_mouseover({Point<num> mouse_pos = null, MouseEvent event = null}) {
+    assert(!(mouse_pos == null && event == null));
+    if (keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
+      var new_grid_pos =
+          util.grid_position_of_mouse_in_side_view(app.model.dna_design.grid, mouse_pos: mouse_pos, event: event);
+      if (app.model.ui_model.side_view_grid_position_mouse_cursor != new_grid_pos) {
+        app.store.dispatch(actions.SideViewMouseGridPositionUpdate(new_grid_pos));
       }
-      return;
+    } else {
+      if (app.model.ui_model.side_view_grid_position_mouse_cursor != null) {
+        app.store.dispatch(actions.SideViewMouseGridPositionClear());
+      }
     }
-
-    Point<num> mouse_point = util.untransformed_svg_point(side_view_svg, event);
-    Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(mouse_point, false);
-//  Point<num> svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(event.offset, false);
-
-    if (DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION) {
-      Point<num> pan = util.current_pan(false);
-      num zoom = util.current_zoom_side();
-      print('mouse event: '
-          'x = ${event.offset.x},   '
-          'y = ${event.offset.y},   '
-          'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
-          'zoom = ${zoom.toStringAsFixed(2)},   '
-          'svg_x = ${svg_coord.x.toStringAsFixed(2)},   '
-          'svg_y = ${svg_coord.y.toStringAsFixed(2)},   ');
-    }
-
-    app.store.dispatch(actions.SideViewMousePositionUpdate(svg_coord));
   }
 }
 

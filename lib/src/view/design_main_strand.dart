@@ -42,7 +42,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   @override
   Map getDefaultProps() => (newProps()..selected = false);
 
-  //TODO: this shouldn't be necessary with Redux/React
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
     Strand strand = props.strand;

@@ -1,7 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../app.dart';
 import '../model/strand.dart';
 import 'design_main_strand.dart';
 
@@ -11,32 +10,25 @@ part 'design_main_strands.over_react.g.dart';
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 
 @Props()
-class _$DesignMainStrandsProps extends UiProps { // FluxUiProps<StrandsStore, StrandsStore> {
+class _$DesignMainStrandsProps extends UiProps {
   BuiltList<Strand> strands;
 }
 
 @Component2()
-class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> { // FluxUiComponent<DesignMainStrandsProps> {
+class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
 
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
     BuiltList<Strand> strands = props.strands;
     BuiltList<Strand> strands_next = nextProps['DesignMainStrandsProps.strands'];
+//    print('DesignMainStrands.shouldComponentUpdate should = ${!(strands == strands_next)}');
+//    print('DesignMainStrands.shouldComponentUpdate strands == strands_next          = ${strands == strands_next}');
+//    print('DesignMainStrands.shouldComponentUpdate identical(strands, strands_next) = ${identical(strands, strands_next)}');
     return !(strands == strands_next);
   }
 
   @override
   render() {
-    //TODO: this gets called (unnecessarily??) on mouseup
-//    print('${'*'*100}\nDesignMainStrands.render()');
-//    return (Dom.g()..className = 'strands-main-view')([
-//      for (Strand strand in this.props.store.strands)
-//        (DesignMainStrand()
-//          ..store = strand
-//          ..key = strand.toString())()
-//    ]);
-
-//    List<Strand> strands = this.props.store.strands;
     BuiltList<Strand> strands = this.props.strands;
 
     List strand_elts = [];

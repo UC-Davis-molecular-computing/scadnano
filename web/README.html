@@ -33,10 +33,11 @@
 <h2 id="keyboard-and-mousetouchpad">Keyboard and mouse/touchpad</h2>
 <p>Some features of scadnano are enabled by depressing a certain key while using the mouse/touchpad:</p>
 <ul>
-<li><p>m: This shows mouseover data when the cursor is positioned over a helix in the main view. The backbone rotation angle of the two strands is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer.</p></li>
+<li><p>m: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. When pressed over a crossover, information for the two helices it connects is shown.</p></li>
+<li><p>Clicking crossover: if a crossover is left-clicked while m is pressed, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.</p></li>
 <li><p>Ctrl and Shift: pressing these enables one to select objects, either by left-clicking on them individually, or by “click-and-drag”. If Shift is pressed, then the objects touched are selected. If Ctrl is pressed, then the object selections are toggled (i.e., unselected if they were selected before).</p></li>
-<li><p>Alt: In the side view, this allows one to add or remove helices by left-clicking.</p></li>
-<li><p>Clicking crossovers: if a crossover is left-clicked, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.</p></li>
+<li><p>h: In the side view, this allows one to add or remove helices by left-clicking.</p></li>
+<li><p>Esc: If helices are selected, this unselects all of them.</p></li>
 </ul>
 <h2 id="exporting-svg">Exporting SVG</h2>
 <p>Exporting the design to SVG is currently not directly supported. However, by installing the Chrome extension <a href="https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi">Export SVG with Style</a>, you can export it yourself:</p>

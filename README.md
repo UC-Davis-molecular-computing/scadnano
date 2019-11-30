@@ -30,15 +30,17 @@ TODO: 5'/3' ends, strands, substrands, loopouts, helix rotations and anchors, et
 
 Some features of scadnano are enabled by depressing a certain key while using the mouse/touchpad:
 
-* m: This shows mouseover data when the cursor is positioned over a helix in the main view. The backbone rotation angle of the two strands is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer.
+* m: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. When pressed over a crossover, information for the two helices it connects is shown.
+
+* Clicking crossover: if a crossover is left-clicked while m is pressed, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.
 
 * Ctrl and Shift: pressing these enables one to select objects, either by left-clicking on them individually, or by "click-and-drag". 
 If Shift is pressed, then the objects touched are selected. 
 If Ctrl is pressed, then the object selections are toggled (i.e., unselected if they were selected before).
 
-* Alt: In the side view, this allows one to add or remove helices by left-clicking.
+* h: In the side view, this allows one to add or remove helices by left-clicking.
 
-* Clicking crossovers: if a crossover is left-clicked, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.
+* Esc: If helices are selected, this unselects all of them.
 
 
 ## Exporting SVG

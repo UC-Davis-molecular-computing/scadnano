@@ -21,9 +21,9 @@ def main():
          hairpin2_2, ss_r2_2])
 
     design = sc.DNADesign(strands=[strand], grid=sc.square)
-    t5 = 'T'*5
-    t10 = 'T'*10
-    t20 = 'T'*20
+    t5 = 'TTTAC'
+    t10 = 'TTTACTTACG'
+    t20 = 'TTTTTTTTTTACGTTGCAGG'
     design.assign_dna(strand,
                       f'ACGACGAC '
                       f'{t5} '

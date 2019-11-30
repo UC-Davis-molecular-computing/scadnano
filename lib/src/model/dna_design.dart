@@ -134,10 +134,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
 
-  static _default_grid_position(int idx) => GridPosition((gp) => gp
-    ..h = 0
-    ..v = idx
-    ..b = 0);
+  static _default_grid_position(int idx) => GridPosition(0, idx);
 
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {

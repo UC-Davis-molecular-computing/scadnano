@@ -59,7 +59,7 @@ util.Box helix_to_box(Helix helix) {
 
 Reducer<BuiltSet<int>> side_selected_helices_reducer = combineReducers([
   TypedReducer<BuiltSet<int>, actions.HelixSelect>(helix_select_reducer),
-  TypedReducer<BuiltSet<int>, actions.HelicesSelectedClear>(helices_selected_clear_reducer),
+  TypedReducer<BuiltSet<int>, actions.HelixSelectionsClear>(helices_selected_clear_reducer),
 ]);
 
 BuiltSet<int> helix_select_reducer(BuiltSet<int> helices, actions.HelixSelect action) {
@@ -75,7 +75,7 @@ BuiltSet<int> helix_select_reducer(BuiltSet<int> helices, actions.HelixSelect ac
   return helices;
 }
 
-BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.HelicesSelectedClear action) {
+BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.HelixSelectionsClear action) {
   return BuiltSet<int>();
 }
 
@@ -93,7 +93,7 @@ Reducer<SelectionBox> side_view_selection_box_reducer = combineReducers([
 
 SelectionBox side_view_selection_box_remove_reducer(
         SelectionBox selection_box, actions.SideViewSelectionBoxRemove action) =>
-    DEFAULT_SelectionBox;
+    null;
 
 SelectionBox side_view_selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.SideViewSelectionBoxSizeChanged action) =>
@@ -101,11 +101,13 @@ SelectionBox side_view_selection_box_size_changed_reducer(
 
 SelectionBox side_view_selection_box_create_toggling_reducer(
         SelectionBox selection_box, actions.SideViewSelectionBoxCreateToggling action) =>
-    selection_box.start_selection(action.point, true);
+    SelectionBox(action.point, true);
+//    selection_box.start_selection(action.point, true);
 
 SelectionBox side_view_selection_box_create_selecting_reducer(
         SelectionBox selection_box, actions.SideViewSelectionBoxCreateSelecting action) =>
-    selection_box.start_selection(action.point, false);
+    SelectionBox(action.point, false);
+//    selection_box.start_selection(action.point, false);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // main view selection box reducer
@@ -121,7 +123,7 @@ Reducer<SelectionBox> main_view_selection_box_reducer = combineReducers([
 
 SelectionBox main_view_selection_box_remove_reducer(
         SelectionBox selection_box, actions.MainViewSelectionBoxRemove action) =>
-    DEFAULT_SelectionBox;
+    null;
 
 SelectionBox main_view_selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.MainViewSelectionBoxSizeChanged action) =>
@@ -130,8 +132,10 @@ SelectionBox main_view_selection_box_size_changed_reducer(
 
 SelectionBox main_view_selection_box_create_toggling_reducer(
         SelectionBox selection_box, actions.MainViewSelectionBoxCreateToggling action) =>
-    selection_box.start_selection(action.point, true);
+    SelectionBox(action.point, true);
+//    selection_box.start_selection(action.point, true);
 
 SelectionBox main_view_selection_box_create_selecting_reducer(
         SelectionBox selection_box, actions.MainViewSelectionBoxCreateSelecting action) =>
-    selection_box.start_selection(action.point, false);
+    SelectionBox(action.point, false);
+//    selection_box.start_selection(action.point, false);

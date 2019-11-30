@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/model/grid_position.dart';
 
 import '../model/helix.dart';
 import '../model/model.dart';
@@ -28,9 +29,11 @@ UIModel ui_model_reducer(UIModel ui_model, action) => ui_model.rebuild((u) => u
   ..show_mouseover_rect = TypedReducer<bool, actions.SetShowMouseoverRect>(show_mouseover_rect_reducer)(
       ui_model.show_mouseover_rect, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_model.side_selected_helix_idxs, action))
-  ..mouse_svg_pos_side_view = side_view_mouse_svg_pos_reducer(ui_model.mouse_svg_pos_side_view, action)
-  ..selection_box_main_view.replace(main_view_selection_box_reducer(ui_model.selection_box_main_view, action))
-  ..selection_box_side_view.replace(side_view_selection_box_reducer(ui_model.selection_box_side_view, action))
+//  ..mouse_svg_pos_side_view = side_view_mouse_svg_pos_reducer(ui_model.mouse_svg_pos_side_view, action)
+  ..side_view_grid_position_mouse_cursor =
+      side_view_mouse_grid_pos_reducer(ui_model.side_view_grid_position_mouse_cursor, action)?.toBuilder()
+  ..selection_box_main_view = main_view_selection_box_reducer(ui_model.selection_box_main_view, action)?.toBuilder()
+  ..selection_box_side_view = side_view_selection_box_reducer(ui_model.selection_box_side_view, action)?.toBuilder()
   ..mouseover_datas.replace(mouseover_data_reducer(ui_model.mouseover_datas, action)));
 
 bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
@@ -49,8 +52,7 @@ Reducer<bool> changed_since_last_save_reducer = combineReducers([
 bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save, actions.UndoableAction action) =>
     true;
 
-bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
-    false;
+bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) => false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover_data reducer
@@ -77,6 +79,17 @@ Point<num> side_view_mouse_svg_pos_update_reducer(Point<num> _, actions.SideView
     action.point;
 
 Point<num> side_view_mouse_svg_pos_remove_reducer(Point<num> _, actions.SideViewMousePositionRemove action) => null;
+
+Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
+  TypedReducer<GridPosition, actions.SideViewMouseGridPositionUpdate>(side_view_mouse_grid_pos_update_reducer),
+  TypedReducer<GridPosition, actions.SideViewMouseGridPositionClear>(side_view_mouse_grid_pos_clear_reducer),
+]);
+
+GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _, actions.SideViewMouseGridPositionUpdate action) =>
+    action.grid_position;
+
+GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.SideViewMouseGridPositionClear action) =>
+    null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
