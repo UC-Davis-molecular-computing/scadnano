@@ -84,16 +84,9 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
           !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor))
         (DesignSidePotentialHelix()
           ..grid = this.props.grid
-//          ..existing_helix_grid_positions = existing_helix_grid_positions
           ..grid_position = props.grid_position_mouse_cursor
 //          ..mouse_svg_pos = mouse_svg_pos
           ..key = 'potential-helix')(),
-//      if (props.grid_position_mouse_cursor != null)
-//        (DesignSidePotentialHelixEnclosingPolygon()
-//          ..grid = props.grid
-//          ..grid_position = props.grid_position_mouse_cursor
-//          ..existing_helix_grid_positions = existing_helix_grid_positions
-//          ..key = 'potential-helix-enclosing-polygon')(),
       (Dom.g()
         ..className = 'helices-side-view'
         ..key = 'helices-side-view')(helices_components),
