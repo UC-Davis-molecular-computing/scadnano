@@ -6,8 +6,9 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:reselect/reselect.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../model/select_mode.dart';
 import '../app.dart';
 import '../model/strand.dart';
@@ -18,13 +19,11 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-// There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
-// go around React when _OPTIMIZE=true and set the class directly by querying the element by ID.
-const _OPTIMIZE = true;
-//const _OPTIMIZE = false;
-
-UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<Model, DesignMainStrandProps>(
-  mapStateToProps: (model) => (DesignMainStrand()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
+  mapStateToPropsWithOwnProps: (state, props) => (DesignMainStrand()
+    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+    ..selected = state.ui_state.selectables_store.selected(props.strand)
+    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)),
 )(DesignMainStrand);
 
 @Factory()
@@ -34,7 +33,8 @@ UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 class _$DesignMainStrandProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
-  bool selected; // needed separately to compare in shouldComponentUpdated, since Strand is mutated in place
+  bool selected;
+  bool selectable;
 }
 
 @Component2()
@@ -42,28 +42,27 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   @override
   Map getDefaultProps() => (newProps()..selected = false);
 
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Strand strand = props.strand;
-    Strand next_strand = nextProps['DesignMainStrandProps.strand'];
-    bool prev_selected = props.selected;
-    bool next_selected = nextProps['DesignMainStrandProps.selected'];
-    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
-    BuiltSet<int> side_selected_helix_idxs_next = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
-
-    bool should = !(strand == next_strand &&
-        prev_selected == next_selected &&
-        side_selected_helix_idxs == side_selected_helix_idxs_next);
-//    print('shouldComponentUpdate() for strand ${strand.toString()}');
-//    print(' prev_selected: $prev_selected');
-//    print(' next_selected: $next_selected');
-    return should;
-  }
+//  @override
+//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+//    Strand strand = nextProps['DesignMainStrandProps.strand'];
+//    bool selected = nextProps['DesignMainStrandProps.selected'];
+//    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
+//
+//    bool should = !(props.strand == strand &&
+//        props.selected == selected &&
+//        props.side_selected_helix_idxs == side_selected_helix_idxs);
+////    print('shouldComponentUpdate() for strand ${strand.toString()}');
+////    print(' prev_selected: $prev_selected');
+////    print(' next_selected: $next_selected');
+//    return should;
+//  }
 
   @override
   render() {
     Strand strand = props.strand;
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
+    bool selected = props.selected;
+    bool selectable = props.selectable;
 //    print('DesignMainStrand.render(): ${strand.toString()}');
 
     if (strand.substrands.length == 0) {
@@ -71,17 +70,15 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     } else {
       //TODO: make strand selectable, but decide how it will interact with selecting other elements.
       var classname = 'strand';
-      if (app.model.ui_model.select_mode_state.modes.contains(SelectModeChoice.strand)) {
+      if (selectable) {
         classname += ' selectable';
       }
-//      if (state.selected) {
-      if (strand.selected()) {
+      if (selectable && selected) {
         classname += ' selected';
       }
 
-      var strand_id = strand.id();
       return (Dom.g()
-        ..id = strand_id
+        ..id = strand.id()
         ..onPointerDown = strand.handle_selection
         ..className = classname)([
 //        (DesignMainStrandPaths()
@@ -115,7 +112,7 @@ List<ReactElement> _insertion_paths(Strand strand, BuiltSet<int> side_selected_h
 }
 
 ReactElement _insertion_path(BoundSubstrand substrand, int offset, Color color) {
-  var helix = app.model.dna_design.helices[substrand.helix];
+  var helix = app.state.dna_design.helices[substrand.helix];
   Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
 
   num dx1 = constants.BASE_WIDTH_SVG;
@@ -190,7 +187,7 @@ List<ReactElement> _deletion_paths(Strand strand, BuiltSet<int> side_selected_he
 ReactElement _deletion_path(BoundSubstrand substrand, int deletion_offset, Strand strand) {
 //  print('app.model.dna_design.helices: ${app.model.dna_design.helices}');
 //  print('  substrand: ${substrand}');
-  var helix = app.model.dna_design.helices[substrand.helix];
+  var helix = app.state.dna_design.helices[substrand.helix];
   Point<num> pos = helix.svg_base_pos(deletion_offset, substrand.forward);
 
   var width = 0.8 * constants.BASE_WIDTH_SVG;

@@ -6,13 +6,14 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
+import 'package:scadnano/src/model/selectable.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
 
 import '../serializers.dart';
 import '../model/dna_design.dart';
 import '../model/substrand.dart';
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../model/dna_design_action_packs.dart';
 import '../model/select_mode.dart';
 import '../model/select_mode_state.dart';
@@ -508,6 +509,52 @@ abstract class SideViewMouseGridPositionClear
   SideViewMouseGridPositionClear._();
 
   static Serializer<SideViewMouseGridPositionClear> get serializer => _$sideViewMouseGridPositionClearSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Selectables
+
+abstract class Select with BuiltJsonSerializable implements Action2, Built<Select, SelectBuilder> {
+  Selectable get selectable;
+
+  bool get toggle;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Select(Selectable selectable, bool toggle) => Select.from((b) => b
+    ..selectable = selectable
+    ..toggle = toggle);
+
+  factory Select.from([void Function(SelectBuilder) updates]) = _$Select;
+
+  Select._();
+
+  static Serializer<Select> get serializer => _$selectSerializer;
+}
+
+abstract class SelectionsClear
+    with BuiltJsonSerializable
+    implements Action2, Built<SelectionsClear, SelectionsClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionsClear() => SelectionsClear.from((b) => b);
+
+  factory SelectionsClear.from([void Function(SelectionsClearBuilder) updates]) = _$SelectionsClear;
+
+  SelectionsClear._();
+
+  static Serializer<SelectionsClear> get serializer => _$selectionsClearSerializer;
+}
+
+abstract class SelectionsAdjust
+    with BuiltJsonSerializable
+    implements Action2, Built<SelectionsAdjust, SelectionsAdjustBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionsAdjust() => SelectionsAdjust.from((b) => b);
+
+  factory SelectionsAdjust.from([void Function(SelectionsAdjustBuilder) updates]) = _$SelectionsAdjust;
+
+  SelectionsAdjust._();
+
+  static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

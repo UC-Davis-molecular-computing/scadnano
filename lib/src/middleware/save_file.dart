@@ -4,16 +4,16 @@ import 'package:redux/redux.dart';
 
 import '../json_serializable.dart';
 import '../actions/actions.dart' as actions;
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../util.dart' as util;
 
-Model save_file_middleware(Store<Model> store, dynamic action, NextDispatcher next) {
+AppState save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
 
-  Model model = store.state;
+  AppState model = store.state;
   if (action is actions.SaveDNAFile) {
     String content = json_encode(model.dna_design);
-    String default_filename = model.ui_model.loaded_filename;
+    String default_filename = model.ui_state.loaded_filename;
     util.save_file(default_filename, content);
     change_tab_title(false);
   } else if (action is actions.UndoableAction) {

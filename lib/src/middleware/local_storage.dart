@@ -6,7 +6,7 @@ import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 
 import '../model/edit_mode.dart';
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../model/select_mode.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -38,13 +38,13 @@ save(Storable storable) {
   String value_string;
 
   if (storable == Storable.show_dna) {
-    value_string = app.model.ui_model.show_dna.toString();
+    value_string = app.state.ui_state.show_dna.toString();
   } else if (storable == Storable.show_mismatches) {
-    value_string = app.model.ui_model.show_mismatches.toString();
+    value_string = app.state.ui_state.show_mismatches.toString();
   } else if (storable == Storable.edit_mode) {
-    value_string = app.model.ui_model.show_editor.toString();
+    value_string = app.state.ui_state.show_editor.toString();
   } else if (storable == Storable.select_modes) {
-    value_string = app.model.ui_model.select_mode_state.to_json();
+    value_string = app.state.ui_state.select_mode_state.to_json();
   }
 
   window.localStorage[storable_key] = value_string;
@@ -112,7 +112,7 @@ restore_all_local_storage() {
   }
 }
 
-local_storage_middleware(Store<Model> store, dynamic action, NextDispatcher next) {
+local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.StorableAction) {
     for (var storable in action.storables()) {

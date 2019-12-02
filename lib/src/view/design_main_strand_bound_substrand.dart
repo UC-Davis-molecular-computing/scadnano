@@ -3,12 +3,20 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
 
 import '../model/helix.dart';
 import '../model/bound_substrand.dart';
 import '../app.dart';
+import '../model/app_state.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
+
+UiFactory<DesignMainBoundSubstrandProps> ConnectedDesignMainBoundSubstrand =
+    connect<AppState, DesignMainBoundSubstrandProps>(mapStateToPropsWithOwnProps: (state, props) {
+  Helix helix = state.dna_design.helices[props.substrand.helix];
+  return DesignMainBoundSubstrand()..helix = helix;
+})(DesignMainBoundSubstrand);
 
 @Factory()
 UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
@@ -17,18 +25,11 @@ UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMain
 class _$DesignMainBoundSubstrandProps extends UiProps {
   BoundSubstrand substrand;
   Color color;
+  Helix helix;
 }
-
-// There's a bit of a lag re-rendering the whole strand just to change its class to "hover", so we
-// go around React when _OPTIMIZE=true and set the class directly by querying the element by ID.
-const _OPTIMIZE = true;
-//const _OPTIMIZE = false;
 
 @Component2()
 class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
-
 //  @override
 //  bool shouldComponentUpdate(Map nextProps, Map nextState) {
 //    BoundSubstrand substrand = props.substrand;
@@ -41,19 +42,15 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
 //    return should;
 //  }
 
-
   @override
   render() {
-//    BoundSubstrand substrand = this.props.store;
     BoundSubstrand substrand = this.props.substrand;
     String id = substrand.id();
 
-    Helix helix = app.model.dna_design.helices[substrand.helix];
-    Point<num> start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-    Point<num> end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
+    Point<num> start_svg = props.helix.svg_base_pos(substrand.offset_5p, substrand.forward);
+    Point<num> end_svg = props.helix.svg_base_pos(substrand.offset_3p, substrand.forward);
 
     return (Dom.line()
-//      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
       ..stroke = props.color.toRgbColor().toCssString()
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'

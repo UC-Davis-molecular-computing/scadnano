@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/model/model.dart';
+import 'package:scadnano/src/model/app_state.dart';
 import 'package:scadnano/src/model/position3d.dart';
 
 import '../actions/actions_OLD.dart';
@@ -22,8 +22,8 @@ part 'design_side_helix.over_react.g.dart';
 
 const String SIDE_VIEW_PREFIX = 'side-view';
 
-UiFactory<_$DesignSideHelixProps> ConnectedDesignSideHelix = connect<Model, _$DesignSideHelixProps>(
-  mapStateToProps: (model) => (DesignSideHelix()),
+UiFactory<_$DesignSideHelixProps> ConnectedDesignSideHelix = connect<AppState, _$DesignSideHelixProps>(
+  mapStateToProps: (state) => (DesignSideHelix()),
 )(DesignSideHelix);
 
 @Factory()
@@ -122,7 +122,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
   _remove_helix(SyntheticMouseEvent event, Helix helix) {
     List<ReversibleActionPack> action_packs_for_batch = [];
     //FIXME: don't reach into global variable
-    DNADesign dna_design = app.model.dna_design;
+    DNADesign dna_design = app.state.dna_design;
     if (dna_design.substrands_on_helix(helix.idx).isNotEmpty) {
       bool confirm = window.confirm('This Helix has strands on it. '
           'If you delete it, all the Strands will be deleted. Do you want to proceed?');
@@ -131,11 +131,11 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
       }
       //XXX: important to keep out duplicates but preserve *reverse* order strands appear in DNADesign
       // That way when they are added back in reverse order with Undo, they will be in the same order as now.
-      var dna_design = app.model.dna_design;
+      var dna_design = app.state.dna_design;
       var all_strands = dna_design.strands;
       var strands_to_remove = {
         for (BoundSubstrand ss in dna_design.substrands_on_helix(helix.idx))
-          app.model.dna_design.substrand_to_strand[ss]
+          app.state.dna_design.substrand_to_strand[ss]
       }.toList();
       strands_to_remove.sort((s1, s2) => all_strands.indexOf(s2).compareTo(all_strands.indexOf(s1)));
 //      action_packs_for_batch.add([for (var strand in strands_to_remove) StrandRemoveActionPack(strand)]);

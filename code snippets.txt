@@ -6,10 +6,10 @@
 
 import 'package:over_react/over_react_redux.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 
 UiFactory<$CLASS_NAME$Props> Connected$CLASS_NAME$ =
-    connect<Model, $CLASS_NAME$Props>(mapStateToProps: (model) {
+    connect<AppState, $CLASS_NAME$Props>(mapStateToProps: (state) {
   
   return $CLASS_NAME$();
 })($CLASS_NAME$);
@@ -43,13 +43,27 @@ abstract class $CLASS_NAME$
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
 }
 
+// bvsan (built value Action with serialization, no data)
+abstract class $CLASS_NAME$ 
+    with BuiltJsonSerializable 
+    implements Action2, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory $CLASS_NAME$() => $CLASS_NAME$.from((b) => b);
+
+  factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
+
+  $CLASS_NAME$._();
+  
+  static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+}
+
 
 
 // bvs (built value with serialization, and support for one field initially)
-abstract class $CLASS_NAME$ with BuiltJsonSerializable implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
-  $FIELD_TYPE$ get $FIELD_NAME$;
+abstract class $CLASS_NAME$ 
+    with BuiltJsonSerializable 
+    implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   
-  /************************ begin BuiltValue boilerplate ************************/
   factory $CLASS_NAME$($FIELD_TYPE$ $FIELD_NAME$) => $CLASS_NAME$.from((b) => b..$FIELD_NAME$ = $FIELD_NAME$);
 
   factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
@@ -57,6 +71,10 @@ abstract class $CLASS_NAME$ with BuiltJsonSerializable implements Built<$CLASS_N
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  /************************ end BuiltValue boilerplate ************************/
+
+  $FIELD_TYPE$ get $FIELD_NAME$;
+  
 }
 
 

@@ -10,15 +10,23 @@ part 'design_main_dna_sequences.over_react.g.dart';
 UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
 
 @Props()
-class _$DesignMainDNASequencesProps extends UiProps { // FluxUiProps<DNASequencesStore, DNASequencesStore> {
+class _$DesignMainDNASequencesProps extends UiProps {
   bool show_dna;
   BuiltList<Strand> strands;
 }
 
 @Component2()
-class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> { // FluxUiComponent<DesignMainDNASequencesProps> {
+class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> {
   @override
-  Map getDefaultProps() => (newProps());
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    bool show_dna = nextProps['DesignMainDNASequencesProps.show_dna'];
+    if (!show_dna && !props.show_dna) {
+      // even if strands are updated, don't bother rendering if we aren't showing DNA previously or now
+      return false;
+    }
+    BuiltList<Strand> strands = nextProps['DesignMainDNASequencesProps.strands'];
+    return !(show_dna == props.show_dna && strands == props.strands);
+  }
 
   @override
   render() {

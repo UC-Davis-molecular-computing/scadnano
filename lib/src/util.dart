@@ -45,6 +45,14 @@ Future<String> file_content(String url) async {
   });
 }
 
+/// Gets grid position of mouse cursor in side view.
+GridPosition grid_position_of_mouse_in_side_view(Grid grid, {Point<num> mouse_pos = null, MouseEvent event = null}) {
+  SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
+  var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
+  var grid_pos = side_view_svg_to_grid(grid, svg_pos);
+  return grid_pos;
+}
+
 /// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
@@ -53,11 +61,19 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt, {Point<num> mouse_pos 
   if (mouse_pos == null) {
     assert(event != null);
     mouse_pos = event.client;
+    print('event.client: ${event.client}');
   }
+  SvgElement target_svg = event.target as SvgElement;
+  GraphicsElement target_graphics = target_svg as GraphicsElement;
+//  var bbox = target_svg.getBoundingClientRect();
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
-  svg_point_SVG = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-  Point<num> svg_point = Point<num>(svg_point_SVG.x, svg_point_SVG.y);
+  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
+  var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
+  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
+  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
+  print('svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
+  Point<num> svg_point = Point<num>(svg_point_SVG_2.x, svg_point_SVG_2.y);
   return svg_point;
 }
 
@@ -69,14 +85,6 @@ Point<num> transformed_svg_point(SvgSvgElement svg_elt, bool is_main,
   var svg_pos_untransformed = untransformed_svg_point(svg_elt, mouse_pos: mouse_pos, event: event);
   var svg_pos = transform_mouse_coord_to_svg_current_panzoom(svg_pos_untransformed, is_main);
   return svg_pos;
-}
-
-/// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid, {Point<num> mouse_pos = null, MouseEvent event = null}) {
-  SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
-  var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
-  var grid_pos = side_view_svg_to_grid(grid, svg_pos);
-  return grid_pos;
 }
 
 Point<num> transform_mouse_coord_to_svg_current_panzoom(Point<num> point, bool is_main) {
@@ -188,7 +196,7 @@ save_editor_content_to_js_context(String new_content) {
 /// Since this is only used for [DNADesign]s, it throws an [IllegalDNADesignError].
 dynamic get_value(Map<String, dynamic> map, String key, String name) {
   if (!map.containsKey(key)) {
-    throw IllegalDNADesignError('key "${key}" is missing from map describing ${name}:\n  ${map}');
+    throw IllegalDNADesignError('key "${key}" is missing from the description of a ${name}:\n  ${map}');
   } else {
     return map[key];
   }
@@ -396,34 +404,35 @@ bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num 
       overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
 }
 
-//// gets list of elements associated to Selectables that intersect select_box_bbox
-//List<SvgElement> get_intersection_list(Rect select_box_bbox) {
-//  return get_generalized_intersection_list(select_box_bbox, intervals_overlap);
-//}
-//
-//// gets list of elements associated to Selectables that intersect select_box_bbox
-//List<SvgElement> get_enclosure_list(Rect select_box_bbox) {
-//  return get_generalized_intersection_list(select_box_bbox, interval_contained);
-//}
-//
-//get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
-//  List<SvgElement> elts_intersecting = [];
-//  List<Element> selectable_elts = querySelectorAll('.selectable');
-//  for (GraphicsElement elt in selectable_elts) {
-//    Rect elt_bbox = elt.getBBox();
-////    util.transform_rect_svg_to_mouse_coord_main_view(elt_bbox);
-//    if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
-//      elts_intersecting.add(elt);
-//    }
-//  }
-//  return elts_intersecting;
-//}
-//
-//bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
-//  num elt_x2 = elt_bbox.x + elt_bbox.width;
-//  num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
-//  num elt_y2 = elt_bbox.y + elt_bbox.height;
-//  num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
-//  return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
-//      overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
-//}
+// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
+List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
+  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
+}
+
+// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
+List<SvgElement> enclosure_list_in_elt(String classname, Rect select_box_bbox) {
+  return generalized_intersection_list_in_elt(classname, select_box_bbox, interval_contained);
+}
+
+generalized_intersection_list_in_elt(
+    String classname, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+  List<SvgElement> elts_intersecting = [];
+  List<Element> selectable_elts = querySelectorAll('.selectable');
+  for (GraphicsElement elt in selectable_elts) {
+    Rect elt_bbox = elt.getBBox();
+//    util.transform_rect_svg_to_mouse_coord_main_view(elt_bbox);
+    if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
+      elts_intersecting.add(elt);
+    }
+  }
+  return elts_intersecting;
+}
+
+bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+  num elt_x2 = elt_bbox.x + elt_bbox.width;
+  num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
+  num elt_y2 = elt_bbox.y + elt_bbox.height;
+  num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
+  return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
+      overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
+}

@@ -99,12 +99,12 @@ split_selectables_by_type(List<Selectable> selected_items, Set<Strand> strands, 
       strands.add(selectable);
     } else if (selectable is Crossover) {
       crossovers.add(selectable);
-    } else if (selectable is Loopout) {
-      loopouts.add(selectable);
+//    } else if (selectable is Loopout) {
+//      loopouts.add(selectable);
     } else if (selectable is DNAEnd) {
       // deleting end means deleting whole substrand it's on
       DNAEnd end = selectable;
-      BoundSubstrand substrand = app.model.dna_design.end_to_substrand[end];
+      BoundSubstrand substrand = app.state.dna_design.end_to_substrand[end];
       substrands.add(substrand);
 //      substrands.add(end.substrand);
     }

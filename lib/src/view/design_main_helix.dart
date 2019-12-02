@@ -65,8 +65,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
         ..x = '$cx'
         ..y = '$cy')('$idx'),
       (Dom.g()
-//        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
         ..className = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
@@ -88,7 +86,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
   }
 }
 
-/// Return Map mapping 'minor' and 'major' to paths describing minor and major vertical lines.
+/// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
 Map<String, String> _vert_line_paths(Helix helix) {
   List<int> regularly_spaced_ticks(int distance, int start, int end) {
     if (distance == null || distance == 0) {
@@ -101,7 +99,7 @@ Map<String, String> _vert_line_paths(Helix helix) {
   }
 
   var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : app.model.dna_design.major_tick_distance;
+      helix.has_major_tick_distance() ? helix.major_tick_distance : app.state.dna_design.major_tick_distance;
   Set<int> major_ticks = (helix.has_major_ticks()
           ? helix.major_ticks
           : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))

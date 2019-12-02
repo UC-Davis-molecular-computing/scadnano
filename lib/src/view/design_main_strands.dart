@@ -16,31 +16,19 @@ class _$DesignMainStrandsProps extends UiProps {
 
 @Component2()
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
-
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    BuiltList<Strand> strands = props.strands;
-    BuiltList<Strand> strands_next = nextProps['DesignMainStrandsProps.strands'];
-//    print('DesignMainStrands.shouldComponentUpdate should = ${!(strands == strands_next)}');
-//    print('DesignMainStrands.shouldComponentUpdate strands == strands_next          = ${strands == strands_next}');
-//    print('DesignMainStrands.shouldComponentUpdate identical(strands, strands_next) = ${identical(strands, strands_next)}');
-    return !(strands == strands_next);
+    BuiltList<Strand> strands = nextProps['DesignMainStrandsProps.strands'];
+    return !(props.strands == strands);
   }
 
   @override
   render() {
-    BuiltList<Strand> strands = this.props.strands;
-
-    List strand_elts = [];
-    for (Strand strand in strands) {
-      var strand_props =
-//      DesignMainStrand()
-      ConnectedDesignMainStrand()
-        ..strand = strand
-        ..key = strand.toString();
-      var strand_elt = strand_props();
-      strand_elts.add(strand_elt);
-    }
-    return (Dom.g()..className = 'strands-main-view')(strand_elts);
+    return (Dom.g()..className = 'strands-main-view')([
+      for (var strand in props.strands)
+        (ConnectedDesignMainStrand()
+          ..strand = strand
+          ..key = strand.toString())()
+    ]);
   }
 }

@@ -6,7 +6,7 @@ import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
 import '../app.dart';
-import '../model/ui_model.dart';
+import '../model/app_ui_state.dart';
 
 //TODO: compile Python scripts in the browser using pyodide (or something)
 
@@ -79,7 +79,7 @@ class EditorViewComponent {
       print('[${doc.getLine(doc.getCursor().line).trim()}]');
     });
 
-    editor.getDoc().setValue(app.model.editor_content);
+    editor.getDoc().setValue(app.state.editor_content);
   }
 
   render() {
@@ -100,7 +100,7 @@ class EditorViewComponent {
     // save button
     this.controls_element.children.add(save_button);
     this.save_button.text = "Save";
-    this.save_button.disabled = !app.model.ui_model.changed_since_last_save;
+    this.save_button.disabled = !app.state.ui_state.changed_since_last_save;
 
     // load button
     this.controls_element.children.add(new LabelElement()..text = "Load:");
@@ -188,9 +188,9 @@ class EditorViewComponent {
 //TODO: there's a lot of repeated code between here and the functions that save/load the .dna files
 // handle file saving/loading for script files
 script_save_file() async {
-  Blob blob = new Blob([app.model.editor_content], 'text/plain;charset=utf-8');
+  Blob blob = new Blob([app.state.editor_content], 'text/plain;charset=utf-8');
   String url = Url.createObjectUrlFromBlob(blob);
-  String filename = app.model.ui_model.loaded_script_filename;
+  String filename = app.state.ui_state.loaded_script_filename;
   var link = new AnchorElement()
     ..href = url
     ..download = filename;

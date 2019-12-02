@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/model/model.dart';
+import 'package:scadnano/src/model/app_state.dart';
 
 import '../model/crossover.dart';
 import 'design_main_strand_3p_end.dart';
@@ -22,9 +22,9 @@ import 'design_main_strand_crossover.dart';
 part 'design_main_strand_paths.over_react.g.dart';
 
 UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
-    connect<Model, DesignMainStrandPathsProps>(
-  mapStateToProps: (model) =>
-      (DesignMainStrandPaths()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+    connect<AppState, DesignMainStrandPathsProps>(
+  mapStateToProps: (state) =>
+      (DesignMainStrandPaths()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
 )(DesignMainStrandPaths);
 
 @Factory()
@@ -68,18 +68,18 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
       bool draw_cur_ss = draw_bound_ss(bound_ss, side_selected_helix_idxs);
       draw_prev_ss = draw_cur_ss;
       if (draw_cur_ss) {
-        paths.add((DesignMainBoundSubstrand()
+        paths.add((ConnectedDesignMainBoundSubstrand()
           ..substrand = substrand
           ..color = strand.color
           ..key = "bound-substrand-$i")());
 
-        ends.add((DesignMain5pEnd()
+        ends.add((ConnectedDesignMain5pEnd()
           ..substrand = substrand
           ..color = strand.color
           ..is_first_substrand = (i == 0)
           ..key = "5'-end-$i")());
 
-        ends.add((DesignMain3pEnd()
+        ends.add((ConnectedDesignMain3pEnd()
           ..substrand = substrand
           ..color = strand.color
           ..is_last_substrand = (i == strand.substrands.length - 1)
@@ -92,9 +92,7 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
         bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
 
         if (draw_next_ss) {
-          Crossover crossover = Crossover((c) => c
-            ..prev_substrand = prev_ss.toBuilder()
-            ..next_substrand = next_ss.toBuilder());
+          Crossover crossover = Crossover(prev_ss, next_ss);
 
 //          paths.add((DesignMainStrandCrossover()
           paths.add((ConnectedDesignMainStrandCrossover()
@@ -107,10 +105,9 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
       BoundSubstrand next_ss = strand.substrands[i + 1];
       bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
       if (draw_prev_ss && draw_next_ss) {
-        paths.add((DesignMainLoopout()
+        paths.add((ConnectedDesignMainLoopout()
           ..loopout = substrand
           ..color = strand.color
-          ..substrand_idx = i
           ..key = "loopout-$i")());
       }
     }
@@ -120,8 +117,8 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
 }
 
 String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand next_substrand) {
-  var prev_helix = app.model.dna_design.helices[prev_substrand.helix];
-  var next_helix = app.model.dna_design.helices[next_substrand.helix];
+  var prev_helix = app.state.dna_design.helices[prev_substrand.helix];
+  var next_helix = app.state.dna_design.helices[next_substrand.helix];
   var start_svg = prev_helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var control = _control_point_for_crossover_bezier_curve(prev_substrand, next_substrand);
   var end_svg = next_helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
@@ -133,8 +130,8 @@ String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand 
 
 Point<num> _control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
-  var from_helix = app.model.dna_design.helices[from_ss.helix];
-  var to_helix = app.model.dna_design.helices[to_ss.helix];
+  var from_helix = app.state.dna_design.helices[from_ss.helix];
+  var to_helix = app.state.dna_design.helices[to_ss.helix];
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p, from_ss.forward);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p, to_ss.forward);
   bool from_strand_below = from_ss.helix - to_ss.helix > 0;

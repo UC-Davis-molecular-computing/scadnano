@@ -40,16 +40,16 @@ class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> 
 
 //    print('rendering rotation on helix ${helix.idx}');
 
-    DNADesign dna_design = app.model.dna_design;
+    DNADesign dna_design = app.state.dna_design;
     var substrands = dna_design.substrands_on_helix_at(helix.idx, offset);
 
     Strand strand_forward;
     Strand strand_reverse;
     for (var ss in substrands) {
       if (ss.forward) {
-        strand_forward = app.model.dna_design.substrand_to_strand[ss];
+        strand_forward = app.state.dna_design.substrand_to_strand[ss];
       } else {
-        strand_reverse = app.model.dna_design.substrand_to_strand[ss];
+        strand_reverse = app.state.dna_design.substrand_to_strand[ss];
       }
     }
 

@@ -1,9 +1,12 @@
 import 'package:color/color.dart';
 import 'package:dnd/dnd.dart';
 import 'package:over_react/over_react.dart';
+import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/model/helix.dart';
+
+import '../model/app_state.dart';
 import 'package:scadnano/src/model/select_mode.dart';
 import 'package:scadnano/src/model/strand.dart';
-
 import '../model/bound_substrand.dart';
 import '../app.dart';
 import '../util.dart' as util;
@@ -13,28 +16,31 @@ import 'react_dnd.dart';
 
 part 'design_main_strand_5p_end.over_react.g.dart';
 
+UiFactory<DesignMain5pEndProps> ConnectedDesignMain5pEnd =
+connect<AppState, DesignMain5pEndProps>(mapStateToPropsWithOwnProps: (state, props) {
+  var select_mode_choice = props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+  return DesignMain5pEnd()
+    ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_5p)
+    ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
+    ..helix = state.dna_design.helices[props.substrand.helix]
+    ..is_first_substrand = props.substrand.is_first;
+})(DesignMain5pEnd);
+
 @Factory()
 UiFactory<DesignMain5pEndProps> DesignMain5pEnd = _$DesignMain5pEnd;
 
 @Props()
 class _$DesignMain5pEndProps extends UiProps {
-  //FluxUiProps<BoundSubstrand, BoundSubstrand> {
   BoundSubstrand substrand;
-  bool is_first_substrand;
   Color color;
+  Helix helix;
+  bool is_first_substrand;
+  bool selected;
+  bool selectable;
 }
 
 @Component2()
 class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
-  // UiComponent<DesignMain5pEndProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
-
-//  @override
-//  void componentDidMount() {
-//    super.componentDidMount();
-////    Draggable draggable =
-//  }
 
   @override
   render() {
@@ -43,27 +49,22 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
     bool is_first_substrand = this.props.is_first_substrand;
     var id = substrand.dnaend_5p.id();
 
-    var helix = app.model.dna_design.helices[substrand.helix];
+    var helix = app.state.dna_design.helices[substrand.helix];
     var offset = substrand.offset_5p;
     var right = substrand.forward;
     var pos = helix.svg_base_pos(offset, right);
 
     var classname = 'five-prime-end' + (is_first_substrand ? '-first-substrand' : '');
 //    if (substrand.selected_5p()) {
-    if (substrand.dnaend_5p.selected()) {
+    if (props.selected) {
       classname += ' selected';
     }
-    if (is_first_substrand &&
-            app.model.ui_model.select_mode_state.modes.contains(SelectModeChoice.end_5p_strand) ||
-        !is_first_substrand &&
-            app.model.ui_model.select_mode_state.modes.contains(SelectModeChoice.end_5p_substrand)) {
+    if (props.selectable) {
       classname += ' selectable';
     }
 
     //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
     // if they are specified in CSS, but it will if they are specified here.
-
-    Strand strand = app.model.dna_design.substrand_to_strand[substrand];
 
     //[{ isDragging }, drag]
     if (USING_REACT_DND) {
@@ -91,7 +92,7 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
         ..height = '7px'
         ..rx = '1.5px'
         ..ry = '1.5px'
-        ..fill = strand.color.toRgbColor().toCssString()
+        ..fill = props.color.toRgbColor().toCssString()
         ..id = id);
       return attr();
     }

@@ -3,8 +3,10 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+import 'package:over_react/over_react_redux.dart';
 
+import '../model/app_state.dart';
+import 'package:scadnano/src/model/select_mode.dart';
 import '../model/bound_substrand.dart';
 import '../model/loopout.dart';
 import '../app.dart';
@@ -16,36 +18,43 @@ part 'design_main_strand_loopout.over_react.g.dart';
 
 //TODO: show mouseover data in footer when mouse is on loopout (also crossover)
 
+UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
+    connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
+  return DesignMainLoopout()
+    ..selected = state.ui_state.selectables_store.selected(props.loopout)
+    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
+})(DesignMainLoopout);
+
 @Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
 @Props()
-class _$DesignMainLoopoutProps extends UiProps { //FluxUiProps<Loopout, Loopout> {
+class _$DesignMainLoopoutProps extends UiProps {
   Loopout loopout;
-  int substrand_idx;
   Color color;
+  bool selected;
+  bool selectable;
 }
 
 @Component2()
-class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { // FluxUiComponent<DesignMainLoopoutProps> {
+class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
+  // FluxUiComponent<DesignMainLoopoutProps> {
 //  @override
 //  Map getDefaultProps() => (newProps());
 
   @override
   render() {
     Loopout loopout = this.props.loopout;
-    int substrand_idx = this.props.substrand_idx;
     Color color = props.color;
 
-    assert(0 < substrand_idx);
     var prev_ss = loopout.prev_substrand;
     var next_ss = loopout.next_substrand;
 
     var classname = 'substrand-line loopout-line';
-    if (loopout.selected()) {
+    if (props.selected) {
       classname += ' selected';
     }
-    if (app.model.ui_model.select_mode_state.modes.contains(SelectModeChoice.loopout)) {
+    if (props.selectable) {
       classname += ' selectable';
     }
 
@@ -66,7 +75,6 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { 
       // perhaps not implemented by Safari though:
       // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
       return (Dom.path()
-//        ..onMouseDown = loopout.handle_selection // use with mixin Selectable
         ..d = path
         ..stroke = color.toRgbColor().toCssString()
         ..onPointerDown = loopout.handle_selection
@@ -79,7 +87,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> { 
 
 ReactElement _hairpin_arc(
     BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname, Color color) {
-  var helix = app.model.dna_design.helices[prev_substrand.helix];
+  var helix = app.state.dna_design.helices[prev_substrand.helix];
   var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
 //  var strand = prev_substrand.strand;
@@ -106,7 +114,7 @@ ReactElement _hairpin_arc(
 
   String id = loopout.id();
   ReactElement arc = (Dom.path()
-  //FIXME: implement this
+    //FIXME: implement this
 //    ..onMouseDown = ((event) => event.ctrlKey ? Actions_OLD.loopout_select_toggle(loopout) : null)
     ..className = classname
     ..stroke = color.toRgbColor().toCssString()

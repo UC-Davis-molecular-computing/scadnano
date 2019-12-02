@@ -8,7 +8,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../app.dart';
 import '../model/mouseover_data.dart';
 import '../model/helix.dart';
@@ -24,12 +24,12 @@ const DEBUG_PRINT_MOUSEOVER = false;
 //const DEBUG_PRINT_MOUSEOVER = true;
 
 UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
-    connect<Model, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (model, props) {
-  Helix helix = model.dna_design.helices[props.helix_idx];
-  BuiltList<MouseoverData> mouseover_datas = model.ui_model.mouseover_datas;
+    connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
+  Helix helix = state.dna_design.helices[props.helix_idx];
+  BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
 //  print('ConnectedDesignMainMouseoverRectHelix connect');
-//  print('  model.ui_model.mouseover_datas: ${model.ui_model.mouseover_datas}');
-  bool show = model.ui_model.show_mouseover_rect;
+//  print('  model.ui_state.mouseover_datas: ${model.ui_model.mouseover_datas}');
+  bool show = state.ui_state.show_mouseover_rect;
   return DesignMainMouseoverRectHelix()
     ..helix = helix
     ..show = show
@@ -125,7 +125,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
   var mouseover_params = MouseoverParams(helix.idx, offset, forward);
 
   //FIXME
-  var dna_design = app.model.dna_design;
+  var dna_design = app.state.dna_design;
 
   if (needs_update(mouseover_params, mouseover_datas)) {
 //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');

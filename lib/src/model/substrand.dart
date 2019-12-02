@@ -19,15 +19,9 @@ abstract class Substrand implements JSONSerializable {
 
   bool is_bound_substrand() => !this.is_loopout();
 
-  @nullable
   String get dna_sequence;
 
-  set_dna_sequence(String seq);
+  Substrand set_dna_sequence(String seq);
 
-  /// Order this substrand appears in the Strand
-//  int order() => strand.substrands.indexOf(this);
-
-//  handle_actions();
-
-  register_selectables(SelectablesStore store);
+  toJson();
 }

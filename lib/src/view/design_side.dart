@@ -5,7 +5,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/model/selection_box.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../model/mouseover_data.dart';
 import 'design_side_helix.dart';
 import '../model/helix.dart';
@@ -20,15 +20,21 @@ part 'design_side.over_react.g.dart';
 // The react/redux stuff keeps going in the background even if we don't render it. To prevent a crash when
 // there is an error message to display instead of a DNADesign (since the components for DesignSide and DesignMain
 // are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when model has an error.
-UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<Model, DesignSideProps>(
-  mapStateToProps: (model) => (DesignSide()
-    ..helices = model.has_error() ? null : model.dna_design.helices
-    ..helix_idxs_selected = model.has_error() ? null : model.ui_model.side_selected_helix_idxs
-    ..mouseover_datas = model.has_error() ? null : model.ui_model.mouseover_datas
-//    ..mouse_svg_pos = model.has_error() ? null : model.ui_model.mouse_svg_pos_side_view
-    ..grid = model.has_error() ? null : model.dna_design.grid
-    ..grid_position_mouse_cursor = model.has_error() ? null : model.ui_model.side_view_grid_position_mouse_cursor
-    ..selection_box = model.has_error() ? null : model.ui_model.selection_box_side_view),
+UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideProps>(
+  mapStateToProps: (state) {
+    if (state.has_error()) {
+      return DesignSide();
+    } else {
+      return DesignSide()
+        ..helices = state.dna_design.helices
+        ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
+        ..mouseover_datas = state.ui_state.mouseover_datas
+//    ..mouse_svg_pos = odel.ui_model.mouse_svg_pos_side_view
+        ..grid = state.dna_design.grid
+        ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
+        ..selection_box = state.ui_state.selection_box_side_view;
+    }
+  },
 )(DesignSide);
 
 @Factory()
@@ -79,6 +85,8 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
 
+    num stroke_width = 2.0 / util.current_zoom_side();
+
     return (Dom.g()..className = 'side-view')([
       if (props.grid_position_mouse_cursor != null &&
           !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor))
@@ -93,7 +101,8 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
       if (selection_box != null)
         (SelectionBoxView()
           ..selection_box = selection_box
-          ..stroke_width = 2.0 / util.current_zoom_side()
+          ..stroke_width = stroke_width
+          ..id = 'selection-box-side'
           ..key = 'selection-box')(),
     ]);
   }

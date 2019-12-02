@@ -1,20 +1,31 @@
+import 'package:built_value/serializer.dart';
+
 import '../constants.dart' as constants;
+import '../serializers.dart';
 import '../util.dart' as util;
-import '../json_serializable.dart';
 import 'dna_design.dart';
 
 import 'package:built_value/built_value.dart';
 
 part 'idt_fields.g.dart';
 
-abstract class IDTFields implements Built<IDTFields, IDTFieldsBuilder> {
+abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, IDTFieldsBuilder> {
+  factory IDTFields(String name, String scale, String purification, {String plate = null, String well = null}) =>
+      IDTFields.from((b) => b
+        ..name = name
+        ..scale = scale
+        ..purification = purification
+        ..plate = plate
+        ..well = well);
+
+  factory IDTFields.from([void Function(IDTFieldsBuilder) updates]) = _$IDTFields;
+
   IDTFields._();
 
-  factory IDTFields([void Function(IDTFieldsBuilder) updates]) = _$IDTFields;
+  static Serializer<IDTFields> get serializer => _$iDTFieldsSerializer;
 
-//}
+  /************************ end BuiltValue boilerplate ************************/
 
-//class IDTFields implements JSONSerializable {
   String get name;
 
   String get scale;
@@ -26,8 +37,6 @@ abstract class IDTFields implements Built<IDTFields, IDTFieldsBuilder> {
 
   @nullable
   String get well;
-
-//  IDTFields(this.name, this.scale, this.purification);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {
@@ -64,11 +73,6 @@ abstract class IDTFields implements Built<IDTFields, IDTFieldsBuilder> {
       throw IllegalDNADesignError("cannot set IDTFields.plate to ${plate} when well is null\n"
           "this occurred when reading IDTFields entry:\n${json_map}");
     }
-    return new IDTFields((idt) => idt
-      ..name = name
-      ..scale = scale
-      ..purification = purification
-      ..plate = plate
-      ..well = well);
+    return new IDTFields(name, scale, purification, plate: plate, well: well);
   }
 }

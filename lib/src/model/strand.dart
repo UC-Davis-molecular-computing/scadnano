@@ -1,6 +1,8 @@
+import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/serializers.dart';
 
 import 'idt_fields.dart';
 import 'select_mode.dart';
@@ -21,6 +23,10 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   factory Strand([void Function(StrandBuilder) updates]) = _$Strand;
 
+  static Serializer<Strand> get serializer => _$strandSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color get color;
@@ -40,23 +46,11 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       if (substrands[i] is BoundSubstrand && substrands[i + 1] is BoundSubstrand) {
         BoundSubstrand prev_ss = substrands[i] as BoundSubstrand;
         BoundSubstrand next_ss = substrands[i + 1] as BoundSubstrand;
-        ret.add(Crossover((c) => c
-          ..prev_substrand = prev_ss.toBuilder()
-          ..next_substrand = next_ss.toBuilder()));
+        ret.add(Crossover(prev_ss, next_ss));
       }
     }
 
     return BuiltSet<Crossover>(ret);
-  }
-
-  register_selectables(SelectablesStore store) {
-    store.register(this);
-    for (var ss in substrands) {
-      ss.register_selectables(store);
-    }
-    for (var crossover in crossovers) {
-      crossover.register_selectables(store);
-    }
   }
 
   SelectModeChoice select_mode() => SelectModeChoice.strand;

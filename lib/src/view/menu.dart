@@ -6,15 +6,15 @@ import 'package:over_react/over_react_redux.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../model/model.dart';
-import '../model/ui_model.dart';
+import '../model/app_state.dart';
+import '../model/app_ui_state.dart';
 
 part 'menu.over_react.g.dart';
 
-UiFactory<MenuProps> ConnectedMenu = connect<Model, MenuProps>(
-  mapStateToProps: (model) => (Menu()
-    ..show_dna = model.ui_model.show_dna
-    ..show_mismatches = model.ui_model.show_mismatches),
+UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
+  mapStateToProps: (state) => (Menu()
+    ..show_dna = state.ui_state.show_dna
+    ..show_mismatches = state.ui_state.show_mismatches),
 )(Menu);
 
 @Factory()
@@ -53,7 +53,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
       //XXX: I like to keep this button around to simulate random things that require user interaction
       (Dom.button()
         ..onClick = (_) {
-          print('app.model.ui_model.side_selected_helices: ${app.model.ui_model.side_selected_helix_idxs}');
+          print('app.model.ui_model.side_selected_helices: ${app.state.ui_state.side_selected_helix_idxs}');
         }
         ..key = 'dummy'
         ..className = 'dummy-button menu-item')('Dummy'),
@@ -155,7 +155,8 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
   assert(files.isNotEmpty);
   File file = files[0];
 
-  var basefilename = path.basenameWithoutExtension(file.name);
+//  var basefilename = path.basenameWithoutExtension(file.name);
+  var basefilename = path.basename(file.name);
 
   FileReader file_reader = new FileReader();
   //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,

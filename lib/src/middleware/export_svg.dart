@@ -5,11 +5,11 @@ import 'package:redux/redux.dart';
 
 import '../app.dart';
 import '../view/view.dart';
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
-export_svg_main_middleware(Store<Model> store, dynamic action, NextDispatcher next) {
+export_svg_main_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.ExportSvgMain) {
     var main = document.getElementById("main-view-svg");
     _export_from_element(main, 'design');
@@ -18,7 +18,7 @@ export_svg_main_middleware(Store<Model> store, dynamic action, NextDispatcher ne
   }
 }
 
-export_svg_side_middleware(Store<Model> store, dynamic action, NextDispatcher next) {
+export_svg_side_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.ExportSvgSide) {
     var side = document.getElementById("side-view-svg");
     _export_from_element(side, 'cross-section');
@@ -47,7 +47,7 @@ _export_from_element(svg.SvgSvgElement svg_element, String filename_append) {
 //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
 
   String blob_type = "data:image/svg+xml;charset=utf-8,";
-  String filename = app.model.ui_model.loaded_filename;
+  String filename = app.state.ui_state.loaded_filename;
   filename = filename.substring(0, filename.lastIndexOf('.'));
   filename += '_${filename_append}.svg';
 

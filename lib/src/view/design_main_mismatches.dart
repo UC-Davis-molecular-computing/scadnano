@@ -13,15 +13,23 @@ part 'design_main_mismatches.over_react.g.dart';
 UiFactory<DesignMainMismatchesProps> DesignMainMismatches = _$DesignMainMismatches;
 
 @Props()
-class _$DesignMainMismatchesProps extends UiProps { //FluxUiProps<MismatchesStore, MismatchesStore> {
+class _$DesignMainMismatchesProps extends UiProps {
   bool show_mismatches;
   BuiltList<Strand> strands;
 }
 
 @Component2()
-class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> { // FluxUiComponent<DesignMainMismatchesProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
+class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> {
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    bool show_mismatches = nextProps['DesignMainMismatchesProps.show_mismatches'];
+    if (!show_mismatches && !props.show_mismatches) {
+      // even if strands are updated, don't bother rendering if we aren't showing mismatches previously or now
+      return false;
+    }
+    BuiltList<Strand> strands = nextProps['DesignMainMismatchesProps.strands'];
+    return !(show_mismatches == props.show_mismatches && strands == props.strands);
+  }
 
   @override
   render() {
@@ -41,9 +49,10 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
     Set<String> keys = {};
     for (Strand strand in strands) {
       for (BoundSubstrand substrand in strand.bound_substrands()) {
-        BuiltList<Mismatch> mismatches = app.model.dna_design.mismatches_on_substrand(substrand);
+        BuiltList<Mismatch> mismatches = app.state.dna_design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
-          var helix = app.model.dna_design.helices[substrand.helix];
+          //FIXME: don't access global variable
+          var helix = app.state.dna_design.helices[substrand.helix];
           var base_svg_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
           // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,
           // not for a specific base. We maintain React keys to agree on any mismatches in the same

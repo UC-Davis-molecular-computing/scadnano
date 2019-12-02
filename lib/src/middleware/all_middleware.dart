@@ -2,13 +2,13 @@ import 'package:redux/redux.dart';
 
 import 'load_file.dart';
 import 'save_file.dart';
-import '../model/model.dart';
+import '../model/app_state.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
 import 'throttle.dart';
 import 'thunk.dart';
 
-final all_middleware = List<Middleware<Model>>.unmodifiable([
+final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
   export_svg_main_middleware,
   export_svg_side_middleware,

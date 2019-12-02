@@ -1,7 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../model/select_mode.dart';
 import '../model/select_mode_state.dart';
@@ -10,8 +10,8 @@ part 'select_mode.over_react.g.dart';
 
 //TODO: check if design is a OrigamiDNADesign; if not, don't display scaffold/staple select modes
 
-UiFactory<SelectModeProps> ConnectedSelectMode = connect<Model, SelectModeProps>(
-  mapStateToProps: (model) => (SelectMode()..select_mode_state = model.ui_model.select_mode_state),
+UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(
+  mapStateToProps: (state) => (SelectMode()..select_mode_state = state.ui_state.select_mode_state),
 //  mapDispatchToProps: (dispatch) => (SelectMode()
 //    ..toggle_select_mode = (SelectModeChoice mode) {
 //      dispatch(Actions.toggle_select_mode());
@@ -23,7 +23,6 @@ UiFactory<SelectModeProps> SelectMode = _$SelectMode;
 
 @Props()
 class _$SelectModeProps extends UiProps with ConnectPropsMixin {
-  // FluxUiProps<SelectModeStore, SelectModeStore> {
   SelectModeState select_mode_state;
   void Function(SelectModeChoice mode) toggle_select_mode;
 }

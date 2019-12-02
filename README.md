@@ -40,7 +40,7 @@ If Ctrl is pressed, then the object selections are toggled (i.e., unselected if 
 
 * h: In the side view, this allows one to add or remove helices by left-clicking.
 
-* Esc: If helices are selected, this unselects all of them.
+* Esc: If helices are selected, this unselects all of them. Note that unlike other interactive applications, items are not deselected when you left-click elsewhere. This helps to avoid accidentally unselecting many items when using the cursor for other tasks such as panning.
 
 
 ## Exporting SVG

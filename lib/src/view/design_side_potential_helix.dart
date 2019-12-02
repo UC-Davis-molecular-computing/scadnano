@@ -65,7 +65,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       throw UnsupportedError('clicking to create helices off-grid not yet supported');
     }
 
-    int idx = app.model.dna_design.helices.length;
+    int idx = app.state.dna_design.helices.length;
     int max_offset = constants.default_max_offset;
     var params = HelixUseActionParameters(true, grid_pos, idx, max_offset);
     var helix_use_action_pack = HelixUseActionPack(params);

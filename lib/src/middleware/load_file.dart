@@ -3,11 +3,13 @@ import 'dart:html';
 import 'package:redux/redux.dart';
 
 import '../actions/actions.dart' as actions;
-import '../model/model.dart';
+import '../app.dart';
+import '../model/app_state.dart';
 
-Model load_file_middleware(Store<Model> store, dynamic action, NextDispatcher next) {
+AppState load_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.LoadDNAFile) {
     document.title = action.filename;
+    app.view.design_view.render(store.state);
   }
 }

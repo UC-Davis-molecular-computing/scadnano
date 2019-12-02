@@ -5,11 +5,10 @@ import 'dart:html';
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/select_mode_state.dart';
+import 'package:over_react/over_react_redux.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import 'design.dart';
 import 'edit_mode.dart';
 import 'select_mode.dart';
@@ -63,7 +62,7 @@ class View {
   bool currently_showing_editor;
 
   View(this.root_element) {
-    currently_showing_editor = app.model.ui_model.show_editor;
+    currently_showing_editor = app.state.ui_state.show_editor;
 
     this.root_element.children.add(menu_element);
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
@@ -90,7 +89,7 @@ class View {
 //    this.render();
   }
 
-  render(Model model) {
+  render(AppState state) {
 //    this.update_showing_editor();
 
     react_dom.render(
@@ -102,7 +101,7 @@ class View {
       this.menu_element,
     );
 
-    this.design_view.render(model);
+    this.design_view.render(state);
 
 //    react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
 

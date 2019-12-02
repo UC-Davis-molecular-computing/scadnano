@@ -4,16 +4,17 @@ import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
 import '../app.dart';
-import '../actions/actions_OLD.dart';
+import '../actions/actions.dart' as actions;
+import 'bound_substrand.dart';
+import 'dna_design.dart';
+import 'loopout.dart';
 import 'select_mode.dart';
-
 
 part 'selectable.g.dart';
 
 final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
   ..selectables_by_id = MapBuilder<String, Selectable>()
   ..selected_items = SetBuilder<Selectable>();
-
 
 abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
   SelectablesStore._();
@@ -30,12 +31,47 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
 
   /// Registers unique ID of this Selectable so it can be reconciled with View component with same HTML id.
   SelectablesStore register(Selectable selectable) {
-    String id = selectable.id();
-//    selectables_by_id[id] = selectable;
     var selectables_by_id_builder = selectables_by_id.toBuilder();
+    String id = selectable.id();
     selectables_by_id_builder[id] = selectable;
     return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
   }
+
+  SelectablesStore register_all(Iterable<Selectable> selectables) {
+    var selectables_by_id_builder = selectables_by_id.toBuilder();
+    for (var selectable in selectables) {
+      String id = selectable.id();
+      selectables_by_id_builder[id] = selectable;
+    }
+    var new_selectables_by_id = selectables_by_id_builder.build();
+//    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
+    var new_store = this.rebuild((s) => s..selectables_by_id.replace(new_selectables_by_id));
+    return new_store;
+  }
+
+  SelectablesStore register_dna_design(DNADesign design) {
+    List<Selectable> selectables = [];
+    for (var strand in design.strands) {
+      selectables.add(strand);
+      for (var substrand in strand.substrands) {
+        if (substrand is Loopout) {
+          selectables.add(substrand);
+        } else
+          if (substrand is BoundSubstrand) {
+          selectables.add(substrand.dnaend_start);
+          selectables.add(substrand.dnaend_end);
+        }
+      }
+      for (var crossover in strand.crossovers) {
+        selectables.add(crossover);
+      }
+    }
+    return register_all(selectables);
+  }
+
+  bool get isEmpty => selected_items.isEmpty;
+
+  bool get isNotEmpty => selected_items.isNotEmpty;
 
 //  handle_actions() {
 //    triggerOnActionV2(Actions.select, (obj) => select(obj));
@@ -126,16 +162,14 @@ mixin Selectable {
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
   handle_selection(event) {
-    if (app.model.ui_model.select_mode_state.is_selectable(this)) {
+    if (app.state.ui_state.select_mode_state.is_selectable(this)) {
       if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
-        Actions_OLD.toggle(this);
+        app.store.dispatch(actions.Select(this, true));
       } else if (event.nativeEvent.shiftKey) {
-        Actions_OLD.select(this);
+        app.store.dispatch(actions.Select(this, false));
       }
     }
   }
-
-  bool selected() => app.model.ui_model.selectables_store.selected(this);
 
 //  bool selected_field = false;
 

@@ -4,10 +4,13 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
+import 'package:scadnano/src/model/loopout.dart';
 
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
+import 'selectable.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'helix.dart';
@@ -18,6 +21,9 @@ import 'substrand.dart';
 import '../actions/actions.dart' as actions;
 
 part 'dna_design.g.dart';
+
+//TODO: create mismatches field in DNADesign that can be accessed directly by DesignMainMismatches instead of
+// going through list of all Strands
 
 //TODO: support Boolean field Strand.circular and draw crossover from last substrand to first.
 
@@ -31,13 +37,16 @@ part 'dna_design.g.dart';
 
 //TODO: export SVG
 
-/// Represents parts of the Model to serialize
 abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
   DNADesign._();
 
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
-    ..grid = Grid.none);
+    ..grid = Grid.square
+    ..helices.replace(BuiltList<Helix>())
+    ..strands.replace(BuiltList<Strand>()));
+
+  /****************************** end built_value boilerplate ******************************/
 
   String get version;
 
@@ -124,12 +133,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 ////        remove_strands(params.strands);
 ////      }
 ////    });
-//  }
-
-//  register_selectables() {
-//    for (var strand in strands) {
-//      strand.register_selectables(selectable_store);
-//    }
 //  }
 
   static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
@@ -743,12 +746,7 @@ int _wc(int code_unit) {
 class IllegalDNADesignError implements Exception {
   String cause;
 
-  IllegalDNADesignError(String the_cause) {
-    this.cause = '**********************\n'
-            '* illegal DNA design *\n'
-            '**********************\n\n' +
-        the_cause;
-  }
+  IllegalDNADesignError(this.cause);
 }
 
 class StrandError extends IllegalDNADesignError {

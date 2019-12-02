@@ -20,9 +20,7 @@ import '../built_intern.dart';
 
 part 'bound_substrand.g.dart';
 
-abstract class Insertion
-    with BuiltJsonSerializable
-    implements Built<Insertion, InsertionBuilder>, JSONSerializable {
+abstract class Insertion with BuiltJsonSerializable implements Built<Insertion, InsertionBuilder>, JSONSerializable {
   int get offset;
 
   int get length;
@@ -48,7 +46,7 @@ abstract class Insertion
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
 /// BoundSubstrand that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
-abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
+abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
   BoundSubstrand._();
 
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
@@ -86,20 +84,12 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
   bool get is_last;
 
   @memoized
-  DNAEnd get dnaend_start => DNAEnd((e) => e
-    ..is_5p = forward
-    ..offset = start
-    ..substrand_is_first = is_first
-    ..substrand_is_last = is_last
-    ..substrand_id = id());
+  DNAEnd get dnaend_start => DNAEnd(
+      is_5p: forward, offset: start, substrand_is_first: is_first, substrand_is_last: is_last, substrand_id: id());
 
   @memoized
-  DNAEnd get dnaend_end => DNAEnd((e) => e
-    ..is_5p = !forward
-    ..offset = end
-    ..substrand_is_first = is_first
-    ..substrand_is_last = is_last
-    ..substrand_id = id());
+  DNAEnd get dnaend_end => DNAEnd(
+      is_5p: !forward, offset: end, substrand_is_first: is_first, substrand_is_last: is_last, substrand_id: id());
 
   BoundSubstrand set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
@@ -125,11 +115,6 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
 
   String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
-  register_selectables(SelectablesStore store) {
-    store.register(dnaend_end);
-    store.register(dnaend_start);
-  }
-
   dynamic to_json_serializable({bool suppress_indent = false}) {
     var json_map = {
       constants.helix_idx_key: this.helix,
@@ -142,9 +127,8 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(this
-          .insertions
-          .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
+      json_map[constants.insertions_key] = List<dynamic>.from(
+          this.insertions.map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
 
     return suppress_indent ? NoIndent(json_map) : json_map;
@@ -161,8 +145,7 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
 //    List<Tuple2<int, int>> insertions =
 //        json_map.containsKey(constants.insertions_key) ? parse_json_insertions(json_map[constants.insertions_key]) : [];
     var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
-    var insertions =
-        parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
+    var insertions = parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
     return BoundSubstrandBuilder()
       ..forward = forward
@@ -323,9 +306,7 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
   }
 
   bool overlaps(BoundSubstrand other) {
-    return (this.helix == other.helix &&
-        this.forward == (!other.forward) &&
-        this.compute_overlap(other).item1 >= 0);
+    return (this.helix == other.helix && this.forward == (!other.forward) && this.compute_overlap(other).item1 >= 0);
   }
 
   Tuple2<int, int> compute_overlap(BoundSubstrand other) {
@@ -347,16 +328,16 @@ abstract class BoundSubstrand implements Built<BoundSubstrand, BoundSubstrandBui
     return false;
   }
 
-  bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner, DNAEnd dna_end) {
-    Helix helix = app.model.dna_design.helices[this.helix];
-    int offset = dna_end == dnaend_5p ? offset_5p : offset_3p;
-    Point<num> end_point = helix.svg_base_pos(offset, forward);
-
-    return upper_left_corner.x <= end_point.x &&
-        end_point.x <= lower_right_corner.x &&
-        upper_left_corner.y <= end_point.y &&
-        end_point.y <= lower_right_corner.y;
-  }
+//  bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner, DNAEnd dna_end) {
+//    Helix helix = app.state.dna_design.helices[this.helix];
+//    int offset = dna_end == dnaend_5p ? offset_5p : offset_3p;
+//    Point<num> end_point = helix.svg_base_pos(offset, forward);
+//
+//    return upper_left_corner.x <= end_point.x &&
+//        end_point.x <= lower_right_corner.x &&
+//        upper_left_corner.y <= end_point.y &&
+//        end_point.y <= lower_right_corner.y;
+//  }
 
   /// Return DNA sequence of this Substrand in the interval of offsets given by
   //  [`left`, `right`], INCLUSIVE.

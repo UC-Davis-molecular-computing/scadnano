@@ -31,13 +31,8 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   Point<num> get start; // starting coordinate of drag
   Point<num> get current; // current coordinate of drag
-//  bool get displayed; // currently dragging?
   bool get toggling; // toggling if Ctrl pressed, otherwise selecting
   bool get selecting => !toggling;
-
-//  SvgSvgElement parent_svg_elt;
-
-//  Set<Selectable> selectedables_selected_at_start = {};
 
   num get x => min(start.x, current.x);
 
@@ -47,19 +42,20 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   num get height => (start.y - current.y).abs();
 
-//  SelectionBox start_selection(Point<num> point, bool toggling) => rebuild((s) => s
-//    ..start = point
-//    ..toggling = toggling
-//    ..current = start
-//    ..displayed = true);
-
-  static const DECIMAL_PLACES = 0;
+  static const DECIMAL_PLACES = 1;
 
   static rectToString(Rect bbox) => ''
       '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
+
+  String toString() => 'start=('
+      '${x.toStringAsFixed(DECIMAL_PLACES)}, '
+      '${y.toStringAsFixed(DECIMAL_PLACES)})'
+      '  current=('
+      '${width.toStringAsFixed(DECIMAL_PLACES)}, '
+      '${height.toStringAsFixed(DECIMAL_PLACES)})';
 
   //TODO: update this code to handle side view or main view, and call it from view/design.dart when drag ends
   //XXX: in principle this should be updateable every time the mouse moves and the selection box changes,
@@ -85,7 +81,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
     Rect select_box_bbox = select_box.getBBox();
 //    util.transform_rect_svg_to_mouse_coord_main_view(select_box_bbox);
 
-    var selectables_by_id = app.model.ui_model.selectables_store.selectables_by_id;
+    var selectables_by_id = app.state.ui_state.selectables_store.selectables_by_id;
 
 //    var elts_all = parent_svg_elt.getEnclosureList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
@@ -110,7 +106,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
     List<Selectable> overlapping_now_select_mode_enabled = [];
     for (var obj in overlapping_now) {
 //      print('obj: $obj');
-      if (app.model.ui_model.select_mode_state.is_selectable(obj)) {
+      if (app.state.ui_state.select_mode_state.is_selectable(obj)) {
         overlapping_now_select_mode_enabled.add(obj);
       }
     }

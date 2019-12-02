@@ -1,34 +1,36 @@
 @JS()
 library app;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:js/js.dart';
-import 'package:js/js_util.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:scadnano/src/model/app_ui_state.dart';
 
 import 'package:scadnano/src/model/bound_substrand.dart';
 import 'model/dna_design.dart';
-import 'model/model.dart';
-
+import 'model/app_state.dart';
 import 'util.dart' as util;
 import 'model/undo_redo.dart';
 import 'view/view.dart';
-import 'reducers/model_reducer.dart';
+import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'actions/actions.dart' as actions;
 
+//TODO: allow a "movie" file format, which is simply a list of several DNADesigns, and buttons to step through them
+
+//TODO: once this is a proper "web" app, add ability to let people share designs via URL, similarly to codepen
+
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -64,7 +66,7 @@ test_stuff() async {
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
-  Model get model => store.state;
+  AppState get state => store.state;
   View view;
 
   Store store;
@@ -91,18 +93,18 @@ class App {
       restore_all_local_storage();
       this.setup_warning_before_unload();
 
-      make_dart_functions_available_to_js(model);
+      make_dart_functions_available_to_js(state);
 
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
 
-      this.view.render(model);
+      this.view.render(state);
     }
   }
 
   initialize_model() async {
-    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
-//    String filename_in_directory = '16_helix_origami_rectangle.dna';
+//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
+    String filename_in_directory = '16_helix_origami_rectangle.dna';
 //    String filename_in_directory = '1_staple_1_helix_origami.dna';
 //    String filename_in_directory = '6_helix_bundle_honeycomb.dna';
 //    String filename_in_directory = '6_helix_origami_rectangle.dna';
@@ -126,15 +128,17 @@ class App {
 //    String initial_editor_content = await util.file_content(filename);
     String initial_editor_content = "";
 
-    Model model;
+    AppState state;
 
     if (error_message == null) {
-      model = (DEFAULT_ModelBuilder
+      var ui_state = AppUIState.from_dna_design(dna_design);
+      state = (DEFAULT_AppStateBuilder
             ..dna_design.replace(dna_design)
+            ..ui_state.replace(ui_state)
             ..editor_content = initial_editor_content)
           .build();
     } else {
-      model = (DEFAULT_ModelBuilder
+      state = (DEFAULT_AppStateBuilder
             ..error_message = error_message
             ..editor_content = initial_editor_content)
           .build();
@@ -142,21 +146,21 @@ class App {
 
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
-      store = DevToolsStore<Model>(model_reducer, initialState: model, middleware: middleware_plus);
+      store = DevToolsStore<AppState>(app_state_reducer, initialState: state, middleware: middleware_plus);
     } else {
-      store = Store<Model>(model_reducer, initialState: model, middleware: all_middleware);
+      store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
     }
 
-    void thunk_action(Store<Model> store) async {
-//      print('thunk_action dispatched');
-      final String searchResults = await new Future.delayed(
-        new Duration(seconds: 1),
-            () => "Search Results",
-      );
-      store.dispatch(searchResults);
-    }
-
-    store.dispatch(thunk_action);
+//    void thunk_action(Store<AppState> store) async {
+////      print('thunk_action dispatched');
+//      final String searchResults = await new Future.delayed(
+//        new Duration(seconds: 1),
+//        () => "Search Results",
+//      );
+//      store.dispatch(searchResults);
+//    }
+//
+//    store.dispatch(thunk_action);
   }
 
   setup_warning_before_unload() {
@@ -168,8 +172,8 @@ class App {
     });
   }
 
-  make_dart_functions_available_to_js(Model model) {
-    util.make_dart_function_available_to_js('dart_allow_pan', model.allow_main_view_pan);
+  make_dart_functions_available_to_js(AppState model) {
+//    util.make_dart_function_available_to_js('dart_allow_pan', model.allow_main_view_pan);
   }
 }
 
@@ -183,13 +187,13 @@ setup_undo_redo_keyboard_listeners() {
 
     // ctrl+Z to undo
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
-      if (app.model.undo_redo.undo_stack.isNotEmpty) {
+      if (app.state.undo_redo.undo_stack.isNotEmpty) {
         app.store.dispatch(actions.Undo());
       }
     }
     // shift+ctrl+Z to redo
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
-      if (app.model.undo_redo.redo_stack.isNotEmpty) {
+      if (app.state.undo_redo.redo_stack.isNotEmpty) {
         app.store.dispatch(actions.Redo());
       }
     }

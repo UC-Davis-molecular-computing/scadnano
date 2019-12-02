@@ -7,7 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:tuple/tuple.dart';
 
-import '../model/model.dart';
+import '../model/app_state.dart';
 import '../app.dart';
 import '../model/strand.dart';
 import '../model/bound_substrand.dart';
@@ -18,9 +18,9 @@ import '../util.dart' as util;
 part 'design_main_dna_sequence.over_react.g.dart';
 
 UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
-    connect<Model, DesignMainDNASequenceProps>(
-  mapStateToProps: (model) =>
-      (DesignMainDNASequence()..side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs),
+    connect<AppState, DesignMainDNASequenceProps>(
+  mapStateToProps: (state) =>
+      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
 )(DesignMainDNASequence);
 
 @Factory()
@@ -77,7 +77,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    var helix = app.model.dna_design.helices[substrand.helix];
+    var helix = app.state.dna_design.helices[substrand.helix];
     Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
