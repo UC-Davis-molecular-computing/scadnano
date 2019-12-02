@@ -1,18 +1,22 @@
-import 'dart:convert';
-
 import 'package:redux/redux.dart';
-import 'package:built_collection/built_collection.dart';
 
-import '../model/dna_design.dart';
-import 'ui_model_reducer.dart';
+import 'app_ui_state_reducer.dart';
 import 'dna_design_reducer.dart';
-import '../app.dart';
 import 'undo_redo_reducer.dart';
 import '../actions/actions.dart' as actions;
-import '../model/model.dart';
-import '../model/undo_redo.dart';
+import '../model/app_state.dart';
+import 'load_dna_file_reducer.dart';
+import '../util.dart' as util;
 
-Model model_reducer(Model model, action) {
+AppState app_state_reducer(AppState model, action) {
+//  if (action is actions.MainViewSelectionBoxSizeChanged) {
+//    var selection_box = model.ui_state.selection_box_main_view;
+//    selection_box = selection_box
+//        .rebuild((s) => s..current = action.point);
+//    var new_model = model.rebuild((m) => m..ui_state.selection_box_main_view.replace(selection_box));
+//    return new_model;
+//  }
+
   // If wrapped in SkipUndo, unpack it and remember undoable_action_reducer shouldn't push onto undo stack.
   bool modify_undo_redo_stacks = true;
   if (action is actions.SkipUndo) {
@@ -37,15 +41,14 @@ Model model_reducer(Model model, action) {
   // "local" reducers can operate on one slice of the model and need only read that same slice
   model = model.rebuild((m) => m
     ..dna_design.replace(dna_design_reducer(model.dna_design, action))
-    ..ui_model.replace(ui_model_reducer(model.ui_model, action))
-    ..error_message =
-        TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(model.error_message, action)
+    ..ui_state.replace(ui_state_reducer(model.ui_state, action))
+    ..error_message = TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(model.error_message, action)
     ..editor_content = editor_content_reducer(model.editor_content, action));
 
   // "global" reducers operate on a slice of the model but need another part of the model
   // we pass the "old" parts of the model, since we don't want dispatcher to assume they will be applied
   // in a certain order. For consistency, everyone gets the version of the model before any action was applied.
-  model = model.rebuild((m) => m..ui_model.replace(ui_model_global_reducer(model.ui_model, model, action)));
+  model = model.rebuild((m) => m..ui_state.replace(ui_state_global_reducer(model.ui_state, model, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
   // So we set a variable telling the Undo reducer not to put anything on the stack for any of these atomic actions.
@@ -53,7 +56,7 @@ Model model_reducer(Model model, action) {
   // This seems like it belongs in undo_redo_reducer, but the logic was tricky to handle, so we make a special case.
   if (action is actions.BatchAction) {
     for (actions.UndoableAction atomic_action in action.actions) {
-      model = model_reducer(model, actions.SkipUndo(atomic_action));
+      model = app_state_reducer(model, actions.SkipUndo(atomic_action));
     }
   }
 
@@ -63,47 +66,6 @@ Model model_reducer(Model model, action) {
   }
 
   return model;
-}
-
-Model load_dna_file_reducer(Model model, actions.LoadDNAFile action) {
-  Map<String, dynamic> map = jsonDecode(action.content);
-  DNADesign dna_design_new;
-  String error_message;
-  try {
-    dna_design_new = DNADesign.from_json(map);
-  } on IllegalDNADesignError catch (error) {
-    error_message = error.cause;
-  }
-
-  Model new_model;
-  if (error_message != null) {
-    new_model = model.rebuild((m) => m
-      ..undo_redo.replace(UndoRedo())
-      ..dna_design = null
-      ..ui_model.changed_since_last_save = false
-      ..error_message = error_message);
-  } else if (dna_design_new != null) {
-    // remove selected helices from
-    BuiltSet<int> side_selected_helix_idxs = model.ui_model.side_selected_helix_idxs;
-    if (model.dna_design != null && dna_design_new.helices.length < model.dna_design.helices.length) {
-      side_selected_helix_idxs = side_selected_helix_idxs
-          .rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
-    }
-    new_model = model.rebuild((m) => m
-      ..undo_redo.replace(UndoRedo())
-      ..dna_design = dna_design_new.toBuilder()
-      ..ui_model.update((u) => u
-        ..changed_since_last_save = false
-        ..loaded_filename = action.filename
-        ..side_selected_helix_idxs.replace(side_selected_helix_idxs))
-      ..error_message = "");
-  } else {
-    throw AssertionError("This line should be unreachable");
-  }
-
-  app.view.design_view.render(new_model);
-
-  return new_model;
 }
 
 ////TODO: this shouldn't have a side effect; instead we should use "middleware", I think?

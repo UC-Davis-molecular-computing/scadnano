@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/serializers.dart';
 
+import 'dna_design.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -12,12 +14,11 @@ import 'selectable.dart';
 
 import 'selection_box.dart';
 
-part 'ui_model.g.dart';
+part 'app_ui_state.g.dart';
 
-final DEFAULT_UIModelBuilder = UIModelBuilder()
+final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
-  ..dragging = false
   ..mouseover_datas = ListBuilder<MouseoverData>()
   ..selection_box_main_view = null
   ..selection_box_side_view = null
@@ -31,13 +32,21 @@ final DEFAULT_UIModelBuilder = UIModelBuilder()
   ..side_view_grid_position_mouse_cursor = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
-abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIModelBuilder> {
-  UIModel._();
+final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
-  factory UIModel([void Function(UIModelBuilder) updates]) =>
-      _$UIModel((u) => u..replace(DEFAULT_UIModelBuilder.build()));
+abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState, AppUIStateBuilder> {
+  AppUIState._();
 
-  static Serializer<UIModel> get serializer => _$uIModelSerializer;
+  factory AppUIState.from_dna_design(DNADesign design) {
+    var selectables_store = SelectablesStore();
+    selectables_store = selectables_store.register_dna_design(design);
+    return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
+  }
+
+  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
+      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
+
+  static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -59,8 +68,6 @@ abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIMo
 
   bool get show_mouseover_rect;
 
-  bool get dragging;
-
   @nullable
   SelectionBox get selection_box_main_view;
 
@@ -80,7 +87,6 @@ abstract class UIModel with BuiltJsonSerializable implements Built<UIModel, UIMo
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
 
-  bool allow_pan() => dragging;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';
