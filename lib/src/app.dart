@@ -103,9 +103,9 @@ class App {
   }
 
   initialize_model() async {
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
+    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
 //    String filename_in_directory = '16_helix_origami_rectangle.dna';
-    String filename_in_directory = '16_helix_origami_barrel_from_algoSST_paper-rotator.dna';
+//    String filename_in_directory = '16_helix_origami_barrel_from_algoSST_paper-rotator.dna';
 //    String filename_in_directory = '1_staple_1_helix_origami.dna';
 //    String filename_in_directory = '6_helix_bundle_honeycomb.dna';
 //    String filename_in_directory = '6_helix_origami_rectangle.dna';

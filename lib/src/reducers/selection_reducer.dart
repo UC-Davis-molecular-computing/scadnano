@@ -110,7 +110,8 @@ SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
   return store;
 }
 
-SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) => store.clear();
+SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
+    store.clear();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer
@@ -185,76 +186,56 @@ BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.Heli
 // side view selection box reducer
 
 Reducer<SelectionBox> side_view_selection_box_reducer = combineReducers([
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxRemove>(side_view_selection_box_remove_reducer),
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxSizeChanged>(side_view_selection_box_size_changed_reducer),
   TypedReducer<SelectionBox, actions.SideViewSelectionBoxCreateToggling>(
       side_view_selection_box_create_toggling_reducer),
   TypedReducer<SelectionBox, actions.SideViewSelectionBoxCreateSelecting>(
       side_view_selection_box_create_selecting_reducer),
+  TypedReducer<SelectionBox, actions.SideViewSelectionBoxSizeChanged>(
+      side_view_selection_box_size_changed_reducer),
+  TypedReducer<SelectionBox, actions.SideViewSelectionBoxRemove>(side_view_selection_box_remove_reducer),
 ]);
 
-SelectionBox side_view_selection_box_remove_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxRemove action) =>
-    null;
-
-SelectionBox side_view_selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxSizeChanged action) {
-  var ret = selection_box.rebuild((s) => s..current = action.point);
-//  print('side_view_selection_box_size_changed_reducer: ret = $ret');
-  return ret;
-}
-//=>
-//    selection_box.rebuild((s) => s..current = action.point);
-
 SelectionBox side_view_selection_box_create_selecting_reducer(
-    SelectionBox selection_box, actions.SideViewSelectionBoxCreateSelecting action) {
-  var ret = SelectionBox(action.point, false);
-//  print('side_view_selection_box_create_selecting_reducer: ret = $ret');
-  return ret;
-}
-//=>
-//    SelectionBox(action.point, false);
+        SelectionBox selection_box, actions.SideViewSelectionBoxCreateSelecting action) =>
+    SelectionBox(action.point, false);
 
 SelectionBox side_view_selection_box_create_toggling_reducer(
         SelectionBox selection_box, actions.SideViewSelectionBoxCreateToggling action) =>
     SelectionBox(action.point, true);
 
+SelectionBox side_view_selection_box_size_changed_reducer(
+        SelectionBox selection_box, actions.SideViewSelectionBoxSizeChanged action) =>
+    selection_box.rebuild((s) => s..current = action.point);
+
+SelectionBox side_view_selection_box_remove_reducer(
+        SelectionBox selection_box, actions.SideViewSelectionBoxRemove action) =>
+    null;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // main view selection box reducer
 
 Reducer<SelectionBox> main_view_selection_box_reducer = combineReducers([
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxRemove>(main_view_selection_box_remove_reducer),
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxSizeChanged>(main_view_selection_box_size_changed_reducer),
   TypedReducer<SelectionBox, actions.MainViewSelectionBoxCreateToggling>(
       main_view_selection_box_create_toggling_reducer),
   TypedReducer<SelectionBox, actions.MainViewSelectionBoxCreateSelecting>(
       main_view_selection_box_create_selecting_reducer),
+  TypedReducer<SelectionBox, actions.MainViewSelectionBoxSizeChanged>(
+      main_view_selection_box_size_changed_reducer),
+  TypedReducer<SelectionBox, actions.MainViewSelectionBoxRemove>(main_view_selection_box_remove_reducer),
 ]);
 
-SelectionBox main_view_selection_box_remove_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxRemove action) =>
-    null;
-
-SelectionBox main_view_selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxSizeChanged action) {
-  var ret = selection_box.rebuild((s) => s..current = action.point);
-//  print('main_view_selection_box_size_changed_reducer: ret = $ret');
-  return ret;
-}
-//=>
-//    selection_box.rebuild((s) => s..current = action.point);
-//selection_box.rebuild((s) => s..current = util.transform_mouse_coord_to_svg_current_panzoom(action.point, true));
-
 SelectionBox main_view_selection_box_create_selecting_reducer(
-    SelectionBox selection_box, actions.MainViewSelectionBoxCreateSelecting action) {
-  var ret = SelectionBox(action.point, false);
-//  print('main_view_selection_box_create_selecting_reducer: ret = $ret');
-  return ret;
-}
-
-//=>
-//    SelectionBox(action.point, false);
+        SelectionBox selection_box, actions.MainViewSelectionBoxCreateSelecting action) =>
+    SelectionBox(action.point, false);
 
 SelectionBox main_view_selection_box_create_toggling_reducer(
         SelectionBox selection_box, actions.MainViewSelectionBoxCreateToggling action) =>
     SelectionBox(action.point, true);
+
+SelectionBox main_view_selection_box_size_changed_reducer(
+        SelectionBox selection_box, actions.MainViewSelectionBoxSizeChanged action) =>
+    selection_box.rebuild((s) => s..current = action.point);
+
+SelectionBox main_view_selection_box_remove_reducer(
+        SelectionBox selection_box, actions.MainViewSelectionBoxRemove action) =>
+    null;
