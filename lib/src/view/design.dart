@@ -62,7 +62,8 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()
+      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -229,18 +230,15 @@ class DesignViewComponent {
     });
   }
 
-  uninstall_draggable(bool main_view, DraggableComponent draggable_component) {
+  uninstall_draggable(bool is_main_view, DraggableComponent draggable_component) {
     if (draggables[draggable_component] != null) {
       draggables[draggable_component].destroy();
       draggables[draggable_component] = null;
       // class .dnd-drag-occurring not removed if Shift or Ctrl key depressed while mouse is lifted,
       // so we need to remove it manually just in case
       document.body.classes.remove('dnd-drag-occurring');
-//      if (app.model.ui_model.selection_box_store.displayed) {
-      if (!main_view && app.state.ui_state.selection_box_side_view != null) {
-        app.store.dispatch(actions.SideViewSelectionBoxRemove());
-      } else if (main_view && app.state.ui_state.selection_box_main_view != null) {
-        app.store.dispatch(actions.MainViewSelectionBoxRemove());
+      if (app.store_selection_box.state != null) {
+        app.store_selection_box.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
     }
   }
@@ -273,18 +271,16 @@ class DesignViewComponent {
 //      print('start point:          (${point.x.toStringAsFixed(1)}, ${point.y.toStringAsFixed(1)})');
 //      print('start target: ${event.target}');
 
+      bool toggle;
       if (event.ctrlKey || event.metaKey) {
-        action = is_main_view
-            ? actions.MainViewSelectionBoxCreateToggling(point)
-            : actions.SideViewSelectionBoxCreateToggling(point);
+        toggle = true;
       } else if (event.shiftKey) {
-        action = is_main_view
-            ? actions.MainViewSelectionBoxCreateSelecting(point)
-            : actions.SideViewSelectionBoxCreateSelecting(point);
+        toggle = false;
       }
-
-      if (action != null) {
-        app.store.dispatch(action);
+      if (toggle != null) {
+        action = actions.SelectionBoxCreate(point, toggle, is_main_view);
+//        app.store.dispatch(action);
+        app.store_selection_box.dispatch(action);
       }
     });
 
@@ -298,7 +294,6 @@ class DesignViewComponent {
       Point<num> point;
 
       Element target = event.target; // || event.srcElement,
-
 
       if (!browser.isFirefox) {
         point = event.offset;
@@ -314,22 +309,25 @@ class DesignViewComponent {
 //      print('current target: ${event.target}');
 
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        var action = is_main_view
-            ? actions.MainViewSelectionBoxSizeChanged(point)
-            : actions.SideViewSelectionBoxSizeChanged(point);
-        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+        var action = actions.SelectionBoxSizeChanged(point, is_main_view);
+//        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+        app.store_selection_box.dispatch(actions.ThrottledAction(action, 1 / 60.0));
       }
     });
 
     draggable.onDragEnd.listen((DraggableEvent draggable_event) {
+      var action_remove = actions.SelectionBoxRemove(is_main_view);
+      bool toggle = app.store_selection_box.state.toggle;
+      var action_adjust;
       if (is_main_view) {
-        app.store.dispatch(actions.SelectionsAdjust());
-        app.store.dispatch(actions.MainViewSelectionBoxRemove());
+        action_adjust = actions.SelectionsAdjust(toggle);
       } else {
-        // call this first so selection box is still in model when selections are made
-        app.store.dispatch(actions.HelixSelectionsAdjust());
-        app.store.dispatch(actions.SideViewSelectionBoxRemove());
+        action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
       }
+      // call this first so selection box is still in view when selections are made,
+      // so we can detect intersection
+      app.store.dispatch(action_adjust);
+      app.store_selection_box.dispatch(action_remove);
     });
   }
 
@@ -378,18 +376,22 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
+          (ReduxProvider()..store = app.store)((ReduxProvider()
+            ..store = app.store_selection_box
+            ..context = app.context_selection_box)(
             ConnectedDesignSide()(),
-          ),
+          )),
         ),
         querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
+          (ReduxProvider()..store = app.store)((ReduxProvider()
+            ..store = app.store_selection_box
+            ..context = app.context_selection_box)(
             ConnectedDesignMain()(),
-          ),
+          )),
         ),
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
@@ -420,8 +422,8 @@ side_view_mouse_leave_update_mouseover() {
 side_view_update_mouseover(Set<int> keys_pressed, {Point<num> mouse_pos = null, MouseEvent event = null}) {
   assert(!(mouse_pos == null && event == null));
   if (keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
-    var new_grid_pos =
-        util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, mouse_pos: mouse_pos, event: event);
+    var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
+        mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
       app.store.dispatch(actions.SideViewMouseGridPositionUpdate(new_grid_pos));
     }

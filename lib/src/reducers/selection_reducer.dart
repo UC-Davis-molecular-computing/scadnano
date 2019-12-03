@@ -15,6 +15,10 @@ import '../constants.dart' as constants;
 import '../model/selectable.dart';
 import 'util_reducer.dart';
 
+Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
+  selection_box_reducer,
+]);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables global reducer
 
@@ -82,7 +86,7 @@ SelectablesStore selections_adjust_reducer(
 //    print('overlapping_now_select_mode_enabled: $overlapping_now_select_mode_enabled');
 
   SelectablesStore new_selectables_store;
-  if (state.ui_state.selection_box_main_view.toggling) {
+  if (action.toggle) {
     new_selectables_store = selectables_store.toggle_all(overlapping_now_select_mode_enabled);
   } else {
     new_selectables_store = selectables_store.select_all(overlapping_now_select_mode_enabled);
@@ -122,8 +126,8 @@ GlobalReducer<BuiltSet<int>, AppState> side_selected_helices_global_reducer = co
 
 BuiltSet<int> helix_selections_adjust_reducer(
     BuiltSet<int> helix_idxs_selected, AppState state, actions.HelixSelectionsAdjust action) {
-  bool toggle = state.ui_state.selection_box_side_view.toggling;
-  var selection_box = state.ui_state.selection_box_side_view;
+  bool toggle = action.toggle;
+  var selection_box = action.selection_box;
   var all_helices = state.dna_design.helices;
   List<util.Box> all_bboxes = all_helices.map((helix) => helix_to_box(helix)).toList();
   List<Helix> helices_overlapping =
@@ -183,59 +187,22 @@ BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.Heli
     BuiltSet<int>();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// side view selection box reducer
+// selection box reducer
 
-Reducer<SelectionBox> side_view_selection_box_reducer = combineReducers([
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxCreateToggling>(
-      side_view_selection_box_create_toggling_reducer),
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxCreateSelecting>(
-      side_view_selection_box_create_selecting_reducer),
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxSizeChanged>(
-      side_view_selection_box_size_changed_reducer),
-  TypedReducer<SelectionBox, actions.SideViewSelectionBoxRemove>(side_view_selection_box_remove_reducer),
+Reducer<SelectionBox> selection_box_reducer = combineReducers([
+  TypedReducer<SelectionBox, actions.SelectionBoxCreate>(selection_box_create_reducer),
+  TypedReducer<SelectionBox, actions.SelectionBoxSizeChanged>(selection_box_size_changed_reducer),
+  TypedReducer<SelectionBox, actions.SelectionBoxRemove>(selection_box_remove_reducer),
 ]);
 
-SelectionBox side_view_selection_box_create_selecting_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxCreateSelecting action) =>
-    SelectionBox(action.point, false);
+SelectionBox selection_box_create_reducer(
+        SelectionBox selection_box, actions.SelectionBoxCreate action) =>
+    SelectionBox(action.point, action.toggle, action.is_main);
 
-SelectionBox side_view_selection_box_create_toggling_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxCreateToggling action) =>
-    SelectionBox(action.point, true);
-
-SelectionBox side_view_selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxSizeChanged action) =>
+SelectionBox selection_box_size_changed_reducer(
+        SelectionBox selection_box, actions.SelectionBoxSizeChanged action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
-SelectionBox side_view_selection_box_remove_reducer(
-        SelectionBox selection_box, actions.SideViewSelectionBoxRemove action) =>
-    null;
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// main view selection box reducer
-
-Reducer<SelectionBox> main_view_selection_box_reducer = combineReducers([
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxCreateToggling>(
-      main_view_selection_box_create_toggling_reducer),
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxCreateSelecting>(
-      main_view_selection_box_create_selecting_reducer),
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxSizeChanged>(
-      main_view_selection_box_size_changed_reducer),
-  TypedReducer<SelectionBox, actions.MainViewSelectionBoxRemove>(main_view_selection_box_remove_reducer),
-]);
-
-SelectionBox main_view_selection_box_create_selecting_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxCreateSelecting action) =>
-    SelectionBox(action.point, false);
-
-SelectionBox main_view_selection_box_create_toggling_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxCreateToggling action) =>
-    SelectionBox(action.point, true);
-
-SelectionBox main_view_selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxSizeChanged action) =>
-    selection_box.rebuild((s) => s..current = action.point);
-
-SelectionBox main_view_selection_box_remove_reducer(
-        SelectionBox selection_box, actions.MainViewSelectionBoxRemove action) =>
+SelectionBox selection_box_remove_reducer(
+        SelectionBox selection_box, actions.SelectionBoxRemove action) =>
     null;

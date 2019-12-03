@@ -19,8 +19,8 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
   ..mouseover_datas = ListBuilder<MouseoverData>()
-  ..selection_box_main_view = null
-  ..selection_box_side_view = null
+  ..selection_box_displayed_main = false
+  ..selection_box_displayed_side = false
   ..selectables_store = SelectablesStoreBuilder()
   ..side_selected_helix_idxs = SetBuilder<int>()
   ..show_dna = false
@@ -67,11 +67,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_mouseover_rect;
 
-  @nullable
-  SelectionBox get selection_box_main_view;
+  bool get selection_box_displayed_main;
 
-  @nullable
-  SelectionBox get selection_box_side_view;
+  bool get selection_box_displayed_side;
 
   BuiltList<MouseoverData> get mouseover_datas;
 

@@ -31,8 +31,7 @@ UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideP
         ..mouseover_datas = state.ui_state.mouseover_datas
 //    ..mouse_svg_pos = odel.ui_model.mouse_svg_pos_side_view
         ..grid = state.dna_design.grid
-        ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
-        ..selection_box = state.ui_state.selection_box_side_view;
+        ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor;
     }
   },
 )(DesignSide);
@@ -49,7 +48,6 @@ class _$DesignSideProps extends UiProps {
 //  Point<num> mouse_svg_pos;
   Grid grid;
   GridPosition grid_position_mouse_cursor;
-  SelectionBox selection_box;
 }
 
 @Component2()
@@ -61,9 +59,10 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
       return null;
     }
 
-    SelectionBox selection_box = props.selection_box;
     BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
-    Map<int, MouseoverData> helix_idx_to_mouseover_data = {for (var mod in mouseover_datas) mod.helix.idx: mod};
+    Map<int, MouseoverData> helix_idx_to_mouseover_data = {
+      for (var mod in mouseover_datas) mod.helix.idx: mod
+    };
     BuiltList<Helix> helices = props.helices;
     BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
@@ -98,12 +97,11 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
       (Dom.g()
         ..className = 'helices-side-view'
         ..key = 'helices-side-view')(helices_components),
-      if (selection_box != null)
-        (SelectionBoxView()
-          ..selection_box = selection_box
-          ..stroke_width = stroke_width
-          ..id = 'selection-box-side'
-          ..key = 'selection-box')(),
+      (ConnectedSelectionBoxView()
+        ..stroke_width_getter = (() => 2.0 / util.current_zoom_side())
+        ..is_main = false
+        ..id = 'selection-box-side'
+        ..key = 'selection-box')(),
     ]);
   }
 }

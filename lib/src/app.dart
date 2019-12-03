@@ -4,16 +4,20 @@ library app;
 import 'dart:html';
 
 import 'package:js/js.dart';
+import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/model/app_ui_state.dart';
 
 import 'package:scadnano/src/model/bound_substrand.dart';
 import 'model/dna_design.dart';
 import 'model/app_state.dart';
+import 'model/selection_box.dart';
+import 'reducers/selection_reducer.dart';
 import 'util.dart' as util;
 import 'model/undo_redo.dart';
 import 'view/view.dart';
@@ -29,8 +33,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -70,6 +74,10 @@ class App {
   View view;
 
   Store store;
+
+  // for optimization
+  Store store_selection_box;
+  var context_selection_box = createContext();
 
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
@@ -152,16 +160,8 @@ class App {
       store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
     }
 
-//    void thunk_action(Store<AppState> store) async {
-////      print('thunk_action dispatched');
-//      final String searchResults = await new Future.delayed(
-//        new Duration(seconds: 1),
-//        () => "Search Results",
-//      );
-//      store.dispatch(searchResults);
-//    }
-//
-//    store.dispatch(thunk_action);
+    store_selection_box = Store<SelectionBox>(optimized_selection_box_reducer,
+        initialState: null, middleware: [throttle_middleware_selection_box]);
   }
 
   setup_warning_before_unload() {

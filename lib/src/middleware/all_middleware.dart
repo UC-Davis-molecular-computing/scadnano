@@ -14,6 +14,6 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_svg_side_middleware,
   save_file_middleware,
   load_file_middleware,
-  throttle_middleware,
+  throttle_middleware_app_state,
   thunk_middleware,
 ]);

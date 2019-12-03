@@ -18,9 +18,10 @@ const ORIGIN = Point<num>(0, 0);
 abstract class SelectionBox with BuiltJsonSerializable implements Built<SelectionBox, SelectionBoxBuilder> {
   SelectionBox._();
 
-  factory SelectionBox(Point<num> start, bool toggling) => SelectionBox.from((b) => b
+  factory SelectionBox(Point<num> start, bool toggle, bool is_main) => SelectionBox.from((b) => b
     ..start = start
-    ..toggling = toggling
+    ..toggle = toggle
+    ..is_main=is_main
     ..current = start);
 
   factory SelectionBox.from([void Function(SelectionBoxBuilder) updates]) = _$SelectionBox;
@@ -31,8 +32,9 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   Point<num> get start; // starting coordinate of drag
   Point<num> get current; // current coordinate of drag
-  bool get toggling; // toggling if Ctrl pressed, otherwise selecting
-  bool get selecting => !toggling;
+  bool get toggle; // toggle if Ctrl pressed, otherwise selecting
+  bool get is_main; // in main view or side view?
+  bool get selecting => !toggle;
 
   num get x => min(start.x, current.x);
 
@@ -51,11 +53,12 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
       '${bbox.height.toStringAsFixed(DECIMAL_PLACES)}';
 
   String toString() => 'start=('
-      '${x.toStringAsFixed(DECIMAL_PLACES)}, '
-      '${y.toStringAsFixed(DECIMAL_PLACES)})'
+      '${start.x.toStringAsFixed(DECIMAL_PLACES)}, '
+      '${start.y.toStringAsFixed(DECIMAL_PLACES)})'
       '  current=('
-      '${width.toStringAsFixed(DECIMAL_PLACES)}, '
-      '${height.toStringAsFixed(DECIMAL_PLACES)})';
+      '${current.x.toStringAsFixed(DECIMAL_PLACES)}, '
+      '${current.y.toStringAsFixed(DECIMAL_PLACES)}), '
+      '  is_main=${is_main}';
 
   //TODO: update this code to handle side view or main view, and call it from view/design.dart when drag ends
   //XXX: in principle this should be updateable every time the mouse moves and the selection box changes,
@@ -117,7 +120,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
 //    print('overlapping_now_select_mode_enabled: $overlapping_now_select_mode_enabled');
 
-    if (toggling) {
+    if (toggle) {
 //      print('toggling  overlapping_now: $overlapping_now');
       Actions_OLD.toggle_all(overlapping_now_select_mode_enabled);
     } else {

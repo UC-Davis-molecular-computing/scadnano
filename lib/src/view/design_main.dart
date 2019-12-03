@@ -47,9 +47,6 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       return null;
     }
 
-    num stroke_width = 2.0 / util.current_zoom_main();
-    SelectionBox selection_box = state.ui_state.selection_box_main_view;
-
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = state.dna_design.helices
@@ -66,12 +63,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..show_dna = state.ui_state.show_dna
         ..strands = state.dna_design.strands
         ..key = 'dna')(),
-      if (selection_box != null)
-        (SelectionBoxView()
-          ..selection_box = selection_box
-          ..stroke_width = stroke_width
-          ..id = 'selection-box-main'
-          ..key = 'selection_box')(),
+      (ConnectedSelectionBoxView()
+        ..stroke_width_getter = (() => 2.0 / util.current_zoom_main())
+        ..is_main = true
+        ..id = 'selection-box-main'
+        ..key = 'selection_box')(),
       if (state.ui_state.show_mouseover_rect)
         (DesignMainMouseoverRectHelices()
           ..helices = state.dna_design.helices

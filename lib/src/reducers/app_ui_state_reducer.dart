@@ -32,8 +32,8 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
-  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
-  ..selection_box_side_view = side_view_selection_box_reducer(ui_state.selection_box_side_view, action)?.toBuilder()
+//  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
+//  ..selection_box_side_view = side_view_selection_box_reducer(ui_state.selection_box_side_view, action)?.toBuilder()
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action)));
 
 bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;

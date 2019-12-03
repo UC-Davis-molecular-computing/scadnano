@@ -720,6 +720,9 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }
+      if (min_offset > 0) {
+        min_offset = 0;
+      }
       helix_builder.min_offset = min_offset;
     }
   }
