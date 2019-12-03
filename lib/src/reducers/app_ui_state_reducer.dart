@@ -8,7 +8,7 @@ import '../model/helix.dart';
 import '../model/app_state.dart';
 import '../model/app_ui_state.dart';
 import '../model/mouseover_data.dart';
-import '../model/select_mode_state.dart';
+import '../reducers/select_mode_state_reducer.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import 'util_reducer.dart';
