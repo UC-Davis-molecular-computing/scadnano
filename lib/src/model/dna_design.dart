@@ -43,6 +43,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
+    ..is_origami = false
     ..helices.replace(BuiltList<Helix>())
     ..strands.replace(BuiltList<Strand>()));
 
@@ -58,6 +59,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltList<Helix> get helices;
 
   BuiltList<Strand> get strands;
+
+  @nullable
+  bool get is_origami;
 
   @memoized
   BuiltMap<BoundSubstrand, BuiltList<Mismatch>> get substrand_mismatches_map {
@@ -317,6 +321,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
   }
 
+  //TODO: read scaffold strand from .dna file if present
+
   /// Replace this DNADesign with the one described in json_map.
 //  read_from_json(Map<String, dynamic> json_map) {
   static DNADesign from_json(Map<String, dynamic> json_map) {
@@ -383,11 +389,18 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     // strands
+    bool is_origami = false;
     List<Strand> strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
+      if (strand.is_scaffold == true) {
+        is_origami = true;
+      }
+    }
+    if (is_origami == true) {
+      dna_design_builder.is_origami = true;
     }
 //    dna_design.strands_store.strands = strands;
     dna_design_builder.strands.replace(strands);

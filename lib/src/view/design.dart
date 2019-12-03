@@ -253,7 +253,7 @@ class DesignViewComponent {
     var draggable = draggables[draggable_component] = Draggable(view_svg);
 
     draggable.onDragStart.listen((DraggableEvent draggable_event) {
-      print('* onDragStart ' + '*' * 100);
+//      print('* onDragStart ' + '*' * 100);
 
       MouseEvent event = draggable_event.originalEvent;
       actions.Action2 action;
@@ -291,7 +291,7 @@ class DesignViewComponent {
     //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
     //https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
     draggable.onDrag.listen((DraggableEvent draggable_event) {
-      print('* onDrag ' + '-' * 100);
+//      print('* onDrag ' + '-' * 100);
 
       MouseEvent event = draggable_event.originalEvent;
 

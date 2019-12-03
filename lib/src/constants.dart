@@ -86,6 +86,7 @@ const position3d_key = 'position'; // support in the future
 const color_key = 'color';
 const dna_sequence_key = 'dna_sequence';
 const idt_key = 'idt';
+const is_scaffold_key = 'is_scaffold';
 const substrands_key = 'substrands';
 
 // IDTFields keys

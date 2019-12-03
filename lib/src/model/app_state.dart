@@ -7,7 +7,7 @@ import 'undo_redo.dart';
 
 part 'app_state.g.dart';
 
-//TODO: replace calls to toBuilder with replace: https://github.com/google/built_value.dart/issues/424
+//TODO: normalize state tree (selectables_by_id is huge) and use connect to look up parts of state by id
 
 final DEFAULT_AppStateBuilder = AppStateBuilder()
   ..ui_state = DEFAULT_AppUIStateBuilder

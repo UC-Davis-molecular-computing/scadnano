@@ -1,4 +1,3 @@
-
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -9,6 +8,7 @@ part 'select_mode.g.dart';
 
 class SelectModeChoice extends EnumClass {
   const SelectModeChoice._(String name) : super(name);
+
   static Serializer<SelectModeChoice> get serializer => _$selectModeChoiceSerializer;
 
   static const SelectModeChoice end_5p_strand = _$end_5p_strand;
@@ -79,17 +79,11 @@ class SelectModeChoice extends EnumClass {
 
   static SelectModeChoice from_json(String json_name) => valueOf(json_name);
 
-  static final BuiltList<SelectModeChoice> all_choices = BuiltList<SelectModeChoice>([
-    end_5p_strand,
-    end_3p_strand,
-    end_5p_substrand,
-    end_3p_substrand,
-    crossover,
-    loopout,
-    strand,
-    scaffold,
-    staple,
-  ]);
+  static final BuiltList<SelectModeChoice> all_choices =
+      BuiltList<SelectModeChoice>(non_origami_choices.toList() + [scaffold, staple]);
+
+  static final BuiltList<SelectModeChoice> non_origami_choices =
+      BuiltList<SelectModeChoice>(strand_parts.toList() + [strand]);
 
   static final BuiltList<SelectModeChoice> strand_parts = BuiltList<SelectModeChoice>([
     end_5p_strand,

@@ -7,6 +7,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:reselect/reselect.dart';
+import 'package:scadnano/src/model/select_mode_state.dart';
 
 import '../model/app_state.dart';
 import '../model/select_mode.dart';
@@ -23,7 +24,8 @@ UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState,
   mapStateToPropsWithOwnProps: (state, props) => (DesignMainStrand()
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selected = state.ui_state.selectables_store.selected(props.strand)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)),
+    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)
+  ),
 )(DesignMainStrand);
 
 @Factory()
@@ -40,22 +42,28 @@ class _$DesignMainStrandProps extends UiProps {
 @Component2()
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   @override
-  Map getDefaultProps() => (newProps()..selected = false);
+  Map get defaultProps => (newProps()
+    ..selected = false
+    ..selectable = false);
 
-//  @override
-//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-//    Strand strand = nextProps['DesignMainStrandProps.strand'];
-//    bool selected = nextProps['DesignMainStrandProps.selected'];
-//    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
-//
-//    bool should = !(props.strand == strand &&
-//        props.selected == selected &&
-//        props.side_selected_helix_idxs == side_selected_helix_idxs);
-////    print('shouldComponentUpdate() for strand ${strand.toString()}');
-////    print(' prev_selected: $prev_selected');
-////    print(' next_selected: $next_selected');
-//    return should;
-//  }
+  @override
+  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+    Strand strand = nextProps['DesignMainStrandProps.strand'];
+    bool selected = nextProps['DesignMainStrandProps.selected'];
+    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
+
+    bool should = !(props.strand == strand &&
+        props.side_selected_helix_idxs == side_selected_helix_idxs &&
+        props.selected == selected);
+    if (!OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
+      bool selectable = nextProps['DesignMainStrandProps.selectable'];
+      should = should || (props.selectable != selectable);
+    }
+//    print('shouldComponentUpdate() for strand ${strand.toString()}: $should');
+//    print(' prev_selected: $prev_selected');
+//    print(' next_selected: $next_selected');
+    return should;
+  }
 
   @override
   render() {
@@ -63,7 +71,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
     bool selectable = props.selectable;
-//    print('DesignMainStrand.render(): ${strand.toString()}');
 
     if (strand.substrands.length == 0) {
       return null;
@@ -71,7 +78,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
       //TODO: make strand selectable, but decide how it will interact with selecting other elements.
       var classname = 'strand';
       if (selectable) {
+//        print('DesignMainStrand.render(): adding selectable class to strand');
         classname += ' selectable';
+      } else {
+//        print('DesignMainStrand.render(): not adding selectable class to strand');
       }
       if (selectable && selected) {
         classname += ' selected';

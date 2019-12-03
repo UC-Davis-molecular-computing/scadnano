@@ -12,11 +12,13 @@ import 'selectable.dart';
 
 part 'select_mode_state.g.dart';
 
+// whether to skip re-rendering views of selectables when selection mode changes; faster to do by side-effect
+//const OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION = true;
+const OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION = false;
+
 final DEFAULT_SelectModeStateBuilder = SelectModeStateBuilder()
   ..modes = SetBuilder<SelectModeChoice>(
       SelectModeChoice.strand_parts.asList() + [SelectModeChoice.staple, SelectModeChoice.scaffold]);
-
-
 
 abstract class SelectModeState implements Built<SelectModeState, SelectModeStateBuilder> {
   SelectModeState._();
@@ -25,6 +27,7 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
       _$SelectModeState((s) => s..replace(DEFAULT_SelectModeStateBuilder.build()));
 
   static Serializer<SelectModeState> get serializer => _$selectModeStateSerializer;
+
   /************************ begin BuiltValue boilerplate ************************/
 
   BuiltSet<SelectModeChoice> get modes;
@@ -83,19 +86,22 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   //XXX: this is doing an end-run around the Model-View-Update cycle for efficiency, otherwise we'd need
   // to wastefully re-render all strands just because we want to make 5' ends selectable
   static add_selectable_css_selectors(SelectModeChoice mode) {
-    var elts = querySelectorAll('.${mode.css_selector()}');
-    for (var elt in elts) {
-      elt.classes.add('selectable');
+    if (OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
+      var elts = querySelectorAll('.${mode.css_selector()}');
+      for (var elt in elts) {
+        elt.classes.add('selectable');
+      }
     }
   }
 
   static remove_selectable_css_selectors(SelectModeChoice mode) {
-    var elts = querySelectorAll('.${mode.css_selector()}');
-    for (var elt in elts) {
-      elt.classes.remove('selectable');
+    if (OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
+      var elts = querySelectorAll('.${mode.css_selector()}');
+      for (var elt in elts) {
+        elt.classes.remove('selectable');
+      }
     }
   }
-
 }
 
 //SelectModeState select_mode_state_reducer([SelectModeState state, action])

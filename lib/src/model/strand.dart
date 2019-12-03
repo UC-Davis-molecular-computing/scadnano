@@ -39,6 +39,9 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   @nullable
   IDTFields get idt;
 
+  @nullable
+  bool get is_scaffold;
+
   @memoized
   BuiltSet<Crossover> get crossovers {
     Set<Crossover> ret = {};
@@ -93,7 +96,11 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
     if (this.idt != null) {
       var idt_json = this.idt.to_json_serializable(suppress_indent: suppress_indent);
-      json_map[constants.dna_sequence_key] = suppress_indent ? NoIndent(idt_json) : idt_json;
+      json_map[constants.idt_key] = suppress_indent ? NoIndent(idt_json) : idt_json;
+    }
+
+    if (this.is_scaffold != null) {
+      json_map[constants.is_scaffold_key] = this.is_scaffold;
     }
 
     json_map[constants.substrands_key] = [
@@ -177,22 +184,28 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    var dna_sequence =
+        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
-    var idt;
+    bool is_scaffold = null;
+    if (json_map.containsKey(constants.is_scaffold_key)) {
+      is_scaffold = json_map[constants.is_scaffold_key];
+    }
 
     Strand strand = Strand((s) => s
       ..substrands = ListBuilder<Substrand>(substrands)
+      ..is_scaffold = is_scaffold
       ..color = color
-      ..idt = idt);
+      ..idt = null);
 
     if (json_map.containsKey(constants.idt_key)) {
       try {
-        idt = IDTFields.from_json(json_map[constants.idt_key]);
+        var idt = IDTFields.from_json(json_map[constants.idt_key]);
+        strand = strand.rebuild((s) => s..idt.replace(idt));
       } catch (err) {
         throw StrandError(strand, err.toString());
       }

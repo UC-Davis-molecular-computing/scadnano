@@ -38,6 +38,7 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
   }
 
   SelectablesStore register_all(Iterable<Selectable> selectables) {
+//    return this;
     var selectables_by_id_builder = selectables_by_id.toBuilder();
     for (var selectable in selectables) {
       String id = selectable.id();
