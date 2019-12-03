@@ -68,17 +68,7 @@ BuiltList<MouseoverData> mouseover_data_clear_reducer(_, actions.MouseoverDataCl
 BuiltList<MouseoverData> mouseover_data_update_reducer(_, actions.MouseoverDataUpdate action) => action.mouseover_datas;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// side view mouse_svg_pos reducer
-
-Reducer<Point<num>> side_view_mouse_svg_pos_reducer = combineReducers([
-  TypedReducer<Point<num>, actions.SideViewMousePositionUpdate>(side_view_mouse_svg_pos_update_reducer),
-  TypedReducer<Point<num>, actions.SideViewMousePositionRemove>(side_view_mouse_svg_pos_remove_reducer),
-]);
-
-Point<num> side_view_mouse_svg_pos_update_reducer(Point<num> _, actions.SideViewMousePositionUpdate action) =>
-    action.point;
-
-Point<num> side_view_mouse_svg_pos_remove_reducer(Point<num> _, actions.SideViewMousePositionRemove action) => null;
+// side view mouse grid position reducer
 
 Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.SideViewMouseGridPositionUpdate>(side_view_mouse_grid_pos_update_reducer),
