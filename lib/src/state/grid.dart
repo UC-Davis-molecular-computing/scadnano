@@ -20,6 +20,8 @@ class Grid extends EnumClass {
   bool is_none() => this == none;
 
   static Serializer<Grid> get serializer => _$gridSerializer;
+
+  int default_major_tick_distance() => this == Grid.hex || this == Grid.honeycomb ? 7 : 8;
 }
 
 //enum Grid { square, hex, honeycomb, none }

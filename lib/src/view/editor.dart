@@ -6,7 +6,7 @@ import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
 import '../app.dart';
-import '../model/app_ui_state.dart';
+import '../state/app_ui_state.dart';
 
 //TODO: compile Python scripts in the browser using pyodide (or something)
 
@@ -217,8 +217,8 @@ request_script_load_file_from_file_chooser(FileUploadInputElement file_chooser) 
 
 script_file_loaded(FileReader file_reader, String filename) {
   //FIXME: send an action to update the fields loaded_script_filename and editor_content
-//  app.model.ui_model.loaded_script_filename = filename;
-//  app.model.editor_content = file_reader.result;
-//  print('in dart, just put this script file contents into model: ${app.model.editor_content}');
+//  app.state.ui_model.loaded_script_filename = filename;
+//  app.state.editor_content = file_reader.result;
+//  print('in dart, just put this script file contents into state: ${app.state.editor_content}');
   app.view.editor_view.render();
 }

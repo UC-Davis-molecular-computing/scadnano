@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
 
 import '../actions/actions.dart' as actions;
-import '../model/select_mode.dart';
-import '../model/select_mode_state.dart';
+import '../state/select_mode.dart';
+import '../state/select_mode_state.dart';
 
 //SelectModeState select_mode_state_reducer([SelectModeState state, action])
 Reducer<SelectModeState> select_mode_state_reducer = combineReducers<SelectModeState>([

@@ -15,7 +15,6 @@ final DEFAULT_AppStateBuilder = AppStateBuilder()
   ..editor_content = ""
   ..undo_redo = DEFAULT_UndoRedoBuilder;
 
-
 abstract class AppState implements Built<AppState, AppStateBuilder> {
   AppState._();
 
@@ -37,7 +36,6 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
 
   String get editor_content;
 
-  /// This exact method name is required for Dart to know how to encode as JSON.
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
     map['dna_design'] = dna_design?.to_json_serializable(suppress_indent: false);

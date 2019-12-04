@@ -4,7 +4,7 @@ import 'package:redux/redux.dart';
 
 import '../actions/actions.dart' as actions;
 import '../app.dart';
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 
 AppState load_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);

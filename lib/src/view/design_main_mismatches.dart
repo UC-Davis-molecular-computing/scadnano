@@ -1,10 +1,10 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/dna_design.dart';
+import '../state/dna_design.dart';
 import '../app.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
 import 'design_main_mismatch.dart';
 
 part 'design_main_mismatches.over_react.g.dart';

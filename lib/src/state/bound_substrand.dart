@@ -105,13 +105,13 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 
   DNAEnd get dnaend_3p => forward ? dnaend_end : dnaend_start;
 
-//  bool selected_5p() => app.model.dna_design.selectable_store.selected(dnaend_5p);
+//  bool selected_5p() => app.state.dna_design.selectable_store.selected(dnaend_5p);
 //
-//  bool selected_3p() => app.model.dna_design.selectable_store.selected(dnaend_3p);
+//  bool selected_3p() => app.state.dna_design.selectable_store.selected(dnaend_3p);
 //
-//  bool selected_start() => app.model.dna_design.selectable_store.selected(dnaend_start);
+//  bool selected_start() => app.state.dna_design.selectable_store.selected(dnaend_start);
 //
-//  bool selected_end() => app.model.dna_design.selectable_store.selected(dnaend_end);
+//  bool selected_end() => app.state.dna_design.selectable_store.selected(dnaend_end);
 
   String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 

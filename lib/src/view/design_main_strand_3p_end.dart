@@ -2,11 +2,11 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import 'package:scadnano/src/model/helix.dart';
-import '../model/app_state.dart';
-import '../model/select_mode.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
+import 'package:scadnano/src/state/helix.dart';
+import '../state/app_state.dart';
+import '../state/select_mode.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
 import '../app.dart';
 
 part 'design_main_strand_3p_end.over_react.g.dart';

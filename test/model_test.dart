@@ -2,7 +2,7 @@
 
 //import 'package:test/test.dart';
 //import 'package:tuple/tuple.dart';
-//import 'package:scadnano/src/model/strand.dart';
+//import 'package:scadnano/src/state/strand.dart';
 
 //TODO: figure out good testing framework.
 
@@ -79,14 +79,14 @@ main() {
 
     design.strands = [s0, s1];
 
-//    print("model = ${model}");
+//    print("state = ${state}");
     var encoder = JsonEncoder.withIndent('  ');
     String serialized_model = encoder.convert(design);
 //    print("serialized_model = $serialized_model");
 
     Map<String, dynamic> deserialized_map = jsonDecode(serialized_model);
     DNADesign decoded_model = DNADesign.from_json(deserialized_map);
-//    print("decoded model.helicesMap = ${model2.helicesMap}");
+//    print("decoded state.helicesMap = ${model2.helicesMap}");
 
     expect(decoded_model.grid, equals(Grid.hex));
 //    expect(decodedModel.basesPerHelix, equals(60));

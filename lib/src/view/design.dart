@@ -12,7 +12,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:platform_detect/platform_detect.dart';
 
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import '../app.dart';
 import 'view.dart';
 import 'design_side.dart';
@@ -114,7 +114,7 @@ class DesignViewComponent {
     set_side_main_pane_widths();
     handle_keyboard_mouse_events();
 
-//    app.model.design_or_error_store.listen((_) => this.render());
+//    app.state.design_or_error_store.listen((_) => this.render());
   }
 
   set_side_main_pane_widths() {
@@ -343,7 +343,7 @@ class DesignViewComponent {
 //          ..id = 'side-view-svg'
 //          ..width = '100%'
 //          ..height = '100%')(
-//          (DesignSide()..store = app.model.dna_design.helices_store)(),
+//          (DesignSide()..store = app.state.dna_design.helices_store)(),
 //        ),
 //      );
 //      react_dom.render(react_svg_pan_zoom_side, this.side_pane);
@@ -357,7 +357,7 @@ class DesignViewComponent {
 //          ..id = 'main-view-svg'
 //          ..width = '100%'
 //          ..height = '100%')(
-//          (DesignMain()..store = app.model)(),
+//          (DesignMain()..store = app.state)(),
 //        ),
 //      );
 //      react_dom.render(react_svg_pan_zoom_main, this.main_pane);

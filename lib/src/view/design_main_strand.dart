@@ -7,13 +7,13 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:reselect/reselect.dart';
-import 'package:scadnano/src/model/select_mode_state.dart';
+import 'package:scadnano/src/state/select_mode_state.dart';
 
-import '../model/app_state.dart';
-import '../model/select_mode.dart';
+import '../state/app_state.dart';
+import '../state/select_mode.dart';
 import '../app.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
@@ -195,7 +195,7 @@ List<ReactElement> _deletion_paths(Strand strand, BuiltSet<int> side_selected_he
 }
 
 ReactElement _deletion_path(BoundSubstrand substrand, int deletion_offset, Strand strand) {
-//  print('app.model.dna_design.helices: ${app.model.dna_design.helices}');
+//  print('app.state.dna_design.helices: ${app.state.dna_design.helices}');
 //  print('  substrand: ${substrand}');
   var helix = app.state.dna_design.helices[substrand.helix];
   Point<num> pos = helix.svg_base_pos(deletion_offset, substrand.forward);

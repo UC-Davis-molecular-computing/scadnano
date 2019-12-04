@@ -13,18 +13,18 @@ import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/view/design.dart';
 
-import 'model/crossover.dart';
-import 'model/dna_end.dart';
-import 'model/grid.dart';
-import 'model/grid_position.dart';
-import 'model/helix.dart';
-import 'model/loopout.dart';
-import 'model/dna_design.dart';
+import 'state/crossover.dart';
+import 'state/dna_end.dart';
+import 'state/grid.dart';
+import 'state/grid_position.dart';
+import 'state/helix.dart';
+import 'state/loopout.dart';
+import 'state/dna_design.dart';
 import 'constants.dart' as constants;
-import 'model/bound_substrand.dart';
-import 'model/selectable.dart';
-import 'model/selection_box.dart';
-import 'model/strand.dart';
+import 'state/bound_substrand.dart';
+import 'state/selectable.dart';
+import 'state/selection_box.dart';
+import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {

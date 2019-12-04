@@ -2,7 +2,7 @@ import 'dart:html';
 
 import 'package:platform_detect/platform_detect.dart';
 
-import 'model/grid.dart';
+import 'state/grid.dart';
 
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.M;

@@ -4,15 +4,15 @@ import 'dart:svg';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano/src/model/selectable.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/view/design.dart';
-import '../model/helix.dart';
-import '../model/app_state.dart';
-import '../model/selection_box.dart';
+import '../state/helix.dart';
+import '../state/app_state.dart';
+import '../state/selection_box.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
-import '../model/selectable.dart';
+import '../state/selectable.dart';
 import 'util_reducer.dart';
 
 Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
@@ -74,7 +74,7 @@ SelectablesStore selections_adjust_reducer(
 //    print('overlapping_now:      $overlapping_now');
 
 //    List<Selectable> overlapping_now_select_mode_enabled = [
-//      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
+//      for (var obj in overlapping_now) if (app.state.select_mode_store.is_selectable(obj)) obj
 //    ];
   List<Selectable> overlapping_now_select_mode_enabled = [];
   for (var obj in overlapping_now) {

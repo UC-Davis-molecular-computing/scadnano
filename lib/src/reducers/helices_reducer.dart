@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/helix.dart';
+import '../state/helix.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 

@@ -1,6 +1,6 @@
 import 'package:over_react/over_react.dart';
 
-import '../model/edit_mode.dart';
+import '../state/edit_mode.dart';
 import '../actions/actions_OLD.dart';
 part 'edit_mode.over_react.g.dart';
 

@@ -4,16 +4,16 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/model/app_state.dart';
+import 'package:scadnano/src/state/app_state.dart';
 
-import '../model/crossover.dart';
+import '../state/crossover.dart';
 import 'design_main_strand_3p_end.dart';
 import 'design_main_strand_5p_end.dart';
 import '../app.dart';
-import '../model/dna_design.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
-import '../model/loopout.dart';
+import '../state/dna_design.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
+import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
@@ -158,7 +158,7 @@ Point<num> _control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, Bou
 //      return;
 //    }
 //    var substrand = this.strand.substrands.first;
-//    var helix = app.model.dna_design.helices[substrand.helix_idx];
+//    var helix = app.state.dna_design.helices[substrand.helix_idx];
 //    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
 //    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 //    for (int i = 0; i < this.strand.substrands.length; i++) {
@@ -170,7 +170,7 @@ Point<num> _control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, Bou
 //      if (i < this.strand.substrands.length - 1) {
 //        var old_substrand = substrand;
 //        substrand = this.strand.substrands[i + 1];
-//        helix = app.model.dna_design.helices[substrand.helix_idx];
+//        helix = app.state.dna_design.helices[substrand.helix_idx];
 //        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
 //        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
 //        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');

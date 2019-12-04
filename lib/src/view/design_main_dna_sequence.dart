@@ -7,11 +7,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:tuple/tuple.dart';
 
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import '../app.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
-import '../model/loopout.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
+import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 

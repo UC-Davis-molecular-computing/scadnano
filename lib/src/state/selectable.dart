@@ -151,7 +151,7 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
 
 /// Represents a part of the Model that represents a part of the View that is Selectable.
 mixin Selectable {
-  /// Subclasses must define this to be used to associate view element to model object through CSS selector.
+  /// Subclasses must define this to be used to associate view element to state object through CSS selector.
   String id();
 
   /// Subclasses must define this to be able to be selectively selected.

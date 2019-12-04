@@ -4,8 +4,8 @@ import 'package:over_react/over_react.dart';
 
 import '../app.dart';
 import '../actions/actions_OLD.dart';
-import '../model/grid.dart';
-import '../model/grid_position.dart';
+import '../state/grid.dart';
+import '../state/grid_position.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 

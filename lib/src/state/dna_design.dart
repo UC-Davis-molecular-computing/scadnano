@@ -5,7 +5,7 @@ import 'package:built_value/built_value.dart';
 import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
-import 'package:scadnano/src/model/loopout.dart';
+import 'package:scadnano/src/state/loopout.dart';
 
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -108,34 +108,12 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return _construct_helix_idx_to_substrands_map(helices.length, strands);
   }
 
-//  _handle_actions() {
-//    selectable_store.handle_actions();
-//
-//    this.triggerOnActionV2<Null>(this.save_dna_file, (_) {
-//      String content = json_encode(this);
-//      String default_filename = app.model.menu_view_ui_model.loaded_filename;
-//      util.save_file(default_filename, content);
-//    });
-//
-////    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_remove, remove_strand);
-////    this.strands_store.triggerOnActionV2<Strand>(Actions.strand_add, add_strand);
-////    this.strands_store.triggerOnActionV2<Iterable<Strand>>(Actions.strands_remove, remove_strands);
-////    this.strands_store.triggerOnActionV2<Iterable<Strand>>(Actions.strands_add, add_strands);
-//
 ////    this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.helix_use, (params) {
 ////      params.create ? this._add_helix(params) : this._remove_helix(params);
 ////    });
 ////
 ////    this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
 ////      this.helices_store.helices = new_helices;
-////    });
-////
-////    this.strands_store.triggerOnActionV2(Actions.delete_all, (params) {
-////      if (params.reverse_deletion) {
-////        add_strands(params.strands);
-////      } else {
-////        remove_strands(params.strands);
-////      }
 ////    });
 //  }
 
@@ -205,60 +183,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 ////    }
 //  }
 
-  DNADesign add_strand(Strand strand) {
-    var new_strands_builder = strands.toBuilder()..add(strand);
-//    var helix_idx_to_substrands_builder = helix_idx_to_substrands.toBuilder();
-//    for (BoundSubstrand ss in strand.bound_substrands()) {
-//      Helix helix = this.helices[ss.helix];
-////      helix_idx_to_substrands[helix.idx].add(ss);
-//      var new_substrands = helix_idx_to_substrands[helix.idx].toBuilder()
-//        ..add(ss);
-//      helix_idx_to_substrands_builder[helix.idx] = new_substrands.build();
-//    }
-    return rebuild((d) => d..strands = new_strands_builder);
-//      ..helix_idx_to_substrands = helix_idx_to_substrands_builder.build());
-  }
+  //TODO: profile to see if it would help to optimize rebuilding of memoized data; currently it is
+  // rebuilt from scratch even if we only add a single Strand
+  DNADesign add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
-  DNADesign remove_strand(Strand strand) {
-    var new_strands = strands.toBuilder()..remove(strand);
-//    var helix_idx_to_substrands_builder = helix_idx_to_substrands.toBuilder();
-//    for (BoundSubstrand ss in strand.bound_substrands()) {
-//      Helix helix = this.helices[ss.helix];
-////      helix_idx_to_substrands[helix.idx].remove(ss);
-//      var new_substrands = helix_idx_to_substrands[helix.idx].toBuilder()..remove(ss);
-//      helix_idx_to_substrands_builder[helix.idx] = new_substrands.build();
-//    }
-    return rebuild((d) => d..strands = new_strands);
-//      ..helix_idx_to_substrands = helix_idx_to_substrands_builder.build());
-  }
+  DNADesign remove_strand(Strand strand) => rebuild((d) => d..strands.remove(strand));
 
-  //TODO: optimize these
-  DNADesign add_strands(Iterable<Strand> strands) {
-    DNADesign new_design = this;
-    for (Strand strand in strands) {
-      new_design = new_design.add_strand(strand);
-    }
-    return new_design;
-  }
+  DNADesign add_strands(Iterable<Strand> new_strands) => rebuild((d) => d..strands.addAll(new_strands));
 
-  DNADesign remove_strands(Iterable<Strand> strands) {
-    DNADesign new_design = this;
-    for (Strand strand in strands) {
-      new_design = new_design.remove_strand(strand);
-    }
-    return new_design;
+  DNADesign remove_strands(Iterable<Strand> strands_to_remove) {
+    Set<Strand> strands_to_remove_set = strands_to_remove.toSet();
+    return rebuild((d) => d..strands.removeWhere((strand) => strands_to_remove_set.contains(strand)));
   }
 
   /// max offset allowed on any Helix in the Model
-  int max_offset() {
-    int ret = 0;
-    for (var helix in this.helices) {
-      if (ret < helix.max_offset) {
-        ret = helix.max_offset;
-      }
-    }
-    return ret;
-  }
+  @memoized
+  int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
@@ -267,7 +207,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //      json_map[constants.grid_key] = grid_to_json(this.grid);
       json_map[constants.grid_key] = this.grid.to_json();
     }
-    if (this.major_tick_distance != default_major_tick_distance(this.grid)) {
+    if (this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
@@ -293,35 +233,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   bool has_nondefault_max_offset(Helix helix) {
-    int max_ss_offset = -1;
-    for (var ss in substrands_on_helix(helix.idx)) {
-      if (max_ss_offset < ss.end) {
-        max_ss_offset = ss.end;
-      }
-    }
-    return helix.max_offset != max_ss_offset;
+    var ends = substrands_on_helix(helix.idx).map((ss) => ss.end);
+    int max_end = ends.isEmpty ? 0 : ends.reduce(max);
+    return helix.max_offset != max_end;
   }
 
   bool has_nondefault_min_offset(Helix helix) {
-    int min_ss_offset = null;
-    for (var ss in substrands_on_helix(helix.idx)) {
-      if (min_ss_offset == null) {
-        min_ss_offset = ss.start;
-      }
-      if (min_ss_offset > ss.start) {
-        min_ss_offset = ss.start;
-      }
-    }
-    // if all offsets are nonnegative (or there are none because there are no substrands, i.e., min_ss_offset == null),
+    var starts = substrands_on_helix(helix.idx).map((ss) => ss.start);
+    int min_start = starts.isEmpty ? null : starts.reduce(min);
+    // if all offsets are nonnegative (or there are no substrands, i.e., min_start == null),
     // then default min_offset is 0; otherwise it is minimum offset
-    if (min_ss_offset == null || min_ss_offset >= 0) {
+    if (min_start == null || min_start >= 0) {
       return helix.min_offset != 0;
     } else {
-      return helix.min_offset != min_ss_offset;
+      return helix.min_offset != min_start;
     }
   }
-
-  //TODO: read scaffold strand from .dna file if present
 
   /// Replace this DNADesign with the one described in json_map.
 //  read_from_json(Map<String, dynamic> json_map) {
@@ -383,9 +310,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       if (helix_builder.grid_position == null) {
         helix_builder.grid_position = DNADesign._default_grid_position(display_order);
       }
-//      if (helix_builder.svg_position == null) {
-//        helix_builder.svg_position = helix_builder.build().default_svg_position();
-//      }
     }
 
     // strands
@@ -402,32 +326,23 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     if (is_origami == true) {
       dna_design_builder.is_origami = true;
     }
-//    dna_design.strands_store.strands = strands;
     dna_design_builder.strands.replace(strands);
 
-    //XXX: order of these is important because each uses the data calculated from the previous
-//    this._set_helices_idxs();
-//    this._set_helices_grid_and_svg_positions();
-//    dna_design_builder._build_helix_idx_to_substrands_list(helix_builders.length);
     _set_helices_min_max_offsets(helix_builders, dna_design_builder.strands.build());
 
     // build Helices
     List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
-//    dna_design.helices_store.helices = helices;
     dna_design_builder.helices.replace(helices);
 
     return dna_design_builder.build();
-  }
-
-  static int default_major_tick_distance(Grid grid) {
-    return grid == Grid.hex || grid == Grid.honeycomb ? 7 : 8;
   }
 
   _check_legal_design() {
     //TODO: implement this and give reasonable error messages
   }
 
-  String toString() => """DNADesign(grid=$grid, major_tick_distance=$major_tick_distance, 
+  String toString() =>
+      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
   helices=$helices, 
   strands=$strands)""";
 

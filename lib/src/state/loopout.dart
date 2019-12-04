@@ -1,6 +1,6 @@
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/model/bound_substrand.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/serializers.dart';
 

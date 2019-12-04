@@ -2,20 +2,20 @@ import 'dart:math';
 
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/model/select_mode.dart';
+import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/app_ui_state_reducer.dart';
 
-import '../model/crossover.dart';
-import '../model/helix.dart';
-import '../model/mouseover_data.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
+import '../state/crossover.dart';
+import '../state/helix.dart';
+import '../state/mouseover_data.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
 import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -45,7 +45,7 @@ class _$DesignMainStrandCrossoverProps extends UiProps {
 @State()
 class _$DesignMainStrandCrossoverState extends UiState {
   // making this "local" state for the component (instead of storing in the global store)
-  // skips wasteful actions and updating the model just to tell if the mouse is hovering over a crossover
+  // skips wasteful actions and updating the state just to tell if the mouse is hovering over a crossover
   bool mouse_hover;
 }
 

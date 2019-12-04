@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/model/selectable.dart';
+import 'package:scadnano/src/state/selectable.dart';
 
-import '../model/dna_design.dart';
+import '../state/dna_design.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../model/app_state.dart';
-import '../model/undo_redo.dart';
+import '../state/app_state.dart';
+import '../state/undo_redo.dart';
 
 
 var hline = '*' * 100;

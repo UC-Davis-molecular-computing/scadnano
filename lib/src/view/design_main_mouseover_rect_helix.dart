@@ -8,10 +8,10 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import '../app.dart';
-import '../model/mouseover_data.dart';
-import '../model/helix.dart';
+import '../state/mouseover_data.dart';
+import '../state/helix.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
 
@@ -28,7 +28,7 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
   Helix helix = state.dna_design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
 //  print('ConnectedDesignMainMouseoverRectHelix connect');
-//  print('  model.ui_state.mouseover_datas: ${model.ui_model.mouseover_datas}');
+//  print('  state.ui_state.mouseover_datas: ${state.ui_model.mouseover_datas}');
   bool show = state.ui_state.show_mouseover_rect;
   return DesignMainMouseoverRectHelix()
     ..helix = helix

@@ -9,16 +9,16 @@ import 'package:tuple/tuple.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/dna_design_action_packs.dart';
-import '../model/select_mode.dart';
-import '../model/selectable.dart';
-import '../model/edit_mode.dart';
-import '../model/helix.dart';
-import '../model/grid_position.dart';
-import '../model/mouseover_data.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
-import '../model/loopout.dart';
+import '../state/dna_design_action_packs.dart';
+import '../state/select_mode.dart';
+import '../state/selectable.dart';
+import '../state/edit_mode.dart';
+import '../state/helix.dart';
+import '../state/grid_position.dart';
+import '../state/mouseover_data.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
+import '../state/loopout.dart';
 
 /// An ActionPack has all the data needed to apply an [Action] (the "payload" in the terminology of w_flux).
 /// It serves as a layer of abstraction between an Action in w_flux (which is a function called with a payload)
@@ -101,7 +101,7 @@ class Actions_OLD {
   static final strands_remove = Action<Iterable<Strand>>();
   static final strands_add = Action<Iterable<Strand>>();
 
-  // Strand UI model
+  // Strand UI state
   static final strand_select_toggle = Action<Strand>();
   static final five_prime_select_toggle = Action<BoundSubstrand>();
   static final three_prime_select_toggle = Action<BoundSubstrand>();

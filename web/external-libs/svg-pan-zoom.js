@@ -1495,7 +1495,7 @@ module.exports = (function(){
   var prefix = "", _addEventListener, _removeEventListener, support, fns = [];
   var passiveOption = {passive: true};
 
-  // detect event model
+  // detect event state
   if ( window.addEventListener ) {
     _addEventListener = "addEventListener";
     _removeEventListener = "removeEventListener";

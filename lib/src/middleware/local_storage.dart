@@ -5,9 +5,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 
-import '../model/edit_mode.dart';
-import '../model/app_state.dart';
-import '../model/select_mode.dart';
+import '../state/edit_mode.dart';
+import '../state/app_state.dart';
+import '../state/select_mode.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 
@@ -15,7 +15,7 @@ part 'local_storage.g.dart';
 
 //TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
 
-/// Aspects of model that can be stored in localStorage. (More like a StorableType; the thing stored is
+/// Aspects of state that can be stored in localStorage. (More like a StorableType; the thing stored is
 /// somewhere in the Model, and this is an "ID" associated with it.
 class Storable extends EnumClass {
   const Storable._(String name) : super(name);

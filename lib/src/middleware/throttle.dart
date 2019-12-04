@@ -1,9 +1,9 @@
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/model/selection_box.dart';
+import 'package:scadnano/src/state/selection_box.dart';
 
 import '../actions/actions.dart' as actions;
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 
 // indicates time an action of given type was last dispatched.
 final Map<Type,int> _throttled_types = {};

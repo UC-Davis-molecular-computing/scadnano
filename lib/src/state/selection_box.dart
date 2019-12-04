@@ -104,7 +104,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 //    print('overlapping_now:      $overlapping_now');
 
 //    List<Selectable> overlapping_now_select_mode_enabled = [
-//      for (var obj in overlapping_now) if (app.model.select_mode_store.is_selectable(obj)) obj
+//      for (var obj in overlapping_now) if (app.state.select_mode_store.is_selectable(obj)) obj
 //    ];
     List<Selectable> overlapping_now_select_mode_enabled = [];
     for (var obj in overlapping_now) {

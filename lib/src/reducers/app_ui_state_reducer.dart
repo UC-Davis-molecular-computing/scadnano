@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/model/grid_position.dart';
+import 'package:scadnano/src/state/grid_position.dart';
 
-import '../model/helix.dart';
-import '../model/app_state.dart';
-import '../model/app_ui_state.dart';
-import '../model/mouseover_data.dart';
+import '../state/helix.dart';
+import '../state/app_state.dart';
+import '../state/app_ui_state.dart';
+import '../state/mouseover_data.dart';
 import '../reducers/select_mode_state_reducer.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
@@ -16,7 +16,7 @@ import 'selection_reducer.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// ui model local reducer
+// ui state local reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
@@ -83,7 +83,7 @@ GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.Mous
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// ui model global reducer
+// ui state global reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AppUIState ui_state_global_reducer(AppUIState ui_model, AppState model, action) => ui_model.rebuild((u) => u

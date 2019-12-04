@@ -2,12 +2,12 @@ import 'package:color/color.dart';
 import 'package:dnd/dnd.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/model/helix.dart';
+import 'package:scadnano/src/state/helix.dart';
 
-import '../model/app_state.dart';
-import 'package:scadnano/src/model/select_mode.dart';
-import 'package:scadnano/src/model/strand.dart';
-import '../model/bound_substrand.dart';
+import '../state/app_state.dart';
+import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano/src/state/strand.dart';
+import '../state/bound_substrand.dart';
 import '../app.dart';
 import '../util.dart' as util;
 import 'design_main.dart';

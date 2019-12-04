@@ -1,9 +1,9 @@
 import 'package:over_react/over_react.dart';
 
-import '../model/dna_design.dart';
-import '../model/strand.dart';
+import '../state/dna_design.dart';
+import '../state/strand.dart';
 import '../app.dart';
-import '../model/helix.dart';
+import '../state/helix.dart';
 import 'design_side_rotation_arrow.dart';
 
 part 'design_side_rotation.over_react.g.dart';

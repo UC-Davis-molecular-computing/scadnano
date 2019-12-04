@@ -8,7 +8,7 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import 'design.dart';
 import 'edit_mode.dart';
 import 'select_mode.dart';
@@ -84,8 +84,8 @@ class View {
 
 //    this.editor_view = EditorViewComponent(editor_element);
 
-//    setup_splits(app.model.show_editor);
-//    this.model.listen((_) => this.render());
+//    setup_splits(app.state.show_editor);
+//    this.state.listen((_) => this.render());
 //    this.render();
   }
 
@@ -103,7 +103,7 @@ class View {
 
     this.design_view.render(state);
 
-//    react_dom.render((EditMode()..store = app.model.edit_mode_store)(), this.edit_mode_element);
+//    react_dom.render((EditMode()..store = app.state.edit_mode_store)(), this.edit_mode_element);
 
     react_dom.render(
       ErrorBoundary()(
@@ -115,9 +115,9 @@ class View {
     );
 
 //    react_dom.render(
-//        (SelectMode()..select_mode_state = app.model.select_mode_store)(), this.select_mode_element);
+//        (SelectMode()..select_mode_state = app.state.select_mode_store)(), this.select_mode_element);
 
-//    if (app.model.show_editor) {
+//    if (app.state.show_editor) {
 //      this.editor_view.render();
 //    }
   }
@@ -126,17 +126,17 @@ class View {
 //    //TODO: Firefox won't let editor pane shrink (when pan separater is dragged) to hide text; Chrome puts a scrollbar
 //    // at the bottom when that happens and lets the editor pane shrink arbitrarily (which is the desired behavior)
 //
-//    if (!this.currently_showing_editor && app.model.show_editor) {
+//    if (!this.currently_showing_editor && app.state.show_editor) {
 //      this.nonmenu_panes_container_element.children.add(design_editor_separator);
 //      this.nonmenu_panes_container_element.children.add(editor_element);
 //      this.currently_showing_editor = true;
-//      setup_splits(app.model.show_editor);
+//      setup_splits(app.state.show_editor);
 //      this.editor_view.render();
-//    } else if (this.currently_showing_editor && !app.model.show_editor) {
+//    } else if (this.currently_showing_editor && !app.state.show_editor) {
 //      this.nonmenu_panes_container_element.children.remove(design_editor_separator);
 //      this.nonmenu_panes_container_element.children.remove(editor_element);
 //      this.currently_showing_editor = false;
-//      setup_splits(app.model.show_editor);
+//      setup_splits(app.state.show_editor);
 //      this.editor_view.render();
 //    }
 //  }

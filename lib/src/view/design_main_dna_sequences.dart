@@ -1,7 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/strand.dart';
+import '../state/strand.dart';
 import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';

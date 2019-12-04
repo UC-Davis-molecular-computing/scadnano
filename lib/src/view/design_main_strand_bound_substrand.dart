@@ -5,10 +5,10 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../model/helix.dart';
-import '../model/bound_substrand.dart';
+import '../state/helix.dart';
+import '../state/bound_substrand.dart';
 import '../app.dart';
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
 

@@ -2,7 +2,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../model/selection_box.dart';
+import '../state/selection_box.dart';
 
 part 'selection_box_view.over_react.g.dart';
 

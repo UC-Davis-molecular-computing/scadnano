@@ -3,14 +3,14 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/model/selection_box.dart';
+import 'package:scadnano/src/state/selection_box.dart';
 
-import '../model/app_state.dart';
-import '../model/mouseover_data.dart';
+import '../state/app_state.dart';
+import '../state/mouseover_data.dart';
 import 'design_side_helix.dart';
-import '../model/helix.dart';
-import '../model/grid.dart';
-import '../model/grid_position.dart';
+import '../state/helix.dart';
+import '../state/grid.dart';
+import '../state/grid_position.dart';
 import 'design_side_potential_helix.dart';
 import 'selection_box_view.dart';
 import '../util.dart' as util;
@@ -19,7 +19,7 @@ part 'design_side.over_react.g.dart';
 
 // The react/redux stuff keeps going in the background even if we don't render it. To prevent a crash when
 // there is an error message to display instead of a DNADesign (since the components for DesignSide and DesignMain
-// are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when model has an error.
+// are rendered manually top-level by vanilla Dart DOM code), we need to say what to do here when state has an error.
 UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideProps>(
   mapStateToProps: (state) {
     if (state.has_error()) {

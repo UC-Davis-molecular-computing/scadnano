@@ -6,8 +6,8 @@ import 'package:over_react/over_react_redux.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../model/app_state.dart';
-import '../model/app_ui_state.dart';
+import '../state/app_state.dart';
+import '../state/app_ui_state.dart';
 
 part 'menu.over_react.g.dart';
 
@@ -53,7 +53,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
       //XXX: I like to keep this button around to simulate random things that require user interaction
       (Dom.button()
         ..onClick = (_) {
-          print('app.model.ui_model.side_selected_helices: ${app.state.ui_state.side_selected_helix_idxs}');
+          print('app.state.ui_model.side_selected_helices: ${app.state.ui_state.side_selected_helix_idxs}');
         }
         ..key = 'dummy'
         ..className = 'dummy-button menu-item')('Dummy'),
@@ -91,7 +91,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
 //            (Dom.input()
 //              ..checked = show_editor
 //              ..onChange = (_) {
-//                app.model.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
+//                app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
 //              }
 //              ..type = 'checkbox')(),
 //            'show editor',
@@ -175,6 +175,6 @@ file_loaded(FileReader file_reader, String filename) {
   app.store.dispatch(actions.LoadDNAFile(json_model_text, filename));
 
 //  app.send_action(LoadDNAFileActionPack(LoadDNAFileParameters(json_model_text, filename)));
-//  app.model.menu_view_ui_model.loaded_filename = filename;
-//  app.model.set_new_design_from_json(json_model_text);
+//  app.state.menu_view_ui_model.loaded_filename = filename;
+//  app.state.set_new_design_from_json(json_model_text);
 }

@@ -11,15 +11,15 @@ import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
-import 'package:scadnano/src/model/app_ui_state.dart';
+import 'package:scadnano/src/state/app_ui_state.dart';
 
-import 'package:scadnano/src/model/bound_substrand.dart';
-import 'model/dna_design.dart';
-import 'model/app_state.dart';
-import 'model/selection_box.dart';
+import 'package:scadnano/src/state/bound_substrand.dart';
+import 'state/dna_design.dart';
+import 'state/app_state.dart';
+import 'state/selection_box.dart';
+import 'state/undo_redo.dart';
 import 'reducers/selection_reducer.dart';
 import 'util.dart' as util;
-import 'model/undo_redo.dart';
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
@@ -97,7 +97,7 @@ class App {
 
       setup_undo_redo_keyboard_listeners();
 
-//    util.save_editor_content_to_js_context(model.editor_content);
+//    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
       this.setup_warning_before_unload();
 
@@ -174,7 +174,7 @@ class App {
   }
 
   make_dart_functions_available_to_js(AppState model) {
-//    util.make_dart_function_available_to_js('dart_allow_pan', model.allow_main_view_pan);
+//    util.make_dart_function_available_to_js('dart_allow_pan', state.allow_main_view_pan);
   }
 }
 

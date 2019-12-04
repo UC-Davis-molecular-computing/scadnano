@@ -5,10 +5,10 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
-import '../model/app_state.dart';
-import 'package:scadnano/src/model/select_mode.dart';
-import '../model/bound_substrand.dart';
-import '../model/loopout.dart';
+import '../state/app_state.dart';
+import 'package:scadnano/src/state/select_mode.dart';
+import '../state/bound_substrand.dart';
+import '../state/loopout.dart';
 import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;

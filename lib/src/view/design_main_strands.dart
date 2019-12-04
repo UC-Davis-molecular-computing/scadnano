@@ -1,7 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../model/strand.dart';
+import '../state/strand.dart';
 import 'design_main_strand.dart';
 
 part 'design_main_strands.over_react.g.dart';

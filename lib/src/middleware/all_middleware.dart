@@ -2,7 +2,7 @@ import 'package:redux/redux.dart';
 
 import 'load_file.dart';
 import 'save_file.dart';
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
 import 'throttle.dart';

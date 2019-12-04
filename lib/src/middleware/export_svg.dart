@@ -5,7 +5,7 @@ import 'package:redux/redux.dart';
 
 import '../app.dart';
 import '../view/view.dart';
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 

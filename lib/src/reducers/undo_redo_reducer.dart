@@ -5,9 +5,9 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 
 import '../app.dart';
-import '../model/dna_design.dart';
-import '../model/undo_redo.dart';
-import '../model/app_state.dart';
+import '../state/dna_design.dart';
+import '../state/undo_redo.dart';
+import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import 'util_reducer.dart';
 

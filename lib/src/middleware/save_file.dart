@@ -4,7 +4,7 @@ import 'package:redux/redux.dart';
 
 import '../json_serializable.dart';
 import '../actions/actions.dart' as actions;
-import '../model/app_state.dart';
+import '../state/app_state.dart';
 import '../util.dart' as util;
 
 AppState save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {

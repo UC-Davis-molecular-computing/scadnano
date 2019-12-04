@@ -6,25 +6,25 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
-import 'package:scadnano/src/model/selectable.dart';
-import 'package:scadnano/src/model/selection_box.dart';
+import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano/src/state/selection_box.dart';
 import 'package:w_flux/w_flux.dart';
 import 'package:built_collection/built_collection.dart';
 
 import '../serializers.dart';
-import '../model/dna_design.dart';
-import '../model/substrand.dart';
-import '../model/app_state.dart';
-import '../model/dna_design_action_packs.dart';
-import '../model/select_mode.dart';
-import '../model/select_mode_state.dart';
-import '../model/edit_mode.dart';
-import '../model/helix.dart';
-import '../model/grid_position.dart';
-import '../model/mouseover_data.dart';
-import '../model/strand.dart';
-import '../model/bound_substrand.dart';
-import '../model/loopout.dart';
+import '../state/dna_design.dart';
+import '../state/substrand.dart';
+import '../state/app_state.dart';
+import '../state/dna_design_action_packs.dart';
+import '../state/select_mode.dart';
+import '../state/select_mode_state.dart';
+import '../state/edit_mode.dart';
+import '../state/helix.dart';
+import '../state/grid_position.dart';
+import '../state/mouseover_data.dart';
+import '../state/strand.dart';
+import '../state/bound_substrand.dart';
+import '../state/loopout.dart';
 import '../middleware/local_storage.dart';
 
 part 'actions.g.dart';
@@ -669,7 +669,7 @@ abstract class UndoRedoClear
 //  strands_remove = Action<Iterable<Strand>>();
 //  strands_add = Action<Iterable<Strand>>();
 //
-//  // Strand UI model
+//  // Strand UI state
 //  strand_select_toggle = Action<Strand>();
 //  five_prime_select_toggle = Action<BoundSubstrand>();
 //  three_prime_select_toggle = Action<BoundSubstrand>();
@@ -707,6 +707,6 @@ abstract class UndoRedoClear
 //  *set_select_modes = Action<List<SelectModeChoice>>();
 //
 //  // all reversible dispatcher go through this Action
-//  reversible_action = Action<ReversibleActionPack>();
+//  *reversible_action = Action<ReversibleActionPack>();
 //
 //}

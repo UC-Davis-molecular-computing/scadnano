@@ -3,17 +3,17 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/model/app_state.dart';
-import 'package:scadnano/src/model/position3d.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/position3d.dart';
 
 import '../actions/actions_OLD.dart';
-import '../model/dna_design.dart';
-import '../model/mouseover_data.dart';
-import '../model/bound_substrand.dart';
+import '../state/dna_design.dart';
+import '../state/mouseover_data.dart';
+import '../state/bound_substrand.dart';
 import '../app.dart';
-import '../model/helix.dart';
-import '../model/grid.dart';
-import '../model/grid_position.dart';
+import '../state/helix.dart';
+import '../state/grid.dart';
+import '../state/grid_position.dart';
 import 'design_side_rotation.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
@@ -139,7 +139,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
       }.toList();
       strands_to_remove.sort((s1, s2) => all_strands.indexOf(s2).compareTo(all_strands.indexOf(s1)));
 //      action_packs_for_batch.add([for (var strand in strands_to_remove) StrandRemoveActionPack(strand)]);
-      action_packs_for_batch.add(StrandsRemoveActionPack(strands_to_remove));
+//      action_packs_for_batch.add(StrandsRemoveActionPack(strands_to_remove));
       //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
     }
 

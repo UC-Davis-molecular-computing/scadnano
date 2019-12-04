@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/model/app_state.dart';
-import 'package:scadnano/src/model/selectable.dart';
-import 'package:scadnano/src/model/strand.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
 
-import '../model/dna_design.dart';
+import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';
 
