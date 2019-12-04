@@ -367,24 +367,24 @@ abstract class SelectionBoxCreate
   static Serializer<SelectionBoxCreate> get serializer => _$selectionBoxCreateSerializer;
 }
 
-abstract class SelectionBoxSizeChanged
+abstract class SelectionBoxSizeChange
     with BuiltJsonSerializable
-    implements Action2, Built<SelectionBoxSizeChanged, SelectionBoxSizeChangedBuilder> {
+    implements Action2, Built<SelectionBoxSizeChange, SelectionBoxSizeChangeBuilder> {
   Point<num> get point;
 
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxSizeChanged(Point<num> point, bool is_main) => SelectionBoxSizeChanged.from((b) => b
+  factory SelectionBoxSizeChange(Point<num> point, bool is_main) => SelectionBoxSizeChange.from((b) => b
     ..point = point
     ..is_main = is_main);
 
-  factory SelectionBoxSizeChanged.from([void Function(SelectionBoxSizeChangedBuilder) updates]) =
-      _$SelectionBoxSizeChanged;
+  factory SelectionBoxSizeChange.from([void Function(SelectionBoxSizeChangeBuilder) updates]) =
+      _$SelectionBoxSizeChange;
 
-  SelectionBoxSizeChanged._();
+  SelectionBoxSizeChange._();
 
-  static Serializer<SelectionBoxSizeChanged> get serializer => _$selectionBoxSizeChangedSerializer;
+  static Serializer<SelectionBoxSizeChange> get serializer => _$selectionBoxSizeChangeSerializer;
 }
 
 abstract class SelectionBoxRemove

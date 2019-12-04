@@ -191,7 +191,7 @@ BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.Heli
 
 Reducer<SelectionBox> selection_box_reducer = combineReducers([
   TypedReducer<SelectionBox, actions.SelectionBoxCreate>(selection_box_create_reducer),
-  TypedReducer<SelectionBox, actions.SelectionBoxSizeChanged>(selection_box_size_changed_reducer),
+  TypedReducer<SelectionBox, actions.SelectionBoxSizeChange>(selection_box_size_changed_reducer),
   TypedReducer<SelectionBox, actions.SelectionBoxRemove>(selection_box_remove_reducer),
 ]);
 
@@ -200,7 +200,7 @@ SelectionBox selection_box_create_reducer(
     SelectionBox(action.point, action.toggle, action.is_main);
 
 SelectionBox selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.SelectionBoxSizeChanged action) =>
+        SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
 SelectionBox selection_box_remove_reducer(

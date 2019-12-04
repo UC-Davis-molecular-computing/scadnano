@@ -38,7 +38,7 @@ part 'serializers.g.dart';
   MouseoverDataClear,
   MouseoverDataUpdate,
   SelectionBoxCreate,
-  SelectionBoxSizeChanged,
+  SelectionBoxSizeChange,
   SelectionBoxRemove,
   MouseoverParams,
   Helix,

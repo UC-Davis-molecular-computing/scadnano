@@ -309,7 +309,7 @@ class DesignViewComponent {
 //      print('current target: ${event.target}');
 
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        var action = actions.SelectionBoxSizeChanged(point, is_main_view);
+        var action = actions.SelectionBoxSizeChange(point, is_main_view);
 //        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
         app.store_selection_box.dispatch(actions.ThrottledAction(action, 1 / 60.0));
       }
