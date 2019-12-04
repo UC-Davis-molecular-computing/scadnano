@@ -485,6 +485,22 @@ abstract class SelectionsAdjust
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Delete selected non-helix items
+
+abstract class DeleteAllSelected
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<DeleteAllSelected, DeleteAllSelectedBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DeleteAllSelected() => DeleteAllSelected.from((b) => b);
+
+  factory DeleteAllSelected.from([void Function(DeleteAllSelectedBuilder) updates]) = _$DeleteAllSelected;
+
+  DeleteAllSelected._();
+
+  static Serializer<DeleteAllSelected> get serializer => _$deleteAllSelectedSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix select (side view)
 
 abstract class HelixSelect
@@ -542,7 +558,7 @@ abstract class HelixSelectionsAdjust
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Mouse position (side view)
+// Show mouseover box (side view)
 
 abstract class SetShowMouseoverRect
     with BuiltJsonSerializable
@@ -660,14 +676,14 @@ abstract class UndoRedoClear
 //  loopout_select_toggle = Action<Loopout>();
 //  crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
 //
-//  unselect_all = Action<Null>();
-//  select = Action<Selectable>();
-//  select_all = Action<List<Selectable>>();
-//  unselect = Action<Selectable>();
-//  toggle = Action<Selectable>();
-//  toggle_all = Action<List<Selectable>>();
+//  *unselect_all = Action<Null>();
+//  *select = Action<Selectable>();
+//  *select_all = Action<List<Selectable>>();
+//  *unselect = Action<Selectable>();
+//  *toggle = Action<Selectable>();
+//  *toggle_all = Action<List<Selectable>>();
 //
-//  delete_all = Action<DeleteAllParameters>();
+//  *delete_all = Action<DeleteAllParameters>();
 //
 //  // Selection box
 //  *create_selection_box_toggling = Action<Point<num>>();

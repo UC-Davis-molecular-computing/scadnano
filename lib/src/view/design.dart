@@ -175,12 +175,7 @@ class DesignViewComponent {
       }
 
       if (key == KeyCode.DELETE) {
-        //FIXME:
-//        List<Selectable> selected = app.model.ui_model.selection.selections.toList();
-//        dna_design_action_packs.delete_all(app.model.dna_design, selected);
-        //XXX: we call a method on DNADesign directly here rather than firing an Action. That method will
-        // do the work of determining which selections are redundant and only fire a reversible Action
-        // for what remains after the set is trimmed.
+        app.store.dispatch(actions.DeleteAllSelected());
       }
     });
 

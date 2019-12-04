@@ -1,29 +1,51 @@
-import 'package:redux/redux.dart';
+import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/model/app_state.dart';
+import 'package:scadnano/src/model/selectable.dart';
+import 'package:scadnano/src/model/strand.dart';
+import 'package:scadnano/src/reducers/util_reducer.dart';
 
 import '../model/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';
-//
-//Reducer<DNADesign> dna_design_reducer = combineReducers([
-//  TypedReducer<DNADesign, actions.ErrorMessageSet>(error_message_set_reducer),
-//  TypedReducer<DNADesign, actions.Action2>(dna_design_composed_reducer),
-//]);
 
 DNADesign dna_design_reducer(DNADesign dna_design, action) {
   if (action is actions.ErrorMessageSet) {
-    return error_message_set_reducer(dna_design, action);
+    dna_design = error_message_set_reducer(dna_design, action);
   } else if (action is actions.Action2) {
-    return dna_design_composed_reducer(dna_design, action);
-  } else {
-    return dna_design;
+    dna_design = dna_design_composed_reducer(dna_design, action);
+//    dna_design = dna_design_whole_reducer(dna_design, action);
   }
+  return dna_design;
 }
 
 DNADesign dna_design_composed_reducer(DNADesign dna_design, action) =>
     dna_design.rebuild((d) => d..helices.replace(helices_reducer(dna_design.helices, action)));
 
 //XXX: don't need this yet, but might soon
-//DNADesign dna_design_global_reducer(DNADesign dna_design, Model model, action) => dna_design.rebuild((d) => d..helices = helice);
+DNADesign dna_design_global_reducer(DNADesign dna_design, AppState state, action) {
+  dna_design = dna_design_global_composed_reducer(dna_design, state, action);
+  dna_design = dna_design_global_whole_reducer(dna_design, state, action);
+  return dna_design;
+}
+
+DNADesign dna_design_global_composed_reducer(DNADesign dna_design, AppState state, action) =>
+    dna_design.rebuild((d) => d
+//      ..helices.replace(helices_global_reducer(dna_design.helices, action))
+//  ..strands.replace(strands_global_reducer(dna_design.strands, action))
+        );
+
+GlobalReducer<DNADesign, AppState> dna_design_global_whole_reducer = combineGlobalReducers([
+  TypedGlobalReducer<DNADesign, AppState, actions.DeleteAllSelected>(dna_design_delete_all_reducer),
+]);
+
+DNADesign dna_design_delete_all_reducer(
+    DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
+  BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
+  var strands = List<Strand>.from(items.where((item) => item is Strand));
+  dna_design = dna_design.remove_strands(strands);
+  //TODO: remove other items than just Strands
+  return dna_design;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Error message set

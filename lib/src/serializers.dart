@@ -72,6 +72,7 @@ part 'serializers.g.dart';
   HelixSelect,
   SelectionsAdjust,
   SelectionsClear,
+  DeleteAllSelected,
   Select,
   Loopout,
 ])

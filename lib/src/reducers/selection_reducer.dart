@@ -24,7 +24,12 @@ Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
 
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
+  TypedGlobalReducer<SelectablesStore, AppState, actions.DeleteAllSelected>(delete_all_reducer),
 ]);
+
+SelectablesStore delete_all_reducer(
+        SelectablesStore selectables_store, AppState state, actions.DeleteAllSelected action) =>
+    selectables_store.clear();
 
 SelectablesStore selections_adjust_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectionsAdjust action) {
@@ -195,14 +200,12 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
   TypedReducer<SelectionBox, actions.SelectionBoxRemove>(selection_box_remove_reducer),
 ]);
 
-SelectionBox selection_box_create_reducer(
-        SelectionBox selection_box, actions.SelectionBoxCreate action) =>
+SelectionBox selection_box_create_reducer(SelectionBox selection_box, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
 SelectionBox selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
-SelectionBox selection_box_remove_reducer(
-        SelectionBox selection_box, actions.SelectionBoxRemove action) =>
+SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) =>
     null;
