@@ -71,14 +71,14 @@ BuiltList<MouseoverData> mouseover_data_update_reducer(_, actions.MouseoverDataU
 // side view mouse grid position reducer
 
 Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
-  TypedReducer<GridPosition, actions.SideViewMouseGridPositionUpdate>(side_view_mouse_grid_pos_update_reducer),
-  TypedReducer<GridPosition, actions.SideViewMouseGridPositionClear>(side_view_mouse_grid_pos_clear_reducer),
+  TypedReducer<GridPosition, actions.MouseGridPositionSideUpdate>(side_view_mouse_grid_pos_update_reducer),
+  TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _, actions.SideViewMouseGridPositionUpdate action) =>
+GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _, actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.SideViewMouseGridPositionClear action) =>
+GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.MouseGridPositionSideClear action) =>
     null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

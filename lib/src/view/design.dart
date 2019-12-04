@@ -208,7 +208,7 @@ class DesignViewComponent {
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
           app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-        app.store.dispatch(actions.SideViewMouseGridPositionClear());
+        app.store.dispatch(actions.MouseGridPositionSideClear());
       }
     });
 
@@ -415,7 +415,7 @@ class DesignViewComponent {
 
 side_view_mouse_leave_update_mouseover() {
   if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-    app.store.dispatch(actions.SideViewMouseGridPositionClear());
+    app.store.dispatch(actions.MouseGridPositionSideClear());
   }
 }
 
@@ -425,11 +425,11 @@ side_view_update_mouseover(Set<int> keys_pressed, {Point<num> mouse_pos = null, 
     var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
         mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
-      app.store.dispatch(actions.SideViewMouseGridPositionUpdate(new_grid_pos));
+      app.store.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
     }
   } else {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-      app.store.dispatch(actions.SideViewMouseGridPositionClear());
+      app.store.dispatch(actions.MouseGridPositionSideClear());
     }
   }
 }

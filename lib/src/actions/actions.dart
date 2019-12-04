@@ -70,6 +70,9 @@ abstract class StorableAction extends Action2 {
   Iterable<Storable> storables();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Batch action
+
 /// [Action] intended for applying >= 2 other [UndoableAction]s at once,
 /// which can be undone/redone in a single step by [UndoRedo].
 abstract class BatchAction
@@ -89,6 +92,28 @@ abstract class BatchAction
 
   @override
   dynamic toJson() => {'actions': actions.toList()};
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Throttle
+
+abstract class ThrottledAction
+    with BuiltJsonSerializable
+    implements Action2, Built<ThrottledAction, ThrottledActionBuilder> {
+  Action2 get action;
+
+  num get interval_sec;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ThrottledAction(Action2 action, num interval_sec) => ThrottledAction.from((b) => b
+    ..action = action
+    ..interval_sec = interval_sec);
+
+  factory ThrottledAction.from([void Function(ThrottledActionBuilder) updates]) = _$ThrottledAction;
+
+  ThrottledAction._();
+
+  static Serializer<ThrottledAction> get serializer => _$throttledActionSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -380,37 +405,35 @@ abstract class SelectionBoxRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouse grid position (side view)
 
-abstract class SideViewMouseGridPositionUpdate
+abstract class MouseGridPositionSideUpdate
     with BuiltJsonSerializable
-    implements Action2, Built<SideViewMouseGridPositionUpdate, SideViewMouseGridPositionUpdateBuilder> {
+    implements Action2, Built<MouseGridPositionSideUpdate, MouseGridPositionSideUpdateBuilder> {
   GridPosition get grid_position;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SideViewMouseGridPositionUpdate(GridPosition grid_position) =>
-      SideViewMouseGridPositionUpdate.from((b) => b..grid_position.replace(grid_position));
+  factory MouseGridPositionSideUpdate(GridPosition grid_position) =>
+      MouseGridPositionSideUpdate.from((b) => b..grid_position.replace(grid_position));
 
-  factory SideViewMouseGridPositionUpdate.from(
-      [void Function(SideViewMouseGridPositionUpdateBuilder) updates]) = _$SideViewMouseGridPositionUpdate;
+  factory MouseGridPositionSideUpdate.from([void Function(MouseGridPositionSideUpdateBuilder) updates]) =
+      _$MouseGridPositionSideUpdate;
 
-  SideViewMouseGridPositionUpdate._();
+  MouseGridPositionSideUpdate._();
 
-  static Serializer<SideViewMouseGridPositionUpdate> get serializer =>
-      _$sideViewMouseGridPositionUpdateSerializer;
+  static Serializer<MouseGridPositionSideUpdate> get serializer => _$mouseGridPositionSideUpdateSerializer;
 }
 
-abstract class SideViewMouseGridPositionClear
+abstract class MouseGridPositionSideClear
     with BuiltJsonSerializable
-    implements Action2, Built<SideViewMouseGridPositionClear, SideViewMouseGridPositionClearBuilder> {
+    implements Action2, Built<MouseGridPositionSideClear, MouseGridPositionSideClearBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory SideViewMouseGridPositionClear() => SideViewMouseGridPositionClear.from((b) => b);
+  factory MouseGridPositionSideClear() => MouseGridPositionSideClear.from((b) => b);
 
-  factory SideViewMouseGridPositionClear.from(
-      [void Function(SideViewMouseGridPositionClearBuilder) updates]) = _$SideViewMouseGridPositionClear;
+  factory MouseGridPositionSideClear.from([void Function(MouseGridPositionSideClearBuilder) updates]) =
+      _$MouseGridPositionSideClear;
 
-  SideViewMouseGridPositionClear._();
+  MouseGridPositionSideClear._();
 
-  static Serializer<SideViewMouseGridPositionClear> get serializer =>
-      _$sideViewMouseGridPositionClearSerializer;
+  static Serializer<MouseGridPositionSideClear> get serializer => _$mouseGridPositionSideClearSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -602,28 +625,6 @@ abstract class UndoRedoClear
   UndoRedoClear._();
 
   static Serializer<UndoRedoClear> get serializer => _$undoRedoClearSerializer;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Throttle
-
-abstract class ThrottledAction
-    with BuiltJsonSerializable
-    implements Action2, Built<ThrottledAction, ThrottledActionBuilder> {
-  Action2 get action;
-
-  num get interval_sec;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledAction(Action2 action, num interval_sec) => ThrottledAction.from((b) => b
-    ..action = action
-    ..interval_sec = interval_sec);
-
-  factory ThrottledAction.from([void Function(ThrottledActionBuilder) updates]) = _$ThrottledAction;
-
-  ThrottledAction._();
-
-  static Serializer<ThrottledAction> get serializer => _$throttledActionSerializer;
 }
 
 //class Actions {
