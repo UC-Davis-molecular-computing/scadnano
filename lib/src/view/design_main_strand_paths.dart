@@ -77,13 +77,13 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
           ..substrand = substrand
           ..color = strand.color
           ..is_first_substrand = (i == 0)
-          ..key = "5'-end-$i")());
+          ..key = "5'-end-$i${bound_ss.is_first ? '-is_first' : ''}")());
 
         ends.add((ConnectedDesignMain3pEnd()
           ..substrand = substrand
           ..color = strand.color
           ..is_last_substrand = (i == strand.substrands.length - 1)
-          ..key = "3'-end-$i")());
+          ..key = "3'-end-$i${bound_ss.is_last ? '-is_last' : ''}")());
       }
 
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {

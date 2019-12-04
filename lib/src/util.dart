@@ -8,6 +8,7 @@ import 'dart:math';
 import 'dart:svg' hide Point;
 
 import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
@@ -26,6 +27,37 @@ import 'state/selectable.dart';
 import 'state/selection_box.dart';
 import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
+
+final ColorCycler color_cycler = ColorCycler();
+
+class ColorCycler {
+  static List<Color> colors = [
+    Color.rgb(50, 184, 108),
+    Color.rgb(204, 0, 0),
+    Color.rgb(247, 67, 8),
+    Color.rgb(247, 147, 30),
+    Color.rgb(170, 170, 0),
+    Color.rgb(87, 187, 0),
+    Color.rgb(0, 114, 0),
+    Color.rgb(3, 182, 162),
+    // Color.rgb(23, 0, 222), // don't like this because it looks too much like scaffold
+    Color.rgb(50, 0, 150), // this one is better contrast with scaffold
+    Color.rgb(184, 5, 108),
+    Color.rgb(51, 51, 51),
+    Color.rgb(115, 0, 222),
+    Color.rgb(136, 136, 136),
+  ];
+
+  int idx = 0;
+
+  ColorCycler();
+
+  Color next() {
+    Color next_color = colors[idx];
+    idx = (idx + 1) % colors.length;
+    return next_color;
+  }
+}
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
@@ -46,7 +78,8 @@ Future<String> file_content(String url) async {
 }
 
 /// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid, {Point<num> mouse_pos = null, MouseEvent event = null}) {
+GridPosition grid_position_of_mouse_in_side_view(Grid grid,
+    {Point<num> mouse_pos = null, MouseEvent event = null}) {
   SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
   var grid_pos = side_view_svg_to_grid(grid, svg_pos);
@@ -56,7 +89,8 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid, {Point<num> mouse_po
 /// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
-Point<num> untransformed_svg_point(SvgSvgElement svg_elt, {Point<num> mouse_pos = null, MouseEvent event = null}) {
+Point<num> untransformed_svg_point(SvgSvgElement svg_elt,
+    {Point<num> mouse_pos = null, MouseEvent event = null}) {
   var svg_point_SVG = svg_elt.createSvgPoint();
   if (mouse_pos == null) {
     assert(event != null);
@@ -70,9 +104,11 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt, {Point<num> mouse_pos 
   svg_point_SVG.y = mouse_pos.y;
   print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
   var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
+  print(
+      'svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
   var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
-  print('svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
+  print(
+      'svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
   Point<num> svg_point = Point<num>(svg_point_SVG_2.x, svg_point_SVG_2.y);
   return svg_point;
 }
@@ -109,7 +145,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   }
 }
 
-transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(
+    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -153,7 +190,8 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
     num y = sin(2 * pi / 6) * gp.v; // y offset from v
     point = Point<num>(x, y);
   } else {
-    throw ArgumentError('cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+    throw ArgumentError(
+        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return point * 2 * radius;
 }
@@ -326,7 +364,8 @@ class Box {
   num x;
   num y;
 
-  factory Box.from(Rect svg_rect) => Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
+  factory Box.from(Rect svg_rect) =>
+      Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
 
   factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
 
@@ -382,7 +421,8 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
 List<E> generalized_intersection_list<E>(
     List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
   if (elts.length != bboxes.length) {
-    throw ArgumentError('elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
+    throw ArgumentError(
+        'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
   }
   List<E> elts_intersecting = [];
   for (int i = 0; i < elts.length; i++) {
@@ -428,7 +468,8 @@ generalized_intersection_list_in_elt(
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(
+    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

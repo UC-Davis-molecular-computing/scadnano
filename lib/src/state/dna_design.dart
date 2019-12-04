@@ -7,6 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
 import 'package:scadnano/src/state/loopout.dart';
 
+import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
@@ -103,19 +104,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return substrand_to_strand_builder.build();
   }
 
+  Strand crossover_to_strand(Crossover crossover) => substrand_to_strand[crossover.prev_substrand];
+
+  Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout.prev_substrand];
+
+  Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
+
   @memoized
   BuiltList<BuiltSet<BoundSubstrand>> get helix_idx_to_substrands {
     return _construct_helix_idx_to_substrands_map(helices.length, strands);
   }
-
-////    this.helices_store.triggerOnActionV2<HelixUseActionParameters>(Actions.helix_use, (params) {
-////      params.create ? this._add_helix(params) : this._remove_helix(params);
-////    });
-////
-////    this.helices_store.triggerOnActionV2<List<Helix>>(Actions.set_helices, (new_helices) {
-////      this.helices_store.helices = new_helices;
-////    });
-//  }
 
   static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
 
@@ -187,9 +185,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   // rebuilt from scratch even if we only add a single Strand
   DNADesign add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
-  DNADesign remove_strand(Strand strand) => rebuild((d) => d..strands.remove(strand));
-
   DNADesign add_strands(Iterable<Strand> new_strands) => rebuild((d) => d..strands.addAll(new_strands));
+
+  DNADesign remove_strand(Strand strand) => rebuild((d) => d..strands.remove(strand));
 
   DNADesign remove_strands(Iterable<Strand> strands_to_remove) {
     Set<Strand> strands_to_remove_set = strands_to_remove.toSet();

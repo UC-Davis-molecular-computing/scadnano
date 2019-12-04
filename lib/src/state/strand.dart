@@ -21,7 +21,22 @@ part 'strand.g.dart';
 abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, JSONSerializable {
   Strand._();
 
-  factory Strand([void Function(StrandBuilder) updates]) = _$Strand;
+  factory Strand(Iterable<Substrand> substrands,
+      {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = null}) {
+    if (color == null) {
+      color = util.color_cycler.next();
+    }
+    return Strand.from((b) => b
+      ..color = color
+      ..substrands.replace(substrands)
+      ..dna_sequence = dna_sequence
+      ..idt = idt?.toBuilder()
+      ..is_scaffold = is_scaffold);
+  }
+
+  factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
+
+//  factory Strand([void Function(StrandBuilder) updates]) = _$Strand;
 
   static Serializer<Strand> get serializer => _$strandSerializer;
 
@@ -31,10 +46,10 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   Color get color;
 
+  BuiltList<Substrand> get substrands;
+
   @nullable
   String get dna_sequence;
-
-  BuiltList<Substrand> get substrands;
 
   @nullable
   IDTFields get idt;
@@ -128,7 +143,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     }
 
     return rebuild((strand) => strand
-      ..substrands = ListBuilder<Substrand>(substrands_new)
+      ..substrands.replace(substrands_new)
       ..dna_sequence = dna_sequence_new);
   }
 
@@ -171,7 +186,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       }
     }
 
-    var substrands = [];
+    List<Substrand> substrands = [];
     for (int i = 0; i < substrand_jsons.length; i++) {
       if (bound_substrands.containsKey(i)) {
         substrands.add(bound_substrands[i]);
@@ -196,11 +211,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       is_scaffold = json_map[constants.is_scaffold_key];
     }
 
-    Strand strand = Strand((s) => s
-      ..substrands = ListBuilder<Substrand>(substrands)
-      ..is_scaffold = is_scaffold
-      ..color = color
-      ..idt = null);
+    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold);
 
     if (json_map.containsKey(constants.idt_key)) {
       try {
