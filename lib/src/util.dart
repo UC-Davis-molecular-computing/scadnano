@@ -28,6 +28,8 @@ import 'state/selection_box.dart';
 import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
+//TODO: consider making the current position of the color_cycler part of the State (or even DNADesign)
+// Then colors would be predictably and repeatably assigned.
 final ColorCycler color_cycler = ColorCycler();
 
 class ColorCycler {

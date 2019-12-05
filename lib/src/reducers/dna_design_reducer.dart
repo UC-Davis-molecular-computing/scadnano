@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
@@ -60,6 +61,8 @@ DNADesign dna_design_delete_all_reducer(
     DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
 
+  //FIXME: normalize crossover/end/loopout as string ids.
+  // otherwise whichever is removed first invalidates the references of the remaining
   var strands = Set<Strand>.from(items.where((item) => item is Strand));
   var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
   var ends = Set<DNAEnd>.from(items.where((item) => item is DNAEnd));
@@ -79,69 +82,78 @@ DNADesign _remove_strands(DNADesign dna_design, Iterable<Strand> strands_to_remo
 DNADesign _remove_crossovers(DNADesign dna_design, Iterable<Crossover> crossovers) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
+
+  // collect all crossovers for one strand because we need special case to remove multiple from one strand
+  Map<Strand, List<Crossover>> strand_to_crossovers = {};
   for (var crossover in crossovers) {
     var strand = dna_design.crossover_to_strand(crossover);
-    strands_to_remove.add(strand);
-    var split_strands = _remove_crossover(strand, crossover);
-    strands_to_add.add(split_strands.item1);
-    strands_to_add.add(split_strands.item2);
+    if (strand_to_crossovers[strand] == null) {
+      strand_to_crossovers[strand] = [];
+    }
+    strand_to_crossovers[strand].add(crossover);
   }
+
+  // remove crossovers one strand at a time
+  for (var strand in strand_to_crossovers.keys) {
+    strands_to_remove.add(strand);
+    var split_strands = _remove_crossovers_from_strand(strand, strand_to_crossovers[strand]);
+    strands_to_add.addAll(split_strands);
+  }
+
+  // remove old strands and add new strands to DNADesign
   var new_strands = dna_design.strands.toList();
   new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
   new_strands.addAll(strands_to_add);
+
   return dna_design.rebuild((d) => d..strands.replace(new_strands));
 }
 
 // Splits one strand into two by removing a crossover
-Tuple2<Strand, Strand> _remove_crossover(Strand strand, Crossover crossover) {
-  // get substrands on either side of crossover
-  List<Substrand> substrands1 = [];
-  List<Substrand> substrands2 = [];
-  bool crossed = false;
-  for (var ss in strand.substrands) {
-    if (!crossed) {
-      substrands1.add(ss);
-    } else {
-      substrands2.add(ss);
-    }
-    if (crossover.prev_substrand == ss) {
-      crossed = true;
-    }
+List<Strand> _remove_crossovers_from_strand(Strand strand, List<Crossover> crossovers) {
+  // find indexes of each substrand between crossovers, including those before first and after last
+  List<int> idxs = [0];
+  for (var crossover in crossovers) {
+    int idx = strand.substrands.indexOf(crossover.next_substrand);
+    idxs.add(idx);
+  }
+  idxs.sort();
+  idxs.add(strand.substrands.length);
+
+  // split strand.substrands by idxs
+  List<List<Substrand>> substrands_list = [];
+  for (int i = 0; i < idxs.length - 1; i++) {
+    var substrands = List<Substrand>.from(strand.substrands.sublist(idxs[i], idxs[i + 1]));
+    substrands_list.add(substrands);
   }
 
   //XXX: This should go before updating substrands below with is_first and is_last or else they cannot be
   // found as substrands of strand
-  var dna1 = dna_seq(substrands1, strand);
-  var dna2 = dna_seq(substrands2, strand);
+  var dnas = [for (var substrands in substrands_list) dna_seq(substrands, strand)];
 
-  // adjust is_first and is_last Booleans on substrands
-  BoundSubstrand ss_end_strand1 = substrands1[substrands1.length - 1];
-  ss_end_strand1 = ss_end_strand1.rebuild((ss) => ss.is_last = true);
-  substrands1[substrands1.length - 1] = ss_end_strand1;
-  BoundSubstrand ss_start_strand2 = substrands2[0];
-  ss_start_strand2 = ss_start_strand2.rebuild((ss) => ss.is_first = true);
-  substrands2[0] = ss_start_strand2;
-
-  var color1 = strand.color;
-  var color2 = color1;
-  while (color2 == color1) {
-    color2 = util.color_cycler.next();
+  // adjust is_first and is_last Booleans on BoundSubstrands
+  for (var substrands in substrands_list) {
+    var first_bound_ss = substrands[0] as BoundSubstrand;
+    int last = substrands.length - 1;
+    substrands[0] = first_bound_ss.rebuild((s) => s..is_first = true);
+    //XXX: important to get variable from substrands[last] AFTER above assignment to substrands[0],
+    // in case List is length 1 and the first object is the last object.
+    // This ensures both fields are set to true.
+    var last_bound_ss = substrands[last] as BoundSubstrand;
+    substrands[last] = last_bound_ss.rebuild((s) => s..is_last = true);
   }
 
-  var strand1 = Strand(
-    substrands1,
-    color: color1,
-    dna_sequence: dna1,
-    idt: strand.idt,
-    is_scaffold: strand.is_scaffold,
-  );
-  var strand2 = Strand(
-    substrands2,
-    color: color2,
-    dna_sequence: dna2,
-  );
+  List<Strand> new_strands = [];
+  for (int i = 0; i < substrands_list.length; i++) {
+    var substrands = substrands_list[i];
+    var dna = dnas[i];
+    // assign old properties to first new strand and find new/default properties for remaining
+    var color = i == 0 ? strand.color : util.color_cycler.next();
+    var idt = i == 0 ? strand.idt : null;
+    var is_scaffold = i == 0 ? strand.is_scaffold : false;
+    new_strands.add(Strand(substrands, color: color, dna_sequence: dna, idt: idt, is_scaffold: is_scaffold));
+  }
 
-  return Tuple2<Strand, Strand>(strand1, strand2);
+  return new_strands;
 }
 
 String dna_seq(List<Substrand> substrands, Strand strand) =>

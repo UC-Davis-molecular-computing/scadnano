@@ -2,8 +2,8 @@ import 'package:color/color.dart';
 import 'package:dnd/dnd.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/helix.dart';
 
+import 'package:scadnano/src/state/helix.dart';
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -17,8 +17,9 @@ import 'react_dnd.dart';
 part 'design_main_strand_5p_end.over_react.g.dart';
 
 UiFactory<DesignMain5pEndProps> ConnectedDesignMain5pEnd =
-connect<AppState, DesignMain5pEndProps>(mapStateToPropsWithOwnProps: (state, props) {
-  var select_mode_choice = props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+    connect<AppState, DesignMain5pEndProps>(mapStateToPropsWithOwnProps: (state, props) {
+  var select_mode_choice =
+      props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
   return DesignMain5pEnd()
     ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_5p)
     ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
@@ -41,7 +42,6 @@ class _$DesignMain5pEndProps extends UiProps {
 
 @Component2()
 class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
-
   @override
   render() {
     BoundSubstrand substrand = this.props.substrand;
