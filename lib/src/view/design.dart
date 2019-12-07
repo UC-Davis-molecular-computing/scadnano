@@ -210,19 +210,20 @@ class DesignViewComponent {
     //XXX: this does NOT get fired when Draggable is running things, in particular when the user
     // did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
     // finish the box
-    main_view_svg.onMouseUp.listen((ev) {
-      //TODO: add some logic to make sure we didn't just get done moving a selected item/group of items
-      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey) &&
-          app.state.ui_state.selectables_store.selected_items.isNotEmpty) {
-//        Actions_OLD.unselect_all();
-      }
-    });
-    side_view_svg.onMouseUp.listen((ev) {
-      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
-        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
-//        app.store.dispatch(actions.HelicesSelectedClear());
-      }
-    });
+//    main_view_svg.onMouseUp.listen((ev) {
+//      // XXX: if we decide to unselect items here, add some logic to make sure we didn't just get done moving a
+//      // selected item/group of items
+//      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey) &&
+//          app.state.ui_state.selectables_store.selected_items.isNotEmpty) {
+////        Actions_OLD.unselect_all();
+//      }
+//    });
+//    side_view_svg.onMouseUp.listen((ev) {
+//      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
+//        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
+////        app.store.dispatch(actions.HelicesSelectedClear());
+//      }
+//    });
   }
 
   uninstall_draggable(bool is_main_view, DraggableComponent draggable_component) {
@@ -279,8 +280,6 @@ class DesignViewComponent {
       }
     });
 
-    //TODO: when cursor is over SVG element, in Firefox it gives mouse offset relative to that object
-    //https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
     draggable.onDrag.listen((DraggableEvent draggable_event) {
 //      print('* onDrag ' + '-' * 100);
 

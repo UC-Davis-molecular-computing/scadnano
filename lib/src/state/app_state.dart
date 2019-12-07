@@ -7,8 +7,6 @@ import 'undo_redo.dart';
 
 part 'app_state.g.dart';
 
-//TODO: normalize state tree (selectables_by_id is huge) and use connect to look up parts of state by id
-
 final DEFAULT_AppStateBuilder = AppStateBuilder()
   ..ui_state = DEFAULT_AppUIStateBuilder
   ..error_message = ""

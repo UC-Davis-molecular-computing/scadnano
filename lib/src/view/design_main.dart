@@ -17,12 +17,6 @@ import '../util.dart' as util;
 
 part 'design_main.over_react.g.dart';
 
-//TODO: display width of each portion of helix between major ticks lightly above helix 0;
-//  alternately, display as mouseover information
-
-//TODO: adjust vertical distance between helices in main view depending on their grid_position/svg_position,
-// not just display order
-
 final USING_REACT_DND = false;
 
 UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMainProps>(

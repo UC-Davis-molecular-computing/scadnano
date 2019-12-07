@@ -179,8 +179,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   bool has_min_offset() => this.min_offset != null;
 
-  //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines
-  //  in main view
+  //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines in main view
 
   static HelixBuilder from_json(Map<String, dynamic> json_map) {
     var helix_builder = HelixBuilder();

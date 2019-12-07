@@ -79,7 +79,6 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
       var drag = drag_ret[1];
       bool isDragging = props['isDragging'];
     } else {
-      //TODO: replace string-based prop setting below when OverReact repo is updated to include typed properties
       SvgProps attr = (Dom.rect()
 //      ..onMouseDown = substrand.dnaend_5p.handle_selection
 //        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())

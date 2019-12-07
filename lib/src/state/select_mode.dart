@@ -4,8 +4,6 @@ import 'package:built_collection/built_collection.dart';
 
 part 'select_mode.g.dart';
 
-//TODO: implement scaffold/staple selection filters
-
 class SelectModeChoice extends EnumClass {
   const SelectModeChoice._(String name) : super(name);
 

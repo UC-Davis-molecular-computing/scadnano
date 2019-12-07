@@ -9,8 +9,6 @@ import '../state/select_mode_state.dart';
 
 part 'select_mode.over_react.g.dart';
 
-//TODO: check if design is a OrigamiDNADesign; if not, don't display scaffold/staple select modes
-
 UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(mapStateToProps: (state) {
   bool is_origami = false;
   if (state.dna_design.is_origami == true) {

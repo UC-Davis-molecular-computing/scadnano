@@ -97,7 +97,8 @@ class DesignMainStrandCrossoverComponent
         param_list.add(MouseoverParams(helix_idx, offset, forward));
       }
 
-      //FIXME: should be able to use thunk middleware to give dna_design to this action and not need a global variable
+      //FIXME: don't access global variable
+      // should be able to use thunk middleware to give dna_design to this action
       app.store.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
     }
 
@@ -113,8 +114,6 @@ class DesignMainStrandCrossoverComponent
     var color = strand.color.toRgbColor().toCssString();
     var id = crossover.id();
 
-    //FIXME: check if mouse is *currently* over crossover, if not then bug to update
-    // look up how to check current mouse position
     if (show_mouseover_rect && mouse_hover) {
       update_mouseover_crossover();
     }

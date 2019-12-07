@@ -59,7 +59,6 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
       '${current.y.toStringAsFixed(DECIMAL_PLACES)}), '
       '  is_main=${is_main}';
 
-  //TODO: update this code to handle side view or main view, and call it from view/design.dart when drag ends
   //XXX: in principle this should be updateable every time the mouse moves and the selection box changes,
   // but in practice, the currently selected items and/or the Actions fired affected the results returned by
   // getIntersectionList, getEnclosureList, checkIntersection, checkEnclosure, so that they would falsely say certain

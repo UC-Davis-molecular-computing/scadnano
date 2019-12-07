@@ -124,7 +124,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
 
   var mouseover_params = MouseoverParams(helix.idx, offset, forward);
 
-  //FIXME
+  //FIXME: don't access global variable
   var dna_design = app.state.dna_design;
 
   if (needs_update(mouseover_params, mouseover_datas)) {

@@ -26,10 +26,6 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'actions/actions.dart' as actions;
 
-//TODO: allow a "movie" file format, which is simply a list of several DNADesigns, and buttons to step through them
-
-//TODO: once this is a proper "web" app, add ability to let people share designs via URL, similarly to codepen
-
 // global variable for whole program
 App app = App();
 

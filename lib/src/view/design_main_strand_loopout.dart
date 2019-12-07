@@ -16,8 +16,6 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
-//TODO: show mouseover data in footer when mouse is on loopout (also crossover)
-
 UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
     connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
   return DesignMainLoopout()
@@ -65,11 +63,6 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
       String path = crossover_path_description(prev_ss, next_ss);
       String id = loopout.id();
 
-      //TODO: find way to not repeat ourselves by reusing the Selectable logic between components
-      // loopout, crossover, 5p-end, 3p-end, strand
-      // There's a pattern called higher-order component in React but it's not clear how to implement it in
-      // OverReact.
-
       //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:
       // https://github.com/marcojakob/dart-dnd/issues/27
       // perhaps not implemented by Safari though:
@@ -92,7 +85,6 @@ ReactElement _hairpin_arc(
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
 //  var strand = prev_substrand.strand;
 
-  //TODO: make a design with all loopout lengths 1-20 and calibrate this
   var w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
   var h = 10 * util.sigmoid(loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
 
@@ -114,8 +106,6 @@ ReactElement _hairpin_arc(
 
   String id = loopout.id();
   ReactElement arc = (Dom.path()
-    //FIXME: implement this
-//    ..onMouseDown = ((event) => event.ctrlKey ? Actions_OLD.loopout_select_toggle(loopout) : null)
     ..className = classname
     ..stroke = color.toRgbColor().toCssString()
     ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'

@@ -13,8 +13,6 @@ import '../actions/actions.dart' as actions;
 
 part 'local_storage.g.dart';
 
-//TODO: put whole DNADesign in here, as well as UI options such as "Show DNA"
-
 /// Aspects of state that can be stored in localStorage. (More like a StorableType; the thing stored is
 /// somewhere in the Model, and this is an "ID" associated with it.
 class Storable extends EnumClass {

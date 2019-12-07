@@ -75,7 +75,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     if (strand.substrands.length == 0) {
       return null;
     } else {
-      //TODO: make strand selectable, but decide how it will interact with selecting other elements.
       var classname = 'strand';
       if (selectable) {
 //        print('DesignMainStrand.render(): adding selectable class to strand');

@@ -69,16 +69,12 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
 //    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
 //        'DesignSide.render()  using helices:\n${helices}');
 
-    //TODO: it's not well-defined what to do when grid=none and there is no grid position for helices
     List helices_components = [
       for (var helix in helices)
         (DesignSideHelix()
 //        (ConnectedDesignSideHelix()
           ..helix = helix
-          ..grid_position = helix.grid_position
-          ..grid = this.props.grid
           ..selected = helix_idxs_selected.contains(helix.idx)
-//          ..mouseover_datas = mouseover_datas
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
     ];

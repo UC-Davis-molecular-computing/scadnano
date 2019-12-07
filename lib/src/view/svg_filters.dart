@@ -1,7 +1,5 @@
 import 'dart:svg' as svg;
 
-//TODO: on elements far to the right (and possibly up/down/left) this is causing them to disappear
-
 add_shadow_filter(svg.SvgSvgElement elt) {
   // https://stackoverflow.com/a/6094674
   var drop_shadow = [

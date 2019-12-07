@@ -28,8 +28,6 @@ import '../middleware/local_storage.dart';
 
 part 'actions.g.dart';
 
-//TODO: put name of loaded file in browser tab
-
 /// [Action]s don't have to implement BuiltValue, but if they do, and they use the serialization mechanism,
 /// this this toJson method will work automatically.
 abstract class Action2 {

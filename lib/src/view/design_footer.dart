@@ -1,14 +1,12 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:over_react/over_react.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
 import '../state/mouseover_data.dart';
 import '../state/app_state.dart';
 
-//TODO: use tooltips (or something) to give more information on mouse hover than the footer has room for
-
-import 'package:over_react/over_react.dart';
 
 part 'design_footer.over_react.g.dart';
 

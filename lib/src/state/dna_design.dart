@@ -26,18 +26,6 @@ part 'dna_design.g.dart';
 //TODO: create mismatches field in DNADesign that can be accessed directly by DesignMainMismatches instead of
 // going through list of all Strands
 
-//TODO: support Boolean field Strand.circular and draw crossover from last substrand to first.
-
-//TODO: support editing an existing DNADesign so that user can modify strands, etc.
-
-//TODO: add a mixin that lets me specify for each class that when it is created using from_json,
-//  it should store all the fields that are not used by scadnano,
-//  and write them back out on serialization using to_json
-
-//TODO: import/export cadnano files
-
-//TODO: export SVG
-
 abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
   DNADesign._();
 
@@ -259,7 +247,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     dna_design_builder.grid =
         util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
 
-    //FIXME: figure out why loopouts_all_types.dna is not properly auto-calculating max_offset of Helix 2
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
     } else if (!dna_design_builder.grid.is_none()) {
@@ -609,7 +596,6 @@ BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
-//FIXME: this isn't working properly for loading loopouts_all_types.dna
 _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
   var helix_idx_to_substrands = _construct_helix_idx_to_substrands_map(helix_builders.length, strands);
 

@@ -18,8 +18,6 @@ import '../app.dart';
 
 import '../constants.dart' as constants;
 
-//TODO: display message while app is loading so it looks like something is happening
-
 @JS(constants.js_function_name_setup_svg_panzoom)
 external setup_svg_panzoom_js();
 

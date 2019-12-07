@@ -28,8 +28,6 @@ import 'state/selection_box.dart';
 import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
-//TODO: consider making the current position of the color_cycler part of the State (or even DNADesign)
-// Then colors would be predictably and repeatably assigned.
 final ColorCycler color_cycler = ColorCycler();
 
 class ColorCycler {
@@ -128,9 +126,6 @@ Point<num> transformed_svg_point(SvgSvgElement svg_elt, bool is_main,
 Point<num> transform_mouse_coord_to_svg_current_panzoom(Point<num> point, bool is_main) {
   return transform_mouse_coord_to_svg(point, current_pan(is_main), current_zoom(is_main));
 }
-
-//TODO: this is still scaled wrong with Firefox; may not even be coming from this code, because it's
-// different depending whether the mouse is over the empty helix, or a strand, or a crossover/loopout
 
 /// Transform point by panning and zooming from mouse coordinates to SVG coordinates.
 /// (Actually I needed to do what appears to be the inverse transformation here, not sure why.)
@@ -305,7 +300,7 @@ save_file(String default_filename, String content, {String blob_type = 'text/pla
   // The code keeps executing while they pick their file. Figure out how to detect if they picked a file or cancelled
   // If they cancelled then we should act as though nothing happened (in particular the Controller should not
   // send an Action indicating that the file was saved.
-  //TODO: consider using one of these libraries if possible:
+  // consider using one of these libraries if possible:
   //  https://github.com/jimmywarting/StreamSaver.js
   //  https://github.com/eligrey/FileSaver.js
   await link.click();

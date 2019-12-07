@@ -31,8 +31,8 @@ UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 @Props()
 class _$DesignSideHelixProps extends UiProps with ConnectPropsMixin {
   Helix helix;
-  GridPosition grid_position;
-  Grid grid;
+//  GridPosition grid_position;
+//  Grid grid;
   bool selected;
   MouseoverData mouseover_data;
 }
