@@ -10,7 +10,6 @@ import 'package:over_react/over_react_redux.dart';
 
 import '../state/app_state.dart';
 import 'design.dart';
-import 'edit_mode.dart';
 import 'select_mode.dart';
 import 'menu.dart';
 import 'editor.dart';

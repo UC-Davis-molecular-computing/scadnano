@@ -1,9 +1,7 @@
-import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/selection_box.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
@@ -79,8 +77,6 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
-
-    num stroke_width = 2.0 / util.current_zoom_side();
 
     return (Dom.g()..className = 'side-view')([
       if (props.grid_position_mouse_cursor != null &&

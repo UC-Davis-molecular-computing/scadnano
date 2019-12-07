@@ -9,7 +9,6 @@ import 'design_main_helices.dart';
 import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
-import '../state/selection_box.dart';
 import '../state/app_state.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';

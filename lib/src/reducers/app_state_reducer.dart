@@ -6,7 +6,6 @@ import 'undo_redo_reducer.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import 'load_dna_file_reducer.dart';
-import '../util.dart' as util;
 
 AppState app_state_reducer(AppState state, action) {
 //  if (action is actions.MainViewSelectionBoxSizeChanged) {

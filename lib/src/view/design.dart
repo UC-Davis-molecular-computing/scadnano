@@ -1,7 +1,6 @@
 @JS()
 library view_design;
 
-import 'dart:convert';
 import 'dart:html';
 import 'dart:svg' as svg;
 
@@ -62,8 +61,7 @@ class DesignViewComponent {
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()
-      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -243,86 +241,66 @@ class DesignViewComponent {
     if (draggables[draggable_component] != null) {
       return;
     }
-
     var draggable = draggables[draggable_component] = Draggable(view_svg);
+    draggable.onDragStart.listen((ev) => drag_start(ev, view_svg, is_main_view));
+    draggable.onDrag.listen((ev) => drag(ev, view_svg, is_main_view));
+    draggable.onDragEnd.listen((ev) => drag_end(ev, view_svg, is_main_view));
+  }
 
-    draggable.onDragStart.listen((DraggableEvent draggable_event) {
-//      print('* onDragStart ' + '*' * 100);
-
-      MouseEvent event = draggable_event.originalEvent;
-      actions.Action2 action;
-
-      Point<num> point;
-
-      if (!browser.isFirefox) {
-        point = event.offset;
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-      } else {
-        point = util.untransformed_svg_point(view_svg, event: event);
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-      }
-
-//      print('start event.offset:   (${event.offset.x.toStringAsFixed(1)}, ${event.offset.y.toStringAsFixed(1)})');
-//      print('start event.client:   (${event.client.x.toStringAsFixed(1)}, ${event.client.y.toStringAsFixed(1)})');
-//      print('start point:          (${point.x.toStringAsFixed(1)}, ${point.y.toStringAsFixed(1)})');
-//      print('start target: ${event.target}');
-
-      bool toggle;
-      if (event.ctrlKey || event.metaKey) {
-        toggle = true;
-      } else if (event.shiftKey) {
-        toggle = false;
-      }
-      if (toggle != null) {
-        action = actions.SelectionBoxCreate(point, toggle, is_main_view);
+  drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+    MouseEvent event = draggable_event.originalEvent;
+    actions.Action2 action;
+    Point<num> point;
+    if (!browser.isFirefox) {
+      point = event.offset;
+      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+    } else {
+      point = util.untransformed_svg_point(view_svg, event: event);
+      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+    }
+    bool toggle;
+    if (event.ctrlKey || event.metaKey) {
+      toggle = true;
+    } else if (event.shiftKey) {
+      toggle = false;
+    }
+    if (toggle != null) {
+      action = actions.SelectionBoxCreate(point, toggle, is_main_view);
 //        app.store.dispatch(action);
-        app.store_selection_box.dispatch(action);
-      }
-    });
+      app.store_selection_box.dispatch(action);
+    }
+  }
 
-    draggable.onDrag.listen((DraggableEvent draggable_event) {
-//      print('* onDrag ' + '-' * 100);
+  drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+    MouseEvent event = draggable_event.originalEvent;
+    Point<num> point;
+    if (!browser.isFirefox) {
+      point = event.offset;
+      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+    } else {
+      point = util.untransformed_svg_point(view_svg, event: event);
+      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+    }
+    if (event.ctrlKey || event.metaKey || event.shiftKey) {
+      var action = actions.SelectionBoxSizeChange(point, is_main_view);
+      //        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+      app.store_selection_box.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+    }
+  }
 
-      MouseEvent event = draggable_event.originalEvent;
-
-      Point<num> point;
-
-      Element target = event.target; // || event.srcElement,
-
-      if (!browser.isFirefox) {
-        point = event.offset;
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-      } else {
-        point = util.untransformed_svg_point(view_svg, event: event);
-        point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-      }
-
-//      print('current event.offset: (${event.offset.x.toStringAsFixed(1)}, ${event.offset.y.toStringAsFixed(1)})');
-//      print('current event.client: (${event.client.x.toStringAsFixed(1)}, ${event.client.y.toStringAsFixed(1)})');
-//      print('current point:        (${point.x.toStringAsFixed(1)}, ${point.y.toStringAsFixed(1)})');
-//      print('current target: ${event.target}');
-
-      if (event.ctrlKey || event.metaKey || event.shiftKey) {
-        var action = actions.SelectionBoxSizeChange(point, is_main_view);
-//        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
-        app.store_selection_box.dispatch(actions.ThrottledAction(action, 1 / 60.0));
-      }
-    });
-
-    draggable.onDragEnd.listen((DraggableEvent draggable_event) {
-      var action_remove = actions.SelectionBoxRemove(is_main_view);
-      bool toggle = app.store_selection_box.state.toggle;
-      var action_adjust;
-      if (is_main_view) {
-        action_adjust = actions.SelectionsAdjust(toggle);
-      } else {
-        action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
-      }
-      // call this first so selection box is still in view when selections are made,
-      // so we can detect intersection
-      app.store.dispatch(action_adjust);
-      app.store_selection_box.dispatch(action_remove);
-    });
+  drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+    var action_remove = actions.SelectionBoxRemove(is_main_view);
+    bool toggle = app.store_selection_box.state.toggle;
+    var action_adjust;
+    if (is_main_view) {
+      action_adjust = actions.SelectionsAdjust(toggle);
+    } else {
+      action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+    }
+    // call this first so selection box is still in view when selections are made,
+    // so we can detect intersection
+    app.store.dispatch(action_adjust);
+    app.store_selection_box.dispatch(action_remove);
   }
 
   render(AppState state) {
@@ -416,8 +394,8 @@ side_view_mouse_leave_update_mouseover() {
 side_view_update_mouseover(Set<int> keys_pressed, {Point<num> mouse_pos = null, MouseEvent event = null}) {
   assert(!(mouse_pos == null && event == null));
   if (keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
-    var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
-        mouse_pos: mouse_pos, event: event);
+    var new_grid_pos =
+        util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
       app.store.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
     }

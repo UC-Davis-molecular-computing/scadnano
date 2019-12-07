@@ -5,7 +5,6 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/helix.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
-import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import '../app.dart';
 

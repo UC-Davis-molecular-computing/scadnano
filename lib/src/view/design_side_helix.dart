@@ -6,9 +6,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
-import '../state/dna_design.dart';
 import '../state/mouseover_data.dart';
-import '../state/bound_substrand.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import '../state/grid.dart';

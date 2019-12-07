@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
@@ -11,7 +10,6 @@ import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'selectable.dart';
 
-import 'selection_box.dart';
 
 part 'app_ui_state.g.dart';
 

@@ -4,7 +4,6 @@ import 'dart:svg' as svg;
 import 'package:redux/redux.dart';
 
 import '../app.dart';
-import '../view/view.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;

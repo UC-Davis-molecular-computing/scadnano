@@ -7,7 +7,6 @@ import 'package:over_react/over_react_redux.dart';
 
 import '../state/helix.dart';
 import '../state/bound_substrand.dart';
-import '../app.dart';
 import '../state/app_state.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';

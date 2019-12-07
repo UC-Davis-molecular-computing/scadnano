@@ -73,6 +73,7 @@ class SelectModeChoice extends EnumClass {
       case staple:
         return 'staple';
     }
+    throw AssertionError('should not be reachable; unknown SelectModeChoice used: ${this}');
   }
 
   static SelectModeChoice from_json(String json_name) => valueOf(json_name);

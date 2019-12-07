@@ -1,33 +1,33 @@
-import 'package:built_value/built_value.dart';
-import 'package:built_collection/built_collection.dart';
+//import 'package:built_value/built_value.dart';
+//import 'package:built_collection/built_collection.dart';
 
-Set<Built> _cache_built_value = {};
-Set<BuiltList> _cache_built_list = {};
-Set<BuiltSet> _cache_built_set = {};
-Set<BuiltMap> _cache_built_map = {};
-
-V intern<V extends Built<V, B>, B extends Builder<V, B>>(V value) {
-  Set<Built> cache = _cache_built_value;
-  Built<V, B> cached_value = cache.lookup(value);
-  if (cached_value == null) {
-    cache.add(value);
-    return value;
-  } else {
-    return cached_value;
-  }
-}
-
-V build_interned<V extends Built<V, B>, B extends Builder<V, B>>(B builder) {
-  V value = builder.build();
-  Set<Built> cache = _cache_built_value;
-  Built<V, B> cached_value = cache.lookup(value);
-  if (cached_value == null) {
-    cache.add(value);
-    return value;
-  } else {
-    return cached_value;
-  }
-}
+//Set<Built> _cache_built_value = {};
+//Set<BuiltList> _cache_built_list = {};
+//Set<BuiltSet> _cache_built_set = {};
+//Set<BuiltMap> _cache_built_map = {};
+//
+//V intern<V extends Built<V, B>, B extends Builder<V, B>>(V value) {
+//  Set<Built> cache = _cache_built_value;
+//  Built<V, B> cached_value = cache.lookup(value);
+//  if (cached_value == null) {
+//    cache.add(value);
+//    return value;
+//  } else {
+//    return cached_value;
+//  }
+//}
+//
+//V build_interned<V extends Built<V, B>, B extends Builder<V, B>>(B builder) {
+//  V value = builder.build();
+//  Set<Built> cache = _cache_built_value;
+//  Built<V, B> cached_value = cache.lookup(value);
+//  if (cached_value == null) {
+//    cache.add(value);
+//    return value;
+//  } else {
+//    return cached_value;
+//  }
+//}
 
 //extension BuiltExtendedWithIntern<V extends Built<V, B>, B extends Builder<V, B>> on Built<V, B> {
 //  V intern_this() {

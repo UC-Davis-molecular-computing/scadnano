@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/app_ui_state_reducer.dart';
 
 import '../state/crossover.dart';
-import '../state/helix.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
@@ -22,13 +18,12 @@ part 'design_main_strand_crossover.over_react.g.dart';
 const SELECTED_CROSSOVER_COLOR = 'hotpink';
 
 UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
-    connect<AppState, DesignMainStrandCrossoverProps>(mapStateToPropsWithOwnProps: (state, props) {
-  bool selected = state.ui_state.selectables_store.selected(props.crossover);
-  return DesignMainStrandCrossover()
+    connect<AppState, DesignMainStrandCrossoverProps>(
+  mapStateToPropsWithOwnProps: (state, props) => DesignMainStrandCrossover()
     ..show_mouseover_rect = state.ui_state.show_mouseover_rect
     ..selected = state.ui_state.selectables_store.selected(props.crossover)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
-})(DesignMainStrandCrossover);
+    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover),
+)(DesignMainStrandCrossover);
 
 @Factory()
 UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMainStrandCrossover;

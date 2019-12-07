@@ -1,15 +1,11 @@
-import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
 
-import '../app.dart';
 import '../state/dna_design.dart';
 import '../state/undo_redo.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
-import 'util_reducer.dart';
 
 // These involve direct manipulation of the undo/redo stacks.
 Reducer<AppState> undo_redo_reducer = combineReducers([

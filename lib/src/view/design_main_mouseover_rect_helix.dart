@@ -62,7 +62,6 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
   render() {
 //    print('rendering DesignMainMouseoverRectHelix');
     Helix helix = props.helix;
-    BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
 
     String id = '$_ID_PREFIX-${helix.idx}';
 

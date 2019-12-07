@@ -13,7 +13,6 @@ import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 
-import 'package:scadnano/src/state/bound_substrand.dart';
 import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
@@ -36,16 +35,16 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
 test_stuff() async {
-  print('hi');
-  BoundSubstrand ss1 = BoundSubstrand((s) => s
-    ..helix = 3
-    ..forward = false
-    ..start = 16
-    ..end = 32
-    ..deletions.replace([])
-    ..insertions.replace([])
-    ..is_first = true
-    ..is_last = false);
+//  print('hi');
+//  BoundSubstrand ss1 = BoundSubstrand((s) => s
+//    ..helix = 3
+//    ..forward = false
+//    ..start = 16
+//    ..end = 32
+//    ..deletions.replace([])
+//    ..insertions.replace([])
+//    ..is_first = true
+//    ..is_last = false);
 
 //  BoundSubstrand ss2 = BoundSubstrand((s) => s
 //    ..helix = 3

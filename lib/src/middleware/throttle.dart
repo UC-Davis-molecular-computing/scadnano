@@ -12,7 +12,7 @@ final Map<Type,int> _throttled_types = {};
 const _DEBUG = false;
 
 /// Applies [ThrottledAction]s only every [action.interval_sec] seconds and discards the rest.
-AppState throttle_middleware_app_state(Store<AppState> store, action, NextDispatcher next) {
+throttle_middleware_app_state(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.ThrottledAction) {
     var throttled_action = action.action;
     int last_time = _throttled_types[throttled_action.runtimeType];
@@ -32,7 +32,7 @@ AppState throttle_middleware_app_state(Store<AppState> store, action, NextDispat
 }
 
 /// Applies [ThrottledAction]s only every [action.interval_sec] seconds and discards the rest.
-SelectionBox throttle_middleware_selection_box(Store<SelectionBox> store, action, NextDispatcher next) {
+throttle_middleware_selection_box(Store<SelectionBox> store, action, NextDispatcher next) {
   if (action is actions.ThrottledAction) {
     var throttled_action = action.action;
     int last_time = _throttled_types[throttled_action.runtimeType];

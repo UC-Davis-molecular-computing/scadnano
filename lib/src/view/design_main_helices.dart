@@ -1,11 +1,9 @@
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/constants.dart';
 
 import 'design_main_helix.dart';
 import '../state/helix.dart';
-import '../util.dart' as util;
 
 part 'design_main_helices.over_react.g.dart';
 

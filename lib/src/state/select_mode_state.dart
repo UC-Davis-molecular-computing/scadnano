@@ -2,11 +2,9 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_value/serializer.dart';
-import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../actions/actions.dart' as actions;
 import 'select_mode.dart';
 import 'selectable.dart';
 

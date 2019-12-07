@@ -2,21 +2,16 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/serializers.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../app.dart';
 import 'dna_end.dart';
-import 'helix.dart';
-import 'selectable.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 
-import '../built_intern.dart';
 
 part 'bound_substrand.g.dart';
 

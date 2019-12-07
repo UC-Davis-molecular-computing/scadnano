@@ -16,11 +16,8 @@ class _$DesignMainMismatchProps extends UiProps {
   bool forward;
 }
 
-@Component()
-class DesignMainMismatchComponent extends UiComponent<DesignMainMismatchProps> {
-  @override
-  Map getDefaultProps() => (newProps());
-
+@Component2()
+class DesignMainMismatchComponent extends UiComponent2<DesignMainMismatchProps> {
   @override
   render() {
     return create_mismatch_svg_star(this.props.base_svg_pos, this.props.forward);

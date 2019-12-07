@@ -1,18 +1,14 @@
 import 'package:color/color.dart';
-import 'package:dnd/dnd.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+//import 'package:dnd/dnd.dart';
 
 import 'package:scadnano/src/state/helix.dart';
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
 import '../state/bound_substrand.dart';
 import '../app.dart';
-import '../util.dart' as util;
 import 'design_main.dart';
-import 'design_main_mouseover_rect_helix.dart';
-import 'react_dnd.dart';
 
 part 'design_main_strand_5p_end.over_react.g.dart';
 
@@ -68,16 +64,16 @@ class DesignMain5pEndComponent extends UiComponent2<DesignMain5pEndProps> {
 
     //[{ isDragging }, drag]
     if (USING_REACT_DND) {
-      var param = {
-        'item': {'type': '5p'},
-        'collect': (monitor) => {
-              'isDragging': monitor.isDragging(),
-            },
-      };
-      List drag_ret = useDrag(param);
-      var props = drag_ret[0];
-      var drag = drag_ret[1];
-      bool isDragging = props['isDragging'];
+//      var param = {
+//        'item': {'type': '5p'},
+//        'collect': (monitor) => {
+//              'isDragging': monitor.isDragging(),
+//            },
+//      };
+//      List drag_ret = useDrag(param);
+//      var props = drag_ret[0];
+//      var drag = drag_ret[1];
+//      bool isDragging = props['isDragging'];
     } else {
       SvgProps attr = (Dom.rect()
 //      ..onMouseDown = substrand.dnaend_5p.handle_selection

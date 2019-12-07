@@ -1,13 +1,8 @@
-//part of '../components.dart';
-
-//library view_helix_react;
-
 import 'package:quiver/iterables.dart' as iter;
 
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 
-import 'design_main_mouseover_rect_helix.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import '../constants.dart' as constants;

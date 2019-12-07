@@ -4,14 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/state/loopout.dart';
 
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
-import 'selectable.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'helix.dart';
@@ -19,7 +17,6 @@ import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
-import '../actions/actions.dart' as actions;
 
 part 'dna_design.g.dart';
 
@@ -319,11 +316,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
     dna_design_builder.helices.replace(helices);
 
-    return dna_design_builder.build();
+    var dna_design = dna_design_builder.build();
+    dna_design._check_legal_design();
+    return dna_design;
   }
 
   _check_legal_design() {
-    //TODO: implement this and give reasonable error messages
+//    TODO: implement this and give reasonable error messages
   }
 
   String toString() =>
@@ -684,14 +683,12 @@ class StrandError extends IllegalDNADesignError {
 
 Color parse_json_color(Object json_obj) {
   if (json_obj is Map) {
-    Map json_map = json_obj as Map;
-    int r = json_map['r'];
-    int g = json_map['g'];
-    int b = json_map['b'];
+    int r = json_obj['r'];
+    int g = json_obj['g'];
+    int b = json_obj['b'];
     return RgbColor(r, g, b);
   } else if (json_obj is String) {
-    String json_str = json_obj as String;
-    return HexColor(json_str);
+    return HexColor(json_obj);
   } else {
     throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
         '${json_obj.runtimeType}:\n${json_obj}');

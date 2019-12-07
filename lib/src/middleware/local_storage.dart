@@ -5,7 +5,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 
-import '../state/edit_mode.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
 import '../app.dart';
@@ -83,7 +82,7 @@ _restore(Storable storable) {
       action = actions.SetShowEditor(value == 'true');
 
     } else if (storable == Storable.edit_mode) {
-      EditModeChoice mode = EditModeChoice.from_json(value);
+//      EditModeChoice mode = EditModeChoice.from_json(value);
       //FIXME: implement this
 
     } else if (storable == Storable.select_modes) {

@@ -2,7 +2,6 @@
 library react_dnd;
 
 import 'package:js/js.dart';
-import 'package:react/react_client.dart';
 
 
 //@JS('ReactDnD_DndProvider')

@@ -26,9 +26,6 @@ class _$DesignFooterProps extends UiProps { // FluxUiProps<MouseoverDataStore, M
 @Component2()
 class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiComponent<DesignFooterProps> {
   @override
-  Map getDefaultProps() => (newProps());
-
-  @override
   render() {
 //    List<MouseoverData> mouseover_datas = this.props.store.data;
     BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;

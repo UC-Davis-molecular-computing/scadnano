@@ -1,6 +1,5 @@
 import 'package:redux/redux.dart';
 
-import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
 /// Taken from https://github.com/brianegan/redux_thunk/blob/master/lib/redux_thunk.dart
