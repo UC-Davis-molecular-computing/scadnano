@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 
 import '../app.dart';
-import '../actions/actions_OLD.dart';
 import '../state/grid.dart';
 import '../state/grid_position.dart';
 import '../util.dart' as util;
@@ -67,10 +66,9 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
 
     int idx = app.state.dna_design.helices.length;
     int max_offset = constants.default_max_offset;
-    var params = HelixUseActionParameters(true, grid_pos, idx, max_offset);
-    var helix_use_action_pack = HelixUseActionPack(params);
-
     //FIXME: implement this
+//    var params = HelixUseActionParameters(true, grid_pos, idx, max_offset);
+//    var helix_use_action_pack = HelixUseActionPack(params);
 //    app.send_action(helix_use_action_pack);
   }
 }

@@ -1,7 +1,3 @@
-import 'package:w_flux/w_flux.dart';
-
-import '../middleware/local_storage.dart' as local_storage;
-import '../actions/actions_OLD.dart';
 
 class EditModeChoice {
   final String name;
@@ -42,22 +38,15 @@ class EditModeChoice {
   String toString() => 'EditModeChoice(${this.name})';
 }
 
-class EditModeStore extends Store {
+class EditModeStore {
   EditModeChoice mode = EditModeChoice.select;
 
   EditModeStore() {
-    handle_actions();
   }
 
   String to_json() {
     return mode.name;
   }
 
-  void handle_actions() {
-    triggerOnActionV2<EditModeChoice>(Actions_OLD.set_edit_mode, (new_mode) {
-      //FIXME: implement this
-      //      this.mode = new_mode;
-//      local_storage.save(local_storage.Storable.edit_mode);
-    });
-  }
+
 }

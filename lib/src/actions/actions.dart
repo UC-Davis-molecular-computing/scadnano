@@ -15,7 +15,6 @@ import '../serializers.dart';
 import '../state/dna_design.dart';
 import '../state/substrand.dart';
 import '../state/app_state.dart';
-import '../state/dna_design_action_packs.dart';
 import '../state/select_mode.dart';
 import '../state/select_mode_state.dart';
 import '../state/edit_mode.dart';
