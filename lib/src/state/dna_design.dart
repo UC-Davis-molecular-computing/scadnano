@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
-import 'package:color/color.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/loopout.dart';
 
@@ -678,19 +677,5 @@ class StrandError extends IllegalDNADesignError {
         "strand 3' end offset =  ${last_substrand.offset_3p}\n";
 
     this.cause += msg;
-  }
-}
-
-Color parse_json_color(Object json_obj) {
-  if (json_obj is Map) {
-    int r = json_obj['r'];
-    int g = json_obj['g'];
-    int b = json_obj['b'];
-    return RgbColor(r, g, b);
-  } else if (json_obj is String) {
-    return HexColor(json_obj);
-  } else {
-    throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
-        '${json_obj.runtimeType}:\n${json_obj}');
   }
 }

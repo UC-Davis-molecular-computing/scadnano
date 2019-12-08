@@ -236,6 +236,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     return strand;
   }
 
+
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
     for (int i = starting_at; i < this.substrands.length; i++) {
       if (this.substrands[i] is BoundSubstrand) {
@@ -276,5 +277,19 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       int start_idx = get_seq_start_idx(substrand);
       return dna_sequence.substring(start_idx, start_idx + substrand.dna_length());
     }
+  }
+}
+
+Color parse_json_color(Object json_obj) {
+  if (json_obj is Map) {
+    int r = json_obj['r'];
+    int g = json_obj['g'];
+    int b = json_obj['b'];
+    return RgbColor(r, g, b);
+  } else if (json_obj is String) {
+    return HexColor(json_obj);
+  } else {
+    throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
+        '${json_obj.runtimeType}:\n${json_obj}');
   }
 }
