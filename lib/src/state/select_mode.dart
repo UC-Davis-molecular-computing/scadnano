@@ -92,4 +92,12 @@ class SelectModeChoice extends EnumClass {
     crossover,
     loopout,
   ]);
+
+  static final BuiltList<SelectModeChoice> ends = BuiltList<SelectModeChoice>([
+    end_5p_strand,
+    end_3p_strand,
+    end_5p_substrand,
+    end_3p_substrand,
+  ]);
+
 }

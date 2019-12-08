@@ -21,6 +21,11 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Toggle
       new_state = new_state.remove_modes(SelectModeChoice.strand_parts);
     } else if (SelectModeChoice.strand_parts.contains(mode)) {
       new_state = new_state.remove_mode(SelectModeChoice.strand);
+      if (mode == SelectModeChoice.crossover || mode == SelectModeChoice.loopout) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends);
+      } else if (SelectModeChoice.ends.contains(mode)) {
+        new_state = new_state.remove_modes([SelectModeChoice.crossover, SelectModeChoice.loopout]);
+      }
     }
   }
   return new_state;

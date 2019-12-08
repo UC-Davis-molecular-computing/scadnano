@@ -661,17 +661,17 @@ abstract class UndoRedoClear
 //  *set_helix_rotation = Action<SetHelixRotationActionParameters>();
 //
 //  // Strand
-//  strand_remove = Action<Strand>();
 //  strand_add = Action<Strand>();
-//  strands_remove = Action<Iterable<Strand>>();
 //  strands_add = Action<Iterable<Strand>>();
+//  *strand_remove = Action<Strand>();
+//  *strands_remove = Action<Iterable<Strand>>();
 //
 //  // Strand UI state
-//  strand_select_toggle = Action<Strand>();
-//  five_prime_select_toggle = Action<BoundSubstrand>();
-//  three_prime_select_toggle = Action<BoundSubstrand>();
-//  loopout_select_toggle = Action<Loopout>();
-//  crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
+//  *strand_select_toggle = Action<Strand>();
+//  *five_prime_select_toggle = Action<BoundSubstrand>();
+//  *three_prime_select_toggle = Action<BoundSubstrand>();
+//  *loopout_select_toggle = Action<Loopout>();
+//  *crossover_select_toggle = Action<Tuple2<BoundSubstrand, BoundSubstrand>>();
 //
 //  *unselect_all = Action<Null>();
 //  *select = Action<Selectable>();
