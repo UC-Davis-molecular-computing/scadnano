@@ -13,8 +13,8 @@ import 'select_mode.dart';
 part 'selectable.g.dart';
 
 final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
-  ..selectables_by_id = MapBuilder<String, Selectable>()
-  ..selected_items = SetBuilder<Selectable>();
+  ..selectables_by_id.replace({})
+  ..selected_items.replace([]);
 
 abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
   SelectablesStore._();
@@ -38,16 +38,12 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
   }
 
   SelectablesStore register_all(Iterable<Selectable> selectables) {
-//    return this;
     var selectables_by_id_builder = selectables_by_id.toBuilder();
     for (var selectable in selectables) {
       String id = selectable.id();
       selectables_by_id_builder[id] = selectable;
     }
-    var new_selectables_by_id = selectables_by_id_builder.build();
-//    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
-    var new_store = this.rebuild((s) => s..selectables_by_id.replace(new_selectables_by_id));
-    return new_store;
+    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
   }
 
   SelectablesStore register_dna_design(DNADesign design) {

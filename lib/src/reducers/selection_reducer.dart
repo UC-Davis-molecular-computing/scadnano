@@ -33,71 +33,39 @@ SelectablesStore delete_all_reducer(
 
 SelectablesStore selections_adjust_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectionsAdjust action) {
-  //XXX: this is not a pure reducer. It seems difficult to put enough state into AppState to reliably detect
-  // when one SVG element overlaps another in a way that is robust to future changes in how we draw.
-  // Maybe figure out some way to do this with middlware so the reducer can remain pure.
+  //XXX: this is not a pure reducer since it looks at SVG view properties to determine SVG object intersection.
+  // It seems difficult to put enough state into AppState to reliably detect when one SVG element overlaps another
+  // in a way that is robust to future changes in how we draw.
+  // Maybe figure out some way to do this with middleware so the reducer can remain pure.
 
   RectElement select_box = querySelector('#selection-box-main') as RectElement;
   if (select_box == null) {
     return selectables_store;
   }
+  Rect select_box_bbox = select_box.getBBox();
 
   //XXX: Firefox does not have getIntersectionList or getEnclosureList
   // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
-  // It didn't work well anyway in Chrome and I basically had to implement it myself anyway based
-  // on bounding boxes.
+  // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
 
-  Rect select_box_bbox = select_box.getBBox();
-//    util.transform_rect_svg_to_mouse_coord_main_view(select_box_bbox);
-
-  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
-
-//    var elts_all = parent_svg_elt.getEnclosureList(select_box_bbox, null).map((elt) => elt as SvgElement);
-//    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
-//    Set<SvgElement> elts_overlapping = elts_all.where((elt) => elt.classes.contains('selectable')).toSet();
-
-//    Set<SvgElement> elts_overlapping =
-//        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
-
-//  Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
   Set<SvgElement> elts_overlapping =
       util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).map((elt) => elt as SvgElement).toSet();
 
-  //    print('elts_overlapping: $elts_overlapping');
-
-//    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
+  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
   List<Selectable> overlapping_now = [
     for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
   ];
 
-//    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');
-//    print('overlapping_now:      $overlapping_now');
-
-//    List<Selectable> overlapping_now_select_mode_enabled = [
-//      for (var obj in overlapping_now) if (app.state.select_mode_store.is_selectable(obj)) obj
-//    ];
   List<Selectable> overlapping_now_select_mode_enabled = [];
   for (var obj in overlapping_now) {
-//      print('obj: $obj');
     if (state.ui_state.select_mode_state.is_selectable(obj)) {
       overlapping_now_select_mode_enabled.add(obj);
     }
   }
 
-//    Set<Selectable> overlapping_before = Set<Selectable>.from(selectables_overlapping);
-//    Set<Selectable> newly_overlapping = overlapping_now.difference(overlapping_before);
-//    Set<Selectable> newly_nonoverlapping = overlapping_before.difference(overlapping_now);
-
-//    print('overlapping_now_select_mode_enabled: $overlapping_now_select_mode_enabled');
-
-  SelectablesStore new_selectables_store;
-  if (action.toggle) {
-    new_selectables_store = selectables_store.toggle_all(overlapping_now_select_mode_enabled);
-  } else {
-    new_selectables_store = selectables_store.select_all(overlapping_now_select_mode_enabled);
-  }
-
-  return new_selectables_store;
+  return action.toggle
+      ? selectables_store.toggle_all(overlapping_now_select_mode_enabled)
+      : selectables_store.select_all(overlapping_now_select_mode_enabled);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,8 +87,7 @@ SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
   return store;
 }
 
-SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
-    store.clear();
+SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) => store.clear();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer
@@ -203,9 +170,7 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
 SelectionBox selection_box_create_reducer(SelectionBox selection_box, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
-SelectionBox selection_box_size_changed_reducer(
-        SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
+SelectionBox selection_box_size_changed_reducer(SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
-SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) =>
-    null;
+SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) => null;
