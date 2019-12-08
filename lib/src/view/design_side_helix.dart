@@ -9,8 +9,6 @@ import 'package:scadnano/src/state/position3d.dart';
 import '../state/mouseover_data.dart';
 import '../app.dart';
 import '../state/helix.dart';
-import '../state/grid.dart';
-import '../state/grid_position.dart';
 import 'design_side_rotation.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
@@ -29,8 +27,6 @@ UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 @Props()
 class _$DesignSideHelixProps extends UiProps with ConnectPropsMixin {
   Helix helix;
-//  GridPosition grid_position;
-//  Grid grid;
   bool selected;
   MouseoverData mouseover_data;
 }
@@ -47,15 +43,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     MouseoverData mouseover_data = props.mouseover_data;
     bool selected = props.selected;
     bool should = !(helix == helix_next && mouseover_data == mouseover_data_next && selected == selected_next);
-//    print('should DesignSideHelix update for helix=${helix.idx}?          ${should}');
-//    if (should) {
-//      print('  helix == helix_next:                   ${helix == helix_next}');
-//      print('  mouseover_data == mouseover_data_next: ${mouseover_data == mouseover_data_next}');
-//      print('  helix = ${helix}');
-//      print('  helix_next = ${helix_next}');
-//      print('  mouseover_data = ${mouseover_data}');
-//      print('  mouseover_data_next = ${mouseover_data_next}');
-//    }
     return should;
   }
 
@@ -65,13 +52,11 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     MouseoverData mouseover_data = this.props.mouseover_data;
 //    print('  mouseover_data: $mouseover_data');
 
-    Helix helix = this.props.helix;
+    Helix helix = props.helix;
 
     Position3D pos3d = helix.position3d();
     Point<num> center = Point<num>(pos3d.x, pos3d.y);
     bool selected = props.selected;
-
-//    center = util.side_view_grid_to_svg(this.props.grid_position, this.props.grid);
 
     String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';
     if (selected) {

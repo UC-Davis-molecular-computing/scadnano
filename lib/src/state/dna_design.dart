@@ -29,8 +29,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
     ..is_origami = false
-    ..helices.replace(BuiltList<Helix>())
-    ..strands.replace(BuiltList<Strand>()));
+    ..helices.replace([])
+    ..strands.replace([]));
 
   /****************************** end built_value boilerplate ******************************/
 
