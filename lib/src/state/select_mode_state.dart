@@ -32,6 +32,17 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
 
   bool is_selectable(Selectable selectable) => modes.contains(selectable.select_mode());
 
+  bool strands_selectable() => modes.contains(SelectModeChoice.strand);
+
+  bool linkers_selectable() =>
+      modes.contains(SelectModeChoice.crossover) || modes.contains(SelectModeChoice.loopout);
+
+  bool ends_selectable() =>
+      modes.contains(SelectModeChoice.end_3p_strand) ||
+      modes.contains(SelectModeChoice.end_5p_strand) ||
+      modes.contains(SelectModeChoice.end_3p_substrand) ||
+      modes.contains(SelectModeChoice.end_5p_substrand);
+
   String to_json() {
     List<String> lst = [for (var mode in modes) mode.name];
     var js = jsonEncode(lst);

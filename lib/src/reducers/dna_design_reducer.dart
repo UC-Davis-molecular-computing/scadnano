@@ -62,17 +62,14 @@ DNADesign dna_design_delete_all_reducer(
     DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
 
-  if (state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)) {
+  if (state.ui_state.select_mode_state.strands_selectable()) {
     var strands = Set<Strand>.from(items.where((item) => item is Strand));
     dna_design = _remove_strands(dna_design, strands);
-  } else if (state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover) ||
-      state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout)) {
+  } else if (state.ui_state.select_mode_state.linkers_selectable()) {
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
     dna_design = _remove_crossovers_and_loopouts(dna_design, crossovers, loopouts);
-  } else if (state.ui_state.select_mode_state.modes
-      .difference(SelectModeChoice.ends.toBuiltSet())
-      .isNotEmpty) {
+  } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
     var substrands = Set<BoundSubstrand>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
     dna_design = _remove_bound_substrands(dna_design, substrands);
