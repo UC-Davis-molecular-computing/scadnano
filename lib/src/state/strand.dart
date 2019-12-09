@@ -61,9 +61,10 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     Set<Crossover> ret = {};
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is BoundSubstrand && substrands[i + 1] is BoundSubstrand) {
-        BoundSubstrand prev_ss = substrands[i] as BoundSubstrand;
-        BoundSubstrand next_ss = substrands[i + 1] as BoundSubstrand;
-        ret.add(Crossover(prev_ss, next_ss));
+//        BoundSubstrand prev_ss = substrands[i] as BoundSubstrand;
+//        BoundSubstrand next_ss = substrands[i + 1] as BoundSubstrand;
+//        ret.add(Crossover(prev_ss, next_ss));
+        ret.add(Crossover(i, i + 1, id()));
       }
     }
 
@@ -124,9 +125,10 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     return json_map;
   }
 
-  set_dna_sequence(String dna_sequence_new) {
+  Strand set_dna_sequence(String dna_sequence_new) {
     int start_idx_ss = 0;
     List<Substrand> substrands_new = [];
+    // assign DNA substrings to substrands
     for (var ss in substrands) {
       int end_idx_ss = start_idx_ss + ss.dna_length();
       String dna_subseq = dna_sequence_new.substring(start_idx_ss, end_idx_ss);
@@ -179,8 +181,14 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       var substrand_json = substrand_jsons[i];
       if (substrand_json.containsKey(constants.loopout_key)) {
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
-        lb.prev_substrand = bound_substrands[i - 1].toBuilder();
-        lb.next_substrand = bound_substrands[i + 1].toBuilder();
+        lb.prev_substrand_idx = i - 1;
+        lb.next_substrand_idx = i + 1;
+//        BoundSubstrand prev_ss = bound_substrands[i - 1];
+//        BoundSubstrand next_ss = bound_substrands[i + 1];
+//        lb.prev_substrand = prev_ss.toBuilder();
+//        lb.next_substrand = next_ss.toBuilder();
+        // need to normalize or find some way to replace with actual same object
+//        loopouts[i] = lb.build().rebuild((l) => l..prev_substrand.replace(prev_ss)..next_substrand.replace(next_ss));
         loopouts[i] = lb.build();
       }
     }
@@ -198,8 +206,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence =
-        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])
@@ -233,9 +240,24 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       strand = strand.set_dna_sequence(dna_sequence);
     }
 
+    String id = strand.id();
+    int idx = 0;
+    bool updated_loopout = false;
+    var substrands_new = strand.substrands.toBuilder();
+    for (var ss in strand.substrands) {
+      if (ss is Loopout) {
+        var loopout = ss.rebuild((l) => l..strand_id = id);
+        substrands_new[idx] = loopout;
+        updated_loopout = true;
+      }
+      idx++;
+    }
+    if (updated_loopout) {
+      strand = strand.rebuild((s) => s..substrands = substrands_new);
+    }
+
     return strand;
   }
-
 
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
     for (int i = starting_at; i < this.substrands.length; i++) {

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/strand.dart';
 
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
@@ -18,7 +19,11 @@ part 'design_main_strand_loopout.over_react.g.dart';
 
 UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
     connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
+  var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
+  var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
   return DesignMainLoopout()
+    ..prev_substrand = prev_ss
+    ..next_substrand = next_ss
     ..selected = state.ui_state.selectables_store.selected(props.loopout)
     ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
 })(DesignMainLoopout);
@@ -29,6 +34,9 @@ UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 @Props()
 class _$DesignMainLoopoutProps extends UiProps {
   Loopout loopout;
+  Strand strand;
+  BoundSubstrand prev_substrand;
+  BoundSubstrand next_substrand;
   Color color;
   bool selected;
   bool selectable;
@@ -45,8 +53,8 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
     Loopout loopout = this.props.loopout;
     Color color = props.color;
 
-    var prev_ss = loopout.prev_substrand;
-    var next_ss = loopout.next_substrand;
+    var prev_ss = props.prev_substrand;
+    var next_ss = props.next_substrand;
 
     var classname = 'substrand-line loopout-line';
     if (props.selected) {

@@ -88,9 +88,19 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return substrand_to_strand_builder.build();
   }
 
-  Strand crossover_to_strand(Crossover crossover) => substrand_to_strand[crossover.prev_substrand];
+  @memoized
+  BuiltMap<Crossover, Strand> get crossover_to_strand {
+    var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
+    for (var strand in strands) {
+      var crossovers = strand.crossovers;
+      for (var crossover in strand.crossovers) {
+        crossover_to_strand_builder[crossover] = strand;
+      }
+    }
+    return crossover_to_strand_builder.build();
+  }
 
-  Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout.prev_substrand];
+  Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
 
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
 
@@ -232,10 +242,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
   }
 
-  /// Replace this DNADesign with the one described in json_map.
-//  read_from_json(Map<String, dynamic> json_map) {
   static DNADesign from_json(Map<String, dynamic> json_map) {
-    //TODO: add test for illegally overlapping substrands on Helix (copy algorithm from Python repo)
     var dna_design_builder = DNADesignBuilder();
 
     dna_design_builder.version =

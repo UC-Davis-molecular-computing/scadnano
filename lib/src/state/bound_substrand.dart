@@ -166,8 +166,8 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 
   int get visual_length => (this.end - this.start);
 
-  String toString() =>
-      'BoundSubstrand(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
+//  String toString() =>
+//      'BoundSubstrand(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand.
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.

@@ -130,7 +130,7 @@ mixin Selectable {
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
   handle_selection(event) {
-    print('handle_selection called');
+//    print('handle_selection called');
     if (app.state.ui_state.select_mode_state.is_selectable(this)) {
       if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
         app.store.dispatch(actions.Select(this, true));
@@ -142,5 +142,5 @@ mixin Selectable {
 
 //  bool selected_field = false;
 
-  String toString() => id();
+//  String toString() => id();
 }

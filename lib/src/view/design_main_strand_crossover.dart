@@ -19,10 +19,18 @@ const SELECTED_CROSSOVER_COLOR = 'hotpink';
 
 UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
     connect<AppState, DesignMainStrandCrossoverProps>(
-  mapStateToPropsWithOwnProps: (state, props) => DesignMainStrandCrossover()
-    ..show_mouseover_rect = state.ui_state.show_mouseover_rect
-    ..selected = state.ui_state.selectables_store.selected(props.crossover)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover),
+  mapStateToPropsWithOwnProps: (state, props) {
+    int prev_idx = props.crossover.prev_substrand_idx;
+    int next_idx = props.crossover.next_substrand_idx;
+    var prev_ss = props.strand.substrands[prev_idx];
+    var next_ss = props.strand.substrands[next_idx];
+    return DesignMainStrandCrossover()
+      ..show_mouseover_rect = state.ui_state.show_mouseover_rect
+      ..prev_substrand = prev_ss
+      ..next_substrand = next_ss
+      ..selected = state.ui_state.selectables_store.selected(props.crossover)
+      ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
+  },
 )(DesignMainStrandCrossover);
 
 @Factory()
@@ -32,6 +40,8 @@ UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMa
 class _$DesignMainStrandCrossoverProps extends UiProps {
   Strand strand;
   Crossover crossover;
+  BoundSubstrand prev_substrand;
+  BoundSubstrand next_substrand;
   bool show_mouseover_rect;
   bool selected;
   bool selectable;
@@ -50,26 +60,18 @@ class DesignMainStrandCrossoverComponent
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
-//  @override
-//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-//    Strand strand = nextProps['DesignMainStrandCrossoverProps.strand'];
-//    Crossover crossover = nextProps['DesignMainStrandCrossoverProps.crossover'];
-//    bool show_mouseover_rect = nextProps['DesignMainStrandCrossoverProps.show_mouseover_rect'];
-//    bool selected = nextProps['DesignMainStrandCrossoverProps.selected'];
-//    return !(props.strand == strand && props.crossover == crossover && props.show_mouseover_rect == show_mouseover_rect);
-//  }
-
   @override
   render() {
     Strand strand = props.strand;
     Crossover crossover = props.crossover;
+    BoundSubstrand prev_substrand = props.prev_substrand;
+    BoundSubstrand next_substrand = props.next_substrand;
+    int helix_idx_prev = prev_substrand.helix;
+    int helix_idx_next = next_substrand.helix;
+
     bool show_mouseover_rect = props.show_mouseover_rect;
-    int helix_idx_prev = crossover.prev_substrand.helix;
-    int helix_idx_next = crossover.next_substrand.helix;
     bool mouse_hover = state.mouse_hover;
 
-    BoundSubstrand prev_substrand = crossover.prev_substrand;
-    BoundSubstrand next_substrand = crossover.next_substrand;
 
     handle_crossover_click() {
       List<actions.UndoableAction> rotation_actions = [];

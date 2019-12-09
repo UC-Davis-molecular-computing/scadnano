@@ -21,8 +21,7 @@ import 'design_main_strand_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
-    connect<AppState, DesignMainStrandPathsProps>(
+UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths = connect<AppState, DesignMainStrandPathsProps>(
   mapStateToProps: (state) =>
       (DesignMainStrandPaths()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
 )(DesignMainStrandPaths);
@@ -44,8 +43,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
   }
 }
 
-bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
-    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
+bool should_draw_bound_ss(int helix_idx, BuiltSet<int> side_selected_helix_idxs) =>
+    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(helix_idx);
 
 List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
   if (strand.substrands.first is Loopout) {
@@ -65,7 +64,7 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
 
     if (substrand.is_bound_substrand()) {
       BoundSubstrand bound_ss = substrand as BoundSubstrand;
-      bool draw_cur_ss = draw_bound_ss(bound_ss, side_selected_helix_idxs);
+      bool draw_cur_ss = should_draw_bound_ss(bound_ss.helix, side_selected_helix_idxs);
       draw_prev_ss = draw_cur_ss;
       if (draw_cur_ss) {
         paths.add((ConnectedDesignMainBoundSubstrand()
@@ -89,10 +88,10 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {
         BoundSubstrand prev_ss = substrand;
         BoundSubstrand next_ss = strand.substrands[i + 1];
-        bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
+        bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
 
         if (draw_next_ss) {
-          Crossover crossover = Crossover(prev_ss, next_ss);
+          Crossover crossover = Crossover(i, i + 1, strand.id());
 
 //          paths.add((DesignMainStrandCrossover()
           paths.add((ConnectedDesignMainStrandCrossover()
@@ -103,10 +102,11 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
       }
     } else {
       BoundSubstrand next_ss = strand.substrands[i + 1];
-      bool draw_next_ss = draw_bound_ss(next_ss, side_selected_helix_idxs);
+      bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
       if (draw_prev_ss && draw_next_ss) {
         paths.add((ConnectedDesignMainLoopout()
           ..loopout = substrand
+          ..strand = strand
           ..color = strand.color
           ..key = "loopout-$i")());
       }
