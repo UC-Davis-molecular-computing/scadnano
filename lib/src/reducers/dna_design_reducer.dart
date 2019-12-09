@@ -28,7 +28,6 @@ DNADesign error_message_set_reducer(DNADesign dna_design, actions.ErrorMessageSe
 DNADesign dna_design_composed_reducer(DNADesign dna_design, action) =>
     dna_design.rebuild((d) => d..helices.replace(helices_reducer(dna_design.helices, action)));
 
-//XXX: don't need this yet, but might soon
 DNADesign dna_design_global_reducer(DNADesign dna_design, AppState state, action) {
   dna_design = dna_design_global_composed_reducer(dna_design, state, action);
   dna_design = dna_design_global_whole_reducer(dna_design, state, action);

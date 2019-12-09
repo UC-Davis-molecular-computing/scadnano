@@ -82,7 +82,7 @@ class DesignMainStrandCrossoverComponent
         rotation_actions.add(rotation_action);
       }
       var action = actions.BatchAction(rotation_actions);
-      app.store.dispatch(action);
+      app.dispatch(action);
     }
 
     update_mouseover_crossover() {
@@ -96,7 +96,7 @@ class DesignMainStrandCrossoverComponent
 
       //FIXME: don't access global variable
       // should be able to use thunk middleware to give dna_design to this action
-      app.store.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
+      app.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
     }
 
     var classname_this_curve = 'crossover-curve';

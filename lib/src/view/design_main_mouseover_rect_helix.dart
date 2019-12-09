@@ -85,7 +85,7 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
 }
 
 mouse_leave_update_mouseover() {
-  app.store.dispatch(actions.MouseoverDataClear());
+  app.dispatch(actions.MouseoverDataClear());
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
@@ -128,7 +128,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
 
   if (needs_update(mouseover_params, mouseover_datas)) {
 //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
-    app.store.dispatch(
+    app.dispatch(
         actions.MouseoverDataUpdate(dna_design, BuiltList<MouseoverParams>([mouseover_params])));
   } else {
 //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');

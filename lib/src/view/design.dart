@@ -57,7 +57,6 @@ class DesignViewComponent {
   bool svg_panzoom_has_been_set_up = false;
 
   Point<num> side_view_mouse_position = Point<num>(0, 0);
-  Set<int> keys_pressed = {};
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
@@ -135,7 +134,7 @@ class DesignViewComponent {
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
       side_view_mouse_position = event.client;
-      side_view_update_mouseover(keys_pressed, event: event);
+      side_view_update_mouseover(event: event);
     });
 
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
@@ -144,7 +143,7 @@ class DesignViewComponent {
       int key = ev.which;
 
       if (!ev.repeat) {
-        keys_pressed.add(key);
+        app.keys_pressed.add(key);
       }
 
       if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
@@ -156,31 +155,31 @@ class DesignViewComponent {
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX && !ev.repeat) {
-        side_view_update_mouseover(keys_pressed, mouse_pos: side_view_mouse_position);
+        side_view_update_mouseover(mouse_pos: side_view_mouse_position);
       }
 
       if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
-        app.store.dispatch(actions.SetShowMouseoverRect(true));
+        app.dispatch(actions.SetShowMouseoverRect(true));
       }
 
       if (key == KeyCode.ESC) {
         if (app.state.ui_state.selectables_store.isNotEmpty) {
-          app.store.dispatch(actions.SelectionsClear());
+          app.dispatch(actions.SelectionsClear());
         }
         if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
-          app.store.dispatch(actions.HelixSelectionsClear());
+          app.dispatch(actions.HelixSelectionsClear());
         }
       }
 
       if (key == KeyCode.DELETE) {
-        app.store.dispatch(actions.DeleteAllSelected());
+        app.dispatch(actions.DeleteAllSelected());
       }
     });
 
     window.onKeyUp.listen((ev) {
       int key = ev.which;
 
-      keys_pressed.remove(key);
+      app.keys_pressed.remove(key);
 
       if (key == constants.KEY_CODE_TOGGLE_SELECT ||
           key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
@@ -190,18 +189,18 @@ class DesignViewComponent {
       }
       if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
         if (app.state.ui_state.show_mouseover_rect) {
-          app.store.dispatch(actions.SetShowMouseoverRect(false));
+          app.dispatch(actions.SetShowMouseoverRect(false));
         }
         // removes mouseover even if on crossover even though we don't want that. Oh well
 
         if (app.state.ui_state.mouseover_datas.isNotEmpty) {
-          app.store.dispatch(actions.MouseoverDataClear());
+          app.dispatch(actions.MouseoverDataClear());
         }
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
           app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-        app.store.dispatch(actions.MouseGridPositionSideClear());
+        app.dispatch(actions.MouseGridPositionSideClear());
       }
     });
 
@@ -219,7 +218,7 @@ class DesignViewComponent {
 //    side_view_svg.onMouseUp.listen((ev) {
 //      if (!(ev.ctrlKey || ev.metaKey || ev.shiftKey)) {
 //        //XXX: maybe should unselect the helices, but it's probably more convenient to let them stay selected
-////        app.store.dispatch(actions.HelicesSelectedClear());
+////        app.dispatch(actions.HelicesSelectedClear());
 //      }
 //    });
   }
@@ -232,7 +231,7 @@ class DesignViewComponent {
       // so we need to remove it manually just in case
       document.body.classes.remove('dnd-drag-occurring');
       if (app.store_selection_box.state != null) {
-        app.store_selection_box.dispatch(actions.SelectionBoxRemove(is_main_view));
+        app.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
     }
   }
@@ -266,8 +265,7 @@ class DesignViewComponent {
     }
     if (toggle != null) {
       action = actions.SelectionBoxCreate(point, toggle, is_main_view);
-//        app.store.dispatch(action);
-      app.store_selection_box.dispatch(action);
+      app.dispatch(action);
     }
   }
 
@@ -283,8 +281,7 @@ class DesignViewComponent {
     }
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       var action = actions.SelectionBoxSizeChange(point, is_main_view);
-      //        app.store.dispatch(actions.ThrottledAction(action, 1 / 60.0));
-      app.store_selection_box.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+      app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
     }
   }
 
@@ -299,8 +296,8 @@ class DesignViewComponent {
     }
     // call this first so selection box is still in view when selections are made,
     // so we can detect intersection
-    app.store.dispatch(action_adjust);
-    app.store_selection_box.dispatch(action_remove);
+    app.dispatch(action_adjust);
+    app.dispatch(action_remove);
   }
 
   render(AppState state) {
@@ -387,21 +384,21 @@ class DesignViewComponent {
 
 side_view_mouse_leave_update_mouseover() {
   if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-    app.store.dispatch(actions.MouseGridPositionSideClear());
+    app.dispatch(actions.MouseGridPositionSideClear());
   }
 }
 
-side_view_update_mouseover(Set<int> keys_pressed, {Point<num> mouse_pos = null, MouseEvent event = null}) {
+side_view_update_mouseover({Point<num> mouse_pos = null, MouseEvent event = null}) {
   assert(!(mouse_pos == null && event == null));
-  if (keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
+  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
     var new_grid_pos =
         util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
-      app.store.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
+      app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
     }
   } else {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-      app.store.dispatch(actions.MouseGridPositionSideClear());
+      app.dispatch(actions.MouseGridPositionSideClear());
     }
   }
 }

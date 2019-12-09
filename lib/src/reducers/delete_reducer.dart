@@ -17,6 +17,9 @@ import '../util.dart' as util;
 DNADesign dna_design_delete_all_reducer(
     DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
+  if (items.isEmpty) {
+    return dna_design;
+  }
 
   if (state.ui_state.select_mode_state.strands_selectable()) {
     var strands = Set<Strand>.from(items.where((item) => item is Strand));

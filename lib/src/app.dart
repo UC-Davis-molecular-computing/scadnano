@@ -13,6 +13,7 @@ import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 
+import 'actions/actions.dart';
 import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
@@ -70,9 +71,13 @@ class App {
 
   Store store;
 
-  // for optimization
+  // for optimization; too slow to store in Model since it's updated 60 times/sec
   Store store_selection_box;
   var context_selection_box = createContext();
+
+  // for optimization; don't want to dispatch Actions changing model on every keypress
+  // This is updated in view/design.dart; consider moving it higher-level.
+  final Set<int> keys_pressed = {};
 
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
@@ -159,6 +164,18 @@ class App {
         initialState: null, middleware: [throttle_middleware_selection_box]);
   }
 
+  dispatch(Action2 action) {
+    var underlying_action = action is ThrottledAction ? action.action : action;
+    if (underlying_action is actions.SelectionBoxCreate ||
+        underlying_action is actions.SelectionBoxSizeChange ||
+        underlying_action is actions.SelectionBoxRemove) {
+      // optimization since selection box size changes happen too fast to update whole model
+      store_selection_box.dispatch(action);
+    } else {
+      store.dispatch(action);
+    }
+  }
+
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((Event event) {
       if (this.undo_redo.undo_stack.isNotEmpty) {
@@ -184,13 +201,13 @@ setup_undo_redo_keyboard_listeners() {
     // ctrl+Z to undo
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
       if (app.state.undo_redo.undo_stack.isNotEmpty) {
-        app.store.dispatch(actions.Undo());
+        app.dispatch(actions.Undo());
       }
     }
     // shift+ctrl+Z to redo
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
-        app.store.dispatch(actions.Redo());
+        app.dispatch(actions.Redo());
       }
     }
   });

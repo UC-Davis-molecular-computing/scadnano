@@ -92,7 +92,7 @@ _restore(Storable storable) {
     }
 
     if (action != null) {
-      app.store.dispatch(action);
+      app.dispatch(action);
     }
   }
 }

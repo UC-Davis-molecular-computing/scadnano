@@ -98,9 +98,9 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
       // since it won't be in the mouse event
 //      _remove_helix(event, helix);
     } else if (event.shiftKey) {
-      app.store.dispatch(actions.HelixSelect(helix.idx, false));
+      app.dispatch(actions.HelixSelect(helix.idx, false));
     } else if (event.ctrlKey || event.metaKey) {
-      app.store.dispatch(actions.HelixSelect(helix.idx, true));
+      app.dispatch(actions.HelixSelect(helix.idx, true));
     }
   }
 

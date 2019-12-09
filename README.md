@@ -50,6 +50,6 @@ Exporting the design to SVG is currently not directly supported. However, by ins
 you can export it yourself:
 
 
-Add the extension, then restart scadnano, and after loading the design you want to export to SVG, click the Export SVG Button.
+Add the extension, then restart scadnano (press F5 button to refresh the page), and after loading the design you want to export to SVG, click the Export SVG Button.
 It will report that there are two SVG elements on the page.
 These are the side view and main view, respectively, and the extension will save both of them.

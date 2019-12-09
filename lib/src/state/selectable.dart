@@ -133,9 +133,9 @@ mixin Selectable {
 //    print('handle_selection called');
     if (app.state.ui_state.select_mode_state.is_selectable(this)) {
       if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
-        app.store.dispatch(actions.Select(this, true));
+        app.dispatch(actions.Select(this, true));
       } else if (event.nativeEvent.shiftKey) {
-        app.store.dispatch(actions.Select(this, false));
+        app.dispatch(actions.Select(this, false));
       }
     }
   }

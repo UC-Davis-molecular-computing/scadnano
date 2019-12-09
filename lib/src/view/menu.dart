@@ -172,7 +172,7 @@ file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
 
 //  Actions.load_dna_file(LoadDNAFileParameters(json_model_text, filename));
-  app.store.dispatch(actions.LoadDNAFile(json_model_text, filename));
+  app.dispatch(actions.LoadDNAFile(json_model_text, filename));
 
 //  app.send_action(LoadDNAFileActionPack(LoadDNAFileParameters(json_model_text, filename)));
 //  app.state.menu_view_ui_model.loaded_filename = filename;
