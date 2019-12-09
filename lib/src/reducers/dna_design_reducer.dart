@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
@@ -48,7 +49,7 @@ DNADesign dna_design_global_composed_reducer(DNADesign dna_design, AppState stat
     dna_design.rebuild((d) => d
 //      ..helices.replace(helices_global_reducer(dna_design.helices, action))
 //  ..strands.replace(strands_global_reducer(dna_design.strands, action))
-    );
+        );
 
 GlobalReducer<DNADesign, AppState> dna_design_global_whole_reducer = combineGlobalReducers([
   TypedGlobalReducer<DNADesign, AppState, actions.DeleteAllSelected>(dna_design_delete_all_reducer),
@@ -57,7 +58,8 @@ GlobalReducer<DNADesign, AppState> dna_design_global_whole_reducer = combineGlob
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // delete all
 
-DNADesign dna_design_delete_all_reducer(DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
+DNADesign dna_design_delete_all_reducer(
+    DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
 
   if (state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)) {
@@ -73,7 +75,7 @@ DNADesign dna_design_delete_all_reducer(DNADesign dna_design, AppState state, ac
       .isNotEmpty) {
     var ends = items.where((item) => item is DNAEnd);
     var substrands = Set<BoundSubstrand>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
-    dna_design = _remove_substrands(dna_design, substrands);
+    dna_design = _remove_bound_substrands(dna_design, substrands);
   }
 
   return dna_design;
@@ -82,12 +84,12 @@ DNADesign dna_design_delete_all_reducer(DNADesign dna_design, AppState state, ac
 DNADesign _remove_strands(DNADesign dna_design, Iterable<Strand> strands_to_remove) =>
     dna_design.rebuild((d) => d..strands.removeWhere((strand) => strands_to_remove.contains(strand)));
 
-DNADesign _remove_crossovers_and_loopouts(DNADesign dna_design, Iterable<Crossover> crossovers,
-    Iterable<Loopout> loopouts) {
+DNADesign _remove_crossovers_and_loopouts(
+    DNADesign dna_design, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
-  // collect all crossovers for one strand because we need special case to remove multiple from one strand
+  // collect all linkers for one strand because we need special case to remove multiple from one strand
   Map<Strand, List<Linker>> strand_to_linkers = {};
   for (var crossover in crossovers) {
     var strand = dna_design.crossover_to_strand[crossover];
@@ -104,7 +106,7 @@ DNADesign _remove_crossovers_and_loopouts(DNADesign dna_design, Iterable<Crossov
     strand_to_linkers[strand].add(loopout);
   }
 
-  // remove crossovers one strand at a time
+  // remove linkers one strand at a time
   for (var strand in strand_to_linkers.keys) {
     strands_to_remove.add(strand);
     var split_strands = _remove_linkers_from_strand(strand, strand_to_linkers[strand]);
@@ -119,46 +121,48 @@ DNADesign _remove_crossovers_and_loopouts(DNADesign dna_design, Iterable<Crossov
   return dna_design.rebuild((d) => d..strands.replace(new_strands));
 }
 
-// Splits one strand into two by removing a crossover
+// Splits one strand into many by removing crossovers and loopouts
 List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
-//  // find indexes of each substrand between linkers, including those before first and after last
-//  List<int> idxs = [0];
-//  for (var linker in linkers) {
-//    int next_idx = linker.next_substrand_idx;
-//    idxs.add(next_idx);
-//  }
-//  idxs.sort();
-//  idxs.add(strand.substrands.length);
-//
-//  // split strand.substrands by idxs
-//  List<List<Substrand>> substrands_list = [];
-//  for (int i = 0; i < idxs.length - 1; i++) {
-//    var substrands = List<Substrand>.from(strand.substrands.sublist(idxs[i], idxs[i + 1]));
-//    substrands_list.add(substrands);
-//  }
-
+  // partition substrands of Strand that are separated by a linker
+  // This logic is a bit complex because Loopouts are themselves Substrands, but Crossovers are not.
   linkers.sort((l1, l2) => l1.prev_substrand_idx.compareTo(l2.prev_substrand_idx));
-
   int linker_idx = 0;
   List<List<Substrand>> substrands_list = [[]];
-  for (int i = 0; i < strand.substrands.length; i++) {
-    var substrand = strand.substrands[i];
+  for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
+    var substrand = strand.substrands[ss_idx];
     substrands_list[linker_idx].add(substrand);
     if (linker_idx < linkers.length) {
       Linker linker = linkers[linker_idx];
-      if (i == linker.prev_substrand_idx) {
+      if (ss_idx == linker.prev_substrand_idx) {
         linker_idx++;
         substrands_list.add([]);
         if (linker is Loopout) {
-          i++; // so we don't put Loopout in any new Strands
+          ss_idx++; // so we don't put Loopout in any new Strands
         }
       }
     }
   }
 
-  //XXX: This should go before updating substrands below with is_first and is_last or else they cannot be
-  // found as substrands of strand
-  var dnas = [for (var substrands in substrands_list) dna_seq(substrands, strand)];
+  return _create_new_strands_from_substrand_lists(substrands_list, strand);
+}
+
+String _dna_seq(List<Substrand> substrands, Strand strand) {
+  List<String> ret = [];
+  for (var ss in substrands) {
+    ret.add(strand.dna_sequence_in(ss));
+  }
+  return ret.join('');
+}
+//=>
+//    substrands.map((ss) => strand.dna_sequence_in(ss)).reduce((seq1, seq2) => seq1 + seq2);
+
+/// Creates new strands, one for each list of consecutive substrands of strand.
+/// Needs strand to assign DNA sequences and to have default properties for first strand (e.g., idt).
+List<Strand> _create_new_strands_from_substrand_lists(List<List<Substrand>> substrands_list, Strand strand) {
+  // Find DNA sequences of new Strands.
+  //XXX: This must go before updating substrands below with is_first and is_last or else they cannot be
+  // found as substrands of strand by method Strand.dna_sequence_in(), called by _dna_seq
+  var dna_sequences = [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
   // adjust is_first and is_last Booleans on BoundSubstrands
   for (var substrands in substrands_list) {
@@ -170,12 +174,12 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
     // This ensures both fields are set to true.
     var last_bound_ss = substrands[last] as BoundSubstrand;
     substrands[last] = last_bound_ss.rebuild((s) => s..is_last = true);
-    // replace Loopout prev/next idxs, which are now stale
+
+    // replace Loopout (prev/next)_substrand_idx's, which are now stale
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
       if (substrand is Loopout) {
-        substrands[i] = substrand.rebuild((loopout) =>
-        loopout
+        substrands[i] = substrand.rebuild((loopout) => loopout
           ..prev_substrand_idx = i - 1
           ..next_substrand_idx = i + 1);
       }
@@ -185,69 +189,78 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   List<Strand> new_strands = [];
   for (int i = 0; i < substrands_list.length; i++) {
     var substrands = substrands_list[i];
-    var dna = dnas[i];
+    var dna_sequence = dna_sequences[i];
     // assign old properties to first new strand and find new/default properties for remaining
     var color = i == 0 ? strand.color : util.color_cycler.next();
     var idt = i == 0 ? strand.idt : null;
     var is_scaffold = i == 0 ? strand.is_scaffold : false;
-    var new_strand = Strand(substrands, color: color, dna_sequence: dna, idt: idt, is_scaffold: is_scaffold);
+    var new_strand =
+        Strand(substrands, color: color, dna_sequence: dna_sequence, idt: idt, is_scaffold: is_scaffold);
     new_strands.add(new_strand);
   }
-
   return new_strands;
 }
 
-String dna_seq(List<Substrand> substrands, Strand strand) =>
-    substrands.map((ss) => strand.dna_sequence_in(ss)).reduce((seq1, seq2) => seq1 + seq2);
+DNADesign _remove_bound_substrands(DNADesign dna_design, Set<BoundSubstrand> substrands) {
+  Set<Strand> strands_to_remove = {};
+  List<Strand> strands_to_add = [];
 
-DNADesign _remove_substrands(DNADesign dna_design, Set<BoundSubstrand> substrands) {
-  //FIXME: implement this
-  return dna_design;
+  // collect all BoundSubstrands for one strand because we need special case to remove multiple from one strand
+  Map<Strand, Set<BoundSubstrand>> strand_to_substrands = {};
+  for (var substrand in substrands) {
+    var strand = dna_design.substrand_to_strand[substrand];
+    if (strand_to_substrands[strand] == null) {
+      strand_to_substrands[strand] = {};
+    }
+    strand_to_substrands[strand].add(substrand);
+  }
+
+  // remove crossovers one strand at a time
+  for (var strand in strand_to_substrands.keys) {
+    strands_to_remove.add(strand);
+    var split_strands = _remove_bound_substrands_from_strand(strand, strand_to_substrands[strand]);
+    strands_to_add.addAll(split_strands);
+  }
+
+  // remove old strands and add new strands to DNADesign
+  var new_strands = dna_design.strands.toList();
+  new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
+  new_strands.addAll(strands_to_add);
+
+  return dna_design.rebuild((d) => d..strands.replace(new_strands));
 }
 
-//int dna_length(Iterable<Substrand> substrands) =>
-//    substrands.map((ss) => ss.dna_length()).reduce((a, b) => a + b);
+// Splits one strand into many by removing BoundSubstrands
+List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<BoundSubstrand> substrands_to_remove) {
+  // partition substrands of Strand that are separated by a BoundSubstrand
+  List<Substrand> substrands = [];
+  List<List<Substrand>> substrands_list = [substrands];
+  for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
+    var substrand = strand.substrands[ss_idx];
+    if (substrands_to_remove.contains(substrand)) {
+      // also remove previous substrand if it is a Loopout
+      if (ss_idx > 0 && strand.substrands[ss_idx - 1] is Loopout) {
+        substrands.removeLast();
+      }
+      // start new list of substrands if we added some to previous
+      if (substrands.isNotEmpty) {
+        substrands = [];
+        substrands_list.add(substrands);
+      }
+      // if Loopout is next, remove it (i.e., leave it out by skipping its index)
+      if (ss_idx < strand.substrands.length - 1 && strand.substrands[ss_idx + 1] is Loopout) {
+        ss_idx++;
+      }
+    } else {
+      // add to existing list of substrands
+      substrands.add(substrand);
+    }
+  }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix rotation set
+  // special case if we removed last bound substrand
+  if (substrands.isEmpty) {
+    substrands_list.removeLast();
+  }
 
-//DNADesign helix_rotation_set_reducer(DNADesign dna_design, dispatcher.HelixRotationSet action) {
-//  Helix helix_new = dna_design.helices[action.helix_idx].rebuild((h) => h
-//    ..rotation = action.rotation
-//    ..rotation_anchor = action.anchor);
-//  ListBuilder<Helix> helix_list_builder = dna_design.helices.toBuilder();
-//  helix_list_builder[action.helix_idx] = helix_new;
-//
-//  return dna_design.rebuild((d) => d..helices = helix_list_builder);
-//}
-//
-//DNADesign helix_rotation_set_at_other_reducer(DNADesign dna_design, dispatcher.HelixRotationSetAtOther action) {
-//  Helix helix = dna_design.helices[action.helix_idx];
-//  Helix helix_other = dna_design.helices[action.helix_other_idx];
-//
-////  print('*' * 50 + ' setting rotation of helix ${action.helix_idx}');
-//
-//  num rotation = helix.angle_to(helix_other);
-//  if (!action.forward) {
-//    rotation = (rotation - 150) % 360;
-//  }
-//
-//  // adjust helix rotation
-//  Helix helix_new = helix.rebuild((h) => h
-//    ..rotation = rotation
-//    ..rotation_anchor = action.anchor);
-//
-//  // create new helices
-//  var helices_builder = dna_design.helices.toBuilder();
-//  helices_builder[action.helix_idx] = helix_new;
-//
-//  // update mouseover_data
-//  app.store.dispatch(dispatcher.MouseoverDataUpdate());
-//
-//  var dna_design_new = dna_design.rebuild((d) => d..helices = helices_builder);
-//
-////  print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
-////      'Handled dispatcher.HelixRotationSetAtOther and created new DNADesign:\n$dna_design_new');
-//
-//  return dna_design_new;
-//}
+  return _create_new_strands_from_substrand_lists(substrands_list, strand);
+}
