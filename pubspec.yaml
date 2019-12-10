@@ -8,6 +8,7 @@ environment:
   sdk: ^2.6.0
 
 dependencies:
+  dialog: ^0.7.0
   meta: ^1.1.7
   js: ^0.6.1+1
   codemirror: ^0.5.11

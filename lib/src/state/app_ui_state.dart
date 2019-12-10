@@ -8,19 +8,21 @@ import 'dna_design.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
+import 'edit_mode.dart';
 import 'selectable.dart';
 
 
 part 'app_ui_state.g.dart';
 
 final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
+  ..edit_modes.replace([EditModeChoice.move])
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
   ..mouseover_datas = ListBuilder<MouseoverData>()
   ..selection_box_displayed_main = false
   ..selection_box_displayed_side = false
   ..selectables_store = SelectablesStoreBuilder()
-  ..side_selected_helix_idxs = SetBuilder<int>()
+  ..side_selected_helix_idxs.replace([])
   ..show_dna = false
   ..show_editor = false
   ..show_mismatches = true
@@ -71,13 +73,12 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   BuiltList<MouseoverData> get mouseover_datas;
 
-//  @nullable // null when Alt not pressed or mouse outside of side view
-//  Point<num> get mouse_svg_pos_side_view;
-
   @nullable // null when Alt not pressed or mouse outside of side view
   GridPosition get side_view_grid_position_mouse_cursor;
 
   SelectModeState get select_mode_state;
+
+  BuiltSet<EditModeChoice> get edit_modes;
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;

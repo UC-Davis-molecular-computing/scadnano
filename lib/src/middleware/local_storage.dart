@@ -69,7 +69,7 @@ _restore(Storable storable) {
   if (window.localStorage.containsKey(storable_key)) {
     var value = window.localStorage[storable_key];
 
-    actions.Action2 action = null;
+    actions.Action action = null;
 
     if (storable == Storable.show_dna) {
 //      action = dispatcher.SetShowDNA.from((s) => s..show_dna = (value == 'true'));
@@ -88,7 +88,7 @@ _restore(Storable storable) {
     } else if (storable == Storable.select_modes) {
       List<dynamic> mode_names = jsonDecode(value);
       List<SelectModeChoice> modes = mode_names.map((name) => SelectModeChoice.from_json(name)).toList();
-      action = actions.SetSelectModes(SetBuilder<SelectModeChoice>(modes));
+      action = actions.SelectModesSet(SetBuilder<SelectModeChoice>(modes));
     }
 
     if (action != null) {

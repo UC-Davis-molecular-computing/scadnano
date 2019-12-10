@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:color/color.dart';
+import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -14,6 +15,7 @@ import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
+import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
@@ -78,16 +80,38 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
       return (Dom.path()
         ..d = path
         ..stroke = color.toRgbColor().toCssString()
-        ..onPointerDown = loopout.handle_selection
+        ..onPointerDown = ((ev) {
+          loopout.handle_selection(ev);
+          if (app.keys_pressed.contains(constants.KEY_CODE_LOOPOUT_CONVERT)) {
+            loopout_length_change();
+          }
+        })
         ..className = classname
         ..id = id
         ..key = id)();
     }
   }
+
+  loopout_length_change() async {
+    int length = null;
+    String prompt_to_user = "Enter loopout length (nonnegative integer):";
+    do {
+      var prompt_result = await prompt(prompt_to_user);
+      if (prompt_result == null) {
+        return;
+      }
+      var prompt_result_string = prompt_result.toString();
+      length = int.tryParse(prompt_result_string);
+      prompt_to_user =
+          '"$prompt_result_string" is not a nonnegative integer. Enter loopout length (nonnegative integer):';
+    } while (length == null || length < 0);
+
+    app.dispatch(actions.LoopoutLengthChange(props.loopout, length));
+  }
 }
 
-ReactElement _hairpin_arc(
-    BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname, Color color) {
+ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
+    String classname, Color color) {
   var helix = app.state.dna_design.helices[prev_substrand.helix];
   var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);

@@ -10,6 +10,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
@@ -144,35 +145,31 @@ class DesignViewComponent {
 
       if (!ev.repeat) {
         app.keys_pressed.add(key);
-      }
 
-      if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
-              key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
-              key == constants.KEY_CODE_SELECT) &&
-          !ev.repeat) {
-        install_draggable(true, DraggableComponent.main, main_view_svg);
-        install_draggable(false, DraggableComponent.side, side_view_svg);
-      }
 
-      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX && !ev.repeat) {
-        side_view_update_mouseover(mouse_pos: side_view_mouse_position);
-      }
-
-      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
-        app.dispatch(actions.SetShowMouseoverRect(true));
-      }
-
-      if (key == KeyCode.ESC) {
-        if (app.state.ui_state.selectables_store.isNotEmpty) {
-          app.dispatch(actions.SelectionsClear());
+        if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
+            key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+            key == constants.KEY_CODE_SELECT)) {
+          install_draggable(true, DraggableComponent.main, main_view_svg);
+          install_draggable(false, DraggableComponent.side, side_view_svg);
+        } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
+          app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
+        } else if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+          app.dispatch(actions.ShowMouseoverRectToggle());
+        } else if (key == KeyCode.ESC) {
+          if (app.state.ui_state.selectables_store.isNotEmpty) {
+            app.dispatch(actions.SelectionsClear());
+          }
+          if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
+            app.dispatch(actions.HelixSelectionsClear());
+          }
+        } else if (key == KeyCode.DELETE) {
+          app.dispatch(actions.DeleteAllSelected());
         }
-        if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
-          app.dispatch(actions.HelixSelectionsClear());
-        }
-      }
 
-      if (key == KeyCode.DELETE) {
-        app.dispatch(actions.DeleteAllSelected());
+        if (key == EditModeChoice.helix.key_code()) {
+          side_view_update_mouseover(mouse_pos: side_view_mouse_position);
+        }
       }
     });
 
@@ -189,13 +186,13 @@ class DesignViewComponent {
       }
       if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
         if (app.state.ui_state.show_mouseover_rect) {
-          app.dispatch(actions.SetShowMouseoverRect(false));
+//          app.dispatch(actions.ShowMouseoverRectSet(false));
         }
         // removes mouseover even if on crossover even though we don't want that. Oh well
 
-        if (app.state.ui_state.mouseover_datas.isNotEmpty) {
-          app.dispatch(actions.MouseoverDataClear());
-        }
+//        if (app.state.ui_state.mouseover_datas.isNotEmpty) {
+//          app.dispatch(actions.MouseoverDataClear());
+//        }
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
@@ -248,7 +245,7 @@ class DesignViewComponent {
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
-    actions.Action2 action;
+    actions.Action action;
     Point<num> point;
     if (!browser.isFirefox) {
       point = event.offset;
@@ -390,7 +387,8 @@ side_view_mouse_leave_update_mouseover() {
 
 side_view_update_mouseover({Point<num> mouse_pos = null, MouseEvent event = null}) {
   assert(!(mouse_pos == null && event == null));
-  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
+//  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
+  if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
     var new_grid_pos =
         util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {

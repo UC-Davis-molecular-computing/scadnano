@@ -6,11 +6,11 @@ import '../state/select_mode_state.dart';
 
 //SelectModeState select_mode_state_reducer([SelectModeState state, action])
 Reducer<SelectModeState> select_mode_state_reducer = combineReducers<SelectModeState>([
-  TypedReducer<SelectModeState, actions.ToggleSelectMode>(toggle_select_mode_reducer),
-  TypedReducer<SelectModeState, actions.SetSelectModes>(set_select_modes_reducer),
+  TypedReducer<SelectModeState, actions.SelectModeToggle>(toggle_select_mode_reducer),
+  TypedReducer<SelectModeState, actions.SelectModesSet>(set_select_modes_reducer),
 ]);
 
-SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.ToggleSelectMode action) {
+SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.SelectModeToggle action) {
   SelectModeState new_state;
   SelectModeChoice mode = action.select_mode_choice;
   if (state.modes.contains(mode)) {
@@ -31,5 +31,5 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Toggle
   return new_state;
 }
 
-SelectModeState set_select_modes_reducer(SelectModeState state, actions.SetSelectModes action) =>
+SelectModeState set_select_modes_reducer(SelectModeState state, actions.SelectModesSet action) =>
     state.set_modes(action.select_mode_choices);

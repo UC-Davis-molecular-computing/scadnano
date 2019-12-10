@@ -95,21 +95,19 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt,
   if (mouse_pos == null) {
     assert(event != null);
     mouse_pos = event.client;
-    print('event.client: ${event.client}');
+//    print('event.client: ${event.client}');
   }
-  SvgElement target_svg = event.target as SvgElement;
-  GraphicsElement target_graphics = target_svg as GraphicsElement;
+//  SvgElement target_svg = event.target as SvgElement;
+//  GraphicsElement target_graphics = target_svg as GraphicsElement;
 //  var bbox = target_svg.getBoundingClientRect();
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
-  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
+//  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
   var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-  print(
-      'svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
-  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
-  print(
-      'svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
-  Point<num> svg_point = Point<num>(svg_point_SVG_2.x, svg_point_SVG_2.y);
+//  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
+//  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
+//  print('svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
+  Point<num> svg_point = Point<num>(svg_point_SVG_1.x, svg_point_SVG_1.y);
   return svg_point;
 }
 

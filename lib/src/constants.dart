@@ -9,6 +9,7 @@ const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.M;
 final KEY_CODE_TOGGLE_SELECT_MAC = browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
+const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.0.1";
 

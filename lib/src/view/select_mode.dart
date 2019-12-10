@@ -42,7 +42,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> {
       ...[
         for (var mode in modes)
           (Dom.button()
-            ..onClick = ((_) => props.dispatch(actions.ToggleSelectMode(mode)))
+            ..onClick = ((_) => props.dispatch(actions.SelectModeToggle(mode)))
             ..className = 'mode-button ' +
                 (props.select_mode_state.modes.contains(mode)
                     ? 'select-mode-button-selected'

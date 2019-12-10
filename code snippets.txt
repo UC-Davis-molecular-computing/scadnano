@@ -30,7 +30,7 @@ LOWER_CLASS_NAME =   decapitalize(CLASS_NAME)
 // bvsa (built value Action with serialization, and support for one field initially
 abstract class $CLASS_NAME$ 
     with BuiltJsonSerializable 
-    implements Action2, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+    implements Action, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   $FIELD_TYPE$ get $FIELD_NAME$;
   
   /************************ begin BuiltValue boilerplate ************************/
@@ -46,7 +46,7 @@ abstract class $CLASS_NAME$
 // bvsan (built value Action with serialization, no data
 abstract class $CLASS_NAME$ 
     with BuiltJsonSerializable 
-    implements Action2, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
+    implements Action, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory $CLASS_NAME$() => $CLASS_NAME$.from((b) => b);
 

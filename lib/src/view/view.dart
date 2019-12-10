@@ -10,6 +10,7 @@ import 'package:over_react/over_react_redux.dart';
 
 import '../state/app_state.dart';
 import 'design.dart';
+import 'edit_mode.dart';
 import 'select_mode.dart';
 import 'menu.dart';
 import 'editor.dart';
@@ -101,6 +102,15 @@ class View {
     this.design_view.render(state);
 
 //    react_dom.render((EditMode()..store = app.state.edit_mode_store)(), this.edit_mode_element);
+
+    react_dom.render(
+      ErrorBoundary()(
+        (ReduxProvider()..store = app.store)(
+          ConnectedEditMode()(),
+        ),
+      ),
+      this.edit_mode_element,
+    );
 
     react_dom.render(
       ErrorBoundary()(

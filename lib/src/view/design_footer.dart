@@ -12,6 +12,7 @@ part 'design_footer.over_react.g.dart';
 
 UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<AppState, _$DesignFooterProps>(
   mapStateToProps: (state) => (DesignFooter()
+    ..show_mouseover_rect = state.ui_state.show_mouseover_rect
     ..mouseover_datas = state.ui_state.mouseover_datas),
 )(DesignFooter);
 
@@ -21,14 +22,14 @@ UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 @Props()
 class _$DesignFooterProps extends UiProps { // FluxUiProps<MouseoverDataStore, MouseoverDataStore> {
   BuiltList<MouseoverData> mouseover_datas;
+  bool show_mouseover_rect;
 }
 
 @Component2()
 class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiComponent<DesignFooterProps> {
   @override
   render() {
-//    List<MouseoverData> mouseover_datas = this.props.store.data;
-    BuiltList<MouseoverData> mouseover_datas = this.props.mouseover_datas;
+    BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
 
     String text = '';
     if (mouseover_datas.length == 1) {
@@ -39,13 +40,20 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiC
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.substrand != null) {
         int substrand_length = mouseover_data.substrand.dna_length();
-//        var strand = mouseover_data.substrand.strand;
         var strand = app.state.dna_design.substrand_to_strand[mouseover_data.substrand];
         text += (', ' +
             'substrand length: ${substrand_length}, ' +
             'strand length: ${strand.dna_length()}, ' +
             (strand.idt != null ? 'strand IDT name: ${strand.idt.name}' : ''));
         ;
+      }
+    } else {
+      if (props.show_mouseover_rect) {
+        text = 'You can now view data about objects by placing the cursor over them, '
+            'but you will not be able to select them. To enable selecting them, press the M key again.';
+      } else {
+        text = 'To see data about the helix and strands, '
+            'press the M key and then place the cursor over the object you wish to inspect.';
       }
     }
     return (Dom.span()..className = 'footer-mouse-over-paragraph')(text);

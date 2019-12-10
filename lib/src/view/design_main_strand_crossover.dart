@@ -1,8 +1,9 @@
+import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
+
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
-
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
@@ -12,6 +13,8 @@ import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
+import '../constants.dart' as constants;
+
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
@@ -66,38 +69,9 @@ class DesignMainStrandCrossoverComponent
     Crossover crossover = props.crossover;
     BoundSubstrand prev_substrand = props.prev_substrand;
     BoundSubstrand next_substrand = props.next_substrand;
-    int helix_idx_prev = prev_substrand.helix;
-    int helix_idx_next = next_substrand.helix;
 
     bool show_mouseover_rect = props.show_mouseover_rect;
     bool mouse_hover = state.mouse_hover;
-
-
-    handle_crossover_click() {
-      List<actions.UndoableAction> rotation_actions = [];
-      for (var ss in [prev_substrand, next_substrand]) {
-        var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
-        int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-        var rotation_action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
-        rotation_actions.add(rotation_action);
-      }
-      var action = actions.BatchAction(rotation_actions);
-      app.dispatch(action);
-    }
-
-    update_mouseover_crossover() {
-      List<MouseoverParams> param_list = [];
-      for (var ss in [prev_substrand, next_substrand]) {
-        int helix_idx = ss == prev_substrand ? helix_idx_prev : helix_idx_next;
-        int offset = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-        bool forward = ss.forward;
-        param_list.add(MouseoverParams(helix_idx, offset, forward));
-      }
-
-      //FIXME: don't access global variable
-      // should be able to use thunk middleware to give dna_design to this action
-      app.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
-    }
 
     var classname_this_curve = 'crossover-curve';
     if (props.selected) {
@@ -136,9 +110,58 @@ class DesignMainStrandCrossoverComponent
           crossover.handle_selection(ev);
         } else if (show_mouseover_rect) {
           handle_crossover_click();
+        } else if (app.keys_pressed.contains(constants.KEY_CODE_LOOPOUT_CONVERT)) {
+          convert_crossover_to_loopout();
         }
       })
       ..id = id
       ..key = id)();
+  }
+
+  handle_crossover_click() {
+    BoundSubstrand prev_substrand = props.prev_substrand;
+    BoundSubstrand next_substrand = props.next_substrand;
+    List<actions.UndoableAction> rotation_actions = [];
+    for (var ss in [prev_substrand, next_substrand]) {
+      var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
+      int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
+      var rotation_action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
+      rotation_actions.add(rotation_action);
+    }
+    var action = actions.BatchAction(rotation_actions);
+    app.dispatch(action);
+  }
+
+  update_mouseover_crossover() {
+    BoundSubstrand prev_substrand = props.prev_substrand;
+    BoundSubstrand next_substrand = props.next_substrand;
+    List<MouseoverParams> param_list = [];
+    for (var ss in [prev_substrand, next_substrand]) {
+      int helix_idx = ss == prev_substrand ? prev_substrand.helix : next_substrand.helix;
+      int offset = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
+      bool forward = ss.forward;
+      param_list.add(MouseoverParams(helix_idx, offset, forward));
+    }
+
+    //FIXME: don't access global variable
+    // should be able to use thunk middleware to give dna_design to this action
+    app.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
+  }
+
+  convert_crossover_to_loopout() async {
+    int length = null;
+    String prompt_to_user = "Enter loopout length (positive integer):";
+    do {
+      var prompt_result = await prompt(prompt_to_user);
+      if (prompt_result == null) {
+        return;
+      }
+      var prompt_result_string = prompt_result.toString();
+      length = int.tryParse(prompt_result_string);
+      prompt_to_user =
+          '"$prompt_result_string" is not a positive integer. Enter loopout length (positive integer):';
+    } while (length == null || length <= 0);
+
+    app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, length));
   }
 }

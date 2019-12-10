@@ -15,15 +15,15 @@ part 'loopout.g.dart';
 abstract class Loopout
     with Selectable, BuiltJsonSerializable
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker {
-  factory Loopout(int loopout_length,
+  factory Loopout(
+          int loopout_length,
 //      BoundSubstrand prev_substrand, BoundSubstrand next_substrand
-      int prev_substrand_idx, String strand_id
-      ) =>
-      Loopout.from((b) => b
-        ..loopout_length = loopout_length
+          int prev_substrand_idx,
+          String strand_id) =>
+      Loopout.from((b) => b..loopout_length = loopout_length
 //        ..prev_substrand.replace(prev_substrand)
 //        ..next_substrand.replace(next_substrand)
-      );
+          );
 
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
 
@@ -35,19 +35,17 @@ abstract class Loopout
 
   int get loopout_length;
 
-  @nullable
-  String get dna_sequence;
-
-//  BoundSubstrand get prev_substrand;
-//  BoundSubstrand get next_substrand;
-
-
   int get prev_substrand_idx;
+
   int get next_substrand_idx;
 
   // can't really be nullable but need a way to delay setting it until whole Strand is built
   @nullable
   String get strand_id;
+
+  @nullable
+  String get dna_sequence;
+
 
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 
@@ -57,7 +55,7 @@ abstract class Loopout
 
   SelectModeChoice select_mode() => SelectModeChoice.loopout;
 
-  String id() => 'loopout-${prev_substrand_idx+1}-${strand_id}';
+  String id() => 'loopout-${prev_substrand_idx + 1}-${strand_id}';
 
 //  String toString() => 'Loopout(${this.loopout_length})';
 

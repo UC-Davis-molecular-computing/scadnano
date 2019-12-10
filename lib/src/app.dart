@@ -164,7 +164,7 @@ class App {
         initialState: null, middleware: [throttle_middleware_selection_box]);
   }
 
-  dispatch(Action2 action) {
+  dispatch(Action action) {
     var underlying_action = action is ThrottledAction ? action.action : action;
     if (underlying_action is actions.SelectionBoxCreate ||
         underlying_action is actions.SelectionBoxSizeChange ||

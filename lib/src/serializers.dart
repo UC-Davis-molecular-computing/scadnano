@@ -6,6 +6,7 @@ import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
 import 'state/dna_end.dart';
+import 'state/edit_mode.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
 import 'state/substrand.dart';
@@ -27,8 +28,8 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
-  ToggleSelectMode,
-  SetSelectModes,
+  SelectModeToggle,
+  SelectModesSet,
   SelectionBox,
   SetShowDNA,
   SetShowMismatches,
@@ -55,7 +56,8 @@ part 'serializers.g.dart';
   SelectionBox,
   SelectModeChoice,
   SelectModeState,
-  SetShowMouseoverRect,
+  ShowMouseoverRectSet,
+  ShowMouseoverRectToggle,
   MouseoverDataUpdate,
   MouseoverDataClear,
   Grid,
@@ -75,6 +77,11 @@ part 'serializers.g.dart';
   DeleteAllSelected,
   Select,
   Loopout,
+  LoopoutLengthChange,
+  ConvertCrossoverToLoopout,
+  EditModeChoice,
+  EditModeToggle,
+  EditModesSet,
 ])
 Serializers serializers = _$serializers;
 

@@ -195,7 +195,7 @@ List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<BoundSubstr
     var substrand = strand.substrands[ss_idx];
     if (substrands_to_remove.contains(substrand)) {
       // also remove previous substrand if it is a Loopout
-      if (ss_idx > 0 && strand.substrands[ss_idx - 1] is Loopout) {
+      if (substrands.isNotEmpty && substrands.last is Loopout) {
         substrands.removeLast();
       }
       // start new list of substrands if we added some to previous
