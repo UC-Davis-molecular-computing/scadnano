@@ -5,6 +5,7 @@ import 'package:color/color.dart';
 import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../state/app_state.dart';
@@ -26,6 +27,7 @@ UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
   return DesignMainLoopout()
     ..prev_substrand = prev_ss
     ..next_substrand = next_ss
+    ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
     ..selected = state.ui_state.selectables_store.selected(props.loopout)
     ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
 })(DesignMainLoopout);
@@ -42,6 +44,7 @@ class _$DesignMainLoopoutProps extends UiProps {
   Color color;
   bool selected;
   bool selectable;
+  bool loopout_edit_mode_enabled;
 }
 
 @Component2()
@@ -82,7 +85,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
         ..stroke = color.toRgbColor().toCssString()
         ..onPointerDown = ((ev) {
           loopout.handle_selection(ev);
-          if (app.keys_pressed.contains(constants.KEY_CODE_LOOPOUT_CONVERT)) {
+          if (props.loopout_edit_mode_enabled) {
             loopout_length_change();
           }
         })

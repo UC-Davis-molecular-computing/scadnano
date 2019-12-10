@@ -1,6 +1,7 @@
 import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
@@ -31,6 +32,7 @@ UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
       ..show_mouseover_rect = state.ui_state.show_mouseover_rect
       ..prev_substrand = prev_ss
       ..next_substrand = next_ss
+      ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
       ..selected = state.ui_state.selectables_store.selected(props.crossover)
       ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
   },
@@ -48,6 +50,7 @@ class _$DesignMainStrandCrossoverProps extends UiProps {
   bool show_mouseover_rect;
   bool selected;
   bool selectable;
+  bool loopout_edit_mode_enabled;
 }
 
 @State()
@@ -110,7 +113,7 @@ class DesignMainStrandCrossoverComponent
           crossover.handle_selection(ev);
         } else if (show_mouseover_rect) {
           handle_crossover_click();
-        } else if (app.keys_pressed.contains(constants.KEY_CODE_LOOPOUT_CONVERT)) {
+        } else if (props.loopout_edit_mode_enabled) {
           convert_crossover_to_loopout();
         }
       })

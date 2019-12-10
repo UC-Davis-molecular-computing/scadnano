@@ -106,10 +106,15 @@ abstract class ThrottledAction
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Edit modes
 
+
+
+
 abstract class EditModeToggle
     with BuiltJsonSerializable
-    implements Action, Built<EditModeToggle, EditModeToggleBuilder> {
+    implements StorableAction, Built<EditModeToggle, EditModeToggleBuilder> {
   EditModeChoice get mode;
+
+  Iterable<Storable> storables() => [Storable.edit_modes];
 
   /************************ begin BuiltValue boilerplate ************************/
   factory EditModeToggle(EditModeChoice mode) => EditModeToggle.from((b) => b..mode = mode);
@@ -127,7 +132,7 @@ abstract class EditModesSet
   BuiltSet<EditModeChoice> get edit_modes;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory EditModesSet(BuiltSet<EditModeChoice> edit_modes) =>
+  factory EditModesSet(Iterable<EditModeChoice> edit_modes) =>
       EditModesSet.from((b) => b..edit_modes.replace(edit_modes));
 
   factory EditModesSet.from([void Function(EditModesSetBuilder) updates]) = _$EditModesSet;
@@ -164,8 +169,8 @@ abstract class SelectModesSet
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectModesSet(SetBuilder<SelectModeChoice> select_mode_choices) =>
-      SelectModesSet.from((b) => b..select_mode_choices = select_mode_choices);
+  factory SelectModesSet(Iterable<SelectModeChoice> select_mode_choices) =>
+      SelectModesSet.from((b) => b..select_mode_choices.replace(select_mode_choices));
 
   factory SelectModesSet.from([void Function(SelectModesSetBuilder) updates]) = _$SelectModesSet;
 

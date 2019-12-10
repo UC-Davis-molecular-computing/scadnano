@@ -4,6 +4,7 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
@@ -20,7 +21,8 @@ class Storable extends EnumClass {
   static const Storable show_dna = _$show_dna;
   static const Storable show_mismatches = _$show_mismatches;
   static const Storable show_editor = _$show_editor;
-  static const Storable edit_mode = _$edit_mode;
+  static const Storable edit_modes = _$edit_modes;
+  static const Storable editor_mode = _$editor_mode;
   static const Storable select_modes = _$select_modes;
 
   static BuiltSet<Storable> get values => _$values;
@@ -38,7 +40,10 @@ save(Storable storable) {
     value_string = app.state.ui_state.show_dna.toString();
   } else if (storable == Storable.show_mismatches) {
     value_string = app.state.ui_state.show_mismatches.toString();
-  } else if (storable == Storable.edit_mode) {
+  } else if (storable == Storable.edit_modes) {
+    List<String> edit_modes_list = [for (var mode in app.state.ui_state.edit_modes) mode.name];
+    value_string = jsonEncode(edit_modes_list);
+  } else if (storable == Storable.editor_mode) {
     value_string = app.state.ui_state.show_editor.toString();
   } else if (storable == Storable.select_modes) {
     value_string = app.state.ui_state.select_mode_state.to_json();
@@ -81,14 +86,19 @@ _restore(Storable storable) {
     } else if (storable == Storable.show_editor) {
       action = actions.SetShowEditor(value == 'true');
 
-    } else if (storable == Storable.edit_mode) {
+    } else if (storable == Storable.editor_mode) {
 //      EditModeChoice mode = EditModeChoice.from_json(value);
       //FIXME: implement this
+
+    } else if (storable == Storable.edit_modes) {
+      List<dynamic> mode_names = jsonDecode(value);
+      List<EditModeChoice> modes = mode_names.map((name) => EditModeChoice.from_json(name)).toList();
+      action = actions.EditModesSet(modes);
 
     } else if (storable == Storable.select_modes) {
       List<dynamic> mode_names = jsonDecode(value);
       List<SelectModeChoice> modes = mode_names.map((name) => SelectModeChoice.from_json(name)).toList();
-      action = actions.SelectModesSet(SetBuilder<SelectModeChoice>(modes));
+      action = actions.SelectModesSet(modes);
     }
 
     if (action != null) {

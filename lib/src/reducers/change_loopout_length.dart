@@ -7,7 +7,7 @@ import '../actions/actions.dart' as actions;
 DNADesign convert_crossover_to_loopout_reducer(
     DNADesign dna_design, AppState state, actions.ConvertCrossoverToLoopout action) {
   Strand strand = state.ui_state.selectables_store.selectables_by_id[action.crossover.strand_id];
-
+  print('action: $action');
   return dna_design;
 }
 
