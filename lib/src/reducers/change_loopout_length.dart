@@ -1,9 +1,6 @@
-import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/strand.dart';
 
-import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 
 Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {

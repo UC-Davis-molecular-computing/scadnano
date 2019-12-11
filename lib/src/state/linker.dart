@@ -1,4 +1,3 @@
-import 'bound_substrand.dart';
 import 'select_mode.dart';
 
 /// Implemented by both [Crossover] and [Loopout].

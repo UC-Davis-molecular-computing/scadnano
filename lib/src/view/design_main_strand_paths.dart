@@ -86,13 +86,10 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
       }
 
       if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {
-        BoundSubstrand prev_ss = substrand;
         BoundSubstrand next_ss = strand.substrands[i + 1];
         bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
-
         if (draw_next_ss) {
           Crossover crossover = Crossover(i, i + 1, strand.id());
-
 //          paths.add((DesignMainStrandCrossover()
           paths.add((ConnectedDesignMainStrandCrossover()
             ..crossover = crossover

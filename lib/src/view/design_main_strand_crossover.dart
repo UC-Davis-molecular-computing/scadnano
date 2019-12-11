@@ -14,7 +14,6 @@ import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
-import '../constants.dart' as constants;
 
 
 part 'design_main_strand_crossover.over_react.g.dart';

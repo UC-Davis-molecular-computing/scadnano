@@ -173,7 +173,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<Crossover, Strand> get crossover_to_strand {
     var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
     for (var strand in strands) {
-      var crossovers = strand.crossovers;
       for (var crossover in strand.crossovers) {
         crossover_to_strand_builder[crossover] = strand;
       }

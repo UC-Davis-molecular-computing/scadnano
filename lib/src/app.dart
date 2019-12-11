@@ -19,12 +19,13 @@ import 'state/app_state.dart';
 import 'state/selection_box.dart';
 import 'state/undo_redo.dart';
 import 'reducers/selection_reducer.dart';
-import 'util.dart' as util;
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
+import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+//import 'constants.dart' as constants;
 
 // global variable for whole program
 App app = App();
@@ -191,21 +192,29 @@ class App {
 }
 
 setup_undo_redo_keyboard_listeners() {
-  document.body.onKeyPress.listen((KeyboardEvent event) {
-//      print('charCode: ${event.charCode}');
-//      print(' keyCode: ${event.keyCode}');
-//      print('    code: ${event.code}');
-//      print('     key: ${event.key}');
-//      print('   which: ${event.which}');
+  // below doesn't work with onKeyPress
+  // previous solution with onKeyPress used event.code == 'KeyZ' and worked inconsistently
+  document.body.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which;
+//    print('*' * 100);
+//    print('charCode: ${event.charCode}');
+//    print(' keyCode: ${event.keyCode}');
+//    print('    code: ${event.code}');
+//    print('     key: ${event.key}');
+//    print('   which: ${event.which}');
+//    print("Control: ${event.getModifierState('control')}"); // modifiers.control);
+//    print("KeyCode: ${event.key.codeUnitAt(0)}");
 
     // ctrl+Z to undo
-    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.Z && !event.altKey) {
+      print('Ctrl+Z pressed');
       if (app.state.undo_redo.undo_stack.isNotEmpty) {
         app.dispatch(actions.Undo());
       }
     }
     // shift+ctrl+Z to redo
-    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.code == 'KeyZ' && !event.altKey) {
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey && key == KeyCode.Z && !event.altKey) {
+      print('Ctrl+Shift+Z pressed');
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
         app.dispatch(actions.Redo());
       }
