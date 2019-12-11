@@ -6,7 +6,7 @@ import '../state/helix.dart';
 import '../app.dart';
 import '../state/mouseover_data.dart';
 import '../state/app_state.dart';
-
+import '../constants.dart' as constants;
 
 part 'design_footer.over_react.g.dart';
 
@@ -48,12 +48,13 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiC
         ;
       }
     } else {
+      String key = new String.fromCharCodes([constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO]);
       if (props.show_mouseover_rect) {
         text = 'You can now view data about objects by placing the cursor over them, '
-            'but you will not be able to select them. To enable selecting them, press the M key again.';
+            'but you will not be able to select them. To enable selecting them, press the $key key again.';
       } else {
         text = 'To see data about the helix and strands, '
-            'press the M key and then place the cursor over the object you wish to inspect.';
+            'press the $key key and then place the cursor over the object you wish to inspect.';
       }
     }
     return (Dom.span()..className = 'footer-mouse-over-paragraph')(text);

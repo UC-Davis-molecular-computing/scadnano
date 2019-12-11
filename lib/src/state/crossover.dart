@@ -1,4 +1,5 @@
 import 'package:built_value/serializer.dart';
+import 'package:scadnano/src/state/strand_part.dart';
 
 import '../serializers.dart';
 import 'linker.dart';
@@ -11,7 +12,7 @@ part 'crossover.g.dart';
 
 abstract class Crossover
     with Selectable, BuiltJsonSerializable
-    implements Built<Crossover, CrossoverBuilder>, Linker {
+    implements Built<Crossover, CrossoverBuilder>, Linker, StrandPart {
 //  factory Crossover(BoundSubstrand prev_substrand, BoundSubstrand next_substrand) =>
 //      Crossover.from((b) => b..prev_substrand.replace(prev_substrand)..next_substrand.replace(next_substrand));
   factory Crossover(int prev_substrand_idx, int next_substrand_idx, String strand_id) =>
@@ -32,6 +33,7 @@ abstract class Crossover
 
   int get next_substrand_idx;
 
+  @nullable
   String get strand_id;
 
   SelectModeChoice select_mode() => SelectModeChoice.crossover;

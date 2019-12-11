@@ -11,6 +11,7 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_box.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/strand_part.dart';
 
 //import '../state/substrand.dart';
 //import '../state/app_state.dart';
@@ -105,9 +106,6 @@ abstract class ThrottledAction
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Edit modes
-
-
-
 
 abstract class EditModeToggle
     with BuiltJsonSerializable
@@ -684,14 +682,23 @@ abstract class UndoRedoClear
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Strand part action
+
+abstract class StrandPartAction extends Action {
+  StrandPart get strand_part;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // loopout length change
 
 abstract class LoopoutLengthChange
     with BuiltJsonSerializable
-    implements Action, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
+    implements StrandPartAction, UndoableAction, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
   Loopout get loopout;
 
   int get length;
+
+  StrandPart get strand_part => loopout;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory LoopoutLengthChange(Loopout loopout, int length) => LoopoutLengthChange.from((b) => b
@@ -708,10 +715,15 @@ abstract class LoopoutLengthChange
 
 abstract class ConvertCrossoverToLoopout
     with BuiltJsonSerializable
-    implements Action, Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {
+    implements
+        StrandPartAction,
+        UndoableAction,
+        Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {
   Crossover get crossover;
 
   int get length;
+
+  StrandPart get strand_part => crossover;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ConvertCrossoverToLoopout(Crossover crossover, int length) =>

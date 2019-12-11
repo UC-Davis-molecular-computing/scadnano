@@ -8,22 +8,21 @@ import 'linker.dart';
 import 'selectable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'strand_part.dart';
 import 'substrand.dart';
 
 part 'loopout.g.dart';
 
 abstract class Loopout
     with Selectable, BuiltJsonSerializable
-    implements Built<Loopout, LoopoutBuilder>, Substrand, Linker {
+    implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
   factory Loopout(
           int loopout_length,
-//      BoundSubstrand prev_substrand, BoundSubstrand next_substrand
           int prev_substrand_idx,
-          String strand_id) =>
+          int next_substrand_idx) =>
       Loopout.from((b) => b..loopout_length = loopout_length
-//        ..prev_substrand.replace(prev_substrand)
-//        ..next_substrand.replace(next_substrand)
-          );
+        ..prev_substrand_idx = prev_substrand_idx
+        ..next_substrand_idx = next_substrand_idx);
 
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
 
@@ -39,13 +38,11 @@ abstract class Loopout
 
   int get next_substrand_idx;
 
-  // can't really be nullable but need a way to delay setting it until whole Strand is built
-  @nullable
-  String get strand_id;
-
   @nullable
   String get dna_sequence;
 
+  @nullable
+  String get strand_id;
 
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 

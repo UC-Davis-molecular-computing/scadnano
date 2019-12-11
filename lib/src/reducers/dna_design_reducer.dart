@@ -1,6 +1,8 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
+import 'package:scadnano/src/state/strand.dart';
 
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
@@ -46,9 +48,8 @@ DNADesign dna_design_composed_local_reducer(DNADesign dna_design, action) => dna
 // global: need the whole AppState
 DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState state, action) =>
     dna_design.rebuild((d) => d
-//      ..helices.replace(helices_global_reducer(dna_design.helices, action))
-//  ..strands.replace(strands_global_reducer(dna_design.strands, action))
-        );
+//      ..helices.replace(helices_global_reducer(dna_design.helices, state, action))
+      ..strands.replace(strands_global_reducer(dna_design.strands, state, action)));
 
 // whole: operate on the whole DNADesign
 // local: don't need the whole AppState
@@ -58,6 +59,30 @@ Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([]);
 // global: need the whole AppState
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DNADesign, AppState, actions.DeleteAllSelected>(dna_design_delete_all_reducer),
-  TypedGlobalReducer<DNADesign, AppState, actions.ConvertCrossoverToLoopout>(convert_crossover_to_loopout_reducer),
-  TypedGlobalReducer<DNADesign, AppState, actions.LoopoutLengthChange>(loopout_length_change_reducer),
+]);
+
+GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
+//  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoverToLoopout>(
+//      convert_crossover_to_loopout_reducer),
+//  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutLengthChange>(loopout_length_change_reducer),
+]);
+
+// takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
+BuiltList<Strand> strands_part_reducer(
+    BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
+  Strand strand = state.dna_design.strands_by_id[action.strand_part.strand_id];
+  int strand_idx = strands.indexOf(strand);
+
+  strand = strand_part_reducer(strand, action);
+  strand = strand.initialize();
+
+  var strands_builder = strands.toBuilder();
+  strands_builder[strand_idx] = strand;
+  return strands_builder.build();
+}
+
+Reducer<Strand> strand_part_reducer = combineReducers([
+  TypedReducer<Strand, actions.ConvertCrossoverToLoopout>(convert_crossover_to_loopout_reducer),
+  TypedReducer<Strand, actions.LoopoutLengthChange>(loopout_length_change_reducer),
 ]);

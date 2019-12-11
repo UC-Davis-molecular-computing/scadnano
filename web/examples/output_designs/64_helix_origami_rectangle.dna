@@ -1,6 +1,5 @@
 {
   "version": "0.0.1",
-  "grid": "square",
   "helices": [
     {"max_offset": 128, "grid_position": [0, 0]},
     {"max_offset": 128, "grid_position": [0, 1]},
@@ -199,7 +198,8 @@
         {"helix": 61, "forward": false, "start": 64, "end": 112},
         {"helix": 62, "forward": true, "start": 64, "end": 112},
         {"helix": 63, "forward": false, "start": 64, "end": 112}
-      ]
+      ],
+      "is_scaffold": true
     },
     {
       "color": "#f74308",

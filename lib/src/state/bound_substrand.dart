@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:scadnano/src/serializers.dart';
+import 'package:scadnano/src/state/strand_part.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -12,10 +13,11 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 
-
 part 'bound_substrand.g.dart';
 
-abstract class Insertion with BuiltJsonSerializable implements Built<Insertion, InsertionBuilder>, JSONSerializable {
+abstract class Insertion
+    with BuiltJsonSerializable
+    implements Built<Insertion, InsertionBuilder>, JSONSerializable, StrandPart {
   int get offset;
 
   int get length;
@@ -41,7 +43,9 @@ abstract class Insertion with BuiltJsonSerializable implements Built<Insertion, 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
 /// BoundSubstrand that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
-abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
+abstract class BoundSubstrand
+    with BuiltJsonSerializable
+    implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
   BoundSubstrand._();
 
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
@@ -68,11 +72,14 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 
   BuiltList<int> get deletions;
 
-  BuiltList<Insertion> get insertions; // elt: Pair(offset, num insertions)
+  BuiltList<Insertion> get insertions;
 
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
   String get dna_sequence;
+
+  @nullable
+  String get strand_id;
 
   bool get is_first;
 
@@ -80,11 +87,19 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 
   @memoized
   DNAEnd get dnaend_start => DNAEnd(
-      is_5p: forward, offset: start, substrand_is_first: is_first, substrand_is_last: is_last, substrand_id: id());
+      is_5p: forward,
+      offset: start,
+      substrand_is_first: is_first,
+      substrand_is_last: is_last,
+      substrand_id: id());
 
   @memoized
   DNAEnd get dnaend_end => DNAEnd(
-      is_5p: !forward, offset: end, substrand_is_first: is_first, substrand_is_last: is_last, substrand_id: id());
+      is_5p: !forward,
+      offset: end,
+      substrand_is_first: is_first,
+      substrand_is_last: is_last,
+      substrand_id: id());
 
   BoundSubstrand set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
@@ -100,14 +115,6 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 
   DNAEnd get dnaend_3p => forward ? dnaend_end : dnaend_start;
 
-//  bool selected_5p() => app.state.dna_design.selectable_store.selected(dnaend_5p);
-//
-//  bool selected_3p() => app.state.dna_design.selectable_store.selected(dnaend_3p);
-//
-//  bool selected_start() => app.state.dna_design.selectable_store.selected(dnaend_start);
-//
-//  bool selected_end() => app.state.dna_design.selectable_store.selected(dnaend_end);
-
   String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
@@ -122,8 +129,9 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
     }
     if (this.insertions.isNotEmpty) {
       // need to use List.from because List.map returns Iterable, not List
-      json_map[constants.insertions_key] = List<dynamic>.from(
-          this.insertions.map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
+      json_map[constants.insertions_key] = List<dynamic>.from(this
+          .insertions
+          .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
 
     return suppress_indent ? NoIndent(json_map) : json_map;
@@ -140,7 +148,8 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
 //    List<Tuple2<int, int>> insertions =
 //        json_map.containsKey(constants.insertions_key) ? parse_json_insertions(json_map[constants.insertions_key]) : [];
     var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
-    var insertions = parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
+    var insertions =
+        parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
     return BoundSubstrandBuilder()
       ..forward = forward
@@ -251,6 +260,49 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
     return seq_modified;
   }
 
+  /// Return DNA sequence of this Substrand in the interval of offsets given by
+  //  [`left`, `right`], INCLUSIVE.
+  //
+  //  WARNING: This is inclusive on both ends,
+  //  unlike other parts of this API where the right endpoint is exclusive.
+  //  This is to make the notion well-defined when one of the endpoints is on an offset with a
+  //  deletion or insertion.
+  String dna_sequence_in(int offset_low, int offset_high) {
+    if (dna_sequence == null) {
+      return null;
+    }
+    // if on a deletion, move inward until we are off of it
+    while (this.deletions.contains(offset_low)) {
+      offset_low += 1;
+    }
+    while (this.deletions.contains(offset_high)) {
+      offset_high -= 1;
+    }
+
+    if (offset_low > offset_high) {
+      return '';
+    }
+    if (offset_low >= this.end) {
+      return '';
+    }
+    if (offset_high < this.start) {
+      return '';
+    }
+
+    bool five_p_on_left = this.forward;
+    int str_idx_low = offset_to_substrand_dna_idx(offset_low, five_p_on_left);
+    int str_idx_high = offset_to_substrand_dna_idx(offset_high, !five_p_on_left);
+    if (!this.forward) {
+      // these will be out of order if strand is reverse
+      int swap = str_idx_low;
+      str_idx_low = str_idx_high;
+      str_idx_high = swap;
+    }
+
+    String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
+    return subseq;
+  }
+
   /// Net number of insertions from 5' end to offset_edge.
   /// Check is inclusive on the left and exclusive on the right (which is 5' depends on direction).
   int net_ins_del_length_increase_from_5p_to(int offset_edge, bool offset_closer_to_5p) {
@@ -301,7 +353,9 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
   }
 
   bool overlaps(BoundSubstrand other) {
-    return (this.helix == other.helix && this.forward == (!other.forward) && this.compute_overlap(other).item1 >= 0);
+    return (this.helix == other.helix &&
+        this.forward == (!other.forward) &&
+        this.compute_overlap(other).item1 >= 0);
   }
 
   Tuple2<int, int> compute_overlap(BoundSubstrand other) {
@@ -321,60 +375,6 @@ abstract class BoundSubstrand with BuiltJsonSerializable implements Built<BoundS
       }
     }
     return false;
-  }
-
-//  bool in_box(Point<num> upper_left_corner, Point<num> lower_right_corner, DNAEnd dna_end) {
-//    Helix helix = app.state.dna_design.helices[this.helix];
-//    int offset = dna_end == dnaend_5p ? offset_5p : offset_3p;
-//    Point<num> end_point = helix.svg_base_pos(offset, forward);
-//
-//    return upper_left_corner.x <= end_point.x &&
-//        end_point.x <= lower_right_corner.x &&
-//        upper_left_corner.y <= end_point.y &&
-//        end_point.y <= lower_right_corner.y;
-//  }
-
-  /// Return DNA sequence of this Substrand in the interval of offsets given by
-  //  [`left`, `right`], INCLUSIVE.
-  //
-  //  WARNING: This is inclusive on both ends,
-  //  unlike other parts of this API where the right endpoint is exclusive.
-  //  This is to make the notion well-defined when one of the endpoints is on an offset with a
-  //  deletion or insertion.
-  String dna_sequence_in(int offset_low, int offset_high) {
-    if (dna_sequence == null) {
-      return null;
-    }
-    // if on a deletion, move inward until we are off of it
-    while (this.deletions.contains(offset_low)) {
-      offset_low += 1;
-    }
-    while (this.deletions.contains(offset_high)) {
-      offset_high -= 1;
-    }
-
-    if (offset_low > offset_high) {
-      return '';
-    }
-    if (offset_low >= this.end) {
-      return '';
-    }
-    if (offset_high < this.start) {
-      return '';
-    }
-
-    bool five_p_on_left = this.forward;
-    int str_idx_low = offset_to_substrand_dna_idx(offset_low, five_p_on_left);
-    int str_idx_high = offset_to_substrand_dna_idx(offset_high, !five_p_on_left);
-    if (!this.forward) {
-      // these will be out of order if strand is reverse
-      int swap = str_idx_low;
-      str_idx_low = str_idx_high;
-      str_idx_high = swap;
-    }
-
-    String subseq = dna_sequence.substring(str_idx_low, str_idx_high + 1);
-    return subseq;
   }
 
   /// Convert from offset on Substrand's Helix to string index on the parent Strand's DNA sequence.

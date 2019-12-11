@@ -1,12 +1,11 @@
 {
   "version": "0.0.1",
-  "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "major_ticks": [2, 5]}
   ],
   "strands": [
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "dna_sequence": "AGTTAGTT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 9, "deletions": [2]}

@@ -35,8 +35,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
 
-//  factory Strand([void Function(StrandBuilder) updates]) = _$Strand;
-
   static Serializer<Strand> get serializer => _$strandSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
@@ -126,6 +124,15 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   }
 
   Strand set_dna_sequence(String dna_sequence_new) {
+    // truncate dna_sequence_new if too long; pad with ?'s if to short
+    int seq_len = dna_sequence_new.length;
+    int dna_len_strand = this.dna_length();
+    if (seq_len > dna_len_strand) {
+      dna_sequence_new = dna_sequence_new.substring(0, dna_len_strand);
+    } else if (seq_len < dna_len_strand) {
+      dna_sequence_new = dna_sequence_new + (constants.DNA_BASE_WILDCARD * (dna_len_strand - seq_len));
+    }
+
     int start_idx_ss = 0;
     List<Substrand> substrands_new = [];
     // assign DNA substrings to substrands
@@ -135,12 +142,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       Substrand ss_new = ss.set_dna_sequence(dna_subseq);
       substrands_new.add(ss_new);
       start_idx_ss = end_idx_ss;
-    }
-
-    int seq_len = dna_sequence_new.length;
-    int dna_len_strand = this.dna_length();
-    if (seq_len != dna_len_strand) {
-      throw StrandError(this, 'Strand length $dna_len_strand does not match DNA sequence length $seq_len');
     }
 
     return rebuild((strand) => strand
@@ -183,12 +184,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
         lb.prev_substrand_idx = i - 1;
         lb.next_substrand_idx = i + 1;
-//        BoundSubstrand prev_ss = bound_substrands[i - 1];
-//        BoundSubstrand next_ss = bound_substrands[i + 1];
-//        lb.prev_substrand = prev_ss.toBuilder();
-//        lb.next_substrand = next_ss.toBuilder();
-        // need to normalize or find some way to replace with actual same object
-//        loopouts[i] = lb.build().rebuild((l) => l..prev_substrand.replace(prev_ss)..next_substrand.replace(next_ss));
         loopouts[i] = lb.build();
       }
     }
@@ -206,7 +201,8 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    var dna_sequence =
+        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])
@@ -217,7 +213,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       is_scaffold = json_map[constants.is_scaffold_key];
     }
 
-    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold);
+    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold, dna_sequence: dna_sequence);
 
     if (json_map.containsKey(constants.idt_key)) {
       try {
@@ -236,23 +232,39 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       throw StrandError(strand, 'Loopout at end of strand not supported');
     }
 
+    strand = strand.initialize();
+
+    return strand;
+  }
+
+  /// Sets up data such as DNA sequence and part strand_id's
+  Strand initialize() {
+    Strand strand = this;
+
     if (dna_sequence != null) {
       strand = strand.set_dna_sequence(dna_sequence);
     }
 
     String id = strand.id();
     int idx = 0;
-    bool updated_loopout = false;
+    bool updated = false;
     var substrands_new = strand.substrands.toBuilder();
     for (var ss in strand.substrands) {
       if (ss is Loopout) {
-        var loopout = ss.rebuild((l) => l..strand_id = id);
+        var loopout = ss.rebuild((l) => l
+          ..strand_id = id
+          ..prev_substrand_idx = idx - 1
+          ..next_substrand_idx = idx + 1);
         substrands_new[idx] = loopout;
-        updated_loopout = true;
+        updated = true;
+      } else if (ss is BoundSubstrand) {
+        var bound_ss = ss.rebuild((l) => l..strand_id = id);
+        substrands_new[idx] = bound_ss;
+        updated = true;
       }
       idx++;
     }
-    if (updated_loopout) {
+    if (updated) {
       strand = strand.rebuild((s) => s..substrands = substrands_new);
     }
 

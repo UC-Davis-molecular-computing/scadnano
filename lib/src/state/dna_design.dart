@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/selectable.dart';
 
 import 'crossover.dart';
 import 'dna_end.dart';
@@ -47,6 +48,86 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   @nullable
   bool get is_origami;
+
+  @memoized
+  BuiltMap<String, Strand> get strands_by_id {
+    var builder = MapBuilder<String, Strand>();
+    for (var strand in strands) {
+      builder[strand.id()] = strand;
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, BoundSubstrand> get bound_substrands_by_id {
+    var builder = MapBuilder<String, BoundSubstrand>();
+    for (var strand in strands) {
+      for (var bound_substrand in strand.bound_substrands()) {
+        builder[bound_substrand.id()] = bound_substrand;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, Loopout> get loopouts_by_id {
+    var builder = MapBuilder<String, Loopout>();
+    for (var strand in strands) {
+      for (var loopout in strand.loopouts()) {
+        builder[loopout.id()] = loopout;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, Crossover> get crossovers_by_id {
+    var builder = MapBuilder<String, Crossover>();
+    for (var strand in strands) {
+      for (var crossover in strand.crossovers) {
+        builder[crossover.id()] = crossover;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, DNAEnd> get ends_by_id {
+    var builder = MapBuilder<String, DNAEnd>();
+    for (var strand in strands) {
+      for (var bound_substrand in strand.bound_substrands()) {
+        builder[bound_substrand.dnaend_start.id()] = bound_substrand.dnaend_start;
+        builder[bound_substrand.dnaend_end.id()] = bound_substrand.dnaend_end;
+      }
+    }
+    return builder.build();
+  }
+
+  Selectable selectable_by_id(String id) {
+    Selectable selectable;
+
+    selectable = strands_by_id[id];
+    if (selectable != null) {
+      return selectable;
+    }
+
+    selectable = loopouts_by_id[id];
+    if (selectable != null) {
+      return selectable;
+    }
+
+    selectable = crossovers_by_id[id];
+    if (selectable != null) {
+      return selectable;
+    }
+
+    selectable = ends_by_id[id];
+    if (selectable != null) {
+      return selectable;
+    }
+
+    return selectable;
+  }
 
   @memoized
   BuiltMap<BoundSubstrand, BuiltList<Mismatch>> get substrand_mismatches_map {

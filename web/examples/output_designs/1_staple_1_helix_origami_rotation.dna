@@ -1,12 +1,11 @@
 {
   "version": "0.0.1",
-  "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "rotation": 1.5707963267948966, "rotation_anchor": 2}
   ],
   "strands": [
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "dna_sequence": "?AGTTAGTT",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 9}

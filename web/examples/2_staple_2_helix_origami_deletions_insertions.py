@@ -37,8 +37,8 @@ def main():
     design.add_insertion(helix=1, offset=18, length=4)
 
     # DNA assigned to whole design so complement can be assigned to strands other than scaf
-    design.assign_dna(scaf, 'AACT' * 31)
-
+    design.assign_dna(scaf, 'AACT' * 18)
+    
     return design
 
 

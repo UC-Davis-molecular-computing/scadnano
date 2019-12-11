@@ -1,18 +1,31 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 
-DNADesign convert_crossover_to_loopout_reducer(
-    DNADesign dna_design, AppState state, actions.ConvertCrossoverToLoopout action) {
-  Strand strand = state.ui_state.selectables_store.selectables_by_id[action.crossover.strand_id];
-  print('action: $action');
-  return dna_design;
+Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {
+  Loopout loopout_new =
+      Loopout(action.length, action.crossover.prev_substrand_idx, action.crossover.next_substrand_idx + 1);
+  var substrands_builder = strand.substrands.toBuilder();
+  substrands_builder.insert(action.crossover.next_substrand_idx, loopout_new);
+  strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  return strand;
 }
 
-DNADesign loopout_length_change_reducer(
-    DNADesign dna_design, AppState state, actions.LoopoutLengthChange action) {
-  print('action: $action');
-  return dna_design;
+Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange action) {
+  int loopout_idx = strand.substrands.indexOf(action.loopout);
+  var substrands_builder = strand.substrands.toBuilder();
+  if (action.length > 0) {
+    // shorten length of existing loopout
+    Loopout loopout_new = action.loopout.rebuild((l) => l..loopout_length = action.length);
+    substrands_builder[loopout_idx] = loopout_new;
+  } else if (action.length == 0) {
+    // convert to crossover by removing loopout
+    substrands_builder.removeAt(loopout_idx);
+  }
+  strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  return strand;
 }
