@@ -13,7 +13,7 @@ import 'select_mode.dart';
 part 'selectable.g.dart';
 
 final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
-  ..selectables_by_id.replace({})
+//  ..selectables_by_id.replace({})
   ..selected_items.replace([]);
 
 abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
@@ -25,46 +25,46 @@ abstract class SelectablesStore with BuiltJsonSerializable implements Built<Sele
 
   /************************ end BuiltValue boilerplate ************************/
 
-  BuiltMap<String, Selectable> get selectables_by_id;
+//  BuiltMap<String, Selectable> get selectables_by_id;
 
   BuiltSet<Selectable> get selected_items; // => selected_items_factory();
 
-  /// Registers unique ID of this Selectable so it can be reconciled with View component with same HTML id.
-  SelectablesStore register(Selectable selectable) {
-    var selectables_by_id_builder = selectables_by_id.toBuilder();
-    String id = selectable.id();
-    selectables_by_id_builder[id] = selectable;
-    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
-  }
-
-  SelectablesStore register_all(Iterable<Selectable> selectables) {
-    var selectables_by_id_builder = selectables_by_id.toBuilder();
-    for (var selectable in selectables) {
-      String id = selectable.id();
-      selectables_by_id_builder[id] = selectable;
-    }
-    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
-  }
-
-  SelectablesStore register_dna_design(DNADesign design) {
-    List<Selectable> selectables = [];
-    for (var strand in design.strands) {
-      selectables.add(strand);
-      for (var substrand in strand.substrands) {
-        if (substrand is Loopout) {
-          selectables.add(substrand);
-        } else
-          if (substrand is BoundSubstrand) {
-          selectables.add(substrand.dnaend_start);
-          selectables.add(substrand.dnaend_end);
-        }
-      }
-      for (var crossover in strand.crossovers) {
-        selectables.add(crossover);
-      }
-    }
-    return register_all(selectables);
-  }
+//  /// Registers unique ID of this Selectable so it can be reconciled with View component with same HTML id.
+//  SelectablesStore register(Selectable selectable) {
+//    var selectables_by_id_builder = selectables_by_id.toBuilder();
+//    String id = selectable.id();
+//    selectables_by_id_builder[id] = selectable;
+//    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
+//  }
+//
+//  SelectablesStore register_all(Iterable<Selectable> selectables) {
+//    var selectables_by_id_builder = selectables_by_id.toBuilder();
+//    for (var selectable in selectables) {
+//      String id = selectable.id();
+//      selectables_by_id_builder[id] = selectable;
+//    }
+//    return rebuild((s) => s..selectables_by_id = selectables_by_id_builder);
+//  }
+//
+//  SelectablesStore register_dna_design(DNADesign design) {
+//    List<Selectable> selectables = [];
+//    for (var strand in design.strands) {
+//      selectables.add(strand);
+//      for (var substrand in strand.substrands) {
+//        if (substrand is Loopout) {
+//          selectables.add(substrand);
+//        } else
+//          if (substrand is BoundSubstrand) {
+//          selectables.add(substrand.dnaend_start);
+//          selectables.add(substrand.dnaend_end);
+//        }
+//      }
+//      for (var crossover in strand.crossovers) {
+//        selectables.add(crossover);
+//      }
+//    }
+//    return register_all(selectables);
+//  }
 
   bool get isEmpty => selected_items.isEmpty;
 

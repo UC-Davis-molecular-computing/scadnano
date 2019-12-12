@@ -38,7 +38,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   factory AppUIState.from_dna_design(DNADesign design) {
     var selectables_store = SelectablesStore();
-    selectables_store = selectables_store.register_dna_design(design);
+//    selectables_store = selectables_store.register_dna_design(design);
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
 

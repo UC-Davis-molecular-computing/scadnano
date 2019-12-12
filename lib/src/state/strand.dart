@@ -55,18 +55,15 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   bool get is_scaffold;
 
   @memoized
-  BuiltSet<Crossover> get crossovers {
+  BuiltList<Crossover> get crossovers {
     Set<Crossover> ret = {};
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is BoundSubstrand && substrands[i + 1] is BoundSubstrand) {
-//        BoundSubstrand prev_ss = substrands[i] as BoundSubstrand;
-//        BoundSubstrand next_ss = substrands[i + 1] as BoundSubstrand;
-//        ret.add(Crossover(prev_ss, next_ss));
         ret.add(Crossover(i, i + 1, id()));
       }
     }
 
-    return BuiltSet<Crossover>(ret);
+    return BuiltList<Crossover>(ret);
   }
 
   SelectModeChoice select_mode() => SelectModeChoice.strand;

@@ -152,6 +152,7 @@ List<Strand> _create_new_strands_from_substrand_lists(List<List<Substrand>> subs
     var is_scaffold = i == 0 ? strand.is_scaffold : false;
     var new_strand =
         Strand(substrands, color: color, dna_sequence: dna_sequence, idt: idt, is_scaffold: is_scaffold);
+    new_strand = new_strand.initialize();
     new_strands.add(new_strand);
   }
   return new_strands;

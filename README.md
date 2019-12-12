@@ -28,19 +28,19 @@ TODO: 5'/3' ends, strands, substrands, loopouts, helix rotations and anchors, et
 
 ## Keyboard and mouse/touchpad
 
-Some features of scadnano are enabled by depressing a certain key while using the mouse/touchpad:
-
-* m: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. When pressed over a crossover, information for the two helices it connects is shown.
-
 * Clicking crossover: if a crossover is left-clicked while m is pressed, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.
 
 * Ctrl and Shift: pressing these enables one to select objects, either by left-clicking on them individually, or by "click-and-drag". 
 If Shift is pressed, then the objects touched are selected. 
 If Ctrl is pressed, then the object selections are toggled (i.e., unselected if they were selected before).
 
-* h: In the side view, this allows one to add or remove helices by left-clicking.
-
 * Esc: If helices are selected, this unselects all of them. Note that unlike other interactive applications, items are not deselected when you left-click elsewhere. This helps to avoid accidentally unselecting many items when using the cursor for other tasks such as panning.
+
+## Edit modes
+
+These are not very well-defined yet. The general idea is to toggle an edit mode by clicking it on the right side, or pressing the keyboard shortcut. 
+
+* w: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. Furthermore, while this is enabled, clicking on a crossover can alter the backbone rotation of the two helices it connects to point them at each other.
 
 
 ## Exporting SVG

@@ -51,9 +51,10 @@ SelectablesStore selections_adjust_reducer(
   Set<SvgElement> elts_overlapping =
       util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).map((elt) => elt as SvgElement).toSet();
 
-  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
+//  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
   List<Selectable> overlapping_now = [
-    for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
+//    for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
+    for (var elt in elts_overlapping) state.dna_design.selectable_by_id(elt.id)
   ];
 
   List<Selectable> overlapping_now_select_mode_enabled = [];

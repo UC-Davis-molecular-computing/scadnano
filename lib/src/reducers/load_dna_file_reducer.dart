@@ -62,7 +62,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
           side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
     }
     var new_selectables_store = SelectablesStore();
-    new_selectables_store = new_selectables_store.register_dna_design(dna_design_new);
+//    new_selectables_store = new_selectables_store.register_dna_design(dna_design_new);
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
       ..dna_design = dna_design_new.toBuilder()

@@ -82,7 +82,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
     Rect select_box_bbox = select_box.getBBox();
 //    util.transform_rect_svg_to_mouse_coord_main_view(select_box_bbox);
 
-    var selectables_by_id = app.state.ui_state.selectables_store.selectables_by_id;
+//    var selectables_by_id = app.state.ui_state.selectables_store.selectables_by_id;
 
 //    var elts_all = parent_svg_elt.getEnclosureList(select_box_bbox, null).map((elt) => elt as SvgElement);
 //    var elts_all = parent_svg_elt.getIntersectionList(select_box_bbox, null).map((elt) => elt as SvgElement);
@@ -95,7 +95,8 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
     List<Selectable> overlapping_now = [
-      for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
+//      for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
+      for (var elt in elts_overlapping) app.state.dna_design.selectable_by_id(elt.id)
     ];
 
 //    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');

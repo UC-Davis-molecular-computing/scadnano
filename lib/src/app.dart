@@ -30,8 +30,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -207,14 +207,12 @@ setup_undo_redo_keyboard_listeners() {
 
     // ctrl+Z to undo
     if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.Z && !event.altKey) {
-      print('Ctrl+Z pressed');
       if (app.state.undo_redo.undo_stack.isNotEmpty) {
         app.dispatch(actions.Undo());
       }
     }
     // shift+ctrl+Z to redo
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && key == KeyCode.Z && !event.altKey) {
-      print('Ctrl+Shift+Z pressed');
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
         app.dispatch(actions.Redo());
       }
