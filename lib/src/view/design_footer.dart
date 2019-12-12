@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
@@ -12,7 +13,7 @@ part 'design_footer.over_react.g.dart';
 
 UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<AppState, _$DesignFooterProps>(
   mapStateToProps: (state) => (DesignFooter()
-    ..show_mouseover_rect = state.ui_state.show_mouseover_rect
+    ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
     ..mouseover_datas = state.ui_state.mouseover_datas),
 )(DesignFooter);
 
@@ -48,7 +49,8 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiC
         ;
       }
     } else {
-      String key = new String.fromCharCodes([constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO]);
+//      String key = String.fromCharCodes([constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO]);
+      String key = EditModeChoice.backbone.shortcut_key();
       if (props.show_mouseover_rect) {
         text = 'You can now view data about objects by placing the cursor over them, '
             'but you will not be able to select them. To enable selecting them, press the $key key again.';

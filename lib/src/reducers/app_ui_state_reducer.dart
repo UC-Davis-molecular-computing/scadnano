@@ -26,7 +26,7 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
   ..show_mismatches =
       TypedReducer<bool, actions.SetShowMismatches>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
-  ..show_mouseover_rect = show_mousever_rect_reducer(ui_state.show_mouseover_rect, action)
+//  ..show_mouseover_rect = show_mousever_rect_reducer(ui_state.show_mouseover_rect, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
   ..side_view_grid_position_mouse_cursor =

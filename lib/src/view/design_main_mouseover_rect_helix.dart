@@ -7,6 +7,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
@@ -29,7 +30,8 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
 //  print('ConnectedDesignMainMouseoverRectHelix connect');
 //  print('  state.ui_state.mouseover_datas: ${state.ui_model.mouseover_datas}');
-  bool show = state.ui_state.show_mouseover_rect;
+//  bool show = state.ui_state.show_mouseover_rect;
+  bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
   return DesignMainMouseoverRectHelix()
     ..helix = helix
     ..show = show

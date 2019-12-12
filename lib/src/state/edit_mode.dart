@@ -52,6 +52,8 @@ class EditModeChoice extends EnumClass {
     throw AssertionError('This should be unreachable.');
   }
 
+  String shortcut_key() => String.fromCharCodes([key_code()]);
+
   String to_json() => name;
 
   String display_name() {

@@ -28,7 +28,8 @@ UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
     var prev_ss = props.strand.substrands[prev_idx];
     var next_ss = props.strand.substrands[next_idx];
     return DesignMainStrandCrossover()
-      ..show_mouseover_rect = state.ui_state.show_mouseover_rect
+//      ..show_mouseover_rect = state.ui_state.show_mouseover_rect
+      ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
       ..prev_substrand = prev_ss
       ..next_substrand = next_ss
       ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)

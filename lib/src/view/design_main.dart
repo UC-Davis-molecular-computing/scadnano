@@ -3,6 +3,7 @@ library view_main;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'design_main_mismatches.dart';
 import 'design_main_helices.dart';
@@ -61,7 +62,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection_box')(),
-      if (state.ui_state.show_mouseover_rect)
+      if (state.ui_state.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = state.dna_design.helices
           ..key = 'mouseover_rect')(),

@@ -154,8 +154,8 @@ class DesignViewComponent {
           install_draggable(false, DraggableComponent.side, side_view_svg);
         } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
           app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
-        } else if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
-          app.dispatch(actions.ShowMouseoverRectToggle());
+//        } else if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
+//          app.dispatch(actions.ShowMouseoverRectToggle());
         } else if (key == KeyCode.ESC) {
           if (app.state.ui_state.selectables_store.isNotEmpty) {
             app.dispatch(actions.SelectionsClear());
@@ -184,16 +184,16 @@ class DesignViewComponent {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
       }
-      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
-        if (app.state.ui_state.show_mouseover_rect) {
-//          app.dispatch(actions.ShowMouseoverRectSet(false));
-        }
-        // removes mouseover even if on crossover even though we don't want that. Oh well
-
-//        if (app.state.ui_state.mouseover_datas.isNotEmpty) {
-//          app.dispatch(actions.MouseoverDataClear());
+//      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
+//        if (app.state.ui_state.show_mouseover_rect) {
+////          app.dispatch(actions.ShowMouseoverRectSet(false));
 //        }
-      }
+//        // removes mouseover even if on crossover even though we don't want that. Oh well
+//
+////        if (app.state.ui_state.mouseover_datas.isNotEmpty) {
+////          app.dispatch(actions.MouseoverDataClear());
+////        }
+//      }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
           app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
