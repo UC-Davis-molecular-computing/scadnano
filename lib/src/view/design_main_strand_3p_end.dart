@@ -10,15 +10,17 @@ import '../app.dart';
 
 part 'design_main_strand_3p_end.over_react.g.dart';
 
-UiFactory<DesignMain3pEndProps> ConnectedDesignMain3pEnd =
-    connect<AppState, DesignMain3pEndProps>(mapStateToPropsWithOwnProps: (state, props) {
+Map mapStateToPropsWithOwnProps(AppState state, DesignMain3pEndProps props) {
   var select_mode_choice = props.substrand.is_last ? SelectModeChoice.end_3p_strand : SelectModeChoice.end_3p_substrand;
   return DesignMain3pEnd()
     ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_3p)
     ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..is_last_substrand = props.substrand.is_last;
-})(DesignMain3pEnd);
+}
+
+UiFactory<DesignMain3pEndProps> ConnectedDesignMain3pEnd =
+    connect<AppState, DesignMain3pEndProps>(mapStateToPropsWithOwnProps: mapStateToPropsWithOwnProps)(DesignMain3pEnd);
 
 @Factory()
 UiFactory<DesignMain3pEndProps> DesignMain3pEnd = _$DesignMain3pEnd;

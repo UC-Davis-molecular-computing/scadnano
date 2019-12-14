@@ -54,7 +54,7 @@ class _$DesignMainMouseoverRectHelixProps extends UiProps {
 class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Helix helix = nextProps['DesignMainMouseoverRectHelixProps.show'];
+    Helix helix = nextProps['DesignMainMouseoverRectHelixProps.helix'];
     bool show = nextProps['DesignMainMouseoverRectHelixProps.show'];
     return !(helix == props.helix && show == props.show);
   }
@@ -69,8 +69,10 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
 
     var width = helix.svg_width();
     var height = helix.svg_height();
+    Point<num> translation = helix_main_view_translation(helix);
+
     return (Dom.rect()
-      ..transform = helix_main_view_translation(helix)
+      ..transform = 'translate(${translation.x} ${translation.y})'
       ..x = '0'
       ..y = '0'
       ..width = '$width'

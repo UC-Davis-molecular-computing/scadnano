@@ -51,7 +51,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     var x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
     var x_end = x_start + width;
 
-    Point<num> translation = helix.svg_position; //helix_main_view_translation(helix);
+    Point<num> translation = helix_main_view_translation(helix);
 
     return (Dom.g()
       ..className = 'helix-main-view'
@@ -65,12 +65,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
         ..className = 'main-view-helix-text'
         ..x = '$cx'
         ..y = '$cy')('$idx'),
-      (Dom.g()
-        ..className = 'helix-lines-group')(
+      (Dom.g()..className = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
-          ..d =
-              'M $x_start 0 '
+          ..d = 'M $x_start 0 '
               'H $x_end '
               'M $x_start ${height / 2.0} '
               'H $x_end '
@@ -88,14 +86,17 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
 }
 
 //static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-
+//
 Point<num> helix_main_view_translation(Helix helix) {
-  int view_order = helix.view_order;
-  if (helix.position != null) {
-    return Point<num>(helix.position.z*constants.BASE_WIDTH_SVG, helix.position.y*constants.DISTANCE_BETWEEN_HELICES_SVG);
-  } else {
-    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * view_order);
-  }
+  return helix.svg_position;
+  //FIXME: standardize this
+//  int view_order = helix.view_order;
+//  if (helix.position != null) {
+//    return Point<num>(
+//        helix.position.z * constants.BASE_WIDTH_SVG, helix.position.y * constants.DISTANCE_BETWEEN_HELICES_SVG);
+//  } else {
+//    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * view_order);
+//  }
 }
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.

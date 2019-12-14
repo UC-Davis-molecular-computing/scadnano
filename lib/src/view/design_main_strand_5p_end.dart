@@ -12,16 +12,18 @@ import 'design_main.dart';
 
 part 'design_main_strand_5p_end.over_react.g.dart';
 
-UiFactory<DesignMain5pEndProps> ConnectedDesignMain5pEnd =
-    connect<AppState, DesignMain5pEndProps>(mapStateToPropsWithOwnProps: (state, props) {
+Map mapStateToPropsWithOwnProps(AppState state, DesignMain5pEndProps props) {
   var select_mode_choice =
-      props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+  props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
   return DesignMain5pEnd()
     ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_5p)
     ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..is_first_substrand = props.substrand.is_first;
-})(DesignMain5pEnd);
+}
+
+UiFactory<DesignMain5pEndProps> ConnectedDesignMain5pEnd =
+    connect<AppState, DesignMain5pEndProps>(mapStateToPropsWithOwnProps: mapStateToPropsWithOwnProps)(DesignMain5pEnd);
 
 @Factory()
 UiFactory<DesignMain5pEndProps> DesignMain5pEnd = _$DesignMain5pEnd;
