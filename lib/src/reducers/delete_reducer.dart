@@ -31,7 +31,7 @@ DNADesign dna_design_delete_all_reducer(
   } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
     var substrands = Set<BoundSubstrand>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
-    dna_design = _remove_bound_substrands(dna_design, substrands);
+    dna_design = remove_bound_substrands(dna_design, substrands);
   }
 
   return dna_design;
@@ -158,7 +158,7 @@ List<Strand> _create_new_strands_from_substrand_lists(List<List<Substrand>> subs
   return new_strands;
 }
 
-DNADesign _remove_bound_substrands(DNADesign dna_design, Set<BoundSubstrand> substrands) {
+DNADesign remove_bound_substrands(DNADesign dna_design, Set<BoundSubstrand> substrands) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 

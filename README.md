@@ -12,6 +12,8 @@ with two main differences:
 1. It runs entirely in the browser, with no installation required.
 2. scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library ([documentation here](./docs/)), to help automate tedious tasks.
 
+A secondary goal related to (2) is that the file format should be easily readable, to help when debugging scripts.
+
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
 

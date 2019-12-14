@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:built_value/serializer.dart';
 
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/serializers.dart';
+import 'grid.dart';
+import '../constants.dart' as constants;
 
 part 'grid_position.g.dart';
 
@@ -39,6 +43,29 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   @override
   String toString() => '(${this.h}, ${this.v}' + (this.b == 0 ? ')' : ', ${this.b})');
+
+  /// Distance in nanometers between two grid positions,
+  /// assuming each position is a circle of diameter 2.5 nm.
+  num distance_nm(GridPosition other, Grid grid) {
+    //TODO
+  }
+
+  num distance_lattice(GridPosition other, Grid grid) {
+    num x = h - other.h;
+    num y = v - other.v;
+    if (grid == Grid.square) {
+      return sqrt(x*x + y*y);
+    } else if (grid == Grid.hex || grid == Grid.honeycomb) {
+      num x = h - other.h;
+      if (x % 2 == 0) {
+        return sqrt(x*x + y*y);
+      } else {
+        return 0;
+      }
+    } else {
+      throw ArgumentError('grid cannot be Grid.none to evaluate distance');
+    }
+  }
 
   /************************ begin BuiltValue boilerplate ************************/
   factory GridPosition(int h, int v, [int b = 0]) => GridPosition.from((g) => g

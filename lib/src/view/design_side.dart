@@ -2,6 +2,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
@@ -27,6 +28,7 @@ UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideP
         ..helices = state.dna_design.helices
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
+        ..edit_modes = state.ui_state.edit_modes
 //    ..mouse_svg_pos = odel.ui_model.mouse_svg_pos_side_view
         ..grid = state.dna_design.grid
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor;
@@ -42,6 +44,7 @@ class _$DesignSideProps extends UiProps {
   BuiltList<Helix> helices;
   BuiltSet<int> helix_idxs_selected;
   BuiltList<MouseoverData> mouseover_datas;
+  BuiltSet<EditModeChoice> edit_modes;
 
 //  Point<num> mouse_svg_pos;
   Grid grid;
@@ -72,6 +75,8 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
         (DesignSideHelix()
 //        (ConnectedDesignSideHelix()
           ..helix = helix
+          ..edit_modes = props.edit_modes
+          ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
           ..selected = helix_idxs_selected.contains(helix.idx)
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
           ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()

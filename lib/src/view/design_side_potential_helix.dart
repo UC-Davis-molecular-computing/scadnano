@@ -7,6 +7,7 @@ import '../state/grid.dart';
 import '../state/grid_position.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import '../actions/actions.dart' as actions;
 
 part 'design_side_potential_helix.over_react.g.dart';
 
@@ -25,8 +26,6 @@ class _$DesignSidePotentialHelixProps extends UiProps {
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {
-
-
 //    Point<num> mouse_svg_pos = props.mouse_svg_pos;
 //    if (mouse_svg_pos == null) {
 //      return null;
@@ -53,22 +52,18 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       ..cy = svg_ideal_pos.y
       ..r = '${constants.SIDE_HELIX_RADIUS}'
       ..onClick = ((e) => this._handle_click(e, grid_position))
-      ..className = allowed_grid_position? 'side-view-potential-helix': 'side-view-potential-helix-disallowed-position')();
+      ..className = allowed_grid_position
+          ? 'side-view-potential-helix'
+          : 'side-view-potential-helix-disallowed-position')();
   }
 
   _handle_click(SyntheticMouseEvent event, GridPosition grid_pos) {
-    if (!(event.ctrlKey || event.metaKey)) {
-      return;
-    }
+    // unlike DesignSideHelix, no need to check edit_mode here since PotentialHelix only displayed when
+    // edit mode has helix on
     if (grid_pos == null) {
       throw UnsupportedError('clicking to create helices off-grid not yet supported');
     }
 
-    int idx = app.state.dna_design.helices.length;
-    int max_offset = constants.default_max_offset;
-    //FIXME: implement this
-//    var params = HelixUseActionParameters(true, grid_pos, idx, max_offset);
-//    var helix_use_action_pack = HelixUseActionPack(params);
-//    app.send_action(helix_use_action_pack);
+    app.dispatch(actions.HelixAdd(grid_pos));
   }
 }

@@ -82,6 +82,8 @@ part 'serializers.g.dart';
   EditModeChoice,
   EditModeToggle,
   EditModesSet,
+  HelixAdd,
+  HelixRemove,
 ])
 Serializers serializers = _$serializers;
 

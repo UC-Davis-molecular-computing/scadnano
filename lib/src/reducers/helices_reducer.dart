@@ -5,14 +5,15 @@ import '../state/helix.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
-Reducer<BuiltList<Helix>> helices_reducer = combineReducers([
+Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
 ]);
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set rotation of backbone
 
-BuiltList<Helix> helix_rotation_set_reducer(
-    BuiltList<Helix> helices, actions.HelixRotationSet action) {
+BuiltList<Helix> helix_rotation_set_reducer(BuiltList<Helix> helices, actions.HelixRotationSet action) {
   Helix helix_new = helices[action.helix_idx].rebuild((h) => h
     ..rotation = action.rotation
     ..rotation_anchor = action.anchor);
@@ -39,5 +40,3 @@ BuiltList<Helix> helix_rotation_set_at_other_reducer(
   return helices_builder.build();
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix reducer

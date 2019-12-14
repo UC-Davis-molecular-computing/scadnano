@@ -318,6 +318,11 @@ html, body {
     fill: hotpink;
 }
 
+.deletable.side-view-helix-circle {
+    stroke: none;
+    fill: lightgray;
+}
+
 .selected.five-prime-end,
 .selected.three-prime-end,
 .selected.five-prime-end-first-substrand,

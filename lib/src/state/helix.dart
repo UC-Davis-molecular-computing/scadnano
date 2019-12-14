@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_value/serializer.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
 import '../json_serializable.dart';
@@ -23,7 +24,37 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   static Serializer<Helix> get serializer => _$helixSerializer;
 
-  factory Helix([void Function(HelixBuilder) updates]) = _$Helix;
+  factory Helix.from([void Function(HelixBuilder) updates]) = _$Helix;
+
+//  factory Helix([void Function(HelixBuilder) updates]) = _$Helix;
+
+  factory Helix(
+      {int idx,
+      Grid grid,
+      int view_order = null,
+      GridPosition grid_position = null,
+      num rotation = constants.default_helix_rotation,
+      int rotation_anchor = constants.default_helix_rotation_anchor,
+      int min_offset = 0,
+      int max_offset = constants.default_max_offset}) {
+    if (view_order == null) {
+      view_order = idx;
+    }
+    if (grid_position == null) {
+      grid_position = GridPosition(0, idx);
+    }
+    return Helix.from((b) => b
+      ..idx = idx
+      ..view_order = view_order
+      ..grid = grid
+      ..grid_position.replace(grid_position)
+      ..rotation = rotation
+      ..rotation_anchor = rotation_anchor
+      ..min_offset = min_offset
+      ..max_offset = max_offset);
+  }
+
+  /************************ end BuiltValue boilerplate ************************/
 
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
@@ -31,24 +62,27 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   int get idx;
 
   // This is inferred from DNADesign.helices_view_order and is here for convenience, but isn't serialized.
-  int get display_order;
-
-  /// position within square/hex/honeycomb integer grid (side view)
-  GridPosition get grid_position;
+  int get view_order;
 
   Grid get grid;
+
+  /// position within square/hex/honeycomb integer grid (side view)
+  @nullable
+  GridPosition get grid_position;
 
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
-  Point<num> get svg_position;
+  @nullable
+  Point<num> get svg_position_;
 
   @nullable
   Position3D get position;
 
-  double get rotation; //= constants.default_helix_rotation;
-  int get rotation_anchor; // = constants.default_helix_rotation_anchor;
+  double get rotation;
+
+  int get rotation_anchor;
 
   /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix.
   int get max_offset;
@@ -62,9 +96,59 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   @nullable
   BuiltList<int> get major_ticks;
 
+  GridPosition default_grid_position() => GridPosition(0, this.view_order);
+
+  Point<num> default_svg_position() {
+    if (grid != Grid.none) {
+      //FIXME: need to know positions of helices above this one in view order to know vertical offset
+//      return Point<num>(grid_position.b * constants.BASE_WIDTH_SVG,
+//          grid_position.v * constants.DISTANCE_BETWEEN_HELICES_SVG);
+      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
+    } else if (position != null) {
+      var p = position3d();
+      // position z is main view x
+      // SVG pixels in x direction = p.z in nm * (1/0.34 bp/nm) * (BASE_WIDTH_SVG pixels/bp)
+      // SVG pixels in y direction =
+      //   p.y in nm * (1/2.5 helix/nm)
+      //   * (GridPosition.distance grid_point/helix)
+      //   * (DISTANCE_BETWEEN_HELICES_SVG pixels/grid_point)
+      //FIXME: need to know positions of helices above this one in view order to know vertical offset
+      return Point<num>(
+          (p.z / 0.34) * constants.BASE_WIDTH_SVG, (p.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG
+//              * grid_position.distance_lattice(other, grid)
+          );
+    } else {
+//      throw AssertionError('cannot have grid_position, position both null and call default_svg_position');
+      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
+    }
+  }
+
+  Position3D default_position() {
+    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
+    num z = grid_position.b * constants.BASE_WIDTH_SVG;
+    return Position3D(x: svg_pos.x, y: svg_pos.y, z: z, pitch: 0, roll: 0, yaw: 0);
+  }
+
+  bool has_grid_position() => this.grid_position != null;
+
+  /// More like "has *assigned* SVG position"; if not one is calculated from grid_position or position
+  bool has_svg_position() => this.svg_position_ != null;
+
+  bool has_position() => this.position != null;
+
 //  @override
 //  String toString() =>
 //      super.toString().replaceFirst(r'helix=[+-]?\d+(\.\d+)?', 'helix=${util.to_degrees(rotation)}');
+
+  /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
+  /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
+  @memoized
+  Point<num> get svg_position {
+    if (svg_position_ != null) {
+      return svg_position_;
+    }
+    return default_svg_position();
+  }
 
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
@@ -72,9 +156,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     if (position != null) {
       return position;
     }
-    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
-    num z = grid_position.b * constants.BASE_WIDTH_SVG;
-    return Position3D(x: svg_pos.x, y: svg_pos.y, z: z, pitch: 0, roll: 0, yaw: 0);
+    return default_position();
   }
 
   /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
@@ -105,7 +187,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     Map<String, dynamic> json_map = {};
 
     if (this.has_grid_position()) {
-      json_map[constants.grid_position_key] = this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.grid_position_key] =
+          this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
     if (this.has_nondefault_svg_position()) {
@@ -124,7 +207,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
-  /// depending on whether strand is going forward or not.
+  /// depending on whether strand is going forward or not. This is relative to the starting point of
+  /// the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
     num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this.svg_position.x;
     num y = constants.BASE_HEIGHT_SVG / 2 + this.svg_position.y;
@@ -155,14 +239,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     }
     return relative_y < 10;
   }
-
-  GridPosition default_grid_position() => GridPosition(0, this.display_order);
-
-  Point<num> default_svg_position() => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.display_order);
-
-  bool has_grid_position() => this.grid_position != null;
-
-  bool has_svg_position() => this.svg_position != null;
 
   bool has_nondefault_svg_position() {
     num eps = 0.00000001;
@@ -196,7 +272,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
       if (!(gp_list.length == 2 || gp_list.length == 3)) {
-        throw ArgumentError("list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+        throw ArgumentError(
+            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
     }
@@ -207,7 +284,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
         throw ArgumentError(
             "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
       }
-      helix_builder.svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
+      helix_builder.svg_position_ = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
 
     if (json_map.containsKey(constants.max_offset_key)) {
@@ -216,8 +293,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     helix_builder.rotation =
         util.get_value_with_default(json_map, constants.rotation_key, constants.default_helix_rotation);
-    helix_builder.rotation_anchor =
-        util.get_value_with_default(json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
+    helix_builder.rotation_anchor = util.get_value_with_default(
+        json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
 
     Position3D position = util.get_value_with_default(json_map, constants.position3d_key, null,
         transformer: (map) => Position3D.from_json(map));
@@ -228,7 +305,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   /// Transform to apply to an SVG element so that it will appear in the correct position relative to this
   /// Helix.
-  translate() => 'translate(${this.svg_position.x} ${this.svg_position.y})';
+//  translate() => 'translate(${this.svg_position.x} ${this.svg_position.y})';
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 

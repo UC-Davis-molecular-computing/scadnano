@@ -15,6 +15,7 @@ import '../state/mouseover_data.dart';
 import '../state/helix.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
+import 'design_main_helix.dart';
 
 part 'design_main_mouseover_rect_helix.over_react.g.dart';
 
@@ -53,24 +54,23 @@ class _$DesignMainMouseoverRectHelixProps extends UiProps {
 class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    int helix_idx = props.helix_idx;
-    int helix_idx_next = nextProps['DesignMainMouseoverRectHelixProps.helix_idx'];
-    bool show = props.show;
-    bool show_next = nextProps['DesignMainMouseoverRectHelixProps.show'];
-    return !(helix_idx == helix_idx_next && show == show_next);
+    Helix helix = nextProps['DesignMainMouseoverRectHelixProps.show'];
+    bool show = nextProps['DesignMainMouseoverRectHelixProps.show'];
+    return !(helix == props.helix && show == props.show);
   }
 
   @override
   render() {
 //    print('rendering DesignMainMouseoverRectHelix');
     Helix helix = props.helix;
+    int view_order = helix.view_order;
 
     String id = '$_ID_PREFIX-${helix.idx}';
 
     var width = helix.svg_width();
     var height = helix.svg_height();
     return (Dom.rect()
-      ..transform = helix.translate()
+      ..transform = helix_main_view_translation(helix)
       ..x = '0'
       ..y = '0'
       ..width = '$width'

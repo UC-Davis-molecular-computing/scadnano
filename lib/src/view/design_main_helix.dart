@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:quiver/iterables.dart' as iter;
 
 import 'package:over_react/over_react.dart';
@@ -15,6 +17,7 @@ UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 @Props()
 class _$DesignMainHelixProps extends UiProps {
   Helix helix;
+  int view_order;
 }
 
 @Component2()
@@ -29,7 +32,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
 
   @override
   render() {
-    Helix helix = this.props.helix;
+    Helix helix = props.helix;
+    int view_order = helix.view_order;
 
 //    print("DesignMainHelix.render() helix = ${helix.idx}");
 
@@ -47,9 +51,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     var x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
     var x_end = x_start + width;
 
+    Point<num> translation = helix.svg_position; //helix_main_view_translation(helix);
+
     return (Dom.g()
       ..className = 'helix-main-view'
-      ..transform = helix.translate())(
+      ..transform = 'translate(${translation.x} ${translation.y})')(
       (Dom.circle()
         ..className = 'main-view-helix-circle'
         ..cx = '$cx'
@@ -78,6 +84,17 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
           ..d = vert_line_paths['major'])(),
       ),
     );
+  }
+}
+
+//static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
+
+Point<num> helix_main_view_translation(Helix helix) {
+  int view_order = helix.view_order;
+  if (helix.position != null) {
+    return Point<num>(helix.position.z*constants.BASE_WIDTH_SVG, helix.position.y*constants.DISTANCE_BETWEEN_HELICES_SVG);
+  } else {
+    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * view_order);
   }
 }
 

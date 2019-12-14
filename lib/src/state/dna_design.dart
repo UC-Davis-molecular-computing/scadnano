@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/selectable.dart';
-
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -45,6 +45,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltList<Helix> get helices;
 
   BuiltList<Strand> get strands;
+
+//  BuiltList<int> get helices_view_order;
 
   @nullable
   bool get is_origami;
@@ -189,6 +191,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return _construct_helix_idx_to_substrands_map(helices.length, strands);
   }
 
+  @memoized
+  bool get helices_view_order_is_identity {
+    for (var helix in helices) {
+      if (helix.idx != helix.view_order) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
 
   static _default_grid_position(int idx) => GridPosition(0, idx);
@@ -271,6 +283,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// max offset allowed on any Helix in the Model
   @memoized
   int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
+
+  /// min offset allowed on any Helix in the Model
+  @memoized
+  int get min_offset => helices.map((helix) => helix.min_offset).reduce(min);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
@@ -355,9 +371,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     // view order of helices
-    List<int> identity_permutation = [for (int i = 0; i < num_helices; i++) i];
-    List<int> helices_view_order = List<int>.from(
-        util.get_value_with_default(json_map, constants.helices_view_order_key, identity_permutation));
+    var identity_permutation = util.identity_permutation(num_helices);
+    List<int> helices_view_order = List<int>.from(util.get_value_with_default(
+        json_map, constants.helices_view_order_key, identity_permutation));
     if (helices_view_order.length != num_helices) {
       throw IllegalDNADesignError('length of helices (${num_helices}) does not match '
           'length of helices_view_order (${helices_view_order.length})');
@@ -370,13 +386,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     for (int i = 0; i < helices_view_order.length; i++) {
       int i_unsorted = helices_view_order[i];
       var helix_builder = helix_builders[i_unsorted];
-      int display_order = i;
-      helix_builder.display_order = display_order;
-      if (helix_builder.svg_position == null) {
-        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
-      }
+      int view_order = i;
+      helix_builder.view_order = view_order;
+//      if (helix_builder.svg_position == null) {
+//        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
+//      }
       if (helix_builder.grid_position == null) {
-        helix_builder.grid_position = DNADesign._default_grid_position(display_order);
+        helix_builder.grid_position = DNADesign._default_grid_position(view_order);
       }
     }
 
@@ -404,6 +420,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     var dna_design = dna_design_builder.build();
     dna_design._check_legal_design();
+
     return dna_design;
   }
 
@@ -411,68 +428,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //    TODO: implement this and give reasonable error messages
   }
 
-  String toString() =>
-      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
+  String toString() => """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
   helices=$helices, 
   strands=$strands)""";
-
-//  _build_end_to_substrand_map() {
-//    var end_to_substrand_builder = MapBuilder<DNAEnd, BoundSubstrand>();
-//    for (var strand in strands) {
-//      for (var substrand in strand.bound_substrands()) {
-//        end_to_substrand_builder[substrand.dnaend_3p] = substrand;
-//        end_to_substrand_builder[substrand.dnaend_5p] = substrand;
-//      }
-//    }
-//    end_to_substrand = end_to_substrand_builder.build();
-//  }
-
-//  _build_substrand_to_strand_map() {
-//    var substrand_to_strand_builder = MapBuilder<Substrand, Strand>();
-//    for (var strand in strands) {
-//      for (var substrand in strand.substrands) {
-//        substrand_to_strand_builder[substrand] = strand;
-//      }
-//    }
-//    substrand_to_strand = substrand_to_strand_builder.build();
-//  }
-
-//  _build_helix_idx_to_substrands_list(int num_helices) {
-//    var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
-//    for (int _ = 0; _ < num_helices; _++) {
-//      helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
-//    }
-//    for (Strand strand in this.strands) {
-//      for (Substrand substrand in strand.substrands) {
-//        if (substrand.is_bound_substrand()) {
-//          var bound_ss = substrand as BoundSubstrand;
-//          helix_idx_to_substrands_builder[bound_ss.helix].add(bound_ss);
-//        }
-//      }
-//    }
-//    var helix_idx_to_substrands_builtset_builder = ListBuilder<BuiltSet<BoundSubstrand>>();
-//    for (var set in helix_idx_to_substrands_builder.build()) {
-//      helix_idx_to_substrands_builtset_builder.add(set.build());
-//    }
-//    helix_idx_to_substrands = helix_idx_to_substrands_builtset_builder.build();
-//  }
-
-//  _build_substrand_mismatches_map() {
-//    var substrand_mismatches_map_builder = MapBuilder<BoundSubstrand, ListBuilder<Mismatch>>();
-////    this._substrand_mismatches_map = {};
-//    for (Strand strand in this.strands) {
-//      if (strand.dna_sequence != null) {
-//        for (BoundSubstrand bound_ss in strand.bound_substrands()) {
-//          substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
-//        }
-//      }
-//    }
-//    var substrand_mismatches_builtmap_builder = MapBuilder<BoundSubstrand, BuiltList<Mismatch>>();
-//    substrand_mismatches_map_builder.build().forEach ((bound_ss, mismatches) {
-//      substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
-//    });
-//    _substrand_mismatches_map = substrand_mismatches_builtmap_builder.build();
-//  }
 
   ListBuilder<Mismatch> _find_mismatches_on_substrand(BoundSubstrand substrand) {
     var mismatches = ListBuilder<Mismatch>();
@@ -554,8 +512,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Return [Substrand]s at [offset].
   BuiltSet<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) {
     var substrands_at_offset = SetBuilder<BoundSubstrand>({
-      for (var substrand in this.helix_idx_to_substrands[helix_idx])
-        if (substrand.contains_offset(offset)) substrand
+      for (var substrand in this.helix_idx_to_substrands[helix_idx]) if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
   }
@@ -658,10 +615,19 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   bool helix_has_substrands(Helix helix) => this.helix_idx_to_substrands[helix.idx].isNotEmpty;
+
+  @memoized
+  BuiltList<int> get helices_view_order_inverse {
+    List<int> helices_view_order_inverse = List<int>(helices.length);
+    for (int i = 0; i < helices.length; i++) {
+      int i_unsorted = helices[i].view_order;
+      helices_view_order_inverse[i_unsorted] = i;
+    }
+    return helices_view_order_inverse.toBuiltList();
+  }
 }
 
-BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
-    int num_helices, Iterable<Strand> strands) {
+BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(int num_helices, Iterable<Strand> strands) {
   var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
   for (int _ = 0; _ < num_helices; _++) {
     helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
@@ -689,8 +655,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset =
-          substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+      var max_offset = substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -699,8 +664,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var min_offset =
-          substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+      var min_offset = substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }
@@ -710,6 +674,64 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
       helix_builder.min_offset = min_offset;
     }
   }
+
+//  _build_end_to_substrand_map() {
+//    var end_to_substrand_builder = MapBuilder<DNAEnd, BoundSubstrand>();
+//    for (var strand in strands) {
+//      for (var substrand in strand.bound_substrands()) {
+//        end_to_substrand_builder[substrand.dnaend_3p] = substrand;
+//        end_to_substrand_builder[substrand.dnaend_5p] = substrand;
+//      }
+//    }
+//    end_to_substrand = end_to_substrand_builder.build();
+//  }
+
+//  _build_substrand_to_strand_map() {
+//    var substrand_to_strand_builder = MapBuilder<Substrand, Strand>();
+//    for (var strand in strands) {
+//      for (var substrand in strand.substrands) {
+//        substrand_to_strand_builder[substrand] = strand;
+//      }
+//    }
+//    substrand_to_strand = substrand_to_strand_builder.build();
+//  }
+
+//  _build_helix_idx_to_substrands_list(int num_helices) {
+//    var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
+//    for (int _ = 0; _ < num_helices; _++) {
+//      helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
+//    }
+//    for (Strand strand in this.strands) {
+//      for (Substrand substrand in strand.substrands) {
+//        if (substrand.is_bound_substrand()) {
+//          var bound_ss = substrand as BoundSubstrand;
+//          helix_idx_to_substrands_builder[bound_ss.helix].add(bound_ss);
+//        }
+//      }
+//    }
+//    var helix_idx_to_substrands_builtset_builder = ListBuilder<BuiltSet<BoundSubstrand>>();
+//    for (var set in helix_idx_to_substrands_builder.build()) {
+//      helix_idx_to_substrands_builtset_builder.add(set.build());
+//    }
+//    helix_idx_to_substrands = helix_idx_to_substrands_builtset_builder.build();
+//  }
+
+//  _build_substrand_mismatches_map() {
+//    var substrand_mismatches_map_builder = MapBuilder<BoundSubstrand, ListBuilder<Mismatch>>();
+////    this._substrand_mismatches_map = {};
+//    for (Strand strand in this.strands) {
+//      if (strand.dna_sequence != null) {
+//        for (BoundSubstrand bound_ss in strand.bound_substrands()) {
+//          substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
+//        }
+//      }
+//    }
+//    var substrand_mismatches_builtmap_builder = MapBuilder<BoundSubstrand, BuiltList<Mismatch>>();
+//    substrand_mismatches_map_builder.build().forEach ((bound_ss, mismatches) {
+//      substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
+//    });
+//    _substrand_mismatches_map = substrand_mismatches_builtmap_builder.build();
+//  }
 }
 
 class Mismatch {

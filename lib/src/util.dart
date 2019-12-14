@@ -103,6 +103,7 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt,
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
 //  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
+  //TODO: consider using svg_elt.getCtm(): https://github.com/anvaka/panzoom/commit/49be4a1bd6361598b79f29fe99adc2c125d93678
   var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
 //  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
 //  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
@@ -349,6 +350,8 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
 
   return rotation;
 }
+
+List<int> identity_permutation(int length) => [for (int i=0; i<length; i++) i];
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // intersection geometry
