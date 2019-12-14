@@ -1,12 +1,30 @@
-//import 'package:built_value/built_value.dart';
-//import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_collection/built_collection.dart';
+
+Set _cache = {};
+
+V intern<V>(V value) {
+  var cached_value = _cache.lookup(value);
+  if (cached_value == null) {
+    _cache.add(value);
+    return value;
+  } else {
+    return cached_value;
+  }
+}
+
+//extension Internable on Object {
+//  V intern<V extends Object>() {
+//    return intern_object(this);
+//  }
+//}
 
 //Set<Built> _cache_built_value = {};
 //Set<BuiltList> _cache_built_list = {};
 //Set<BuiltSet> _cache_built_set = {};
 //Set<BuiltMap> _cache_built_map = {};
 //
-//V intern<V extends Built<V, B>, B extends Builder<V, B>>(V value) {
+//V intern_built<V extends Built<V, B>, B extends Builder<V, B>>(V value) {
 //  Set<Built> cache = _cache_built_value;
 //  Built<V, B> cached_value = cache.lookup(value);
 //  if (cached_value == null) {

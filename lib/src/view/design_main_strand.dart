@@ -6,8 +6,9 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
+import 'package:reselect/reselect.dart';
 
+import 'package:scadnano/src/state/select_mode_state.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
 import '../app.dart';
@@ -19,13 +20,15 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
-  mapStateToPropsWithOwnProps: (state, props) => (DesignMainStrand()
+UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand =
+    connect<AppState, DesignMainStrandProps>(mapStateToPropsWithOwnProps: (state, props) {
+  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
+  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+  return DesignMainStrand()
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-    ..selected = state.ui_state.selectables_store.selected(props.strand)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand)
-  ),
-)(DesignMainStrand);
+    ..selected = selected
+    ..selectable = selectable;
+})(DesignMainStrand);
 
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;

@@ -12,9 +12,11 @@ part 'design_main_strand_3p_end.over_react.g.dart';
 
 Map mapStateToPropsWithOwnProps(AppState state, DesignMain3pEndProps props) {
   var select_mode_choice = props.substrand.is_last ? SelectModeChoice.end_3p_strand : SelectModeChoice.end_3p_substrand;
+  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.substrand.dnaend_3p);
+  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(select_mode_choice);
   return DesignMain3pEnd()
-    ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_3p)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
+    ..selected = selected
+    ..selectable = selectable
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..is_last_substrand = props.substrand.is_last;
 }

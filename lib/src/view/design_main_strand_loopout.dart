@@ -5,9 +5,9 @@ import 'package:color/color.dart';
 import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
-
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import '../state/bound_substrand.dart';
@@ -22,14 +22,16 @@ part 'design_main_strand_loopout.over_react.g.dart';
 
 UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
     connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
+  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.loopout);
+  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
   var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
   var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
   return DesignMainLoopout()
     ..prev_substrand = prev_ss
     ..next_substrand = next_ss
     ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
-    ..selected = state.ui_state.selectables_store.selected(props.loopout)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
+    ..selected = selected
+    ..selectable = selectable;
 })(DesignMainLoopout);
 
 @Factory()
@@ -49,9 +51,6 @@ class _$DesignMainLoopoutProps extends UiProps {
 
 @Component2()
 class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
-  // FluxUiComponent<DesignMainLoopoutProps> {
-//  @override
-//  Map getDefaultProps() => (newProps());
 
   @override
   render() {
@@ -113,8 +112,8 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
   }
 }
 
-ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
-    String classname, Color color) {
+ReactElement _hairpin_arc(
+    BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname, Color color) {
   var helix = app.state.dna_design.helices[prev_substrand.helix];
   var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);

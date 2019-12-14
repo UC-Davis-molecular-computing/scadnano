@@ -36,6 +36,9 @@ const USE_REDUX_DEV_TOOLS = true;
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
 
+//const DEBUG_SELECT = true;
+const DEBUG_SELECT = false;
+
 test_stuff() async {
 //  print('hi');
 //  BoundSubstrand ss1 = BoundSubstrand((s) => s

@@ -14,10 +14,12 @@ part 'design_main_strand_5p_end.over_react.g.dart';
 
 Map mapStateToPropsWithOwnProps(AppState state, DesignMain5pEndProps props) {
   var select_mode_choice =
-  props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+      props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.substrand.dnaend_5p);
+  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(select_mode_choice);
   return DesignMain5pEnd()
-    ..selected = state.ui_state.selectables_store.selected(props.substrand.dnaend_5p)
-    ..selectable = state.ui_state.select_mode_state.modes.contains(select_mode_choice)
+    ..selected = selected
+    ..selectable = selectable
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..is_first_substrand = props.substrand.is_first;
 }
