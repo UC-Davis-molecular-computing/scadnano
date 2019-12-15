@@ -48,7 +48,7 @@ html, body {
     cursor: col-resize;
 }
 
-#nonmenu-panes-container {
+#right-side-panes-container {
     display: flex;
     height: 100%;
     width: 100%;
@@ -192,16 +192,16 @@ html, body {
 ************************************************/
 
 #edit-mode {
-    width: 81px;
+    width: 90px;
 }
 
 #select-mode {
-    width: 81px;
+    width: 90px;
 }
 
 .mode-button {
     border: none;
-    width: 81px;
+    width: 90px;
     outline: 0;
     font-weight: bold;
     color: black;

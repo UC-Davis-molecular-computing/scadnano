@@ -111,45 +111,4 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     }
   }
 
-//  _remove_helix(SyntheticMouseEvent event, Helix helix) {
-//    List<ReversibleActionPack> action_packs_for_batch = [];
-//    //FIXME: don't reach into global variable
-//    DNADesign dna_design = app.state.dna_design;
-//    if (dna_design.substrands_on_helix(helix.idx).isNotEmpty) {
-//      bool confirm = window.confirm('This Helix has strands on it. '
-//          'If you delete it, all the Strands will be deleted. Do you want to proceed?');
-//      if (!confirm) {
-//        return;
-//      }
-//      //XXX: important to keep out duplicates but preserve *reverse* order strands appear in DNADesign
-//      // That way when they are added back in reverse order with Undo, they will be in the same order as now.
-//      var dna_design = app.state.dna_design;
-//      var all_strands = dna_design.strands;
-//      var strands_to_remove = {
-//        for (BoundSubstrand ss in dna_design.substrands_on_helix(helix.idx))
-//          app.state.dna_design.substrand_to_strand[ss]
-//      }.toList();
-//      strands_to_remove.sort((s1, s2) => all_strands.indexOf(s2).compareTo(all_strands.indexOf(s1)));
-////      action_packs_for_batch.add([for (var strand in strands_to_remove) StrandRemoveActionPack(strand)]);
-////      action_packs_for_batch.add(StrandsRemoveActionPack(strands_to_remove));
-//      //TODO: give option to user to remove only substrands on this helix and split the remaining substrands
-//    }
-//
-//    int idx = this.props.helix.idx;
-//    int max_offset = this.props.helix.max_offset;
-//    int min_offset = this.props.helix.min_offset;
-//    var params = HelixUseActionParameters(false, this.props.grid_position, idx, max_offset,
-//        min_offset: min_offset, major_tick_distance: helix.major_tick_distance, major_ticks: helix.major_ticks);
-//    var helix_use_action_pack = HelixUseActionPack(params);
-//
-//    if (action_packs_for_batch.isEmpty) {
-//      //FIXME: dispatch action through props.dispatch
-////      app.send_action(helix_use_action_pack);
-//    } else {
-//      //FIXME: dispatch action through props.dispatch
-////      action_packs_for_batch.add(helix_use_action_pack);
-////      BatchActionPack batch_action_pack = BatchActionPack(action_packs_for_batch);
-////      app.send_action(batch_action_pack);
-//    }
-//  }
 }

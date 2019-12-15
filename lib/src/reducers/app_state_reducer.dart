@@ -70,12 +70,6 @@ AppState app_state_reducer(AppState state, action) {
   return state;
 }
 
-////TODO: this shouldn't have a side effect; instead we should use "middleware", I think?
-//Model save_dna_file_reducer(Model state, actions.SaveDNAFile action) {
-//  // not much happens here; side effect of saving file is in middleware/save_file.dart
-//  return state.rebuild((m) => m..ui_model.changed_since_last_save = false);
-//}
-
 String error_message_reducer(String error_message, actions.ErrorMessageSet action) => action.error_message;
 
 String editor_content_reducer(String editor_content, action) {

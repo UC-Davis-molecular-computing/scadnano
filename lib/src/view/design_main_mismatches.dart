@@ -51,7 +51,7 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
       for (BoundSubstrand substrand in strand.bound_substrands()) {
         BuiltList<Mismatch> mismatches = app.state.dna_design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
-          //FIXME: don't access global variable
+          //FIXME: don't access global variable; make this a connected component and used a memoized selector
           var helix = app.state.dna_design.helices[substrand.helix];
           var base_svg_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
           // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,

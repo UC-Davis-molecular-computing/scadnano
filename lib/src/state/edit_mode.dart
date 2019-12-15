@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 
 part 'edit_mode.g.dart';
 
@@ -15,7 +16,7 @@ class EditModeChoice extends EnumClass {
   static const EditModeChoice select = _$select;
   static const EditModeChoice pencil = _$pencil;
   static const EditModeChoice nick = _$nick;
-  static const EditModeChoice ligate = _$ligate;
+  static const EditModeChoice join = _$ligate; // previously "ligate"; means join two BoundSubstrands on same Helix
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice sequence = _$sequence;
@@ -34,7 +35,7 @@ class EditModeChoice extends EnumClass {
     KeyCode.S: select,
     KeyCode.P: pencil,
     KeyCode.N: nick,
-    KeyCode.J: ligate,
+    KeyCode.J: join,
     KeyCode.I: insertion,
     KeyCode.D: deletion,
     KeyCode.Q: sequence,
@@ -52,6 +53,37 @@ class EditModeChoice extends EnumClass {
     throw AssertionError('This should be unreachable.');
   }
 
+  /// For a mode m, `m.excluded_modes()` is a set of other modes that are mutually exclusive with `m`.
+  /// In other words, if `m` is on, then all those in `m.excluded_modes()` are turned off.
+  BuiltSet<EditModeChoice> excluded_modes() {
+    switch (this) {
+      case move:
+        return [pencil, helix].toBuiltSet();
+      case select:
+        return [pencil, loopout].toBuiltSet();
+      case pencil:
+        return [select, move].toBuiltSet();
+      case nick:
+        return [join, insertion, deletion, sequence].toBuiltSet();
+      case join:
+        return [nick, insertion, deletion, sequence].toBuiltSet();
+      case insertion:
+        return [nick, join, deletion, sequence].toBuiltSet();
+      case deletion:
+        return [nick, join, insertion, sequence].toBuiltSet();
+      case sequence:
+        return [nick, join, insertion, deletion].toBuiltSet();
+      case backbone:
+        return <EditModeChoice>[].toBuiltSet();
+      case loopout:
+        return [select].toBuiltSet();
+      case helix:
+        return [move].toBuiltSet();
+      default:
+        throw ArgumentError('${this} is not a valid EditModeChoice');
+    }
+  }
+
   String shortcut_key() => String.fromCharCodes([key_code()]);
 
   String to_json() => name;
@@ -67,7 +99,7 @@ class EditModeChoice extends EnumClass {
         return '(p)encil';
       case nick:
         return '(n)ick';
-      case ligate:
+      case join:
         return '(j)oin';
       case insertion:
         return '(i)nsertion';

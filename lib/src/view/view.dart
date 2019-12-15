@@ -32,7 +32,7 @@ const EDIT_MODE_ID = 'edit-mode';
 const SELECT_MODE_ID = 'select-mode';
 const DESIGN_ID = 'design-pane';
 const EDITOR_ID = 'editor-pane';
-const NONMENU_PANES_CONTAINER_ID = 'nonmenu-panes-container';
+const RIGHT_SIDE_PANES_CONTAINER_ID = 'right-side-panes-container';
 
 const FIXED_VERTICAL_SEPARATOR = 'fixed-vertical-separator';
 const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
@@ -44,7 +44,7 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 class View {
   final DivElement root_element;
 
-  DivElement nonmenu_panes_container_element = DivElement()..attributes = {'id': NONMENU_PANES_CONTAINER_ID};
+  DivElement right_side_panes_container_element = DivElement()..attributes = {'id': RIGHT_SIDE_PANES_CONTAINER_ID};
   DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
   DivElement design_editor_separator = DivElement()
@@ -65,14 +65,14 @@ class View {
     this.root_element.children.add(menu_element);
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
-    this.root_element.children.add(this.nonmenu_panes_container_element);
+    this.root_element.children.add(this.right_side_panes_container_element);
 
-    this.nonmenu_panes_container_element.children.add(design_element);
+    this.right_side_panes_container_element.children.add(design_element);
     var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};
-    this.nonmenu_panes_container_element.children.add(design_mode_separator);
+    this.right_side_panes_container_element.children.add(design_mode_separator);
 
     var modes_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
-    this.nonmenu_panes_container_element.children.add(DivElement()
+    this.right_side_panes_container_element.children.add(DivElement()
       ..id = 'modes-buttons'
       ..children = [edit_mode_element, modes_separator, select_mode_element]);
 //    this.nonmenu_panes_container_element.children.add(edit_mode_element);

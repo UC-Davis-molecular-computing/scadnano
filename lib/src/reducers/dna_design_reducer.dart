@@ -73,7 +73,6 @@ GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlob
 // helix add/remove
 
 DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd action) {
-  //FIXME: change helices_view_order also
   int new_idx = design.helices.length;
   var min_offset = design.helices.length > 0 ? design.min_offset : 0;
   var max_offset = design.helices.length > 0 ? design.max_offset : constants.default_max_offset;

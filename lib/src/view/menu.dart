@@ -8,6 +8,7 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/app_ui_state.dart';
+import '../util.dart' as util;
 
 part 'menu.over_react.g.dart';
 
@@ -53,7 +54,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
       //XXX: I like to keep this button around to simulate random things that require user interaction
       (Dom.button()
         ..onClick = (_) {
-          print('app.state.ui_model.side_selected_helices: ${app.state.ui_state.side_selected_helix_idxs}');
+//          util.set_allow_pan(false);
         }
         ..key = 'dummy'
         ..className = 'dummy-button menu-item')('Dummy'),

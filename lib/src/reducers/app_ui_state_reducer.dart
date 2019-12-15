@@ -55,12 +55,10 @@ Reducer<bool> changed_since_last_save_reducer = combineReducers([
   TypedReducer<bool, actions.SaveDNAFile>(changed_since_last_save_just_saved_reducer),
 ]);
 
-bool changed_since_last_save_undoable_action_reducer(
-        bool changed_since_last_save, actions.UndoableAction action) =>
+bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save, actions.UndoableAction action) =>
     true;
 
-bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
-    false;
+bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) => false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover_data reducer
@@ -73,8 +71,7 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
 BuiltList<MouseoverData> mouseover_data_clear_reducer(_, actions.MouseoverDataClear action) =>
     BuiltList<MouseoverData>();
 
-BuiltList<MouseoverData> mouseover_data_update_reducer(_, actions.MouseoverDataUpdate action) =>
-    action.mouseover_datas;
+BuiltList<MouseoverData> mouseover_data_update_reducer(_, actions.MouseoverDataUpdate action) => action.mouseover_datas;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse grid position reducer
@@ -84,13 +81,10 @@ Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(
-        GridPosition _, actions.MouseGridPositionSideUpdate action) =>
+GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _, actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(
-        GridPosition _, actions.MouseGridPositionSideClear action) =>
-    null;
+GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.MouseGridPositionSideClear action) => null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -113,22 +107,36 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover datas global reducer
 
-//FIXME: implement this
 BuiltList<MouseoverData> helix_rotation_set_mouseover_reducer(
-        BuiltList<MouseoverData> mouseover_data, AppState model, actions.HelixRotationSet action) =>
-    mouseover_data;
+        BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRotationSet action) =>
+    _update_mouseover_datas_with_helix_rotation(
+      model: model,
+      helix_idx: action.helix_idx,
+      rotation: action.rotation,
+      rotation_anchor: action.anchor,
+      mouseover_datas: mouseover_datas,
+    );
 
 BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
-    BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRotationSetAtOther action) {
-  num rotation = util.rotation_between_helices(model.dna_design.helices, action);
-  Helix new_helix = model.dna_design.helices[action.helix_idx].rebuild((h) => h
+        BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRotationSetAtOther action) =>
+    _update_mouseover_datas_with_helix_rotation(
+      model: model,
+      helix_idx: action.helix_idx,
+      rotation: util.rotation_between_helices(model.dna_design.helices, action),
+      rotation_anchor: action.anchor,
+      mouseover_datas: mouseover_datas,
+    );
+
+BuiltList<MouseoverData> _update_mouseover_datas_with_helix_rotation(
+    {AppState model, int helix_idx, num rotation, int rotation_anchor, BuiltList<MouseoverData> mouseover_datas}) {
+  Helix new_helix = model.dna_design.helices[helix_idx].rebuild((h) => h
     ..rotation = rotation
-    ..rotation_anchor = action.anchor);
+    ..rotation_anchor = rotation_anchor);
 
   var mouseover_datas_builder = mouseover_datas.toBuilder();
   for (int i = 0; i < mouseover_datas.length; i++) {
     MouseoverData mouseover_data = mouseover_datas[i];
-    if (mouseover_data.helix.idx == action.helix_idx) {
+    if (mouseover_data.helix.idx == helix_idx) {
       mouseover_datas_builder[i] = mouseover_data.rebuild((m) => m..helix.replace(new_helix));
     }
   }

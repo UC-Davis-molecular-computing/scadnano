@@ -174,7 +174,7 @@ class App {
     if (underlying_action is actions.SelectionBoxCreate ||
         underlying_action is actions.SelectionBoxSizeChange ||
         underlying_action is actions.SelectionBoxRemove) {
-      // optimization since selection box size changes happen too fast to update whole model
+      // optimization since selection box size changes happen too fast to update whole model without jank
       store_selection_box.dispatch(action);
     } else {
       store.dispatch(action);

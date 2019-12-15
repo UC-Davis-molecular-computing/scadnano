@@ -63,6 +63,9 @@ make_dart_function_available_to_js(String js_function_name, Function dart_func) 
   setProperty(window, js_function_name, allowInterop(dart_func));
 }
 
+@JS()
+external void set_allow_pan(bool allow);
+
 /// Should only be called once at the start of the program
 Future<DNADesign> dna_design_from_url(String url) async {
   String content = await file_content(url);

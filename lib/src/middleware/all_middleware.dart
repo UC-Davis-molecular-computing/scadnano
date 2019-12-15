@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/edit_mode_allow_pan.dart';
 
 import 'load_file.dart';
 import 'save_file.dart';
@@ -16,4 +17,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   load_file_middleware,
   throttle_middleware_app_state,
   thunk_middleware,
+  edit_mode_allow_pan_middleware,
 ]);
