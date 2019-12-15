@@ -8,6 +8,7 @@ import 'export_svg.dart';
 import 'local_storage.dart';
 import 'throttle.dart';
 import 'thunk.dart';
+import 'helix_remove.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
@@ -18,4 +19,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   throttle_middleware_app_state,
   thunk_middleware,
   edit_mode_allow_pan_middleware,
+  helix_remove_middleware,
 ]);
