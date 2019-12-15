@@ -11,6 +11,7 @@ import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'delete_reducer.dart';
 import 'helices_reducer.dart';
+import 'nick_join_reducers.dart';
 import 'strands_reducer.dart';
 import '../constants.dart' as constants;
 import 'delete_reducer.dart' as delete_reducer;
@@ -61,11 +62,13 @@ DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState stat
 Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
   TypedReducer<DNADesign, actions.HelixAdd>(helix_add_dna_design_local_reducer),
   TypedReducer<DNADesign, actions.HelixRemove>(helix_remove_dna_design_local_reducer),
+  TypedReducer<DNADesign, actions.Nick>(nick_reducer),
 ]);
 
 // whole: operate on the whole DNADesign
 // global: need the whole AppState
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<DNADesign, AppState, actions.DeleteAllSelected>(dna_design_delete_all_reducer),
   TypedGlobalReducer<DNADesign, AppState, actions.DeleteAllSelected>(dna_design_delete_all_reducer),
 ]);
 

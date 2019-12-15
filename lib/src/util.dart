@@ -356,6 +356,30 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
 
 List<int> identity_permutation(int length) => [for (int i=0; i<length; i++) i];
 
+class OffsetForward {
+  int offset;
+  bool forward;
+  OffsetForward(this.offset,this.forward);
+}
+
+OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
+  var svg_coord;
+  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+  if (browser.isFirefox) {
+    svg_coord = event.offset;
+  } else {
+    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
+  }
+  num svg_x = svg_coord.x;
+  num svg_y = svg_coord.y;
+
+  int offset = helix.svg_x_to_offset(svg_x);
+  bool forward = helix.svg_y_is_forward(svg_y);
+
+  return OffsetForward(offset, forward);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // intersection geometry
 

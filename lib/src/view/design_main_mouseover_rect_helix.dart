@@ -93,22 +93,10 @@ mouse_leave_update_mouseover() {
 }
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
-
   MouseEvent event = event_syn.nativeEvent;
-
-  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-  var svg_coord;
-  if (browser.isFirefox) {
-    svg_coord = event.offset;
-  } else {
-    svg_coord = util.transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
-  }
-  num svg_x = svg_coord.x;
-  num svg_y = svg_coord.y;
-
-  int offset = helix.svg_x_to_offset(svg_x);
-  bool forward = helix.svg_y_is_forward(svg_y);
+  var offset_forward = util.get_offset_forward(event, helix);
+  int offset = offset_forward.offset;
+  bool forward = offset_forward.forward;
 
   if (DEBUG_PRINT_MOUSEOVER) {
     Point<num> pan = util.current_pan(true);
@@ -118,8 +106,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
         'y = ${event.offset.y},   '
         'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
         'zoom = ${zoom.toStringAsFixed(2)},   '
-        'svg_x = ${svg_x.toStringAsFixed(2)},   '
-        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+//        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+//        'svg_y = ${svg_y.toStringAsFixed(2)},   '
         'helix = ${helix.idx},   '
         'offset = ${offset},   '
         'forward = ${forward}');

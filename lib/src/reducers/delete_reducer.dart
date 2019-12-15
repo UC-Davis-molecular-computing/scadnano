@@ -99,7 +99,7 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
     }
   }
 
-  return _create_new_strands_from_substrand_lists(substrands_list, strand);
+  return create_new_strands_from_substrand_lists(substrands_list, strand);
 }
 
 String _dna_seq(List<Substrand> substrands, Strand strand) {
@@ -109,12 +109,10 @@ String _dna_seq(List<Substrand> substrands, Strand strand) {
   }
   return ret.join('');
 }
-//=>
-//    substrands.map((ss) => strand.dna_sequence_in(ss)).reduce((seq1, seq2) => seq1 + seq2);
 
 /// Creates new strands, one for each list of consecutive substrands of strand.
 /// Needs strand to assign DNA sequences and to have default properties for first strand (e.g., idt).
-List<Strand> _create_new_strands_from_substrand_lists(List<List<Substrand>> substrands_list, Strand strand) {
+List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> substrands_list, Strand strand) {
   // Find DNA sequences of new Strands.
   //XXX: This must go before updating substrands below with is_first and is_last or else they cannot be
   // found as substrands of strand by method Strand.dna_sequence_in(), called by _dna_seq
@@ -219,5 +217,5 @@ List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<BoundSubstr
     substrands_list.removeLast();
   }
 
-  return _create_new_strands_from_substrand_lists(substrands_list, strand);
+  return create_new_strands_from_substrand_lists(substrands_list, strand);
 }

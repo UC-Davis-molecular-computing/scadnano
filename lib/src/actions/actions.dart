@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
+import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/selectable.dart';
@@ -740,4 +741,24 @@ abstract class ConvertCrossoverToLoopout
   ConvertCrossoverToLoopout._();
 
   static Serializer<ConvertCrossoverToLoopout> get serializer => _$convertCrossoverToLoopoutSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// nick/join
+
+abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<Nick, NickBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  int get offset;
+
+  factory Nick(BoundSubstrand bound_substrand, int offset) => Nick.from((b) => b
+    ..bound_substrand.replace(bound_substrand)
+    ..offset = offset);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Nick.from([void Function(NickBuilder) updates]) = _$Nick;
+
+  Nick._();
+
+  static Serializer<Nick> get serializer => _$nickSerializer;
 }
