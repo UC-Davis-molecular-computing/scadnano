@@ -44,6 +44,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = state.dna_design.helices
+        ..strand_create_enabled = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..key = 'helices')(),
       (DesignMainMismatches()

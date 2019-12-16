@@ -50,28 +50,26 @@ abstract class BoundSubstrand
 
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
 
-//  factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
-  // named argument constructor
-  factory BoundSubstrand(
-      {int helix,
-      bool forward,
-      int start,
-      int end,
-      BuiltList<int> deletions,
-      BuiltList<Insertion> insertions,
-      String dna_sequence,
-      String strand_id,
-      bool is_first,
-      bool is_last}) = _$BoundSubstrand._;
+  factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
 
-  static void _finalizeBuilder(BoundSubstrandBuilder builder) {
-    if (builder.deletions == null) {
-      builder.deletions = ListBuilder<int>();
-    }
-    if (builder.insertions == null) {
-      builder.insertions = ListBuilder<Insertion>();
-    }
-  }
+//  // named argument constructor
+//  factory BoundSubstrand(
+//      {int helix,
+//      bool forward,
+//      int start,
+//      int end,
+//      BuiltList<int> deletions,
+//      BuiltList<Insertion> insertions,
+//      String dna_sequence,
+//      String strand_id,
+//      bool is_first,
+//      bool is_last}) = _$BoundSubstrand._;
+
+  static void _initializeBuilder(BoundSubstrandBuilder b) => b
+    ..deletions.replace([])
+    ..insertions.replace([])
+    ..is_first = false
+    ..is_last = false;
 
 //  static void _finalizeBuilder(void Function(BoundSubstrandBuilder builder)) {
 //  static void _finalizeBuilder(BoundSubstrandBuilder builder) {
@@ -95,16 +93,16 @@ abstract class BoundSubstrand
 
   BuiltList<Insertion> get insertions;
 
+  bool get is_first;
+
+  bool get is_last;
+
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
   String get dna_sequence;
 
   @nullable
   String get strand_id;
-
-  bool get is_first;
-
-  bool get is_last;
 
   @memoized
   DNAEnd get dnaend_start => DNAEnd(

@@ -265,6 +265,11 @@ html, body {
     stroke-linecap: round;
 }
 
+.helix-invisible-rect {
+    visibility: hidden;
+    pointer-events: all;
+}
+
 .helix-mouseover {
     visibility: hidden;
     pointer-events: all;

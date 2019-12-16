@@ -824,7 +824,7 @@ abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate
 
 abstract class StrandCreate
     with BuiltJsonSerializable
-    implements Action, Built<StrandCreate, StrandCreateBuilder> {
+    implements UndoableAction, Built<StrandCreate, StrandCreateBuilder> {
   int get helix_idx;
 
   int get offset;

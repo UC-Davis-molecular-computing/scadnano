@@ -57,7 +57,23 @@ BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actio
     end = offset + 1;
   }
 
-  BoundSubstrand substrand = BoundSubstrand(helix: helix_idx, forward: forward, start: start, end: end);
+  // skip creating Strand if one is already there
+  var existing_substrands_start = state.dna_design.substrands_on_helix_at(helix_idx, start);
+  var existing_substrands_end = state.dna_design.substrands_on_helix_at(helix_idx, end - 1);
+  for (var ss in existing_substrands_start.union(existing_substrands_end)) {
+    if (ss.forward == forward) {
+      return strands;
+    }
+  }
+
+//  BoundSubstrand substrand = BoundSubstrand(helix: helix_idx, forward: forward, start: start, end: end);
+  BoundSubstrand substrand = BoundSubstrand((b) => b
+    ..helix = helix_idx
+    ..forward = forward
+    ..start = start
+    ..end = end
+    ..is_first = true
+    ..is_last = true);
   Strand strand = Strand([substrand]);
   var new_strands = strands.rebuild((s) => s..add(strand));
 

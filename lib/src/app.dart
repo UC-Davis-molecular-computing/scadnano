@@ -40,32 +40,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-//  print('hi');
-//  BoundSubstrand ss1 = BoundSubstrand((s) => s
-//    ..helix = 3
-//    ..forward = false
-//    ..start = 16
-//    ..end = 32
-//    ..deletions.replace([])
-//    ..insertions.replace([])
-//    ..is_first = true
-//    ..is_last = false);
 
-//  BoundSubstrand ss2 = BoundSubstrand((s) => s
-//    ..helix = 3
-//    ..forward = false
-//    ..start = 16
-//    ..end = 32
-//    ..deletions.replace([])
-//    ..insertions.replace([])
-//    ..is_first = true
-//    ..is_last = false);
-//  int h1 = ss1.hashCode;
-//  int h2 = ss2.hashCode;
-//  print('ss1.hashCode: ${ss1.hashCode}');
-//  print('ss2.hashCode: ${ss2.hashCode}');
-//  print('ss1 == ss2:         ${ss1 == ss2}');
-//  print('identical(ss1,ss2): ${identical(ss1,ss2)}');
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
