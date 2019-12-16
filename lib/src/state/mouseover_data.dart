@@ -43,9 +43,9 @@ abstract class MouseoverData
   BoundSubstrand get substrand;
 
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
-  static ListBuilder<MouseoverData> from_params(DNADesign dna_design, Iterable<MouseoverParams> params) {
+  static List<MouseoverData> from_params(DNADesign dna_design, Iterable<MouseoverParams> params) {
     BoundSubstrand substrand = null;
-    var mouseover_datas_builder = ListBuilder<MouseoverData>();
+    var mouseover_datas_builder = List<MouseoverData>();
     for (var param in params) {
       int helix_idx = param.helix_idx;
       int offset = param.offset;

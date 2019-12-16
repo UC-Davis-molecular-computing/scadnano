@@ -110,13 +110,10 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
 
   var mouseover_params = MouseoverParams(helix.idx, offset, forward);
 
-  //FIXME: don't access global variable
-  var dna_design = app.state.dna_design;
-
   if (needs_update(mouseover_params, mouseover_datas)) {
 //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     app.dispatch(
-        actions.MouseoverDataUpdate(dna_design, BuiltList<MouseoverParams>([mouseover_params])));
+        actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
   } else {
 //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
   }

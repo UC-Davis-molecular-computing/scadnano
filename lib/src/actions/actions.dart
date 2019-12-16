@@ -283,12 +283,10 @@ abstract class MouseoverDataClear
 abstract class MouseoverDataUpdate
     with BuiltJsonSerializable
     implements Action, Built<MouseoverDataUpdate, MouseoverDataUpdateBuilder> {
-  BuiltList<MouseoverData> get mouseover_datas;
+  BuiltList<MouseoverParams> get mouseover_params;
 
-  factory MouseoverDataUpdate(DNADesign dna_design, Iterable<MouseoverParams> params) {
-    ListBuilder<MouseoverData> mouseover_datas_builder = MouseoverData.from_params(dna_design, params);
-    return MouseoverDataUpdate.from((b) => b..mouseover_datas = mouseover_datas_builder);
-  }
+  factory MouseoverDataUpdate({BuiltList<MouseoverParams> mouseover_params}) = _$MouseoverDataUpdate._;
+//  => MouseoverDataUpdate.from((b) => b..mouseover_params.replace(params));
 
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverDataUpdate.from([void Function(MouseoverDataUpdateBuilder) updates]) =
@@ -783,12 +781,8 @@ abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<
 
   int get offset;
 
-  factory Nick(BoundSubstrand bound_substrand, int offset) => Nick.from((b) => b
-    ..bound_substrand.replace(bound_substrand)
-    ..offset = offset);
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory Nick.from([void Function(NickBuilder) updates]) = _$Nick;
+  factory Nick({BoundSubstrand bound_substrand, int offset}) = _$Nick._;
 
   Nick._();
 
@@ -803,11 +797,7 @@ abstract class JoinStrandsByCrossover
   Strand get strand_to;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory JoinStrandsByCrossover(Strand strand_from, Strand strand_to) =>
-      JoinStrandsByCrossover.from((b) => b..strand_from.replace(strand_from)..strand_to.replace(strand_to));
-
-  factory JoinStrandsByCrossover.from([void Function(JoinStrandsByCrossoverBuilder) updates]) =
-      _$JoinStrandsByCrossover;
+  factory JoinStrandsByCrossover({Strand strand_from, Strand strand_to}) =_$JoinStrandsByCrossover._;
 
   JoinStrandsByCrossover._();
 
@@ -822,12 +812,7 @@ abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate
   bool get forward;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Ligate(int helix_idx, int offset, bool forward) => Ligate.from((b) => b
-    ..helix_idx = helix_idx
-    ..offset = offset
-    ..forward = forward);
-
-  factory Ligate.from([void Function(LigateBuilder) updates]) = _$Ligate;
+  factory Ligate({int helix_idx, int offset, bool forward}) = _$Ligate._;
 
   Ligate._();
 
@@ -847,14 +832,10 @@ abstract class StrandCreate
   bool get forward;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandCreate(int helix_idx, int offset, bool forward) => StrandCreate.from((b) => b
-    ..helix_idx = helix_idx
-    ..offset = offset
-    ..forward = forward);
-
-  factory StrandCreate.from([void Function(StrandCreateBuilder) updates]) = _$StrandCreate;
+  factory StrandCreate({int helix_idx, int offset, bool forward}) = _$StrandCreate._;
 
   StrandCreate._();
 
   static Serializer<StrandCreate> get serializer => _$strandCreateSerializer;
 }
+

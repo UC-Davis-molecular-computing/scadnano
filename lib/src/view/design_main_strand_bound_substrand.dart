@@ -78,7 +78,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
         // need remaining substrands to be length at least 2
         return;
       }
-      app.dispatch(actions.Nick(ss, offset));
+      app.dispatch(actions.Nick(bound_substrand: ss, offset: offset));
     }
   }
 

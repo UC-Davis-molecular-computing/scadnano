@@ -149,9 +149,7 @@ class DesignMainStrandCrossoverComponent
       param_list.add(MouseoverParams(helix_idx, offset, forward));
     }
 
-    //FIXME: don't access global variable
-    // should be able to use thunk middleware to give dna_design to this action
-    app.dispatch(actions.MouseoverDataUpdate(app.state.dna_design, BuiltList<MouseoverParams>(param_list)));
+    app.dispatch(actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>(param_list)));
   }
 
   convert_crossover_to_loopout() async {
