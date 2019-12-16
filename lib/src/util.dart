@@ -262,10 +262,10 @@ num sigmoid(num x) {
 external ImageElement cache_svg(String svg_elt_id);
 
 @JS(constants.js_function_name_current_zoom_main)
-external num current_zoom_main();
+external num current_zoom_main_js();
 
 @JS(constants.js_function_name_current_zoom_side)
-external num current_zoom_side();
+external num current_zoom_side_js();
 
 @JS(constants.js_function_name_current_pan_main)
 external List<num> current_pan_main_js();
@@ -278,7 +278,7 @@ Point<num> current_pan(bool is_main) {
   return Point<num>(ret[0], ret[1]);
 }
 
-num current_zoom(bool is_main) => is_main ? current_zoom_main() : current_zoom_side();
+num current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoom_side_js();
 
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {

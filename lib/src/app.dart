@@ -115,7 +115,8 @@ class App {
   }
 
   initialize_model() async {
-    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
+//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
+    String filename_in_directory = '3_helix_deletions_insertions.dna';
 //    String filename_in_directory = '6_helix_origami_rectangle_helices_out_of_order.dna';
 //    String filename_in_directory = '6_helix_origami_rectangle.dna';
 //    String filename_in_directory = '16_helix_origami_rectangle.dna';

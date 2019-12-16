@@ -1,26 +1,20 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/dna_design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/linker.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano/src/state/helix.dart';
 
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import 'change_loopout_length.dart';
-import 'nick_join_reducers.dart';
 import 'util_reducer.dart';
-import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreate>(strand_create),
 //  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.HelixRemove>(helix_remove_strand_global_reducer),
 
 //  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoverToLoopout>(
@@ -47,5 +41,25 @@ Reducer<Strand> strand_part_reducer = combineReducers([
   TypedReducer<Strand, actions.LoopoutLengthChange>(loopout_length_change_reducer),
 ]);
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// create Strand
 
+BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actions.StrandCreate action) {
+  int helix_idx = action.helix_idx;
+  int offset = action.offset;
+  bool forward = action.forward;
 
+  // ensure 3' end is where mouse clicked
+  int start = offset;
+  int end = offset + 2;
+  if (forward) {
+    start = offset - 1;
+    end = offset + 1;
+  }
+
+  BoundSubstrand substrand = BoundSubstrand(helix: helix_idx, forward: forward, start: start, end: end);
+  Strand strand = Strand([substrand]);
+  var new_strands = strands.rebuild((s) => s..add(strand));
+
+  return new_strands;
+}

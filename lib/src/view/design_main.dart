@@ -58,7 +58,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..strands = state.dna_design.strands
         ..key = 'dna')(),
       (ConnectedSelectionBoxView()
-        ..stroke_width_getter = (() => 2.0 / util.current_zoom_main())
+        ..stroke_width_getter = (() => 2.0 / util.current_zoom_main_js())
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection_box')(),

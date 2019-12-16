@@ -1,8 +1,9 @@
 {
   "version": "0.0.1",
   "helices": [
-    {"grid_position": [0, 0]},
-    {"grid_position": [0, 1]}
+    {"max_offset": 64, "grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"max_offset": 64, "grid_position": [0, 2]}
   ],
   "strands": [
     {
@@ -30,6 +31,24 @@
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
         {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 32, "end": 48}
+      ]
+    },
+    {
+      "color": "#333333",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 48, "end": 64}
+      ]
+    },
+    {
+      "color": "#320096",
+      "substrands": [
+        {"helix": 2, "forward": false, "start": 32, "end": 48}
       ]
     }
   ]

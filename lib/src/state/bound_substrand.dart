@@ -50,7 +50,28 @@ abstract class BoundSubstrand
 
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
 
-  factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
+//  factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
+  // named argument constructor
+  factory BoundSubstrand(
+      {int helix,
+      bool forward,
+      int start,
+      int end,
+      BuiltList<int> deletions,
+      BuiltList<Insertion> insertions,
+      String dna_sequence,
+      String strand_id,
+      bool is_first,
+      bool is_last}) = _$BoundSubstrand._;
+
+  static void _finalizeBuilder(BoundSubstrandBuilder builder) {
+    if (builder.deletions == null) {
+      builder.deletions = ListBuilder<int>();
+    }
+    if (builder.insertions == null) {
+      builder.insertions = ListBuilder<Insertion>();
+    }
+  }
 
 //  static void _finalizeBuilder(void Function(BoundSubstrandBuilder builder)) {
 //  static void _finalizeBuilder(BoundSubstrandBuilder builder) {

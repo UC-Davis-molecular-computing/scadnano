@@ -95,7 +95,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
         ..className = 'helices-side-view'
         ..key = 'helices-side-view')(helices_components),
       (ConnectedSelectionBoxView()
-        ..stroke_width_getter = (() => 2.0 / util.current_zoom_side())
+        ..stroke_width_getter = (() => 2.0 / util.current_zoom_side_js())
         ..is_main = false
         ..id = 'selection-box-side'
         ..key = 'selection-box')(),

@@ -29,9 +29,6 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
     connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
   Helix helix = state.dna_design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
-//  print('ConnectedDesignMainMouseoverRectHelix connect');
-//  print('  state.ui_state.mouseover_datas: ${state.ui_model.mouseover_datas}');
-//  bool show = state.ui_state.show_mouseover_rect;
   bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
   return DesignMainMouseoverRectHelix()
     ..helix = helix
@@ -61,9 +58,7 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
 
   @override
   render() {
-//    print('rendering DesignMainMouseoverRectHelix');
     Helix helix = props.helix;
-    int view_order = helix.view_order;
 
     String id = '$_ID_PREFIX-${helix.idx}';
 
@@ -100,7 +95,7 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
 
   if (DEBUG_PRINT_MOUSEOVER) {
     Point<num> pan = util.current_pan(true);
-    num zoom = util.current_zoom_main();
+    num zoom = util.current_zoom(true);
     print('mouse event: '
         'x = ${event.offset.x},   '
         'y = ${event.offset.y},   '

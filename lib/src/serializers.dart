@@ -84,9 +84,10 @@ part 'serializers.g.dart';
   EditModesSet,
   HelixAdd,
   HelixRemove,
+  StrandCreate,
   Nick,
-//  Ligate,
-//  JoinStrandsByCrossover,
+  Ligate,
+  JoinStrandsByCrossover,
 ])
 Serializers serializers = _$serializers;
 
