@@ -50,6 +50,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       }
     }
   }
+  
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
