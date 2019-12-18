@@ -5,7 +5,6 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 

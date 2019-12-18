@@ -8,7 +8,6 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/app_ui_state.dart';
-import '../util.dart' as util;
 
 part 'menu.over_react.g.dart';
 

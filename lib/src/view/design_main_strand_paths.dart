@@ -6,22 +6,21 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 
-import '../state/crossover.dart';
-import 'design_main_strand_3p_end.dart';
-import 'design_main_strand_5p_end.dart';
 import '../app.dart';
 import '../state/dna_design.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
+import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths = connect<AppState, DesignMainStrandPathsProps>(
+UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
+    connect<AppState, DesignMainStrandPathsProps>(
   mapStateToProps: (state) =>
       (DesignMainStrandPaths()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
 )(DesignMainStrandPaths);
@@ -70,33 +69,33 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
         paths.add((ConnectedDesignMainBoundSubstrand()
           ..substrand = substrand
           ..color = strand.color
+          ..dna_sequence = strand.dna_sequence_in(substrand)
           ..key = "bound-substrand-$i")());
 
-        ends.add((ConnectedDesignMain5pEnd()
+        ends.add((ConnectedDesignMainDNAEnd()
           ..substrand = substrand
+          ..is_5p = true
           ..color = strand.color
-          ..is_first_substrand = (i == 0)
           ..key = "5'-end-$i${bound_ss.is_first ? '-is_first' : ''}")());
 
-        ends.add((ConnectedDesignMain3pEnd()
+        ends.add((ConnectedDesignMainDNAEnd()
           ..substrand = substrand
+          ..is_5p = false
           ..color = strand.color
-          ..is_last_substrand = (i == strand.substrands.length - 1)
           ..key = "3'-end-$i${bound_ss.is_last ? '-is_last' : ''}")());
       }
 
-      if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {
-        BoundSubstrand next_ss = strand.substrands[i + 1];
-        bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
-        if (draw_next_ss) {
-//          paths.add((DesignMainStrandCrossover()
-          var crossover = strand.crossovers[i];
-          paths.add((ConnectedDesignMainStrandCrossover()
-            ..crossover = crossover
-            ..strand = strand
-            ..key = 'crossover-paths-$i')());
-        }
-      }
+//      if (i < strand.substrands.length - 1 && strand.substrands[i + 1].is_bound_substrand() && draw_cur_ss) {
+//        BoundSubstrand next_ss = strand.substrands[i + 1];
+//        bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
+//        if (draw_next_ss) {
+//          var crossover = strand.crossovers[idx_crossover++];
+//          paths.add((ConnectedDesignMainStrandCrossover()
+//            ..crossover = crossover
+//            ..strand = strand
+//            ..key = 'crossover-paths-${idx_crossover - 1}')());
+//        }
+//      }
     } else {
       BoundSubstrand next_ss = strand.substrands[i + 1];
       bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
@@ -107,6 +106,19 @@ List<ReactElement> _strand_paths(Strand strand, BuiltSet<int> side_selected_heli
           ..color = strand.color
           ..key = "loopout-$i")());
       }
+    }
+  }
+
+  int idx_crossover = 0;
+  for (var crossover in strand.crossovers) {
+    BoundSubstrand next_ss = strand.substrands[crossover.next_substrand_idx];
+    bool draw_next_ss = should_draw_bound_ss(next_ss.helix, side_selected_helix_idxs);
+    if (draw_next_ss) {
+      var crossover = strand.crossovers[idx_crossover++];
+      paths.add((ConnectedDesignMainStrandCrossover()
+        ..crossover = crossover
+        ..strand = strand
+        ..key = 'crossover-paths-${idx_crossover - 1}')());
     }
   }
 

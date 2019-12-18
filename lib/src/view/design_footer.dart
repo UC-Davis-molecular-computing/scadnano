@@ -7,7 +7,6 @@ import '../state/helix.dart';
 import '../app.dart';
 import '../state/mouseover_data.dart';
 import '../state/app_state.dart';
-import '../constants.dart' as constants;
 
 part 'design_footer.over_react.g.dart';
 

@@ -25,7 +25,8 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
   ..show_mismatches =
       TypedReducer<bool, actions.SetShowMismatches>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
-//  ..show_mouseover_rect = show_mousever_rect_reducer(ui_state.show_mouseover_rect, action)
+  ..drawing_potential_crossover =
+      drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
   ..side_view_grid_position_mouse_cursor =
@@ -33,6 +34,17 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
 //  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
 //  ..selection_box_side_view = side_view_selection_box_reducer(ui_state.selection_box_side_view, action)?.toBuilder()
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action)));
+
+Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
+  TypedReducer<bool, actions.PotentialCrossoverCreate>(potential_crossover_create_app_ui_state_reducer),
+  TypedReducer<bool, actions.PotentialCrossoverRemove>(potential_crossover_remove_app_ui_state_reducer),
+]);
+
+bool potential_crossover_create_app_ui_state_reducer(bool state, actions.PotentialCrossoverCreate action) =>
+    true;
+
+bool potential_crossover_remove_app_ui_state_reducer(bool state, actions.PotentialCrossoverRemove action) =>
+    false;
 
 bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
 
@@ -54,14 +66,15 @@ Reducer<bool> changed_since_last_save_reducer = combineReducers([
   TypedReducer<bool, actions.SaveDNAFile>(changed_since_last_save_just_saved_reducer),
 ]);
 
-bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save, actions.UndoableAction action) =>
+bool changed_since_last_save_undoable_action_reducer(
+        bool changed_since_last_save, actions.UndoableAction action) =>
     true;
 
-bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) => false;
+bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
+    false;
 
 Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
-
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,10 +85,13 @@ Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _, actions.MouseGridPositionSideUpdate action) =>
+GridPosition side_view_mouse_grid_pos_update_reducer(
+        GridPosition _, actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _, actions.MouseGridPositionSideClear action) => null;
+GridPosition side_view_mouse_grid_pos_clear_reducer(
+        GridPosition _, actions.MouseGridPositionSideClear action) =>
+    null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -93,6 +109,6 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
       helix_rotation_set_mouseover_reducer),
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRotationSetAtOther>(
       helix_rotation_set_at_other_mouseover_reducer),
-  TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(mouseover_data_update_reducer),
+  TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
+      mouseover_data_update_reducer),
 ]);
-

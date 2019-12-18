@@ -11,6 +11,7 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
+import 'potential_crossover_view.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';
 import '../util.dart' as util;
@@ -58,15 +59,18 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..show_dna = state.ui_state.show_dna
         ..strands = state.dna_design.strands
         ..key = 'dna')(),
+      (ConnectedPotentialCrossoverView()
+        ..id = 'potential-crossover-main'
+        ..key = 'potential-crossover')(),
       (ConnectedSelectionBoxView()
         ..stroke_width_getter = (() => 2.0 / util.current_zoom_main_js())
         ..is_main = true
         ..id = 'selection-box-main'
-        ..key = 'selection_box')(),
+        ..key = 'selection-box')(),
       if (state.ui_state.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = state.dna_design.helices
-          ..key = 'mouseover_rect')(),
+          ..key = 'mouseover-rect')(),
     ]);
 
     if (USING_REACT_DND) {

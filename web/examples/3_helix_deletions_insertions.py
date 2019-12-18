@@ -26,13 +26,24 @@ def main():
     ss_extra1 = sc.Substrand(helix=1, forward=True, start=32, end=48)
     ss_extra2 = sc.Substrand(helix=1, forward=True, start=48, end=64)
     ss_extra3 = sc.Substrand(helix=2, forward=False, start=32, end=48)
+    ss_extra1b = sc.Substrand(helix=1, forward=False, start=32, end=48)
+    ss_extra2b = sc.Substrand(helix=1, forward=False, start=48, end=64)
+    ss_extra3b = sc.Substrand(helix=2, forward=True, start=32, end=48)
+    ss_extra4 = sc.Substrand(helix=2, forward=True, start=16, end=32)
+    ss_extra5 = sc.Substrand(helix=2, forward=True, start=0, end=16)
     s_extra1 = sc.Strand(substrands=[ss_extra1])
     s_extra2 = sc.Strand(substrands=[ss_extra2])
     s_extra3 = sc.Strand(substrands=[ss_extra3])
+    s_extra4 = sc.Strand(substrands=[ss_extra4])
+    s_extra5 = sc.Strand(substrands=[ss_extra5])
+    s_extra1b = sc.Strand(substrands=[ss_extra1b])
+    s_extra2b = sc.Strand(substrands=[ss_extra2b])
+    s_extra3b = sc.Strand(substrands=[ss_extra3b])
 
     # whole design
     design = sc.DNAOrigamiDesign(helices=helices,
-                                 strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3],
+                                 strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3, s_extra4,
+                                          s_extra1b, s_extra2b, s_extra3b, s_extra5],
                                  grid=sc.square,
                                  scaffold=scaf)
 

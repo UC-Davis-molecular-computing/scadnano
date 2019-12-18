@@ -379,6 +379,14 @@ html, body {
     fill: none;
 }
 
+.potential-crossover {
+    stroke-width: 4;
+    /*stroke-dasharray: 2;*/
+    stroke-opacity: 0.3;
+    fill: none;
+    pointer-events: none;
+}
+
 .insertion-line {
     stroke-width: 2.5px;
     fill: none;

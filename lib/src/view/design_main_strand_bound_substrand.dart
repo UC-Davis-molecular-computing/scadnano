@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:platform_detect/platform_detect.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import '../app.dart';
@@ -18,9 +17,9 @@ part 'design_main_strand_bound_substrand.over_react.g.dart';
 
 UiFactory<DesignMainBoundSubstrandProps> ConnectedDesignMainBoundSubstrand =
     connect<AppState, DesignMainBoundSubstrandProps>(mapStateToPropsWithOwnProps: (state, props) {
-  Helix helix = state.dna_design.helices[props.substrand.helix];
-  bool nick_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.nick);
-  return DesignMainBoundSubstrand()..helix = helix..nick_mode_enabled=nick_mode_enabled;
+  return DesignMainBoundSubstrand()
+    ..helix = state.dna_design.helices[props.substrand.helix]
+    ..nick_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.nick);
 })(DesignMainBoundSubstrand);
 
 @Factory()
@@ -32,6 +31,7 @@ class _$DesignMainBoundSubstrandProps extends UiProps {
   Color color;
   Helix helix;
   bool nick_mode_enabled;
+  String dna_sequence;
 }
 
 @Component2()
@@ -81,6 +81,4 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
       app.dispatch(actions.Nick(bound_substrand: ss, offset: offset));
     }
   }
-
-
 }

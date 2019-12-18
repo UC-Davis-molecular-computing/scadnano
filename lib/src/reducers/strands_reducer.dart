@@ -1,9 +1,7 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
-import 'package:scadnano/src/state/helix.dart';
 
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
@@ -15,11 +13,6 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([]);
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreate>(strand_create),
-//  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.HelixRemove>(helix_remove_strand_global_reducer),
-
-//  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoverToLoopout>(
-//      convert_crossover_to_loopout_reducer),
-//  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutLengthChange>(loopout_length_change_reducer),
 ]);
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand

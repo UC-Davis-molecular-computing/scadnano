@@ -5,9 +5,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import 'bound_substrand.dart';
-import 'dna_design.dart';
-import 'loopout.dart';
+import 'edit_mode.dart';
 import 'select_mode.dart';
 
 part 'selectable.g.dart';
@@ -16,7 +14,9 @@ final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
 //  ..selectables_by_id.replace({})
   ..selected_items.replace([]);
 
-abstract class SelectablesStore with BuiltJsonSerializable implements Built<SelectablesStore, SelectablesStoreBuilder> {
+abstract class SelectablesStore
+    with BuiltJsonSerializable
+    implements Built<SelectablesStore, SelectablesStoreBuilder> {
   SelectablesStore._();
 
   factory SelectablesStore([void Function(SelectablesStoreBuilder) updates]) = _$SelectablesStore;
@@ -131,7 +131,9 @@ mixin Selectable {
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
   handle_selection(event) {
 //    print('handle_selection called');
-    if (app.state.ui_state.select_mode_state.is_selectable(this)) {
+    //FIXME: don't use global variable
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+        app.state.ui_state.select_mode_state.is_selectable(this)) {
       if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
         app.dispatch(actions.Select(this, true));
       } else if (event.nativeEvent.shiftKey) {

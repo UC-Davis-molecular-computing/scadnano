@@ -32,7 +32,7 @@ abstract class $CLASS_NAME$
     with BuiltJsonSerializable 
     implements Action, Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory $CLASS_NAME$() => _$$$CLASS_NAME$;
+  factory $CLASS_NAME$() = _$$$CLASS_NAME$;
 
   $CLASS_NAME$._();
   

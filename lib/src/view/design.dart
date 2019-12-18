@@ -9,7 +9,6 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../state/app_state.dart';
@@ -58,10 +57,12 @@ class DesignViewComponent {
   bool svg_panzoom_has_been_set_up = false;
 
   Point<num> side_view_mouse_position = Point<num>(0, 0);
+  Point<num> main_view_mouse_position = Point<num>(0, 0);
 
   DesignViewComponent(this.root_element) {
     this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
-    var side_main_separator = DivElement()..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
+    var side_main_separator = DivElement()
+      ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
     this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
@@ -138,6 +139,11 @@ class DesignViewComponent {
       side_view_update_mouseover(event: event);
     });
 
+    main_view_svg.onMouseMove.listen((event) {
+      main_view_mouse_position = event.client;
+      main_view_update(event);
+    });
+
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
     window.onKeyDown.listen((ev) {
@@ -145,7 +151,6 @@ class DesignViewComponent {
 
       if (!ev.repeat) {
         app.keys_pressed.add(key);
-
 
         if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
@@ -162,6 +167,9 @@ class DesignViewComponent {
           }
           if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
             app.dispatch(actions.HelixSelectionsClear());
+          }
+          if (app.state.ui_state.drawing_potential_crossover) {
+            app.dispatch(actions.PotentialCrossoverRemove());
           }
         } else if (key == KeyCode.DELETE) {
           app.dispatch(actions.DeleteAllSelected());
@@ -245,15 +253,8 @@ class DesignViewComponent {
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
-    actions.Action action;
-    Point<num> point;
-    if (!browser.isFirefox) {
-      point = event.offset;
-      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-    } else {
-      point = util.untransformed_svg_point(view_svg, event: event);
-      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-    }
+    Point<num> point =
+        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     bool toggle;
     if (event.ctrlKey || event.metaKey) {
       toggle = true;
@@ -261,21 +262,14 @@ class DesignViewComponent {
       toggle = false;
     }
     if (toggle != null) {
-      action = actions.SelectionBoxCreate(point, toggle, is_main_view);
-      app.dispatch(action);
+      app.dispatch(actions.SelectionBoxCreate(point, toggle, is_main_view));
     }
   }
 
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
-    Point<num> point;
-    if (!browser.isFirefox) {
-      point = event.offset;
-      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-    } else {
-      point = util.untransformed_svg_point(view_svg, event: event);
-      point = util.transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-    }
+    Point<num> point =
+        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       var action = actions.SelectionBoxSizeChange(point, is_main_view);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
@@ -355,9 +349,11 @@ class DesignViewComponent {
         ErrorBoundary()(
           (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
-            ..context = app.context_selection_box)(
+            ..context = app.context_selection_box)((ReduxProvider()
+            ..store = app.store_potential_crossover
+            ..context = app.context_potential_crossover)(
             ConnectedDesignMain()(),
-          )),
+          ))),
         ),
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
@@ -377,6 +373,15 @@ class DesignViewComponent {
       }
     }
   }
+
+  main_view_update(MouseEvent event) {
+    if (app.store_potential_crossover.state != null) {
+      Point<num> point =
+          util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+      var action = actions.PotentialCrossoverMove(point: point);
+      app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+    }
+  }
 }
 
 side_view_mouse_leave_update_mouseover() {
@@ -389,8 +394,8 @@ side_view_update_mouseover({Point<num> mouse_pos = null, MouseEvent event = null
   assert(!(mouse_pos == null && event == null));
 //  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
   if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
-    var new_grid_pos =
-        util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, mouse_pos: mouse_pos, event: event);
+    var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
+        mouse_pos: mouse_pos, event: event);
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
       app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
     }

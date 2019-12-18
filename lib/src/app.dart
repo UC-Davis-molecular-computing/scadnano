@@ -12,8 +12,10 @@ import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
+import 'package:scadnano/src/state/potential_crossover.dart';
 
 import 'actions/actions.dart';
+import 'reducers/potential_crossover_reducer.dart';
 import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
@@ -39,9 +41,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
-test_stuff() async {
-
-}
+test_stuff() async {}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -53,6 +53,8 @@ class App {
   // for optimization; too slow to store in Model since it's updated 60 times/sec
   Store store_selection_box;
   var context_selection_box = createContext();
+  Store store_potential_crossover;
+  var context_potential_crossover = createContext();
 
   // for optimization; don't want to dispatch Actions changing model on every keypress
   // This is updated in view/design.dart; consider moving it higher-level.
@@ -142,18 +144,29 @@ class App {
     }
 
     store_selection_box = Store<SelectionBox>(optimized_selection_box_reducer,
-        initialState: null, middleware: [throttle_middleware_selection_box]);
+        initialState: null, middleware: [throttle_middleware]);
+
+    store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
+        initialState: null, middleware: [throttle_middleware]);
   }
 
   dispatch(Action action) {
+    // dispatch most to normal store, but fast-repeated actions only go to optimized stores
+    if (!(action is FastAction)) {
+      store.dispatch(action);
+    }
+
+    // optimization since these actions happen too fast to update whole model without jank
     var underlying_action = action is ThrottledAction ? action.action : action;
     if (underlying_action is actions.SelectionBoxCreate ||
         underlying_action is actions.SelectionBoxSizeChange ||
         underlying_action is actions.SelectionBoxRemove) {
-      // optimization since selection box size changes happen too fast to update whole model without jank
       store_selection_box.dispatch(action);
-    } else {
-      store.dispatch(action);
+    }
+    if (underlying_action is actions.PotentialCrossoverCreate ||
+        underlying_action is actions.PotentialCrossoverMove ||
+        underlying_action is actions.PotentialCrossoverRemove) {
+      store_potential_crossover.dispatch(action);
     }
   }
 

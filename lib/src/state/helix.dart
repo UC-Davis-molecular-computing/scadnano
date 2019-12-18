@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:built_value/serializer.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
 import '../json_serializable.dart';

@@ -39,6 +39,18 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   /************************ end BuiltValue boilerplate ************************/
 
+  static void _finalizeBuilder(StrandBuilder builder) {
+    for (int i = 0; i < builder.substrands.length; i++) {
+      var substrand = builder.substrands[i];
+      if (substrand is Loopout) {
+        var loopout = (substrand as Loopout).rebuild((b) => b
+          ..prev_substrand_idx = i - 1
+          ..next_substrand_idx = i + 1);
+        builder.substrands[i] = loopout;
+      }
+    }
+  }
+
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   Color get color;

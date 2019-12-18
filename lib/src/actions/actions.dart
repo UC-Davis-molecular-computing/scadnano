@@ -8,11 +8,12 @@ import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_box.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strand_part.dart';
 
 //import '../state/substrand.dart';
@@ -24,7 +25,6 @@ import 'package:scadnano/src/state/strand_part.dart';
 //import '../state/loopout.dart';
 import '../state/edit_mode.dart';
 import '../serializers.dart';
-import '../state/dna_design.dart';
 import '../state/select_mode.dart';
 import '../state/grid_position.dart';
 import '../state/mouseover_data.dart';
@@ -38,7 +38,11 @@ abstract class Action {
   dynamic toJson();
 }
 
+/// Undoable actions can be undone by Ctrl+Z; they should be actions that affect the DNADesign.
 abstract class UndoableAction extends Action {}
+
+/// Fast actions happen rapidly and are not dispatched to normal store for optimization
+abstract class FastAction extends Action {}
 
 // Wrap an UndoableAction in a SkipUndo in order to apply it, but skip its effect on the undo/redo stacks.
 abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<SkipUndo, SkipUndoBuilder> {
@@ -89,7 +93,7 @@ abstract class BatchAction
 
 abstract class ThrottledAction
     with BuiltJsonSerializable
-    implements Action, Built<ThrottledAction, ThrottledActionBuilder> {
+    implements FastAction, Built<ThrottledAction, ThrottledActionBuilder> {
   Action get action;
 
   num get interval_sec;
@@ -286,6 +290,7 @@ abstract class MouseoverDataUpdate
   BuiltList<MouseoverParams> get mouseover_params;
 
   factory MouseoverDataUpdate({BuiltList<MouseoverParams> mouseover_params}) = _$MouseoverDataUpdate._;
+
 //  => MouseoverDataUpdate.from((b) => b..mouseover_params.replace(params));
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -393,7 +398,7 @@ abstract class SelectionBoxCreate
 
 abstract class SelectionBoxSizeChange
     with BuiltJsonSerializable
-    implements Action, Built<SelectionBoxSizeChange, SelectionBoxSizeChangeBuilder> {
+    implements FastAction, Built<SelectionBoxSizeChange, SelectionBoxSizeChangeBuilder> {
   Point<num> get point;
 
   bool get is_main;
@@ -789,21 +794,6 @@ abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<
   static Serializer<Nick> get serializer => _$nickSerializer;
 }
 
-abstract class JoinStrandsByCrossover
-    with BuiltJsonSerializable
-    implements Action, Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
-  Strand get strand_from;
-
-  Strand get strand_to;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory JoinStrandsByCrossover({Strand strand_from, Strand strand_to}) =_$JoinStrandsByCrossover._;
-
-  JoinStrandsByCrossover._();
-
-  static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
-}
-
 abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate, LigateBuilder> {
   int get helix_idx;
 
@@ -818,6 +808,24 @@ abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate
 
   static Serializer<Ligate> get serializer => _$ligateSerializer;
 }
+
+
+abstract class JoinStrandsByCrossover
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
+  PotentialCrossover get potential_crossover;
+
+  DNAEnd get dna_end_second_click;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory JoinStrandsByCrossover({PotentialCrossover potential_crossover, DNAEnd dna_end_second_click}) =
+  _$JoinStrandsByCrossover._;
+
+  JoinStrandsByCrossover._();
+
+  static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create new Strand
@@ -839,3 +847,42 @@ abstract class StrandCreate
   static Serializer<StrandCreate> get serializer => _$strandCreateSerializer;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// potential crossover and linking strands by crossover
+
+abstract class PotentialCrossoverCreate
+    with BuiltJsonSerializable
+    implements Action, Built<PotentialCrossoverCreate, PotentialCrossoverCreateBuilder> {
+  PotentialCrossover get potential_crossover;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PotentialCrossoverCreate({PotentialCrossover potential_crossover}) = _$PotentialCrossoverCreate._;
+
+  PotentialCrossoverCreate._();
+
+  static Serializer<PotentialCrossoverCreate> get serializer => _$potentialCrossoverCreateSerializer;
+}
+
+abstract class PotentialCrossoverMove
+    with BuiltJsonSerializable
+    implements FastAction, Built<PotentialCrossoverMove, PotentialCrossoverMoveBuilder> {
+  Point<num> get point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PotentialCrossoverMove({Point<num> point}) = _$PotentialCrossoverMove._;
+
+  PotentialCrossoverMove._();
+
+  static Serializer<PotentialCrossoverMove> get serializer => _$potentialCrossoverMoveSerializer;
+}
+
+abstract class PotentialCrossoverRemove
+    with BuiltJsonSerializable
+    implements Action, Built<PotentialCrossoverRemove, PotentialCrossoverRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory PotentialCrossoverRemove() = _$PotentialCrossoverRemove;
+
+  PotentialCrossoverRemove._();
+
+  static Serializer<PotentialCrossoverRemove> get serializer => _$potentialCrossoverRemoveSerializer;
+}

@@ -5,8 +5,10 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
+import 'actions/actions.dart';
 import 'state/dna_end.dart';
 import 'state/edit_mode.dart';
+import 'state/potential_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
 import 'state/substrand.dart';
@@ -19,7 +21,6 @@ import 'state/position3d.dart';
 import 'state/select_mode.dart';
 import 'state/bound_substrand.dart';
 import 'state/grid_position.dart';
-import 'actions/actions.dart';
 import 'state/selection_box.dart';
 import 'state/select_mode_state.dart';
 import 'state/strand.dart';
@@ -88,6 +89,10 @@ part 'serializers.g.dart';
   Nick,
   Ligate,
   JoinStrandsByCrossover,
+  PotentialCrossover,
+  PotentialCrossoverCreate,
+  PotentialCrossoverMove,
+  PotentialCrossoverRemove,
 ])
 Serializers serializers = _$serializers;
 

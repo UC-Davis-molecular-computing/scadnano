@@ -50,6 +50,36 @@
       "substrands": [
         {"helix": 2, "forward": false, "start": 32, "end": 48}
       ]
+    },
+    {
+      "color": "#03b6a2",
+      "substrands": [
+        {"helix": 2, "forward": true, "start": 16, "end": 32}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 32, "end": 48}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 48, "end": 64}
+      ]
+    },
+    {
+      "color": "#007200",
+      "substrands": [
+        {"helix": 2, "forward": true, "start": 32, "end": 48}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "substrands": [
+        {"helix": 2, "forward": true, "start": 0, "end": 16}
+      ]
     }
   ]
 }

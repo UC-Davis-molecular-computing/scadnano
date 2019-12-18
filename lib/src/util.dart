@@ -89,6 +89,19 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
   return grid_pos;
 }
 
+Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
+  Point<num> point;
+  if (!browser.isFirefox) {
+    point = event.offset;
+    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+  } else {
+    point = untransformed_svg_point(view_svg, event: event);
+    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+  }
+  return point;
+}
+
 /// Gets untransformed coordinates of mouse_pos. If mouse_pos==null, get it from mouse event.client.
 /// XXX: Firefox is the only browser to handle this correctly; cross-browser solution taken from
 /// https://stackoverflow.com/questions/19713320/svg-viewbox-doesnt-return-correct-mouse-points-with-nested-svg-in-firefox
@@ -354,12 +367,13 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
   return rotation;
 }
 
-List<int> identity_permutation(int length) => [for (int i=0; i<length; i++) i];
+List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 class OffsetForward {
   int offset;
   bool forward;
-  OffsetForward(this.offset,this.forward);
+
+  OffsetForward(this.offset, this.forward);
 }
 
 OffsetForward get_offset_forward(MouseEvent event, Helix helix) {

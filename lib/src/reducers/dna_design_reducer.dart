@@ -1,21 +1,13 @@
-import 'package:built_collection/built_collection.dart';
-import 'package:collection/collection.dart';
 import 'package:redux/redux.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/strand.dart';
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'delete_reducer.dart';
 import 'helices_reducer.dart';
 import 'nick_join_reducers.dart';
 import 'strands_reducer.dart';
-import '../constants.dart' as constants;
-import 'delete_reducer.dart' as delete_reducer;
-import '../util.dart' as util;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // reducer composition
@@ -63,6 +55,8 @@ Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
   TypedReducer<DNADesign, actions.HelixAdd>(helix_add_dna_design_local_reducer),
   TypedReducer<DNADesign, actions.HelixRemove>(helix_remove_dna_design_local_reducer),
   TypedReducer<DNADesign, actions.Nick>(nick_reducer),
+  TypedReducer<DNADesign, actions.Ligate>(ligate_reducer),
+  TypedReducer<DNADesign, actions.JoinStrandsByCrossover>(join_strands_by_crossover_reducer),
 ]);
 
 // whole: operate on the whole DNADesign

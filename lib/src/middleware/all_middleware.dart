@@ -16,7 +16,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_svg_side_middleware,
   save_file_middleware,
   load_file_middleware,
-  throttle_middleware_app_state,
+  throttle_middleware,
   thunk_middleware,
   edit_mode_allow_pan_middleware,
   helix_remove_middleware,
