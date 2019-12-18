@@ -809,7 +809,6 @@ abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate
   static Serializer<Ligate> get serializer => _$ligateSerializer;
 }
 
-
 abstract class JoinStrandsByCrossover
     with BuiltJsonSerializable
     implements UndoableAction, Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
@@ -819,28 +818,29 @@ abstract class JoinStrandsByCrossover
 
   /************************ begin BuiltValue boilerplate ************************/
   factory JoinStrandsByCrossover({PotentialCrossover potential_crossover, DNAEnd dna_end_second_click}) =
-  _$JoinStrandsByCrossover._;
+      _$JoinStrandsByCrossover._;
 
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// create new Strand
+// create new Strand with a single BoundSubstrand with no deletions or insertions
 
 abstract class StrandCreate
     with BuiltJsonSerializable
     implements UndoableAction, Built<StrandCreate, StrandCreateBuilder> {
   int get helix_idx;
 
-  int get offset;
+  int get start;
+
+  int get end;
 
   bool get forward;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandCreate({int helix_idx, int offset, bool forward}) = _$StrandCreate._;
+  factory StrandCreate({int helix_idx, bool forward, int start, int end}) = _$StrandCreate._;
 
   StrandCreate._();
 

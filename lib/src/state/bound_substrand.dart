@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:react/react.dart';
 import 'package:scadnano/src/serializers.dart';
 import 'package:scadnano/src/state/strand_part.dart';
 import 'package:tuple/tuple.dart';
@@ -50,26 +51,44 @@ abstract class BoundSubstrand
 
   static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
 
-  factory BoundSubstrand([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
+  factory BoundSubstrand.from([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
 
-//  // named argument constructor
-//  factory BoundSubstrand(
-//      {int helix,
-//      bool forward,
-//      int start,
-//      int end,
-//      BuiltList<int> deletions,
-//      BuiltList<Insertion> insertions,
-//      String dna_sequence,
-//      String strand_id,
-//      bool is_first,
-//      bool is_last}) = _$BoundSubstrand._;
+  // named argument constructor
+  factory BoundSubstrand(
+      {int helix,
+      bool forward,
+      int start,
+      int end,
+      Iterable<int> deletions,
+      Iterable<Insertion> insertions,
+      String dna_sequence,
+      String strand_id,
+      bool is_first = false,
+      bool is_last = false}) {
+    if (deletions == null) {
+      deletions = BuiltList<int>();
+    }
+    if (insertions == null) {
+      insertions = BuiltList<Insertion>();
+    }
+    return BoundSubstrand.from((b) => b
+      ..helix = helix
+      ..forward = forward
+      ..start = start
+      ..end = end
+      ..deletions.replace(deletions)
+      ..insertions.replace(insertions)
+      ..dna_sequence = dna_sequence
+      ..strand_id = strand_id
+      ..is_first = is_first
+      ..is_last = is_last);
+  }
 
-  static void _initializeBuilder(BoundSubstrandBuilder b) => b
-    ..deletions.replace([])
-    ..insertions.replace([])
-    ..is_first = false
-    ..is_last = false;
+//  static void _initializeBuilder(BoundSubstrandBuilder b) => b
+//    ..deletions.replace([])
+//    ..insertions.replace([])
+//    ..is_first = false
+//    ..is_last = false;
 
 //  static void _finalizeBuilder(void Function(BoundSubstrandBuilder builder)) {
 //  static void _finalizeBuilder(BoundSubstrandBuilder builder) {

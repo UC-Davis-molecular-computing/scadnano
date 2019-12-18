@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/app_state.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
@@ -66,12 +67,16 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
   return design.rebuild((d) => d..helices.replace(helices));
 }
 
-DNADesign helix_remove_dna_design_local_reducer(DNADesign design, actions.HelixRemove action) {
+DNADesign helix_remove_dna_design_global_reducer(
+    DNADesign design, AppState state, actions.HelixRemove action) {
   Set<BoundSubstrand> substrands_on_helix = design.substrands_on_helix(action.helix_idx).toSet();
-  design = delete_reducer.remove_bound_substrands(design, substrands_on_helix);
-  var new_strands = change_all_bound_substrand_helix_idxs(design.strands, action.helix_idx, -1);
+  var strands_with_substrands_removed =
+      delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helix);
+  var strands_with_helix_indices_updated =
+      change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_bound_substrands(design.helices, action);
-  return design.rebuild((d) => d..helices.replace(new_helices)..strands.replace(new_strands));
+  return design
+      .rebuild((d) => d..helices.replace(new_helices)..strands.replace(strands_with_helix_indices_updated));
 }
 
 /// Change (by amount `increment`) all helix_idx's of all BoundSubstrands with helix >= helix_idx.

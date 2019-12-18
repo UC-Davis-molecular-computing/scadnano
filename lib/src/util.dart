@@ -32,14 +32,14 @@ final ColorCycler color_cycler = ColorCycler();
 
 class ColorCycler {
   static List<Color> colors = [
-    Color.rgb(50, 184, 108),
     Color.rgb(204, 0, 0),
+    Color.rgb(50, 184, 108),
     Color.rgb(247, 67, 8),
-    Color.rgb(247, 147, 30),
-    Color.rgb(170, 170, 0),
     Color.rgb(87, 187, 0),
     Color.rgb(0, 114, 0),
+    Color.rgb(170, 170, 0),
     Color.rgb(3, 182, 162),
+    Color.rgb(247, 147, 30),
     // Color.rgb(23, 0, 222), // don't like this because it looks too much like scaffold
     Color.rgb(50, 0, 150), // this one is better contrast with scaffold
     Color.rgb(184, 5, 108),

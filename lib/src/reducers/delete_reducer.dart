@@ -14,48 +14,48 @@ import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
-DNADesign dna_design_delete_all_reducer(
-    DNADesign dna_design, AppState state, actions.DeleteAllSelected action) {
+BuiltList<Strand> delete_all_reducer(
+    BuiltList<Strand> strands, AppState state, actions.DeleteAllSelected action) {
   BuiltSet<Selectable> items = state.ui_state.selectables_store.selected_items;
   if (items.isEmpty) {
-    return dna_design;
+    return strands;
   }
 
   if (state.ui_state.select_mode_state.strands_selectable()) {
-    var strands = Set<Strand>.from(items.where((item) => item is Strand));
-    dna_design = _remove_strands(dna_design, strands);
+    var strands_to_remove = Set<Strand>.from(items.where((item) => item is Strand));
+    strands = _remove_strands(strands, strands_to_remove);
   } else if (state.ui_state.select_mode_state.linkers_selectable()) {
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
-    dna_design = _remove_crossovers_and_loopouts(dna_design, crossovers, loopouts);
+    strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
     var substrands = Set<BoundSubstrand>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
-    dna_design = remove_bound_substrands(dna_design, substrands);
+    strands = remove_bound_substrands(strands, state, substrands);
   }
 
-  return dna_design;
+  return strands;
 }
 
-DNADesign _remove_strands(DNADesign dna_design, Iterable<Strand> strands_to_remove) =>
-    dna_design.rebuild((d) => d..strands.removeWhere((strand) => strands_to_remove.contains(strand)));
+BuiltList<Strand> _remove_strands(BuiltList<Strand> strands, Iterable<Strand> strands_to_remove) =>
+    strands.rebuild((b) => b..removeWhere((strand) => strands_to_remove.contains(strand)));
 
-DNADesign _remove_crossovers_and_loopouts(
-    DNADesign dna_design, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
+BuiltList<Strand> _remove_crossovers_and_loopouts(
+    BuiltList<Strand> strands, AppState state, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
   // collect all linkers for one strand because we need special case to remove multiple from one strand
   Map<Strand, List<Linker>> strand_to_linkers = {};
   for (var crossover in crossovers) {
-    var strand = dna_design.crossover_to_strand[crossover];
+    var strand = state.dna_design.crossover_to_strand[crossover];
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
     strand_to_linkers[strand].add(crossover);
   }
   for (var loopout in loopouts) {
-    var strand = dna_design.loopout_to_strand(loopout);
+    var strand = state.dna_design.loopout_to_strand(loopout);
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
@@ -70,11 +70,11 @@ DNADesign _remove_crossovers_and_loopouts(
   }
 
   // remove old strands and add new strands to DNADesign
-  var new_strands = dna_design.strands.toList();
+  var new_strands = state.dna_design.strands.toList();
   new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
   new_strands.addAll(strands_to_add);
 
-  return dna_design.rebuild((d) => d..strands.replace(new_strands));
+  return new_strands.build();
 }
 
 // Splits one strand into many by removing crossovers and loopouts
@@ -156,14 +156,15 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   return new_strands;
 }
 
-DNADesign remove_bound_substrands(DNADesign dna_design, Set<BoundSubstrand> substrands) {
+BuiltList<Strand> remove_bound_substrands(
+    BuiltList<Strand> strands, AppState state, Set<BoundSubstrand> substrands) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
   // collect all BoundSubstrands for one strand because we need special case to remove multiple from one strand
   Map<Strand, Set<BoundSubstrand>> strand_to_substrands = {};
   for (var substrand in substrands) {
-    var strand = dna_design.substrand_to_strand[substrand];
+    var strand = state.dna_design.substrand_to_strand[substrand];
     if (strand_to_substrands[strand] == null) {
       strand_to_substrands[strand] = {};
     }
@@ -178,11 +179,11 @@ DNADesign remove_bound_substrands(DNADesign dna_design, Set<BoundSubstrand> subs
   }
 
   // remove old strands and add new strands to DNADesign
-  var new_strands = dna_design.strands.toList();
+  var new_strands = strands.toList();
   new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
   new_strands.addAll(strands_to_add);
 
-  return dna_design.rebuild((d) => d..strands.replace(new_strands));
+  return new_strands.build();
 }
 
 // Splits one strand into many by removing BoundSubstrands

@@ -2,6 +2,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 
 import 'idt_fields.dart';
 import 'select_mode.dart';
@@ -25,12 +26,33 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     if (color == null) {
       color = util.color_cycler.next();
     }
-    return Strand.from((b) => b
+
+    var strand = Strand.from((b) => b
       ..color = color
       ..substrands.replace(substrands)
       ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
       ..is_scaffold = is_scaffold);
+
+    strand = strand.initialize();
+    return strand;
+//
+//
+////    return strand;
+//    List<Substrand> substrands_dna_assigned = [];
+//    for (var substrand in substrands) {
+//      String dna = strand.dna_sequence_in(substrand);
+//      if (substrand is BoundSubstrand) {
+//        BoundSubstrand ss = substrand;
+//        substrand = ss.rebuild((b) => b..dna_sequence = dna);
+//      } else if (substrand is Loopout) {
+//        Loopout ss = substrand;
+//        substrand = ss.rebuild((b) => b..dna_sequence = dna);
+//      }
+//      substrands_dna_assigned.add(substrand);
+//    }
+//
+//    return strand.rebuild((b) => b..substrands.replace(substrands_dna_assigned));
   }
 
   factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
@@ -39,18 +61,32 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   /************************ end BuiltValue boilerplate ************************/
 
+  //FIXME: remove prev_ and next_ from Loopout so they don't need to be recalculated
+
   static void _finalizeBuilder(StrandBuilder builder) {
+    BoundSubstrand first_ss = builder.substrands.first;
+    String id = id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
+    // ensure Loopouts have appropriate prev and next indices for adjacent BoundSubstrands
+    // (not necessary for Crossovers since they are lazily evaluated,
+    // but Loopout objects are created prior to creating the Strand)
     for (int i = 0; i < builder.substrands.length; i++) {
       var substrand = builder.substrands[i];
       if (substrand is Loopout) {
-        var loopout = (substrand as Loopout).rebuild((b) => b
-          ..prev_substrand_idx = i - 1
-          ..next_substrand_idx = i + 1);
-        builder.substrands[i] = loopout;
+        if (substrand.prev_substrand_idx != i - 1 || substrand.next_substrand_idx != i + 1) {
+          var loopout = (substrand as Loopout).rebuild((b) => b
+            ..prev_substrand_idx = i - 1
+            ..next_substrand_idx = i + 1);
+          builder.substrands[i] = loopout;
+        }
+      }
+      // set strand_id on all substrands
+      if (substrand is BoundSubstrand) {
+        builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
+      } else if (substrand is Loopout) {
+        builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
       }
     }
   }
-  
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
@@ -64,6 +100,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   @nullable
   IDTFields get idt;
 
+  //TODO: don't let this be nullable
   @nullable
   bool get is_scaffold;
 
@@ -83,8 +120,11 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   String id() {
     var first_ss = this.first_bound_substrand();
-    return 'strand-H${first_ss.helix}-${first_ss.offset_5p}-${first_ss.forward ? 'forward' : 'reverse'}';
+    return id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
   }
+
+  static String id_from_data(int helix, int offset, bool forward) =>
+      'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
   String toString() {
     var first_ss = this.first_bound_substrand();

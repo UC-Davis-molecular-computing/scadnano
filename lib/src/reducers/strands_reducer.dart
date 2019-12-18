@@ -6,6 +6,8 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import 'change_loopout_length.dart';
+import 'delete_reducer.dart';
+import 'nick_join_reducers.dart';
 import 'util_reducer.dart';
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([]);
@@ -13,6 +15,11 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([]);
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreate>(strand_create),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Nick>(nick_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
+      join_strands_by_crossover_reducer),
 ]);
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
@@ -39,16 +46,9 @@ Reducer<Strand> strand_part_reducer = combineReducers([
 
 BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actions.StrandCreate action) {
   int helix_idx = action.helix_idx;
-  int offset = action.offset;
+  int start = action.start;
+  int end = action.end;
   bool forward = action.forward;
-
-  // ensure 3' end is where mouse clicked
-  int start = offset;
-  int end = offset + 2;
-  if (forward) {
-    start = offset - 1;
-    end = offset + 1;
-  }
 
   // skip creating Strand if one is already there
   var existing_substrands_start = state.dna_design.substrands_on_helix_at(helix_idx, start);
@@ -60,13 +60,8 @@ BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actio
   }
 
 //  BoundSubstrand substrand = BoundSubstrand(helix: helix_idx, forward: forward, start: start, end: end);
-  BoundSubstrand substrand = BoundSubstrand((b) => b
-    ..helix = helix_idx
-    ..forward = forward
-    ..start = start
-    ..end = end
-    ..is_first = true
-    ..is_last = true);
+  BoundSubstrand substrand = BoundSubstrand(
+      helix: helix_idx, forward: forward, start: start, end: end, is_first: true, is_last: true);
   Strand strand = Strand([substrand]);
   var new_strands = strands.rebuild((s) => s..add(strand));
 
