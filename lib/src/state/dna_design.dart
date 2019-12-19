@@ -509,7 +509,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
 //  Set<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
-  /// Return [Substrand]s at [offset].
+  /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
   BuiltSet<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) {
     var substrands_at_offset = SetBuilder<BoundSubstrand>({
       for (var substrand in this.helix_idx_to_substrands[helix_idx]) if (substrand.contains_offset(offset)) substrand

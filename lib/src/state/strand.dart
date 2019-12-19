@@ -3,7 +3,9 @@ import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart';
+import 'package:tuple/tuple.dart';
 
+import 'dna_end.dart';
 import 'idt_fields.dart';
 import 'select_mode.dart';
 import 'selectable.dart';
@@ -36,23 +38,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
     strand = strand.initialize();
     return strand;
-//
-//
-////    return strand;
-//    List<Substrand> substrands_dna_assigned = [];
-//    for (var substrand in substrands) {
-//      String dna = strand.dna_sequence_in(substrand);
-//      if (substrand is BoundSubstrand) {
-//        BoundSubstrand ss = substrand;
-//        substrand = ss.rebuild((b) => b..dna_sequence = dna);
-//      } else if (substrand is Loopout) {
-//        Loopout ss = substrand;
-//        substrand = ss.rebuild((b) => b..dna_sequence = dna);
-//      }
-//      substrands_dna_assigned.add(substrand);
-//    }
-//
-//    return strand.rebuild((b) => b..substrands.replace(substrands_dna_assigned));
   }
 
   factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
@@ -86,6 +71,41 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
       }
     }
+  }
+
+  /// Sets up data such as DNA sequence and part strand_id's
+  /// FIXME: remove duplicated code between initialize() and _finalizeBuilder
+  Strand initialize() {
+    Strand strand = this;
+
+    if (dna_sequence != null) {
+      strand = strand.set_dna_sequence(dna_sequence);
+    }
+
+    String id = strand.id();
+    int idx = 0;
+    bool updated = false;
+    var substrands_new = strand.substrands.toBuilder();
+    for (var ss in strand.substrands) {
+      if (ss is Loopout) {
+        var loopout = ss.rebuild((l) => l
+          ..strand_id = id
+          ..prev_substrand_idx = idx - 1
+          ..next_substrand_idx = idx + 1);
+        substrands_new[idx] = loopout;
+        updated = true;
+      } else if (ss is BoundSubstrand) {
+        var bound_ss = ss.rebuild((l) => l..strand_id = id);
+        substrands_new[idx] = bound_ss;
+        updated = true;
+      }
+      idx++;
+    }
+    if (updated) {
+      strand = strand.rebuild((s) => s..substrands = substrands_new);
+    }
+
+    return strand;
   }
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
@@ -282,41 +302,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       throw StrandError(strand, 'Loopout at end of strand not supported');
     }
 
-    strand = strand.initialize();
-
-    return strand;
-  }
-
-  /// Sets up data such as DNA sequence and part strand_id's
-  Strand initialize() {
-    Strand strand = this;
-
-    if (dna_sequence != null) {
-      strand = strand.set_dna_sequence(dna_sequence);
-    }
-
-    String id = strand.id();
-    int idx = 0;
-    bool updated = false;
-    var substrands_new = strand.substrands.toBuilder();
-    for (var ss in strand.substrands) {
-      if (ss is Loopout) {
-        var loopout = ss.rebuild((l) => l
-          ..strand_id = id
-          ..prev_substrand_idx = idx - 1
-          ..next_substrand_idx = idx + 1);
-        substrands_new[idx] = loopout;
-        updated = true;
-      } else if (ss is BoundSubstrand) {
-        var bound_ss = ss.rebuild((l) => l..strand_id = id);
-        substrands_new[idx] = bound_ss;
-        updated = true;
-      }
-      idx++;
-    }
-    if (updated) {
-      strand = strand.rebuild((s) => s..substrands = substrands_new);
-    }
+//    strand = strand.initialize();
 
     return strand;
   }
@@ -361,6 +347,42 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       int start_idx = get_seq_start_idx(substrand);
       return dna_sequence.substring(start_idx, start_idx + substrand.dna_length());
     }
+  }
+
+  /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
+  /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
+  Tuple2<DNAEnd, DNAEnd> ligatable_ends(Strand other) {
+    if (this == other) {
+      return null;
+    } else if (_ligatable_3p_to_5p_of(other)) {
+      return Tuple2<DNAEnd, DNAEnd>(dnaend_3p, other.dnaend_5p);
+    } else if (_ligatable_5p_to_3p_of(other)) {
+      return Tuple2<DNAEnd, DNAEnd>(dnaend_5p, other.dnaend_3p);
+    } else {
+      return null;
+    }
+  }
+
+  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
+
+  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
+
+  bool _ligatable_3p_to_5p_of(Strand other) {
+    BoundSubstrand last_ss_this = last_bound_substrand();
+    BoundSubstrand first_ss_other = other.first_bound_substrand();
+
+    return last_ss_this.forward == first_ss_other.forward &&
+        last_ss_this.helix == first_ss_other.helix &&
+        dnaend_3p.offset == other.dnaend_5p.offset;
+  }
+
+  bool _ligatable_5p_to_3p_of(Strand other) {
+    BoundSubstrand first_ss_this = first_bound_substrand();
+    BoundSubstrand last_ss_other = other.last_bound_substrand();
+
+    return first_ss_this.forward == last_ss_other.forward &&
+        first_ss_this.helix == last_ss_other.helix &&
+        dnaend_5p.offset == other.dnaend_3p.offset;
   }
 }
 

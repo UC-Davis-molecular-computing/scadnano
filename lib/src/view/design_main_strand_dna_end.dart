@@ -29,6 +29,7 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
     ..selectable = selectable
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
+    ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.join)
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
@@ -48,6 +49,7 @@ class _$DesignMainDNAEndProps extends UiProps {
   bool selected;
   bool selectable;
   bool pencil_mode;
+  bool join_mode;
   bool drawing_potential_crossover;
 }
 
@@ -159,7 +161,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         current_point: start_point,
       );
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
-    } else if (props.drawing_potential_crossover && (is_first || is_last)) {
+    } else if (props.pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
       PotentialCrossover potential_crossover = app.store_potential_crossover.state;
 
       //FIXME: can we avoid this global variable access? probably not since there's multiple stores
@@ -169,6 +171,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         app.dispatch(actions.JoinStrandsByCrossover(
             potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
+    } else if (props.join_mode && (is_first || is_last)) {
+      app.dispatch(actions.Ligate(dna_end: dna_end));
     }
   }
 }

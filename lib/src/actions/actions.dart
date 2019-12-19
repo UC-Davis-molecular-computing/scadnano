@@ -794,15 +794,11 @@ abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<
   static Serializer<Nick> get serializer => _$nickSerializer;
 }
 
-abstract class Ligate with BuiltJsonSerializable implements Action, Built<Ligate, LigateBuilder> {
-  int get helix_idx;
-
-  int get offset;
-
-  bool get forward;
+abstract class Ligate with BuiltJsonSerializable implements UndoableAction, Built<Ligate, LigateBuilder> {
+  DNAEnd get dna_end;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Ligate({int helix_idx, int offset, bool forward}) = _$Ligate._;
+  factory Ligate({DNAEnd dna_end}) = _$Ligate._;
 
   Ligate._();
 

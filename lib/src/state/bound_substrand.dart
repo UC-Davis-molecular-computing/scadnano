@@ -126,6 +126,7 @@ abstract class BoundSubstrand
   @memoized
   DNAEnd get dnaend_start => DNAEnd(
       is_5p: forward,
+      is_start: true,
       offset: start,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
@@ -134,6 +135,7 @@ abstract class BoundSubstrand
   @memoized
   DNAEnd get dnaend_end => DNAEnd(
       is_5p: !forward,
+      is_start: false,
       offset: end,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
@@ -216,7 +218,7 @@ abstract class BoundSubstrand
 //  String toString() =>
 //      'BoundSubstrand(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
-  /// Indicates if `offset` is the offset of a base on this substrand.
+  /// Indicates if `offset` is the offset of a base on this substrand. (The end index should be false.)
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
   /// If for example, this Substrand starts at position 0 and ends at 10, and it has 5 deletions,
   /// then it contains the offset 7 even though there is no base 7 positions from the start.

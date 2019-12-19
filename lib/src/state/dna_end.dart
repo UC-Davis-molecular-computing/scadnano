@@ -9,10 +9,11 @@ import 'selectable.dart';
 part 'dna_end.g.dart';
 
 abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
-  factory DNAEnd({int offset, bool is_5p, bool substrand_is_first, bool substrand_is_last, String substrand_id}) =>
+  factory DNAEnd({int offset, bool is_5p, bool is_start, bool substrand_is_first, bool substrand_is_last, String substrand_id}) =>
       DNAEnd.from((b) => b
         ..offset = offset
         ..is_5p = is_5p
+        ..is_start = is_start
         ..substrand_is_first = substrand_is_first
         ..substrand_is_last = substrand_is_last
         ..substrand_id = substrand_id);
@@ -28,6 +29,8 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
   int get offset;
 
   bool get is_5p;
+
+  bool get is_start;
 
   bool get substrand_is_first;
 

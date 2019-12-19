@@ -52,6 +52,7 @@ class EditModeChoice extends EnumClass {
     throw AssertionError('This should be unreachable.');
   }
 
+  //FIXME: this is an undirected graph but we are representing it as directed; make more DRY
   /// For a mode m, `m.excluded_modes()` is a set of other modes that are mutually exclusive with `m`.
   /// In other words, if `m` is on, then all those in `m.excluded_modes()` are turned off.
   BuiltSet<EditModeChoice> excluded_modes() {
@@ -61,11 +62,11 @@ class EditModeChoice extends EnumClass {
       case select:
         return [pencil, loopout].toBuiltSet();
       case pencil:
-        return [select, move].toBuiltSet();
+        return [select, move, join].toBuiltSet();
       case nick:
         return [join, insertion, deletion, sequence].toBuiltSet();
       case join:
-        return [nick, insertion, deletion, sequence].toBuiltSet();
+        return [pencil, nick, insertion, deletion, sequence].toBuiltSet();
       case insertion:
         return [nick, join, deletion, sequence].toBuiltSet();
       case deletion:
