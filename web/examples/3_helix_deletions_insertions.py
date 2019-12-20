@@ -61,6 +61,8 @@ def main():
 
     # DNA assigned to whole design so complement can be assigned to strands other than scaf
     design.assign_dna(scaf, 'AACT' * 18)
+    design.assign_dna(s_extra1, 'AACT'*4)
+    design.assign_dna(s_extra2, 'GGTA'*4)
 
     return design
 

@@ -10,7 +10,6 @@ import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
-import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 

@@ -90,7 +90,8 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
 //    Set<SvgElement> elts_overlapping =
 //        get_intersection_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
-    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+//    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).map((elt) => elt as SvgElement).toSet();
+    Set<SvgElement> elts_overlapping = get_enclosure_list(select_box_bbox).toSet();
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};

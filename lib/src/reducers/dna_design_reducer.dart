@@ -4,9 +4,7 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
-import 'delete_reducer.dart';
 import 'helices_reducer.dart';
-import 'nick_join_reducers.dart';
 import 'strands_reducer.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

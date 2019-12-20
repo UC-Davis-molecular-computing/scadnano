@@ -1,6 +1,4 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:color/color.dart';
-import 'package:react/react.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
@@ -8,6 +6,7 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove BoundSubstrand where nick will be, and remember where it was attached
@@ -85,7 +84,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   BoundSubstrand other_substrand;
   BuiltSet<BoundSubstrand> substrands_adjacent;
   DNAEnd strand_end;
-  DNAEnd strand_adj_end;
   if (dna_end.is_start)
     substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset - 1);
   else
@@ -95,7 +93,6 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     var ends = strand.ligatable_ends(strand_adj);
     if (ends != null) {
       strand_end = ends.item1;
-      strand_adj_end = ends.item2;
       other_substrand = substrand_adj;
       break;
     }
@@ -118,7 +115,8 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   Strand strand_left = state.dna_design.substrand_to_strand[ss_left];
   Strand strand_right = state.dna_design.substrand_to_strand[ss_right];
 
-  // normalize 5'/3' distinction
+  // normalize 5'/3' distinction; below refers to which Strand has the 5'/3' end that will be ligated
+  // So strand_5p is the one whose 3' end will be the 3' end of the whole new Strand
   BoundSubstrand ss_5p, ss_3p;
   Strand strand_5p, strand_3p;
   if (dna_end.is_5p && !forward) {
@@ -146,8 +144,8 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   var substrands_3p_new = strand_3p.substrands.toList()..removeLast();
 
   // take properties from existing strands
-  var new_substrands = substrands_3p_new + [new_substrand] + substrands_5p_new;
-  Strand new_strand = join_two_strands_with_substrands(strand_5p, strand_3p, new_substrands);
+  var substrands_new = substrands_3p_new + [new_substrand] + substrands_5p_new;
+  Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new);
 
   return swap_strands(strands, [strand_left, strand_right], [new_strand]);
 }
@@ -155,17 +153,33 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 /// Joins two Strands using specified list of Substrands. Used to merge properties in a consistent way.
 /// Defaults to using strand1 for properties, but lets is_scaffold property override.
 /// Note that it *ignores* the substrands in strand1 and strand2.
-Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Substrand> substrands_new) {
+/// Set dna_in_order_1_2=false to reverse the order of DNA concatenation.
+Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Substrand> substrands_new,
+    {bool dna_in_order_1_2 = true}) {
   var color = strand1.color;
   var idt = strand1.idt;
   if (strand2.is_scaffold == true) {
     color = strand2.color;
     idt = strand2.idt;
   }
+
   var dna = null;
-  if (strand1.dna_sequence != null && strand2.dna_sequence != null) {
-    dna = strand1.dna_sequence + strand2.dna_sequence;
+  var strand_first_dna = strand1;
+  var strand_second_dna = strand2;
+  if (!dna_in_order_1_2) {
+    strand_first_dna = strand2;
+    strand_second_dna = strand1;
   }
+  if (strand_first_dna.dna_sequence == null && strand_second_dna.dna_sequence == null) {
+    dna = null;
+  } else if (strand_first_dna.dna_sequence != null && strand_second_dna.dna_sequence != null) {
+    dna = strand_first_dna.dna_sequence + strand_second_dna.dna_sequence;
+  } else if (strand_first_dna.dna_sequence == null) {
+    dna = constants.DNA_BASE_WILDCARD * strand_first_dna.dna_length() + strand_second_dna.dna_sequence;
+  } else if (strand_second_dna.dna_sequence == null) {
+    dna = strand_first_dna.dna_sequence + constants.DNA_BASE_WILDCARD * strand_second_dna.dna_length();
+  }
+
   Strand new_strand = Strand(substrands_new,
       color: color,
       dna_sequence: dna,
@@ -230,8 +244,9 @@ BuiltList<Strand> _join(
 //      idt: strand_first_clicked.idt,
 //      is_scaffold: strand_from.is_scaffold == true || strand_to.is_scaffold == true);
 
-  Strand new_strand =
-      join_two_strands_with_substrands(strand_first_clicked, strand_second_clicked, substrands_new);
+  Strand new_strand = join_two_strands_with_substrands(
+      strand_first_clicked, strand_second_clicked, substrands_new,
+      dna_in_order_1_2: first_clicked_is_from);
 
   return swap_strands(strands, [strand_from, strand_to], [new_strand]);
 }

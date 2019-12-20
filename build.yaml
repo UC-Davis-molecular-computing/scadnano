@@ -1,6 +1,20 @@
-targets:
-  $default:
-    builders:
-      build_web_compilers|dart_source_cleanup:
-        release_options:
-          enabled: false
+# I forget what this does
+#targets:
+#  $default:
+#    builders:
+#      build_web_compilers|dart_source_cleanup:
+#        release_options:
+#          enabled: false
+
+# for compiling un-minified production code so JS names are familiar
+#targets:
+#  $default:
+#    builders:
+#      build_web_compilers|entrypoint:
+#        # These are globs for the entrypoints you want to compile.
+#        generate_for:
+#          - web/**.dart
+#        options:
+#          compiler: dart2js
+#          dart2js_args:
+#            - --no-minify

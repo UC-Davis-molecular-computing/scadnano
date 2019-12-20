@@ -35,12 +35,14 @@
     },
     {
       "color": "#32b86c",
+      "dna_sequence": "AACTAACTAACTAACT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
       "color": "#333333",
+      "dna_sequence": "GGTAGGTAGGTAGGTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 48, "end": 64}
       ]
@@ -59,12 +61,14 @@
     },
     {
       "color": "#aaaa00",
+      "dna_sequence": "AGTTAGTTAGTTAGTT",
       "substrands": [
         {"helix": 1, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
       "color": "#b8056c",
+      "dna_sequence": "TACCTACCTACCTACC",
       "substrands": [
         {"helix": 1, "forward": false, "start": 48, "end": 64}
       ]

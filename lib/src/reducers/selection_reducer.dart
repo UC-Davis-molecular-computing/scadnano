@@ -48,8 +48,7 @@ SelectablesStore selections_adjust_reducer(
   // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
   // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
 
-  Set<SvgElement> elts_overlapping =
-      util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).map((elt) => elt as SvgElement).toSet();
+  Set<SvgElement> elts_overlapping = util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).toSet();
 
 //  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
   List<Selectable> overlapping_now = [
@@ -88,7 +87,8 @@ SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
   return store;
 }
 
-SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) => store.clear();
+SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
+    store.clear();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer
@@ -171,7 +171,9 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
 SelectionBox selection_box_create_reducer(SelectionBox selection_box, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
-SelectionBox selection_box_size_changed_reducer(SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
+SelectionBox selection_box_size_changed_reducer(
+        SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
-SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) => null;
+SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) =>
+    null;

@@ -74,7 +74,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
     var classname = '${props.is_5p ? 'five' : 'three'}-prime-end' +
         (is_first && props.is_5p ? '-first-substrand' : '') +
         (is_last && !props.is_5p ? '-last-substrand' : '');
-    ;
+
 //    if (substrand.selected_5p()) {
     if (props.selected) {
       classname += ' selected';

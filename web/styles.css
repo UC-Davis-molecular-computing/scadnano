@@ -205,6 +205,7 @@ html, body {
     outline: 0;
     font-weight: bold;
     color: black;
+    text-align: left;
 }
 
 .edit-mode-button-selected {
@@ -221,6 +222,7 @@ html, body {
     outline: 0;
     font-weight: bold;
     color: black;
+    text-align: left;
 }
 
 .select-mode-button-selected {

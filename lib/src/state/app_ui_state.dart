@@ -15,7 +15,7 @@ import 'selectable.dart';
 part 'app_ui_state.g.dart';
 
 final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
-  ..edit_modes.replace([EditModeChoice.move])
+  ..edit_modes.replace([EditModeChoice.scroll])
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
   ..mouseover_datas = ListBuilder<MouseoverData>()

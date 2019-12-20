@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/serializers.dart';
 import 'package:scadnano/src/state/strand_part.dart';
 import 'package:tuple/tuple.dart';

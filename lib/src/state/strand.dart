@@ -2,7 +2,6 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:tuple/tuple.dart';
 
 import 'dna_end.dart';
@@ -58,7 +57,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       var substrand = builder.substrands[i];
       if (substrand is Loopout) {
         if (substrand.prev_substrand_idx != i - 1 || substrand.next_substrand_idx != i + 1) {
-          var loopout = (substrand as Loopout).rebuild((b) => b
+          var loopout = substrand.rebuild((b) => b
             ..prev_substrand_idx = i - 1
             ..next_substrand_idx = i + 1);
           builder.substrands[i] = loopout;

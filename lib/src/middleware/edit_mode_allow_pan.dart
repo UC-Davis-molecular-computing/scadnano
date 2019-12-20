@@ -11,7 +11,7 @@ import '../state/app_state.dart';
 edit_mode_allow_pan_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.EditModesSet || action is actions.EditModeToggle) {
-    bool allow_pan = store.state.ui_state.edit_modes.contains(EditModeChoice.move);
+    bool allow_pan = store.state.ui_state.edit_modes.contains(EditModeChoice.scroll);
     util.set_allow_pan(allow_pan);
   }
 }

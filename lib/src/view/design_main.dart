@@ -1,9 +1,12 @@
 library view_main;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/strand.dart';
 
 import 'design_main_mismatches.dart';
 import 'design_main_helices.dart';
@@ -21,7 +24,17 @@ part 'design_main.over_react.g.dart';
 final USING_REACT_DND = false;
 
 UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMainProps>(
-  mapStateToProps: (state) => (DesignMain()..state = state),
+  mapStateToProps: (state) {
+    return (DesignMain()
+      ..helices = state.dna_design.helices
+      ..strands = state.dna_design.strands
+      ..has_error = state.has_error()
+      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+      ..backbone_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
+      ..pencil_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
+      ..show_mismatches = state.ui_state.show_mismatches
+      ..show_dna = state.ui_state.show_dna);
+  },
 )(DesignMain);
 
 @Factory()
@@ -30,34 +43,40 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 @Props()
 class _$DesignMainProps extends UiProps {
   AppState state;
+  BuiltList<Helix> helices;
+  BuiltList<Strand> strands;
+  BuiltSet<int> side_selected_helix_idxs;
+  bool has_error;
+  bool show_mismatches;
+  bool show_dna;
+  bool backbone_edit_mode;
+  bool pencil_edit_mode;
 }
 
 @Component2()
 class DesignMainComponent extends UiComponent2<DesignMainProps> {
   @override
   render() {
-    AppState state = props.state;
-
-    if (state.has_error()) {
+    if (props.has_error) {
       return null;
     }
 
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
-        ..helices = state.dna_design.helices
-        ..strand_create_enabled = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-        ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+        ..helices = props.helices
+        ..strand_create_enabled = props.pencil_edit_mode
+        ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..key = 'helices')(),
       (DesignMainMismatches()
-        ..show_mismatches = state.ui_state.show_mismatches
-        ..strands = state.dna_design.strands
+        ..show_mismatches = props.show_mismatches
+        ..strands = props.strands
         ..key = 'mismatches')(),
       (DesignMainStrands()
-        ..strands = state.dna_design.strands
+        ..strands = props.strands
         ..key = 'strands')(),
       (DesignMainDNASequences()
-        ..show_dna = state.ui_state.show_dna
-        ..strands = state.dna_design.strands
+        ..show_dna = props.show_dna
+        ..strands = props.strands
         ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
@@ -67,9 +86,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
-      if (state.ui_state.edit_modes.contains(EditModeChoice.backbone))
+      if (props.backbone_edit_mode)
         (DesignMainMouseoverRectHelices()
-          ..helices = state.dna_design.helices
+          ..helices = props.helices
           ..key = 'mouseover-rect')(),
     ]);
 
