@@ -13,9 +13,9 @@ class EditModeChoice extends EnumClass {
 
   static const EditModeChoice scroll = _$scroll;
   static const EditModeChoice select = _$select;
-  static const EditModeChoice pencil = _$pencil;
+  static const EditModeChoice pencil = _$pencil; // used to join two BoundSubstrands with Crossover
   static const EditModeChoice nick = _$nick;
-  static const EditModeChoice join = _$ligate; // previously "ligate"; means join two BoundSubstrands on same Helix
+  static const EditModeChoice ligate = _$ligate; // means join two BoundSubstrands on same Helix
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice sequence = _$sequence;
@@ -34,12 +34,12 @@ class EditModeChoice extends EnumClass {
     KeyCode.S: select,
     KeyCode.P: pencil,
     KeyCode.N: nick,
-    KeyCode.J: join,
+    KeyCode.L: ligate,
     KeyCode.I: insertion,
     KeyCode.D: deletion,
     KeyCode.Q: sequence,
     KeyCode.B: backbone,
-    KeyCode.L: loopout,
+    KeyCode.O: loopout,
     KeyCode.H: helix,
   };
 
@@ -62,17 +62,17 @@ class EditModeChoice extends EnumClass {
       case select:
         return [pencil, loopout].toBuiltSet();
       case pencil:
-        return [select, scroll, join].toBuiltSet();
+        return [select, scroll, ligate].toBuiltSet();
       case nick:
-        return [join, insertion, deletion, sequence].toBuiltSet();
-      case join:
+        return [ligate, insertion, deletion, sequence].toBuiltSet();
+      case ligate:
         return [pencil, nick, insertion, deletion, sequence].toBuiltSet();
       case insertion:
-        return [nick, join, deletion, sequence].toBuiltSet();
+        return [nick, ligate, deletion, sequence].toBuiltSet();
       case deletion:
-        return [nick, join, insertion, sequence].toBuiltSet();
+        return [nick, ligate, insertion, sequence].toBuiltSet();
       case sequence:
-        return [nick, join, insertion, deletion].toBuiltSet();
+        return [nick, ligate, insertion, deletion].toBuiltSet();
       case backbone:
         return <EditModeChoice>[].toBuiltSet();
       case loopout:
@@ -99,8 +99,8 @@ class EditModeChoice extends EnumClass {
         return '(p)encil';
       case nick:
         return '(n)ick';
-      case join:
-        return '(j)oin';
+      case ligate:
+        return '(l)igate';
       case insertion:
         return '(i)nsertion';
       case deletion:
@@ -110,7 +110,7 @@ class EditModeChoice extends EnumClass {
       case backbone:
         return '(b)ackbone';
       case loopout:
-        return '(l)oopout';
+        return 'l(o)opout';
       case helix:
         return '(h)elix';
     }

@@ -29,7 +29,7 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
     ..selectable = selectable
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-    ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.join)
+    ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
