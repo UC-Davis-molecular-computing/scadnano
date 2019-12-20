@@ -225,6 +225,19 @@ html, body {
     text-align: left;
 }
 
+.helix-change-offsets-button-rect {
+    stroke: black;
+    fill: #999999;
+}
+
+.helix-change-offsets-button-text {
+    font-size: smaller;
+    text-anchor: middle;
+    text-align: center;
+    alignment-baseline: middle;
+    pointer-events: none;
+}
+
 .select-mode-button-selected {
     background-color: lightcoral;
 }

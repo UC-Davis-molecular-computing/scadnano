@@ -621,6 +621,49 @@ abstract class HelixSelectionsAdjust
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helix change min/max offsets
+
+abstract class HelixIndividualAction {
+  int get helix_idx;
+}
+
+abstract class HelixOffsetChange
+    with BuiltJsonSerializable
+    implements UndoableAction, HelixIndividualAction, Built<HelixOffsetChange, HelixOffsetChangeBuilder> {
+  int get helix_idx;
+
+  @nullable
+  int get min_offset;
+
+  @nullable
+  int get max_offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixOffsetChange({int helix_idx, int min_offset, int max_offset}) = _$HelixOffsetChange._;
+
+  HelixOffsetChange._();
+
+  static Serializer<HelixOffsetChange> get serializer => _$helixOffsetChangeSerializer;
+}
+
+abstract class HelixOffsetChangeAll
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<HelixOffsetChangeAll, HelixOffsetChangeAllBuilder> {
+  @nullable
+  int get min_offset;
+
+  @nullable
+  int get max_offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixOffsetChangeAll({int min_offset, int max_offset}) = _$HelixOffsetChangeAll._;
+
+  HelixOffsetChangeAll._();
+
+  static Serializer<HelixOffsetChangeAll> get serializer => _$helixOffsetChangeAllSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show mouseover box (side view)
 
 abstract class ShowMouseoverRectSet

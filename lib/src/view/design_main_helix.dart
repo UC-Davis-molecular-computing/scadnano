@@ -2,15 +2,16 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:quiver/iterables.dart' as iter;
-
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
+import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'svg_button.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
@@ -52,6 +53,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
+    num height_helix_length_change_button = 2 * constants.BASE_HEIGHT_SVG;
+    num width_helix_length_change_button = 6 * height_helix_length_change_button;
+    num offset_helix_length_change_button = -(width_helix_length_change_button - 2 * cx + 10);
 
     return (Dom.g()
       ..className = 'helix-main-view'
@@ -88,6 +92,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
+      (SvgButton()
+        ..x = offset_helix_length_change_button
+        ..y = 0
+        ..width = width_helix_length_change_button
+        ..height = height_helix_length_change_button
+        ..text = 'adjust helix length'
+        ..on_click = handle_helix_adjust_length_button_pressed
+        ..classname = 'helix-change-offsets-button'
+        ..id = 'helix-${props.helix.idx}-change-offsets-button'
+        ..key = 'helix-change-offsets-button-component')(),
       if (props.strand_create_enabled)
         (Dom.rect()
           ..onClick = create_strand
@@ -113,6 +127,40 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
       end = offset + 1;
     }
     app.dispatch(actions.StrandCreate(helix_idx: props.helix.idx, forward: forward, start: start, end: end));
+  }
+
+  handle_helix_adjust_length_button_pressed(SyntheticMouseEvent event) async {
+    Helix helix = props.helix;
+    int helix_idx = helix.idx;
+
+    // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+    String buttontype = null;
+    String htmlTitleText = 'new offsets for helix ${helix_idx}; leave blank to not change';
+    List<String> textLabels = ['new minimum:', 'new maximum:'];
+    List<List<String>> comboInfo = null;
+    List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}'];
+    List<int> widths = [10, 10];
+    List<String> isChecked = null;
+    bool alternateRowColor = false;
+    List<String> buttonLabels = ['OK', 'Cancel'];
+
+    UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+        widths, isChecked, alternateRowColor, buttonLabels);
+
+    if (result.buttonCode == 'DIA_ACT_CANCEL') {
+      return;
+    }
+
+    String min_offset_str = result.getUserInput(0)[0];
+    String max_offset_str = result.getUserInput(1)[0];
+    int min_offset = int.tryParse(min_offset_str);
+    int max_offset = int.tryParse(max_offset_str);
+
+    if (min_offset == null && max_offset == null) {
+      return;
+    }
+    app.dispatch(
+        actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
   }
 }
 

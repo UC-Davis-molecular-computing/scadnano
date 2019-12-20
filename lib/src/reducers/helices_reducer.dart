@@ -14,7 +14,44 @@ import '../constants.dart' as constants;
 Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
+  TypedReducer<BuiltList<Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
+  TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
 ]);
+
+BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.HelixIndividualAction action) {
+  Helix helix = helices[action.helix_idx];
+  var new_helix = _helix_individual_reducers(helix, action);
+  if (new_helix != helix) {
+    var helices_list = helices.toBuilder();
+    helices_list[action.helix_idx] = new_helix;
+    return helices_list.build();
+  } else {
+    return helices;
+  }
+}
+
+Reducer<Helix> _helix_individual_reducers = combineReducers([
+  TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
+]);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change min/max offsets
+
+Helix helix_offset_change_reducer(Helix helix, actions.HelixOffsetChange action) {
+  return _change_offset_one_helix(helix, action.min_offset, action.max_offset);
+}
+
+Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) {
+  return helix.rebuild((b) => b
+    ..min_offset = min_offset ?? helix.min_offset
+    ..max_offset = max_offset ?? helix.max_offset);
+}
+
+BuiltList<Helix> helix_offset_change_all_reducer(
+        BuiltList<Helix> helices, actions.HelixOffsetChangeAll action) =>
+    helices
+        .map((helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset))
+        .toBuiltList();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone
