@@ -15,7 +15,7 @@ import 'selectable.dart';
 part 'app_ui_state.g.dart';
 
 final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
-  ..edit_modes.replace([EditModeChoice.scroll])
+  ..edit_modes.replace([EditModeChoice.select])
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
   ..mouseover_datas = ListBuilder<MouseoverData>()
@@ -27,7 +27,6 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..show_editor = false
   ..show_mismatches = true
   ..drawing_potential_crossover = false
-//  ..show_mouseover_rect = false
   ..changed_since_last_save = false
   ..side_view_grid_position_mouse_cursor = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;

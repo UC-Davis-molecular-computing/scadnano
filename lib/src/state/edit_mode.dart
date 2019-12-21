@@ -11,7 +11,6 @@ class EditModeChoice extends EnumClass {
 
   static Serializer<EditModeChoice> get serializer => _$editModeChoiceSerializer;
 
-  static const EditModeChoice scroll = _$scroll;
   static const EditModeChoice select = _$select;
   static const EditModeChoice pencil = _$pencil; // used to join two BoundSubstrands with Crossover
   static const EditModeChoice nick = _$nick;
@@ -30,7 +29,6 @@ class EditModeChoice extends EnumClass {
   static EditModeChoice valueOf(String name) => _$valueOf(name);
 
   static const Map<int, EditModeChoice> key_code_to_mode = {
-    KeyCode.C: scroll,
     KeyCode.S: select,
     KeyCode.P: pencil,
     KeyCode.N: nick,
@@ -57,12 +55,10 @@ class EditModeChoice extends EnumClass {
   /// In other words, if `m` is on, then all those in `m.excluded_modes()` are turned off.
   BuiltSet<EditModeChoice> excluded_modes() {
     switch (this) {
-      case scroll:
-        return [pencil, helix].toBuiltSet();
       case select:
         return [pencil, loopout].toBuiltSet();
       case pencil:
-        return [select, scroll, ligate].toBuiltSet();
+        return [select, ligate].toBuiltSet();
       case nick:
         return [ligate, insertion, deletion, sequence].toBuiltSet();
       case ligate:
@@ -78,7 +74,7 @@ class EditModeChoice extends EnumClass {
       case loopout:
         return [select].toBuiltSet();
       case helix:
-        return [scroll].toBuiltSet();
+        return <EditModeChoice>[].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
     }
@@ -91,8 +87,6 @@ class EditModeChoice extends EnumClass {
   String display_name() {
     // edit this to display a different string than the identifier name above
     switch (this) {
-      case scroll:
-        return 's(c)roll';
       case select:
         return '(s)elect';
       case pencil:

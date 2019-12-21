@@ -107,11 +107,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     return strand;
   }
 
-  static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
-
-  @BuiltValueField(compare: false)
-  Color get color;
-
   BuiltList<Substrand> get substrands;
 
   @nullable
@@ -123,6 +118,14 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   //TODO: don't let this be nullable
   @nullable
   bool get is_scaffold;
+
+  // Since color assignment is somewhat nondeterministic, we don't want to use it to detect equality.
+  // XXX: if we let the user specify a new Strand color in scadnano, the view will have to be explicitly
+  // updated somehow.
+  @BuiltValueField(compare: false)
+  Color get color;
+
+  static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   @memoized
   BuiltList<Crossover> get crossovers {

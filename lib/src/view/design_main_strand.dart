@@ -22,7 +22,8 @@ part 'design_main_strand.over_react.g.dart';
 UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand =
     connect<AppState, DesignMainStrandProps>(mapStateToPropsWithOwnProps: (state, props) {
   bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
-  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+  bool selectable =
+      DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
   return DesignMainStrand()
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selected = selected
@@ -60,9 +61,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
       bool selectable = nextProps['DesignMainStrandProps.selectable'];
       should = should || (props.selectable != selectable);
     }
-//    print('shouldComponentUpdate() for strand ${strand.toString()}: $should');
-//    print(' prev_selected: $prev_selected');
-//    print(' next_selected: $next_selected');
     return should;
   }
 

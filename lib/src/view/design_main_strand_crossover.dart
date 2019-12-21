@@ -17,8 +17,6 @@ import '../state/app_state.dart';
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
-const SELECTED_CROSSOVER_COLOR = 'hotpink';
-
 UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
     connect<AppState, DesignMainStrandCrossoverProps>(
   mapStateToPropsWithOwnProps: (state, props) {
@@ -162,7 +160,8 @@ class DesignMainStrandCrossoverComponent
       }
       var prompt_result_string = prompt_result.toString();
       length = int.tryParse(prompt_result_string);
-      prompt_to_user = '"$prompt_result_string" is not a positive integer. Enter loopout length (positive integer):';
+      prompt_to_user =
+          '"$prompt_result_string" is not a positive integer. Enter loopout length (positive integer):';
     } while (length == null || length <= 0);
 
     app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, length));

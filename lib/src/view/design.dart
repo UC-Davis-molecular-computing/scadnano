@@ -139,10 +139,21 @@ class DesignViewComponent {
       side_view_update_mouseover(event: event);
     });
 
+    // move potential crossover
     main_view_svg.onMouseMove.listen((event) {
       main_view_mouse_position = event.client;
-      main_view_update(event);
+      main_view_move_potential_crossover(event);
     });
+
+    // disable pan in svg-pan-zoom unless background SVG object was clicked
+    for (var view_svg in [main_view_svg, side_view_svg]) {
+      view_svg.onMouseDown.listen((event) {
+        util.set_allow_pan(event.target is svg.SvgSvgElement);
+      });
+      view_svg.onMouseUp.listen((event) {
+        util.set_allow_pan(true);
+      });
+    }
 
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
@@ -374,7 +385,7 @@ class DesignViewComponent {
     }
   }
 
-  main_view_update(MouseEvent event) {
+  main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
       Point<num> point =
           util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
