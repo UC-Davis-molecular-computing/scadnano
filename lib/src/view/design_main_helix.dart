@@ -134,33 +134,49 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     int helix_idx = helix.idx;
 
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-    String buttontype = null;
-    String htmlTitleText = 'new offsets for helix ${helix_idx}; leave blank to not change';
-    List<String> textLabels = ['new minimum:', 'new maximum:'];
+    String buttontype = DiaAttr.CHECKBOX;
+    String htmlTitleText = 'helix ${helix_idx} new offsets';
+    List<String> textLabels = ['minimum:', 'maximum:', 'all helices?'];
     List<List<String>> comboInfo = null;
-    List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}'];
-    List<int> widths = [10, 10];
-    List<String> isChecked = null;
+    List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}', null];
+    List<int> widths = [1, 1, 0];
+    List<String> isChecked = [null, null, 'false'];
     bool alternateRowColor = false;
     List<String> buttonLabels = ['OK', 'Cancel'];
 
     UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
         widths, isChecked, alternateRowColor, buttonLabels);
 
-    if (result.buttonCode == 'DIA_ACT_CANCEL') {
+    if (result.buttonCode != 'DIA_ACT_OK') {
       return;
     }
 
     String min_offset_str = result.getUserInput(0)[0];
     String max_offset_str = result.getUserInput(1)[0];
-    int min_offset = int.tryParse(min_offset_str);
-    int max_offset = int.tryParse(max_offset_str);
 
-    if (min_offset == null && max_offset == null) {
+    int min_offset;
+    int max_offset;
+
+    try {
+      min_offset = int.parse(min_offset_str);
+    } on FormatException {
+      Info.show('minimum offset value "${min_offset_str}" is not an integer');
       return;
     }
-    app.dispatch(
-        actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
+    try {
+      max_offset = int.parse(max_offset_str);
+    } on FormatException {
+      Info.show('maximum offset value "${max_offset_str}" is not an integer');
+      return;
+    }
+
+    bool apply_to_all = result.getCheckedState(2) == 'true' ? true : false;
+    if (apply_to_all) {
+      app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
+    } else {
+      app.dispatch(
+          actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
+    }
   }
 }
 
