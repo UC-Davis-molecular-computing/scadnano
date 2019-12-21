@@ -136,7 +136,7 @@ class DesignViewComponent {
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
       side_view_mouse_position = event.client;
-      side_view_update_mouseover(event: event);
+      side_view_update_grid_position(event: event);
     });
 
     // move potential crossover
@@ -187,7 +187,7 @@ class DesignViewComponent {
         }
 
         if (key == EditModeChoice.helix.key_code()) {
-          side_view_update_mouseover(mouse_pos: side_view_mouse_position);
+          side_view_update_grid_position(mouse_pos: side_view_mouse_position);
         }
       }
     });
@@ -401,7 +401,7 @@ side_view_mouse_leave_update_mouseover() {
   }
 }
 
-side_view_update_mouseover({Point<num> mouse_pos = null, MouseEvent event = null}) {
+side_view_update_grid_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
   assert(!(mouse_pos == null && event == null));
 //  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
   if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
