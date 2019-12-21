@@ -7,6 +7,7 @@ import 'package:color/color.dart';
 
 import 'actions/actions.dart';
 import 'state/dna_end.dart';
+import 'state/dna_end_move.dart';
 import 'state/edit_mode.dart';
 import 'state/potential_crossover.dart';
 import 'state/selectable.dart';
@@ -93,6 +94,8 @@ part 'serializers.g.dart';
   PotentialCrossoverCreate,
   PotentialCrossoverMove,
   PotentialCrossoverRemove,
+  DNAEndMove,
+  DNAEndsMove,
 ])
 Serializers serializers = _$serializers;
 
