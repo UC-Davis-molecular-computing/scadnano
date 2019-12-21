@@ -170,6 +170,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
       return;
     }
 
+    if (min_offset >= max_offset) {
+      Info.show('minimum offset ${min_offset} must be strictly less than maximum offset, '
+          'but maximum offset is ${max_offset}');
+      return;
+    }
+
     bool apply_to_all = result.getCheckedState(2) == 'true' ? true : false;
     if (apply_to_all) {
       app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
