@@ -19,9 +19,18 @@ import '../actions/actions.dart' as actions;
 part 'design_main_strand_dna_end.over_react.g.dart';
 
 Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
-  var select_mode_choice =
-      props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
-  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.substrand.dnaend_5p);
+  SelectModeChoice select_mode_choice;
+  if (props.is_5p) {
+    select_mode_choice =
+        props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
+  } else {
+    select_mode_choice =
+        props.substrand.is_last ? SelectModeChoice.end_3p_strand : SelectModeChoice.end_3p_substrand;
+  }
+  bool selected = DEBUG_SELECT
+      ? false
+      : state.ui_state.selectables_store
+          .selected(props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p);
   bool selectable =
       DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(select_mode_choice);
   return DesignMainDNAEnd()
@@ -138,7 +147,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
 //      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
 //      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
           ..onMouseUp = ((ev) => handle_end_click())
-          ..onPointerDown = substrand.dnaend_3p.handle_selection
+          ..onPointerDown = dna_end.handle_selection
           ..className = classname
           ..points = points
           ..fill = props.color.toRgbColor().toCssString()
