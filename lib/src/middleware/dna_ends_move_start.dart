@@ -54,7 +54,7 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
   BoundSubstrand substrand = dna_design.end_to_substrand[end];
   int helix_idx = substrand.helix;
-  Set<int> selected_offsets = selected_ends.map((e) => e.offset).toSet();
+  Set<int> selected_offsets = selected_ends.map((e) => e.offset_inclusive).toSet();
 
   // offsets of (selected) ends to right (if highest==true) or left (if highest==false) of end.offset
   List<int> unselected_end_offsets_to_one_side = [];

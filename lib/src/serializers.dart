@@ -86,6 +86,8 @@ part 'serializers.g.dart';
   EditModesSet,
   HelixAdd,
   HelixRemove,
+  HelixOffsetChange,
+  HelixOffsetChangeAll,
   StrandCreate,
   Nick,
   Ligate,
