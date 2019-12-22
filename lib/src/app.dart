@@ -12,15 +12,18 @@ import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
+import 'package:scadnano/src/state/dna_end_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 
 import 'actions/actions.dart';
+import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
 import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
 import 'state/undo_redo.dart';
 import 'reducers/selection_reducer.dart';
+import 'view/design.dart';
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
@@ -55,6 +58,8 @@ class App {
   var context_selection_box = createContext();
   Store store_potential_crossover;
   var context_potential_crossover = createContext();
+  Store store_dna_ends_move;
+  var context_dna_ends_move = createContext();
 
   // for optimization; don't want to dispatch Actions changing model on every keypress
   // This is updated in view/design.dart; consider moving it higher-level.
@@ -148,6 +153,9 @@ class App {
 
     store_potential_crossover = Store<PotentialCrossover>(optimized_potential_crossover_reducer,
         initialState: null, middleware: [throttle_middleware]);
+
+    store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
+        initialState: null, middleware: [throttle_middleware]);
   }
 
   dispatch(Action action) {
@@ -168,6 +176,11 @@ class App {
         underlying_action is actions.PotentialCrossoverRemove) {
       store_potential_crossover.dispatch(action);
     }
+    if (underlying_action is actions.DNAEndsMoveSetSelectedEnds ||
+        underlying_action is actions.DNAEndsMoveAdjustOffset ||
+        underlying_action is actions.DNAEndsMoveStop) {
+      store_dna_ends_move.dispatch(action);
+    }
   }
 
   setup_warning_before_unload() {
@@ -179,8 +192,9 @@ class App {
     });
   }
 
-  make_dart_functions_available_to_js(AppState model) {
-//    util.make_dart_function_available_to_js('dart_allow_pan', state.allow_main_view_pan);
+  make_dart_functions_available_to_js(AppState state) {
+    util.make_dart_function_available_to_js(
+        'dart_main_view_dna_ends_move_stop', main_view_dna_ends_move_stop);
   }
 }
 

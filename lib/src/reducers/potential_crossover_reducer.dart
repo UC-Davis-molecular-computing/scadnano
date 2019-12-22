@@ -14,16 +14,13 @@ Reducer<PotentialCrossover> potential_crossover_reducer = combineReducers([
 ]);
 
 PotentialCrossover potential_crossover_create_reducer(
-    PotentialCrossover potential_crossover, actions.PotentialCrossoverCreate action) {
-  return action.potential_crossover;
-}
+        PotentialCrossover potential_crossover, actions.PotentialCrossoverCreate action) =>
+    action.potential_crossover;
 
 PotentialCrossover potential_crossover_move_reducer(
-    PotentialCrossover potential_crossover, actions.PotentialCrossoverMove action) {
-  return potential_crossover.rebuild((p) => p..current_point = action.point);
-}
+        PotentialCrossover potential_crossover, actions.PotentialCrossoverMove action) =>
+    potential_crossover.rebuild((p) => p..current_point = action.point);
 
 PotentialCrossover potential_crossover_remove_reducer(
-    PotentialCrossover potential_crossover, actions.PotentialCrossoverRemove action) {
-  return null;
-}
+        PotentialCrossover potential_crossover, actions.PotentialCrossoverRemove action) =>
+    null;

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 //import 'package:dnd/dnd.dart';
@@ -37,6 +38,7 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
     ..selected = selected
     ..selectable = selectable
     ..helix = state.dna_design.helices[props.substrand.helix]
+    ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
     ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
     ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
@@ -57,6 +59,7 @@ class _$DesignMainDNAEndProps extends UiProps {
   Helix helix;
   bool selected;
   bool selectable;
+  bool select_mode;
   bool pencil_mode;
   bool join_mode;
   bool drawing_potential_crossover;
@@ -108,19 +111,22 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
 //      var drag = drag_ret[1];
 //      bool isDragging = props['isDragging'];
     } else {
+      var on_pointer_down = handle_end_click_select_and_or_move_start;
       if (props.is_5p) {
         var pos = helix.svg_base_pos(offset, right);
+        num width = 7;
+        //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
+        // which it is when Shift or Ctrl (or Meta) keys are pressed
+        // see here: https://github.com/marcojakob/dart-dnd/issues/27
         return (Dom.rect()
-//      ..onMouseDown = substrand.dnaend_5p.handle_selection
-//        ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//        ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
-          ..onMouseUp = ((ev) => handle_end_click())
-          ..onPointerDown = dna_end.handle_selection
+          ..onPointerDown = on_pointer_down //dna_end.handle_selection
+//          ..onMouseDown = handle_end_click_select_and_or_move //dna_end.handle_selection
+          ..onMouseUp = ((ev) => handle_end_click_ligate_or_potential_crossover())
           ..className = classname
-          ..x = '${pos.x - 3.5}'
-          ..y = '${pos.y - 3.5}'
-          ..width = '7px'
-          ..height = '7px'
+          ..x = '${pos.x - width / 2}'
+          ..y = '${pos.y - width / 2}'
+          ..width = '${width}px'
+          ..height = '${width}px'
           ..rx = '1.5px'
           ..ry = '1.5px'
           ..fill = props.color.toRgbColor().toCssString()
@@ -143,11 +149,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         }
 
         return (Dom.polygon()
-//          ..onMouseDown = substrand.dnaend_3p.handle_selection
-//      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//      ..onMouseMove = ((event) => update_mouseover(event, helix.idx))
-          ..onMouseUp = ((ev) => handle_end_click())
-          ..onPointerDown = dna_end.handle_selection
+          ..onPointerDown = on_pointer_down //dna_end.handle_selection
+//          ..onMouseDown = handle_end_click_select_and_or_move //dna_end.handle_selection
+          ..onMouseUp = ((ev) => handle_end_click_ligate_or_potential_crossover())
           ..className = classname
           ..points = points
           ..fill = props.color.toRgbColor().toCssString()
@@ -156,7 +160,18 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
     }
   }
 
-  handle_end_click() {
+//  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
+  handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event) {
+    // select end
+    dna_end.handle_selection(event);
+
+    if (props.select_mode) {
+      // set up drag detection for moving DNA ends
+      app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
+    }
+  }
+
+  handle_end_click_ligate_or_potential_crossover() {
     if (props.pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
       int offset = props.is_5p ? props.substrand.offset_5p : props.substrand.offset_3p;
       Point<num> start_point = props.helix.svg_base_pos(offset, props.substrand.forward);

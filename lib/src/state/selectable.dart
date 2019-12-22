@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
+import 'dna_end.dart';
 import 'edit_mode.dart';
 import 'select_mode.dart';
 
@@ -28,6 +29,8 @@ abstract class SelectablesStore
 //  BuiltMap<String, Selectable> get selectables_by_id;
 
   BuiltSet<Selectable> get selected_items; // => selected_items_factory();
+
+  BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
 
 //  /// Registers unique ID of this Selectable so it can be reconciled with View component with same HTML id.
 //  SelectablesStore register(Selectable selectable) {
@@ -129,6 +132,7 @@ mixin Selectable {
   //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
+//  handle_selection(react.SyntheticPointerEvent event) {
   handle_selection(event) {
 //    print('handle_selection called');
     //FIXME: don't use global variable
@@ -142,7 +146,4 @@ mixin Selectable {
     }
   }
 
-//  bool selected_field = false;
-
-//  String toString() => id();
 }

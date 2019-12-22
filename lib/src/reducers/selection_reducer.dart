@@ -3,6 +3,7 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/view/design.dart';
@@ -25,6 +26,7 @@ Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.DeleteAllSelected>(delete_all_reducer),
+  TypedGlobalReducer<SelectablesStore, AppState, actions.DNAEndsMoveCommit>(ends_moved_reducer),
 ]);
 
 SelectablesStore delete_all_reducer(
@@ -89,6 +91,20 @@ SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
 
 SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
     store.clear();
+
+//FIXME: If we just finished moving ends, they should remain selected
+SelectablesStore ends_moved_reducer(SelectablesStore store, AppState state, actions.DNAEndsMoveCommit action) {
+  store = store.clear();
+  return store;
+//  List<DNAEnd> old_ends = List<DNAEnd>.from(store.selected_items);
+//  List<DNAEnd> new_ends = [];
+//  for (var end in old_ends) {
+//    print(end.id());
+//    DNAEnd new_end = state.dna_design.selectable_by_id(end.id());
+//    new_ends.add(new_end);
+//  }
+//  return store.select_all(new_ends);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer

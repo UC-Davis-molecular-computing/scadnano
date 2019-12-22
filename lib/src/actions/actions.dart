@@ -9,11 +9,14 @@ import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_box.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strand_part.dart';
 
 //import '../state/substrand.dart';
@@ -924,4 +927,82 @@ abstract class PotentialCrossoverRemove
   PotentialCrossoverRemove._();
 
   static Serializer<PotentialCrossoverRemove> get serializer => _$potentialCrossoverRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dna end move
+
+abstract class DNAEndsMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<DNAEndsMoveStart, DNAEndsMoveStartBuilder> {
+  int get offset;
+
+  Helix get helix;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndsMoveStart({int offset, Helix helix}) = _$DNAEndsMoveStart._;
+
+  DNAEndsMoveStart._();
+
+  static Serializer<DNAEndsMoveStart> get serializer => _$dNAEndsMoveStartSerializer;
+}
+
+abstract class DNAEndsMoveSetSelectedEnds
+    with BuiltJsonSerializable
+    implements Action, Built<DNAEndsMoveSetSelectedEnds, DNAEndsMoveSetSelectedEndsBuilder> {
+  BuiltList<DNAEndMove> get moves;
+
+  int get original_offset;
+
+  Helix get helix;
+
+  BuiltSet<Strand> get strands_affected;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndsMoveSetSelectedEnds(
+      {BuiltList<DNAEndMove> moves,
+      int original_offset,
+      Helix helix,
+      BuiltSet<Strand> strands_affected}) = _$DNAEndsMoveSetSelectedEnds._;
+
+  DNAEndsMoveSetSelectedEnds._();
+
+  static Serializer<DNAEndsMoveSetSelectedEnds> get serializer => _$dNAEndsMoveSetSelectedEndsSerializer;
+}
+
+abstract class DNAEndsMoveAdjustOffset
+    with BuiltJsonSerializable
+    implements FastAction, Built<DNAEndsMoveAdjustOffset, DNAEndsMoveAdjustOffsetBuilder> {
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndsMoveAdjustOffset({int offset}) = _$DNAEndsMoveAdjustOffset._;
+
+  DNAEndsMoveAdjustOffset._();
+
+  static Serializer<DNAEndsMoveAdjustOffset> get serializer => _$dNAEndsMoveAdjustOffsetSerializer;
+}
+
+abstract class DNAEndsMoveStop
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<DNAEndsMoveStop, DNAEndsMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndsMoveStop() = _$DNAEndsMoveStop._;
+
+  DNAEndsMoveStop._();
+
+  static Serializer<DNAEndsMoveStop> get serializer => _$dNAEndsMoveStopSerializer;
+}
+
+abstract class DNAEndsMoveCommit
+    with BuiltJsonSerializable
+    implements Action, Built<DNAEndsMoveCommit, DNAEndsMoveCommitBuilder> {
+  DNAEndsMove get dna_ends_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndsMoveCommit({DNAEndsMove dna_ends_move}) = _$DNAEndsMoveCommit._;
+
+  DNAEndsMoveCommit._();
+
+  static Serializer<DNAEndsMoveCommit> get serializer => _$dNAEndsMoveCommitSerializer;
 }

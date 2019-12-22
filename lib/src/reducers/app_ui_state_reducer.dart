@@ -38,6 +38,8 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
   TypedReducer<bool, actions.PotentialCrossoverCreate>(potential_crossover_create_app_ui_state_reducer),
   TypedReducer<bool, actions.PotentialCrossoverRemove>(potential_crossover_remove_app_ui_state_reducer),
+  TypedReducer<bool, actions.DNAEndsMoveStart>(dna_ends_move_start_app_ui_state_reducer),
+  TypedReducer<bool, actions.DNAEndsMoveStop>(dna_ends_move_stop_app_ui_state_reducer),
 ]);
 
 bool potential_crossover_create_app_ui_state_reducer(bool state, actions.PotentialCrossoverCreate action) =>
@@ -45,6 +47,10 @@ bool potential_crossover_create_app_ui_state_reducer(bool state, actions.Potenti
 
 bool potential_crossover_remove_app_ui_state_reducer(bool state, actions.PotentialCrossoverRemove action) =>
     false;
+
+bool dna_ends_move_start_app_ui_state_reducer(bool state, actions.DNAEndsMoveStart action) => true;
+
+bool dna_ends_move_stop_app_ui_state_reducer(bool state, actions.DNAEndsMoveStop action) => false;
 
 bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
 
@@ -93,16 +99,16 @@ GridPosition side_view_mouse_grid_pos_clear_reducer(
         GridPosition _, actions.MouseGridPositionSideClear action) =>
     null;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // ui state global reducer
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_global_reducer(AppUIState ui_model, AppState model, action) => ui_model.rebuild((u) => u
-  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_model.mouseover_datas, model, action))
+AppUIState ui_state_global_reducer(AppUIState ui_state, AppState model, action) => ui_state.rebuild((u) => u
+  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, model, action))
   ..side_selected_helix_idxs
-      .replace(side_selected_helices_global_reducer(ui_model.side_selected_helix_idxs, model, action))
-  ..selectables_store.replace(selectables_store_global_reducer(ui_model.selectables_store, model, action)));
+      .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, model, action))
+  ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, model, action)));
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRotationSet>(

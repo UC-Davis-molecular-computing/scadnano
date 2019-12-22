@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 
+import 'dna_ends_move_start.dart';
 import 'load_file.dart';
 import 'save_file.dart';
 import '../state/app_state.dart';
@@ -18,4 +19,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   throttle_middleware,
   thunk_middleware,
   helix_remove_middleware,
+  dna_ends_move_start_middleware,
 ]);

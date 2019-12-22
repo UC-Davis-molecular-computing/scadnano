@@ -96,6 +96,11 @@ part 'serializers.g.dart';
   PotentialCrossoverRemove,
   DNAEndMove,
   DNAEndsMove,
+  DNAEndsMoveStart,
+  DNAEndsMoveSetSelectedEnds,
+  DNAEndsMoveAdjustOffset,
+  DNAEndsMoveStop,
+  DNAEndsMoveCommit,
 ])
 Serializers serializers = _$serializers;
 

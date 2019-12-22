@@ -9,7 +9,9 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
+import 'package:scadnano/src/state/dna_end_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/helix.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
@@ -39,12 +41,16 @@ enum DraggableComponent { main, side }
 class DesignViewComponent {
   DivElement root_element;
 
-  DivElement design_above_footer_pane = DivElement()..attributes = {'id': 'design'};
+  DivElement design_above_footer_pane = DivElement()
+    ..attributes = {'id': 'design'};
   DivElement footer_separator = DivElement()
     ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
-  DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
-  DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
-  DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
+  DivElement footer_element = DivElement()
+    ..attributes = {'id': FOOTER_ID};
+  DivElement modes_element = DivElement()
+    ..attributes = {'id': MODES_ID};
+  DivElement error_message_pane = DivElement()
+    ..attributes = {'id': 'error-message-pane'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -60,10 +66,12 @@ class DesignViewComponent {
   Point<num> main_view_mouse_position = Point<num>(0, 0);
 
   DesignViewComponent(this.root_element) {
-    this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
+    this.side_pane = DivElement()
+      ..attributes = {'id': 'side-pane', 'class': 'split'};
     var side_main_separator = DivElement()
       ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
-    this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
+    this.main_pane = DivElement()
+      ..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
       ..attributes = {
@@ -84,7 +92,8 @@ class DesignViewComponent {
       ..attributes = {
         'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
       };
-    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
+    var main_view_svg_viewport = svg.GElement()
+      ..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
@@ -150,10 +159,30 @@ class DesignViewComponent {
       view_svg.onMouseDown.listen((event) {
         util.set_allow_pan(event.target is svg.SvgSvgElement);
       });
-      view_svg.onMouseUp.listen((event) {
-        util.set_allow_pan(true);
-      });
+      //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
+      // which calls main_view_dna_ends_move_stop below
+//      view_svg.onMouseUp.listen((event) {
+//        util.set_allow_pan(true);
+//        print('mouse up');
+//        if (view_svg == main_view_svg && app.store_dna_ends_move.state != null) {
+//          DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+//          print('mouse up and move != null');
+//          app.dispatch(actions.DNAEndsMoveStop(dna_ends_move: dna_ends_move));
+//        }
+//      });
     }
+
+    main_view_svg.onMouseMove.listen((event) {
+      DNAEndsMove moves_store = app.store_dna_ends_move.state;
+      if (moves_store != null) {
+        Helix helix = moves_store.helix;
+        int offset = util.get_offset_forward(event, helix).offset;
+        int old_offset = moves_store.current_offset;
+        if (offset != old_offset) {
+          app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+        }
+      }
+    });
 
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
     // because while installed, Draggable stops the mouse events that the svg-pan-zoom library listens to.
@@ -265,7 +294,7 @@ class DesignViewComponent {
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
-        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+    util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     bool toggle;
     if (event.ctrlKey || event.metaKey) {
       toggle = true;
@@ -280,7 +309,7 @@ class DesignViewComponent {
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
-        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+    util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       var action = actions.SelectionBoxSizeChange(point, is_main_view);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
@@ -347,7 +376,8 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()..store = app.store)((ReduxProvider()
+          (ReduxProvider()
+            ..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)(
             ConnectedDesignSide()(),
@@ -358,20 +388,24 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()..store = app.store)((ReduxProvider()
+          (ReduxProvider()
+            ..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)((ReduxProvider()
             ..store = app.store_potential_crossover
-            ..context = app.context_potential_crossover)(
+            ..context = app.context_potential_crossover)((ReduxProvider()
+            ..store = app.store_dna_ends_move
+            ..context = app.context_dna_ends_move)(
             ConnectedDesignMain()(),
-          ))),
+          )))),
         ),
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
+          (ReduxProvider()
+            ..store = app.store)(
             ConnectedDesignFooter()(),
           ),
         ),
@@ -388,7 +422,7 @@ class DesignViewComponent {
   main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
       Point<num> point =
-          util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+      util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
     }
@@ -413,6 +447,16 @@ side_view_update_grid_position({Point<num> mouse_pos = null, MouseEvent event = 
   } else {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
       app.dispatch(actions.MouseGridPositionSideClear());
+    }
+  }
+}
+
+main_view_dna_ends_move_stop() {
+  if (app.store_dna_ends_move.state != null) {
+    DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+    app.dispatch(actions.DNAEndsMoveStop());
+    if (dna_ends_move.is_nontrivial) {
+      app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
     }
   }
 }

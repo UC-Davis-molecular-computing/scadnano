@@ -27,6 +27,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..show_editor = false
   ..show_mismatches = true
   ..drawing_potential_crossover = false
+  ..moving_dna_ends = false
   ..changed_since_last_save = false
   ..side_view_grid_position_mouse_cursor = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
@@ -66,6 +67,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_editor;
 
   bool get drawing_potential_crossover;
+
+  bool get moving_dna_ends;
 
   bool get selection_box_displayed_main;
 

@@ -4,6 +4,7 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
+import 'dna_ends_move_reducer.dart';
 import 'helices_reducer.dart';
 import 'strands_reducer.dart';
 
@@ -57,5 +58,5 @@ Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
 // global: need the whole AppState
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DNADesign, AppState, actions.HelixRemove>(helix_remove_dna_design_global_reducer),
-
 ]);
+
