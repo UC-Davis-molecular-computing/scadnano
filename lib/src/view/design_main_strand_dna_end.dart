@@ -112,6 +112,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
       // which it is when Shift or Ctrl (or Meta) keys are pressed
       // see here: https://github.com/marcojakob/dart-dnd/issues/27
       BoundSubstrand substrand = this.props.substrand;
+      DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
       var helix = app.state.dna_design.helices[substrand.helix];
       var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
       var pos = helix.svg_base_pos(offset, substrand.forward);
@@ -125,11 +126,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         ..color = props.color
         ..classname = classname
         ..forward = substrand.forward
+        ..id = dna_end.id()
         ..key = 'nonmoving-end';
 
       // draw avatar of moving DNA end if it is moving
       EndMovingProps end_moving_props = ConnectedEndMoving();
-      DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
       end_moving_props = end_moving_props
         ..dna_end = dna_end
         ..original_offset = offset

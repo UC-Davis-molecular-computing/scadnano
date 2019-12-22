@@ -34,9 +34,10 @@ SelectablesStore delete_all_reducer(
 
 SelectablesStore selections_adjust_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectionsAdjust action) {
-  //XXX: this is not a pure reducer since it looks at SVG view properties to determine SVG object intersection.
-  // It seems difficult to put enough state into AppState to reliably detect when one SVG element overlaps another
-  // in a way that is robust to future changes in how we draw.
+  //XXX: this is not a pure reducer since it looks at SVG view properties to determine SVG object
+  // intersection.
+  // It seems difficult to put enough state into AppState to reliably detect when one SVG element
+  // overlaps another in a way that is robust to future changes in how we draw.
   // Maybe figure out some way to do this with middleware so the reducer can remain pure.
 
   RectElement select_box = querySelector('#selection-box-main') as RectElement;
@@ -51,10 +52,10 @@ SelectablesStore selections_adjust_reducer(
 
   Set<SvgElement> elts_overlapping = util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).toSet();
 
-//  var selectables_by_id = state.ui_state.selectables_store.selectables_by_id;
+  var selectable_by_id = state.dna_design.selectable_by_id;
   List<Selectable> overlapping_now = [
 //    for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
-    for (var elt in elts_overlapping) state.dna_design.selectable_by_id(elt.id)
+    for (var elt in elts_overlapping) if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
   ];
 
   List<Selectable> overlapping_now_select_mode_enabled = [];
@@ -92,7 +93,8 @@ SelectablesStore selections_clear_reducer(SelectablesStore store, actions.Select
     store.clear();
 
 //FIXME: If we just finished moving ends, they should remain selected
-SelectablesStore ends_moved_reducer(SelectablesStore store, AppState state, actions.DNAEndsMoveCommit action) {
+SelectablesStore ends_moved_reducer(
+    SelectablesStore store, AppState state, actions.DNAEndsMoveCommit action) {
   store = store.clear();
   return store;
 //  List<DNAEnd> old_ends = List<DNAEnd>.from(store.selected_items);

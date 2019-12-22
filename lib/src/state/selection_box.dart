@@ -20,7 +20,7 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
   factory SelectionBox(Point<num> start, bool toggle, bool is_main) => SelectionBox.from((b) => b
     ..start = start
     ..toggle = toggle
-    ..is_main=is_main
+    ..is_main = is_main
     ..current = start);
 
   factory SelectionBox.from([void Function(SelectionBoxBuilder) updates]) = _$SelectionBox;
@@ -95,9 +95,10 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 //    print('elts_overlapping: $elts_overlapping');
 
 //    Set<Selectable> overlapping_now = {for (var elt in elts_overlapping) selectables_by_id[elt.id]};
+    var selectable_by_id = app.state.dna_design.selectable_by_id;
     List<Selectable> overlapping_now = [
 //      for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
-      for (var elt in elts_overlapping) app.state.dna_design.selectable_by_id(elt.id)
+      for (var elt in elts_overlapping) if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
     ];
 
 //    print('elts_overlapping ids: ${[for (var elt in elts_overlapping) elt.id]}');
@@ -166,7 +167,8 @@ get_generalized_intersection_list(Rect select_box_bbox, bool overlap(num l1, num
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(
+    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

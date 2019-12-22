@@ -105,30 +105,39 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return builder.build();
   }
 
-  Selectable selectable_by_id(String id) {
-    Selectable selectable;
-
-    selectable = strands_by_id[id];
-    if (selectable != null) {
-      return selectable;
+  @memoized
+  BuiltMap<String, Selectable> get selectable_by_id {
+    Map<String, Selectable> map = {};
+    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id]) {
+      for (var key in map_small.keys) {
+        var obj = map_small[key];
+        map[key] = obj;
+      }
     }
-
-    selectable = loopouts_by_id[id];
-    if (selectable != null) {
-      return selectable;
-    }
-
-    selectable = crossovers_by_id[id];
-    if (selectable != null) {
-      return selectable;
-    }
-
-    selectable = ends_by_id[id];
-    if (selectable != null) {
-      return selectable;
-    }
-
-    return selectable;
+    return map.build();
+//    Selectable selectable;
+//
+//    selectable = strands_by_id[id];
+//    if (selectable != null) {
+//      return selectable;
+//    }
+//
+//    selectable = loopouts_by_id[id];
+//    if (selectable != null) {
+//      return selectable;
+//    }
+//
+//    selectable = crossovers_by_id[id];
+//    if (selectable != null) {
+//      return selectable;
+//    }
+//
+//    selectable = ends_by_id[id];
+//    if (selectable != null) {
+//      return selectable;
+//    }
+//
+//    return selectable;
   }
 
   @memoized
@@ -372,8 +381,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // view order of helices
     var identity_permutation = util.identity_permutation(num_helices);
-    List<int> helices_view_order = List<int>.from(util.get_value_with_default(
-        json_map, constants.helices_view_order_key, identity_permutation));
+    List<int> helices_view_order = List<int>.from(
+        util.get_value_with_default(json_map, constants.helices_view_order_key, identity_permutation));
     if (helices_view_order.length != num_helices) {
       throw IllegalDNADesignError('length of helices (${num_helices}) does not match '
           'length of helices_view_order (${helices_view_order.length})');
@@ -428,7 +437,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //    TODO: implement this and give reasonable error messages
   }
 
-  String toString() => """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
+  String toString() =>
+      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
   helices=$helices, 
   strands=$strands)""";
 
@@ -512,7 +522,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
   BuiltSet<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) {
     var substrands_at_offset = SetBuilder<BoundSubstrand>({
-      for (var substrand in this.helix_idx_to_substrands[helix_idx]) if (substrand.contains_offset(offset)) substrand
+      for (var substrand in this.helix_idx_to_substrands[helix_idx])
+        if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
   }
@@ -627,7 +638,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 }
 
-BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(int num_helices, Iterable<Strand> strands) {
+BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
+    int num_helices, Iterable<Strand> strands) {
   var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
   for (int _ = 0; _ < num_helices; _++) {
     helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
@@ -655,7 +667,8 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset = substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+      var max_offset =
+          substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -664,7 +677,8 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var min_offset = substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+      var min_offset =
+          substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }

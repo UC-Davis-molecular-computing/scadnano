@@ -16,6 +16,7 @@ abstract class EndEitherPrimeProps implements UiProps {
   Point<num> pos;
   Color color;
   bool forward;
+  String id;
 }
 
 @Factory()
@@ -29,6 +30,7 @@ class _$End5PrimeProps extends UiProps implements EndEitherPrimeProps {
   Point<num> pos;
   Color color;
   bool forward;
+  String id;
 }
 
 @Component2()
@@ -48,6 +50,7 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
       ..height = '${width}px'
       ..rx = '1.5px'
       ..ry = '1.5px'
+      ..id = props.id
       ..fill = props.color.toRgbColor().toCssString())();
   }
 }

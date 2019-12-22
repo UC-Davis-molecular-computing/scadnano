@@ -21,13 +21,9 @@ typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove, EndMovingProps>(
   mapStateToPropsWithOwnProps: (dna_ends_move, props) {
     int current_offset = dna_ends_move?.current_capped_offset_of(props.dna_end);
-//    print('dna_ends_move:  $dna_ends_move');
-
     if (current_offset == null) {
       return EndMoving()..render = false;
     }
-    print('*'*100);
-    print('current_offset: $current_offset');
     return EndMoving()..current_offset = current_offset;
   },
   context: app.context_dna_ends_move,

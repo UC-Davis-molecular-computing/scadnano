@@ -18,6 +18,7 @@ class _$End3PrimeProps extends UiProps implements EndEitherPrimeProps {
   Point<num> pos;
   Color color;
   bool forward;
+  String id;
 }
 
 @Component2()
@@ -44,6 +45,7 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
       ..onMouseUp = props.on_mouse_up
       ..className = props.classname
       ..points = points
+      ..id = props.id
       ..fill = props.color.toRgbColor().toCssString())();
   }
 }
