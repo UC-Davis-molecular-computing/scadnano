@@ -22,8 +22,9 @@ part 'strand.g.dart';
 abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, JSONSerializable {
   Strand._();
 
+  //FIXME: this is not pure since it consults util.color_cycler
   factory Strand(Iterable<Substrand> substrands,
-      {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = null}) {
+      {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = false}) {
     if (color == null) {
       color = util.color_cycler.next();
     }
@@ -115,8 +116,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   @nullable
   IDTFields get idt;
 
-  //TODO: don't let this be nullable
-  @nullable
   bool get is_scaffold;
 
   // Since color assignment is somewhat nondeterministic, we don't want to use it to detect equality.
@@ -185,6 +184,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       json_map[constants.idt_key] = suppress_indent ? NoIndent(idt_json) : idt_json;
     }
 
+    //TODO: figure out if DNADesign is an origami, and if not, don't write this field
     if (this.is_scaffold != null) {
       json_map[constants.is_scaffold_key] = this.is_scaffold;
     }
@@ -281,7 +281,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
         ? parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
-    bool is_scaffold = null;
+    bool is_scaffold = false;
     if (json_map.containsKey(constants.is_scaffold_key)) {
       is_scaffold = json_map[constants.is_scaffold_key];
     }

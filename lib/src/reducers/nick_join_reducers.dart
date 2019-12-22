@@ -181,10 +181,7 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
   }
 
   Strand new_strand = Strand(substrands_new,
-      color: color,
-      dna_sequence: dna,
-      idt: idt,
-      is_scaffold: strand1.is_scaffold == true || strand2.is_scaffold == true);
+      color: color, dna_sequence: dna, idt: idt, is_scaffold: strand1.is_scaffold || strand2.is_scaffold);
   return new_strand;
 }
 
