@@ -308,6 +308,13 @@ html, body {
     stroke-width: 0.5px;
 }
 
+.five-prime-end-moving,
+.three-prime-end-moving {
+    stroke: black;
+    stroke-width: 0.5px;
+    fill-opacity: 0.5;
+}
+
 .five-prime-end,
 .three-prime-end {
     stroke: black;

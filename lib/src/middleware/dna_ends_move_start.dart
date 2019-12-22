@@ -23,15 +23,13 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
     BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends;
     List<DNAEndMove> moves = [];
     for (var end in selected_ends) {
-      int current_offset = end.offset;
       int lowest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, false);
       int highest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, true);
 
       var move = DNAEndMove(
           dna_end: end,
           lowest_offset: lowest_offset,
-          highest_offset: highest_offset,
-          current_offset: current_offset);
+          highest_offset: highest_offset);
       moves.add(move);
     }
 

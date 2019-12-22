@@ -69,7 +69,7 @@ BuiltList<Strand> strands_dna_ends_move_stop_reducer(
 }
 
 Strand single_strand_dna_ends_move_stop_reducer(Strand strand, DNAEndsMove all_move) {
-  int delta = all_move.current_offset - all_move.original_offset;
+//  int delta = all_move.current_offset - all_move.original_offset;
   List<Substrand> substrands = strand.substrands.toList();
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
@@ -79,7 +79,8 @@ Strand single_strand_dna_ends_move_stop_reducer(Strand strand, DNAEndsMove all_m
       for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
         DNAEndMove move = find_move(all_move.moves, dnaend);
         if (move != null) {
-          int new_offset = adjust_offset(dnaend, move, delta);
+          int new_offset = all_move.current_capped_offset_of(dnaend);
+//          int new_offset = adjust_offset(dnaend, move, delta);
           bound_ss = bound_ss.rebuild(
               (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
           List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);

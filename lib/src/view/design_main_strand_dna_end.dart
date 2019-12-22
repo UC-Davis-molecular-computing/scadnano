@@ -4,16 +4,20 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
+
 //import 'package:dnd/dnd.dart';
 
+import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import '../state/bound_substrand.dart';
 import '../app.dart';
+import '5p_end.dart';
+import '3p_end.dart';
+import 'design_main_strand_dna_end_moving.dart';
 import 'design_main.dart';
 import '../actions/actions.dart' as actions;
 
@@ -34,6 +38,8 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
           .selected(props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p);
   bool selectable =
       DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(select_mode_choice);
+  DNAEnd end = props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
+  bool moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end);
   return DesignMainDNAEnd()
     ..selected = selected
     ..selectable = selectable
@@ -41,6 +47,7 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
     ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
     ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
     ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
+    ..moving_this_dna_end = moving_this_dna_end
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
@@ -63,6 +70,7 @@ class _$DesignMainDNAEndProps extends UiProps {
   bool pencil_mode;
   bool join_mode;
   bool drawing_potential_crossover;
+  bool moving_this_dna_end;
 }
 
 @Component2()
@@ -75,14 +83,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
 
   @override
   render() {
-    BoundSubstrand substrand = this.props.substrand;
-
-    var id = dna_end.id();
-
-    var helix = app.state.dna_design.helices[substrand.helix];
-    var offset = substrand.offset_5p;
-    var right = substrand.forward;
-
     var classname = '${props.is_5p ? 'five' : 'three'}-prime-end' +
         (is_first && props.is_5p ? '-first-substrand' : '') +
         (is_last && !props.is_5p ? '-last-substrand' : '');
@@ -94,9 +94,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
     if (props.selectable) {
       classname += ' selectable';
     }
-
-    //XXX: width, height, rx, ry should be do-able in CSS. However, Firefox won't display properly
-    // if they are specified in CSS, but it will if they are specified here.
 
     //[{ isDragging }, drag]
     if (USING_REACT_DND) {
@@ -111,52 +108,70 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
 //      var drag = drag_ret[1];
 //      bool isDragging = props['isDragging'];
     } else {
+      //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
+      // which it is when Shift or Ctrl (or Meta) keys are pressed
+      // see here: https://github.com/marcojakob/dart-dnd/issues/27
+      BoundSubstrand substrand = this.props.substrand;
+      var helix = app.state.dna_design.helices[substrand.helix];
+      var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
+      var pos = helix.svg_base_pos(offset, substrand.forward);
       var on_pointer_down = handle_end_click_select_and_or_move_start;
-      if (props.is_5p) {
-        var pos = helix.svg_base_pos(offset, right);
-        num width = 7;
-        //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
-        // which it is when Shift or Ctrl (or Meta) keys are pressed
-        // see here: https://github.com/marcojakob/dart-dnd/issues/27
-        return (Dom.rect()
-          ..onPointerDown = on_pointer_down //dna_end.handle_selection
-//          ..onMouseDown = handle_end_click_select_and_or_move //dna_end.handle_selection
-          ..onMouseUp = ((ev) => handle_end_click_ligate_or_potential_crossover())
-          ..className = classname
-          ..x = '${pos.x - width / 2}'
-          ..y = '${pos.y - width / 2}'
-          ..width = '${width}px'
-          ..height = '${width}px'
-          ..rx = '1.5px'
-          ..ry = '1.5px'
-          ..fill = props.color.toRgbColor().toCssString()
-          ..id = id)();
-      } else {
-        var offset = substrand.offset_3p;
-        var direction = substrand.forward;
-        var helix = app.state.dna_design.helices[substrand.helix];
-        var pos = helix.svg_base_pos(offset, direction);
-        var points;
-        num scale = 3.7;
-        if (!substrand.forward) {
-          points = '${pos.x - scale},${pos.y} '
-              '${pos.x + 0.9 * scale},${pos.y + scale} '
-              '${pos.x + 0.9 * scale},${pos.y - scale}';
-        } else {
-          points = '${pos.x + scale},${pos.y} '
-              '${pos.x - 0.9 * scale},${pos.y + scale} '
-              '${pos.x - 0.9 * scale},${pos.y - scale}';
-        }
+      var on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover());
+      EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
+      end_props = end_props
+        ..on_pointer_down = on_pointer_down
+        ..on_mouse_up = on_mouse_up
+        ..pos = pos
+        ..color = props.color
+        ..classname = classname
+        ..forward = substrand.forward
+        ..key = 'nonmoving-end';
 
-        return (Dom.polygon()
-          ..onPointerDown = on_pointer_down //dna_end.handle_selection
-//          ..onMouseDown = handle_end_click_select_and_or_move //dna_end.handle_selection
-          ..onMouseUp = ((ev) => handle_end_click_ligate_or_potential_crossover())
-          ..className = classname
-          ..points = points
-          ..fill = props.color.toRgbColor().toCssString()
-          ..id = id)();
-      }
+      // draw avatar of moving DNA end if it is moving
+      EndMovingProps end_moving_props = ConnectedEndMoving();
+      DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
+      end_moving_props = end_moving_props
+        ..dna_end = dna_end
+        ..original_offset = offset
+        ..color = props.color
+        ..forward = substrand.forward
+        ..helix = helix
+        ..is_5p = props.is_5p
+        ..key = 'moving-end';
+
+      return [
+        end_props(),
+        end_moving_props(),
+      ];
+
+//      if (props.moving_this_dna_end) {
+//        //XXX: change second option
+//        EndMovingEitherPrimeProps end_moving_props = props.is_5p ? EndMoving5Prime() : EndMoving5Prime();
+//        DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
+//        end_moving_props = end_moving_props
+//          ..dna_end = dna_end
+//          ..original_offset = offset
+//          ..color = props.color
+//          ..forward = substrand.forward
+//          ..helix = helix;
+//        return [
+//          end_props(),
+//          end_moving_props(),
+//        ];
+//      } else {
+//        return end_props();
+//      }
+
+//      EndMovingEitherPrimeProps end_moving_props = (props.is_5p ? EndMoving5Prime() : EndMoving3Prime());
+//      end_moving_props = end_moving_props
+//        ..original_offset = pos
+//        ..color = props.color
+//        ..classname = classname
+//        ..id = id;
+//      if (!props.is_5p) {
+//        (end_props as End3PrimeProps).forward = substrand.forward;
+//      }
+////      return (end_props(),);
     }
   }
 

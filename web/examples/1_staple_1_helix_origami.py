@@ -9,7 +9,6 @@ def main():
     scaf = sc.Strand([scaf_ss], color=sc.default_scaffold_color)
     strands = [stap, scaf]
     design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
-    design.add_deletion(helix=0, offset=2)
     design.assign_dna(scaf, 'AACT' * (length // 4))
 
     return design

@@ -19,16 +19,17 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand =
-    connect<AppState, DesignMainStrandProps>(mapStateToPropsWithOwnProps: (state, props) {
-  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
-  bool selectable =
-      DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
-  return DesignMainStrand()
-    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-    ..selected = selected
-    ..selectable = selectable;
-})(DesignMainStrand);
+UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
+  mapStateToPropsWithOwnProps: (state, props) {
+    bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
+    bool selectable =
+        DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+    return DesignMainStrand()
+      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+      ..selected = selected
+      ..selectable = selectable;
+  },
+)(DesignMainStrand);
 
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
