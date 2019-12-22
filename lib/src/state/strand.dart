@@ -184,8 +184,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       json_map[constants.idt_key] = suppress_indent ? NoIndent(idt_json) : idt_json;
     }
 
-    //TODO: figure out if DNADesign is an origami, and if not, don't write this field
-    if (this.is_scaffold != null) {
+    if (this.is_scaffold) {
       json_map[constants.is_scaffold_key] = this.is_scaffold;
     }
 
