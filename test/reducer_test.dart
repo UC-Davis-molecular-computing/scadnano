@@ -4,23 +4,16 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:built_value/built_value.dart';
-import 'package:color/color.dart';
-import 'package:react/react.dart';
-import 'package:redux/redux.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 
@@ -1113,23 +1106,23 @@ main() {
   });
 
   //
-  //     0                16
+  //     0            16
   //    AGTCAGTCAGTCAGTC
-  // 0  [--------------> -
-  //   -<--------------]  \
+  // 0  [-----------------
+  //   ----------------]  \
   //  | TCAGTCAGTCAGTCAG   |
   //  |                    |
   //  |  0             16  |
-  //   -AATTCCGGAATTCCGG   |
-  // 1  [---------------> -/ ---
-  //  - <---------------] -     \
+  //  \ AATTCCGGAATTCCGG   |
+  // 1 --------------------/ ---
+  //  ---------------------     \
   // /  TTAAGGCCTTAAGGCC        |
   // |                          |
   // |                          |
   // |   0             16       |
   // \  AAAATTTTCCCCGGGG        |
-  //  - [-------------->        /
-  // 2  <--------------] ------
+  //  ----------------->        /
+  // 2  <----------------------
   //    TTTTAAAAGGGGCCCC
   String simple_strand_json = r"""
  {
@@ -1156,22 +1149,23 @@ main() {
   """;
   DNADesign simple_strand_dna_design = DNADesign.from_json(jsonDecode(simple_strand_json));
   //
-  //     0             16
+  //     0            16
   //    AGTCAGTCAGTCAGTC
-  // 0  [--------------> -
-  //   -<--------------]  \
+  // 0  [-----------------
+  //   ----------------]  \
   //  | TCAGTCAGTCAGTCAG   |
   //  |                    |
   //  |  0             16  |
-  //   -AATTCCGG AATTCCGG  |
-  // 1  [------> [-------> -/ --
-  //  - <------] <-------] -    \
-  // /  TTAAGGCC TTAAGGCC       |
+  //  \ AATTCCGGAATTCCGG   |
+  // 1 --------------------/ ---
+  //  ---------------------     \
+  // /  TTAAGGCCTTAAGGCC        |
+  // |                          |
   // |                          |
   // |   0             16       |
   // \  AAAATTTTCCCCGGGG        |
-  //  - [-------------->        /
-  // 2  <--------------] ------
+  //  ----------------->        /
+  // 2  <----------------------
   //    TTTTAAAAGGGGCCCC
   test("add nick to a list of substrands", () {
     AppState state = app_state_from_dna_design(simple_strand_dna_design);
@@ -1218,5 +1212,55 @@ main() {
   """;
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
+  });
+
+  //   0       8       16
+  // 0 [------>[------->
+  //   AGTCAGTC AATTCCGG
+  String two_strands_forward_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "strands": [
+    {
+      "dna_sequence": "AGTCAGTC",
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 8}
+      ]
+    },
+    {
+      "dna_sequence": "AATTCCGG",
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 8, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign two_strands_forward = DNADesign.from_json(jsonDecode(two_strands_forward_json));
+
+  //   0               16
+  // 0 [--------------->
+  //   AGTCAGTCAATTCCGG
+  String ligate_two_strands_forward_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "strands": [
+    {
+      "dna_sequence": "AGTCAGTCAATTCCGG",
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign ligate_two_strands_forward = DNADesign.from_json(jsonDecode(ligate_two_strands_forward_json));
+  test("join two strands forward", () {
+    AppState state = app_state_from_dna_design(two_strands_forward);
+
+    DNAEnd dna_end = two_strands_forward.strands[1].dnaend_5p;
+    state = app_state_reducer(state, Ligate(dna_end: dna_end));
+
+    expect_strands_equal(state.dna_design.strands, ligate_two_strands_forward.strands);
   });
 }
