@@ -121,9 +121,14 @@
     // }
 
     var allow_pan = true;
+    var allow_zoom = true;
 
     function set_allow_pan(allow) {
         allow_pan = allow;
+    }
+
+    function set_allow_zoom(allow) {
+        allow_zoom = allow;
     }
 
     //TODO: add ability to pan with keyboard; possibly change to one of these libraries:
@@ -137,6 +142,18 @@
             allow = false;
         }
         if (!allow_pan) {
+            allow = false;
+        }
+        return allow;
+    }
+
+    // This is needed to prevent zooming unless Alt key is pressed
+    function before_zoom(oldZoom, newZoom) {
+        var allow = true;
+        if (document.body.classList.contains('dnd-drag-occurring')) {
+            allow = false;
+        }
+        if (!allow_zoom) {
             allow = false;
         }
         return allow;
@@ -209,22 +226,25 @@
             }
         };
 
-        // var ctrl = false;
-        // var meta = false;
-        // var shift = false;
-        // var alt = false;
-        //
-        // function set_ctrl_shift_alt(event) {
-        //     ctrl = event.ctrlKey;
-        //     meta = event.metaKey;
-        //     shift = event.shiftKey;
-        //     alt = event.altKey;
-        // }
-        //
-        // window.onkeydown = set_ctrl_shift_alt;
-        // window.onkeyup = set_ctrl_shift_alt;
-        // window.onmousedown = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
-        // window.onmouseup = set_ctrl_shift_alt; // needed because others aren't called if mouse key is depressed
+        var ctrl = false;
+        var meta = false;
+        var shift = false;
+        var alt = false;
+
+        function set_ctrl_shift_alt(event) {
+            ctrl = event.ctrlKey;
+            meta = event.metaKey;
+            shift = event.shiftKey;
+            alt = event.altKey;
+            if (event.altKey) {
+                event.preventDefault(); // otherwise shifts focus away from main viewport to browser menu
+            }
+        }
+
+        window.onkeydown = set_ctrl_shift_alt;
+        window.onkeyup = set_ctrl_shift_alt;
+        window.onmousedown = set_ctrl_shift_alt;
+        window.onmouseup = set_ctrl_shift_alt;
 
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
@@ -234,6 +254,7 @@
             minZoom: 0.05,
             maxZoom: 20,
             beforePan: before_pan,
+            beforeZoom: before_zoom,
             customEventsHandler: eventsHandler,
             fit: false,
         });
@@ -244,6 +265,7 @@
             minZoom: 0.05,
             maxZoom: 20,
             beforePan: before_pan,
+            beforeZoom: before_zoom,
             customEventsHandler: eventsHandler,
             fit: false,
         });
