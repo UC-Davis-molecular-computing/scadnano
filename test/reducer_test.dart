@@ -2,6 +2,7 @@
 // import 'dart:io';
 
 import 'dart:convert';
+import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/actions/actions.dart';
@@ -13,6 +14,7 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
@@ -1255,7 +1257,7 @@ main() {
  }
   """;
   DNADesign ligate_two_strands_forward = DNADesign.from_json(jsonDecode(ligate_two_strands_forward_json));
-  test("join two strands forward using 5p end", () {
+  test("ligate two strands forward using 5p end", () {
     AppState state = app_state_from_dna_design(two_strands_forward);
 
     DNAEnd dna_end = two_strands_forward.strands[1].dnaend_5p;
@@ -1263,7 +1265,7 @@ main() {
 
     expect_strands_equal(state.dna_design.strands, ligate_two_strands_forward.strands);
   });
-  test("join two strands forward using 3p end", () {
+  test("ligate two strands forward using 3p end", () {
     AppState state = app_state_from_dna_design(two_strands_forward);
 
     DNAEnd dna_end = two_strands_forward.strands[0].dnaend_3p;
@@ -1313,7 +1315,7 @@ main() {
  }
   """;
   DNADesign ligate_two_strands_reverse = DNADesign.from_json(jsonDecode(ligate_two_strands_reverse_json));
-  test("join two strands reverse using 5p end", () {
+  test("ligate two strands reverse using 5p end", () {
     AppState state = app_state_from_dna_design(two_strands_reverse);
 
     DNAEnd dna_end = two_strands_reverse.strands[0].dnaend_5p;
@@ -1321,12 +1323,216 @@ main() {
 
     expect_strands_equal(state.dna_design.strands, ligate_two_strands_reverse.strands);
   });
-  test("join two strands reverse using 3p end", () {
+  test("ligate two strands reverse using 3p end", () {
     AppState state = app_state_from_dna_design(two_strands_reverse);
 
     DNAEnd dna_end = two_strands_reverse.strands[1].dnaend_3p;
     state = app_state_reducer(state, Ligate(dna_end: dna_end));
 
     expect_strands_equal(state.dna_design.strands, ligate_two_strands_reverse.strands);
+  });
+
+  //   0                  16
+  //
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  // 1 [------------------->
+  //   <-------------------]
+  String two_helices_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign two_helices_design = DNADesign.from_json(jsonDecode(two_helices_json));
+
+  //   0                  16
+  //   Connect this one
+  //   |
+  //   v
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  //   With this one
+  //   |
+  //   v
+  // 1 [------------------->
+  //   <-------------------]
+  test('pencil should ignore connecting a 5p end to a 5p end', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+
+    Strand h0_forward_strand = two_helices_design.strands[0];
+    Strand h1_forward_strand = two_helices_design.strands[2];
+    Helix h0 = two_helices_design.helices[0];
+    Point<num> start_point = h0.svg_base_pos(0, true);
+    PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
+      helix_idx: 0,
+      forward: true,
+      offset: 0,
+      color: h0_forward_strand.color.toHexColor().toCssString(),
+      dna_end_first_click: h0_forward_strand.dnaend_5p,
+      start_point: start_point,
+      current_point: start_point,
+    );
+    DNAEnd helix_1_5p_end_second_click = h1_forward_strand.dnaend_5p;
+
+    state = app_state_reducer(
+        state,
+        JoinStrandsByCrossover(
+          dna_end_second_click: helix_1_5p_end_second_click,
+          potential_crossover: helix_0_5p_end_potential_crossover,
+        ));
+
+    expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
+  });
+
+  //   0                  16
+  //
+  //         Connect this one
+  //                       |
+  //                       v
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  //            With this one
+  //                       |
+  //                       v
+  // 1 [------------------->
+  //   <-------------------]
+  test('pencil should ignore connecting a 3p end to a 3p end', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+
+    Strand h0_forward_strand = two_helices_design.strands[0];
+    Strand h1_forward_strand = two_helices_design.strands[2];
+    Helix h0 = two_helices_design.helices[0];
+    Point<num> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
+    PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
+      helix_idx: 0,
+      forward: true,
+      offset: 15,
+      color: h0_forward_strand.color.toHexColor().toCssString(),
+      dna_end_first_click: h0_forward_strand.dnaend_3p,
+      start_point: start_point,
+      current_point: start_point,
+    );
+    DNAEnd helix_1_3p_end_second_click = h1_forward_strand.dnaend_3p;
+
+    state = app_state_reducer(
+        state,
+        JoinStrandsByCrossover(
+          dna_end_second_click: helix_1_3p_end_second_click,
+          potential_crossover: helix_0_5p_end_potential_crossover,
+        ));
+
+    expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
+  });
+  //   0                  16
+  //
+  // 0 [------------------->
+  //   --------------------]
+  //  /
+  //  |
+  //  \
+  // 1 -------------------->
+  //   <-------------------]
+  String two_helices_join_inner_strands_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16},
+        {"helix": 1, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign two_helices_join_inner_strands = DNADesign.from_json(jsonDecode(two_helices_join_inner_strands_json));
+  test('pencil should connect a 3p end to a 5p end', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+
+    Strand h0_reverse_strand = two_helices_design.strands[1];
+    Strand h1_forward_strand = two_helices_design.strands[2];
+    Helix h0 = two_helices_design.helices[0];
+    Point<num> start_point = h0.svg_base_pos(0, false); // 3p end is 0 offset and forward is false.
+    PotentialCrossover helix_0_3p_end_potential_crossover = PotentialCrossover(
+      helix_idx: 0,
+      forward: false,
+      offset: 0,
+      color: h0_reverse_strand.color.toHexColor().toCssString(),
+      dna_end_first_click: h0_reverse_strand.dnaend_3p,
+      start_point: start_point,
+      current_point: start_point,
+    );
+    DNAEnd helix_1_5p_end_second_click = h1_forward_strand.dnaend_5p;
+
+    state = app_state_reducer(
+        state,
+        JoinStrandsByCrossover(
+          dna_end_second_click: helix_1_5p_end_second_click,
+          potential_crossover: helix_0_3p_end_potential_crossover,
+        ));
+
+    expect_strands_equal(state.dna_design.strands, two_helices_join_inner_strands.strands);
+  });
+  test('pencil should connect a 5p end to a 3p end', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+
+    Strand h0_reverse_strand = two_helices_design.strands[1];
+    Strand h1_forward_strand = two_helices_design.strands[2];
+    Helix h1 = two_helices_design.helices[1];
+    Point<num> start_point = h1.svg_base_pos(0, true); // 5p end is 0 offset and forward is true.
+    PotentialCrossover helix_1_5p_end_potential_crossover = PotentialCrossover(
+      helix_idx: 1,
+      forward: true,
+      offset: 0,
+      color: h1_forward_strand.color.toHexColor().toCssString(),
+      dna_end_first_click: h1_forward_strand.dnaend_5p,
+      start_point: start_point,
+      current_point: start_point,
+    );
+    DNAEnd helix_0_3p_end_second_click = h0_reverse_strand.dnaend_5p;
+
+    state = app_state_reducer(
+        state,
+        JoinStrandsByCrossover(
+          dna_end_second_click: helix_0_3p_end_second_click,
+          potential_crossover: helix_1_5p_end_potential_crossover,
+        ));
+
+    expect_strands_equal(state.dna_design.strands, two_helices_join_inner_strands.strands);
   });
 }
