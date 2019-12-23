@@ -1015,10 +1015,10 @@ abstract class AssignDNA
     implements UndoableAction, Built<AssignDNA, AssignDNABuilder> {
   Strand get strand;
 
-  String get seq;
+  String get dna_sequence;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory AssignDNA({Strand strand, String seq}) = _$AssignDNA._;
+  factory AssignDNA({Strand strand, String dna_sequence}) = _$AssignDNA._;
 
   AssignDNA._();
 

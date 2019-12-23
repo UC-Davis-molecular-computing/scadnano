@@ -25,7 +25,10 @@ class _$EditModeProps extends UiProps {
 class EditModeComponent extends UiComponent2<EditModeProps> {
   @override
   render() {
-    return (Dom.div())([for (var choice in EditModeChoice.values) this._button_for_choice(choice)]);
+    return [
+      (Dom.label()..key = 'label')('Edit mode:'),
+      ...[for (var choice in EditModeChoice.values) this._button_for_choice(choice)],
+    ];
   }
 
   ReactElement _button_for_choice(EditModeChoice mode) {

@@ -37,7 +37,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> {
   @override
   render() {
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
-    return (Dom.div())([
+    return [
       (Dom.label()..key = 'label')('Select:'),
       ...[
         for (var mode in modes)
@@ -48,7 +48,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> {
                     ? 'select-mode-button-selected'
                     : 'select-mode-button-unselected')
             ..key = mode.display_name())(mode.display_name())
-      ]
-    ]);
+      ],
+    ];
   }
 }

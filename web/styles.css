@@ -192,18 +192,18 @@ html, body {
 ************************************************/
 
 #edit-mode {
-    width: 90px;
+    width: 92px;
 }
 
 #select-mode {
-    width: 90px;
+    width: 92px;
 }
 
 .mode-button {
     border: none;
-    width: 90px;
-    outline: 0;
-    font-weight: bold;
+    width: 92px;
+    /*outline: #0b0080;*/
+    /*font-weight: bold;*/
     color: black;
     text-align: left;
 }

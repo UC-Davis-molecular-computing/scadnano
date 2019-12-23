@@ -103,13 +103,13 @@ part 'serializers.g.dart';
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveStop,
   DNAEndsMoveCommit,
+  AssignDNA,
 ])
 Serializers serializers = _$serializers;
 
 Serializers standard_serializers = (serializers.toBuilder()
       ..add(PointSerializer<num>())
       ..add(ColorSerializer())
-//      ..add(LoopoutSerializer())
       ..addPlugin(new StandardJsonPlugin()))
     .build();
 
