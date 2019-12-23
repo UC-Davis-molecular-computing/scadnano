@@ -1255,12 +1255,78 @@ main() {
  }
   """;
   DNADesign ligate_two_strands_forward = DNADesign.from_json(jsonDecode(ligate_two_strands_forward_json));
-  test("join two strands forward", () {
+  test("join two strands forward using 5p end", () {
     AppState state = app_state_from_dna_design(two_strands_forward);
 
     DNAEnd dna_end = two_strands_forward.strands[1].dnaend_5p;
     state = app_state_reducer(state, Ligate(dna_end: dna_end));
 
     expect_strands_equal(state.dna_design.strands, ligate_two_strands_forward.strands);
+  });
+  test("join two strands forward using 3p end", () {
+    AppState state = app_state_from_dna_design(two_strands_forward);
+
+    DNAEnd dna_end = two_strands_forward.strands[0].dnaend_3p;
+    state = app_state_reducer(state, Ligate(dna_end: dna_end));
+
+    expect_strands_equal(state.dna_design.strands, ligate_two_strands_forward.strands);
+  });
+
+  //   0       8       16
+  // 0 <------] <-------]
+  //   GGCCTTAA CTGACTGA
+  String two_strands_reverse_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "strands": [
+    {
+      "dna_sequence": "AATTCCGG",
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 8}
+      ]
+    },
+    {
+      "dna_sequence": "AGTCAGTC",
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 8, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign two_strands_reverse = DNADesign.from_json(jsonDecode(two_strands_reverse_json));
+
+  //   0               16
+  // 0 <---------------]
+  //   GGCCTTAACTGACTGA
+  String ligate_two_strands_reverse_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "strands": [
+    {
+      "dna_sequence": "AGTCAGTCAATTCCGG",
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign ligate_two_strands_reverse = DNADesign.from_json(jsonDecode(ligate_two_strands_reverse_json));
+  test("join two strands reverse using 5p end", () {
+    AppState state = app_state_from_dna_design(two_strands_reverse);
+
+    DNAEnd dna_end = two_strands_reverse.strands[0].dnaend_5p;
+    state = app_state_reducer(state, Ligate(dna_end: dna_end));
+
+    expect_strands_equal(state.dna_design.strands, ligate_two_strands_reverse.strands);
+  });
+  test("join two strands reverse using 3p end", () {
+    AppState state = app_state_from_dna_design(two_strands_reverse);
+
+    DNAEnd dna_end = two_strands_reverse.strands[1].dnaend_3p;
+    state = app_state_reducer(state, Ligate(dna_end: dna_end));
+
+    expect_strands_equal(state.dna_design.strands, ligate_two_strands_reverse.strands);
   });
 }

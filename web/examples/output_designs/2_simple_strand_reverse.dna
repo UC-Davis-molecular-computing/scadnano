@@ -1,0 +1,17 @@
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "strands": [
+    {
+      "dna_sequence": "AATTCCGG",
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 8}
+      ]
+    },
+    {
+      "dna_sequence": "AGTCAGTC",
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 8, "end": 16}
+      ]
+    }
+  ]
+ }
