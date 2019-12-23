@@ -1006,3 +1006,21 @@ abstract class DNAEndsMoveCommit
 
   static Serializer<DNAEndsMoveCommit> get serializer => _$dNAEndsMoveCommitSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// assign dna
+
+abstract class AssignDNA
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<AssignDNA, AssignDNABuilder> {
+  Strand get strand;
+
+  String get seq;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDNA({Strand strand, String seq}) = _$AssignDNA._;
+
+  AssignDNA._();
+
+  static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
+}

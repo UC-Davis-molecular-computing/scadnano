@@ -689,63 +689,6 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
     }
   }
 
-//  _build_end_to_substrand_map() {
-//    var end_to_substrand_builder = MapBuilder<DNAEnd, BoundSubstrand>();
-//    for (var strand in strands) {
-//      for (var substrand in strand.bound_substrands()) {
-//        end_to_substrand_builder[substrand.dnaend_3p] = substrand;
-//        end_to_substrand_builder[substrand.dnaend_5p] = substrand;
-//      }
-//    }
-//    end_to_substrand = end_to_substrand_builder.build();
-//  }
-
-//  _build_substrand_to_strand_map() {
-//    var substrand_to_strand_builder = MapBuilder<Substrand, Strand>();
-//    for (var strand in strands) {
-//      for (var substrand in strand.substrands) {
-//        substrand_to_strand_builder[substrand] = strand;
-//      }
-//    }
-//    substrand_to_strand = substrand_to_strand_builder.build();
-//  }
-
-//  _build_helix_idx_to_substrands_list(int num_helices) {
-//    var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
-//    for (int _ = 0; _ < num_helices; _++) {
-//      helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
-//    }
-//    for (Strand strand in this.strands) {
-//      for (Substrand substrand in strand.substrands) {
-//        if (substrand.is_bound_substrand()) {
-//          var bound_ss = substrand as BoundSubstrand;
-//          helix_idx_to_substrands_builder[bound_ss.helix].add(bound_ss);
-//        }
-//      }
-//    }
-//    var helix_idx_to_substrands_builtset_builder = ListBuilder<BuiltSet<BoundSubstrand>>();
-//    for (var set in helix_idx_to_substrands_builder.build()) {
-//      helix_idx_to_substrands_builtset_builder.add(set.build());
-//    }
-//    helix_idx_to_substrands = helix_idx_to_substrands_builtset_builder.build();
-//  }
-
-//  _build_substrand_mismatches_map() {
-//    var substrand_mismatches_map_builder = MapBuilder<BoundSubstrand, ListBuilder<Mismatch>>();
-////    this._substrand_mismatches_map = {};
-//    for (Strand strand in this.strands) {
-//      if (strand.dna_sequence != null) {
-//        for (BoundSubstrand bound_ss in strand.bound_substrands()) {
-//          substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
-//        }
-//      }
-//    }
-//    var substrand_mismatches_builtmap_builder = MapBuilder<BoundSubstrand, BuiltList<Mismatch>>();
-//    substrand_mismatches_map_builder.build().forEach ((bound_ss, mismatches) {
-//      substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
-//    });
-//    _substrand_mismatches_map = substrand_mismatches_builtmap_builder.build();
-//  }
 }
 
 class Mismatch {

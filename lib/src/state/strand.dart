@@ -195,6 +195,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     return json_map;
   }
 
+  /// Sets DNA sequence of strand (but does not assign complement to any Strands bound to it).
   Strand set_dna_sequence(String dna_sequence_new) {
     // truncate dna_sequence_new if too long; pad with ?'s if to short
     int seq_len = dna_sequence_new.length;

@@ -230,6 +230,11 @@ html, body {
     fill: #dddddd;
 }
 
+.helix-change-offsets-button-rect:hover {
+    stroke: green;
+    fill: limegreen;
+}
+
 .helix-change-offsets-button-text {
     font-size: smaller;
     text-anchor: middle;
