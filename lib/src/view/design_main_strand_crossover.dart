@@ -29,13 +29,13 @@ UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
         DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
 
     return DesignMainStrandCrossover()
-//      ..show_mouseover_rect = state.ui_state.show_mouseover_rect
+      ..selected = selected
+      ..selectable = selectable
+      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
       ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
       ..prev_substrand = prev_ss
       ..next_substrand = next_ss
-      ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
-      ..selected = selected
-      ..selectable = selectable;
+      ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout);
   },
 )(DesignMainStrandCrossover);
 
@@ -51,6 +51,7 @@ class _$DesignMainStrandCrossoverProps extends UiProps {
   bool show_mouseover_rect;
   bool selected;
   bool selectable;
+  bool select_mode;
   bool loopout_edit_mode_enabled;
 }
 
@@ -110,8 +111,8 @@ class DesignMainStrandCrossoverComponent
         }
       })
       ..onPointerDown = ((ev) {
-        if (ev.nativeEvent.ctrlKey || ev.nativeEvent.metaKey || ev.nativeEvent.shiftKey) {
-          crossover.handle_selection(ev);
+        if (props.select_mode && props.selectable) {
+          props.crossover.handle_selection(ev.nativeEvent);
         } else if (show_mouseover_rect) {
           handle_crossover_click();
         } else if (props.loopout_edit_mode_enabled) {

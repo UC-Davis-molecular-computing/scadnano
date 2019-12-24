@@ -474,12 +474,17 @@ abstract class MouseGridPositionSideClear
 abstract class Select with BuiltJsonSerializable implements Action, Built<Select, SelectBuilder> {
   Selectable get selectable;
 
+  // if true, negate current selection status; otherwise set to be selected irrespective of previous status
   bool get toggle;
 
+  // if true, deselect all other items and select only this object; otherwise leave other selections alone
+  bool get only;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory Select(Selectable selectable, bool toggle) => Select.from((b) => b
+  factory Select(Selectable selectable, {bool toggle, bool only = false}) => Select.from((b) => b
     ..selectable = selectable
-    ..toggle = toggle);
+    ..toggle = toggle
+    ..only = only);
 
   factory Select.from([void Function(SelectBuilder) updates]) = _$Select;
 

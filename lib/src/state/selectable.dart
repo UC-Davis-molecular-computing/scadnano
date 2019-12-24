@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -75,30 +77,36 @@ abstract class SelectablesStore
 
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
-  SelectablesStore select(Selectable selectable) {
+  /// adds [selectable] to selected items. If only=true, deselects all other items.
+  SelectablesStore select(Selectable selectable, {bool only=false}) {
     var selected_items_builder = selected_items.toBuilder();
+    if (only) {
+      selected_items_builder.clear();
+    }
     selected_items_builder.add(selectable);
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  unselect(Selectable selectable) {
+  /// removes [selectable] from selected items.
+  SelectablesStore unselect(Selectable selectable) {
     var selected_items_builder = selected_items.toBuilder();
     selected_items_builder.remove(selectable);
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  clear() {
+  /// removes all selectables from store
+  SelectablesStore clear() {
     return rebuild((s) => s..selected_items = SetBuilder<Selectable>());
   }
 
   // methods below here defined in terms of select and unselect
-  select_all(Iterable<Selectable> selectables) {
+  SelectablesStore select_all(Iterable<Selectable> selectables) {
     var selected_items_builder = selected_items.toBuilder();
     selected_items_builder.addAll(selectables);
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  toggle(Selectable selectable) {
+  SelectablesStore toggle(Selectable selectable) {
     if (selected(selectable)) {
       return unselect(selectable);
     } else {
@@ -106,7 +114,7 @@ abstract class SelectablesStore
     }
   }
 
-  toggle_all(Iterable<Selectable> selectables) {
+  SelectablesStore toggle_all(Iterable<Selectable> selectables) {
     var selected_items_builder = selected_items.toBuilder();
     for (var selectable in selectables) {
       if (selected_items.contains(selectable)) {
@@ -133,15 +141,17 @@ mixin Selectable {
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
 //  handle_selection(react.SyntheticPointerEvent event) {
-  handle_selection(event) {
+  handle_selection(MouseEvent event) {
 //    print('handle_selection called');
     //FIXME: don't use global variable
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
         app.state.ui_state.select_mode_state.is_selectable(this)) {
-      if (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) {
-        app.dispatch(actions.Select(this, true));
-      } else if (event.nativeEvent.shiftKey) {
-        app.dispatch(actions.Select(this, false));
+      if (event.ctrlKey || event.metaKey) {
+        app.dispatch(actions.Select(this, toggle: true));
+      } else if (event.shiftKey) {
+        app.dispatch(actions.Select(this, toggle: false));
+      } else if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
+        app.dispatch(actions.Select(this, toggle: false, only: true));
       }
     }
   }

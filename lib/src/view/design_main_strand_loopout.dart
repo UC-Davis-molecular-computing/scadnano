@@ -27,11 +27,12 @@ UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
   var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
   var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
   return DesignMainLoopout()
+    ..selected = selected
+    ..selectable = selectable
+    ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
     ..prev_substrand = prev_ss
     ..next_substrand = next_ss
-    ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
-    ..selected = selected
-    ..selectable = selectable;
+    ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout);
 })(DesignMainLoopout);
 
 @Factory()
@@ -46,6 +47,7 @@ class _$DesignMainLoopoutProps extends UiProps {
   Color color;
   bool selected;
   bool selectable;
+  bool select_mode;
   bool loopout_edit_mode_enabled;
 }
 
@@ -83,7 +85,9 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
         ..d = path
         ..stroke = color.toRgbColor().toCssString()
         ..onPointerDown = ((ev) {
-          loopout.handle_selection(ev);
+          if (props.select_mode && props.selectable) {
+            loopout.handle_selection(ev.nativeEvent);
+          }
           if (props.loopout_edit_mode_enabled) {
             loopout_length_change();
           }

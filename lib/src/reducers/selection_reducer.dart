@@ -81,10 +81,14 @@ Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
 SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
   Selectable item = action.selectable;
   bool toggle = action.toggle;
-  if (toggle) {
-    store = store.toggle(item);
+  if (action.only) {
+    store = store.select(item, only: true);
   } else {
-    store = store.select(item);
+    if (toggle) {
+      store = store.toggle(item);
+    } else {
+      store = store.select(item);
+    }
   }
   return store;
 }

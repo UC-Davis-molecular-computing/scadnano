@@ -24,30 +24,15 @@ import '../actions/actions.dart' as actions;
 part 'design_main_strand_dna_end.over_react.g.dart';
 
 Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
-  SelectModeChoice select_mode_choice;
-  if (props.is_5p) {
-    select_mode_choice =
-        props.substrand.is_first ? SelectModeChoice.end_5p_strand : SelectModeChoice.end_5p_substrand;
-  } else {
-    select_mode_choice =
-        props.substrand.is_last ? SelectModeChoice.end_3p_strand : SelectModeChoice.end_3p_substrand;
-  }
-  bool selected = DEBUG_SELECT
-      ? false
-      : state.ui_state.selectables_store
-          .selected(props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p);
-  bool selectable =
-      DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(select_mode_choice);
   DNAEnd end = props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
-  bool moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end);
   return DesignMainDNAEnd()
-    ..selected = selected
-    ..selectable = selectable
-    ..helix = state.dna_design.helices[props.substrand.helix]
+    ..selected = state.ui_state.selectables_store.selected(end)
+    ..selectable = state.ui_state.select_mode_state.is_selectable(end)
     ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
+    ..helix = state.dna_design.helices[props.substrand.helix]
     ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
     ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
-    ..moving_this_dna_end = moving_this_dna_end
+    ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
@@ -179,7 +164,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event) {
     // select end
-    dna_end.handle_selection(event);
+    if (props.select_mode && props.selectable) {
+      dna_end.handle_selection(event.nativeEvent);
+    }
 
     if (props.select_mode) {
       // set up drag detection for moving DNA ends

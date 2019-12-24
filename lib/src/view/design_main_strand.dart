@@ -29,9 +29,10 @@ UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState,
     bool selectable =
     DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
     return DesignMainStrand()
-      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
       ..selected = selected
       ..selectable = selectable
+      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
+      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
       ..assign_dna_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.assign_dna);
   },
 )(DesignMainStrand);
@@ -45,6 +46,7 @@ class _$DesignMainStrandProps extends UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool selected;
   bool selectable;
+  bool select_mode;
   bool assign_dna_mode_enabled;
 }
 
@@ -108,7 +110,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   }
 
   handle_click(react.SyntheticPointerEvent event) {
-    props.strand.handle_selection(event);
+    if (props.select_mode && props.selectable) {
+      props.strand.handle_selection(event.nativeEvent);
+    }
+
     if (props.assign_dna_mode_enabled) {
       assign_dna();
     }
