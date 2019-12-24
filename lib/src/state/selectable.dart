@@ -94,6 +94,7 @@ abstract class SelectablesStore
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
+  
   /// removes all selectables from store
   SelectablesStore clear() {
     return rebuild((s) => s..selected_items = SetBuilder<Selectable>());
