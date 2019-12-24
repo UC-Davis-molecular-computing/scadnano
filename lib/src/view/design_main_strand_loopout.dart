@@ -86,10 +86,15 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
         ..stroke = color.toRgbColor().toCssString()
         ..onPointerDown = ((ev) {
           if (props.select_mode && props.selectable) {
-            loopout.handle_selection(ev.nativeEvent);
+            loopout.handle_selection_mouse_down(ev.nativeEvent);
           }
           if (props.loopout_edit_mode_enabled) {
             loopout_length_change();
+          }
+        })
+        ..onPointerUp = ((ev) {
+          if (props.select_mode && props.selectable) {
+            loopout.handle_selection_mouse_up(ev.nativeEvent);
           }
         })
         ..className = classname

@@ -112,11 +112,16 @@ class DesignMainStrandCrossoverComponent
       })
       ..onPointerDown = ((ev) {
         if (props.select_mode && props.selectable) {
-          props.crossover.handle_selection(ev.nativeEvent);
+          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
         } else if (show_mouseover_rect) {
           handle_crossover_click();
         } else if (props.loopout_edit_mode_enabled) {
           convert_crossover_to_loopout();
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (props.select_mode && props.selectable) {
+          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
         }
       })
       ..id = id

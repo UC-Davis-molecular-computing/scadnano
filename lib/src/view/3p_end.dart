@@ -12,7 +12,8 @@ UiFactory<End3PrimeProps> End3Prime = _$End3Prime;
 
 @Props()
 class _$End3PrimeProps extends UiProps implements EndEitherPrimeProps {
-  PointerDownHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
   String classname;
   Point<num> pos;
@@ -41,7 +42,8 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
     }
 
     return (Dom.polygon()
-      ..onPointerDown = props.on_pointer_down //dna_end.handle_selection
+      ..onPointerDown = props.on_pointer_down
+      ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
       ..className = props.classname
       ..points = points

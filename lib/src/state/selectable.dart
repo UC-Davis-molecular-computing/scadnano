@@ -78,7 +78,7 @@ abstract class SelectablesStore
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
   /// adds [selectable] to selected items. If only=true, deselects all other items.
-  SelectablesStore select(Selectable selectable, {bool only=false}) {
+  SelectablesStore select(Selectable selectable, {bool only = false}) {
     var selected_items_builder = selected_items.toBuilder();
     if (only) {
       selected_items_builder.clear();
@@ -94,7 +94,6 @@ abstract class SelectablesStore
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
-  
   /// removes all selectables from store
   SelectablesStore clear() {
     return rebuild((s) => s..selected_items = SetBuilder<Selectable>());
@@ -142,19 +141,19 @@ mixin Selectable {
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
 //  handle_selection(react.SyntheticPointerEvent event) {
-  handle_selection(MouseEvent event) {
+  handle_selection_mouse_down(MouseEvent event) {
 //    print('handle_selection called');
-    //FIXME: don't use global variable
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-        app.state.ui_state.select_mode_state.is_selectable(this)) {
-      if (event.ctrlKey || event.metaKey) {
-        app.dispatch(actions.Select(this, toggle: true));
-      } else if (event.shiftKey) {
-        app.dispatch(actions.Select(this, toggle: false));
-      } else if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
-        app.dispatch(actions.Select(this, toggle: false, only: true));
-      }
+    if (event.ctrlKey || event.metaKey) {
+      app.dispatch(actions.Select(this, toggle: true));
+    } else {
+      // add to selection on mouse down
+      app.dispatch(actions.Select(this, toggle: false));
     }
   }
 
+  handle_selection_mouse_up(MouseEvent event) {
+    if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
+      app.dispatch(actions.Select(this, toggle: true, only: true));
+    }
+  }
 }

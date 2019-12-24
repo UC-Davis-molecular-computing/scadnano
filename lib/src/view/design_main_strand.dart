@@ -97,7 +97,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
 
       return (Dom.g()
         ..id = strand.id()
-        ..onPointerDown = handle_click
+        ..onPointerDown = handle_click_down
+        ..onPointerUp = handle_click_up
         ..className = classname)([
 //        (DesignMainStrandPaths()
         (ConnectedDesignMainStrandPaths()
@@ -109,13 +110,19 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     }
   }
 
-  handle_click(react.SyntheticPointerEvent event) {
+  handle_click_down(react.SyntheticPointerEvent event) {
     if (props.select_mode && props.selectable) {
-      props.strand.handle_selection(event.nativeEvent);
+      props.strand.handle_selection_mouse_down(event.nativeEvent);
     }
 
     if (props.assign_dna_mode_enabled) {
       assign_dna();
+    }
+  }
+
+  handle_click_up(react.SyntheticPointerEvent event) {
+    if (props.select_mode && props.selectable) {
+      props.strand.handle_selection_mouse_up(event.nativeEvent);
     }
   }
 

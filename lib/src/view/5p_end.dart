@@ -6,11 +6,12 @@ import 'package:react/react.dart' as react;
 
 part '5p_end.over_react.g.dart';
 
-typedef PointerDownHandler = void Function(react.SyntheticPointerEvent);
+typedef PointerDownUpHandler = void Function(react.SyntheticPointerEvent);
 typedef MouseUpHandler = void Function(react.SyntheticMouseEvent);
 
 abstract class EndEitherPrimeProps implements UiProps {
-  PointerDownHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
   String classname;
   Point<num> pos;
@@ -24,7 +25,8 @@ UiFactory<End5PrimeProps> End5Prime = _$End5Prime;
 
 @Props()
 class _$End5PrimeProps extends UiProps implements EndEitherPrimeProps {
-  PointerDownHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_down;
+  PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
   String classname;
   Point<num> pos;
@@ -42,6 +44,7 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
     num width = 7;
     return (Dom.rect()
       ..onPointerDown = props.on_pointer_down
+      ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
       ..className = props.classname
       ..x = '${props.pos.x - width / 2}'

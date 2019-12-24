@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:color/color.dart';
@@ -101,12 +102,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
       var helix = app.state.dna_design.helices[substrand.helix];
       var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
       var pos = helix.svg_base_pos(offset, substrand.forward);
-      var on_pointer_down = handle_end_click_select_and_or_move_start;
-      var on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover());
       EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
       end_props = end_props
-        ..on_pointer_down = on_pointer_down
-        ..on_mouse_up = on_mouse_up
+        ..on_pointer_down = handle_end_click_select_and_or_move_start
+        ..on_pointer_up = handle_end_pointer_up_select
+        ..on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover())
         ..pos = pos
         ..color = props.color
         ..classname = classname
@@ -162,15 +162,23 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
   }
 
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
-  handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event) {
+  handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     // select end
     if (props.select_mode && props.selectable) {
-      dna_end.handle_selection(event.nativeEvent);
+      MouseEvent event = event_synthetic.nativeEvent;
+      dna_end.handle_selection_mouse_down(event);
     }
 
     if (props.select_mode) {
       // set up drag detection for moving DNA ends
       app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
+    }
+  }
+
+  handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
+    if (props.select_mode && props.selectable) {
+      MouseEvent event = event_synthetic.nativeEvent;
+      dna_end.handle_selection_mouse_up(event);
     }
   }
 
