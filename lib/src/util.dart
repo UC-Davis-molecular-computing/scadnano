@@ -12,6 +12,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:react/react.dart';
 import 'package:scadnano/src/view/design.dart';
 
 import 'state/crossover.dart';
@@ -392,6 +393,120 @@ OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
   bool forward = helix.svg_y_is_forward(svg_y);
 
   return OffsetForward(offset, forward);
+}
+
+String remove_whitespace_and_uppercase(String string) {
+  var string_no_spaces = string.replaceAll(RegExp(r'\s+'), '');
+  return string_no_spaces.toUpperCase();
+}
+
+/// Return [sequence] modified to have length [length].
+/// If [sequence.length] < [length], pad with [constants.DNA_BASE_WILDCARD].
+/// If [sequence.length] > [length], remove extra symbols.
+String pad_dna(String sequence, int length) {
+  if (sequence.length > length) {
+    sequence = sequence.substring(0, length);
+  } else if (sequence.length < length) {
+    sequence += constants.DNA_BASE_WILDCARD * (length - sequence.length);
+  }
+  return sequence;
+}
+
+/// Takes a "union" of two equal-length strings [s1] and [s2].
+/// Whenever one has a symbol [wildcard] and the other does not, the result has the non-wildcard symbol.
+/// Throws [ArgumentError] if [s1] and [s2] are not the same length or do not agree on non-wildcard
+/// symbols at any position.
+String merge_wildcards(String s1, String s2, String wildcard) {
+  if (s1.length != s1.length) {
+    throw ArgumentError('\ns1=${s1} and\ns2=${s2}\nare not the same length.');
+  }
+  List<String> union_builder = [];
+  for (int i=0; i < s1.length; i++) {
+    String c1 = s1[i];
+    String c2 = s2[i];
+    if (c1 == wildcard) {
+      union_builder.add(c2);
+    } else if (c2 == wildcard) {
+      union_builder.add(c1);
+    } else if (c1 != c2) {
+      throw ArgumentError('s1=${s1} and s2=${s2} have unequal symbols ${c1} and ${c2} at position ${i}.');
+    } else if (c1 == c2) {
+      union_builder.add(c1); // doesn't matter which we pick in this case
+    } else {
+      throw AssertionError('should be unreachable');
+    }
+  }
+  return union_builder.join('');
+}
+
+/// Ensure is a valid DNA sequence.
+/// Throw [FormatException] if it contains symbols other than base symbols a c g t A C G T and whitespace,
+/// and if it does not have at least one base symbol.
+check_dna_sequence(String seq) {
+  var seq_no_spaces = seq.replaceAll(RegExp(r'\s+'), '');
+  if (seq_no_spaces.isEmpty) {
+    throw FormatException('"${seq}" is not a valid DNA sequence; it cannot be empty');
+  }
+  RegExp regex = RegExp(r'^(a|c|g|t|A|C|G|T)+$');
+  if (regex.hasMatch(seq_no_spaces)) {
+    return true;
+  } else {
+    String counter_example;
+    for (int i = 0; i < seq_no_spaces.length; i++) {
+      counter_example = seq_no_spaces[i];
+      if (counter_example != 'A' &&
+          counter_example != 'C' &&
+          counter_example != 'G' &&
+          counter_example != 'T' &&
+          counter_example != 'a' &&
+          counter_example != 'c' &&
+          counter_example != 'g' &&
+          counter_example != 't') {
+        break;
+      }
+    }
+    String seq_with_newlines = with_newlines(seq, 100);
+    throw FormatException(r'<pre>' +
+        seq_with_newlines +
+        r'</pre>' +
+        'is not a valid DNA sequence; it can only contain the symbols a c g t A C G T '
+            'but it contains the symbol ${counter_example}');
+  }
+}
+
+/// Puts newline symbols every [width] offsets into [string].
+String with_newlines(String string, int width) {
+  List<String> lines = [];
+  for (int i = 0; i < string.length; i += width) {
+    String line = string.substring(i, min(i + width, string.length));
+    lines.add(line);
+  }
+  return lines.join('\n');
+}
+
+/// Return reverse Watson-Crick complement of seq. (leave non-base symbols alone)
+String wc(String seq) => seq.split('').reversed.map((base) => wc_base(base)).join('');
+
+String wc_base(String base) {
+  switch (base) {
+    case 'A':
+      return 'T';
+    case 'a':
+      return 't';
+    case 'C':
+      return 'G';
+    case 'C':
+      return 'g';
+    case 'G':
+      return 'C';
+    case 'g':
+      return 'c';
+    case 'T':
+      return 'A';
+    case 't':
+      return 'a';
+  }
+  return base;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

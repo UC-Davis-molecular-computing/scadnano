@@ -212,6 +212,23 @@ abstract class BoundSubstrand
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
+
+  /// Number of bases in this [BoundSubstrand] between [left] and [right] offsets (INCLUSIVE).
+  int dna_length_in(int left, int right) {
+    if (!(left <= right + 1)) {
+      throw ArgumentError('left = ${left} and right = ${right} but we should have left <= right + 1');
+    }
+    if (!(start <= left)) {
+      throw ArgumentError('left = ${left} should be at least start = ${start}');
+    }
+    if (!(right < end)) {
+      throw ArgumentError('right = ${right} should be at most end - 1 = ${end - 1}');
+    }
+    int num_deletions = deletions.where((d) => left <= d && d <= right).length;
+    int num_insertions = insertions.where((i) => left <= i.offset && i.offset <= right).length;
+    return (right - left + 1) - num_deletions + num_insertions;
+  }
+
   int get visual_length => (this.end - this.start);
 
 //  String toString() =>

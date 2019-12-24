@@ -3,6 +3,7 @@ library app;
 
 import 'dart:html';
 
+//import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -44,7 +45,12 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
-test_stuff() async {}
+test_stuff() async {
+//  List<List<int>> list = [[1, 2], [3, 4]];
+//  List<BuiltList<int>> partially_built_list = [for (var sublist in list) sublist.build()];
+//  BuiltList<BuiltList<int>> built_list = partially_built_list.build();
+//  print(built_list);
+}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -97,7 +103,9 @@ class App {
   }
 
   initialize_model() async {
-    String filename_in_directory = '3_helix_deletions_insertions.dna';
+//    String filename_in_directory = '3_helix_deletions_insertions.dna';
+    String filename_in_directory = '2_helix_2_strands_multiple_substrands_no_seq.dna';
+//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions_no_seq.dna';
 //    String filename_in_directory = '1_staple_1_helix_origami.dna';
 //    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
 //    String filename_in_directory = '6_helix_origami_rectangle_helices_out_of_order.dna';

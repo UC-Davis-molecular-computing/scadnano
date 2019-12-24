@@ -10,6 +10,7 @@ import 'package:scadnano/src/state/substrand.dart';
 
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
+import 'assign_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
 import 'nick_join_reducers.dart';
@@ -17,6 +18,7 @@ import 'util_reducer.dart';
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.DNAEndsMoveCommit>(strands_dna_ends_move_stop_reducer),
+  TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([

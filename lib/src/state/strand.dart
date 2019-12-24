@@ -2,6 +2,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:tuple/tuple.dart';
 
 import 'dna_end.dart';
@@ -125,6 +126,23 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   Color get color;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
+
+  @memoized
+  BuiltMap<int, BuiltList<BoundSubstrand>> get substrands_on_helix {
+    var substrands_map = Map<int, List<BoundSubstrand>>();
+    for (var substrand in bound_substrands()) {
+      if (substrands_map.containsKey(substrand.helix)) {
+        substrands_map[substrand.helix].add(substrand);
+      } else {
+        substrands_map[substrand.helix] = [substrand];
+      }
+    }
+    var substrands_partially_built_map = Map<int, BuiltList<BoundSubstrand>>();
+    for (var helix in substrands_map.keys) {
+      substrands_partially_built_map[helix] = substrands_map[helix].build();
+    }
+    return substrands_partially_built_map.build();
+  }
 
   @memoized
   BuiltList<Crossover> get crossovers {
@@ -328,6 +346,19 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       assert(this.substrands[len - 2] is BoundSubstrand);
       return (this.substrands[len - 2] as BoundSubstrand);
     }
+  }
+
+  /// Indicates whether `self` overlaps `other_strand`, meaning that the set of offsets occupied
+  /// by `self` has nonempty intersection with those occupied by `other_strand`.
+  bool overlaps(Strand other) {
+    for (var substrand_self in bound_substrands()) {
+      for (var substrand_other in other.bound_substrands()) {
+        if (substrand_self.overlaps(substrand_other)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /// Starting DNA subsequence index for first base of this Substrand on its

@@ -6,16 +6,20 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
+import 'package:smart_dialogs/smart_dialogs.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
+import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
-import 'design_main_strand_paths.dart';
+import '../actions/actions.dart' as actions;
 
 part 'design_main_strand.over_react.g.dart';
 
@@ -23,11 +27,12 @@ UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState,
   mapStateToPropsWithOwnProps: (state, props) {
     bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
     bool selectable =
-        DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+    DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
     return DesignMainStrand()
       ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
       ..selected = selected
-      ..selectable = selectable;
+      ..selectable = selectable
+      ..assign_dna_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.assign_dna);
   },
 )(DesignMainStrand);
 
@@ -40,14 +45,16 @@ class _$DesignMainStrandProps extends UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool selected;
   bool selectable;
+  bool assign_dna_mode_enabled;
 }
 
 @Component2()
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
   @override
-  Map get defaultProps => (newProps()
-    ..selected = false
-    ..selectable = false);
+  Map get defaultProps =>
+      (newProps()
+        ..selected = false
+        ..selectable = false);
 
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {
@@ -88,7 +95,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
 
       return (Dom.g()
         ..id = strand.id()
-        ..onPointerDown = strand.handle_selection
+        ..onPointerDown = handle_click
         ..className = classname)([
 //        (DesignMainStrandPaths()
         (ConnectedDesignMainStrandPaths()
@@ -99,6 +106,50 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
       ]);
     }
   }
+
+  handle_click(react.SyntheticPointerEvent event) {
+    props.strand.handle_selection(event);
+    if (props.assign_dna_mode_enabled) {
+      assign_dna();
+    }
+  }
+
+  assign_dna() async {
+    String dna_sequence = await ask_for_dna_sequence();
+    if (dna_sequence != null) {
+      app.dispatch(actions.AssignDNA(strand: props.strand, dna_sequence: dna_sequence));
+    }
+  }
+}
+
+Future<String> ask_for_dna_sequence() async {
+  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+  String buttontype = DiaAttr.CHECKBOX;
+  String htmlTitleText = 'assign DNA sequence';
+  List<String> textLabels = ['sequence:'];
+  List<List<String>> comboInfo = null;
+  List<String> defaultInputTexts = [''];
+  List<int> widths = [100];
+  List<String> isChecked = null;
+  bool alternateRowColor = false;
+  List<String> buttonLabels = ['OK', 'Cancel'];
+
+  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+      widths, isChecked, alternateRowColor, buttonLabels);
+
+  if (result.buttonCode != 'DIA_ACT_OK') {
+    return null;
+  }
+
+  String dna_sequence = result.getUserInput(0)[0];
+  try {
+    util.check_dna_sequence(dna_sequence);
+  } on FormatException catch (e) {
+    Info.show(e.message);
+    return null;
+  }
+
+  return dna_sequence;
 }
 
 bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
