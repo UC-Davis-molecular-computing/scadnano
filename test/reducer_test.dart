@@ -1627,9 +1627,6 @@ main() {
       ..undo_redo
           .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
 
-    // TODO(benlee12): Figure out consistent rule for svg_position.
-    two_helices_helix_add_state.dna_design.helices.forEach((h) => h = h.rebuild((b) => b.svg_position_ = null));
-
     expect_app_state_equal(state, two_helices_helix_add_state);
   });
 
@@ -1671,8 +1668,6 @@ main() {
       ..ui_state.changed_since_last_save = false
       ..undo_redo
           .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
-
-    two_helices_helix_add_state.dna_design.helices.forEach((h) => h = h.rebuild((b) => b.svg_position_ = null));
 
     expect_app_state_equal(state, two_helices_helix_add_state);
   });
