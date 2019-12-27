@@ -16,6 +16,7 @@ import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 
@@ -51,6 +52,43 @@ void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> ex
       expect(actual_strands.contains(strand), true);
     }
   }
+}
+
+/// Asserts that the [actual] matches [matcher] DNADesign.
+///
+/// This function makes debugging easier by splitting the giant assertion
+/// into smaller assertions on individual fields.
+void expect_dna_design_equal(DNADesign actual, DNADesign matcher) {
+  expect(actual.version, matcher.version);
+  expect(actual.grid, matcher.grid);
+  expect(actual.major_tick_distance, matcher.major_tick_distance);
+  expect(actual.helices, matcher.helices);
+  expect_strands_equal(actual.strands, matcher.strands);
+  expect(actual.is_origami, matcher.is_origami);
+}
+
+/// Asserts that the [actual] matches [matcher] AppUIState.
+void expect_ui_state_equal(AppUIState actual, AppUIState matcher) {
+  // Not neccessary to split assertion at the moment.
+  expect(actual, matcher);
+}
+
+/// Asserts that the [actual] matches [matcher] UndoRedo.
+void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
+  // Not neccessary to split assertion at the moment.
+  expect(actual, matcher);
+}
+
+/// Asserts that the [actual] matches [matcher] AppState.
+///
+/// This function makes debugging easier by splitting the giant assertion
+/// into smaller assertions on individual fields.
+void expect_app_state_equal(AppState actual, AppState matcher) {
+  expect_dna_design_equal(actual.dna_design, matcher.dna_design);
+  expect_ui_state_equal(actual.ui_state, matcher.ui_state);
+  expect_undo_redo_equal(actual.undo_redo, matcher.undo_redo);
+  expect(actual.error_message, matcher.error_message);
+  expect(actual.editor_content, matcher.editor_content);
 }
 
 main() {
@@ -1534,5 +1572,108 @@ main() {
         ));
 
     expect_strands_equal(state.dna_design.strands, two_helices_join_inner_strands.strands);
+  });
+
+  test('Saving DNA design with no unsaved changes', () {
+    AppState state = app_state_from_dna_design(simple_strand_dna_design);
+    AppState new_state = app_state_reducer(state, SaveDNAFile);
+
+    expect(new_state, state);
+  });
+
+  test('Saving DNA design with unsaved changes', () {
+    AppState expected_state = app_state_from_dna_design(simple_strand_dna_design);
+    AppState old_state = expected_state.rebuild((b) => b.ui_state.changed_since_last_save = false);
+    AppState new_state = app_state_reducer(old_state, SaveDNAFile);
+
+    expect(new_state == expected_state, true);
+  });
+
+  test('add helix to DNA design', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+    state = app_state_reducer(state, HelixAdd(GridPosition(0, 2)));
+
+    String two_helices_helix_add_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+    """;
+    DNADesign two_helices_helix_add_design = DNADesign.from_json(jsonDecode(two_helices_helix_add_json));
+    AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
+    two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
+      ..ui_state.changed_since_last_save = true
+      ..undo_redo
+          .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
+
+    // TODO(benlee12): Figure out consistent rule for svg_position.
+    two_helices_helix_add_state.dna_design.helices.forEach((h) => h = h.rebuild((b) => b.svg_position_ = null));
+
+    expect_app_state_equal(state, two_helices_helix_add_state);
+  });
+
+  test('save design after add helix to DNA design', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+    state = app_state_reducer(state, HelixAdd(GridPosition(0, 2)));
+    state = app_state_reducer(state, SaveDNAFile);
+
+    String two_helices_helix_add_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+    """;
+    DNADesign two_helices_helix_add_design = DNADesign.from_json(jsonDecode(two_helices_helix_add_json));
+    AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
+    two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
+      ..ui_state.changed_since_last_save = false
+      ..undo_redo
+          .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
+
+    two_helices_helix_add_state.dna_design.helices.forEach((h) => h = h.rebuild((b) => b.svg_position_ = null));
+
+    expect_app_state_equal(state, two_helices_helix_add_state);
   });
 }
