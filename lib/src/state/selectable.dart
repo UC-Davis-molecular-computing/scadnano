@@ -8,7 +8,6 @@ import '../serializers.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import 'dna_end.dart';
-import 'edit_mode.dart';
 import 'select_mode.dart';
 
 part 'selectable.g.dart';

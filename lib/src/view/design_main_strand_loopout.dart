@@ -7,6 +7,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/state/strand.dart';
 import '../state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
@@ -23,13 +24,15 @@ part 'design_main_strand_loopout.over_react.g.dart';
 UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
     connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
   bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.loopout);
-  bool selectable = DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
+  bool selectable =
+      DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
   var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
   var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
   return DesignMainLoopout()
     ..selected = selected
     ..selectable = selectable
     ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
+    ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
     ..prev_substrand = prev_ss
     ..next_substrand = next_ss
     ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout);
@@ -49,10 +52,21 @@ class _$DesignMainLoopoutProps extends UiProps {
   bool selectable;
   bool select_mode;
   bool loopout_edit_mode_enabled;
+  bool show_mouseover_rect;
+}
+
+@State()
+class _$DesignMainStrandLoopoutState extends UiState {
+  // making this "local" state for the component (instead of storing in the global store)
+  // skips wasteful actions and updating the state just to tell if the mouse is hovering over a loopout
+  bool mouse_hover;
 }
 
 @Component2()
-class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
+class DesignMainLoopoutComponent
+    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState> {
+  @override
+  Map get initialState => (newState()..mouse_hover = false);
 
   @override
   render() {
@@ -62,12 +76,20 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
     var prev_ss = props.prev_substrand;
     var next_ss = props.next_substrand;
 
+    bool show_mouseover_rect = props.show_mouseover_rect;
+    bool mouse_hover = state.mouse_hover;
+
     var classname = 'substrand-line loopout-line';
     if (props.selected) {
       classname += ' selected';
     }
     if (props.selectable) {
       classname += ' selectable';
+    }
+
+
+    if (show_mouseover_rect && mouse_hover) {
+      update_mouseover_loopout();
     }
 
     if (util.is_hairpin(prev_ss, next_ss)) {
@@ -84,6 +106,18 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
       return (Dom.path()
         ..d = path
         ..stroke = color.toRgbColor().toCssString()
+        ..onMouseEnter = (ev) {
+          setState(newState()..mouse_hover = true);
+          if (show_mouseover_rect) {
+            update_mouseover_loopout();
+          }
+        }
+        ..onMouseLeave = ((_) {
+          setState(newState()..mouse_hover = false);
+          if (show_mouseover_rect) {
+            update_mouseover_loopout();
+          }
+        })
         ..onPointerDown = ((ev) {
           if (props.select_mode && props.selectable) {
             loopout.handle_selection_mouse_down(ev.nativeEvent);
@@ -103,6 +137,12 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
     }
   }
 
+
+  update_mouseover_loopout() {
+    //FIXME: implement this
+  }
+
+
   loopout_length_change() async {
     int length = null;
     String prompt_to_user = "Enter loopout length (nonnegative integer):";
@@ -121,8 +161,8 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> {
   }
 }
 
-ReactElement _hairpin_arc(
-    BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout, String classname, Color color) {
+ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
+    String classname, Color color) {
   var helix = app.state.dna_design.helices[prev_substrand.helix];
   var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);

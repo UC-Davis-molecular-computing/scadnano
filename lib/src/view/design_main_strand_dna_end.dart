@@ -13,7 +13,6 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import '../state/app_state.dart';
-import 'package:scadnano/src/state/select_mode.dart';
 import '../state/bound_substrand.dart';
 import '../app.dart';
 import '5p_end.dart';

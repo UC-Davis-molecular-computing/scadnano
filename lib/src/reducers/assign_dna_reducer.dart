@@ -55,7 +55,6 @@ int compare_overlap(
   } else {
     return o1_end - o2_end;
   }
-  return 0;
 }
 
 /// Assuming a DNA sequence has been assigned to `other`, assign its Watson-Crick

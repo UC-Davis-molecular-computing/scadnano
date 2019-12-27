@@ -1,4 +1,3 @@
-import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:built_value/built_value.dart';
@@ -10,9 +9,6 @@ import '../util.dart' as util;
 import 'strand.dart';
 
 part 'export_dna_format.g.dart';
-
-const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
-    'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 
 /// Format of exported DNA sequences
 class ExportDNAFormat extends EnumClass {
@@ -39,7 +35,7 @@ class ExportDNAFormat extends EnumClass {
       case idt_plates384:
         return 'xlsx';
     }
-    throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+    throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
   static const Map<ExportDNAFormat, String> _toString_map = {
@@ -59,7 +55,7 @@ class ExportDNAFormat extends EnumClass {
         return format;
       }
     }
-    throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+    throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
   bool text_file() {
@@ -72,7 +68,7 @@ class ExportDNAFormat extends EnumClass {
       case idt_plates384:
         return false;
     }
-    throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+    throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
   util.BlobType blob_type() {
@@ -85,7 +81,7 @@ class ExportDNAFormat extends EnumClass {
       case idt_plates384:
         return util.BlobType.excel;
     }
-    throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+    throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
   /// Output object (String if text file; Blob if binary) representing list of Strands
@@ -103,14 +99,14 @@ class ExportDNAFormat extends EnumClass {
       }
     } on ExportDNAException catch (e) {
       throw e;
-    } on Error catch (e) {
+    } on Error {
       //FIXME: this isn't catching the error when the Excel file isn't found
-      throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
-    } on Exception catch (e) {
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
+    } on Exception {
       //FIXME: this isn't catching the error when the Excel file isn't found
-      throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
     }
-    throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+    throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 }
 
@@ -186,8 +182,9 @@ List<String> rows_of(PlateType plate_type) {
     case PlateType.wells384:
       return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
     case PlateType.none:
-      throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
+  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 List<int> cols_of(PlateType plate_type) {
@@ -197,8 +194,9 @@ List<int> cols_of(PlateType plate_type) {
     case PlateType.wells384:
       return [for (int i = 1; i <= 24; i++) i];
     case PlateType.none:
-      throw ExportDNAException(ASSERTION_ERROR_MESSAGE);
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
+  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
 }
 
 class _PlateCoordinate {

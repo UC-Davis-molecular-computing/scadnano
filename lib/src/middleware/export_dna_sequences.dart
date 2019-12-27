@@ -1,6 +1,4 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/export_dna_format.dart';
-import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
 import '../state/strand.dart';

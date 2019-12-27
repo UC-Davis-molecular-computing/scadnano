@@ -13,7 +13,6 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:react/react.dart';
 import 'package:scadnano/src/view/design.dart';
 
 import 'app.dart';
@@ -30,6 +29,10 @@ import 'state/selectable.dart';
 import 'state/selection_box.dart';
 import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
+
+const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
+    'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+
 
 final ColorCycler color_cycler = ColorCycler();
 
@@ -325,6 +328,7 @@ String blob_type_to_string(BlobType blob_type) {
 //      return 'application/vnd.ms-excel';
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
+  throw AssertionError(ASSERTION_ERROR_MESSAGE);
 }
 
 save_file(String default_filename, var content, {BlobType blob_type = BlobType.text}) async {
