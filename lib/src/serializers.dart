@@ -9,6 +9,7 @@ import 'actions/actions.dart';
 import 'state/dna_end.dart';
 import 'state/dna_end_move.dart';
 import 'state/edit_mode.dart';
+import 'state/export_dna_format.dart';
 import 'state/potential_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
@@ -104,6 +105,9 @@ part 'serializers.g.dart';
   DNAEndsMoveStop,
   DNAEndsMoveCommit,
   AssignDNA,
+  ExportDNA,
+  ExportDNAFormat,
+  ErrorMessageSet,
 ])
 Serializers serializers = _$serializers;
 

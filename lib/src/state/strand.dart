@@ -418,6 +418,14 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
         first_ss_this.helix == last_ss_other.helix &&
         dnaend_5p.offset == other.dnaend_3p.offset;
   }
+
+  /// Name to use when exporting this Strand.
+  String export_name() {
+    BoundSubstrand first_ss = first_bound_substrand();
+    BoundSubstrand last_ss = last_bound_substrand();
+    String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
+    return is_scaffold? 'SCAF$id}':'ST$id';
+  }
 }
 
 Color parse_json_color(Object json_obj) {

@@ -6,6 +6,7 @@ import 'dart:html' hide ImageElement;
 import 'dart:js' as js;
 import 'dart:math';
 import 'dart:svg' hide Point;
+import 'dart:typed_data';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
@@ -15,6 +16,7 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:react/react.dart';
 import 'package:scadnano/src/view/design.dart';
 
+import 'app.dart';
 import 'state/crossover.dart';
 import 'state/dna_end.dart';
 import 'state/grid.dart';
@@ -69,15 +71,21 @@ external void set_allow_pan(bool allow);
 
 /// Should only be called once at the start of the program
 Future<DNADesign> dna_design_from_url(String url) async {
-  String content = await file_content(url);
+  String content = await get_text_file_content(url);
   Map<String, dynamic> parsed_json = jsonDecode(content);
   DNADesign dna_design = DNADesign.from_json(parsed_json);
   return dna_design;
 }
 
-Future<String> file_content(String url) async {
+Future<String> get_text_file_content(String url) async {
   return await HttpRequest.getString(url).then((content) {
     return content;
+  });
+}
+
+Future<ByteBuffer> get_binary_file_content(String url) async {
+  return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
+    return request.response;
   });
 }
 
@@ -302,30 +310,55 @@ bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
   return is_hairpin;
 }
 
-save_file(String default_filename, String content, {String blob_type = 'text/plain;charset=utf-8'}) async {
-  Blob blob = new Blob([content], blob_type);
-  String url = Url.createObjectUrlFromBlob(blob);
-  var link = new AnchorElement()
-    ..href = url
-    ..download = default_filename;
+enum BlobType { text, binary, image, excel }
 
-  if (browser.isFirefox) {
-    document.body.children.add(link);
+String blob_type_to_string(BlobType blob_type) {
+  switch (blob_type) {
+    case BlobType.text:
+      return 'text/plain;charset=utf-8';
+    case BlobType.binary:
+      return 'application/octet-stream';
+    case BlobType.image:
+      return 'data:image/svg+xml;charset=utf-8,';
+    case BlobType.excel:
+      // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
+//      return 'application/vnd.ms-excel';
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
-  //TODO: this await is my attempt to block until the user has selected a file, but it doesn't work.
-  // The code keeps executing while they pick their file. Figure out how to detect if they picked a file or cancelled
-  // If they cancelled then we should act as though nothing happened (in particular the Controller should not
-  // send an Action indicating that the file was saved.
-  // consider using one of these libraries if possible:
-  //  https://github.com/jimmywarting/StreamSaver.js
-  //  https://github.com/eligrey/FileSaver.js
-  await link.click();
+}
 
-  if (browser.isFirefox) {
-    link.remove();
+save_file(String default_filename, var content, {BlobType blob_type = BlobType.text}) async {
+  try {
+    String blob_type_string = blob_type_to_string(blob_type);
+    Blob blob = new Blob([content], blob_type_string);
+    String url = Url.createObjectUrlFromBlob(blob);
+    var link = new AnchorElement()
+      ..href = url
+      ..download = default_filename;
+
+    if (browser.isFirefox) {
+      document.body.children.add(link);
+    }
+    //TODO: this await is my attempt to block until the user has selected a file, but it doesn't work.
+    // The code keeps executing while they pick their file. Figure out how to detect if they picked a file or cancelled
+    // If they cancelled then we should act as though nothing happened (in particular the Controller should not
+    // send an Action indicating that the file was saved.
+    // consider using one of these libraries if possible:
+    //  https://github.com/jimmywarting/StreamSaver.js
+    //  https://github.com/eligrey/FileSaver.js
+    await link.click();
+
+    if (browser.isFirefox) {
+      link.remove();
+    }
+
+    Url.revokeObjectUrl(url);
+  } on Exception catch (e, stackTrace) {
+    var msg = e.toString() + '\n\n' + stackTrace.toString();
+    app.store.dispatch(actions.ErrorMessageSet(msg));
+    app.view.design_view.render(app.store.state);
+    return;
   }
-
-  Url.revokeObjectUrl(url);
 
   //TODO: create separate textfield for user to enter desired save filename that we use above
   // we cannot pull it from the download dialog due to security:
@@ -421,7 +454,7 @@ String merge_wildcards(String s1, String s2, String wildcard) {
     throw ArgumentError('\ns1=${s1} and\ns2=${s2}\nare not the same length.');
   }
   List<String> union_builder = [];
-  for (int i=0; i < s1.length; i++) {
+  for (int i = 0; i < s1.length; i++) {
     String c1 = s1[i];
     String c2 = s2[i];
     if (c1 == wildcard) {

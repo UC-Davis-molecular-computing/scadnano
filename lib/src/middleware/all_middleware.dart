@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/export_dna_sequences.dart';
 
 import 'dna_ends_move_start.dart';
 import 'load_file.dart';
@@ -20,4 +21,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   thunk_middleware,
   helix_remove_middleware,
   dna_ends_move_start_middleware,
+  export_dna_sequences_middleware,
 ]);

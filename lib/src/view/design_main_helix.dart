@@ -176,7 +176,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
       return;
     }
 
-    bool apply_to_all = result.getCheckedState(2) == 'true' ? true : false;
+    bool apply_to_all = result.getCheckedState(2) == 'true';
     if (apply_to_all) {
       app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
     } else {

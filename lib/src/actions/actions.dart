@@ -10,6 +10,7 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
@@ -702,6 +703,24 @@ abstract class ShowMouseoverRectToggle
   ShowMouseoverRectToggle._();
 
   static Serializer<ShowMouseoverRectToggle> get serializer => _$showMouseoverRectToggleSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Export DNA
+
+abstract class ExportDNA
+    with BuiltJsonSerializable
+    implements Action, Built<ExportDNA, ExportDNABuilder> {
+  bool get include_scaffold;
+
+  ExportDNAFormat get export_dna_format;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportDNA({bool include_scaffold, ExportDNAFormat export_dna_format}) = _$ExportDNA._;
+
+  ExportDNA._();
+
+  static Serializer<ExportDNA> get serializer => _$exportDNASerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

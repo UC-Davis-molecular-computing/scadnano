@@ -3,6 +3,8 @@ import 'dart:html';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/export_dna_format.dart';
+import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -57,6 +59,10 @@ class MenuComponent extends UiComponent2<MenuProps> {
         }
         ..key = 'dummy'
         ..className = 'dummy-button menu-item')('Dummy'),
+      (Dom.button()
+        ..onClick = ((_) => export_dna())
+        ..key = 'export-dna-sequences'
+        ..className = 'export-dna-sequences-button menu-item')('Export DNA'),
       (Dom.button()
         ..className = 'menu-item'
         ..onClick = (_) {
@@ -147,6 +153,32 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..href = './docs/'
         ..target = '_blank')('Script Docs'),
     );
+  }
+
+  export_dna() async {
+    // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+    String buttontype = DiaAttr.CHECKBOX;
+    String htmlTitleText = 'export DNA sequences';
+    List<String> textLabels = ['include scaffold?', 'output type'];
+    List<List<String>> comboInfo = [null, ExportDNAFormat.values.map((v) => v.toString()).toList()];
+    List<String> defaultInputTexts = [null, ExportDNAFormat.idt_bulk.toString()];
+    List<int> widths = [0, 20];
+    List<String> isChecked = ['false', null];
+    bool alternateRowColor = false;
+    List<String> buttonLabels = ['OK', 'Cancel'];
+
+    UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+        widths, isChecked, alternateRowColor, buttonLabels);
+
+    if (result.buttonCode != 'DIA_ACT_OK') {
+      return;
+    }
+
+    bool include_scaffold = result.getCheckedState(0) == 'true';
+    String format_str = result.getUserInput(1)[0];
+    ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
+
+    props.dispatch(actions.ExportDNA(include_scaffold: include_scaffold, export_dna_format: format));
   }
 }
 

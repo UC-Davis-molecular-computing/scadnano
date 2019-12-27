@@ -45,12 +45,12 @@ _export_from_element(svg.SvgSvgElement svg_element, String filename_append) {
   //convert svg source to URI data scheme.
 //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
 
-  String blob_type = "data:image/svg+xml;charset=utf-8,";
+//  String blob_type = "data:image/svg+xml;charset=utf-8,";
   String filename = app.state.ui_state.loaded_filename;
   filename = filename.substring(0, filename.lastIndexOf('.'));
   filename += '_${filename_append}.svg';
 
-  util.save_file(filename, source, blob_type: blob_type);
+  util.save_file(filename, source, blob_type: util.BlobType.image);
 
   //set url value to a element's href attribute.
 //  AnchorElement link = AnchorElement();

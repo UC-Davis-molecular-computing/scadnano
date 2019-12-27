@@ -10,16 +10,16 @@ import '../util.dart' as util;
 save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
 
-  AppState model = store.state;
+  AppState state = store.state;
   if (action is actions.SaveDNAFile) {
-    String content = json_encode(model.dna_design);
-    String default_filename = model.ui_state.loaded_filename;
+    String content = json_encode(state.dna_design);
+    String default_filename = state.ui_state.loaded_filename;
     util.save_file(default_filename, content);
     change_tab_title(false);
   } else if (action is actions.UndoableAction) {
     change_tab_title(true);
   } else if (action is actions.Undo || action is actions.Redo) {
-    bool changed_since_last_save = model.undo_redo.undo_stack.isNotEmpty;
+    bool changed_since_last_save = state.undo_redo.undo_stack.isNotEmpty;
     change_tab_title(changed_since_last_save);
   }
 }

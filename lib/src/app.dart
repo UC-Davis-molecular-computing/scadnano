@@ -2,6 +2,7 @@
 library app;
 
 import 'dart:html';
+import 'dart:typed_data';
 
 //import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
@@ -11,11 +12,12 @@ import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
+
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/dna_end_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
-
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
@@ -36,8 +38,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -46,10 +48,22 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-//  List<List<int>> list = [[1, 2], [3, 4]];
-//  List<BuiltList<int>> partially_built_list = [for (var sublist in list) sublist.build()];
-//  BuiltList<BuiltList<int>> built_list = partially_built_list.build();
-//  print(built_list);
+  print('testing');
+  ByteBuffer data = await util.get_binary_file_content('idt-plates-empty.xlsx');
+  List<int> bytes = Uint8List.view(data);
+  var decoder = SpreadsheetDecoder.decodeBytes(bytes, update: true, verify: true);
+  print(decoder.runtimeType);
+  var table = decoder.tables['plate1'];
+//  var values = table.rows[0];
+//  print('values: $values');
+
+//  decoder.insertRow('Sheet1', 0);
+//  decoder.insertColumn('Sheet1', 0);
+  decoder.updateCell('plate1', 0, 0, 'value');
+
+  var bytes_out = decoder.encode();
+  util.save_file('output.xlsx', bytes_out, blob_type: util.BlobType.excel);
+//  });
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
