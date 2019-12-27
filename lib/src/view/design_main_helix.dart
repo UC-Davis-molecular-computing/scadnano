@@ -134,7 +134,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
     String buttontype = DiaAttr.CHECKBOX;
     String htmlTitleText = 'helix ${helix_idx} new offsets';
-    List<String> textLabels = ['minimum:', 'maximum:', 'all helices?'];
+    List<String> textLabels = ['minimum:', 'maximum:', 'apply to all helices'];
     List<List<String>> comboInfo = null;
     List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}', null];
     List<int> widths = [1, 1, 0];

@@ -17,7 +17,7 @@ import '../state/app_state.dart';
 // does not have access to the list of all selected ends. It is middleware instead of a reducer because
 // it triggers a new action to be dispatched.
 dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
-  next(action);
+//  next(action);
 
   if (action is actions.DNAEndsMoveStart) {
     BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends;
@@ -39,13 +39,16 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
       Strand strand = design.end_to_strand(move.dna_end);
       strands_affected.add(strand);
     }
+    next(action);
 
     app.dispatch(actions.DNAEndsMoveSetSelectedEnds(
         original_offset: action.offset,
         moves: moves.toBuiltList(),
         helix: action.helix,
         strands_affected: strands_affected.toBuiltSet()));
-  } else if (action is actions.DNAEndsMoveStop) {}
+  } else {
+    next(action);
+  }
 }
 
 /// Finds extreme (highest or lowest depending on [highest]) offset that an end at [offset] could be

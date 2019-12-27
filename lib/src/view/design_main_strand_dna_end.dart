@@ -18,7 +18,6 @@ import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
-import 'design_main.dart';
 import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_dna_end.over_react.g.dart';
@@ -80,84 +79,42 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
       classname += ' selectable';
     }
 
-    //[{ isDragging }, drag]
-    if (USING_REACT_DND) {
-//      var param = {
-//        'item': {'type': '5p'},
-//        'collect': (monitor) => {
-//              'isDragging': monitor.isDragging(),
-//            },
-//      };
-//      List drag_ret = useDrag(param);
-//      var props = drag_ret[0];
-//      var drag = drag_ret[1];
-//      bool isDragging = props['isDragging'];
-    } else {
-      //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
-      // which it is when Shift or Ctrl (or Meta) keys are pressed
-      // see here: https://github.com/marcojakob/dart-dnd/issues/27
-      BoundSubstrand substrand = this.props.substrand;
-      DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
-      var helix = app.state.dna_design.helices[substrand.helix];
-      var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
-      var pos = helix.svg_base_pos(offset, substrand.forward);
-      EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
-      end_props = end_props
-        ..on_pointer_down = handle_end_click_select_and_or_move_start
-        ..on_pointer_up = handle_end_pointer_up_select
-        ..on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover())
-        ..pos = pos
-        ..color = props.color
-        ..classname = classname
-        ..forward = substrand.forward
-        ..id = dna_end.id()
-        ..key = 'nonmoving-end';
+    //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
+    // which it is when Shift or Ctrl (or Meta) keys are pressed
+    // see here: https://github.com/marcojakob/dart-dnd/issues/27
+    BoundSubstrand substrand = this.props.substrand;
+    DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
+    var helix = app.state.dna_design.helices[substrand.helix];
+    var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
+    var pos = helix.svg_base_pos(offset, substrand.forward);
 
-      // draw avatar of moving DNA end if it is moving
-      EndMovingProps end_moving_props = ConnectedEndMoving();
-      end_moving_props = end_moving_props
-        ..dna_end = dna_end
-        ..original_offset = offset
-        ..color = props.color
-        ..forward = substrand.forward
-        ..helix = helix
-        ..is_5p = props.is_5p
-        ..key = 'moving-end';
+    EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
+    end_props = end_props
+      ..on_pointer_down = handle_end_click_select_and_or_move_start
+      ..on_pointer_up = handle_end_pointer_up_select
+      ..on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover())
+      ..pos = pos
+      ..color = props.color
+      ..classname = classname
+      ..forward = substrand.forward
+      ..id = dna_end.id()
+      ..key = 'nonmoving-end';
 
-      return [
-        end_props(),
-        end_moving_props(),
-      ];
+    // draw avatar of moving DNA end if it is moving
+    EndMovingProps end_moving_props = ConnectedEndMoving();
+    end_moving_props = end_moving_props
+      ..dna_end = dna_end
+      ..original_offset = offset
+      ..color = props.color
+      ..forward = substrand.forward
+      ..helix = helix
+      ..is_5p = props.is_5p
+      ..key = 'moving-end';
 
-//      if (props.moving_this_dna_end) {
-//        //XXX: change second option
-//        EndMovingEitherPrimeProps end_moving_props = props.is_5p ? EndMoving5Prime() : EndMoving5Prime();
-//        DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
-//        end_moving_props = end_moving_props
-//          ..dna_end = dna_end
-//          ..original_offset = offset
-//          ..color = props.color
-//          ..forward = substrand.forward
-//          ..helix = helix;
-//        return [
-//          end_props(),
-//          end_moving_props(),
-//        ];
-//      } else {
-//        return end_props();
-//      }
-
-//      EndMovingEitherPrimeProps end_moving_props = (props.is_5p ? EndMoving5Prime() : EndMoving3Prime());
-//      end_moving_props = end_moving_props
-//        ..original_offset = pos
-//        ..color = props.color
-//        ..classname = classname
-//        ..id = id;
-//      if (!props.is_5p) {
-//        (end_props as End3PrimeProps).forward = substrand.forward;
-//      }
-////      return (end_props(),);
-    }
+    return [
+      end_props(),
+      end_moving_props(),
+    ];
   }
 
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {

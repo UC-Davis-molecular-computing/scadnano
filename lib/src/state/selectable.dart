@@ -137,8 +137,6 @@ mixin Selectable {
   /// Subclasses must define this to be able to be selectively selected.
   SelectModeChoice select_mode();
 
-  //TODO: handle_selection is getting called twice on a single pointer down
-
   //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
@@ -150,7 +148,6 @@ mixin Selectable {
       // add to selection on mouse down
       app.dispatch(actions.Select(this, toggle: false));
     }
-
 //    if (event.ctrlKey || event.metaKey) {
 //      app.dispatch(actions.Select(this, toggle: true, only: false));
 //    } else if (event.shiftKey) {
@@ -161,6 +158,10 @@ mixin Selectable {
 //    }
   }
 
+  // We choose to use the mouse up event to deselect other selections. Otherwise it is difficult to select
+  // multiple items and then move them, because the click that attempts to move them is done without the
+  // Shift or Ctrl key, so if we deselected whenever the user clicks without those keys, we would not be
+  // able to move multiple items.
   handle_selection_mouse_up(MouseEvent event) {
     if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
       app.dispatch(actions.Select(this, toggle: false, only: true));
