@@ -10,7 +10,7 @@ part 'select_mode.over_react.g.dart';
 
 UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(mapStateToProps: (state) {
   bool is_origami = false;
-  if (state.dna_design.is_origami == true) {
+  if (state.dna_design?.is_origami == true) {
     is_origami = true;
   }
   return SelectMode()

@@ -11,9 +11,10 @@ import 'strands_reducer.dart';
 // reducer composition
 
 DNADesign dna_design_reducer(DNADesign dna_design, action) {
-  if (action is actions.ErrorMessageSet) {
-    dna_design = error_message_set_reducer(dna_design, action);
-  } else if (action is actions.Action) {
+//  if (action is actions.ErrorMessageSet) {
+//    dna_design = error_message_set_reducer(dna_design, action);
+//  } else
+    if (dna_design != null) {
     dna_design = dna_design_composed_local_reducer(dna_design, action);
     dna_design = dna_design_whole_local_reducer(dna_design, action);
   }
@@ -22,8 +23,8 @@ DNADesign dna_design_reducer(DNADesign dna_design, action) {
 
 // This isn't strictly necessary, but it would be nice for debugging if, whenever there is an error,
 // the DNADesign in the Model is null.
-DNADesign error_message_set_reducer(DNADesign dna_design, actions.ErrorMessageSet action) =>
-    action.error_message == null || action.error_message.length == 0 ? dna_design : null;
+//DNADesign error_message_set_reducer(DNADesign dna_design, actions.ErrorMessageSet action) =>
+//    action.error_message == null || action.error_message.length == 0 ? dna_design : null;
 
 DNADesign dna_design_global_reducer(DNADesign dna_design, AppState state, action) {
   dna_design = dna_design_composed_global_reducer(dna_design, state, action);

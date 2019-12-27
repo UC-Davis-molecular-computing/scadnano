@@ -39,7 +39,7 @@ AppState app_state_reducer(AppState state, action) {
 
   // "local" reducers can operate on one slice of the state and need only read that same slice
   state = state.rebuild((m) => m
-    ..dna_design.replace(dna_design_reducer(state.dna_design, action))
+    ..dna_design = dna_design_reducer(state.dna_design, action)?.toBuilder()
     ..ui_state.replace(ui_state_reducer(state.ui_state, action))
     ..error_message =
         TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action)
@@ -49,7 +49,7 @@ AppState app_state_reducer(AppState state, action) {
   // we pass the "old" parts of the state, since we don't want dispatcher to assume they will be applied
   // in a certain order. For consistency, everyone gets the version of the state before any action was applied.
   state = state.rebuild((m) => m
-    ..dna_design.replace(dna_design_global_reducer(state.dna_design, state, action))
+    ..dna_design = dna_design_global_reducer(state.dna_design, state, action)?.toBuilder()
     ..ui_state.replace(ui_state_global_reducer(state.ui_state, state, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.

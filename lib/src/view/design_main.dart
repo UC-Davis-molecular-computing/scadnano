@@ -25,15 +25,19 @@ final USING_REACT_DND = false;
 
 UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMainProps>(
   mapStateToProps: (state) {
-    return (DesignMain()
-      ..helices = state.dna_design.helices
-      ..strands = state.dna_design.strands
-      ..has_error = state.has_error()
-      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-      ..backbone_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
-      ..pencil_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-      ..show_mismatches = state.ui_state.show_mismatches
-      ..show_dna = state.ui_state.show_dna);
+    if (state.has_error()) {
+      return (DesignMain()..has_error = true);
+    } else {
+      return (DesignMain()
+        ..helices = state.dna_design.helices
+        ..strands = state.dna_design.strands
+        ..has_error = state.has_error()
+        ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+        ..backbone_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
+        ..pencil_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
+        ..show_mismatches = state.ui_state.show_mismatches
+        ..show_dna = state.ui_state.show_dna);
+    }
   },
 )(DesignMain);
 
