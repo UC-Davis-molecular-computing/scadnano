@@ -119,13 +119,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
     var offset_forward = util.get_offset_forward(event, props.helix);
     int offset = offset_forward.offset;
     bool forward = offset_forward.forward;
-    // ensure 3' end is where mouse clicked
-    int start = offset;
-    int end = offset + 2;
-    if (forward) {
-      start = offset - 1;
-      end = offset + 1;
+    if (offset <= props.helix.min_offset) {
+      return;
     }
+    int start = offset - 1;
+    int end = offset + 1;
     app.dispatch(actions.StrandCreate(helix_idx: props.helix.idx, forward: forward, start: start, end: end));
   }
 
