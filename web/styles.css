@@ -318,6 +318,7 @@ html, body {
     stroke: black;
     stroke-width: 0.5px;
     fill-opacity: 0.5;
+    pointer-events: none; /* XXX: need this so we can detect mouse up on non-moving end underneath */
 }
 
 .five-prime-end,

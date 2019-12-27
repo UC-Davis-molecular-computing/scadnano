@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import 'package:tuple/tuple.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -221,6 +222,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       map_builder[helix.grid_position] = helix;
     }
     return map_builder.build();
+  }
+
+  /// Gets DNAEnd at given address (helix,offset,forward)
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<Tuple3<int, int, bool>, DNAEnd> get address_to_end {
+    var map = Map<Tuple3<int, int, bool>, DNAEnd>();
+    for (var strand in strands) {
+      for (var ss in strand.bound_substrands()) {
+        for (var end in [ss.dnaend_start, ss.dnaend_end]) {
+          var key = Tuple3(ss.helix, end.offset_inclusive, ss.forward);
+          map[key] = end;
+        }
+      }
+    }
+    return map.build();
   }
 
 //  _add_helix(HelixUseActionParameters params) {
@@ -688,7 +705,6 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
       helix_builder.min_offset = min_offset;
     }
   }
-
 }
 
 class Mismatch {

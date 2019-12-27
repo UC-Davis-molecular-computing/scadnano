@@ -99,8 +99,11 @@ abstract class SelectablesStore
   }
 
   // methods below here defined in terms of select and unselect
-  SelectablesStore select_all(Iterable<Selectable> selectables) {
+  SelectablesStore select_all(Iterable<Selectable> selectables, {bool only=false}) {
     var selected_items_builder = selected_items.toBuilder();
+    if (only) {
+      selected_items_builder.clear();
+    }
     selected_items_builder.addAll(selectables);
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
@@ -141,18 +144,26 @@ mixin Selectable {
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
 //  handle_selection(react.SyntheticPointerEvent event) {
   handle_selection_mouse_down(MouseEvent event) {
-//    print('handle_selection called');
     if (event.ctrlKey || event.metaKey) {
       app.dispatch(actions.Select(this, toggle: true));
     } else {
       // add to selection on mouse down
       app.dispatch(actions.Select(this, toggle: false));
     }
+
+//    if (event.ctrlKey || event.metaKey) {
+//      app.dispatch(actions.Select(this, toggle: true, only: false));
+//    } else if (event.shiftKey) {
+//      // add to selection on mouse down
+//      app.dispatch(actions.Select(this, toggle: false, only: false));
+//    } else {
+//      app.dispatch(actions.Select(this, toggle: false, only: true));
+//    }
   }
 
   handle_selection_mouse_up(MouseEvent event) {
     if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
-      app.dispatch(actions.Select(this, toggle: true, only: true));
+      app.dispatch(actions.Select(this, toggle: false, only: true));
     }
   }
 }

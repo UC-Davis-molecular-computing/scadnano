@@ -27,7 +27,6 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
 
   /************************ end BuiltValue boilerplate ************************/
 
-  @nullable
   BuiltList<DNAEndMove> get moves;
 
   BuiltSet<Strand> get strands_affected;
@@ -49,6 +48,7 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   // if false, we wouldn't actually move anything
   bool get is_nontrivial => current_offset != original_offset;
 
+  // INCLUSIVE offset
   int current_capped_offset_of(DNAEnd end) {
     for (DNAEndMove move in moves) {
       if (move.dna_end == end) {

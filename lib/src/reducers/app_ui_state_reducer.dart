@@ -27,6 +27,7 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
+  ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
   ..side_view_grid_position_mouse_cursor =
@@ -38,19 +39,21 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
   TypedReducer<bool, actions.PotentialCrossoverCreate>(potential_crossover_create_app_ui_state_reducer),
   TypedReducer<bool, actions.PotentialCrossoverRemove>(potential_crossover_remove_app_ui_state_reducer),
+]);
+
+Reducer<bool> moving_dna_ends_reducer = combineReducers([
   TypedReducer<bool, actions.DNAEndsMoveStart>(dna_ends_move_start_app_ui_state_reducer),
   TypedReducer<bool, actions.DNAEndsMoveStop>(dna_ends_move_stop_app_ui_state_reducer),
 ]);
 
-bool potential_crossover_create_app_ui_state_reducer(bool state, actions.PotentialCrossoverCreate action) =>
-    true;
+bool potential_crossover_create_app_ui_state_reducer(bool _, actions.PotentialCrossoverCreate action) => true;
 
-bool potential_crossover_remove_app_ui_state_reducer(bool state, actions.PotentialCrossoverRemove action) =>
+bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCrossoverRemove action) =>
     false;
 
-bool dna_ends_move_start_app_ui_state_reducer(bool state, actions.DNAEndsMoveStart action) => true;
+bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart action) => true;
 
-bool dna_ends_move_stop_app_ui_state_reducer(bool state, actions.DNAEndsMoveStop action) => false;
+bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
 
 bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
 

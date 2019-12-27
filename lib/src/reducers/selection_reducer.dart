@@ -3,6 +3,9 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/dna_end_move.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/view/design.dart';
@@ -75,6 +78,7 @@ SelectablesStore selections_adjust_reducer(
 
 Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.Select>(select_reducer),
+  TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
 ]);
 
@@ -93,6 +97,9 @@ SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
   return store;
 }
 
+SelectablesStore select_all_reducer(SelectablesStore store, actions.SelectAll action) =>
+    store.select_all(action.selectables, only: action.only);
+
 SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
     store.clear();
 
@@ -100,6 +107,12 @@ SelectablesStore selections_clear_reducer(SelectablesStore store, actions.Select
 SelectablesStore ends_moved_reducer(
     SelectablesStore store, AppState state, actions.DNAEndsMoveCommit action) {
   store = store.clear();
+//  for (DNAEndMove move in action.dna_ends_move.moves) {
+//    DNAEnd dna_end = move.dna_end;
+//    BoundSubstrand substrand = state.dna_design.end_to_substrand[dna_end];
+//    int new_offset = action.dna_ends_move.current_capped_offset_of(dna_end);
+//    int helix = move.dna_end.
+//  }
   return store;
 //  List<DNAEnd> old_ends = List<DNAEnd>.from(store.selected_items);
 //  List<DNAEnd> new_ends = [];

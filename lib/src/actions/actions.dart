@@ -522,6 +522,22 @@ abstract class SelectionsAdjust
   static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
 }
 
+abstract class SelectAll
+    with BuiltJsonSerializable
+    implements Action, Built<SelectAll, SelectAllBuilder> {
+  BuiltList<Selectable> get selectables;
+
+  // if true, deselect all other items and select only this object; otherwise leave other selections alone
+  bool get only;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectAll({BuiltList<Selectable> selectables, bool only}) = _$SelectAll._;
+
+  SelectAll._();
+
+  static Serializer<SelectAll> get serializer => _$selectAllSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Delete selected non-helix items
 

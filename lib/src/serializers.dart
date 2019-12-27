@@ -78,6 +78,7 @@ part 'serializers.g.dart';
   SelectionsAdjust,
   SelectionsClear,
   DeleteAllSelected,
+  SelectAll,
   Select,
   Loopout,
   LoopoutLengthChange,
