@@ -16,6 +16,7 @@ import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:test/test.dart';
@@ -1725,11 +1726,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
 
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([simple_helix_no_seq_design]));
-    AppState expect_state = initial_state.rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(actual_state, expect_state);
+    expect_app_state_equal(actual_state, initial_state);
   });
 
   test('Testing DNAEndsMoveCommit on forward strand 5p end', () {
@@ -1744,7 +1741,7 @@ main() {
     // Commits DNA Ends move.
     BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
     DNAEnd dna_end = forward_substrand.dnaend_5p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
       original_offset: 0,
@@ -1796,7 +1793,7 @@ main() {
     // Commits DNA Ends move.
     BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
     DNAEnd dna_end = forward_substrand.dnaend_3p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
       original_offset: 15,
@@ -1848,7 +1845,7 @@ main() {
     // Commits DNA Ends move.
     BoundSubstrand reverse_substrand = reverse_strand.substrands.first as BoundSubstrand;
     DNAEnd dna_end = reverse_substrand.dnaend_5p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
       original_offset: 15,
@@ -1900,7 +1897,7 @@ main() {
     // Commits DNA Ends move.
     BoundSubstrand reverse_substrand = reverse_strand.substrands.first as BoundSubstrand;
     DNAEnd dna_end = reverse_substrand.dnaend_3p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
       original_offset: 0,
@@ -1953,11 +1950,11 @@ main() {
 
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward);
+    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
 
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_3p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse);
+    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
 
     // Create and dispatch DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2011,7 +2008,7 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward);
+    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2028,7 +2025,7 @@ main() {
     final_state = app_state_reducer(final_state, DNAEndsMoveStop());
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse);
+    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2083,7 +2080,7 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward);
+    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2100,7 +2097,7 @@ main() {
     final_state = app_state_reducer(final_state, DNAEndsMoveStop());
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse);
+    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2174,7 +2171,7 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward);
+    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2200,7 +2197,7 @@ main() {
 
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse);
+    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2262,53 +2259,198 @@ main() {
     expect_app_state_equal(state_undo_2, expected_state);
   });
 
+  //     0    4      10 11   16
+  // 0        [------>
+  //          <------]
+  String simple_helix_no_seq_smaller_json = r"""
+{
+"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"strands": [
+  {
+    "substrands": [
+      {"helix": 0, "forward": true , "start": 4, "end": 11}
+    ]
+  },
+  {
+    "substrands": [
+      {"helix": 0, "forward": false , "start": 4, "end": 11}
+    ]
+  }
+]
+}
+""";
+  DNADesign simple_helix_no_seq_smaller_design = DNADesign.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
   test('Dragging end less than helix min offset (see issue #77)', () {
-    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
-    Strand forward_strand = simple_helix_no_seq_design.strands[0];
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_smaller_design);
+    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
+    Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
 
     // Starts DNA Ends move.
-    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: helix0));
+    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 4, helix: helix0));
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
-    DNAEnd dna_end = forward_substrand.dnaend_5p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    // BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    DNAEnd dna_end = forward_strand.dnaend_5p;
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 9);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
-      original_offset: 0,
+      original_offset: 4,
       current_offset: -6,
       helix: helix0,
       strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
-    expect_app_state_equal(actual_state, initial_state);
+    //     0    4      10 11   16
+    // 0   [----------->
+    //          <------]
+    String expected_json = r"""
+{
+"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"strands": [
+  {
+    "substrands": [
+      {"helix": 0, "forward": true , "start": 0, "end": 11}
+    ]
+  },
+  {
+    "substrands": [
+      {"helix": 0, "forward": false , "start": 4, "end": 11}
+    ]
+  }
+]
+}
+    """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..ui_state.changed_since_last_save = true
+      ..undo_redo.replace(expected_undo_redo));
+    expect_app_state_equal(actual_state, expected_state);
   });
 
+  // before:
+  //     0    4      10 11   16
+  // 0        [------>
+  //          <------]
   test('Dragging end greater than helix max offset (see issue #77)', () {
-    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
-    Helix helix0 = simple_helix_no_seq_design.helices[0];
-    Strand forward_strand = simple_helix_no_seq_design.strands[0];
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_smaller_design);
+    Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
+    Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
 
     // Starts DNA Ends move.
-    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: helix0));
+    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 10, helix: helix0));
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
-    DNAEnd dna_end = forward_substrand.dnaend_3p;
-    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    // BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    DNAEnd dna_end = forward_strand.dnaend_3p;
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 5, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move]),
-      original_offset: 15,
+      original_offset: 10,
       current_offset: 19,
       helix: helix0,
       strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
-    expect_app_state_equal(actual_state, initial_state);
+    // after
+    //     0    4      10 11   15 16
+    // 0        [-------------->
+    //          <------]
+    String expected_json = r"""
+{
+"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"strands": [
+  {
+    "substrands": [
+      {"helix": 0, "forward": true , "start": 4, "end": 16}
+    ]
+  },
+  {
+    "substrands": [
+      {"helix": 0, "forward": false , "start": 4, "end": 11}
+    ]
+  }
+]
+}
+    """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..ui_state.changed_since_last_save = true
+      ..undo_redo.replace(expected_undo_redo));
+    expect_app_state_equal(actual_state, expected_state);
+  });
+
+  test('test selected dna ends after undoing DNAEndMove (see issue #83)', () {
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
+    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Strand forward_strand = simple_helix_no_seq_design.strands[0];
+    DNAEnd dna_end = forward_strand.dnaend_5p;
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
+    DNAEndsMove dna_ends_move = DNAEndsMove(
+      moves: BuiltList<DNAEndMove>([dna_end_move]),
+      original_offset: 0,
+      current_offset: 7,
+      helix: helix0,
+      strands_affected: BuiltSet<Strand>([forward_strand]),
+    );
+    AppState actual_state = initial_state;
+
+    // Select
+    actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
+    // Starts DNA Ends move.
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveStart(offset: 0, helix: helix0));
+    // Stops DNA Ends move.
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
+    // Commits DNA Ends move.
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    // Selects new end
+    DNAEnd new_dna_end = actual_state.dna_design.strands[0].dnaend_5p;
+    actual_state =
+        app_state_reducer(actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
+
+    // Undo DNA Ends move
+    actual_state = app_state_reducer(actual_state, Undo());
+    // Select
+    actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
+
+    expect(actual_state.ui_state.selectables_store.selected_items, BuiltList<Selectable>([dna_end]));
+  });
+
+  // two_helices_design (defined earlier)
+  //   0                  16
+  //
+  // 0 [------------------->    <-- \
+  //   <-------------------]    <-- |
+  //                                | -- selects these ends
+  // 1 [------------------->    <-- |
+  //   <-------------------]    <-- /
+  //
+  // After removing helix 1
+  //
+  //   0                  16
+  //
+  // 0 [------------------->    nothing is selected now
+  //   <-------------------]
+  test('test clearing selected ends on deleted helix (see issue #83)', () {
+    DNAEnd dna_end_h0_3p = two_helices_design.strands[0].dnaend_3p;
+    DNAEnd dna_end_h0_5p = two_helices_design.strands[1].dnaend_5p;
+    DNAEnd dna_end_h1_3p = two_helices_design.strands[2].dnaend_3p;
+    DNAEnd dna_end_h1_5p = two_helices_design.strands[3].dnaend_5p;
+    BuiltList<Selectable> initial_selected_ends =
+        BuiltList<Selectable>([dna_end_h0_3p, dna_end_h0_5p, dna_end_h1_3p, dna_end_h1_5p]);
+    AppState initial_state = app_state_from_dna_design(two_helices_design);
+    AppState actual_state = initial_state;
+
+    actual_state = app_state_reducer(actual_state, SelectAll(selectables: initial_selected_ends, only: true));
+    expect(actual_state.ui_state.selectables_store.selected_items, initial_selected_ends.toSet());
+
+    actual_state = app_state_reducer(actual_state, HelixRemove(1));
+    expect(actual_state.ui_state.selectables_store.selected_items, BuiltSet<Selectable>());
   });
 }
