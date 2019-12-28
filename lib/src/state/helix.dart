@@ -83,7 +83,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   int get rotation_anchor;
 
-  /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix.
+  /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix. i.e. EXCLUSIVE.
   int get max_offset;
 
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.

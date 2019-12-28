@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../actions/actions.dart' as actions;
@@ -26,10 +27,7 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
       int lowest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, false);
       int highest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, true);
 
-      var move = DNAEndMove(
-          dna_end: end,
-          lowest_offset: lowest_offset,
-          highest_offset: highest_offset);
+      var move = DNAEndMove(dna_end: end, lowest_offset: lowest_offset, highest_offset: highest_offset);
       moves.add(move);
     }
 
@@ -83,7 +81,8 @@ int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> sel
   }
 
   if (unselected_end_offsets_to_one_side.isEmpty) {
-    return null;
+    Helix helix = dna_design.helices[helix_idx];
+    return highest ? helix.max_offset - 1 : helix.min_offset;
   }
 
   int closest_unselected_offset = unselected_end_offsets_to_one_side.reduce(highest ? min : max);

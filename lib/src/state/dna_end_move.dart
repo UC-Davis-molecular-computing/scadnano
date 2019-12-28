@@ -79,11 +79,9 @@ abstract class DNAEndMove with BuiltJsonSerializable implements Built<DNAEndMove
 
   DNAEnd get dna_end;
 
-  // lowest offset we can assign before end would run into other ends; if null, no bound
-  @nullable
+  // lowest offset we can assign before end would run into other ends or the end of the Helix
   int get lowest_offset;
 
-  // largest offset we can assign before end would run into other ends; if null, no bound
-  @nullable
+  // largest offset we can assign before end would run into other ends or the end of the Helix
   int get highest_offset;
 }
