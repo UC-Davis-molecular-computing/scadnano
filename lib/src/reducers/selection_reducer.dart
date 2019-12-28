@@ -27,13 +27,7 @@ Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
 
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
-  TypedGlobalReducer<SelectablesStore, AppState, actions.DeleteAllSelected>(delete_all_reducer),
-  TypedGlobalReducer<SelectablesStore, AppState, actions.DNAEndsMoveCommit>(ends_moved_reducer),
 ]);
-
-SelectablesStore delete_all_reducer(
-        SelectablesStore selectables_store, AppState state, actions.DeleteAllSelected action) =>
-    selectables_store.clear();
 
 SelectablesStore selections_adjust_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectionsAdjust action) {
@@ -80,49 +74,35 @@ Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.Select>(select_reducer),
   TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
+  TypedReducer<SelectablesStore, actions.DNADesignChangingAction>(dna_design_changing_action_reducer),
 ]);
 
-SelectablesStore select_reducer(SelectablesStore store, actions.Select action) {
+// because the DNADesign changed, some selected items may no longer be valid
+SelectablesStore dna_design_changing_action_reducer(
+        SelectablesStore selectables_store, actions.DNADesignChangingAction _) =>
+    selectables_store.clear();
+
+SelectablesStore select_reducer(SelectablesStore selectables_store, actions.Select action) {
   Selectable item = action.selectable;
   bool toggle = action.toggle;
   if (action.only) {
-    store = store.select(item, only: true);
+    selectables_store = selectables_store.select(item, only: true);
   } else {
     if (toggle) {
-      store = store.toggle(item);
+      selectables_store = selectables_store.toggle(item);
     } else {
-      store = store.select(item);
+      selectables_store = selectables_store.select(item);
     }
   }
-  return store;
+  return selectables_store;
 }
 
-SelectablesStore select_all_reducer(SelectablesStore store, actions.SelectAll action) =>
-    store.select_all(action.selectables, only: action.only);
+SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
+    selectables_store.select_all(action.selectables, only: action.only);
 
-SelectablesStore selections_clear_reducer(SelectablesStore store, actions.SelectionsClear action) =>
-    store.clear();
-
-//FIXME: If we just finished moving ends, they should remain selected
-SelectablesStore ends_moved_reducer(
-    SelectablesStore store, AppState state, actions.DNAEndsMoveCommit action) {
-  store = store.clear();
-//  for (DNAEndMove move in action.dna_ends_move.moves) {
-//    DNAEnd dna_end = move.dna_end;
-//    BoundSubstrand substrand = state.dna_design.end_to_substrand[dna_end];
-//    int new_offset = action.dna_ends_move.current_capped_offset_of(dna_end);
-//    int helix = move.dna_end.
-//  }
-  return store;
-//  List<DNAEnd> old_ends = List<DNAEnd>.from(store.selected_items);
-//  List<DNAEnd> new_ends = [];
-//  for (var end in old_ends) {
-//    print(end.id());
-//    DNAEnd new_end = state.dna_design.selectable_by_id(end.id());
-//    new_ends.add(new_end);
-//  }
-//  return store.select_all(new_ends);
-}
+SelectablesStore selections_clear_reducer(
+        SelectablesStore selectables_store, actions.SelectionsClear action) =>
+    selectables_store.clear();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer

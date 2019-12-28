@@ -42,8 +42,11 @@ abstract class Action {
   dynamic toJson();
 }
 
-/// Undoable actions can be undone by Ctrl+Z; they should be actions that affect the DNADesign.
-abstract class UndoableAction extends Action {}
+// Actions that affect the DNADesign (i.e., not purely UIAppState-affecting actions such as selecting items).
+abstract class DNADesignChangingAction extends Action {}
+
+/// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
+abstract class UndoableAction extends DNADesignChangingAction {}
 
 /// Fast actions happen rapidly and are not dispatched to normal store for optimization
 abstract class FastAction extends Action {}
@@ -66,6 +69,44 @@ abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<Skip
 /// [Action] that should trigger storing of certain [Storable]s to localStorage.
 abstract class StorableAction extends Action {
   Iterable<Storable> storables();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Undo/Redo
+
+abstract class Undo with BuiltJsonSerializable implements DNADesignChangingAction, Built<Undo, UndoBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Undo() => Undo.from((b) => b);
+
+  factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
+
+  Undo._();
+
+  static Serializer<Undo> get serializer => _$undoSerializer;
+}
+
+abstract class Redo with BuiltJsonSerializable implements DNADesignChangingAction, Built<Redo, RedoBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Redo() => Redo.from((b) => b);
+
+  factory Redo.from([void Function(RedoBuilder) updates]) = _$Redo;
+
+  Redo._();
+
+  static Serializer<Redo> get serializer => _$redoSerializer;
+}
+
+abstract class UndoRedoClear
+    with BuiltJsonSerializable
+    implements Action, Built<UndoRedoClear, UndoRedoClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory UndoRedoClear() => UndoRedoClear.from((b) => b);
+
+  factory UndoRedoClear.from([void Function(UndoRedoClearBuilder) updates]) = _$UndoRedoClear;
+
+  UndoRedoClear._();
+
+  static Serializer<UndoRedoClear> get serializer => _$undoRedoClearSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -769,44 +810,6 @@ abstract class ExportSvgSide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Undo/Redo
-
-abstract class Undo with BuiltJsonSerializable implements Action, Built<Undo, UndoBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory Undo() => Undo.from((b) => b);
-
-  factory Undo.from([void Function(UndoBuilder) updates]) = _$Undo;
-
-  Undo._();
-
-  static Serializer<Undo> get serializer => _$undoSerializer;
-}
-
-abstract class Redo with BuiltJsonSerializable implements Action, Built<Redo, RedoBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory Redo() => Redo.from((b) => b);
-
-  factory Redo.from([void Function(RedoBuilder) updates]) = _$Redo;
-
-  Redo._();
-
-  static Serializer<Redo> get serializer => _$redoSerializer;
-}
-
-abstract class UndoRedoClear
-    with BuiltJsonSerializable
-    implements Action, Built<UndoRedoClear, UndoRedoClearBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory UndoRedoClear() => UndoRedoClear.from((b) => b);
-
-  factory UndoRedoClear.from([void Function(UndoRedoClearBuilder) updates]) = _$UndoRedoClear;
-
-  UndoRedoClear._();
-
-  static Serializer<UndoRedoClear> get serializer => _$undoRedoClearSerializer;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand part action
 
 abstract class StrandPartAction extends Action {
@@ -1025,7 +1028,7 @@ abstract class DNAEndsMoveAdjustOffset
 
 abstract class DNAEndsMoveStop
     with BuiltJsonSerializable
-    implements UndoableAction, Built<DNAEndsMoveStop, DNAEndsMoveStopBuilder> {
+    implements Action, Built<DNAEndsMoveStop, DNAEndsMoveStopBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory DNAEndsMoveStop() = _$DNAEndsMoveStop._;
 
@@ -1036,7 +1039,7 @@ abstract class DNAEndsMoveStop
 
 abstract class DNAEndsMoveCommit
     with BuiltJsonSerializable
-    implements Action, Built<DNAEndsMoveCommit, DNAEndsMoveCommitBuilder> {
+    implements UndoableAction, Built<DNAEndsMoveCommit, DNAEndsMoveCommitBuilder> {
   DNAEndsMove get dna_ends_move;
 
   /************************ begin BuiltValue boilerplate ************************/
