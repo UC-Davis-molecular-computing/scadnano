@@ -8,8 +8,10 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
@@ -20,14 +22,14 @@ import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
+import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
 UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
   mapStateToPropsWithOwnProps: (state, props) {
-    bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.strand);
-    bool selectable =
-    DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+    bool selected = state.ui_state.selectables_store.selected(props.strand);
+    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
     return DesignMainStrand()
       ..selected = selected
       ..selectable = selectable
@@ -44,35 +46,45 @@ UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 class _$DesignMainStrandProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
+
   bool selected;
   bool selectable;
-  bool select_mode;
   bool assign_dna_mode_enabled;
+  BuiltList<Helix> helices;
+  SelectablesStore selectables_store;
+  SelectModeState select_mode_state;
+  bool select_mode;
+  bool pencil_mode;
+  bool ligate_mode;
+  bool loopout_mode;
+  bool nick_mode;
+  bool drawing_potential_crossover;
+  bool moving_dna_ends;
+  bool show_mouseover_rect;
 }
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
-  Map get defaultProps =>
-      (newProps()
-        ..selected = false
-        ..selectable = false);
+  Map get defaultProps => (newProps()
+    ..selected = false
+    ..selectable = false);
 
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Strand strand = nextProps['DesignMainStrandProps.strand'];
-    bool selected = nextProps['DesignMainStrandProps.selected'];
-    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
-
-    bool should = !(props.strand == strand &&
-        props.side_selected_helix_idxs == side_selected_helix_idxs &&
-        props.selected == selected);
-    if (!OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
-      bool selectable = nextProps['DesignMainStrandProps.selectable'];
-      should = should || (props.selectable != selectable);
-    }
-    return should;
-  }
+//  @override
+//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+//    Strand strand = nextProps['DesignMainStrandProps.strand'];
+//    bool selected = nextProps['DesignMainStrandProps.selected'];
+//    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
+//
+//    bool should = !(props.strand == strand &&
+//        props.side_selected_helix_idxs == side_selected_helix_idxs &&
+//        props.selected == selected);
+//    if (!OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
+//      bool selectable = nextProps['DesignMainStrandProps.selectable'];
+//      should = should || (props.selectable != selectable);
+//    }
+//    return should;
+//  }
 
   @override
   render() {
@@ -86,10 +98,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
     } else {
       var classname = 'strand';
       if (selectable) {
-//        print('DesignMainStrand.render(): adding selectable class to strand');
         classname += ' selectable';
-      } else {
-//        print('DesignMainStrand.render(): not adding selectable class to strand');
       }
       if (selectable && selected) {
         classname += ' selected';
@@ -100,10 +109,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> {
         ..onPointerDown = handle_click_down
         ..onPointerUp = handle_click_up
         ..className = classname)([
-//        (DesignMainStrandPaths()
-        (ConnectedDesignMainStrandPaths()
+//        (ConnectedDesignMainStrandPaths()
+        (DesignMainStrandPaths()
           ..strand = strand
-          ..key = 'strand-paths')(),
+          ..key = 'strand-paths'
+          ..helices = props.helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..selectables_store = props.selectables_store
+          ..select_mode_state = props.select_mode_state
+          ..select_mode = props.select_mode
+          ..pencil_mode = props.pencil_mode
+          ..ligate_mode = props.ligate_mode
+          ..loopout_mode = props.loopout_mode
+          ..nick_mode = props.nick_mode
+          ..drawing_potential_crossover = props.drawing_potential_crossover
+          ..moving_dna_ends = props.moving_dna_ends
+          ..show_mouseover_rect = props.show_mouseover_rect)(),
         ..._insertion_paths(strand, side_selected_helix_idxs),
         ..._deletion_paths(strand, side_selected_helix_idxs),
       ]);

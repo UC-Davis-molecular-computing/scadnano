@@ -5,6 +5,7 @@ import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
@@ -24,9 +25,8 @@ UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
     int next_idx = props.crossover.next_substrand_idx;
     var prev_ss = props.strand.substrands[prev_idx];
     var next_ss = props.strand.substrands[next_idx];
-    bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.crossover);
-    bool selectable =
-        DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
+    bool selected = state.ui_state.selectables_store.selected(props.crossover);
+    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
 
     return DesignMainStrandCrossover()
       ..selected = selected
@@ -44,8 +44,9 @@ UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMa
 
 @Props()
 class _$DesignMainStrandCrossoverProps extends UiProps {
-  Strand strand;
   Crossover crossover;
+  Strand strand;
+
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
   bool show_mouseover_rect;
@@ -64,7 +65,8 @@ class _$DesignMainStrandCrossoverState extends UiState {
 
 @Component2()
 class DesignMainStrandCrossoverComponent
-    extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState> {
+    extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 

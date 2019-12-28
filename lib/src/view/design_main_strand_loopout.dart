@@ -18,14 +18,14 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
 import '../actions/actions.dart' as actions;
+import 'pure_component.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
 UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
     connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
-  bool selected = DEBUG_SELECT ? false : state.ui_state.selectables_store.selected(props.loopout);
-  bool selectable =
-      DEBUG_SELECT ? false : state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
+  bool selected = state.ui_state.selectables_store.selected(props.loopout);
+  bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
   var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
   var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
   return DesignMainLoopout()
@@ -45,9 +45,10 @@ UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 class _$DesignMainLoopoutProps extends UiProps {
   Loopout loopout;
   Strand strand;
+  Color color;
+
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
-  Color color;
   bool selected;
   bool selectable;
   bool select_mode;
@@ -64,7 +65,7 @@ class _$DesignMainStrandLoopoutState extends UiState {
 
 @Component2()
 class DesignMainLoopoutComponent
-    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState> {
+    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState> with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -86,7 +87,6 @@ class DesignMainLoopoutComponent
     if (props.selectable) {
       classname += ' selectable';
     }
-
 
     if (show_mouseover_rect && mouse_hover) {
       update_mouseover_loopout();
@@ -137,11 +137,9 @@ class DesignMainLoopoutComponent
     }
   }
 
-
   update_mouseover_loopout() {
     //FIXME: implement this
   }
-
 
   loopout_length_change() async {
     int length = null;
