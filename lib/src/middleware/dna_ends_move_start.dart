@@ -18,8 +18,6 @@ import '../state/app_state.dart';
 // does not have access to the list of all selected ends. It is middleware instead of a reducer because
 // it triggers a new action to be dispatched.
 dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher next) {
-//  next(action);
-
   if (action is actions.DNAEndsMoveStart) {
     BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends;
     List<DNAEndMove> moves = [];
