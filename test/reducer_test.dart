@@ -2261,4 +2261,54 @@ main() {
 
     expect_app_state_equal(state_undo_2, expected_state);
   });
+
+  test('Dragging end less than helix min offset (see issue #77)', () {
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
+    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Strand forward_strand = simple_helix_no_seq_design.strands[0];
+
+    // Starts DNA Ends move.
+    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: helix0));
+    // Stops DNA Ends move.
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
+    // Commits DNA Ends move.
+    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    DNAEnd dna_end = forward_substrand.dnaend_5p;
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndsMove dna_ends_move = DNAEndsMove(
+      moves: BuiltList<DNAEndMove>([dna_end_move]),
+      original_offset: 0,
+      current_offset: -6,
+      helix: helix0,
+      strands_affected: BuiltSet<Strand>([forward_strand]),
+    );
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    expect_app_state_equal(actual_state, initial_state);
+  });
+
+  test('Dragging end greater than helix max offset (see issue #77)', () {
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
+    Helix helix0 = simple_helix_no_seq_design.helices[0];
+    Strand forward_strand = simple_helix_no_seq_design.strands[0];
+
+    // Starts DNA Ends move.
+    AppState actual_state = app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: helix0));
+    // Stops DNA Ends move.
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
+    // Commits DNA Ends move.
+    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    DNAEnd dna_end = forward_substrand.dnaend_3p;
+    DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end);
+    DNAEndsMove dna_ends_move = DNAEndsMove(
+      moves: BuiltList<DNAEndMove>([dna_end_move]),
+      original_offset: 15,
+      current_offset: 19,
+      helix: helix0,
+      strands_affected: BuiltSet<Strand>([forward_strand]),
+    );
+    actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
+
+    expect_app_state_equal(actual_state, initial_state);
+  });
 }
