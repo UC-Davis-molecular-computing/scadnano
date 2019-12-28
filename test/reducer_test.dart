@@ -1576,7 +1576,7 @@ main() {
 
   test('Saving DNA design with no unsaved changes', () {
     AppState state = app_state_from_dna_design(simple_strand_dna_design);
-    AppState new_state = app_state_reducer(state, SaveDNAFile);
+    AppState new_state = app_state_reducer(state, SaveDNAFile());
 
     expect(new_state, state);
   });
@@ -1584,7 +1584,7 @@ main() {
   test('Saving DNA design with unsaved changes', () {
     AppState expected_state = app_state_from_dna_design(simple_strand_dna_design);
     AppState old_state = expected_state.rebuild((b) => b.ui_state.changed_since_last_save = false);
-    AppState new_state = app_state_reducer(old_state, SaveDNAFile);
+    AppState new_state = app_state_reducer(old_state, SaveDNAFile());
 
     expect(new_state == expected_state, true);
   });
@@ -1633,7 +1633,7 @@ main() {
   test('save design after add helix to DNA design', () {
     AppState state = app_state_from_dna_design(two_helices_design);
     state = app_state_reducer(state, HelixAdd(GridPosition(0, 2)));
-    state = app_state_reducer(state, SaveDNAFile);
+    state = app_state_reducer(state, SaveDNAFile());
 
     String two_helices_helix_add_json = r"""
  {
@@ -1670,5 +1670,48 @@ main() {
           .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
 
     expect_app_state_equal(state, two_helices_helix_add_state);
+  });
+
+  test('remove empty helix from DNA design', () {
+    AppState original_state = app_state_from_dna_design(two_helices_design);
+
+    AppState second_state = app_state_reducer(original_state, HelixAdd(GridPosition(0, 2)));
+    AppState final_state = app_state_reducer(second_state, HelixRemove(2));
+
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design, second_state.dna_design]));
+    AppState expected_state = original_state.rebuild((b) => b
+      ..ui_state.changed_since_last_save = true
+      ..undo_redo.replace(expected_undo_redo));
+    expect_app_state_equal(final_state, expected_state);
+  });
+
+  //     0               16
+  // 0   [------- ------->
+  //     <------- -------]
+  String simple_helix_no_seq_json = r"""
+{
+"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"strands": [
+  {
+    "substrands": [
+      {"helix": 0, "forward": true , "start": 0, "end": 16}
+    ]
+  },
+  {
+    "substrands": [
+      {"helix": 0, "forward": false , "start": 0, "end": 16}
+    ]
+  }
+]
+}
+""";
+  DNADesign simple_helix_no_seq_design = DNADesign.from_json(jsonDecode(simple_helix_no_seq_json));
+  test('Testing DNAEndsMoveStart', () {
+    AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
+    AppState actual_state =
+        app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
+    AppState expect_state = initial_state.rebuild((b) => b.ui_state.moving_dna_ends = true);
+    expect_app_state_equal(actual_state, expect_state);
   });
 }
