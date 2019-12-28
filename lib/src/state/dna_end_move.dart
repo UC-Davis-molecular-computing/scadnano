@@ -46,7 +46,17 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   int get delta => current_offset - original_offset;
 
   // if false, we wouldn't actually move anything
-  bool get is_nontrivial => current_offset != original_offset;
+  bool get is_nontrivial {
+    if (delta == 0) {
+      return false;
+    }
+    for (var move in moves) {
+      if (current_capped_offset_of(move.dna_end) != move.dna_end.offset_inclusive) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   // INCLUSIVE offset
   int current_capped_offset_of(DNAEnd end) {
@@ -66,8 +76,7 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
 }
 
 abstract class DNAEndMove with BuiltJsonSerializable implements Built<DNAEndMove, DNAEndMoveBuilder> {
-  factory DNAEndMove({DNAEnd dna_end, int lowest_offset, int highest_offset}) =
-      _$DNAEndMove._;
+  factory DNAEndMove({DNAEnd dna_end, int lowest_offset, int highest_offset}) = _$DNAEndMove._;
 
   factory DNAEndMove.from([void Function(DNAEndMoveBuilder) updates]) = _$DNAEndMove;
 
