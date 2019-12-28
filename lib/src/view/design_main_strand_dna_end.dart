@@ -6,8 +6,6 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react.dart' as react;
 
-//import 'package:dnd/dnd.dart';
-
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -19,6 +17,7 @@ import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import '../actions/actions.dart' as actions;
+import 'pure_component.dart';
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
@@ -29,9 +28,9 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
     ..selectable = state.ui_state.select_mode_state.is_selectable(end)
     ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
     ..helix = state.dna_design.helices[props.substrand.helix]
-    ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-    ..join_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
     ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
+    ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
+    ..ligate_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
@@ -52,13 +51,13 @@ class _$DesignMainDNAEndProps extends UiProps {
   bool selectable;
   bool select_mode;
   bool pencil_mode;
-  bool join_mode;
+  bool ligate_mode;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
 
 @Component2()
-class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
+class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
   DNAEnd get dna_end => props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
 
   bool get is_first => props.substrand.is_first && props.is_5p;
@@ -71,7 +70,6 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         (is_first && props.is_5p ? '-first-substrand' : '') +
         (is_last && !props.is_5p ? '-last-substrand' : '');
 
-//    if (substrand.selected_5p()) {
     if (props.selected) {
       classname += ' selected';
     }
@@ -162,7 +160,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> {
         app.dispatch(actions.JoinStrandsByCrossover(
             potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
-    } else if (props.join_mode && (is_first || is_last)) {
+    } else if (props.ligate_mode && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));
     }
   }

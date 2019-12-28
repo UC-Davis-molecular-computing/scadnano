@@ -12,6 +12,7 @@ import '../state/bound_substrand.dart';
 import '../state/app_state.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
+import 'pure_component.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
 
@@ -29,13 +30,15 @@ UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMain
 class _$DesignMainBoundSubstrandProps extends UiProps {
   BoundSubstrand substrand;
   Color color;
+  String dna_sequence;
+
   Helix helix;
   bool nick_mode_enabled;
-  String dna_sequence;
 }
 
 @Component2()
-class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps> {
+class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps>
+    with PureComponent {
 //  @override
 //  bool shouldComponentUpdate(Map nextProps, Map nextState) {
 //    BoundSubstrand substrand = props.substrand;

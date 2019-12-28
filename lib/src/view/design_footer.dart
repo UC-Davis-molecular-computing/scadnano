@@ -2,6 +2,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/strand.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
@@ -11,22 +12,32 @@ import '../state/app_state.dart';
 part 'design_footer.over_react.g.dart';
 
 UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<AppState, _$DesignFooterProps>(
-  mapStateToProps: (state) => (DesignFooter()
-    ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
-    ..mouseover_datas = state.ui_state.mouseover_datas),
+  mapStateToPropsWithOwnProps: (state, props) {
+    BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
+    MouseoverData first_mouseover_data =
+        mouseover_datas.isNotEmpty ? state.ui_state.mouseover_datas.first : null;
+    Strand strand_first_mouseover_data = mouseover_datas.isNotEmpty
+        ? state.dna_design.substrand_to_strand[first_mouseover_data.substrand]
+        : null;
+    return (DesignFooter()
+      ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
+      ..mouseover_datas = state.ui_state.mouseover_datas
+      ..strand_first_mouseover_data = strand_first_mouseover_data);
+  },
 )(DesignFooter);
 
 @Factory()
 UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
 @Props()
-class _$DesignFooterProps extends UiProps { // FluxUiProps<MouseoverDataStore, MouseoverDataStore> {
+class _$DesignFooterProps extends UiProps {
   BuiltList<MouseoverData> mouseover_datas;
   bool show_mouseover_rect;
+  Strand strand_first_mouseover_data;
 }
 
 @Component2()
-class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiComponent<DesignFooterProps> {
+class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
   @override
   render() {
     BuiltList<MouseoverData> mouseover_datas = props.mouseover_datas;
@@ -40,7 +51,7 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> { // FluxUiC
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.substrand != null) {
         int substrand_length = mouseover_data.substrand.dna_length();
-        var strand = app.state.dna_design.substrand_to_strand[mouseover_data.substrand];
+        var strand = props.strand_first_mouseover_data;
         text += (', ' +
             'substrand length: ${substrand_length}, ' +
             'strand length: ${strand.dna_length()}, ' +

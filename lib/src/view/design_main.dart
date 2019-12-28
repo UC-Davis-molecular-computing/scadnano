@@ -46,7 +46,6 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
 class _$DesignMainProps extends UiProps {
-  AppState state;
   BuiltList<Helix> helices;
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
@@ -75,8 +74,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..show_mismatches = props.show_mismatches
         ..strands = props.strands
         ..key = 'mismatches')(),
-      (DesignMainStrands()
-        ..strands = props.strands
+//      (DesignMainStrands()
+//        ..strands = props.strands
+      (ConnectedDesignMainStrands()
         ..key = 'strands')(),
       (DesignMainDNASequences()
         ..show_dna = props.show_dna
