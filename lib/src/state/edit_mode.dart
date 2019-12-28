@@ -57,25 +57,25 @@ class EditModeChoice extends EnumClass {
   BuiltSet<EditModeChoice> get excluded_modes {
     switch (this) {
       case select:
-        return [pencil, loopout, assign_dna].toBuiltSet();
+        return [pencil, loopout, assign_dna, backbone].toBuiltSet();
       case pencil:
-        return [select, ligate, assign_dna].toBuiltSet();
+        return [select, ligate, assign_dna, backbone].toBuiltSet();
       case nick:
-        return [ligate, insertion, deletion, assign_dna, assign_dna].toBuiltSet();
+        return [ligate, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case ligate:
-        return [pencil, nick, insertion, deletion, assign_dna, assign_dna].toBuiltSet();
+        return [pencil, nick, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case insertion:
-        return [nick, ligate, deletion, assign_dna, assign_dna].toBuiltSet();
+        return [nick, ligate, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case deletion:
-        return [nick, ligate, insertion, assign_dna, assign_dna].toBuiltSet();
+        return [nick, ligate, insertion, assign_dna, assign_dna, backbone].toBuiltSet();
       case backbone:
-        return <EditModeChoice>[].toBuiltSet();
+        return [select, pencil, nick, ligate, insertion, deletion, assign_dna].toBuiltSet();
       case loopout:
         return [select, assign_dna].toBuiltSet();
       case helix:
         return <EditModeChoice>[].toBuiltSet();
       case assign_dna:
-        return [select, pencil, nick, ligate, insertion, deletion, loopout].toBuiltSet();
+        return [select, pencil, nick, ligate, insertion, deletion, loopout, backbone].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
     }
