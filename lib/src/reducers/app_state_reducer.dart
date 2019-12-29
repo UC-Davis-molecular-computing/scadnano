@@ -8,13 +8,7 @@ import '../state/app_state.dart';
 import 'load_dna_file_reducer.dart';
 
 AppState app_state_reducer(AppState state, action) {
-//  if (action is actions.MainViewSelectionBoxSizeChanged) {
-//    var selection_box = state.ui_state.selection_box_main_view;
-//    selection_box = selection_box
-//        .rebuild((s) => s..current = action.point);
-//    var new_model = state.rebuild((m) => m..ui_state.selection_box_main_view.replace(selection_box));
-//    return new_model;
-//  }
+  AppState original_state = state;
 
   // If wrapped in SkipUndo, unpack it and remember undoable_action_reducer shouldn't push onto undo stack.
   bool modify_undo_redo_stacks = true;
@@ -46,11 +40,11 @@ AppState app_state_reducer(AppState state, action) {
     ..editor_content = editor_content_reducer(state.editor_content, action));
 
   // "global" reducers operate on a slice of the state but need another part of the state
-  // we pass the "old" parts of the state, since we don't want dispatcher to assume they will be applied
-  // in a certain order. For consistency, everyone gets the version of the state before any action was applied.
+  // we pass the "old" parts of the state, since we don't want dispatcher to assume they will be applied in
+  // a certain order. For consistency, everyone gets the version of the state before any action was applied.
   state = state.rebuild((m) => m
-    ..dna_design = dna_design_global_reducer(state.dna_design, state, action)?.toBuilder()
-    ..ui_state.replace(ui_state_global_reducer(state.ui_state, state, action)));
+    ..dna_design = dna_design_global_reducer(state.dna_design, original_state, action)?.toBuilder()
+    ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
   // So we set a variable telling the Undo reducer not to put anything on the stack for any of these atomic actions.

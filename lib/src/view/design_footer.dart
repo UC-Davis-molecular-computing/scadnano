@@ -5,7 +5,6 @@ import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../state/helix.dart';
-import '../app.dart';
 import '../state/mouseover_data.dart';
 import '../state/app_state.dart';
 

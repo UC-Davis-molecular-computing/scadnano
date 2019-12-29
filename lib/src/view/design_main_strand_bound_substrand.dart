@@ -1,44 +1,44 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import '../state/bound_substrand.dart';
-import '../state/app_state.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
+import 'mode_queryable.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
 
-UiFactory<DesignMainBoundSubstrandProps> ConnectedDesignMainBoundSubstrand =
-    connect<AppState, DesignMainBoundSubstrandProps>(mapStateToPropsWithOwnProps: (state, props) {
-  return DesignMainBoundSubstrand()
-    ..helix = state.dna_design.helices[props.substrand.helix]
-    ..nick_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.nick);
-})(DesignMainBoundSubstrand);
+//UiFactory<DesignMainBoundSubstrandProps> ConnectedDesignMainBoundSubstrand =
+//    connect<AppState, DesignMainBoundSubstrandProps>(mapStateToPropsWithOwnProps: (state, props) {
+//  return DesignMainBoundSubstrand()
+//    ..helix = state.dna_design.helices[props.substrand.helix]
+//    ..edit_modes = state.ui_state.edit_modes;
+//})(DesignMainBoundSubstrand);
 
 @Factory()
 UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
 
 @Props()
-class _$DesignMainBoundSubstrandProps extends UiProps {
+class _$DesignMainBoundSubstrandProps extends EditModePropsAbstract {
   BoundSubstrand substrand;
   Color color;
   String dna_sequence;
 
+  BuiltSet<EditModeChoice> edit_modes;
   Helix helix;
-  bool nick_mode_enabled;
 }
 
 @Component2()
 class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps>
-    with PureComponent {
+    with PureComponent, EditModeQueryable<DesignMainBoundSubstrandProps> {
 //  @override
 //  bool shouldComponentUpdate(Map nextProps, Map nextState) {
 //    BoundSubstrand substrand = props.substrand;
@@ -72,7 +72,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
-    if (props.nick_mode_enabled) {
+    if (nick_mode) {
       MouseEvent event = event_syn.nativeEvent;
       var offset_forward = util.get_offset_forward(event, props.helix);
       int offset = offset_forward.offset;

@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
@@ -13,8 +12,6 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
-import '../state/app_state.dart';
-import '../state/select_mode.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
@@ -22,69 +19,49 @@ import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
+import 'mode_queryable.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
-  mapStateToPropsWithOwnProps: (state, props) {
-    bool selected = state.ui_state.selectables_store.selected(props.strand);
-    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
-    return DesignMainStrand()
-      ..selected = selected
-      ..selectable = selectable
-      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
-      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-      ..assign_dna_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.assign_dna);
-  },
-)(DesignMainStrand);
+//UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
+//  mapStateToPropsWithOwnProps: (state, props) {
+//    bool selected = state.ui_state.selectables_store.selected(props.strand);
+//    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
+//    return DesignMainStrand()
+//      ..selected = selected
+//      ..selectable = selectable
+//      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
+//      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+//      ..assign_dna_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.assign_dna);
+//  },
+//)(DesignMainStrand);
 
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
 @Props()
-class _$DesignMainStrandProps extends UiProps {
+class _$DesignMainStrandProps extends EditModePropsAbstract {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
 
   bool selected;
   bool selectable;
-  bool assign_dna_mode_enabled;
   BuiltList<Helix> helices;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;
-  bool select_mode;
-  bool pencil_mode;
-  bool ligate_mode;
-  bool loopout_mode;
-  bool nick_mode;
+  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool show_mouseover_rect;
 }
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
-  @override
-  Map get defaultProps => (newProps()
-    ..selected = false
-    ..selectable = false);
-
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
+    with PureComponent, EditModeQueryable<DesignMainStrandProps> {
 //  @override
-//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-//    Strand strand = nextProps['DesignMainStrandProps.strand'];
-//    bool selected = nextProps['DesignMainStrandProps.selected'];
-//    BuiltSet<int> side_selected_helix_idxs = nextProps['DesignMainStrandProps.side_selected_helix_idxs'];
-//
-//    bool should = !(props.strand == strand &&
-//        props.side_selected_helix_idxs == side_selected_helix_idxs &&
-//        props.selected == selected);
-//    if (!OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION) {
-//      bool selectable = nextProps['DesignMainStrandProps.selectable'];
-//      should = should || (props.selectable != selectable);
-//    }
-//    return should;
-//  }
+//  Map get defaultProps => (newProps()
+//    ..selected = false
+//    ..selectable = false);
 
   @override
   render() {
@@ -117,14 +94,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
-          ..select_mode = props.select_mode
-          ..pencil_mode = props.pencil_mode
-          ..ligate_mode = props.ligate_mode
-          ..loopout_mode = props.loopout_mode
-          ..nick_mode = props.nick_mode
+          ..edit_modes = props.edit_modes
           ..drawing_potential_crossover = props.drawing_potential_crossover
-          ..moving_dna_ends = props.moving_dna_ends
-          ..show_mouseover_rect = props.show_mouseover_rect)(),
+          ..moving_dna_ends = props.moving_dna_ends)(),
         ..._insertion_paths(strand, side_selected_helix_idxs),
         ..._deletion_paths(strand, side_selected_helix_idxs),
       ]);
@@ -132,17 +104,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   }
 
   handle_click_down(react.SyntheticPointerEvent event) {
-    if (props.select_mode && props.selectable) {
+    if (select_mode && props.selectable) {
       props.strand.handle_selection_mouse_down(event.nativeEvent);
     }
 
-    if (props.assign_dna_mode_enabled) {
+    if (assign_dna_mode) {
       assign_dna();
     }
   }
 
   handle_click_up(react.SyntheticPointerEvent event) {
-    if (props.select_mode && props.selectable) {
+    if (select_mode && props.selectable) {
       props.strand.handle_selection_mouse_up(event.nativeEvent);
     }
   }

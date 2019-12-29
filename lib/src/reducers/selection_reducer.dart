@@ -3,9 +3,6 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_end_move.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/view/design.dart';
@@ -75,6 +72,8 @@ Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
   TypedReducer<SelectablesStore, actions.DNADesignChangingAction>(dna_design_changing_action_reducer),
+  TypedReducer<SelectablesStore, actions.SelectModeToggle>(selections_clear_reducer),
+  TypedReducer<SelectablesStore, actions.SelectModesSet>(selections_clear_reducer),
 ]);
 
 // because the DNADesign changed, some selected items may no longer be valid
@@ -100,9 +99,7 @@ SelectablesStore select_reducer(SelectablesStore selectables_store, actions.Sele
 SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
     selectables_store.select_all(action.selectables, only: action.only);
 
-SelectablesStore selections_clear_reducer(
-        SelectablesStore selectables_store, actions.SelectionsClear action) =>
-    selectables_store.clear();
+SelectablesStore selections_clear_reducer(SelectablesStore selectables_store, _) => selectables_store.clear();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side_selected_helices global reducer

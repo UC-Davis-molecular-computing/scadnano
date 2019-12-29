@@ -1,10 +1,9 @@
 import 'package:dialog/dialog.dart';
-import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 
-import 'package:scadnano/src/state/select_mode.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/view/mode_queryable.dart';
 import 'package:scadnano/src/view/pure_component.dart';
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
@@ -14,46 +13,41 @@ import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
-import '../state/app_state.dart';
 
 part 'design_main_strand_crossover.over_react.g.dart';
 
-UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
-    connect<AppState, DesignMainStrandCrossoverProps>(
-  mapStateToPropsWithOwnProps: (state, props) {
-    int prev_idx = props.crossover.prev_substrand_idx;
-    int next_idx = props.crossover.next_substrand_idx;
-    var prev_ss = props.strand.substrands[prev_idx];
-    var next_ss = props.strand.substrands[next_idx];
-    bool selected = state.ui_state.selectables_store.selected(props.crossover);
-    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
-
-    return DesignMainStrandCrossover()
-      ..selected = selected
-      ..selectable = selectable
-      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
-      ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
-      ..prev_substrand = prev_ss
-      ..next_substrand = next_ss
-      ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout);
-  },
-)(DesignMainStrandCrossover);
+//UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
+//    connect<AppState, DesignMainStrandCrossoverProps>(
+//  mapStateToPropsWithOwnProps: (state, props) {
+//    int prev_idx = props.crossover.prev_substrand_idx;
+//    int next_idx = props.crossover.next_substrand_idx;
+//    var prev_ss = props.strand.substrands[prev_idx];
+//    var next_ss = props.strand.substrands[next_idx];
+//    bool selected = state.ui_state.selectables_store.selected(props.crossover);
+//    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
+//
+//    return DesignMainStrandCrossover()
+//      ..selected = selected
+//      ..selectable = selectable
+//      ..prev_substrand = prev_ss
+//      ..next_substrand = next_ss
+//      ..edit_modes = state.ui_state.edit_modes;
+//  },
+//)(DesignMainStrandCrossover);
 
 @Factory()
 UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMainStrandCrossover;
 
 @Props()
-class _$DesignMainStrandCrossoverProps extends UiProps {
+class _$DesignMainStrandCrossoverProps extends EditModePropsAbstract {
   Crossover crossover;
   Strand strand;
 
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
-  bool show_mouseover_rect;
   bool selected;
   bool selectable;
-  bool select_mode;
-  bool loopout_edit_mode_enabled;
+  BuiltSet<EditModeChoice> edit_modes;
 }
 
 @State()
@@ -66,7 +60,7 @@ class _$DesignMainStrandCrossoverState extends UiState {
 @Component2()
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponent {
+    with PureComponent, EditModeQueryable<DesignMainStrandCrossoverProps> {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -77,7 +71,7 @@ class DesignMainStrandCrossoverComponent
     BoundSubstrand prev_substrand = props.prev_substrand;
     BoundSubstrand next_substrand = props.next_substrand;
 
-    bool show_mouseover_rect = props.show_mouseover_rect;
+    bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
     var classname_this_curve = 'crossover-curve';
@@ -113,16 +107,16 @@ class DesignMainStrandCrossoverComponent
         }
       })
       ..onPointerDown = ((ev) {
-        if (props.select_mode && props.selectable) {
+        if (select_mode && props.selectable) {
           props.crossover.handle_selection_mouse_down(ev.nativeEvent);
         } else if (show_mouseover_rect) {
           handle_crossover_click();
-        } else if (props.loopout_edit_mode_enabled) {
+        } else if (loopout_mode) {
           convert_crossover_to_loopout();
         }
       })
       ..onPointerUp = ((ev) {
-        if (props.select_mode && props.selectable) {
+        if (select_mode && props.selectable) {
           props.crossover.handle_selection_mouse_up(ev.nativeEvent);
         }
       })

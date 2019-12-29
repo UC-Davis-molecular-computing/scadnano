@@ -1,16 +1,14 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/state/strand.dart';
-import '../state/app_state.dart';
-import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano/src/view/mode_queryable.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../app.dart';
@@ -19,30 +17,29 @@ import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
 import '../actions/actions.dart' as actions;
 import 'pure_component.dart';
+import 'mode_queryable.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
-UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
-    connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
-  bool selected = state.ui_state.selectables_store.selected(props.loopout);
-  bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
-  var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
-  var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
-  return DesignMainLoopout()
-    ..selected = selected
-    ..selectable = selectable
-    ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
-    ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
-    ..prev_substrand = prev_ss
-    ..next_substrand = next_ss
-    ..loopout_edit_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.loopout);
-})(DesignMainLoopout);
+//UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
+//    connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
+//  bool selected = state.ui_state.selectables_store.selected(props.loopout);
+//  bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
+//  var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
+//  var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
+//  return DesignMainLoopout()
+//    ..selected = selected
+//    ..selectable = selectable
+//    ..edit_modes = state.ui_state.edit_modes
+//    ..prev_substrand = prev_ss
+//    ..next_substrand = next_ss;
+//})(DesignMainLoopout);
 
 @Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
 @Props()
-class _$DesignMainLoopoutProps extends UiProps {
+class _$DesignMainLoopoutProps extends EditModePropsAbstract {
   Loopout loopout;
   Strand strand;
   Color color;
@@ -51,9 +48,7 @@ class _$DesignMainLoopoutProps extends UiProps {
   BoundSubstrand next_substrand;
   bool selected;
   bool selectable;
-  bool select_mode;
-  bool loopout_edit_mode_enabled;
-  bool show_mouseover_rect;
+  BuiltSet<EditModeChoice> edit_modes;
 }
 
 @State()
@@ -65,7 +60,8 @@ class _$DesignMainStrandLoopoutState extends UiState {
 
 @Component2()
 class DesignMainLoopoutComponent
-    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState> with PureComponent {
+    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState>
+    with PureComponent, EditModeQueryable<DesignMainLoopoutProps> {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -77,7 +73,7 @@ class DesignMainLoopoutComponent
     var prev_ss = props.prev_substrand;
     var next_ss = props.next_substrand;
 
-    bool show_mouseover_rect = props.show_mouseover_rect;
+    bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
     var classname = 'substrand-line loopout-line';
@@ -119,15 +115,15 @@ class DesignMainLoopoutComponent
           }
         })
         ..onPointerDown = ((ev) {
-          if (props.select_mode && props.selectable) {
+          if (select_mode && props.selectable) {
             loopout.handle_selection_mouse_down(ev.nativeEvent);
           }
-          if (props.loopout_edit_mode_enabled) {
+          if (loopout_mode) {
             loopout_length_change();
           }
         })
         ..onPointerUp = ((ev) {
-          if (props.select_mode && props.selectable) {
+          if (select_mode && props.selectable) {
             loopout.handle_selection_mouse_up(ev.nativeEvent);
           }
         })

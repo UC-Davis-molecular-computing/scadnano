@@ -2,13 +2,10 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
 
@@ -26,22 +23,17 @@ import 'pure_component.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
-UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
-    connect<AppState, DesignMainStrandPathsProps>(
-  mapStateToProps: (state) => (DesignMainStrandPaths()
-    ..helices = state.dna_design.helices
-    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-    ..selectables_store = state.ui_state.selectables_store
-    ..select_mode_state = state.ui_state.select_mode_state
-    ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
-    ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-    ..ligate_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
-    ..loopout_mode = state.ui_state.edit_modes.contains(EditModeChoice.loopout)
-    ..nick_mode = state.ui_state.edit_modes.contains(EditModeChoice.nick)
-    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
-    ..moving_dna_ends = state.ui_state.moving_dna_ends
-    ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)),
-)(DesignMainStrandPaths);
+//UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
+//    connect<AppState, DesignMainStrandPathsProps>(
+//  mapStateToProps: (state) => (DesignMainStrandPaths()
+//    ..helices = state.dna_design.helices
+//    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+//    ..selectables_store = state.ui_state.selectables_store
+//    ..select_mode_state = state.ui_state.select_mode_state
+//    ..edit_modes = state.ui_state.edit_modes
+//    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
+//    ..moving_dna_ends = state.ui_state.moving_dna_ends),
+//)(DesignMainStrandPaths);
 
 @Factory()
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
@@ -54,14 +46,9 @@ class _$DesignMainStrandPathsProps extends UiProps {
   BuiltList<Helix> helices;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;
-  bool select_mode;
-  bool pencil_mode;
-  bool ligate_mode;
-  bool loopout_mode;
-  bool nick_mode;
+  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool show_mouseover_rect;
 }
 
 @Component2()
@@ -102,7 +89,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
-            ..nick_mode_enabled = props.nick_mode
+            ..edit_modes = props.edit_modes
             ..key = "bound-substrand-$i")());
 
 //        ends.add((ConnectedDesignMainDNAEnd()
@@ -119,9 +106,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..helix = helix
               ..selected = selected
               ..selectable = props.select_mode_state.is_selectable(end)
-              ..select_mode = props.select_mode
-              ..pencil_mode = props.pencil_mode
-              ..ligate_mode = props.ligate_mode
+              ..edit_modes = props.edit_modes
               ..moving_this_dna_end = props.moving_dna_ends && selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
               ..key = key)());
@@ -139,11 +124,9 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..selected = props.selectables_store.selected(substrand)
             ..selectable = props.select_mode_state.is_selectable(substrand)
-            ..select_mode = props.select_mode
-            ..show_mouseover_rect = props.show_mouseover_rect
+            ..edit_modes = props.edit_modes
             ..prev_substrand = strand.substrands[i - 1]
             ..next_substrand = next_ss
-            ..loopout_edit_mode_enabled = props.loopout_mode
             ..key = "loopout-$i")());
         }
       }
@@ -156,24 +139,15 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
       if (draw_next_ss) {
         var crossover = strand.crossovers[idx_crossover++];
 
-        int prev_idx = crossover.prev_substrand_idx;
-        int next_idx = crossover.next_substrand_idx;
-        var prev_ss = strand.substrands[prev_idx];
-        var next_ss = strand.substrands[next_idx];
-        bool selected = props.selectables_store.selected(crossover);
-        bool selectable = props.select_mode_state.is_selectable(crossover);
-
 //        paths.add((ConnectedDesignMainStrandCrossover()
         paths.add((DesignMainStrandCrossover()
           ..crossover = crossover
           ..strand = strand
-          ..selected = selected
-          ..selectable = selectable
-          ..select_mode = props.select_mode
-          ..show_mouseover_rect = props.show_mouseover_rect
-          ..prev_substrand = prev_ss
-          ..next_substrand = next_ss
-          ..loopout_edit_mode_enabled = props.loopout_mode
+          ..selected = props.selectables_store.selected(crossover)
+          ..selectable = props.select_mode_state.is_selectable(crossover)
+          ..edit_modes = props.edit_modes
+          ..prev_substrand = strand.substrands[crossover.prev_substrand_idx]
+          ..next_substrand = strand.substrands[crossover.next_substrand_idx]
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }

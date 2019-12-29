@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -17,6 +18,7 @@ import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import '../actions/actions.dart' as actions;
+import 'mode_queryable.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_dna_end.over_react.g.dart';
@@ -26,11 +28,9 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
   return DesignMainDNAEnd()
     ..selected = state.ui_state.selectables_store.selected(end)
     ..selectable = state.ui_state.select_mode_state.is_selectable(end)
-    ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
-    ..pencil_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
-    ..ligate_mode = state.ui_state.edit_modes.contains(EditModeChoice.ligate)
+    ..edit_modes = state.ui_state.edit_modes
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 }
 
@@ -41,7 +41,7 @@ UiFactory<DesignMainDNAEndProps> ConnectedDesignMainDNAEnd = connect<AppState, D
 UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
-class _$DesignMainDNAEndProps extends UiProps {
+class _$DesignMainDNAEndProps extends EditModePropsAbstract {
   BoundSubstrand substrand;
   Color color;
   bool is_5p;
@@ -49,15 +49,14 @@ class _$DesignMainDNAEndProps extends UiProps {
   Helix helix;
   bool selected;
   bool selectable;
-  bool select_mode;
-  bool pencil_mode;
-  bool ligate_mode;
+  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
 
 @Component2()
-class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
+class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
+    with PureComponent, EditModeQueryable<DesignMainDNAEndProps> {
   DNAEnd get dna_end => props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
 
   bool get is_first => props.substrand.is_first && props.is_5p;
@@ -118,26 +117,26 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     // select end
-    if (props.select_mode && props.selectable) {
+    if (select_mode && props.selectable) {
       MouseEvent event = event_synthetic.nativeEvent;
       dna_end.handle_selection_mouse_down(event);
     }
 
-    if (props.select_mode) {
+    if (select_mode && props.selectable) {
       // set up drag detection for moving DNA ends
       app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
     }
   }
 
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
-    if (props.select_mode && props.selectable) {
+    if (select_mode && props.selectable) {
       MouseEvent event = event_synthetic.nativeEvent;
       dna_end.handle_selection_mouse_up(event);
     }
   }
 
   handle_end_click_ligate_or_potential_crossover() {
-    if (props.pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
+    if (pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
       int offset = props.is_5p ? props.substrand.offset_5p : props.substrand.offset_3p;
       Point<num> start_point = props.helix.svg_base_pos(offset, props.substrand.forward);
       var potential_crossover = PotentialCrossover(
@@ -150,7 +149,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         current_point: start_point,
       );
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
-    } else if (props.pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
+    } else if (pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
       PotentialCrossover potential_crossover = app.store_potential_crossover.state;
 
       //FIXME: can we avoid this global variable access? probably not since there's multiple stores
@@ -160,7 +159,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         app.dispatch(actions.JoinStrandsByCrossover(
             potential_crossover: potential_crossover, dna_end_second_click: dna_end));
       }
-    } else if (props.ligate_mode && (is_first || is_last)) {
+    } else if (ligate_mode && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));
     }
   }

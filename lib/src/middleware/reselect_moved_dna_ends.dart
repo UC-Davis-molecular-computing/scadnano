@@ -6,7 +6,6 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_end_move.dart';
 import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
-import '../app.dart';
 import '../state/app_state.dart';
 
 reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
