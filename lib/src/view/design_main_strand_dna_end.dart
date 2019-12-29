@@ -18,7 +18,7 @@ import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import '../actions/actions.dart' as actions;
-import 'mode_queryable.dart';
+import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_dna_end.over_react.g.dart';

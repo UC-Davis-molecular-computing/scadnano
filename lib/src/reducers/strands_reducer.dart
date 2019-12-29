@@ -13,6 +13,7 @@ import '../actions/actions.dart' as actions;
 import 'assign_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
+import 'insertion_deletion_reducer.dart';
 import 'nick_join_reducers.dart';
 import 'util_reducer.dart';
 
@@ -49,6 +50,7 @@ BuiltList<Strand> strands_part_reducer(
 Reducer<Strand> strand_part_reducer = combineReducers([
   TypedReducer<Strand, actions.ConvertCrossoverToLoopout>(convert_crossover_to_loopout_reducer),
   TypedReducer<Strand, actions.LoopoutLengthChange>(loopout_length_change_reducer),
+  TypedReducer<Strand, actions.InsertionOrDeletionAction>(insertion_deletion_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

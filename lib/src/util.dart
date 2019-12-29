@@ -381,6 +381,9 @@ pprint(Map map) {
 String id_insertion(BoundSubstrand substrand, int offset) =>
     'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
+String id_deletion(BoundSubstrand substrand, int offset) =>
+    'deletion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
+
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
   Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};
   for (var selectable in selected) {

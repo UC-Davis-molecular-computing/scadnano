@@ -57,17 +57,17 @@ class EditModeChoice extends EnumClass {
   BuiltSet<EditModeChoice> get excluded_modes {
     switch (this) {
       case select:
-        return [pencil, loopout, assign_dna, backbone].toBuiltSet();
+        return [pencil, loopout, assign_dna, backbone, nick, ligate, insertion, deletion].toBuiltSet();
       case pencil:
         return [select, ligate, assign_dna, backbone].toBuiltSet();
       case nick:
-        return [ligate, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
+        return [select, ligate, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case ligate:
-        return [pencil, nick, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
+        return [select, pencil, nick, insertion, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case insertion:
-        return [nick, ligate, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
+        return [select, nick, ligate, deletion, assign_dna, assign_dna, backbone].toBuiltSet();
       case deletion:
-        return [nick, ligate, insertion, assign_dna, assign_dna, backbone].toBuiltSet();
+        return [select, nick, ligate, insertion, assign_dna, assign_dna, backbone].toBuiltSet();
       case backbone:
         return [select, pencil, nick, ligate, insertion, deletion, assign_dna].toBuiltSet();
       case loopout:

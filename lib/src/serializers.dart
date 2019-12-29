@@ -109,6 +109,10 @@ part 'serializers.g.dart';
   ExportDNA,
   ExportDNAFormat,
   ErrorMessageSet,
+  InsertionAdd,
+  DeletionAdd,
+  InsertionRemove,
+  DeletionRemove,
 ])
 Serializers serializers = _$serializers;
 

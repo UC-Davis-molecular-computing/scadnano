@@ -19,6 +19,7 @@ import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
+import 'design_main_strands.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
@@ -49,6 +50,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
@@ -89,6 +91,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
+            ..find_paired_substrand = props.find_paired_substrand
             ..edit_modes = props.edit_modes
             ..key = "bound-substrand-$i")());
 

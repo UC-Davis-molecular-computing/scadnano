@@ -1067,3 +1067,83 @@ abstract class AssignDNA
 
   static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// insertion/deletion
+
+abstract class InsertionOrDeletionAction implements UndoableAction,StrandPartAction {
+  BoundSubstrand get bound_substrand;
+
+  StrandPart get strand_part => bound_substrand;
+}
+
+abstract class InsertionAdd
+    with BuiltJsonSerializable
+    implements InsertionOrDeletionAction, Built<InsertionAdd, InsertionAddBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  int get offset;
+
+  int get length;
+
+  StrandPart get strand_part => bound_substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InsertionAdd({BoundSubstrand bound_substrand, int offset, int length}) = _$InsertionAdd._;
+
+  InsertionAdd._();
+
+  static Serializer<InsertionAdd> get serializer => _$insertionAddSerializer;
+}
+
+abstract class DeletionAdd
+    with BuiltJsonSerializable
+    implements InsertionOrDeletionAction, Built<DeletionAdd, DeletionAddBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  int get offset;
+
+  StrandPart get strand_part => bound_substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DeletionAdd({BoundSubstrand bound_substrand, int offset}) = _$DeletionAdd._;
+
+  DeletionAdd._();
+
+  static Serializer<DeletionAdd> get serializer => _$deletionAddSerializer;
+}
+
+abstract class InsertionRemove
+    with BuiltJsonSerializable
+    implements InsertionOrDeletionAction, Built<InsertionRemove, InsertionRemoveBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  Insertion get insertion;
+
+  StrandPart get strand_part => bound_substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InsertionRemove({BoundSubstrand bound_substrand, Insertion insertion}) = _$InsertionRemove._;
+
+  InsertionRemove._();
+
+  static Serializer<InsertionRemove> get serializer => _$insertionRemoveSerializer;
+}
+
+abstract class DeletionRemove
+    with BuiltJsonSerializable
+    implements InsertionOrDeletionAction, Built<DeletionRemove, DeletionRemoveBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  int get deletion;
+
+  StrandPart get strand_part => bound_substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DeletionRemove({BoundSubstrand bound_substrand, int deletion}) = _$DeletionRemove._;
+
+  DeletionRemove._();
+
+  static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
+}

@@ -1,9 +1,5 @@
-import 'dart:html';
-import 'dart:math';
-
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/edit_mode.dart';
@@ -15,11 +11,13 @@ import 'package:smart_dialogs/smart_dialogs.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
+import 'design_main_strand_deletion.dart';
+import 'design_main_strand_insertion.dart';
 import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
-import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
-import 'mode_queryable.dart';
+import 'design_main_strands.dart';
+import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
@@ -53,16 +51,12 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     with PureComponent, EditModeQueryable<DesignMainStrandProps> {
-//  @override
-//  Map get defaultProps => (newProps()
-//    ..selected = false
-//    ..selectable = false);
-
   @override
   render() {
     Strand strand = props.strand;
@@ -91,14 +85,15 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..strand = strand
           ..key = 'strand-paths'
           ..helices = props.helices
+          ..find_paired_substrand = props.find_paired_substrand
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
           ..edit_modes = props.edit_modes
           ..drawing_potential_crossover = props.drawing_potential_crossover
           ..moving_dna_ends = props.moving_dna_ends)(),
-        ..._insertion_paths(strand, side_selected_helix_idxs),
-        ..._deletion_paths(strand, side_selected_helix_idxs),
+        _insertions(strand, side_selected_helix_idxs, strand.color),
+        _deletions(strand, side_selected_helix_idxs),
       ]);
     }
   }
@@ -124,6 +119,52 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     if (dna_sequence != null) {
       app.dispatch(actions.AssignDNA(strand: props.strand, dna_sequence: dna_sequence));
     }
+  }
+
+  ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
+    List<ReactElement> paths = [];
+    for (BoundSubstrand substrand in strand.bound_substrands()) {
+      Helix helix = props.helices[substrand.helix];
+      if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
+        for (var insertion in substrand.insertions) {
+          String id = util.id_insertion(substrand, insertion.offset);
+          paths.add((DesignMainStrandInsertion()
+            ..insertion = insertion
+            ..substrand = substrand
+            ..find_paired_substrand = props.find_paired_substrand
+            ..helix = helix
+            ..color = color
+            ..edit_modes = props.edit_modes
+            ..id = id
+            ..key = id)());
+        }
+      }
+    }
+    return (Dom.g()
+      ..key = 'insertions'
+      ..className = 'insertions')(paths);
+  }
+
+  ReactElement _deletions(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
+    List<ReactElement> deletions = [];
+    for (BoundSubstrand substrand in strand.bound_substrands()) {
+      Helix helix = props.helices[substrand.helix];
+      if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
+        for (var deletion in substrand.deletions) {
+          String id = util.id_deletion(substrand, deletion);
+          deletions.add((DesignMainStrandDeletion()
+            ..substrand = substrand
+            ..deletion = deletion
+            ..find_paired_substrand = props.find_paired_substrand
+            ..edit_modes = props.edit_modes
+            ..helix = helix
+            ..key = id)());
+        }
+      }
+    }
+    return (Dom.g()
+      ..key = 'deletions'
+      ..className = 'deletions')(deletions);
   }
 }
 
@@ -157,116 +198,5 @@ Future<String> ask_for_dna_sequence() async {
   return dna_sequence;
 }
 
-bool draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
+bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
-
-List<ReactElement> _insertion_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
-  List<ReactElement> paths = [];
-  for (BoundSubstrand substrand in strand.bound_substrands()) {
-    if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
-      for (var insertion in substrand.insertions) {
-        int offset = insertion.offset;
-        ReactElement insertion_path = _insertion_path(substrand, offset, strand.color);
-        ReactElement text_num_insertions = _svg_text_number_of_insertions(insertion, substrand, offset);
-        paths.add(insertion_path);
-        paths.add(text_num_insertions);
-      }
-    }
-  }
-  return paths;
-}
-
-ReactElement _insertion_path(BoundSubstrand substrand, int offset, Color color) {
-  var helix = app.state.dna_design.helices[substrand.helix];
-  Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
-
-  num dx1 = constants.BASE_WIDTH_SVG;
-  num dx2 = 0.5 * constants.BASE_WIDTH_SVG;
-  num dy1 = 2 * constants.BASE_HEIGHT_SVG;
-  num dy2 = 2 * constants.BASE_HEIGHT_SVG;
-  if (substrand.forward) {
-    dy1 = -dy1;
-    dy2 = -dy2;
-    dx1 = -dx1;
-    dx2 = -dx2;
-  }
-  num x0 = pos.x;
-  num y0 = pos.y;
-  var x1 = (x0 + dx1).toStringAsFixed(2);
-  var x2 = (x0 + dx2).toStringAsFixed(2);
-  var x3 = x0.toStringAsFixed(2);
-  var x4 = (x0 - dx2).toStringAsFixed(2);
-  var x5 = (x0 - dx1).toStringAsFixed(2);
-
-  var y1 = (y0 + dy1).toStringAsFixed(2);
-  var y2 = (y0 + dy2).toStringAsFixed(2);
-
-//  String key = 'insertion-H${substrand.helix}-${offset}';
-  String id = util.id_insertion(substrand, offset);
-  ReactElement insertion_path = (Dom.path()
-    ..key = id
-    ..id = id
-    ..className = 'insertion-line'
-    ..stroke = color.toRgbColor().toCssString()
-    ..fill = 'none'
-    ..d = 'M $x0 $y0 '
-        'C $x1 $y1, $x2 $y2, $x3 $y2 '
-        'C $x4 $y2, $x5 $y1, $x0 $y0 ')();
-  return insertion_path;
-}
-
-ReactElement _svg_text_number_of_insertions(Insertion insertion, BoundSubstrand substrand, int offset) {
-  // write number of insertions inside insertion loop
-  int length = insertion.length;
-
-  var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
-  if (browser.isFirefox) {
-    // le sigh
-    dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
-  }
-
-  String key = 'num-insertion-H${substrand.helix}-${offset}';
-  SvgProps text_path_props = Dom.textPath()
-    ..className = 'insertion-length'
-    ..startOffset = '50%'
-    ..href = '#${util.id_insertion(substrand, offset)}';
-  return (Dom.text()
-    ..key = key
-    ..id = key
-    ..dy = dy_text)(text_path_props('${length}'));
-}
-
-List<ReactElement> _deletion_paths(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
-  List<ReactElement> deletions = [];
-  for (BoundSubstrand substrand in strand.bound_substrands()) {
-    if (draw_bound_ss(substrand, side_selected_helix_idxs)) {
-      for (var deletion in substrand.deletions) {
-        ReactElement deletion_path = _deletion_path(substrand, deletion, strand);
-        deletions.add(deletion_path);
-      }
-    }
-  }
-  return deletions;
-}
-
-ReactElement _deletion_path(BoundSubstrand substrand, int deletion_offset, Strand strand) {
-//  print('app.state.dna_design.helices: ${app.state.dna_design.helices}');
-//  print('  substrand: ${substrand}');
-  var helix = app.state.dna_design.helices[substrand.helix];
-  Point<num> pos = helix.svg_base_pos(deletion_offset, substrand.forward);
-
-  var width = 0.8 * constants.BASE_WIDTH_SVG;
-  var half_width = 0.5 * width;
-  var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
-      'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
-
-  String key = 'deletion-H${substrand.helix}-${deletion_offset}';
-  ReactElement deletion_path = (Dom.path()
-    ..key = key
-    ..id = key
-    ..className = 'deletion-cross'
-    ..stroke = strand.color.toRgbColor().toCssString()
-    ..fill = 'none'
-    ..d = path_cmds)();
-  return deletion_path;
-}

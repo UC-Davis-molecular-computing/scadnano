@@ -8,7 +8,7 @@ import 'package:over_react/over_react.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/view/mode_queryable.dart';
+import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../app.dart';
@@ -17,7 +17,7 @@ import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
 import '../actions/actions.dart' as actions;
 import 'pure_component.dart';
-import 'mode_queryable.dart';
+import 'edit_mode_queryable.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 

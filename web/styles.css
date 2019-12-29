@@ -433,6 +433,16 @@ html, body {
     stroke-linecap: round;
 }
 
+.deletion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.insertion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
 .insertion-length {
     font-size: 8px;
     font-weight: bold;
