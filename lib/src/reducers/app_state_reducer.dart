@@ -39,9 +39,12 @@ AppState app_state_reducer(AppState state, action) {
         TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action)
     ..editor_content = editor_content_reducer(state.editor_content, action));
 
-  // "global" reducers operate on a slice of the state but need another part of the state
-  // we pass the "old" parts of the state, since we don't want dispatcher to assume they will be applied in
-  // a certain order. For consistency, everyone gets the version of the state before any action was applied.
+  // "global" reducers operate on a slice of the state but need another part of the state.
+  // For consistency, everyone gets the version of the state before any action was applied.
+  // (This ensures that, for example, when a DeleteAllSelected action is dispatched, above, the
+  // selection reducer sets the set of selected items to empty, yet the delete_all_reducer that deletes the
+  // items from the DNADesign can still see the set of selected items in
+  // original_state.ui_state.selectables_store.
   state = state.rebuild((m) => m
     ..dna_design = dna_design_global_reducer(state.dna_design, original_state, action)?.toBuilder()
     ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
