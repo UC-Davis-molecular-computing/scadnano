@@ -106,7 +106,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..color = strand.color
               ..helix = helix
               ..selected = selected
-              ..selectable = props.select_mode_state.is_selectable(end)
+              ..selectable = props.select_mode_state.is_selectable(end) &&
+                  props.edit_modes.contains(EditModeChoice.select)
               ..edit_modes = props.edit_modes
               ..moving_this_dna_end = props.moving_dna_ends && selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
@@ -124,7 +125,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand = strand
             ..color = strand.color
             ..selected = props.selectables_store.selected(substrand)
-            ..selectable = props.select_mode_state.is_selectable(substrand)
+            ..selectable = props.select_mode_state.is_selectable(substrand) &&
+                props.edit_modes.contains(EditModeChoice.select)
             ..edit_modes = props.edit_modes
             ..prev_substrand = strand.substrands[i - 1]
             ..next_substrand = next_ss
@@ -145,7 +147,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..crossover = crossover
           ..strand = strand
           ..selected = props.selectables_store.selected(crossover)
-          ..selectable = props.select_mode_state.is_selectable(crossover)
+          ..selectable = props.select_mode_state.is_selectable(crossover) &&
+              props.edit_modes.contains(EditModeChoice.select)
           ..edit_modes = props.edit_modes
           ..prev_substrand = strand.substrands[crossover.prev_substrand_idx]
           ..next_substrand = strand.substrands[crossover.next_substrand_idx]

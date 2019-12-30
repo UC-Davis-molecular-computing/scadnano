@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/reducers/edit_modes_reducer.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -13,7 +14,6 @@ import '../state/strand.dart';
 import 'design_main_strand.dart';
 
 part 'design_main_strands.over_react.g.dart';
-
 
 UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     connect<AppState, DesignMainStrandsProps>(mapStateToProps: (state) {
@@ -62,7 +62,8 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
           ..strand = strand
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..selected = props.selectables_store.selected(strand)
-          ..selectable = props.select_mode_state.modes.contains(SelectModeChoice.strand)
+          ..selectable = props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+              props.edit_modes.contains(EditModeChoice.select)
           ..helices = props.helices
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
