@@ -79,38 +79,80 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
       }
       app.dispatch(actions.Nick(bound_substrand: substrand, offset: offset));
     } else if (insertion_mode) {
-      Insertion existing_insertion =
-          substrand.insertions.firstWhere((i) => i.offset == offset, orElse: () => null);
-      if (existing_insertion == null) {
-        add_insertion(substrand, offset); // special case where we need to ask for length from user
-      }
+      add_insertion_or_deletion(substrand, offset, add_deletion: false);
     } else if (deletion_mode) {
-      if (!substrand.deletions.contains(offset)) {
+      add_insertion_or_deletion(substrand, offset, add_deletion: true);
+    }
+  }
+
+  add_insertion_or_deletion(BoundSubstrand substrand, int offset, {bool add_deletion}) async {
+    Insertion existing_insertion =
+        substrand.insertions.firstWhere((i) => i.offset == offset, orElse: () => null);
+    actions.Action action = null;
+    if (existing_insertion == null && !substrand.deletions.contains(offset)) {
+      if (substrand.start < offset && offset < substrand.end - 1) {
         BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
         if (paired_substrand != null) {
-          app.dispatch(actions.BatchAction([
-            actions.DeletionAdd(bound_substrand: props.substrand, offset: offset),
-            actions.DeletionAdd(bound_substrand: paired_substrand, offset: offset),
-          ]));
+          if (paired_substrand.start < offset && offset < paired_substrand.end - 1) {
+            action = actions.BatchAction(add_deletion
+                ? [
+                    actions.DeletionAdd(bound_substrand: props.substrand, offset: offset),
+                    actions.DeletionAdd(bound_substrand: paired_substrand, offset: offset),
+                  ]
+                : [
+                    actions.InsertionAdd(bound_substrand: props.substrand, offset: offset, length: 1),
+                    actions.InsertionAdd(bound_substrand: paired_substrand, offset: offset, length: 1),
+                  ]);
+          }
         } else {
-          app.dispatch(actions.DeletionAdd(bound_substrand: substrand, offset: offset));
+          action = add_deletion
+              ? actions.DeletionAdd(bound_substrand: substrand, offset: offset)
+              : actions.InsertionAdd(bound_substrand: substrand, offset: offset, length: 1);
         }
       }
     }
-  }
-
-  add_insertion(BoundSubstrand substrand, int offset) async {
-    int length = 1;
-    BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
-    if (paired_substrand != null) {
-      app.dispatch(actions.BatchAction([
-        actions.InsertionAdd(bound_substrand: props.substrand, offset: offset, length: length),
-        actions.InsertionAdd(bound_substrand: paired_substrand, offset: offset, length: length),
-      ]));
-    } else {
-      app.dispatch(actions.InsertionAdd(bound_substrand: substrand, offset: offset, length: length));
+    if (action != null) {
+      app.dispatch(action);
     }
   }
+//  add_deletion(BoundSubstrand substrand, int offset) {
+//    Insertion existing_insertion =
+//        substrand.insertions.firstWhere((i) => i.offset == offset, orElse: () => null);
+//    if (existing_insertion == null && !substrand.deletions.contains(offset)) {
+//      if (substrand.start < offset && offset < substrand.end - 1) {
+//        BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
+//        if (paired_substrand != null) {
+//          if (paired_substrand.start < offset && offset < paired_substrand.end - 1) {
+//            app.dispatch(actions.BatchAction([
+//              actions.DeletionAdd(bound_substrand: props.substrand, offset: offset),
+//              actions.DeletionAdd(bound_substrand: paired_substrand, offset: offset),
+//            ]));
+//          }
+//        } else {
+//          app.dispatch(actions.DeletionAdd(bound_substrand: substrand, offset: offset));
+//        }
+//      }
+//    }
+//  }
+//
+//  add_insertion(BoundSubstrand substrand, int offset) async {
+//    Insertion existing_insertion =
+//        substrand.insertions.firstWhere((i) => i.offset == offset, orElse: () => null);
+//    if (existing_insertion == null && !substrand.deletions.contains(offset)) {
+//      if (substrand.start < offset && offset < substrand.end - 1) {
+//        BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
+//        if (paired_substrand != null) {
+//          if (paired_substrand.start < offset && offset < paired_substrand.end - 1) {
+//            app.dispatch(actions.BatchAction([
+//              actions.InsertionAdd(bound_substrand: props.substrand, offset: offset, length: 1),
+//              actions.InsertionAdd(bound_substrand: paired_substrand, offset: offset, length: 1),
+//            ]));
+//          }
+//        } else {
+//          app.dispatch(actions.InsertionAdd(bound_substrand: substrand, offset: offset, length: 1));
+//        }
+//      }
+//    }
+//  }
+
 }
-
-

@@ -176,6 +176,9 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
   change_insertion_length() async {
     int new_length = await ask_for_insertion_length(props.insertion.length);
+    if (new_length == null) {
+      return;
+    }
     int offset = props.insertion.offset;
     BoundSubstrand paired_substrand = props.find_paired_substrand(props.substrand, offset);
     Insertion paired_insertion = paired_substrand.insertions.firstWhere((i) => i.offset == offset);
