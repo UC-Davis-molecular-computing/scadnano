@@ -563,9 +563,7 @@ abstract class SelectionsAdjust
   static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
 }
 
-abstract class SelectAll
-    with BuiltJsonSerializable
-    implements Action, Built<SelectAll, SelectAllBuilder> {
+abstract class SelectAll with BuiltJsonSerializable implements Action, Built<SelectAll, SelectAllBuilder> {
   BuiltList<Selectable> get selectables;
 
   // if true, deselect all other items and select only this object; otherwise leave other selections alone
@@ -765,9 +763,7 @@ abstract class ShowMouseoverRectToggle
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export DNA
 
-abstract class ExportDNA
-    with BuiltJsonSerializable
-    implements Action, Built<ExportDNA, ExportDNABuilder> {
+abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<ExportDNA, ExportDNABuilder> {
   bool get include_scaffold;
 
   ExportDNAFormat get export_dna_format;
@@ -1068,11 +1064,10 @@ abstract class AssignDNA
   static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // insertion/deletion
 
-abstract class InsertionOrDeletionAction implements UndoableAction,StrandPartAction {
+abstract class InsertionOrDeletionAction implements UndoableAction, StrandPartAction {
   BoundSubstrand get bound_substrand;
 
   StrandPart get strand_part => bound_substrand;
@@ -1095,6 +1090,26 @@ abstract class InsertionAdd
   InsertionAdd._();
 
   static Serializer<InsertionAdd> get serializer => _$insertionAddSerializer;
+}
+
+abstract class InsertionLengthChange
+    with BuiltJsonSerializable
+    implements InsertionOrDeletionAction, Built<InsertionLengthChange, InsertionLengthChangeBuilder> {
+  BoundSubstrand get bound_substrand;
+
+  Insertion get insertion;
+
+  int get length;
+
+  StrandPart get strand_part => bound_substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InsertionLengthChange({BoundSubstrand bound_substrand, Insertion insertion, int length}) =
+      _$InsertionLengthChange._;
+
+  InsertionLengthChange._();
+
+  static Serializer<InsertionLengthChange> get serializer => _$insertionLengthChangeSerializer;
 }
 
 abstract class DeletionAdd

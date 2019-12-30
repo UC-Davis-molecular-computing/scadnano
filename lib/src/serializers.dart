@@ -113,6 +113,7 @@ part 'serializers.g.dart';
   DeletionAdd,
   InsertionRemove,
   DeletionRemove,
+  InsertionLengthChange,
 ])
 Serializers serializers = _$serializers;
 

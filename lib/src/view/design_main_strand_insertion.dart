@@ -6,6 +6,7 @@ import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:smart_dialogs/smart_dialogs.dart';
 import 'package:tuple/tuple.dart';
 
 import '../app.dart';
@@ -41,10 +42,11 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     with PureComponent, EditModeQueryable<DesignMainStrandInsertionProps> {
   @override
   render() {
-    ReactElement insertion_background = _insertion_background();
+    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);
+    ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
-    ReactElement text_num_insertions = _svg_text_number_of_insertions();
-    return [insertion_background, insertion_path, text_num_insertions];
+    ReactElement text_num_insertions = _text_number_of_insertions(pos);
+    return [insertion_path, insertion_background, text_num_insertions];
   }
 
   ReactElement _insertion_path() {
@@ -77,7 +79,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
 //  String key = 'insertion-H${substrand.helix}-${offset}';
     ReactElement insertion_path = (Dom.path()
-      ..onClick = ((_) => handle_click())
+      ..onClick = ((_) => change_insertion_length())
       ..className = 'insertion-line'
       ..stroke = color.toRgbColor().toCssString()
       ..fill = 'none'
@@ -89,7 +91,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     return insertion_path;
   }
 
-  ReactElement _svg_text_number_of_insertions() {
+  ReactElement _text_number_of_insertions(Point<num> pos) {
     int offset = props.insertion.offset;
     BoundSubstrand substrand = props.substrand;
     Insertion insertion = props.insertion;
@@ -103,36 +105,61 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
     }
 
+    num background_width = constants.BASE_WIDTH_SVG;
+    num background_height = 1.5 * constants.BASE_HEIGHT_SVG;
+    num background_x = pos.x - background_width / 2;
+    num background_y = pos.y - constants.BASE_HEIGHT_SVG / 2;
+    if (substrand.forward) {
+      background_y -= background_height;
+    } else {
+      background_y += constants.BASE_HEIGHT_SVG;
+    }
+
     String key = 'num-insertion-H${substrand.helix}-${offset}';
     SvgProps text_path_props = Dom.textPath()
       ..className = 'insertion-length'
       ..startOffset = '50%'
       ..href = '#${util.id_insertion(substrand, offset)}';
-    return (Dom.text()
-      ..onClick = ((_) => handle_click())
-      ..dy = dy_text
-      ..id = key
-      ..key = key)(text_path_props('${length}'));
+
+//    return (Dom.text()
+//      ..onClick = ((_) => change_insertion_length())
+//      ..dy = dy_text
+//      ..id = key
+//      ..key = key)(text_path_props('${length}'));
+
+    return (Dom.g()..key = key)(
+        (Dom.rect()
+          ..x = background_x
+          ..y = background_y
+          ..width = background_width
+          ..height = background_height
+          ..className = 'insertion-background'
+          ..onClick = ((_) => change_insertion_length())
+          ..key = 'rect')(),
+        (Dom.text()
+          ..onClick = ((_) => change_insertion_length())
+          ..dy = dy_text
+          ..id = key
+          ..key = 'text')(text_path_props('${length}')));
   }
 
-  ReactElement _insertion_background() {
-    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);
+  ReactElement _insertion_background(Point<num> pos) {
     String key_background = 'insertion-background-H${props.substrand.helix}-${props.insertion.offset}';
     num background_width = constants.BASE_WIDTH_SVG;
-    num background_height = constants.BASE_HEIGHT_SVG * 2.5;
+    num background_height = constants.BASE_HEIGHT_SVG;
     num background_x = pos.x - background_width / 2;
-    num background_y = pos.y + constants.BASE_HEIGHT_SVG / 2 - background_height;
+    num background_y = pos.y - background_height / 2;
     return (Dom.rect()
       ..className = 'insertion-background'
       ..x = background_x
       ..y = background_y
       ..width = background_width
       ..height = background_height
-      ..onClick = ((_) => handle_click())
+      ..onClick = ((_) => remove_insertion())
       ..key = key_background)();
   }
 
-  handle_click() {
+  remove_insertion() {
     if (insertion_mode) {
       var paired_substrand = props.find_paired_substrand(props.substrand, props.insertion.offset);
       if (paired_substrand != null &&
@@ -146,4 +173,54 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       }
     }
   }
+
+  change_insertion_length() async {
+    int new_length = await ask_for_insertion_length(props.insertion.length);
+    int offset = props.insertion.offset;
+    BoundSubstrand paired_substrand = props.find_paired_substrand(props.substrand, offset);
+    Insertion paired_insertion = paired_substrand.insertions.firstWhere((i) => i.offset == offset);
+    if (paired_insertion != null) {
+      app.dispatch(actions.BatchAction([
+        actions.InsertionLengthChange(
+            bound_substrand: props.substrand, insertion: props.insertion, length: new_length),
+        actions.InsertionLengthChange(
+            bound_substrand: paired_substrand, insertion: paired_insertion, length: new_length),
+      ]));
+    } else {
+      app.dispatch(actions.InsertionLengthChange(
+          bound_substrand: props.substrand, insertion: props.insertion, length: new_length));
+    }
+  }
+}
+
+Future<int> ask_for_insertion_length(int current_length) async {
+  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+  String buttontype = DiaAttr.CHECKBOX;
+  String htmlTitleText = 'change insertion length';
+  List<String> textLabels = ['new length:'];
+  List<List<String>> comboInfo = null;
+  List<String> defaultInputTexts = ['${current_length}'];
+  List<int> widths = [1];
+  List<String> isChecked = null;
+  bool alternateRowColor = false;
+  List<String> buttonLabels = ['OK', 'Cancel'];
+
+  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+      widths, isChecked, alternateRowColor, buttonLabels);
+
+  if (result.buttonCode != 'DIA_ACT_OK') {
+    return null;
+  }
+
+  String length_str = result.getUserInput(0)[0];
+  int length = int.tryParse(length_str);
+  if (length == null) {
+    Info.show('"$length_str" is not a valid positive integer');
+    return null;
+  } else if (length < 1) {
+    Info.show('length must be positive, but it is $length_str');
+    return null;
+  }
+
+  return length;
 }

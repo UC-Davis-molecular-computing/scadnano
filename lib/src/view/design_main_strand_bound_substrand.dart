@@ -99,52 +99,18 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
     }
   }
 
-
   add_insertion(BoundSubstrand substrand, int offset) async {
-    int length = await ask_for_insertion_length();
-    if (length != null) {
-      BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
-      if (paired_substrand != null) {
-        app.dispatch(actions.BatchAction([
-          actions.InsertionAdd(bound_substrand: props.substrand, offset: offset, length: length),
-          actions.InsertionAdd(bound_substrand: paired_substrand, offset: offset, length: length),
-        ]));
-      } else {
-        app.dispatch(actions.InsertionAdd(bound_substrand: substrand, offset: offset, length: length));
-      }
+    int length = 1;
+    BoundSubstrand paired_substrand = props.find_paired_substrand(substrand, offset);
+    if (paired_substrand != null) {
+      app.dispatch(actions.BatchAction([
+        actions.InsertionAdd(bound_substrand: props.substrand, offset: offset, length: length),
+        actions.InsertionAdd(bound_substrand: paired_substrand, offset: offset, length: length),
+      ]));
+    } else {
+      app.dispatch(actions.InsertionAdd(bound_substrand: substrand, offset: offset, length: length));
     }
   }
 }
 
 
-Future<int> ask_for_insertion_length() async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = 'add insertion';
-  List<String> textLabels = ['length:'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = [''];
-  List<int> widths = [1];
-  List<String> isChecked = null;
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
-
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
-
-  if (result.buttonCode != 'DIA_ACT_OK') {
-    return null;
-  }
-
-  String length_str = result.getUserInput(0)[0];
-  int length = int.tryParse(length_str);
-  if (length == null) {
-    Info.show('"$length_str" is not a valid positive integer');
-    return null;
-  } else if (length <= 0) {
-    Info.show('length must be positive, but it is $length_str');
-    return null;
-  }
-
-  return length;
-}

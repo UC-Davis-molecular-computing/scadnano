@@ -13,11 +13,21 @@ Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionActi
 }
 
 Reducer<BoundSubstrand> insertion_deletion_substrand_reducer = combineReducers([
+  TypedReducer<BoundSubstrand, actions.InsertionLengthChange>(insertion_length_change_reducer),
   TypedReducer<BoundSubstrand, actions.InsertionAdd>(insertion_add_reducer),
   TypedReducer<BoundSubstrand, actions.InsertionRemove>(insertion_remove_reducer),
   TypedReducer<BoundSubstrand, actions.DeletionAdd>(deletion_add_reducer),
   TypedReducer<BoundSubstrand, actions.DeletionRemove>(deletion_remove_reducer),
 ]);
+
+BoundSubstrand insertion_length_change_reducer(
+    BoundSubstrand substrand, actions.InsertionLengthChange action) {
+  List<Insertion> insertions = substrand.insertions.toList();
+  int idx = insertions.indexOf(action.insertion);
+  Insertion changed_insertion = action.insertion.rebuild((i) => i..length = action.length);
+  insertions[idx] = changed_insertion;
+  return substrand.rebuild((b) => b..insertions.replace(insertions));
+}
 
 BoundSubstrand insertion_add_reducer(BoundSubstrand substrand, actions.InsertionAdd action) {
   List<Insertion> insertions = substrand.insertions.toList();
