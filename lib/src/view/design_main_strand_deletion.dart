@@ -15,8 +15,6 @@ import 'pure_component.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';
 
-
-
 @Factory()
 UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMainStrandDeletion;
 
@@ -26,7 +24,6 @@ class _$DesignMainStrandDeletionProps extends EditModePropsAbstract {
   int deletion;
   Helix helix;
   BuiltSet<EditModeChoice> edit_modes;
-  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
@@ -60,29 +57,37 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..y = background_y
         ..width = background_width
         ..height = background_height
-        ..onClick = ((_) => handle_click())
+        ..onClick = ((_) {
+          if (deletion_mode) {
+            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+//            remove_deletion();
+          }
+        })
         ..key = key_background)(),
       (Dom.path()
         ..className = 'deletion-cross'
         ..fill = 'none'
         ..d = path_cmds
-        ..onClick = ((_) => handle_click())
+        ..onClick = ((_) {
+          if (deletion_mode) {
+            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+//            remove_deletion();
+          }
+        })
         ..id = key
         ..key = key)()
     ];
   }
 
-  handle_click() {
-    if (deletion_mode) {
-      var paired_substrand = props.find_paired_substrand(props.substrand, props.deletion);
-      if (paired_substrand != null && paired_substrand.deletions.contains(props.deletion)) {
-        app.dispatch(actions.BatchAction([
-          actions.DeletionRemove(bound_substrand: props.substrand, deletion: props.deletion),
-          actions.DeletionRemove(bound_substrand: paired_substrand, deletion: props.deletion),
-        ]));
-      } else {
-        app.dispatch(actions.DeletionRemove(bound_substrand: props.substrand, deletion: props.deletion));
-      }
-    }
-  }
+//  remove_deletion() {
+//    var paired_substrand = props.find_paired_substrand(props.substrand, props.deletion);
+//    if (paired_substrand != null && paired_substrand.deletions.contains(props.deletion)) {
+//      app.dispatch(actions.BatchAction([
+//        actions.DeletionRemove(substrand: props.substrand, offset: props.deletion),
+//        actions.DeletionRemove(substrand: paired_substrand, offset: props.deletion),
+//      ]));
+//    } else {
+//      app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+//    }
+//  }
 }

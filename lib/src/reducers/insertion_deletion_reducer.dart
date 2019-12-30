@@ -5,7 +5,7 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionAction action) {
-  BoundSubstrand substrand = action.bound_substrand;
+  BoundSubstrand substrand = action.substrand;
   int ss_idx = strand.substrands.indexOf(substrand);
   List<Substrand> substrands = strand.substrands.toList();
   substrands[ss_idx] = insertion_deletion_substrand_reducer(substrand, action);
@@ -31,7 +31,7 @@ BoundSubstrand insertion_length_change_reducer(
 
 BoundSubstrand insertion_add_reducer(BoundSubstrand substrand, actions.InsertionAdd action) {
   List<Insertion> insertions = substrand.insertions.toList();
-  insertions.add(Insertion(action.offset, action.length));
+  insertions.add(Insertion(action.offset, 1));
   return substrand.rebuild((b) => b..insertions.replace(insertions));
 }
 
@@ -49,6 +49,6 @@ BoundSubstrand deletion_add_reducer(BoundSubstrand substrand, actions.DeletionAd
 
 BoundSubstrand deletion_remove_reducer(BoundSubstrand substrand, actions.DeletionRemove action) {
   List<int> deletions = substrand.deletions.toList();
-  deletions.remove(action.deletion);
+  deletions.remove(action.offset);
   return substrand.rebuild((b) => b..deletions.replace(deletions));
 }

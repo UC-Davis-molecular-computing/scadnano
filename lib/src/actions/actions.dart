@@ -1068,24 +1068,29 @@ abstract class AssignDNA
 // insertion/deletion
 
 abstract class InsertionOrDeletionAction implements UndoableAction, StrandPartAction {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
-  StrandPart get strand_part => bound_substrand;
+  int get offset;
+
+  StrandPart get strand_part => substrand;
+
+  InsertionOrDeletionAction clone_for_adjacent_substrand(BoundSubstrand other_substrand);
 }
 
 abstract class InsertionAdd
     with BuiltJsonSerializable
     implements InsertionOrDeletionAction, Built<InsertionAdd, InsertionAddBuilder> {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
   int get offset;
 
-  int get length;
+  StrandPart get strand_part => substrand;
 
-  StrandPart get strand_part => bound_substrand;
+  InsertionAdd clone_for_adjacent_substrand(BoundSubstrand other_substrand) =>
+      InsertionAdd(substrand: other_substrand, offset: offset);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionAdd({BoundSubstrand bound_substrand, int offset, int length}) = _$InsertionAdd._;
+  factory InsertionAdd({BoundSubstrand substrand, int offset}) = _$InsertionAdd._;
 
   InsertionAdd._();
 
@@ -1095,16 +1100,24 @@ abstract class InsertionAdd
 abstract class InsertionLengthChange
     with BuiltJsonSerializable
     implements InsertionOrDeletionAction, Built<InsertionLengthChange, InsertionLengthChangeBuilder> {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
   Insertion get insertion;
 
   int get length;
 
-  StrandPart get strand_part => bound_substrand;
+  int get offset => insertion.offset;
+
+  StrandPart get strand_part => substrand;
+
+  InsertionLengthChange clone_for_adjacent_substrand(BoundSubstrand other_substrand) => InsertionLengthChange(
+        substrand: other_substrand,
+        insertion: other_substrand.insertions.firstWhere((i) => i.offset == offset),
+        length: length,
+      );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionLengthChange({BoundSubstrand bound_substrand, Insertion insertion, int length}) =
+  factory InsertionLengthChange({BoundSubstrand substrand, Insertion insertion, int length}) =
       _$InsertionLengthChange._;
 
   InsertionLengthChange._();
@@ -1115,14 +1128,17 @@ abstract class InsertionLengthChange
 abstract class DeletionAdd
     with BuiltJsonSerializable
     implements InsertionOrDeletionAction, Built<DeletionAdd, DeletionAddBuilder> {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
   int get offset;
 
-  StrandPart get strand_part => bound_substrand;
+  StrandPart get strand_part => substrand;
+
+  DeletionAdd clone_for_adjacent_substrand(BoundSubstrand other_substrand) =>
+      DeletionAdd(substrand: other_substrand, offset: offset);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionAdd({BoundSubstrand bound_substrand, int offset}) = _$DeletionAdd._;
+  factory DeletionAdd({BoundSubstrand substrand, int offset}) = _$DeletionAdd._;
 
   DeletionAdd._();
 
@@ -1132,14 +1148,21 @@ abstract class DeletionAdd
 abstract class InsertionRemove
     with BuiltJsonSerializable
     implements InsertionOrDeletionAction, Built<InsertionRemove, InsertionRemoveBuilder> {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
   Insertion get insertion;
 
-  StrandPart get strand_part => bound_substrand;
+  int get offset => insertion.offset;
+
+  StrandPart get strand_part => substrand;
+
+  InsertionRemove clone_for_adjacent_substrand(BoundSubstrand other_substrand) => InsertionRemove(
+        substrand: other_substrand,
+        insertion: other_substrand.insertions.firstWhere((i) => i.offset == offset),
+      );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionRemove({BoundSubstrand bound_substrand, Insertion insertion}) = _$InsertionRemove._;
+  factory InsertionRemove({BoundSubstrand substrand, Insertion insertion}) = _$InsertionRemove._;
 
   InsertionRemove._();
 
@@ -1149,14 +1172,17 @@ abstract class InsertionRemove
 abstract class DeletionRemove
     with BuiltJsonSerializable
     implements InsertionOrDeletionAction, Built<DeletionRemove, DeletionRemoveBuilder> {
-  BoundSubstrand get bound_substrand;
+  BoundSubstrand get substrand;
 
-  int get deletion;
+  int get offset;
 
-  StrandPart get strand_part => bound_substrand;
+  StrandPart get strand_part => substrand;
+
+  DeletionRemove clone_for_adjacent_substrand(BoundSubstrand other_substrand) =>
+      DeletionRemove(substrand: other_substrand, offset: offset);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionRemove({BoundSubstrand bound_substrand, int deletion}) = _$DeletionRemove._;
+  factory DeletionRemove({BoundSubstrand substrand, int offset}) = _$DeletionRemove._;
 
   DeletionRemove._();
 

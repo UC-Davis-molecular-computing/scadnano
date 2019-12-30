@@ -34,7 +34,6 @@ class _$DesignMainStrandInsertionProps extends EditModePropsAbstract {
   Helix helix;
   String id;
   BuiltSet<EditModeChoice> edit_modes;
-  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
@@ -155,44 +154,21 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..y = background_y
       ..width = background_width
       ..height = background_height
-      ..onClick = ((_) => remove_insertion())
+      ..onClick = ((_) {
+        if (insertion_mode) {
+          app.dispatch(actions.InsertionRemove(substrand: props.substrand, insertion: props.insertion));
+        }
+      })
       ..key = key_background)();
-  }
-
-  remove_insertion() {
-    if (insertion_mode) {
-      var paired_substrand = props.find_paired_substrand(props.substrand, props.insertion.offset);
-      if (paired_substrand != null &&
-          paired_substrand.insertions.map((i) => i.offset).contains(props.insertion.offset)) {
-        app.dispatch(actions.BatchAction([
-          actions.InsertionRemove(bound_substrand: props.substrand, insertion: props.insertion),
-          actions.InsertionRemove(bound_substrand: paired_substrand, insertion: props.insertion),
-        ]));
-      } else {
-        app.dispatch(actions.InsertionRemove(bound_substrand: props.substrand, insertion: props.insertion));
-      }
-    }
   }
 
   change_insertion_length() async {
     int new_length = await ask_for_insertion_length(props.insertion.length);
-    if (new_length == null) {
+    if (new_length == null || new_length == props.insertion.length) {
       return;
     }
-    int offset = props.insertion.offset;
-    BoundSubstrand paired_substrand = props.find_paired_substrand(props.substrand, offset);
-    Insertion paired_insertion = paired_substrand.insertions.firstWhere((i) => i.offset == offset);
-    if (paired_insertion != null) {
-      app.dispatch(actions.BatchAction([
-        actions.InsertionLengthChange(
-            bound_substrand: props.substrand, insertion: props.insertion, length: new_length),
-        actions.InsertionLengthChange(
-            bound_substrand: paired_substrand, insertion: paired_insertion, length: new_length),
-      ]));
-    } else {
-      app.dispatch(actions.InsertionLengthChange(
-          bound_substrand: props.substrand, insertion: props.insertion, length: new_length));
-    }
+    app.dispatch(actions.InsertionLengthChange(
+        substrand: props.substrand, insertion: props.insertion, length: new_length));
   }
 }
 

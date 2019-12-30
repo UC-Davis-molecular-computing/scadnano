@@ -50,7 +50,6 @@ class _$DesignMainStrandPathsProps extends UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
@@ -91,7 +90,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
-            ..find_paired_substrand = props.find_paired_substrand
             ..edit_modes = props.edit_modes
             ..key = "bound-substrand-$i")());
 

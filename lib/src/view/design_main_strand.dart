@@ -51,7 +51,6 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  PairedSubstrandFinder find_paired_substrand;
 }
 
 @Component2()
@@ -85,7 +84,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..strand = strand
           ..key = 'strand-paths'
           ..helices = props.helices
-          ..find_paired_substrand = props.find_paired_substrand
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
@@ -131,7 +129,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           paths.add((DesignMainStrandInsertion()
             ..insertion = insertion
             ..substrand = substrand
-            ..find_paired_substrand = props.find_paired_substrand
             ..helix = helix
             ..color = color
             ..edit_modes = props.edit_modes
@@ -155,7 +152,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           deletions.add((DesignMainStrandDeletion()
             ..substrand = substrand
             ..deletion = deletion
-            ..find_paired_substrand = props.find_paired_substrand
             ..edit_modes = props.edit_modes
             ..helix = helix
             ..key = id)());
