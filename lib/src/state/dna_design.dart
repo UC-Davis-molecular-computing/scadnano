@@ -347,7 +347,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     for (int i = 0; i < helices.length; i++) {
       var helix = helices[i];
-      var helix_json = helix_jsons[i];
+      var helix_json = suppress_indent ? helix_jsons[i].value : helix_jsons[i];
       if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
