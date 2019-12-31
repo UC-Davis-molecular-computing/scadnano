@@ -155,12 +155,12 @@ Strand single_strand_dna_ends_commit_stop_reducer(Strand strand, DNAEndsMove all
 
 List<int> get_remaining_deletions(BoundSubstrand substrand, int new_offset, DNAEnd dnaend) =>
     substrand.deletions
-        .where((d) => (substrand.dnaend_start == dnaend ? new_offset <= d : new_offset >= d))
+        .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
         .toList();
 
 List<Insertion> get_remaining_insertions(BoundSubstrand substrand, int new_offset, DNAEnd dnaend) =>
     substrand.insertions
-        .where((i) => (substrand.dnaend_start == dnaend ? new_offset <= i.offset : new_offset >= i.offset))
+        .where((i) => (substrand.dnaend_start == dnaend ? new_offset < i.offset : new_offset > i.offset))
         .toList();
 
 int adjust_offset(DNAEnd end, DNAEndMove move, int delta) {
