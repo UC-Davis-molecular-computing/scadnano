@@ -3,6 +3,7 @@ import 'package:built_value/built_value.dart';
 
 import 'package:scadnano/src/serializers.dart';
 import 'package:scadnano/src/state/select_mode.dart';
+import '../json_serializable.dart';
 import 'linker.dart';
 import 'selectable.dart';
 import '../constants.dart' as constants;
@@ -53,8 +54,6 @@ abstract class Loopout
 
   String id() => 'loopout-${prev_substrand_idx + 1}-${strand_id}';
 
-//  String toString() => 'Loopout(${this.loopout_length})';
-
   int dna_length() => this.loopout_length;
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
@@ -63,13 +62,11 @@ abstract class Loopout
     return LoopoutBuilder()..loopout_length = loopout_length;
   }
 
-  Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
+  dynamic to_json_serializable({bool suppress_indent = false}) {
     var json_map = {
       constants.loopout_key: this.loopout_length,
     };
-    return json_map;
+    return suppress_indent ? NoIndent(json_map) : json_map;
   }
-
-//  toJson() => to_json_serializable(suppress_indent: false);
 
 }
