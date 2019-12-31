@@ -6,8 +6,9 @@ import 'state/grid.dart';
 
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
-final KEY_CODE_TOGGLE_SELECT_MAC =
+final KEY_CODE_COMMAND_MAC =
     browser.isFirefox ? 224 : 91; // Meta/Command: https://tosbourn.com/cmd-osx-key-code/
+final KEY_CODE_TOGGLE_SELECT_MAC = KEY_CODE_COMMAND_MAC;
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
 const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;

@@ -979,8 +979,10 @@ abstract class StrandsMoveStart
 
   Helix get helix;
 
+  bool get copy;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStart({int offset, Helix helix}) = _$StrandsMoveStart._;
+  factory StrandsMoveStart({int offset, Helix helix, bool copy}) = _$StrandsMoveStart._;
 
   StrandsMoveStart._();
 
@@ -996,23 +998,6 @@ abstract class StrandsMoveStop
   StrandsMoveStop._();
 
   static Serializer<StrandsMoveStop> get serializer => _$strandsMoveStopSerializer;
-}
-
-abstract class StrandsMoveSetSelectedStrands
-    with BuiltJsonSerializable
-    implements Action, Built<StrandsMoveSetSelectedStrands, StrandsMoveSetSelectedStrandsBuilder> {
-  BuiltList<Strand> get strands;
-
-  int get delta;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveSetSelectedStrands({BuiltList<Strand> strands, int delta}) =
-      _$StrandsMoveSetSelectedStrands._;
-
-  StrandsMoveSetSelectedStrands._();
-
-  static Serializer<StrandsMoveSetSelectedStrands> get serializer =>
-      _$strandsMoveSetSelectedStrandsSerializer;
 }
 
 abstract class StrandsMoveAdjustOffset

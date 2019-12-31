@@ -118,7 +118,6 @@ part 'serializers.g.dart';
   StrandsMove,
   StrandsMoveStart,
   StrandsMoveStop,
-  StrandsMoveSetSelectedStrands,
   StrandsMoveAdjustOffset,
   StrandsMoveCommit,
 ])

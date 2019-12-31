@@ -17,6 +17,7 @@ import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
 import 'nick_join_reducers.dart';
 import 'util_reducer.dart';
+import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.DNAEndsMoveCommit>(strands_dna_ends_move_commit_reducer),
@@ -63,9 +64,15 @@ BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions
     var strands_builder = strands.toBuilder();
     for (var strand in action.strands_move.strands_moving) {
       int strand_idx = strands.indexOf(strand);
-      strand = single_strand_commit_stop_reducer(strand, action.strands_move);
-      strand = strand.initialize();
-      strands_builder[strand_idx] = strand;
+      if (action.strands_move.copy) {
+        Strand new_strand = single_strand_commit_stop_reducer(strand, action.strands_move);
+        new_strand = new_strand.initialize();
+        strands_builder.add(new_strand);
+      } else {
+        strand = single_strand_commit_stop_reducer(strand, action.strands_move);
+        strand = strand.initialize();
+        strands_builder[strand_idx] = strand;
+      }
     }
     return strands_builder.build();
   } else {
@@ -93,7 +100,12 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
     }
     substrands[i] = new_substrand;
   }
-  return strand.rebuild((b) => b..substrands.replace(substrands));
+  strand = strand.rebuild((b) => b..substrands.replace(substrands));
+  if (strands_move.copy) {
+    //FIXME: this makes the reducer not pure
+    strand = strand.rebuild((b) => b..color = util.color_cycler.next());
+  }
+  return strand;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

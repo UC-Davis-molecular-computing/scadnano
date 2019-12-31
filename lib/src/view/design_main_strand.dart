@@ -108,7 +108,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       Helix helix = util.get_helix(event, props.helices);
       var offset_forward = util.get_offset_forward(event, helix);
       int offset = offset_forward.offset;
-      app.dispatch(actions.StrandsMoveStart(offset: offset, helix: helix));
+      app.dispatch(actions.StrandsMoveStart(offset: offset, helix: helix, copy: false));
     }
 
     if (assign_dna_mode) {

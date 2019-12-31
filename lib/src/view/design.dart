@@ -9,9 +9,13 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
+import 'package:quiver/iterables.dart';
+import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 
 import '../state/app_state.dart';
@@ -223,6 +227,15 @@ class DesignViewComponent {
           app.dispatch(actions.DeleteAllSelected());
         }
 
+        // Ctrl+C for copy
+        if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+            app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+            app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
+            (ev.ctrlKey || ev.metaKey) &&
+            key == KeyCode.C) {
+          copy_selected_strands();
+        }
+
         if (key == EditModeChoice.helix.key_code()) {
           side_view_update_grid_position(mouse_pos: side_view_mouse_position);
         }
@@ -431,6 +444,26 @@ class DesignViewComponent {
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
     }
+  }
+
+  copy_selected_strands() {
+    // find minimum helix of any selected strand, then minimum starting offset of that strand
+    var strands = app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand).toList();
+    int min_helix_idx;
+    int min_offset;
+    for (Strand strand in strands) {
+      for (BoundSubstrand substrand in strand.bound_substrands()) {
+        if (min_helix_idx == null || min_helix_idx > substrand.helix) {
+          min_helix_idx = substrand.helix;
+          min_offset = substrand.start; // reset this absolutely since helix got smaller
+        } else if (min_offset == null || (min_helix_idx == substrand.helix && min_offset > substrand.start)) {
+          min_offset = substrand.start;
+        }
+      }
+    }
+
+    Helix helix = app.state.dna_design.helices[min_helix_idx];
+    app.dispatch(actions.StrandsMoveStart(offset: min_offset, helix: helix, copy: true));
   }
 }
 

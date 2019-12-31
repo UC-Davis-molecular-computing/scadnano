@@ -4,8 +4,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
-import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
@@ -30,7 +28,7 @@ StrandsMove strands_move_start_reducer(
       original_offset: action.offset,
       helix: action.helix,
       helices: state.dna_design.helices,
-      copy: false);
+      copy: action.copy);
 }
 
 StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsMoveStop action) => null;
