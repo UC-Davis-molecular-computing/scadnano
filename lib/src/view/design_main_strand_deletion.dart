@@ -5,11 +5,9 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:tuple/tuple.dart';
 import '../app.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
-import 'design_main_strands.dart';
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 

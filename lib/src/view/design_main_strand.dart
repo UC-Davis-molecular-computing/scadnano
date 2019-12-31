@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
@@ -16,7 +18,6 @@ import 'design_main_strand_insertion.dart';
 import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
-import 'design_main_strands.dart';
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 
@@ -65,40 +66,49 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
     if (strand.substrands.length == 0) {
       return null;
-    } else {
-      var classname = 'strand';
-      if (selectable) {
-        classname += ' selectable';
-      }
-      if (selectable && selected) {
-        classname += ' selected';
-      }
-
-      return (Dom.g()
-        ..id = strand.id()
-        ..onPointerDown = handle_click_down
-        ..onPointerUp = handle_click_up
-        ..className = classname)([
-//        (ConnectedDesignMainStrandPaths()
-        (DesignMainStrandPaths()
-          ..strand = strand
-          ..key = 'strand-paths'
-          ..helices = props.helices
-          ..side_selected_helix_idxs = props.side_selected_helix_idxs
-          ..selectables_store = props.selectables_store
-          ..select_mode_state = props.select_mode_state
-          ..edit_modes = props.edit_modes
-          ..drawing_potential_crossover = props.drawing_potential_crossover
-          ..moving_dna_ends = props.moving_dna_ends)(),
-        _insertions(strand, side_selected_helix_idxs, strand.color),
-        _deletions(strand, side_selected_helix_idxs),
-      ]);
     }
+
+    var classname = 'strand';
+    if (selectable) {
+      classname += ' selectable';
+    }
+    if (selectable && selected) {
+      classname += ' selected';
+    }
+
+    return (Dom.g()
+      ..id = strand.id()
+      ..onPointerDown = handle_click_down
+      ..onPointerUp = handle_click_up
+      ..className = classname)([
+//        (ConnectedDesignMainStrandPaths()
+      (DesignMainStrandPaths()
+        ..strand = strand
+        ..key = 'strand-paths'
+        ..helices = props.helices
+        ..side_selected_helix_idxs = props.side_selected_helix_idxs
+        ..selectables_store = props.selectables_store
+        ..select_mode_state = props.select_mode_state
+        ..edit_modes = props.edit_modes
+        ..drawing_potential_crossover = props.drawing_potential_crossover
+        ..moving_dna_ends = props.moving_dna_ends)(),
+      _insertions(strand, side_selected_helix_idxs, strand.color),
+      _deletions(strand, side_selected_helix_idxs),
+    ]);
   }
 
-  handle_click_down(react.SyntheticPointerEvent event) {
+  handle_click_down(react.SyntheticPointerEvent event_syn) {
+    MouseEvent event = event_syn.nativeEvent;
     if (select_mode && props.selectable) {
-      props.strand.handle_selection_mouse_down(event.nativeEvent);
+      props.strand.handle_selection_mouse_down(event);
+    }
+
+    // set up drag detection for moving DNA ends
+    if (select_mode && props.selectable) {
+      Helix helix = util.get_helix(event, props.helices);
+      var offset_forward = util.get_offset_forward(event, helix);
+      int offset = offset_forward.offset;
+      app.dispatch(actions.StrandsMoveStart(offset: offset, helix: helix));
     }
 
     if (assign_dna_mode) {
@@ -196,3 +206,38 @@ Future<String> ask_for_dna_sequence() async {
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
+
+//  _draw_strand_lines_single_path() {
+//    if (this.strand.substrands.length == 0) {
+//      return;
+//    }
+//    var substrand = this.strand.substrands.first;
+//    var helix = app.state.dna_design.helices[substrand.helix_idx];
+//    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
+//    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
+//    for (int i = 0; i < this.strand.substrands.length; i++) {
+//      // substrand line
+//      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
+//      path_cmds.add('L ${end_svg.x} ${end_svg.y}');
+//
+//      // crossover line/arc
+//      if (i < this.strand.substrands.length - 1) {
+//        var old_substrand = substrand;
+//        substrand = this.strand.substrands[i + 1];
+//        helix = app.state.dna_design.helices[substrand.helix_idx];
+//        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
+//        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
+//        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
+//      }
+//    }
+//
+//    var path = svg.PathElement();
+//    path.attributes = {
+//      'id': substrand_line_id(substrand),
+//      'class': 'substrand-line',
+//      'stroke': strand.color.toRgbColor().toCssString(),
+//      'fill': 'none',
+//      'd': path_cmds.join(' '),
+//    };
+//    this.root_element.children.add(path);
+//  }

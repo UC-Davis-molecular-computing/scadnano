@@ -5,7 +5,8 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
+import 'package:scadnano/src/state/strands_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 import '../state/strand.dart';
@@ -18,7 +19,8 @@ import 'nick_join_reducers.dart';
 import 'util_reducer.dart';
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Strand>, actions.DNAEndsMoveCommit>(strands_dna_ends_move_stop_reducer),
+  TypedReducer<BuiltList<Strand>, actions.DNAEndsMoveCommit>(strands_dna_ends_move_commit_reducer),
+  TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
 ]);
 
@@ -54,9 +56,50 @@ Reducer<Strand> strand_part_reducer = combineReducers([
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// move strands
+
+BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions.StrandsMoveCommit action) {
+  if (action.strands_move.allowable && action.strands_move.is_nontrivial) {
+    var strands_builder = strands.toBuilder();
+    for (var strand in action.strands_move.strands_moving) {
+      int strand_idx = strands.indexOf(strand);
+      strand = single_strand_commit_stop_reducer(strand, action.strands_move);
+      strand = strand.initialize();
+      strands_builder[strand_idx] = strand;
+    }
+    return strands_builder.build();
+  } else {
+    return strands;
+  }
+}
+
+Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move) {
+  List<Substrand> substrands = strand.substrands.toList();
+  for (int i = 0; i < substrands.length; i++) {
+    Substrand substrand = substrands[i];
+    Substrand new_substrand = substrand;
+    if (substrand is BoundSubstrand) {
+      BoundSubstrand bound_ss = substrand;
+      for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
+        int new_offset = dnaend.offset_inclusive + strands_move.delta;
+        bound_ss = bound_ss.rebuild(
+            (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
+        List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
+        List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
+        bound_ss = bound_ss.rebuild(
+            (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
+      }
+      new_substrand = bound_ss;
+    }
+    substrands[i] = new_substrand;
+  }
+  return strand.rebuild((b) => b..substrands.replace(substrands));
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // move DNA ends
 
-BuiltList<Strand> strands_dna_ends_move_stop_reducer(
+BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     BuiltList<Strand> strands, actions.DNAEndsMoveCommit action) {
   DNAEndsMove move = action.dna_ends_move;
   if (move.current_offset == move.original_offset) {
@@ -65,15 +108,14 @@ BuiltList<Strand> strands_dna_ends_move_stop_reducer(
   var strands_builder = strands.toBuilder();
   for (var strand in action.dna_ends_move.strands_affected) {
     int strand_idx = strands.indexOf(strand);
-    strand = single_strand_dna_ends_move_stop_reducer(strand, move);
+    strand = single_strand_dna_ends_commit_stop_reducer(strand, move);
     strand = strand.initialize();
     strands_builder[strand_idx] = strand;
   }
   return strands_builder.build();
 }
 
-Strand single_strand_dna_ends_move_stop_reducer(Strand strand, DNAEndsMove all_move) {
-//  int delta = all_move.current_offset - all_move.original_offset;
+Strand single_strand_dna_ends_commit_stop_reducer(Strand strand, DNAEndsMove all_move) {
   List<Substrand> substrands = strand.substrands.toList();
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
@@ -84,7 +126,6 @@ Strand single_strand_dna_ends_move_stop_reducer(Strand strand, DNAEndsMove all_m
         DNAEndMove move = find_move(all_move.moves, dnaend);
         if (move != null) {
           int new_offset = all_move.current_capped_offset_of(dnaend);
-//          int new_offset = adjust_offset(dnaend, move, delta);
           bound_ss = bound_ss.rebuild(
               (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
           List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);

@@ -19,7 +19,6 @@ import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_bound_substrand.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
-import 'design_main_strands.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
@@ -164,7 +163,7 @@ String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand 
   var prev_helix = app.state.dna_design.helices[prev_substrand.helix];
   var next_helix = app.state.dna_design.helices[next_substrand.helix];
   var start_svg = prev_helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
-  var control = _control_point_for_crossover_bezier_curve(prev_substrand, next_substrand);
+  var control = control_point_for_crossover_bezier_curve(prev_substrand, next_substrand);
   var end_svg = next_helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
@@ -172,12 +171,12 @@ String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand 
   return path;
 }
 
-Point<num> _control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss) {
+Point<num> control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss, {int delta = 0}) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
   var from_helix = app.state.dna_design.helices[from_ss.helix];
   var to_helix = app.state.dna_design.helices[to_ss.helix];
-  var start_pos = from_helix.svg_base_pos(from_ss.offset_3p, from_ss.forward);
-  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p, to_ss.forward);
+  var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
+  var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward);
   bool from_strand_below = from_ss.helix - to_ss.helix > 0;
   num midX = (start_pos.x + end_pos.x) / 2;
   num midY = (start_pos.y + end_pos.y) / 2;

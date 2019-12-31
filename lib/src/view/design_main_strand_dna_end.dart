@@ -122,8 +122,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
       dna_end.handle_selection_mouse_down(event);
     }
 
+    // set up drag detection for moving DNA ends
     if (select_mode && props.selectable) {
-      // set up drag detection for moving DNA ends
       app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
     }
   }

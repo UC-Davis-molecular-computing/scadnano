@@ -34,7 +34,7 @@ AppState app_state_reducer(AppState state, action) {
   // "local" reducers can operate on one slice of the state and need only read that same slice
   state = state.rebuild((m) => m
     ..dna_design = dna_design_reducer(state.dna_design, action)?.toBuilder()
-    ..ui_state.replace(ui_state_reducer(state.ui_state, action))
+    ..ui_state.replace(ui_state_local_reducer(state.ui_state, action))
     ..error_message =
         TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action)
     ..editor_content = editor_content_reducer(state.editor_content, action));

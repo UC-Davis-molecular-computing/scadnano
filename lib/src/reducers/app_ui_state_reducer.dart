@@ -8,6 +8,7 @@ import '../state/mouseover_data.dart';
 import '../reducers/select_mode_state_reducer.dart';
 import '../reducers/edit_modes_reducer.dart';
 import '../actions/actions.dart' as actions;
+import 'strands_move_reducer.dart';
 import 'util_reducer.dart';
 import 'selection_reducer.dart';
 import 'mouseover_datas_reducer.dart';
@@ -17,7 +18,7 @@ import 'mouseover_datas_reducer.dart';
 // ui state local reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
+AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
   ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
   ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
@@ -30,6 +31,7 @@ AppUIState ui_state_reducer(AppUIState ui_state, action) => ui_state.rebuild((u)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
+  ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
 //  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
@@ -107,11 +109,12 @@ GridPosition side_view_mouse_grid_pos_clear_reducer(
 // ui state global reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_global_reducer(AppUIState ui_state, AppState model, action) => ui_state.rebuild((u) => u
-  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, model, action))
+AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) => ui_state.rebuild((u) => u
+  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
+  ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
   ..side_selected_helix_idxs
-      .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, model, action))
-  ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, model, action)));
+      .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action))
+  ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, state, action)));
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRotationSet>(

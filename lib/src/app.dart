@@ -14,7 +14,7 @@ import 'package:over_react/over_react.dart' as react;
 
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';

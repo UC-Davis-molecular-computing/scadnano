@@ -7,12 +7,13 @@ import 'package:color/color.dart';
 
 import 'actions/actions.dart';
 import 'state/dna_end.dart';
-import 'state/dna_end_move.dart';
+import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
 import 'state/export_dna_format.dart';
 import 'state/potential_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
+import 'state/strands_move.dart';
 import 'state/substrand.dart';
 import 'state/grid.dart';
 import 'state/helix.dart';
@@ -98,13 +99,6 @@ part 'serializers.g.dart';
   PotentialCrossoverCreate,
   PotentialCrossoverMove,
   PotentialCrossoverRemove,
-  DNAEndMove,
-  DNAEndsMove,
-  DNAEndsMoveStart,
-  DNAEndsMoveSetSelectedEnds,
-  DNAEndsMoveAdjustOffset,
-  DNAEndsMoveStop,
-  DNAEndsMoveCommit,
   AssignDNA,
   ExportDNA,
   ExportDNAFormat,
@@ -114,6 +108,19 @@ part 'serializers.g.dart';
   InsertionRemove,
   DeletionRemove,
   InsertionLengthChange,
+  DNAEndMove,
+  DNAEndsMove,
+  DNAEndsMoveStart,
+  DNAEndsMoveStop,
+  DNAEndsMoveSetSelectedEnds,
+  DNAEndsMoveAdjustOffset,
+  DNAEndsMoveCommit,
+  StrandsMove,
+  StrandsMoveStart,
+  StrandsMoveStop,
+  StrandsMoveSetSelectedStrands,
+  StrandsMoveAdjustOffset,
+  StrandsMoveCommit,
 ])
 Serializers serializers = _$serializers;
 

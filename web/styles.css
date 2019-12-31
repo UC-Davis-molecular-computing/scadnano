@@ -346,6 +346,15 @@ html, body {
     filter: url("#shadow");
 }
 
+.disallowed {
+    stroke: lightgray;
+}
+
+.disallowed-end {
+    stroke: lightgray;
+    fill: lightgray;
+}
+
 .selected.side-view-helix-circle {
     stroke: red;
     fill: hotpink;

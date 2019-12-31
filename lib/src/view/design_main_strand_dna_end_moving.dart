@@ -6,7 +6,7 @@ import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/dna_end.dart';
 
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import '../app.dart';
@@ -40,6 +40,7 @@ class _$EndMovingProps extends UiProps {
   bool forward;
   Helix helix;
   bool is_5p;
+  bool allowable;
 
   int current_offset;
   bool render;
@@ -48,7 +49,9 @@ class _$EndMovingProps extends UiProps {
 @Component2()
 class EndMovingComponent extends UiComponent2<EndMovingProps> {
   @override
-  get defaultProps => (newProps()..render=true);
+  get defaultProps => (newProps()
+    ..render = true
+    ..allowable = true);
 
   @override
   render() {
@@ -57,7 +60,8 @@ class EndMovingComponent extends UiComponent2<EndMovingProps> {
     }
     Point<num> pos = props.helix.svg_base_pos(props.current_offset, props.forward);
     EndEitherPrimeProps end_props = (props.is_5p ? End5Prime() : End3Prime());
-    String classname = props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving';
+    String classname = (props.is_5p ? 'five-prime-end-moving' : 'three-prime-end-moving') +
+        (props.allowable ? '' : ' disallowed-end');
     end_props = end_props
       ..on_pointer_down = null
       ..on_mouse_up = null

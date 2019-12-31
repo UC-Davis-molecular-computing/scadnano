@@ -1,4 +1,3 @@
-
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
@@ -10,7 +9,7 @@ import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import 'selectable.dart';
-
+import 'strands_move.dart';
 
 part 'app_ui_state.g.dart';
 
@@ -30,6 +29,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..moving_dna_ends = false
   ..changed_since_last_save = false
   ..side_view_grid_position_mouse_cursor = null
+  ..strands_move = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
@@ -60,6 +60,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   String get loaded_script_filename;
 
+  @nullable
+  StrandsMove get strands_move;
+
   bool get show_dna;
 
   bool get show_mismatches;
@@ -85,7 +88,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
-
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

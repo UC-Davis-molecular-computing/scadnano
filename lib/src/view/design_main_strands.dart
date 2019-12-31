@@ -1,8 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/reducers/edit_modes_reducer.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode.dart';
@@ -45,16 +43,9 @@ class _$DesignMainStrandsProps extends UiProps {
 
 @Component2()
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
-//  @override
-//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-//    BuiltList<Strand> strands = nextProps['DesignMainStrandsProps.strands'];
-//    return !(props.strands == strands);
-//  }
 
   @override
   render() {
-//    AppUIState ui_state = props.state.ui_state;
-    bool;
     return (Dom.g()..className = 'strands-main-view')([
       for (var strand in props.strands)
 //        (ConnectedDesignMainStrand()

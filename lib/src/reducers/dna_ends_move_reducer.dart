@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
 
 import '../actions/actions.dart' as actions;
 

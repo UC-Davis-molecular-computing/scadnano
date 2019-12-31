@@ -9,7 +9,7 @@ import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/loopout.dart';
@@ -19,6 +19,7 @@ import 'package:scadnano/src/state/selection_box.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strand_part.dart';
+import 'package:scadnano/src/state/strands_move.dart';
 
 //import '../state/substrand.dart';
 //import '../state/app_state.dart';
@@ -969,7 +970,79 @@ abstract class PotentialCrossoverRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// dna end move
+// strands move
+
+abstract class StrandsMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMoveStart, StrandsMoveStartBuilder> {
+  int get offset;
+
+  Helix get helix;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveStart({int offset, Helix helix}) = _$StrandsMoveStart._;
+
+  StrandsMoveStart._();
+
+  static Serializer<StrandsMoveStart> get serializer => _$strandsMoveStartSerializer;
+}
+
+abstract class StrandsMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMoveStop, StrandsMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveStop() = _$StrandsMoveStop;
+
+  StrandsMoveStop._();
+
+  static Serializer<StrandsMoveStop> get serializer => _$strandsMoveStopSerializer;
+}
+
+abstract class StrandsMoveSetSelectedStrands
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMoveSetSelectedStrands, StrandsMoveSetSelectedStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  int get delta;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveSetSelectedStrands({BuiltList<Strand> strands, int delta}) =
+      _$StrandsMoveSetSelectedStrands._;
+
+  StrandsMoveSetSelectedStrands._();
+
+  static Serializer<StrandsMoveSetSelectedStrands> get serializer =>
+      _$strandsMoveSetSelectedStrandsSerializer;
+}
+
+abstract class StrandsMoveAdjustOffset
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMoveAdjustOffset, StrandsMoveAdjustOffsetBuilder> {
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveAdjustOffset({int offset}) = _$StrandsMoveAdjustOffset._;
+
+  StrandsMoveAdjustOffset._();
+
+  static Serializer<StrandsMoveAdjustOffset> get serializer => _$strandsMoveAdjustOffsetSerializer;
+}
+
+abstract class StrandsMoveCommit
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<StrandsMoveCommit, StrandsMoveCommitBuilder> {
+  StrandsMove get strands_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveCommit({StrandsMove strands_move}) = _$StrandsMoveCommit._;
+
+  StrandsMoveCommit._();
+
+  static Serializer<StrandsMoveCommit> get serializer => _$strandsMoveCommitSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dna ends move
 
 abstract class DNAEndsMoveStart
     with BuiltJsonSerializable
@@ -986,6 +1059,11 @@ abstract class DNAEndsMoveStart
   static Serializer<DNAEndsMoveStart> get serializer => _$dNAEndsMoveStartSerializer;
 }
 
+/// This action is needed because [DNAEndsMoveStart] doesn't have enough information to find the set
+/// of selected ends, and because we process the subsequent actions as a [FactAction] with an
+/// optimized store, it doesn't have access to the full store either. So middleware on the full store
+/// processes the [DNAEndsMoveStart] in order to find the selected ends and put them into the
+/// [DNAEndMove]'s of this action.
 abstract class DNAEndsMoveSetSelectedEnds
     with BuiltJsonSerializable
     implements Action, Built<DNAEndsMoveSetSelectedEnds, DNAEndsMoveSetSelectedEndsBuilder> {

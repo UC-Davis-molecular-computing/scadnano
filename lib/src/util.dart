@@ -33,7 +33,6 @@ import 'actions/actions.dart' as actions;
 const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
     'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 
-
 final ColorCycler color_cycler = ColorCycler();
 
 class ColorCycler {
@@ -417,6 +416,27 @@ class OffsetForward {
   OffsetForward(this.offset, this.forward);
 }
 
+/// Return helix where click event occured, if any.
+Helix get_helix(MouseEvent event, BuiltList<Helix> helices) {
+  var svg_coord;
+  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+  if (browser.isFirefox) {
+    svg_coord = event.offset;
+  } else {
+    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
+  }
+  num svg_y = svg_coord.y;
+
+  for (Helix helix in helices) {
+    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
+      return helix;
+    }
+  }
+  return null;
+}
+
+/// Return offset and direction on helix where click event occurred.
 OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
   var svg_coord;
   //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event

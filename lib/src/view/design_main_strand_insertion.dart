@@ -14,7 +14,6 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
-import 'design_main_strands.dart';
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 

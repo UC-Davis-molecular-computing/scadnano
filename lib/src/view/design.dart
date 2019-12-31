@@ -9,9 +9,10 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:scadnano/src/state/dna_end_move.dart';
+import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/strands_move.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
@@ -173,6 +174,7 @@ class DesignViewComponent {
     }
 
     main_view_svg.onMouseMove.listen((event) {
+      // move selected DNA ends
       DNAEndsMove moves_store = app.store_dna_ends_move.state;
       if (moves_store != null) {
         Helix helix = moves_store.helix;
@@ -182,6 +184,18 @@ class DesignViewComponent {
           app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
         }
       }
+
+      // move selected Strands
+      StrandsMove strands_move = app.state.ui_state.strands_move;
+      if (strands_move != null) {
+        Helix helix = strands_move.helix;
+        int offset = util.get_offset_forward(event, helix).offset;
+        int old_offset = strands_move.current_offset;
+        if (offset != old_offset) {
+          app.dispatch(actions.StrandsMoveAdjustOffset(offset: offset));
+        }
+      }
+
     });
 
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
@@ -459,4 +473,12 @@ main_view_dna_ends_move_stop() {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
     }
   }
+  if (app.state.ui_state.strands_move != null) {
+    StrandsMove strands_move = app.state.ui_state.strands_move;
+    app.dispatch(actions.StrandsMoveStop());
+    if (strands_move.allowable && strands_move.is_nontrivial) {
+      app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
+    }
+  }
+
 }

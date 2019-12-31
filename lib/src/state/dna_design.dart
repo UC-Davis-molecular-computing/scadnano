@@ -197,8 +197,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
 
   @memoized
-  BuiltList<BuiltSet<BoundSubstrand>> get helix_idx_to_substrands {
-    return _construct_helix_idx_to_substrands_map(helices.length, strands);
+  BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
+    return construct_helix_idx_to_substrands_map(helices.length, strands);
   }
 
   @memoized
@@ -236,6 +236,19 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
           map[key] = end;
         }
       }
+    }
+    return map.build();
+  }
+
+  /// Gets Strand with 5p end at given address (helix,offset,forward)
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<Tuple3<int, int, bool>, Strand> get address_5p_to_strand {
+    var map = Map<Tuple3<int, int, bool>, Strand>();
+    for (var strand in strands) {
+      var ss = strand.first_bound_substrand();
+      var key = Tuple3(ss.helix, ss.dnaend_5p.offset_inclusive, ss.forward);
+      map[key] = strand;
     }
     return map.build();
   }
@@ -532,7 +545,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return set of substrands on the Helix with the given index.
-  BuiltSet<BoundSubstrand> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
+  BuiltList<BoundSubstrand> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
 
 //  Set<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
@@ -655,11 +668,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 }
 
-BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
+BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(
     int num_helices, Iterable<Strand> strands) {
-  var helix_idx_to_substrands_builder = ListBuilder<SetBuilder<BoundSubstrand>>();
+  var helix_idx_to_substrands_builder = List<List<BoundSubstrand>>();
   for (int _ = 0; _ < num_helices; _++) {
-    helix_idx_to_substrands_builder.add(SetBuilder<BoundSubstrand>());
+    helix_idx_to_substrands_builder.add(List<BoundSubstrand>());
   }
   for (Strand strand in strands) {
     for (Substrand substrand in strand.substrands) {
@@ -669,15 +682,18 @@ BuiltList<BuiltSet<BoundSubstrand>> _construct_helix_idx_to_substrands_map(
       }
     }
   }
-  var helix_idx_to_substrands_builtset_builder = ListBuilder<BuiltSet<BoundSubstrand>>();
-  for (var set in helix_idx_to_substrands_builder.build()) {
-    helix_idx_to_substrands_builtset_builder.add(set.build());
+
+  var helix_idx_to_substrands_builtset_builder = List<BuiltList<BoundSubstrand>>();
+  for (var substrands in helix_idx_to_substrands_builder) {
+    // sort by start offset; since the intervals are disjoint, this sorts them by end as well
+    substrands.sort((ss1, ss2) => ss1.start - ss2.start);
+    helix_idx_to_substrands_builtset_builder.add(substrands.build());
   }
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
 _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
-  var helix_idx_to_substrands = _construct_helix_idx_to_substrands_map(helix_builders.length, strands);
+  var helix_idx_to_substrands = construct_helix_idx_to_substrands_map(helix_builders.length, strands);
 
   for (int idx = 0; idx < helix_builders.length; idx++) {
     HelixBuilder helix_builder = helix_builders[idx];

@@ -9,7 +9,7 @@ import 'dna_end.dart';
 import 'helix.dart';
 import 'strand.dart';
 
-part 'dna_end_move.g.dart';
+part 'dna_ends_move.g.dart';
 
 abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMove, DNAEndsMoveBuilder> {
   factory DNAEndsMove(

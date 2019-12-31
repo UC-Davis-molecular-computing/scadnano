@@ -1,5 +1,8 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
+#* text eol=crlf
+#* text eol=lf
+#* text=off
 
 *.dart text
 *.txt text

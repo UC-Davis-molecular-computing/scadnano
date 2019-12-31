@@ -7,6 +7,8 @@ import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/strands_move.dart';
+import 'package:scadnano/src/view/design_main_strands_moving.dart';
 
 import 'design_main_mismatches.dart';
 import 'design_main_helices.dart';
@@ -32,9 +34,9 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..helices = state.dna_design.helices
         ..strands = state.dna_design.strands
         ..has_error = state.has_error()
+        ..edit_modes = state.ui_state.edit_modes
+        ..strands_move = state.ui_state.strands_move
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-        ..backbone_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
-        ..pencil_edit_mode = state.ui_state.edit_modes.contains(EditModeChoice.pencil)
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna);
     }
@@ -49,11 +51,11 @@ class _$DesignMainProps extends UiProps {
   BuiltList<Helix> helices;
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
+  BuiltSet<EditModeChoice> edit_modes;
+  StrandsMove strands_move;
   bool has_error;
   bool show_mismatches;
   bool show_dna;
-  bool backbone_edit_mode;
-  bool pencil_edit_mode;
 }
 
 @Component2()
@@ -67,7 +69,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.helices
-        ..strand_create_enabled = props.pencil_edit_mode
+        ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..key = 'helices')(),
       (DesignMainMismatches()
@@ -76,8 +78,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..key = 'mismatches')(),
 //      (DesignMainStrands()
 //        ..strands = props.strands
-      (ConnectedDesignMainStrands()
-        ..key = 'strands')(),
+      (ConnectedDesignMainStrands()..key = 'strands')(),
       (DesignMainDNASequences()
         ..show_dna = props.show_dna
         ..strands = props.strands
@@ -90,10 +91,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
-      if (props.backbone_edit_mode)
+      if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.helices
           ..key = 'mouseover-rect')(),
+      (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
     ]);
 
     if (USING_REACT_DND) {
