@@ -2425,7 +2425,7 @@ main() {
     // Expect:
     //     0            16               32
     // 0                [---------------->
-    //    <-------------X----------------]
+    //    <-------------[----------------]
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
     String expected_json = r"""
@@ -2439,7 +2439,7 @@ main() {
     },
     {
       "substrands": [
-        {"helix": 0, "forward": false, "start": 0, "end": 32, "deletions": [16]}
+        {"helix": 0, "forward": false, "start": 0, "end": 32}
       ]
     }
   ]
@@ -2478,7 +2478,7 @@ main() {
     // Expect:
     //     0            16               32
     // 0                [---------------->
-    //    <-------------I----------------]
+    //    <-------------[----------------]
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
     String expected_json = r"""
@@ -2492,7 +2492,7 @@ main() {
     },
     {
       "substrands": [
-        {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
+        {"helix": 0, "forward": false, "start": 0, "end": 32}
       ]
     }
   ]
