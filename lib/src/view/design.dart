@@ -42,16 +42,12 @@ enum DraggableComponent { main, side }
 class DesignViewComponent {
   DivElement root_element;
 
-  DivElement design_above_footer_pane = DivElement()
-    ..attributes = {'id': 'design'};
+  DivElement design_above_footer_pane = DivElement()..attributes = {'id': 'design'};
   DivElement footer_separator = DivElement()
     ..attributes = {'id': 'design-footer-separator', 'class': 'fixed-separator'};
-  DivElement footer_element = DivElement()
-    ..attributes = {'id': FOOTER_ID};
-  DivElement modes_element = DivElement()
-    ..attributes = {'id': MODES_ID};
-  DivElement error_message_pane = DivElement()
-    ..attributes = {'id': 'error-message-pane'};
+  DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
+  DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
+  DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -67,12 +63,10 @@ class DesignViewComponent {
   Point<num> main_view_mouse_position = Point<num>(0, 0);
 
   DesignViewComponent(this.root_element) {
-    this.side_pane = DivElement()
-      ..attributes = {'id': 'side-pane', 'class': 'split'};
+    this.side_pane = DivElement()..attributes = {'id': 'side-pane', 'class': 'split'};
     var side_main_separator = DivElement()
       ..attributes = {'id': 'side-main-separator', 'class': 'draggable-separator'};
-    this.main_pane = DivElement()
-      ..attributes = {'id': 'main-pane', 'class': 'split'};
+    this.main_pane = DivElement()..attributes = {'id': 'main-pane', 'class': 'split'};
 
     side_view_svg = svg.SvgSvgElement()
       ..attributes = {
@@ -93,8 +87,7 @@ class DesignViewComponent {
       ..attributes = {
         'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
       };
-    var main_view_svg_viewport = svg.GElement()
-      ..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
+    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
@@ -195,7 +188,6 @@ class DesignViewComponent {
           app.dispatch(actions.StrandsMoveAdjustOffset(offset: offset));
         }
       }
-
     });
 
     // need to install and uninstall Draggable on each cycle of Ctrl/Shift key-down/up,
@@ -206,15 +198,14 @@ class DesignViewComponent {
       if (!ev.repeat) {
         app.keys_pressed.add(key);
 
-        if ((key == constants.KEY_CODE_TOGGLE_SELECT ||
-            key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
-            key == constants.KEY_CODE_SELECT)) {
+        if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+            (key == constants.KEY_CODE_TOGGLE_SELECT ||
+                key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+                key == constants.KEY_CODE_SELECT)) {
           install_draggable(true, DraggableComponent.main, main_view_svg);
           install_draggable(false, DraggableComponent.side, side_view_svg);
         } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
           app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
-//        } else if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO) {
-//          app.dispatch(actions.ShowMouseoverRectToggle());
         } else if (key == KeyCode.ESC) {
           if (app.state.ui_state.selectables_store.isNotEmpty) {
             app.dispatch(actions.SelectionsClear());
@@ -224,6 +215,9 @@ class DesignViewComponent {
           }
           if (app.state.ui_state.drawing_potential_crossover) {
             app.dispatch(actions.PotentialCrossoverRemove());
+          }
+          if (app.state.ui_state.strands_move != null) {
+            app.dispatch(actions.StrandsMoveStop());
           }
         } else if (key == KeyCode.DELETE) {
           app.dispatch(actions.DeleteAllSelected());
@@ -308,7 +302,7 @@ class DesignViewComponent {
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
-    util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     bool toggle;
     if (event.ctrlKey || event.metaKey) {
       toggle = true;
@@ -323,7 +317,7 @@ class DesignViewComponent {
   drag(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
-    util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       var action = actions.SelectionBoxSizeChange(point, is_main_view);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
@@ -390,8 +384,7 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()
-            ..store = app.store)((ReduxProvider()
+          (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)(
             ConnectedDesignSide()(),
@@ -402,8 +395,7 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()
-            ..store = app.store)((ReduxProvider()
+          (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)((ReduxProvider()
             ..store = app.store_potential_crossover
@@ -418,8 +410,7 @@ class DesignViewComponent {
 
       react_dom.render(
         ErrorBoundary()(
-          (ReduxProvider()
-            ..store = app.store)(
+          (ReduxProvider()..store = app.store)(
             ConnectedDesignFooter()(),
           ),
         ),
@@ -436,7 +427,7 @@ class DesignViewComponent {
   main_view_move_potential_crossover(MouseEvent event) {
     if (app.store_potential_crossover.state != null) {
       Point<num> point =
-      util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+          util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
       var action = actions.PotentialCrossoverMove(point: point);
       app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
     }
@@ -480,5 +471,4 @@ main_view_dna_ends_move_stop() {
       app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
     }
   }
-
 }
