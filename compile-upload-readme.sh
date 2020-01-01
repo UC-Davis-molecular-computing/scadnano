@@ -7,3 +7,4 @@ pandoc -c pandoc.css -s README.md -o web/README.html
 
 echo uploading README.html to doty@set.cs.ucdavis.edu:public_html/scadnano/ 
 scp web/README.html doty@set.cs.ucdavis.edu:public_html/scadnano/
+scp doc-images/* doty@set.cs.ucdavis.edu:public_html/scadnano/doc-images/

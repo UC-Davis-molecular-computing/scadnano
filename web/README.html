@@ -21,23 +21,44 @@
 <header id="title-block-header">
 <h1 class="title">scadnano help</h1>
 </header>
-<p><a href="https://web.cs.ucdavis.edu/~doty/scadnano2">scadnano</a> (“<strong>s</strong>criptable-cadnano”) is a program for designing synthetic DNA structures such as DNA origami. Its design is based on <a href="https://cadnano.org/">cadnano</a>, specifically <a href="https://github.com/douglaslab/cadnano2">version 2</a>, with two main differences:</p>
+<p><a href="https://web.cs.ucdavis.edu/~doty/scadnano2">scadnano</a> (“<strong><em>S</em></strong>criptable-cadnano”) is a program for designing synthetic DNA structures such as DNA origami. Its design is based on <a href="https://cadnano.org/">cadnano</a>, specifically <a href="https://github.com/douglaslab/cadnano2">version 2</a>, with two main differences:</p>
 <ol type="1">
 <li>It runs entirely in the browser, with no installation required.</li>
-<li>scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library (<a href="./docs/">documentation here</a>), to help automate tedious tasks.</li>
+<li>scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library (<a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package">download</a>/<a href="./docs/">documentation</a>), to help automate tedious tasks.</li>
 </ol>
 <p>A secondary goal is that the file format should be easily readable, to help when debugging scripts.</p>
 <p>This document does not assume any familiarity with cadnano, although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.</p>
 <h2 id="terms">Terms</h2>
 <p>The main parts of the program are the <em>side view</em> on the left, and the <em>main view</em> on the right. The side view shows DNA helices “head on”, with the interpretation that as you move left-to-right in the main view, this is like moving “into the screen” in the side view.</p>
+<figure>
+<img src="doc-images/screenshot-initial-marked-up.png" alt="" /><figcaption>screenshot</figcaption>
+</figure>
+<p>The screenshot above shows many of the terms used in scadnano.</p>
 <p>TODO: 5’/3’ ends, strands, substrands, loopouts, helix rotations and anchors, etc.</p>
-<h2 id="keyboard-and-mousetouchpad">Keyboard and mouse/touchpad</h2>
+<h2 id="menu">Menu</h2>
 <ul>
-<li><p>Clicking crossover: if a crossover is left-clicked while m is pressed, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.</p></li>
+<li><p><strong>Export DNA:</strong> Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.</p></li>
+<li><p><strong>Save:</strong> Saves the current design in a .dna file. This is the same format output by (and readable by) the Python scripting package.</p></li>
+<li><p><strong>Load:</strong> Loads a .dna file. Note that due to browser security restrictions on accessing the local file system it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.</p></li>
+<li><p><strong>show DNA:</strong> Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a &gt; 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/30">this feature request</a> will reduce the rendering time.</p></li>
+<li><p><strong>show mismatches:</strong> Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.</p></li>
+</ul>
+<h2 id="edit-modes">Edit modes</h2>
+<p>There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously.</p>
+<ul>
+<li><p><strong>Select:</strong> This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the “Select Mode”, shown below the Edit modes. Some of these are mutually exclusive as well.</p>
+<ul>
+<li><p><strong>5’ end (strand), 3’ end (strand):</strong> These allow one to select the 5’ end (square) or 3’ end (triangle) of a whole strand.</p></li>
+<li><p><strong>5’ end (other), 3’ end (other):</strong> Each strand is composed of one or more <em>bound substrands</em>, defined to be a portion of a strand that exists on a single helix. A 5’/3’ end of a bound substrand that is not the 5’/3’ end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5’/3’ end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.</p></li>
+<li><p><strong>crossover, loopout:</strong> Two consecutive bound substrands on a strand can be joined by either a <em>crossover</em>, which consists of no DNA bases, or a <em>loopout</em>, which is a single-stranded portion of the strand with one or more DNA bases.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
+<li><p><strong>strand:</strong> The whole strand can be selected.</p></li>
+<li><p><strong>scaffold/staple:</strong> In the case of a DNA origami design—one in which at least one strand is marked as a <em>scaffold</em>—all non-scaffold strands are called <em>staples</em>. This option allows one to select only scaffold strands/strand parts, only staples, or both.</p></li>
+</ul></li>
+<li><p>Clicking crossover: if a crossover is left-clicked while backbone mode is enabled, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.</p></li>
 <li><p>Ctrl and Shift: pressing these enables one to select objects, either by left-clicking on them individually, or by “click-and-drag”. If Shift is pressed, then the objects touched are selected. If Ctrl is pressed, then the object selections are toggled (i.e., unselected if they were selected before).</p></li>
 <li><p>Esc: If helices are selected, this unselects all of them. Note that unlike other interactive applications, items are not deselected when you left-click elsewhere. This helps to avoid accidentally unselecting many items when using the cursor for other tasks such as panning.</p></li>
 </ul>
-<h2 id="edit-modes">Edit modes</h2>
+<h2 id="edit-modes-1">Edit modes</h2>
 <p>These are not very well-defined yet. The general idea is to toggle an edit mode by clicking it on the right side, or pressing the keyboard shortcut.</p>
 <ul>
 <li>w: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. Furthermore, while this is enabled, clicking on a crossover can alter the backbone rotation of the two helices it connects to point them at each other.</li>
@@ -45,5 +66,11 @@
 <h2 id="exporting-svg">Exporting SVG</h2>
 <p>Exporting the design to SVG is currently not directly supported. However, by installing the Chrome extension <a href="https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi">Export SVG with Style</a>, you can export it yourself:</p>
 <p>Add the extension, then restart scadnano (press F5 button to refresh the page), and after loading the design you want to export to SVG, click the Export SVG Button. It will report that there are two SVG elements on the page. These are the side view and main view, respectively, and the extension will save both of them.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/34">unsupported</a> for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 </body>
 </html>
