@@ -9,7 +9,8 @@ Its design is based on [cadnano](https://cadnano.org/),
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
 with two main differences: 
 
-1) It runs entirely in the browser, with no installation required.
+1) It runs entirely in the browser, with no installation required. Currently only [Chrome](https://www.google.com/chrome/) is supported, with support for [Firefox](https://www.mozilla.org/en-US/firefox/), [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge), and [Safari](https://www.apple.com/safari/) planned in the future.
+
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](./docs/)), to help automate tedious tasks.
 
 A secondary goal is that the file format should be easily readable, to help when debugging scripts.
@@ -17,11 +18,14 @@ A secondary goal is that the file format should be easily readable, to help when
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
 
+Please file bug reports and make feature requests at the 
+[GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
+
 
 
 ## Terms
 
-The main parts of the program are the *side view* on the left, and the *main view* on the right.
+The main parts of the program are the *side view* on the left, and the *main view* in the center.
 The side view shows DNA helices "head on", with the interpretation that as you move left-to-right in the main view, this is like moving "into the screen" in the side view.
 
 ![screenshot](doc-images/screenshot-initial-marked-up.png)
@@ -29,9 +33,15 @@ The side view shows DNA helices "head on", with the interpretation that as you m
 The screenshot above shows many of the terms used in scadnano.
 
 
-TODO: 5'/3' ends, strands, substrands, loopouts, helix rotations and anchors, etc.
+TODO: explain data model: 5'/3' ends, strands, substrands, forward, offsets, crossovers, loopouts, helix rotations and anchors, etc.
+
+## Navigation
+
+The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
 
 ## Menu
+
+The menu layout is currently hacky and will [change to something more elegant in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/63).
 
 * **Export DNA:**
 Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
@@ -52,8 +62,12 @@ Shows DNA base pair mismatches. When assigning DNA sequences, the default is to 
 
 There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously.
 
-* **Select:**
+* **select:**
 This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
+
+A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. 
+
+Unlike other drawing programs, clicking on the background will not unselect the objects. To unselect all selected objects, press the Esc key.
 
   - **5' end (strand), 3' end (strand):**
   These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
@@ -69,22 +83,25 @@ This is similar to the Select edit mode in cadnano. It allows one to select one 
 
   - **scaffold/staple:**
   In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both.
-  
-  
 
-* Clicking crossover: if a crossover is left-clicked while backbone mode is enabled, then the backbone rotation angles and anchors of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.
+  
+* **pencil:**
+This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands. (Currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/98) to change its length while added, so unfortunately you must add a strand of length 2 and then enable select mode to lengthen it.) It also allows one to merge two strands into one with a crossover. This is done by clicking on a 5'/3' end of one strand and then clicking on another. (In between a line will be drawn showing the "potential" crossover being added; to delete this and reset, press the Esc key.) To undo these operations select the crossover/strand that was just created and press the Delete key. (Note that deleting a bound substrand that is the only one on a strand will delete the whole strand.)
 
-* Ctrl and Shift: pressing these enables one to select objects, either by left-clicking on them individually, or by "click-and-drag". 
-If Shift is pressed, then the objects touched are selected. 
-If Ctrl is pressed, then the object selections are toggled (i.e., unselected if they were selected before).
+* **nick/ligate:**
+Technically these operations are unnecessary, but they give a fast way to create large designs. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
+
+* **insertion/deletion:**
+These have the same meaning as in cadnano. They are a visual trick used to allow  bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. Normally, each offset (small white square outlined in gray on a helix) represents a single base. Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. Clicking an existing insertion/deletion removes it. (Note that this requires clicking in the small square where the bound substrand is drawn; clicking on an insertion outside of that position allows one to change its length.) If a deletion appears at that position, then it does not correspond to any DNA base. If an insertion appears at that position, it has a *length*, which is a positive integer, and the number of bases represented by that position is actually *length*+1. In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
+
+  Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface.
+
+* **backbone:**
+This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. This is not intended to be a predictive model based on molecular kinetics, nor is it even intended to be meaningful over the entirety of a helix. Rather, it is useful to set the rotation at one offset on a helix and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
+
+  If a crossover is clicked while backbone mode is enabled, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 * Esc: If helices are selected, this unselects all of them. Note that unlike other interactive applications, items are not deselected when you left-click elsewhere. This helps to avoid accidentally unselecting many items when using the cursor for other tasks such as panning.
-
-## Edit modes
-
-These are not very well-defined yet. The general idea is to toggle an edit mode by clicking it on the right side, or pressing the keyboard shortcut. 
-
-* w: This shows mouseover data when the cursor is positioned over a helix or crossover in the main view. The backbone rotation angle of the two strands on the helix is shown in the side view, and the information about the helix and (if present) DNA strand is shown in the footer. Furthermore, while this is enabled, clicking on a crossover can alter the backbone rotation of the two helices it connects to point them at each other.
 
 
 ## Exporting SVG
@@ -93,10 +110,9 @@ Exporting the design to SVG is currently not directly supported. However, by ins
 [Export SVG with Style](https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi),
 you can export it yourself:
 
-
 Add the extension, then restart scadnano (press F5 button to refresh the page), and after loading the design you want to export to SVG, click the Export SVG Button.
 It will report that there are two SVG elements on the page.
 These are the side view and main view, respectively, and the extension will save both of them.
 
 
-  [^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
+[^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
