@@ -211,6 +211,7 @@ class DesignViewComponent {
         } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
           app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
         } else if (key == KeyCode.ESC) {
+          clear_copy_buffer();
           if (app.state.ui_state.selectables_store.isNotEmpty) {
             app.dispatch(actions.SelectionsClear());
           }
@@ -227,13 +228,17 @@ class DesignViewComponent {
           app.dispatch(actions.DeleteAllSelected());
         }
 
-        // Ctrl+C for copy
+        // Ctrl+C/Ctrl+V for copy/paste
         if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
             app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
             app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
             (ev.ctrlKey || ev.metaKey) &&
             key == KeyCode.C) {
           copy_selected_strands();
+        }
+        // can paste even if nothing selected or not in select mode, if something is in copy buffer
+        if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
+          paste_selected_strands();
         }
 
         if (key == EditModeChoice.helix.key_code()) {
@@ -253,16 +258,6 @@ class DesignViewComponent {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
       }
-//      if (key == constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO && !ev.repeat) {
-//        if (app.state.ui_state.show_mouseover_rect) {
-////          app.dispatch(actions.ShowMouseoverRectSet(false));
-//        }
-//        // removes mouseover even if on crossover even though we don't want that. Oh well
-//
-////        if (app.state.ui_state.mouseover_datas.isNotEmpty) {
-////          app.dispatch(actions.MouseoverDataClear());
-////        }
-//      }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
           app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
@@ -446,6 +441,8 @@ class DesignViewComponent {
     }
   }
 
+  actions.StrandsMoveStart copy_action;
+
   copy_selected_strands() {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
     var strands = app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand).toList();
@@ -463,7 +460,17 @@ class DesignViewComponent {
     }
 
     Helix helix = app.state.dna_design.helices[min_helix_idx];
-    app.dispatch(actions.StrandsMoveStart(offset: min_offset, helix: helix, copy: true));
+    copy_action = actions.StrandsMoveStart(offset: min_offset, helix: helix, copy: true);
+  }
+
+  clear_copy_buffer() {
+    copy_action = null;
+  }
+
+  paste_selected_strands() {
+    if (copy_action != null) {
+      app.dispatch(copy_action);
+    }
   }
 }
 
