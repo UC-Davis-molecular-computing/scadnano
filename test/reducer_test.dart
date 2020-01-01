@@ -1694,7 +1694,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -1746,7 +1745,6 @@ main() {
       original_offset: 15,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -1798,7 +1796,6 @@ main() {
       original_offset: 15,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([reverse_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -1850,7 +1847,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([reverse_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -1909,7 +1905,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand, reverse_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -1962,7 +1957,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -1979,7 +1973,6 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([reverse_strand]),
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2034,7 +2027,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -2051,7 +2043,6 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([reverse_strand]),
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2125,7 +2116,6 @@ main() {
       original_offset: 0,
       current_offset: 3,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     mid_state = app_state_reducer(mid_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_forward));
 
@@ -2151,7 +2141,6 @@ main() {
       original_offset: 15,
       current_offset: 4,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([reverse_strand]),
     );
     final_state = app_state_reducer(final_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move_reverse));
 
@@ -2245,7 +2234,6 @@ main() {
       original_offset: 4,
       current_offset: -6,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2299,7 +2287,6 @@ main() {
       original_offset: 10,
       current_offset: 19,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
@@ -2343,7 +2330,6 @@ main() {
       original_offset: 0,
       current_offset: 7,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     AppState actual_state = initial_state;
 
@@ -2418,7 +2404,6 @@ main() {
       original_offset: 0,
       current_offset: 16,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     AppState actual_state = initial_state;
 
@@ -2471,7 +2456,6 @@ main() {
       original_offset: 0,
       current_offset: 16,
       helix: helix0,
-      strands_affected: BuiltSet<Strand>([forward_strand]),
     );
     AppState actual_state = initial_state;
 
@@ -2499,7 +2483,7 @@ main() {
  }
   """;
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_deletion_design));
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_insertion_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2874,5 +2858,79 @@ main() {
 
       expect(state.ui_state.mouseover_datas, BuiltList<MouseoverData>());
     });
+
+    //   0                  16
+    //
+    // 0 [------------------->
+    //   <--------------------
+    //                       |
+    // 1 [--------------------
+    //   <-------------------]
+    String two_helices_crossover_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": true , "start": 0, "end": 16},
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+    DNADesign two_helices_crossover_design = DNADesign.from_json(jsonDecode(two_helices_crossover_json));
+    test('HelixRotationSetAtOther', () {
+      AppState state = app_state_from_dna_design(two_helices_crossover_design);
+
+      state =
+          app_state_reducer(state, HelixRotationSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
+
+      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+        ..rotation = 30
+        ..rotation_anchor = 15);
+
+      expect(state.dna_design.helices.first, expected_helix0);
+
+      state =
+          app_state_reducer(state, HelixRotationSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
+
+      Helix expected_helix1 = two_helices_crossover_design.helices.last.rebuild((b) => b
+        ..rotation = 0
+        ..rotation_anchor = 15);
+
+      expect(state.dna_design.helices.first, expected_helix0);
+      expect(state.dna_design.helices.last, expected_helix1);
+    });
+
+    test('HelixRotationSet', () {
+      AppState state = app_state_from_dna_design(two_helices_crossover_design);
+
+      state = app_state_reducer(state, HelixRotationSet(0, 150, 4));
+
+      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+        ..rotation = 150
+        ..rotation_anchor = 4);
+
+      expect(state.dna_design.helices.first, expected_helix0);
+    });
+  });
+
+  test('Error message set', () {
+    AppState state = default_state();
+    String message = 'This is an error';
+    state = app_state_reducer(state, ErrorMessageSet(message));
+
+    expect(state.error_message, message);
   });
 }
