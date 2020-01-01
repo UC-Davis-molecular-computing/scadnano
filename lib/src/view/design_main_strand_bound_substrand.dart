@@ -60,25 +60,26 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
-    int offset;
-    var substrand = props.substrand;
     if (nick_mode || insertion_mode || deletion_mode) {
+      var substrand = props.substrand;
       MouseEvent event = event_syn.nativeEvent;
       var offset_forward = util.get_offset_forward(event, props.helix);
-      offset = offset_forward.offset;
-    }
-    if (offset <= substrand.start || offset >= substrand.end) {
-      return; // cannot have nick/insertion/deletion on end
-    }
-    if (nick_mode) {
-      if (offset <= substrand.start + 1 || offset >= substrand.end - 1) {
-        return; // need remaining substrands to be length at least 2
+      int offset = offset_forward.offset;
+
+      if (offset <= substrand.start || offset >= substrand.end) {
+        return; // cannot have nick/insertion/deletion on end
       }
-      app.dispatch(actions.Nick(bound_substrand: substrand, offset: offset));
-    } else if (insertion_mode) {
-      app.dispatch(actions.InsertionAdd(substrand: substrand, offset: offset));
-    } else if (deletion_mode) {
-      app.dispatch(actions.DeletionAdd(substrand: substrand, offset: offset));
+
+      if (nick_mode) {
+        if (offset <= substrand.start + 1 || offset >= substrand.end - 1) {
+          return; // need remaining substrands to be length at least 2
+        }
+        app.dispatch(actions.Nick(bound_substrand: substrand, offset: offset));
+      } else if (insertion_mode) {
+        app.dispatch(actions.InsertionAdd(substrand: substrand, offset: offset));
+      } else if (deletion_mode) {
+        app.dispatch(actions.DeletionAdd(substrand: substrand, offset: offset));
+      }
     }
   }
 

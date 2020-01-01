@@ -25,7 +25,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   helix_remove_middleware,
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
-  insertion_deletion_pairing_middleware,
   reselect_moved_dna_ends_middleware,
   reselect_moved_strands_middleware,
+  insertion_deletion_pairing_middleware,
 ]);

@@ -9,8 +9,9 @@ import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
 reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
-  List<Tuple3<int, int, bool>> addresses = [];
   if (action is actions.DNAEndsMoveCommit) {
+    List<Tuple3<int, int, bool>> addresses = [];
+
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (DNAEndMove move in action.dna_ends_move.moves) {
       DNAEnd old_end = move.dna_end;
@@ -18,12 +19,10 @@ reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher
       int new_offset = action.dna_ends_move.current_capped_offset_of(old_end);
       addresses.add(Tuple3<int, int, bool>(old_substrand.helix, new_offset, old_substrand.forward));
     }
-  }
-  
-  // then apply action
-  next(action);
 
-  if (action is actions.DNAEndsMoveCommit) {
+    // then apply action
+    next(action);
+
     // now find new ends at given addresses
     List<DNAEnd> new_ends = [];
     for (var address in addresses) {
@@ -31,6 +30,7 @@ reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher
       new_ends.add(new_end);
     }
     store.dispatch(actions.SelectAll(selectables: new_ends.toBuiltList(), only: true));
+  } else {
+    next(action);
   }
-  
 }

@@ -16,8 +16,7 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
       {BuiltList<DNAEndMove> moves,
       int original_offset,
       int current_offset,
-      Helix helix,
-      BuiltSet<Strand> strands_affected}) = _$DNAEndsMove._;
+      Helix helix}) = _$DNAEndsMove._;
 
   factory DNAEndsMove.from([void Function(DNAEndsMoveBuilder) updates]) = _$DNAEndsMove;
 
@@ -29,23 +28,21 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
 
   BuiltList<DNAEndMove> get moves;
 
-  BuiltSet<Strand> get strands_affected;
-
-  // starting offset (in units of bases) where mouse was when we started moving
+  /// starting offset (in units of bases) where mouse was when we started moving
   int get original_offset;
 
-  // helix where dragging started
+  /// helix where dragging started
   Helix get helix;
 
-  // current offset where mouse is
-  // (note that some ends have offset different from start_offset, but we are trying to move all of them
-  // by current_offset - start_offset, assuming that won't be too far for any of them)
+  /// current offset where mouse is
+  /// (note that some ends have offset different from start_offset, but we are trying to move all of them
+  /// by current_offset - start_offset, assuming that won't be too far for any of them)
   int get current_offset;
 
   @memoized
   int get delta => current_offset - original_offset;
 
-  // if false, we wouldn't actually move anything
+  /// if false, we wouldn't actually move anything
   bool get is_nontrivial {
     if (delta == 0) {
       return false;

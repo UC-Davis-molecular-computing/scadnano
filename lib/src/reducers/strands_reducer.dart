@@ -2,12 +2,15 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/insertion_deletion_pairing.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
+import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
@@ -20,12 +23,13 @@ import 'util_reducer.dart';
 import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Strand>, actions.DNAEndsMoveCommit>(strands_dna_ends_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
+      strands_dna_ends_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreate>(strand_create),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
@@ -112,23 +116,67 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
 // move DNA ends
 
 BuiltList<Strand> strands_dna_ends_move_commit_reducer(
-    BuiltList<Strand> strands, actions.DNAEndsMoveCommit action) {
+    BuiltList<Strand> strands, AppState state, actions.DNAEndsMoveCommit action) {
   DNAEndsMove move = action.dna_ends_move;
   if (move.current_offset == move.original_offset) {
     return strands;
   }
   var strands_builder = strands.toBuilder();
-  for (var strand in action.dna_ends_move.strands_affected) {
+  Set<Strand> strands_affected = {};
+  for (var move in action.dna_ends_move.moves) {
+    var strand = state.dna_design.end_to_strand(move.dna_end);
+    strands_affected.add(strand);
+  }
+
+  List<InsertionDeletionRecord> records = [];
+
+  for (var strand in strands_affected) {
     int strand_idx = strands.indexOf(strand);
-    strand = single_strand_dna_ends_commit_stop_reducer(strand, move);
+    var ret = single_strand_dna_ends_commit_stop_reducer(strand, move, state.dna_design);
+    strand = ret.item1;
+    records.addAll(ret.item2);
     strand = strand.initialize();
     strands_builder[strand_idx] = strand;
   }
+
+//  print('other deletions and insertions: $records');
+
+  for (var record in records) {
+    int offset = record.offset;
+    int strand_idx = record.strand_idx;
+    int ss_idx = record.substrand_idx;
+    Strand strand = strands_builder[strand_idx];
+    StrandBuilder strand_builder = strand.toBuilder();
+    BoundSubstrand substrand = strand.bound_substrands()[ss_idx];
+    BoundSubstrandBuilder substrand_builder = substrand.toBuilder();
+    if (substrand.deletions.contains(offset)) {
+      substrand_builder.deletions.remove(offset);
+    } else {
+      substrand_builder.insertions.removeWhere((i) => i.offset == offset);
+    }
+    strand_builder.substrands[ss_idx] = substrand_builder.build();
+    strands_builder[strand_idx] = strand_builder.build().initialize();
+  }
+
   return strands_builder.build();
 }
 
-Strand single_strand_dna_ends_commit_stop_reducer(Strand strand, DNAEndsMove all_move) {
+class InsertionDeletionRecord {
+  int offset;
+  int strand_idx;
+  int substrand_idx;
+
+  InsertionDeletionRecord({this.offset, this.strand_idx, this.substrand_idx});
+
+  String toString() =>
+      'InsertionDeletionRecord(offset=${offset}, strand_idx=$strand_idx, substrand_idx=$substrand_idx)';
+}
+
+Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
+    Strand strand, DNAEndsMove all_move, DNADesign design) {
+  List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
+
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
@@ -138,10 +186,30 @@ Strand single_strand_dna_ends_commit_stop_reducer(Strand strand, DNAEndsMove all
         DNAEndMove move = find_move(all_move.moves, dnaend);
         if (move != null) {
           int new_offset = all_move.current_capped_offset_of(dnaend);
-          bound_ss = bound_ss.rebuild(
-              (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
+
           List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
           List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
+
+          //XXX: make sure to record deletions and insertions before bound_ss changes
+          List<int> deletions_removed =
+              bound_ss.deletions.where((d) => !remaining_deletions.contains(d)).toList();
+          List<int> insertion_offsets_removed = bound_ss.insertions
+              .where((i) => !remaining_insertions.contains(i))
+              .map((i) => i.offset)
+              .toList();
+          for (var offset in deletions_removed + insertion_offsets_removed) {
+            BoundSubstrand other_ss = find_paired_substrand(design, bound_ss, offset);
+            if (other_ss != null) {
+              Strand other_strand = design.substrand_to_strand[other_ss];
+              int other_ss_idx = other_strand.substrands.indexOf(other_ss);
+              int other_strand_idx = design.strands.indexOf(other_strand);
+              records.add(InsertionDeletionRecord(
+                  offset: offset, strand_idx: other_strand_idx, substrand_idx: other_ss_idx));
+            }
+          }
+
+          bound_ss = bound_ss.rebuild(
+              (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
           bound_ss = bound_ss.rebuild(
               (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
         }
@@ -150,7 +218,8 @@ Strand single_strand_dna_ends_commit_stop_reducer(Strand strand, DNAEndsMove all
     }
     substrands[i] = new_substrand;
   }
-  return strand.rebuild((b) => b..substrands.replace(substrands));
+  return Tuple2<Strand, List<InsertionDeletionRecord>>(
+      strand.rebuild((b) => b..substrands.replace(substrands)), records);
 }
 
 List<int> get_remaining_deletions(BoundSubstrand substrand, int new_offset, DNAEnd dnaend) =>
