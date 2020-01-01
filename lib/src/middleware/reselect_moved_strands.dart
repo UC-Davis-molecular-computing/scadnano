@@ -9,8 +9,12 @@ import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
 reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher next) {
-  List<Tuple3<int, int, bool>> addresses = [];
-  if (action is actions.StrandsMoveCommit) {
+  if (action is actions.StrandsMoveCommit && action.strands_move.strands_moving.length > 1) {
+    // only reselect if there is more than 1 selected, otherwise this builds up many selected items
+    // as the user repeatedly clicks on one at a time
+
+    List<Tuple3<int, int, bool>> addresses = [];
+
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (Strand strand in action.strands_move.strands_moving) {
       BoundSubstrand old_substrand = strand.first_bound_substrand();
@@ -18,12 +22,10 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
       int new_offset = old_5p_end.offset_inclusive + action.strands_move.delta;
       addresses.add(Tuple3<int, int, bool>(old_substrand.helix, new_offset, old_substrand.forward));
     }
-  }
-  
-  // then apply action
-  next(action);
 
-  if (action is actions.StrandsMoveCommit) {
+    // then apply action
+    next(action);
+
     // now find new ends at given addresses
     List<Strand> new_strands = [];
     for (var address in addresses) {
@@ -31,6 +33,7 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
       new_strands.add(new_strand);
     }
     store.dispatch(actions.SelectAll(selectables: new_strands.toBuiltList(), only: true));
+  } else {
+    next(action);
   }
-  
 }

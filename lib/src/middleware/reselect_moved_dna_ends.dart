@@ -9,7 +9,10 @@ import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
 reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action is actions.DNAEndsMoveCommit) {
+  if (action is actions.DNAEndsMoveCommit && action.dna_ends_move.moves.length > 1) {
+    // only reselect if there is more than 1 selected, otherwise this builds up many selected items
+    // as the user repeatedly clicks on one at a time
+
     List<Tuple3<int, int, bool>> addresses = [];
 
     // first collect addresses while dna_design.end_to_substrand is still valid

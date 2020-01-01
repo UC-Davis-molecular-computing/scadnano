@@ -139,8 +139,6 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     strands_builder[strand_idx] = strand;
   }
 
-//  print('other deletions and insertions: $records');
-
   for (var record in records) {
     int offset = record.offset;
     int strand_idx = record.strand_idx;
