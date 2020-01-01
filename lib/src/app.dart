@@ -98,8 +98,8 @@ class App {
   }
 
   initialize_model() async {
-//    String filename_in_directory = '3_helix_deletions_insertions.dna';
-    String filename_in_directory = '1_staple_1_helix_origami.dna';
+    String filename_in_directory = '3_helix_deletions_insertions.dna';
+//    String filename_in_directory = '1_staple_1_helix_origami.dna';
 //    String filename_in_directory = '2_helix_2_strands_multiple_substrands_no_seq.dna';
 //    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions_no_seq.dna';
 //    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
