@@ -30,7 +30,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
-    ..is_origami = false
     ..helices.replace([])
     ..strands.replace([]));
 
@@ -47,10 +46,15 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   BuiltList<Strand> get strands;
 
-//  BuiltList<int> get helices_view_order;
-
-  @nullable
-  bool get is_origami;
+  @memoized
+  bool get is_origami {
+    for (var strand in strands) {
+      if (strand.is_scaffold) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   @memoized
   BuiltMap<String, Strand> get strands_by_id {
@@ -436,18 +440,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     // strands
-    bool is_origami = false;
     List<Strand> strands = [];
     List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
     for (var strand_json in deserialized_strand_list) {
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
-      if (strand.is_scaffold == true) {
-        is_origami = true;
-      }
-    }
-    if (is_origami == true) {
-      dna_design_builder.is_origami = true;
     }
     dna_design_builder.strands.replace(strands);
 

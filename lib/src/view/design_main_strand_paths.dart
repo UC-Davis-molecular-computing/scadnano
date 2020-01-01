@@ -49,6 +49,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  bool origami_type_is_selectable;
 }
 
 @Component2()
@@ -106,7 +107,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..helix = helix
               ..selected = selected
               ..selectable = props.select_mode_state.is_selectable(end) &&
-                  props.edit_modes.contains(EditModeChoice.select)
+                  props.edit_modes.contains(EditModeChoice.select) &&
+                  props.origami_type_is_selectable
               ..edit_modes = props.edit_modes
               ..moving_this_dna_end = props.moving_dna_ends && selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
@@ -125,7 +127,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..selected = props.selectables_store.selected(substrand)
             ..selectable = props.select_mode_state.is_selectable(substrand) &&
-                props.edit_modes.contains(EditModeChoice.select)
+                props.edit_modes.contains(EditModeChoice.select) &&
+                props.origami_type_is_selectable
             ..edit_modes = props.edit_modes
             ..prev_substrand = strand.substrands[i - 1]
             ..next_substrand = next_ss
@@ -147,7 +150,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..strand = strand
           ..selected = props.selectables_store.selected(crossover)
           ..selectable = props.select_mode_state.is_selectable(crossover) &&
-              props.edit_modes.contains(EditModeChoice.select)
+              props.edit_modes.contains(EditModeChoice.select) &&
+              props.origami_type_is_selectable
           ..edit_modes = props.edit_modes
           ..prev_substrand = strand.substrands[crossover.prev_substrand_idx]
           ..next_substrand = strand.substrands[crossover.next_substrand_idx]
@@ -171,7 +175,8 @@ String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand 
   return path;
 }
 
-Point<num> control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss, {int delta = 0}) {
+Point<num> control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss,
+    {int delta = 0}) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
   var from_helix = app.state.dna_design.helices[from_ss.helix];
   var to_helix = app.state.dna_design.helices[to_ss.helix];

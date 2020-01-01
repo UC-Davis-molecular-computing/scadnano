@@ -52,6 +52,7 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  bool origami_type_is_selectable;
 }
 
 @Component2()
@@ -90,6 +91,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..selectables_store = props.selectables_store
         ..select_mode_state = props.select_mode_state
         ..edit_modes = props.edit_modes
+        ..origami_type_is_selectable = props.origami_type_is_selectable
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends)(),
       _insertions(strand, side_selected_helix_idxs, strand.color),

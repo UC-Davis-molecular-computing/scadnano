@@ -22,6 +22,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..selectables_store = state.ui_state.selectables_store
     ..select_mode_state = state.ui_state.select_mode_state
     ..edit_modes = state.ui_state.edit_modes
+    ..is_origami = state.dna_design.is_origami
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
     ..moving_dna_ends = state.ui_state.moving_dna_ends;
 })(DesignMainStrands);
@@ -39,13 +40,34 @@ class _$DesignMainStrandsProps extends UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  bool is_origami;
 }
 
 @Component2()
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
 
+  bool origami_type_is_selectable(Strand strand) {
+    if (!props.is_origami) {
+      return true;
+    }
+    if (strand.is_scaffold) {
+      return props.select_mode_state.modes.contains(SelectModeChoice.scaffold);
+    } else {
+      return props.select_mode_state.modes.contains(SelectModeChoice.staple);
+    }
+  }
+
+  bool strand_is_selectable(Strand strand) {
+    if (! (props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+        props.edit_modes.contains(EditModeChoice.select))) {
+      return false;
+    }
+    return origami_type_is_selectable(strand);
+  }
+
   @override
   render() {
+
     return (Dom.g()..className = 'strands-main-view')([
       for (var strand in props.strands)
 //        (ConnectedDesignMainStrand()
@@ -53,8 +75,8 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
           ..strand = strand
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..selected = props.selectables_store.selected(strand)
-          ..selectable = props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-              props.edit_modes.contains(EditModeChoice.select)
+          ..selectable = strand_is_selectable(strand)
+          ..origami_type_is_selectable = origami_type_is_selectable(strand)
           ..helices = props.helices
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
