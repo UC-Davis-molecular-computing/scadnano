@@ -1,4 +1,3 @@
-import 'package:dialog/dialog.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 

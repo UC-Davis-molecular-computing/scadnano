@@ -6,7 +6,6 @@ import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:smart_dialogs/smart_dialogs.dart';
 import 'package:tuple/tuple.dart';
 
 import '../app.dart';

@@ -5,7 +5,6 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 
 import '../state/app_state.dart';
-import '../state/strand.dart';
 import 'design_main_strand_moving.dart';
 
 part 'design_main_strands_moving.over_react.g.dart';

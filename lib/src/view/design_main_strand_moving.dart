@@ -4,7 +4,6 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 
 import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/design_main_strand_dna_end_moving.dart';
 

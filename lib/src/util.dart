@@ -416,7 +416,7 @@ class OffsetForward {
   OffsetForward(this.offset, this.forward);
 }
 
-/// Return helix where click event occured, if any.
+/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
 Helix get_helix(MouseEvent event, BuiltList<Helix> helices) {
   var svg_coord;
   //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
@@ -433,7 +433,16 @@ Helix get_helix(MouseEvent event, BuiltList<Helix> helices) {
       return helix;
     }
   }
-  return null;
+
+  // didn't find a helix, so we'll find the closest one
+  Helix helix_closest = helices.first;
+  num dist = (helix_closest.svg_position.y - svg_y).abs();
+  for (Helix helix in helices) {
+    if ((helix.svg_position.y - svg_y).abs() < dist) {
+      helix_closest = helix;
+    }
+  }
+  return helix_closest;
 }
 
 /// Return offset and direction on helix where click event occurred.

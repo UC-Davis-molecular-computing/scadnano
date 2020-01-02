@@ -7,7 +7,6 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
 import 'helix.dart';
-import 'strand.dart';
 
 part 'dna_ends_move.g.dart';
 

@@ -208,38 +208,3 @@ Future<String> ask_for_dna_sequence() async {
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
-
-//  _draw_strand_lines_single_path() {
-//    if (this.strand.substrands.length == 0) {
-//      return;
-//    }
-//    var substrand = this.strand.substrands.first;
-//    var helix = app.state.dna_design.helices[substrand.helix_idx];
-//    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-//    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
-//    for (int i = 0; i < this.strand.substrands.length; i++) {
-//      // substrand line
-//      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
-//      path_cmds.add('L ${end_svg.x} ${end_svg.y}');
-//
-//      // crossover line/arc
-//      if (i < this.strand.substrands.length - 1) {
-//        var old_substrand = substrand;
-//        substrand = this.strand.substrands[i + 1];
-//        helix = app.state.dna_design.helices[substrand.helix_idx];
-//        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-//        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
-//        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
-//      }
-//    }
-//
-//    var path = svg.PathElement();
-//    path.attributes = {
-//      'id': substrand_line_id(substrand),
-//      'class': 'substrand-line',
-//      'stroke': strand.color.toRgbColor().toCssString(),
-//      'fill': 'none',
-//      'd': path_cmds.join(' '),
-//    };
-//    this.root_element.children.add(path);
-//  }
