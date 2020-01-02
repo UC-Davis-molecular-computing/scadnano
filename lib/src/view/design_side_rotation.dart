@@ -38,8 +38,6 @@ class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> 
     int offset = this.props.offset;
     num radius = this.props.radius;
 
-//    print('rendering rotation on helix ${helix.idx}');
-
     DNADesign dna_design = app.state.dna_design;
     var substrands = dna_design.substrands_on_helix_at(helix.idx, offset);
 

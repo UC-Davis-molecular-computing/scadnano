@@ -85,22 +85,31 @@ BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions
 }
 
 Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move) {
+  int delta = strands_move.delta;
   List<Substrand> substrands = strand.substrands.toList();
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     if (substrand is BoundSubstrand) {
-      BoundSubstrand bound_ss = substrand;
-      for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
-        int new_offset = dnaend.offset_inclusive + strands_move.delta;
-        bound_ss = bound_ss.rebuild(
-            (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
-        List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
-        List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
-        bound_ss = bound_ss.rebuild(
-            (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
-      }
-      new_substrand = bound_ss;
+      BoundSubstrand bound_ss_moved = substrand.rebuild(
+        (b) => b
+          ..start = substrand.start + delta
+          ..end = substrand.end + delta
+          ..deletions.replace(substrand.deletions.map((d) => d + delta))
+          ..insertions
+              .replace(substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta))),
+      );
+
+//      for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
+//        int new_offset = dnaend.offset_inclusive + strands_move.delta;
+//        bound_ss = bound_ss.rebuild(
+//            (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
+//        List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
+//        List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
+//        bound_ss = bound_ss.rebuild(
+//            (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
+//      }
+      new_substrand = bound_ss_moved;
     }
     substrands[i] = new_substrand;
   }

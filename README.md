@@ -127,7 +127,7 @@ Unlike other drawing programs, clicking on the background will not unselect the 
   - **scaffold/staple:**
   In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both.
 
-It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
+    It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
 
   
 * **(p)encil:**
@@ -160,7 +160,7 @@ Clicking on a strand allows one to assign a DNA sequence to a strand. Any strand
 
 ## Exporting SVG
 
-Exporting the design to SVG is currently not directly supported. However, by installing the Chrome extension
+Exporting the design to SVG is [currently not directly supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/8). However, by installing the Chrome extension
 [Export SVG with Style](https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi),
 you can export it yourself:
 
