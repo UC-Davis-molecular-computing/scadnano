@@ -7,6 +7,7 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
+import 'package:scadnano/src/reducers/selection_reducer.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
@@ -20,6 +21,7 @@ import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano/src/state/selection_box.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:test/test.dart';
@@ -2932,5 +2934,167 @@ main() {
     state = app_state_reducer(state, ErrorMessageSet(message));
 
     expect(state.error_message, message);
+  });
+
+  group('Selection box (side view)', () {
+    Point point = new Point(0, 0);
+    bool toggle = true;
+    bool is_main = false;
+    SelectionBox selectionBox;
+    test('SelectionBoxCreate', () {
+      selectionBox = optimized_selection_box_reducer(null, SelectionBoxCreate(point, toggle, is_main));
+      SelectionBox expected = SelectionBox(point, toggle, is_main);
+
+      expect(selectionBox, expected);
+    });
+
+    test('SelectionBoxSizeChange', () {
+      Point dragPoint = new Point(5, 10);
+      selectionBox = optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main));
+
+      SelectionBox expected = SelectionBox(point, toggle, is_main).rebuild((b) => b..current = dragPoint);
+
+      expect(selectionBox, expected);
+    });
+
+    test('SelectionBoxRemove', () {
+      selectionBox = optimized_selection_box_reducer(selectionBox, SelectionBoxRemove(is_main));
+      expect(selectionBox, null);
+    });
+  });
+
+  group('Mouse grid position (side view)', () {
+    AppState state = default_state();
+    test('MouseGridPositionSideUpdate', () {
+      GridPosition gridPosition = GridPosition(4, 2);
+      state = app_state_reducer(state, MouseGridPositionSideUpdate(gridPosition));
+
+      expect(state.ui_state.side_view_grid_position_mouse_cursor, gridPosition);
+    });
+
+    test('MouseGridPositionSideClear', () {
+      state = app_state_reducer(state, MouseGridPositionSideClear());
+      expect(state.ui_state.side_view_grid_position_mouse_cursor, null);
+    });
+  });
+
+  group('Selectables', () {
+    //   0                  16
+    //
+    // 0 [------------------->
+    //   <-------------------]
+    //
+    // 1 [------------------->
+    //   <-------------------]
+    AppState state = app_state_from_dna_design(two_helices_design);
+    DNAEnd h0_forward_3p = two_helices_design.strands.first.dnaend_3p;
+    DNAEnd h1_forward_3p = two_helices_design.strands[1].dnaend_3p;
+    DNAEnd h1_reverse_5p = two_helices_design.strands.last.dnaend_5p;
+    test('Select an end', () {
+      //   0                  16
+      //
+      // 0 [------------------->  <--  select this 3p end
+      //   <-------------------]
+      //
+      // 1 [------------------->
+      //   <-------------------]
+      state = app_state_reducer(state, Select(h0_forward_3p, toggle: false, only: false));
+      expect(state.ui_state.selectables_store.selected_items, [h0_forward_3p].toBuiltSet());
+
+      //   0                  16
+      //
+      // 0 [------------------->   <- already selected
+      //   <-------------------]
+      //
+      // 1 [------------------->
+      //   <-------------------]
+      //   ^
+      //   |
+      //   select this 5p end
+      state = app_state_reducer(state, Select(h1_reverse_5p, toggle: false, only: false));
+      expect(state.ui_state.selectables_store.selected_items, [h0_forward_3p, h1_reverse_5p].toBuiltSet());
+    });
+
+    test('Unselect end with toggle', () {
+      //   0                  16
+      //
+      // 0 [------------------->   <- toggle this so it is now unselected
+      //   <-------------------]
+      //
+      // 1 [------------------->
+      //   <-------------------]
+      //   ^
+      //   |
+      //   already selected
+      state = app_state_reducer(state, Select(h0_forward_3p, toggle: true, only: false));
+      expect(state.ui_state.selectables_store.selected_items, [h1_reverse_5p].toBuiltSet());
+    });
+
+    test('Selecting another end with `only = true` should deselect all other items', () {
+      //   0                  16
+      //
+      // 0 [------------------->
+      //   <-------------------]
+      //
+      // 1 [------------------->    <- Select this end with `only = true`
+      //   <-------------------]
+      //   ^
+      //   |
+      //   already selected but should now be unselected because of `only = true`
+      state = app_state_reducer(state, Select(h1_forward_3p, toggle: false, only: true));
+      expect(state.ui_state.selectables_store.selected_items, [h1_forward_3p].toBuiltSet());
+    });
+
+    test('SelectionClear clears all selected items', () {
+      state = app_state_reducer(state, SelectionsClear());
+      expect(state.ui_state.selectables_store.selected_items, BuiltSet<Selectable>());
+    });
+
+    // Setting up state for next test by selecting an end (first line in both subsequent tests):
+    //   0                  16
+    //
+    // 0 [------------------->
+    //   <-------------------]  <--  select this 5p end
+    //
+    // 1 [------------------->
+    //   <-------------------]
+    DNAEnd h0_reverse_5p = two_helices_design.strands.first.dnaend_5p;
+
+    BuiltList<Selectable> selectables = [h0_forward_3p, h1_forward_3p, h1_reverse_5p].toBuiltList();
+    test('SelectAll with `only = false`', () {
+      state = app_state_reducer(state, Select(h0_reverse_5p, toggle: false, only: false));
+      // Setting up state for next test by selecting an end:
+      //   0                  16
+      //
+      // 0 [------------------->  <--  this needs to be selected
+      //   <-------------------]  <--  this end STAYS SELECTED
+      //
+      // 1 [------------------->  <--  this needs to be selected
+      //   <-------------------]
+      //   ^
+      //   |
+      //   this needs to be selected
+      AppState local_state = app_state_reducer(state, SelectAll(selectables: selectables, only: false));
+      BuiltSet<Selectable> expected_selectables = selectables.rebuild((b) => b..add(h0_reverse_5p)).toBuiltSet();
+      expect(local_state.ui_state.selectables_store.selected_items, expected_selectables);
+    });
+
+    test('SelectAll with `only = true`', () {
+      state = app_state_reducer(state, Select(h0_reverse_5p, toggle: false, only: false));
+      // Setting up state for next test by selecting an end:
+      //   0                  16
+      //
+      // 0 [------------------->  <--  this needs to be selected
+      //   <-------------------]  <--  this end needs to be UNSELECTED
+      //
+      // 1 [------------------->  <--  this needs to be selected
+      //   <-------------------]
+      //   ^
+      //   |
+      //   this needs to be selected
+      AppState local_state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      BuiltSet<Selectable> expected_selectables = selectables.toBuiltSet();
+      expect(local_state.ui_state.selectables_store.selected_items, expected_selectables);
+    });
   });
 }
