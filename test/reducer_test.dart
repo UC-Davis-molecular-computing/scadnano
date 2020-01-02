@@ -10,6 +10,7 @@ import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/selection_reducer.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
@@ -2492,7 +2493,7 @@ main() {
     expect_app_state_equal(actual_state, expected_state);
   });
 
-  group('Edit modes', () {
+  group('Edit modes tests: ', () {
     test('test EditModeToggle to toggle off', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.edit_modes.replace([EditModeChoice.select]));
@@ -2532,7 +2533,7 @@ main() {
     });
   });
 
-  group('Select modes', () {
+  group('Select modes tests: ', () {
     test('test SelectModeToggle to toggle off', () {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
@@ -2628,7 +2629,7 @@ main() {
     });
   });
 
-  group('Show/hide DNA/mismatches/editor', () {
+  group('Show/hide DNA/mismatches/editor tests:', () {
     test('Test SetShowDNA', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
@@ -2657,7 +2658,7 @@ main() {
     });
   });
 
-  group('test saving and loading files', () {
+  group('test saving and loading files: ', () {
     test('Saving DNA design with no unsaved changes', () {
       AppState state = app_state_from_dna_design(simple_strand_dna_design);
       AppState new_state = app_state_reducer(state, SaveDNAFile());
@@ -2738,7 +2739,7 @@ main() {
     });
   });
 
-  group('Mouseover Data', () {
+  group('Mouseover Data tests: ', () {
     test('MouseOverUpdate over an offset', () {
       //   0                  16
       //
@@ -2936,7 +2937,7 @@ main() {
     expect(state.error_message, message);
   });
 
-  group('Selection box (side view)', () {
+  group('Selection box (side view) tests: ', () {
     Point point = new Point(0, 0);
     bool toggle = true;
     bool is_main = false;
@@ -2963,7 +2964,7 @@ main() {
     });
   });
 
-  group('Mouse grid position (side view)', () {
+  group('Mouse grid position (side view) tests: ', () {
     AppState state = default_state();
     test('MouseGridPositionSideUpdate', () {
       GridPosition gridPosition = GridPosition(4, 2);
@@ -2978,7 +2979,7 @@ main() {
     });
   });
 
-  group('Selectables', () {
+  group('Selectables tests: ', () {
     //   0                  16
     //
     // 0 [------------------->
@@ -3095,6 +3096,56 @@ main() {
       AppState local_state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       BuiltSet<Selectable> expected_selectables = selectables.toBuiltSet();
       expect(local_state.ui_state.selectables_store.selected_items, expected_selectables);
+    });
+  });
+
+  group('DeleteAllSelected tests:', () {
+    // two_helices_join_inner_strands
+    //   0                  16
+    //
+    // 0 [-------------------> strand0
+    //   --------------------] strand1
+    //  /
+    //  |
+    //  \
+    // 1 -------------------->
+    //   <-------------------] strand2
+    Strand strand0 = two_helices_join_inner_strands.strands[0];
+    Strand strand1 = two_helices_join_inner_strands.strands[1];
+    Strand strand2 = two_helices_join_inner_strands.strands[2];
+    test('Select and delete strands', () {
+      AppState state = app_state_from_dna_design(two_helices_join_inner_strands);
+      BuiltList<Selectable> selectables = [strand0, strand1].toBuiltList();
+
+      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.strand]));
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      state = app_state_reducer(state, DeleteAllSelected());
+
+      BuiltList<Strand> remaining_strands = [strand2].toBuiltList();
+      expect(state.dna_design.strands, remaining_strands);
+    });
+
+    test('Select and delete crossover with no dna sequence (see issue #103)', () {
+      AppState state = app_state_from_dna_design(two_helices_join_inner_strands);
+      Crossover crossover = strand1.crossovers.first;
+
+      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.crossover]));
+      state = app_state_reducer(state, Select(crossover, only: false, toggle: false));
+
+      expect(state.ui_state.selectables_store.selected_items, [crossover].toBuiltSet());
+
+      state = app_state_reducer(state, DeleteAllSelected());
+      // two_helices_join_inner_strands
+      //   0                  16
+      //
+      // 0 [-------------------> strand0
+      //   <-------------------]
+      //
+      // 1 [------------------->
+      //   <-------------------] strand2
+      expect_dna_design_equal(state.dna_design, two_helices_design);
     });
   });
 }
