@@ -11,7 +11,7 @@ with two main differences:
 
 1) It runs entirely in the browser, with no installation required. Currently only [Chrome](https://www.google.com/chrome/) is supported, with support for [Firefox](https://www.mozilla.org/en-US/firefox/), [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge), and [Safari](https://www.apple.com/safari/) planned in the future.
 
-2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](./docs/)), to help automate tedious tasks.
+2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
 
 A secondary goal is that the file format should be easily readable, to help when debugging scripts.
 
@@ -108,9 +108,11 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
 This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
 
-A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. 
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. 
 
-Unlike other drawing programs, clicking on the background will not unselect the objects. To unselect all selected objects, press the Esc key.
+  Unlike other drawing programs, clicking on the background will not unselect the objects. To unselect all selected objects, press the Esc key.
+
+  The following are the types of objects that can be selected in the main view.
 
   - **5' end (strand), 3' end (strand):**
   These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
