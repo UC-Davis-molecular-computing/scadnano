@@ -609,8 +609,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return dna_length;
   }
 
-  /// in radians
-  double helix_rotation_3p(Helix helix, int offset) {
+  /// in radians; gives rotation of backbone of strand in the forward direction, as viewed in the side view
+  double helix_rotation_forward(Helix helix, int offset) {
     int num_bases;
     if (helix.rotation_anchor < offset) {
       num_bases = this.helix_num_bases_between(helix, helix.rotation_anchor, offset - 1);
@@ -627,10 +627,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return rot;
   }
 
-  /// in radians;  3' rotation + 150 degrees
-  double helix_rotation_5p(Helix helix, int offset) =>
+  /// in radians; rotation of forward strand  + 150 degrees
+  double helix_rotation_reverse(Helix helix, int offset) =>
 //      this.helix_rotation_3p(helix, offset) + (2 * pi * 150.0 / 360.0);
-      this.helix_rotation_3p(helix, offset) + 150;
+      this.helix_rotation_forward(helix, offset) + 150;
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;

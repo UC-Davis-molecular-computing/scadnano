@@ -30,14 +30,57 @@ The side view shows DNA helices "head on", with the interpretation that as you m
 
 ![screenshot](doc-images/screenshot-initial-marked-up.png)
 
-The screenshot above shows many of the terms used in scadnano.
+The screenshot above shows many of the terms used in scadnano. To see how it is represented as a .dna file (which is itself something called JSON format): here is part of the file representing the above design:
+
+```json
+{
+  "version": "0.0.1",
+  "helices": [
+    {"max_offset": 64, "grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"max_offset": 64, "grid_position": [0, 2]}
+  ],
+  "strands": [
+    {
+      "color": "#0066cc",
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACT",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
+        {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24], "insertions": [[6, 1], [18, 2]]},
+        {"loopout": 3},
+        {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
+      ],
+      "is_scaffold": true
+    },
+    {
+      "color": "#f74308",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
+        {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12], "insertions": [[6, 1]]}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAGTTAGT",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
+        {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}
+      ]
+    },
+...
+```
 
 
 TODO: explain data model: 5'/3' ends, strands, substrands, forward, offsets, crossovers, loopouts, helix rotations and anchors, etc.
 
-## Navigation
+## Navigation and control
 
-The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
+**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
+
+**Undo/redo:**
+Pressing Ctrl+Z will undo the last action that changed the design.
+Pressing Shift+Ctrl+Z will redo it.
 
 ## Menu
 

@@ -53,21 +53,21 @@ class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> 
       }
     }
 
-    var rotation_3p = dna_design.helix_rotation_3p(helix, offset);
-    var rotation_5p = dna_design.helix_rotation_5p(helix, offset);
-    var color_3p = strand_forward == null ? 'black' : strand_forward.color.toHexColor().toCssString();
-    var color_5p = strand_reverse == null ? 'black' : strand_reverse.color.toHexColor().toCssString();
+    var rotation_forward = dna_design.helix_rotation_forward(helix, offset);
+    var rotation_reverse = dna_design.helix_rotation_reverse(helix, offset);
+    var color_forward = strand_forward == null ? 'black' : strand_forward.color.toHexColor().toCssString();
+    var color_reverse = strand_reverse == null ? 'black' : strand_reverse.color.toHexColor().toCssString();
 
     return Dom.g()(
       (DesignSideRotationArrow()
         ..radius = radius
-        ..angle_degrees = rotation_3p
-        ..color = color_3p
+        ..angle_degrees = rotation_forward
+        ..color = color_forward
         ..className = 'rotation-arrow')(),
       (DesignSideRotationArrow()
         ..radius = radius
-        ..angle_degrees = rotation_5p
-        ..color = color_5p
+        ..angle_degrees = rotation_reverse
+        ..color = color_reverse
         ..className = 'rotation-arrow')(),
     );
   }
