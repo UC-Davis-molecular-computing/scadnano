@@ -10,6 +10,7 @@ import '../state/mouseover_data.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import 'design_main_mouseover_rect_helix.dart';
+import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -153,19 +154,10 @@ class DesignMainStrandCrossoverComponent
   }
 
   convert_crossover_to_loopout() async {
-    int length = null;
-    String prompt_to_user = "Enter loopout length (positive integer):";
-    do {
-      var prompt_result = await prompt(prompt_to_user);
-      if (prompt_result == null) {
-        return;
-      }
-      var prompt_result_string = prompt_result.toString();
-      length = int.tryParse(prompt_result_string);
-      prompt_to_user =
-          '"$prompt_result_string" is not a positive integer. Enter loopout length (positive integer):';
-    } while (length == null || length <= 0);
-
-    app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, length));
+    int new_length = await ask_for_length('change loopout length', current_length: 1, lower_bound: 1);
+    if (new_length == null || new_length == 0) {
+      return;
+    }
+    app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
   }
 }

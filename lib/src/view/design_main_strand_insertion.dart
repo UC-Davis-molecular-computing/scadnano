@@ -14,6 +14,7 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
+import 'design_main_strand_loopout.dart';
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 
@@ -162,43 +163,12 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   change_insertion_length() async {
-    int new_length = await ask_for_insertion_length(props.insertion.length);
+    int new_length = await ask_for_length('change insertion length',
+        current_length: props.insertion.length, lower_bound: 1);
     if (new_length == null || new_length == props.insertion.length) {
       return;
     }
     app.dispatch(actions.InsertionLengthChange(
         substrand: props.substrand, insertion: props.insertion, length: new_length));
   }
-}
-
-Future<int> ask_for_insertion_length(int current_length) async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = 'change insertion length';
-  List<String> textLabels = ['new length:'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = ['${current_length}'];
-  List<int> widths = [1];
-  List<String> isChecked = null;
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
-
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
-
-  if (result.buttonCode != 'DIA_ACT_OK') {
-    return null;
-  }
-
-  String length_str = result.getUserInput(0)[0];
-  int length = int.tryParse(length_str);
-  if (length == null) {
-    Info.show('"$length_str" is not a valid positive integer');
-    return null;
-  } else if (length < 1) {
-    Info.show('length must be positive, but it is $length_str');
-    return null;
-  }
-
-  return length;
 }

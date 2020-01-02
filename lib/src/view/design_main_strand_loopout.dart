@@ -9,6 +9,7 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
+import 'package:smart_dialogs/smart_dialogs.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../app.dart';
@@ -138,21 +139,45 @@ class DesignMainLoopoutComponent
   }
 
   loopout_length_change() async {
-    int length = null;
-    String prompt_to_user = "Enter loopout length (nonnegative integer):";
-    do {
-      var prompt_result = await prompt(prompt_to_user);
-      if (prompt_result == null) {
-        return;
-      }
-      var prompt_result_string = prompt_result.toString();
-      length = int.tryParse(prompt_result_string);
-      prompt_to_user =
-          '"$prompt_result_string" is not a nonnegative integer. Enter loopout length (nonnegative integer):';
-    } while (length == null || length < 0);
-
-    app.dispatch(actions.LoopoutLengthChange(props.loopout, length));
+    int new_length = await ask_for_length('change loopout length',
+        current_length: props.loopout.loopout_length, lower_bound: 0);
+    if (new_length == null || new_length == props.loopout.loopout_length) {
+      return;
+    }
+    app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
   }
+}
+
+Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {
+  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
+  String buttontype = DiaAttr.CHECKBOX;
+  String htmlTitleText = title;
+  List<String> textLabels = ['new length:'];
+  List<List<String>> comboInfo = null;
+  List<String> defaultInputTexts = ['${current_length}'];
+  List<int> widths = [1];
+  List<String> isChecked = null;
+  bool alternateRowColor = false;
+  List<String> buttonLabels = ['OK', 'Cancel'];
+
+  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
+      widths, isChecked, alternateRowColor, buttonLabels);
+
+  if (result.buttonCode != 'DIA_ACT_OK') {
+    return null;
+  }
+
+  String length_str = result.getUserInput(0)[0];
+  int length = int.tryParse(length_str);
+  if (length == null) {
+    Info.show('"$length_str" is not a valid integer');
+    return null;
+  } else if (length < lower_bound) {
+    Info.show('length must be at least ${lower_bound}, but it is $length_str');
+    return null;
+  }
+
+  return length;
 }
 
 ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
