@@ -14,7 +14,7 @@ import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
-import 'assign_dna_reducer.dart';
+import 'assign_or_remove_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
@@ -25,6 +25,7 @@ import '../util.dart' as util;
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
+  TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([

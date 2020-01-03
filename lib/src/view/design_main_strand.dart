@@ -125,9 +125,21 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   assign_dna() async {
-    String dna_sequence = await app.disable_keyboard_shortcuts_while(ask_for_dna_sequence);
-    if (dna_sequence != null) {
-      app.dispatch(actions.AssignDNA(strand: props.strand, dna_sequence: dna_sequence));
+    DNAAssignOptions options =
+        await app.disable_keyboard_shortcuts_while(() => ask_for_dna_sequence(props.strand.dna_sequence));
+    if (options == null) {
+      return;
+    }
+    if (!options.remove) {
+      app.dispatch(actions.AssignDNA(
+          strand: props.strand,
+          dna_sequence: options.dna_sequence,
+          assign_complements: options.assign_complements));
+    } else {
+      app.dispatch(actions.RemoveDNA(
+          strand: props.strand,
+          remove_complements: options.remove_complements,
+          remove_all: options.remove_all));
     }
   }
 
@@ -176,15 +188,38 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 }
 
-Future<String> ask_for_dna_sequence() async {
+class DNAAssignOptions {
+  String dna_sequence; // sequence to assign to this strand
+  bool assign_complements; // assign complementary sequences to strands bound to this one
+  bool remove_sequence; // remove from this strand only
+  bool remove_complements; // remove from this strand and all strands bound to it
+  bool remove_all; // remove from all strands in design
+
+  bool get remove => remove_sequence || remove_complements || remove_all;
+
+  DNAAssignOptions(
+      {this.dna_sequence = null,
+      this.assign_complements = true,
+      this.remove_sequence = false,
+      this.remove_complements = false,
+      this.remove_all = false});
+}
+
+Future<DNAAssignOptions> ask_for_dna_sequence(String existing_dna) async {
   // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
   String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = 'assign DNA sequence';
-  List<String> textLabels = ['sequence:'];
+  String htmlTitleText = 'assign or remove DNA sequence';
+  List<String> textLabels = [
+    'sequence:',
+    'assign complement to bound strands',
+    'remove existing sequence',
+    'remove from bound strands',
+    'remove from all strands',
+  ];
   List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = [''];
-  List<int> widths = [100];
-  List<String> isChecked = null;
+  List<String> defaultInputTexts = [existing_dna ?? '', null, null, null, null];
+  List<int> widths = [100, 0, 0, 0, 0];
+  List<String> isChecked = [null, 'true', 'false', 'false', 'false'];
   bool alternateRowColor = false;
   List<String> buttonLabels = ['OK', 'Cancel'];
 
@@ -196,14 +231,26 @@ Future<String> ask_for_dna_sequence() async {
   }
 
   String dna_sequence = result.getUserInput(0)[0];
-  try {
-    util.check_dna_sequence(dna_sequence);
-  } on FormatException catch (e) {
-    Info.show(e.message);
-    return null;
-  }
+  bool assign_to_complements = result.getCheckedState(1) == 'true';
+  bool remove_sequence = result.getCheckedState(2) == 'true';
+  bool remove_from_complements = result.getCheckedState(3) == 'true';
+  bool remove_from_all = result.getCheckedState(4) == 'true';
+  var options = DNAAssignOptions(
+      dna_sequence: dna_sequence,
+      assign_complements: assign_to_complements,
+      remove_sequence: remove_sequence,
+      remove_complements: remove_from_complements,
+      remove_all: remove_from_all);
 
-  return dna_sequence;
+  if (!options.remove) {
+    try {
+      util.check_dna_sequence(dna_sequence);
+    } on FormatException catch (e) {
+      Info.show(e.message);
+      return null;
+    }
+  }
+  return options;
 }
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>

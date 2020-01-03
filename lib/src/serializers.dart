@@ -102,6 +102,7 @@ part 'serializers.g.dart';
   PotentialCrossoverMove,
   PotentialCrossoverRemove,
   AssignDNA,
+  RemoveDNA,
   ExportDNA,
   ExportDNAFormat,
   ErrorMessageSet,

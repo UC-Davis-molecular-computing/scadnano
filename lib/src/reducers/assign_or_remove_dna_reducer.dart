@@ -10,6 +10,34 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 
+BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDNA action) {
+  List<int> idxs = [];
+  Strand strand = action.strand;
+
+  if (action.remove_all) {
+    idxs = [for (int idx = 0; idx < strands.length; idx++) idx];
+  } else {
+    int strand_idx = strands.indexOf(strand);
+    idxs = [strand_idx];
+    if (action.remove_complements) {
+      // collect indices of strands bound to this one
+      for (int i = 0; i < strands.length; i++) {
+        Strand other_strand = strands[i];
+        if (i != strand_idx && other_strand.overlaps(strand)) {
+          idxs.add(i);
+        }
+      }
+    }
+  }
+
+  List<Strand> strands_builder = strands.toList();
+  for (int idx in idxs) {
+    strands_builder[idx] = strands_builder[idx].rebuild((b) => b..dna_sequence = null);
+  }
+
+  return strands_builder.toBuiltList();
+}
+
 BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDNA action) {
   Strand strand = action.strand;
   String seq = action.dna_sequence;
@@ -23,20 +51,22 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
   int strand_idx = strands.indexOf(strand);
   strands_builder[strand_idx] = strand_with_new_sequence;
 
-  // then assign to other strands
-  for (int i = 0; i < strands_builder.length; i++) {
-    Strand other_strand = strands_builder[i];
-    // note that possibly strand==other_strand; it might bind to itself at some point and we want to
-    // allow a partial assignment to one substrand to automatically assign the complement to the
-    // bound substrand.
-    // However, if there are no wildcards in the assigned sequence we can safely skip strand.
-    if (strand == other_strand && !strand.dna_sequence.contains(constants.DNA_BASE_WILDCARD)) {
-      continue;
-    }
-    if (other_strand.overlaps(strand)) {
-      String new_dna = compute_dna_complement_from(other_strand, strand_with_new_sequence);
-      if (new_dna != other_strand.dna_sequence) {
-        strands_builder[i] = other_strand.set_dna_sequence(new_dna);
+  // then assign to other strands if requested
+  if (action.assign_complements) {
+    for (int i = 0; i < strands_builder.length; i++) {
+      Strand other_strand = strands_builder[i];
+      // note that possibly strand==other_strand; it might bind to itself at some point and we want to
+      // allow a partial assignment to one substrand to automatically assign the complement to the
+      // bound substrand.
+      // However, if there are no wildcards in the assigned sequence we can safely skip strand.
+      if (strand == other_strand && !strand.dna_sequence.contains(constants.DNA_BASE_WILDCARD)) {
+        continue;
+      }
+      if (other_strand.overlaps(strand)) {
+        String new_dna = compute_dna_complement_from(other_strand, strand_with_new_sequence);
+        if (new_dna != other_strand.dna_sequence) {
+          strands_builder[i] = other_strand.set_dna_sequence(new_dna);
+        }
       }
     }
   }

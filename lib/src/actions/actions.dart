@@ -46,6 +46,7 @@ abstract class Action {
 }
 
 // Actions that affect the DNADesign (i.e., not purely UIAppState-affecting actions such as selecting items).
+// Only Undo and Redo implement this directly; all others implement the subtype UndoableAction.
 abstract class DNADesignChangingAction extends Action {}
 
 /// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
@@ -1179,7 +1180,7 @@ abstract class DNAEndsMoveCommit
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// assign dna
+// assign/remove dna
 
 abstract class AssignDNA
     with BuiltJsonSerializable
@@ -1188,12 +1189,31 @@ abstract class AssignDNA
 
   String get dna_sequence;
 
+  bool get assign_complements;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory AssignDNA({Strand strand, String dna_sequence}) = _$AssignDNA._;
+  factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements}) = _$AssignDNA._;
 
   AssignDNA._();
 
   static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
+}
+
+abstract class RemoveDNA
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<RemoveDNA, RemoveDNABuilder> {
+  Strand get strand;
+
+  bool get remove_complements;
+
+  bool get remove_all;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory RemoveDNA({Strand strand, bool remove_complements, bool remove_all}) = _$RemoveDNA._;
+
+  RemoveDNA._();
+
+  static Serializer<RemoveDNA> get serializer => _$removeDNASerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
