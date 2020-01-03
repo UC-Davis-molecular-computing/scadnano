@@ -115,7 +115,9 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   // Find DNA sequences of new Strands.
   //XXX: This must go before updating substrands below with is_first and is_last or else they cannot be
   // found as substrands of strand by method Strand.dna_sequence_in(), called by _dna_seq
-  var dna_sequences = [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
+  var dna_sequences = strand.dna_sequence == null
+      ? [for (var _ in substrands_list) null]
+      : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
   // adjust is_first and is_last Booleans on BoundSubstrands
   for (var substrands in substrands_list) {
