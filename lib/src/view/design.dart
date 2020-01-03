@@ -12,6 +12,7 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -142,7 +143,7 @@ class DesignViewComponent {
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
       side_view_mouse_position = event.client;
-      side_view_update_grid_position(event: event);
+      side_view_update_position(event: event);
     });
 
     // move potential crossover
@@ -241,7 +242,7 @@ class DesignViewComponent {
         }
 
         if (key == EditModeChoice.helix.key_code()) {
-          side_view_update_grid_position(mouse_pos: side_view_mouse_position);
+          side_view_update_position(mouse_pos: side_view_mouse_position);
         }
       }
     });
@@ -327,7 +328,7 @@ class DesignViewComponent {
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       var action = actions.SelectionBoxSizeChange(point, is_main_view);
-      app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+      app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
     }
   }
 
@@ -436,7 +437,7 @@ class DesignViewComponent {
       Point<num> point =
           util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
       var action = actions.PotentialCrossoverMove(point: point);
-      app.dispatch(actions.ThrottledAction(action, 1 / 60.0));
+      app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
     }
   }
 
@@ -471,26 +472,33 @@ class DesignViewComponent {
       app.dispatch(copy_action);
     }
   }
-}
 
-side_view_mouse_leave_update_mouseover() {
-  if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-    app.dispatch(actions.MouseGridPositionSideClear());
-  }
-}
-
-side_view_update_grid_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
-  assert(!(mouse_pos == null && event == null));
-//  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
-  if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
-    var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
-        mouse_pos: mouse_pos, event: event);
-    if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
-      app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
-    }
-  } else {
+  side_view_mouse_leave_update_mouseover() {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
       app.dispatch(actions.MouseGridPositionSideClear());
+    }
+  }
+
+  side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
+    assert(!(mouse_pos == null && event == null));
+//  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
+      if (!app.state.dna_design.grid.is_none()) {
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
+            mouse_pos: mouse_pos, event: event);
+        if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
+          app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
+        }
+      } else {
+        //FIXME: dispatch an action about the position, not grid position
+        var svg_pos = util.transformed_svg_point(side_view_svg, false, mouse_pos: mouse_pos, event: event);
+        var action = actions.MousePositionSideUpdate(svg_pos: svg_pos);
+        app.dispatch(actions.ThrottledActionNonFast(action, 1.0 / 60));
+      }
+    } else {
+      if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
+        app.dispatch(actions.MouseGridPositionSideClear());
+      }
     }
   }
 }

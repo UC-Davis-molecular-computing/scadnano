@@ -25,6 +25,7 @@ import 'state/loopout.dart';
 import 'state/dna_design.dart';
 import 'constants.dart' as constants;
 import 'state/bound_substrand.dart';
+import 'state/position3d.dart';
 import 'state/selectable.dart';
 import 'state/selection_box.dart';
 import 'state/strand.dart';
@@ -219,6 +220,20 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   return point * 2 * radius;
 }
 
+GridPosition position3d_to_grid(Position3D position, Grid grid) {
+//  Point<num> svg_coord = position3d_to_main_view_svg(position);
+  Point<num> svg_coord = position3d_to_side_view_svg(position);
+  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord);
+  return grid_position;
+}
+
+Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
+//  GridPosition grid_position = side_view_svg_to_grid(grid_position, svg_coord);
+  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid);
+  Position3D position3d = svg_side_view_to_position3d(svg_coord);
+  return position3d;
+}
+
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
@@ -240,11 +255,19 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   return GridPosition(h, v, b);
 }
 
-/// Indicates if given hex position is in the honeycome lattice.
-bool in_honeycomb_lattice(GridPosition pos) {
-  int x = pos.h, y = pos.v;
-  return !(((y % 2 == 0) && (x % 3 == 0)) || ((y % 2 == 1) && (x % 3 == 1)));
-}
+Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
+    (position.z / 0.34) * constants.BASE_WIDTH_SVG,
+    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
+
+Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
+    position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
+    position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
+
+Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
+    x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
+    y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
+//  return Point<num>((position.z / 0.34) * constants.BASE_WIDTH_SVG,
+//      (position.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window

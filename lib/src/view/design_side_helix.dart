@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
 import '../state/mouseover_data.dart';
@@ -13,6 +13,8 @@ import '../state/helix.dart';
 import 'design_side_rotation.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+import '../util.dart' as util;
+import 'pure_component.dart';
 
 part 'design_side_helix.over_react.g.dart';
 
@@ -26,30 +28,17 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
 @Props()
-class _$DesignSideHelixProps extends UiProps with ConnectPropsMixin {
+class _$DesignSideHelixProps extends UiProps {
   Helix helix;
   bool selected;
   bool mouse_is_over;
   MouseoverData mouseover_data;
   BuiltSet<EditModeChoice> edit_modes;
+  Grid grid;
 }
 
 @Component2()
-class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Helix helix = nextProps['DesignSideHelixProps.helix'];
-    MouseoverData mouseover_data = nextProps['DesignSideHelixProps.mouseover_data'];
-    bool selected = nextProps['DesignSideHelixProps.selected'];
-    BuiltSet<EditModeChoice> edit_modes = nextProps['DesignSideHelixProps.edit_modes'];
-    bool mouse_is_over = nextProps['DesignSideHelixProps.mouse_is_over'];
-    bool should = !(helix == props.helix &&
-        mouseover_data == props.mouseover_data &&
-        selected == props.selected &&
-        edit_modes == props.edit_modes &&
-        mouse_is_over == props.mouse_is_over);
-    return should;
-  }
+class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
 
   @override
   render() {
@@ -60,7 +49,8 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> {
     Helix helix = props.helix;
 
     Position3D pos3d = helix.position3d();
-    Point<num> center = Point<num>(pos3d.x, pos3d.y);
+    Point<num> svg_pos = util.position3d_to_side_view_svg(pos3d);
+    Point<num> center = Point<num>(svg_pos.x, svg_pos.y);
     bool selected = props.selected;
 
     String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';

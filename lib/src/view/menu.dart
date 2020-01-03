@@ -4,6 +4,7 @@ import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
@@ -17,7 +18,8 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (state) => (Menu()
     ..show_dna = state.ui_state.show_dna
-    ..show_mismatches = state.ui_state.show_mismatches),
+    ..show_mismatches = state.ui_state.show_mismatches
+    ..grid = state.dna_design.grid),
 )(Menu);
 
 @Factory()
@@ -27,6 +29,7 @@ UiFactory<MenuProps> Menu = _$Menu;
 class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool show_dna;
   bool show_mismatches;
+  Grid grid;
 }
 
 @Component2()
@@ -45,8 +48,9 @@ class MenuComponent extends UiComponent2<MenuProps> {
 
   @override
   render() {
-    bool show_dna = this.props.show_dna;
-    bool show_mismatches = this.props.show_mismatches;
+    bool show_dna = props.show_dna;
+    bool show_mismatches = props.show_mismatches;
+    Grid grid = props.grid;
 //    bool show_editor = this.props.store.show_editor_store.show_editor;
 
     return (Dom.div())(
@@ -145,6 +149,24 @@ class MenuComponent extends UiComponent2<MenuProps> {
           'show mismatches',
         ),
       ),
+      (Dom.select()
+        ..name = 'Grid'
+        ..onChange = ((ev) {
+          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to Grid title option
+          props.dispatch(actions.GridChange(grid: grid_options[idx]));
+        })
+        ..value = grid.toString())([
+        (Dom.option()
+          ..value = 'Grid'
+          ..disabled = true
+          ..key = 'title')('Grid type'),
+        ...[
+          for (var grid in grid_options)
+            (Dom.option()
+              ..value = grid.toString()
+              ..key = grid.toString())(grid.toString())
+        ]
+      ]),
       (Dom.a()
         ..className = 'docs-link menu-item'
         ..href = 'README.html'
@@ -155,6 +177,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..target = '_blank')('Script Docs'),
     );
   }
+
+  final List<Grid> grid_options = [Grid.square, Grid.honeycomb, Grid.hex, Grid.none];
 
   export_dna() async {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html

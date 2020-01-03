@@ -11,8 +11,10 @@ import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_box.dart';
@@ -137,23 +139,56 @@ abstract class BatchAction
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Throttle
 
-abstract class ThrottledAction
+//XXX: Originally all ThrottledActions were FastActions because anything that would need to be throttled
+// (>= 60 fps) was too fast to be handled by the normal React/Redux store updates. Now that we have trimmed
+// the rendering time significantly (https://github.com/UC-Davis-molecular-computing/scadnano/issues/87),
+// this is no longer the case. But FastAction is still used to avoid
+// dispatching actions to the main store. So we need ThrottledActionNonFast to throttle actions that we still
+// would like to be dispatched to the main store.
+abstract class ThrottledAction implements Action {
+  Action get action;
+
+  num get interval_sec;
+}
+
+abstract class ThrottledActionFast
     with BuiltJsonSerializable
-    implements FastAction, Built<ThrottledAction, ThrottledActionBuilder> {
+    implements ThrottledAction, FastAction, Built<ThrottledActionFast, ThrottledActionFastBuilder> {
   Action get action;
 
   num get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledAction(Action action, num interval_sec) => ThrottledAction.from((b) => b
+  factory ThrottledActionFast(Action action, num interval_sec) => ThrottledActionFast.from((b) => b
     ..action = action
     ..interval_sec = interval_sec);
 
-  factory ThrottledAction.from([void Function(ThrottledActionBuilder) updates]) = _$ThrottledAction;
+  factory ThrottledActionFast.from([void Function(ThrottledActionFastBuilder) updates]) =
+      _$ThrottledActionFast;
 
-  ThrottledAction._();
+  ThrottledActionFast._();
 
-  static Serializer<ThrottledAction> get serializer => _$throttledActionSerializer;
+  static Serializer<ThrottledActionFast> get serializer => _$throttledActionFastSerializer;
+}
+
+abstract class ThrottledActionNonFast
+    with BuiltJsonSerializable
+    implements ThrottledAction, Built<ThrottledActionNonFast, ThrottledActionNonFastBuilder> {
+  Action get action;
+
+  num get interval_sec;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ThrottledActionNonFast(Action action, num interval_sec) => ThrottledActionNonFast.from((b) => b
+    ..action = action
+    ..interval_sec = interval_sec);
+
+  factory ThrottledActionNonFast.from([void Function(ThrottledActionNonFastBuilder) updates]) =
+      _$ThrottledActionNonFast;
+
+  ThrottledActionNonFast._();
+
+  static Serializer<ThrottledActionNonFast> get serializer => _$throttledActionNonFastSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -478,7 +513,7 @@ abstract class SelectionBoxRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Mouse grid position (side view)
+// Mouse position/grid position (side view)
 
 abstract class MouseGridPositionSideUpdate
     with BuiltJsonSerializable
@@ -509,6 +544,30 @@ abstract class MouseGridPositionSideClear
   MouseGridPositionSideClear._();
 
   static Serializer<MouseGridPositionSideClear> get serializer => _$mouseGridPositionSideClearSerializer;
+}
+
+abstract class MousePositionSideUpdate
+    with BuiltJsonSerializable
+    implements Action, Built<MousePositionSideUpdate, MousePositionSideUpdateBuilder> {
+  Point<num> get svg_pos;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MousePositionSideUpdate({Point<num> svg_pos}) = _$MousePositionSideUpdate._;
+
+  MousePositionSideUpdate._();
+
+  static Serializer<MousePositionSideUpdate> get serializer => _$mousePositionSideUpdateSerializer;
+}
+
+abstract class MousePositionSideClear
+    with BuiltJsonSerializable
+    implements Action, Built<MousePositionSideClear, MousePositionSideClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MousePositionSideClear() = _$MousePositionSideClear;
+
+  MousePositionSideClear._();
+
+  static Serializer<MousePositionSideClear> get serializer => _$mousePositionSideClearSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,11 +659,21 @@ abstract class DeleteAllSelected
 abstract class HelixAdd
     with BuiltJsonSerializable
     implements UndoableAction, Built<HelixAdd, HelixAddBuilder> {
+  @nullable
   GridPosition get grid_position;
 
+  @nullable
+  Position3D get position;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixAdd(GridPosition grid_position) =>
-      HelixAdd.from((b) => b..grid_position.replace(grid_position));
+  factory HelixAdd({GridPosition grid_position = null, Position3D position = null}) {
+    if (grid_position == null && position == null) {
+      throw AssertionError('cannot have both grid_position and position null in HelixAdd');
+    }
+    return HelixAdd.from((b) => b
+      ..grid_position = grid_position?.toBuilder()
+      ..position = position?.toBuilder());
+  }
 
   factory HelixAdd.from([void Function(HelixAddBuilder) updates]) = _$HelixAdd;
 
@@ -1250,4 +1319,20 @@ abstract class DeletionRemove
   DeletionRemove._();
 
   static Serializer<DeletionRemove> get serializer => _$deletionRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// grid change
+
+abstract class GridChange
+    with BuiltJsonSerializable
+    implements DNADesignChangingAction, Built<GridChange, GridChangeBuilder> {
+  Grid get grid;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GridChange({Grid grid}) = _$GridChange._;
+
+  GridChange._();
+
+  static Serializer<GridChange> get serializer => _$gridChangeSerializer;
 }

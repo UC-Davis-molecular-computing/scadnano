@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/grid_position.dart';
@@ -34,6 +36,8 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
+  ..side_view_position_mouse_cursor =
+      side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
 //  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
 //  ..selection_box_side_view = side_view_selection_box_reducer(ui_state.selection_box_side_view, action)?.toBuilder()
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action)));
@@ -89,7 +93,7 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// side view mouse grid position reducer
+// side view mouse position/grid position reducers
 
 Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.MouseGridPositionSideUpdate>(side_view_mouse_grid_pos_update_reducer),
@@ -103,6 +107,16 @@ GridPosition side_view_mouse_grid_pos_update_reducer(
 GridPosition side_view_mouse_grid_pos_clear_reducer(
         GridPosition _, actions.MouseGridPositionSideClear action) =>
     null;
+
+Reducer<Point<num>> side_view_position_mouse_cursor_reducer = combineReducers([
+  TypedReducer<Point<num>, actions.MousePositionSideUpdate>(side_view_mouse_pos_update_reducer),
+  TypedReducer<Point<num>, actions.MousePositionSideClear>(side_view_mouse_pos_clear_reducer),
+]);
+
+Point<num> side_view_mouse_pos_update_reducer(Point<num> _, actions.MousePositionSideUpdate action) =>
+    action.svg_pos;
+
+Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePositionSideClear action) => null;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

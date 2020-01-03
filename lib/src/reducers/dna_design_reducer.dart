@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
+import 'package:scadnano/src/state/grid.dart';
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';
@@ -14,7 +15,7 @@ DNADesign dna_design_reducer(DNADesign dna_design, action) {
 //  if (action is actions.ErrorMessageSet) {
 //    dna_design = error_message_set_reducer(dna_design, action);
 //  } else
-    if (dna_design != null) {
+  if (dna_design != null) {
     dna_design = dna_design_composed_local_reducer(dna_design, action);
     dna_design = dna_design_whole_local_reducer(dna_design, action);
   }
@@ -38,8 +39,12 @@ DNADesign dna_design_global_reducer(DNADesign dna_design, AppState state, action
 // composed: operate on slices of the DNADesign
 // local: don't need the whole AppState
 DNADesign dna_design_composed_local_reducer(DNADesign dna_design, action) => dna_design.rebuild((d) => d
+  ..grid = TypedReducer<Grid, actions.GridChange>(grid_local_reducer)(dna_design.grid, action)
   ..helices.replace(helices_local_reducer(dna_design.helices, action))
   ..strands.replace(strands_local_reducer(dna_design.strands, action)));
+
+
+Grid grid_local_reducer(Grid grid, actions.GridChange action) => action.grid;
 
 // composed: operate on slices of the DNADesign
 // global: need the whole AppState
@@ -59,4 +64,3 @@ Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DNADesign, AppState, actions.HelixRemove>(helix_remove_dna_design_global_reducer),
 ]);
-

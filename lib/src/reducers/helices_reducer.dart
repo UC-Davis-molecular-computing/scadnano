@@ -4,6 +4,7 @@ import 'package:scadnano/src/state/app_state.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import '../state/helix.dart';
@@ -16,6 +17,7 @@ Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
+  TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_reducer),
 ]);
 
 BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.HelixIndividualAction action) {
@@ -95,6 +97,7 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
       idx: new_idx,
       grid: design.grid,
       grid_position: action.grid_position,
+      position: action.position,
       min_offset: min_offset,
       max_offset: max_offset,
       view_order: new_idx);
@@ -154,4 +157,21 @@ BuiltList<Helix> remove_helix_assuming_no_bound_substrands(
     helices_builder[i] = helix_builder.build();
   }
   return helices_builder.build();
+}
+
+BuiltList<Helix> helix_grid_reducer(BuiltList<Helix> helices, actions.GridChange action) {
+  List<HelixBuilder> helices_builder = helices.map((h) => h.toBuilder()).toList();
+  for (int i = 0; i < helices.length; i++) {
+    Helix helix = helices[i];
+    helices_builder[i].grid = action.grid;
+    if (helix.grid_position == null && !action.grid.is_none()) {
+      helices_builder[i].grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
+    }
+    if (helix.position == null && action.grid.is_none()) {
+      helices_builder[i].position = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+    }
+  }
+
+//  return helices.map((h) => h.rebuild((b) => b..grid = action.grid)).toBuiltList();
+  return [for (var helix in helices_builder) helix.build()].build();
 }

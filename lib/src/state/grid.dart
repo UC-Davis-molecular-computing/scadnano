@@ -24,35 +24,3 @@ class Grid extends EnumClass {
   int default_major_tick_distance() => this == Grid.hex || this == Grid.honeycomb ? 7 : 8;
 }
 
-//enum Grid { square, hex, honeycomb, none }
-//
-//String grid_to_json(Grid grid) {
-//  switch (grid) {
-//    case Grid.square:
-//      return 'square';
-//    case Grid.hex:
-//      return 'hex';
-//    case Grid.honeycomb:
-//      return 'honeycomb';
-//    case Grid.none:
-//      return 'none';
-//    default:
-//      throw UnimplementedError('unrecognized grid: $grid');
-//  }
-//}
-//
-//Grid grid_from_string(String string) {
-//  switch (string) {
-//    case 'square':
-//      return Grid.square;
-//    case 'hex':
-//      return Grid.hex;
-//    case 'honeycomb':
-//      return Grid.honeycomb;
-//    case 'none':
-//      return Grid.none;
-//    default:
-//      throw new UnimplementedError('unrecognized grid: $string');
-//  }
-//}
-

@@ -105,7 +105,7 @@ main() {
     var state = default_state();
     final grid_position = new GridPosition(5, 10);
 
-    state = app_state_reducer(state, new HelixAdd(grid_position));
+    state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
     final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
     var correct_helices = new BuiltList<Helix>([correct_helix]);
@@ -116,7 +116,7 @@ main() {
     var state = default_state();
     final grid_position = new GridPosition(5, 10);
 
-    state = app_state_reducer(state, new HelixAdd(grid_position));
+    state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
     state = app_state_reducer(state, new HelixRemove(0));
 
     var correct_helices = new BuiltList<Helix>([]);
@@ -1585,7 +1585,7 @@ main() {
 
   test('add helix to DNA design', () {
     AppState state = app_state_from_dna_design(two_helices_design);
-    state = app_state_reducer(state, HelixAdd(GridPosition(0, 2)));
+    state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
 
     String two_helices_helix_add_json = r"""
  {
@@ -1627,7 +1627,7 @@ main() {
   test('remove empty helix from DNA design', () {
     AppState original_state = app_state_from_dna_design(two_helices_design);
 
-    AppState second_state = app_state_reducer(original_state, HelixAdd(GridPosition(0, 2)));
+    AppState second_state = app_state_reducer(original_state, HelixAdd(grid_position: GridPosition(0, 2)));
     AppState final_state = app_state_reducer(second_state, HelixRemove(2));
 
     UndoRedo expected_undo_redo =
@@ -2676,7 +2676,7 @@ main() {
 
     test('save design after add helix to DNA design', () {
       AppState state = app_state_from_dna_design(two_helices_design);
-      state = app_state_reducer(state, HelixAdd(GridPosition(0, 2)));
+      state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
       state = app_state_reducer(state, SaveDNAFile());
 
       String two_helices_helix_add_json = r"""

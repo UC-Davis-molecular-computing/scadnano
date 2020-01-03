@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
+import 'grid_change.dart';
 import 'insertion_deletion_pairing.dart';
 import 'load_file.dart';
 import 'reselect_moved_dna_ends.dart';
@@ -23,6 +24,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   throttle_middleware,
 //  thunk_middleware,
   helix_remove_middleware,
+  grid_change_middleware,
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,

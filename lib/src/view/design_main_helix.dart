@@ -11,6 +11,7 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'pure_component.dart';
 import 'svg_button.dart';
 
 part 'design_main_helix.over_react.g.dart';
@@ -26,13 +27,13 @@ class _$DesignMainHelixProps extends UiProps {
 }
 
 @Component2()
-class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> {
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Helix helix = nextProps['DesignMainHelixProps.helix'];
-    bool strand_create_enabled = nextProps['DesignMainHelixProps.strand_create_enabled'];
-    return !(helix == props.helix && strand_create_enabled == props.strand_create_enabled);
-  }
+class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
+//  @override
+//  bool shouldComponentUpdate(Map nextProps, Map nextState) {
+//    Helix helix = nextProps['DesignMainHelixProps.helix'];
+//    bool strand_create_enabled = nextProps['DesignMainHelixProps.strand_create_enabled'];
+//    return !(helix == props.helix && strand_create_enabled == props.strand_create_enabled);
+//  }
 
   @override
   render() {

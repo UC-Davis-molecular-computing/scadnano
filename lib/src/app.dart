@@ -168,7 +168,7 @@ class App {
     }
 
     // optimization since these actions happen too fast to update whole model without jank
-    var underlying_action = action is ThrottledAction ? action.action : action;
+    var underlying_action = action is ThrottledActionFast ? action.action : action;
     if (underlying_action is actions.SelectionBoxCreate ||
         underlying_action is actions.SelectionBoxSizeChange ||
         underlying_action is actions.SelectionBoxRemove) {

@@ -2,6 +2,9 @@ import 'package:over_react/over_react.dart';
 
 part 'menu_card.over_react.g.dart';
 
+//TODO: come back to this, or just use an existing React implementation, e.g.,
+// https://react-bootstrap.github.io/components/dropdowns/
+
 @Factory()
 UiFactory<MenuCardProps> MenuCard = _$MenuCard;
 
@@ -18,14 +21,14 @@ class _$MenuCardState extends UiState {
 @Component2()
 class MenuCardComponent extends UiStatefulComponent2<MenuCardProps, MenuCardState> {
   @override
-  Map get defaultProps => (newProps());
+  Map get defaultProps => (newProps()..items = []);
 
   @override
   Map get initialState => (newState()..show = false);
 
   @override
   render() {
-
+    return null;
   }
 }
 

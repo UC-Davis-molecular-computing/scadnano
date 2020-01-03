@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
@@ -29,6 +31,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..moving_dna_ends = false
   ..changed_since_last_save = false
   ..side_view_grid_position_mouse_cursor = null
+  ..side_view_position_mouse_cursor = null
   ..strands_move = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
@@ -79,8 +82,11 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   BuiltList<MouseoverData> get mouseover_datas;
 
-  @nullable // null when Alt not pressed or mouse outside of side view
+  @nullable // null when mouse outside of side view or helix edit mode not enabled
   GridPosition get side_view_grid_position_mouse_cursor;
+
+  @nullable // null when mouse outside of side view or helix edit mode not enabled
+  Point<num> get side_view_position_mouse_cursor;
 
   SelectModeState get select_mode_state;
 

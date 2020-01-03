@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
+/// Check whether user wants to remove helix that has strands on it.
 helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.HelixRemove) {
     if (store.state.dna_design.substrands_on_helix(action.helix_idx).isNotEmpty) {

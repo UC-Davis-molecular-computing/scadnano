@@ -73,6 +73,8 @@ part 'serializers.g.dart';
   UndoRedoClear,
   MouseGridPositionSideUpdate,
   MouseGridPositionSideClear,
+  MousePositionSideUpdate,
+  MousePositionSideClear,
   HelixSelectionsAdjust,
   HelixSelectionsClear,
   HelixSelect,
@@ -120,6 +122,9 @@ part 'serializers.g.dart';
   StrandsMoveStop,
   StrandsMoveAdjustOffset,
   StrandsMoveCommit,
+  GridChange,
+  ThrottledActionFast,
+  ThrottledActionNonFast,
 ])
 Serializers serializers = _$serializers;
 

@@ -1,8 +1,10 @@
+import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
@@ -29,9 +31,9 @@ UiFactory<_$DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSideP
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
         ..edit_modes = state.ui_state.edit_modes
-//    ..mouse_svg_pos = odel.ui_model.mouse_svg_pos_side_view
         ..grid = state.dna_design.grid
-        ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor;
+        ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
+        ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor;
     }
   },
 )(DesignSide);
@@ -46,13 +48,13 @@ class _$DesignSideProps extends UiProps {
   BuiltList<MouseoverData> mouseover_datas;
   BuiltSet<EditModeChoice> edit_modes;
 
-//  Point<num> mouse_svg_pos;
+  Point<num> mouse_svg_pos;
   Grid grid;
   GridPosition grid_position_mouse_cursor;
 }
 
 @Component2()
-class DesignSideComponent extends UiComponent2<DesignSideProps> {
+class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
   @override
   render() {
     if (props.helices == null) {
@@ -75,6 +77,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
         (DesignSideHelix()
 //        (ConnectedDesignSideHelix()
           ..helix = helix
+          ..grid = props.grid
           ..edit_modes = props.edit_modes
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
           ..selected = helix_idxs_selected.contains(helix.idx)
@@ -83,13 +86,15 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> {
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
 
+    bool should_display_potential_helix = props.mouse_svg_pos != null ||
+        (props.grid_position_mouse_cursor != null &&
+            !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor));
     return (Dom.g()..className = 'side-view')([
-      if (props.grid_position_mouse_cursor != null &&
-          !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor))
+      if (should_display_potential_helix)
         (DesignSidePotentialHelix()
           ..grid = this.props.grid
           ..grid_position = props.grid_position_mouse_cursor
-//          ..mouse_svg_pos = mouse_svg_pos
+          ..mouse_svg_pos = props.mouse_svg_pos
           ..key = 'potential-helix')(),
       (Dom.g()
         ..className = 'helices-side-view'
