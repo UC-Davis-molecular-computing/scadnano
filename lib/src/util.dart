@@ -509,7 +509,7 @@ String pad_dna(String sequence, int length) {
 /// Throws [ArgumentError] if [s1] and [s2] are not the same length or do not agree on non-wildcard
 /// symbols at any position.
 String merge_wildcards(String s1, String s2, String wildcard) {
-  if (s1.length != s1.length) {
+  if (s1.length != s2.length) {
     throw ArgumentError('\ns1=${s1} and\ns2=${s2}\nare not the same length.');
   }
   List<String> union_builder = [];
