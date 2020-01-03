@@ -159,19 +159,30 @@ BuiltList<Helix> remove_helix_assuming_no_bound_substrands(
   return helices_builder.build();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// grid change, so helix must change positions
+
 BuiltList<Helix> helix_grid_reducer(BuiltList<Helix> helices, actions.GridChange action) {
   List<HelixBuilder> helices_builder = helices.map((h) => h.toBuilder()).toList();
   for (int i = 0; i < helices.length; i++) {
     Helix helix = helices[i];
     helices_builder[i].grid = action.grid;
-    if (helix.grid_position == null && !action.grid.is_none()) {
+    if (!action.grid.is_none() && helix.grid_position == null) {
       helices_builder[i].grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
+      helices_builder[i].position = null; //TODO: do we really want to do this?
+      print('writing null into helix $i');
     }
-    if (helix.position == null && action.grid.is_none()) {
+    if (action.grid.is_none() && helix.position == null) {
       helices_builder[i].position = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+      helices_builder[i].grid_position = null;
     }
   }
 
-//  return helices.map((h) => h.rebuild((b) => b..grid = action.grid)).toBuiltList();
-  return [for (var helix in helices_builder) helix.build()].build();
+  BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+  int i=0;
+  for (var helix in new_helices) {
+    print('helix ${i} grid_position: ${helix.grid_position}');
+    print('helix ${i++} position: ${helix.position}');
+  }
+  return new_helices;
 }
