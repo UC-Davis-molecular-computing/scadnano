@@ -66,6 +66,9 @@ class App {
   // This is updated in view/design.dart; consider moving it higher-level.
   final Set<int> keys_pressed = {};
 
+  // when user-interacting dialog is open, disable keyboard shortcuts
+  bool keyboard_shortcuts_enabled = true;
+
   /// Undo/Redo stacks
   UndoRedo undo_redo = UndoRedo();
 
@@ -159,6 +162,13 @@ class App {
 
     store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
+  }
+
+  Future<T> disable_keyboard_shortcuts_while<T>(Future<T> f()) async {
+    keyboard_shortcuts_enabled = false;
+    T return_value = await f();
+    keyboard_shortcuts_enabled = true;
+    return return_value;
   }
 
   dispatch(Action action) {

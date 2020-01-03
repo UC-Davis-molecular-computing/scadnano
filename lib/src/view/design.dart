@@ -12,7 +12,6 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -202,47 +201,8 @@ class DesignViewComponent {
       if (!ev.repeat) {
         app.keys_pressed.add(key);
 
-        if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-            (key == constants.KEY_CODE_TOGGLE_SELECT ||
-                key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
-                key == constants.KEY_CODE_SELECT)) {
-          install_draggable(true, DraggableComponent.main, main_view_svg);
-          install_draggable(false, DraggableComponent.side, side_view_svg);
-        } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
-          app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
-        } else if (key == KeyCode.ESC) {
-          clear_copy_buffer();
-          if (app.state.ui_state.selectables_store.isNotEmpty) {
-            app.dispatch(actions.SelectionsClear());
-          }
-          if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
-            app.dispatch(actions.HelixSelectionsClear());
-          }
-          if (app.state.ui_state.drawing_potential_crossover) {
-            app.dispatch(actions.PotentialCrossoverRemove());
-          }
-          if (app.state.ui_state.strands_move != null) {
-            app.dispatch(actions.StrandsMoveStop());
-          }
-        } else if (key == KeyCode.DELETE) {
-          app.dispatch(actions.DeleteAllSelected());
-        }
-
-        // Ctrl+C/Ctrl+V for copy/paste
-        if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-            app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-            app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
-            (ev.ctrlKey || ev.metaKey) &&
-            key == KeyCode.C) {
-          copy_selected_strands();
-        }
-        // can paste even if nothing selected or not in select mode, if something is in copy buffer
-        if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
-          paste_selected_strands();
-        }
-
-        if (key == EditModeChoice.helix.key_code()) {
-          side_view_update_position(mouse_pos: side_view_mouse_position);
+        if (app.keyboard_shortcuts_enabled) {
+          handle_keyboard_shortcuts(key, ev);
         }
       }
     });
@@ -282,6 +242,51 @@ class DesignViewComponent {
 ////        app.dispatch(actions.HelicesSelectedClear());
 //      }
 //    });
+  }
+
+  handle_keyboard_shortcuts(int key, KeyboardEvent ev) {
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+        (key == constants.KEY_CODE_TOGGLE_SELECT ||
+            key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+            key == constants.KEY_CODE_SELECT)) {
+      install_draggable(true, DraggableComponent.main, main_view_svg);
+      install_draggable(false, DraggableComponent.side, side_view_svg);
+    } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
+      app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
+    } else if (key == KeyCode.ESC) {
+      clear_copy_buffer();
+      if (app.state.ui_state.selectables_store.isNotEmpty) {
+        app.dispatch(actions.SelectionsClear());
+      }
+      if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
+        app.dispatch(actions.HelixSelectionsClear());
+      }
+      if (app.state.ui_state.drawing_potential_crossover) {
+        app.dispatch(actions.PotentialCrossoverRemove());
+      }
+      if (app.state.ui_state.strands_move != null) {
+        app.dispatch(actions.StrandsMoveStop());
+      }
+    } else if (key == KeyCode.DELETE) {
+      app.dispatch(actions.DeleteAllSelected());
+    }
+
+    // Ctrl+C/Ctrl+V for copy/paste
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+        app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+        app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
+        (ev.ctrlKey || ev.metaKey) &&
+        key == KeyCode.C) {
+      copy_selected_strands();
+    }
+    // can paste even if nothing selected or not in select mode, if something is in copy buffer
+    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
+      paste_selected_strands();
+    }
+
+    if (key == EditModeChoice.helix.key_code()) {
+      side_view_update_position(mouse_pos: side_view_mouse_position);
+    }
   }
 
   uninstall_draggable(bool is_main_view, DraggableComponent draggable_component) {

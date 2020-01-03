@@ -125,7 +125,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   }
 
   assign_dna() async {
-    String dna_sequence = await ask_for_dna_sequence();
+    String dna_sequence = await app.disable_keyboard_shortcuts_while(ask_for_dna_sequence);
     if (dna_sequence != null) {
       app.dispatch(actions.AssignDNA(strand: props.strand, dna_sequence: dna_sequence));
     }

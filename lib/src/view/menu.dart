@@ -65,7 +65,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..key = 'dummy'
         ..className = 'dummy-button menu-item')('Dummy'),
       (Dom.button()
-        ..onClick = ((_) => export_dna())
+        ..onClick = //((_) => export_dna())
+          ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..key = 'export-dna-sequences'
         ..className = 'export-dna-sequences-button menu-item')('Export DNA'),
       (Dom.button()
@@ -180,7 +181,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
 
   final List<Grid> grid_options = [Grid.square, Grid.honeycomb, Grid.hex, Grid.none];
 
-  export_dna() async {
+  Future<void> export_dna() async {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
     String buttontype = DiaAttr.CHECKBOX;
     String htmlTitleText = 'export DNA sequences';

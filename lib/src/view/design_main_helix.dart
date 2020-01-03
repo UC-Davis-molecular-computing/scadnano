@@ -99,7 +99,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..width = width_helix_length_change_button
         ..height = height_helix_length_change_button
         ..text = 'adjust helix length'
-        ..on_click = handle_helix_adjust_length_button_pressed
+        ..on_click =
+            ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
         ..classname = 'helix-change-offsets-button'
         ..id = 'helix-${props.helix.idx}-change-offsets-button'
         ..key = 'helix-change-offsets-button-component')(),
@@ -128,7 +129,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.dispatch(actions.StrandCreate(helix_idx: props.helix.idx, forward: forward, start: start, end: end));
   }
 
-  handle_helix_adjust_length_button_pressed(SyntheticMouseEvent event) async {
+  Future<void> handle_helix_adjust_length_button_pressed() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
 

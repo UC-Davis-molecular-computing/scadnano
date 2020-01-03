@@ -138,8 +138,8 @@ class DesignMainLoopoutComponent
   }
 
   loopout_length_change() async {
-    int new_length = await ask_for_length('change loopout length',
-        current_length: props.loopout.loopout_length, lower_bound: 0);
+    int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length('change loopout length',
+        current_length: props.loopout.loopout_length, lower_bound: 0));
     if (new_length == null || new_length == props.loopout.loopout_length) {
       return;
     }
