@@ -54,9 +54,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
-    num height_helix_length_change_button = 2 * constants.BASE_HEIGHT_SVG;
-    num width_helix_length_change_button = 6 * height_helix_length_change_button;
-    num offset_helix_length_change_button = -(width_helix_length_change_button - 2 * cx + 10);
+
+    String tooltip_helix_length_adjust = 'click to adjust helix length';
 
     return (Dom.g()
       ..className = 'helix-main-view'
@@ -66,12 +65,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..cx = '$cx'
         ..cy = '$cy'
         ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}'
-        ..key = 'main-view-helix-circle')(),
+        ..onClick = ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
+        ..key = 'main-view-helix-circle')(Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'
         ..x = '$cx'
         ..y = '$cy'
-        ..key = 'main-view-helix-text')('$idx'),
+        ..onClick = ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
+        ..key = 'main-view-helix-text')(Dom.svgTitle()(tooltip_helix_length_adjust), '$idx'),
       (Dom.g()
         ..className = 'helix-lines-group'
         ..key = 'helix-lines-group')(
@@ -93,17 +94,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
-      (SvgButton()
-        ..x = offset_helix_length_change_button
-        ..y = 0
-        ..width = width_helix_length_change_button
-        ..height = height_helix_length_change_button
-        ..text = 'adjust helix length'
-        ..on_click =
-            ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
-        ..classname = 'helix-change-offsets-button'
-        ..id = 'helix-${props.helix.idx}-change-offsets-button'
-        ..key = 'helix-change-offsets-button-component')(),
       if (props.strand_create_enabled)
         (Dom.rect()
           ..onClick = create_strand
