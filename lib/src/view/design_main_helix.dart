@@ -121,7 +121,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     List<List<String>> comboInfo = null;
     List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}', null];
     List<int> widths = [1, 1, 0];
-    List<String> isChecked = [null, null, 'false'];
+    List<String> isChecked = [null, null, 'true'];
     bool alternateRowColor = false;
     List<String> buttonLabels = ['OK', 'Cancel'];
 
