@@ -3785,7 +3785,6 @@ main() {
 
     Helix helix0 = two_helices_with_empty_offsets.helices.first;
     Helix helix1 = two_helices_with_empty_offsets.helices.last;
-    Strand strand0 = two_helices_with_empty_offsets.strands[0];
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
     test('StrandsMoveStart (no copy)', () {
@@ -4004,6 +4003,96 @@ main() {
 
       // Should unselect the strands
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
+    });
+  });
+
+  String simple_helix_json = r"""
+      {
+        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "strands": [
+          {
+            "dna_sequence": "AACGTACGATGCATCC",
+            "substrands": [
+              {"helix": 0, "forward": true , "start": 0, "end": 16}
+            ]
+          },
+          {
+            "dna_sequence": "GGATGCATCGTACGTT",
+            "substrands": [
+              {"helix": 0, "forward": false , "start": 0, "end": 16}
+            ]
+          }
+        ]
+      }
+      """;
+  DNADesign simple_helix_design = DNADesign.from_json(jsonDecode(simple_helix_json));
+  group('Assign/remove dna test: ', () {
+    test('AssignDNA', () {
+      // simple_helix_no_seq_design
+      //     0               16
+      // 0   [--------------->
+      //     <---------------]
+      AppState state = app_state_from_dna_design(simple_helix_no_seq_design);
+
+      Strand strand = simple_helix_no_seq_design.strands.first;
+
+      String dna_sequence = 'AACGTACGATGCATCC';
+      state = app_state_reducer(state, AssignDNA(strand: strand, assign_complements: true, dna_sequence: dna_sequence));
+      //     0               16
+      //     AACGTACGATGCATCC
+      // 0   [-------------->
+      //     <--------------]
+      //     TTGCATGCTACGTAGG
+      expect(state.dna_design, simple_helix_design);
+
+      // Assigning on strands that already have dna sequence (not sure if this is allowed yet)
+      // Strand strand_last = expected_design.strands.last;
+      // dna_sequence = 'ATCCAACAGCCCCTCG';
+      // state = app_state_reducer(
+      //   state,
+      //   AssignDNA(
+      //     strand: strand_last,
+      //     assign_complements: false,
+      //     dna_sequence: dna_sequence,
+      //   ),
+      // );
+
+      // //     0               16
+      // //     AACGTACGATGCATCC
+      // // 0   [-------------->
+      // //     <--------------]
+      // //     GCTCCCCGACAACCTA
+      // expected_json = r"""
+      // {
+      //   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+      //   "strands": [
+      //     {
+      //       "dna_sequence": "AACGTACGATGCATCC",
+      //       "substrands": [
+      //         {"helix": 0, "forward": true , "start": 0, "end": 16}
+      //       ]
+      //     },
+      //     {
+      //       "dna_sequence": "ATCCAACAGCCCCTCG",
+      //       "substrands": [
+      //         {"helix": 0, "forward": false , "start": 0, "end": 16}
+      //       ]
+      //     }
+      //   ]
+      // }
+      // """;
+      // expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      // expect(state.dna_design, expected_design);
+    });
+
+    test('RemoveDNA (see issue #109)', () {
+      AppState state = app_state_from_dna_design(simple_helix_design);
+
+      Strand strand = simple_helix_design.strands.last;
+
+      state = app_state_reducer(state, RemoveDNA(strand: strand, remove_all: false, remove_complements: true));
+
+      expect_dna_design_equal(state.dna_design, simple_helix_no_seq_design);
     });
   });
 }
