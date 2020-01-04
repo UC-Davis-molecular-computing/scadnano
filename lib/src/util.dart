@@ -63,6 +63,8 @@ class ColorCycler {
     idx = (idx + 1) % colors.length;
     return next_color;
   }
+
+  static final Color scaffold_color = Color.rgb(0, 102, 204);
 }
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {

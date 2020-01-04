@@ -6,6 +6,7 @@ import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
 import 'actions/actions.dart';
+import 'state/context_menu.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
@@ -126,6 +127,11 @@ part 'serializers.g.dart';
   GridChange,
   ThrottledActionFast,
   ThrottledActionNonFast,
+  ContextMenu,
+  ContextMenuItem,
+  ContextMenuShow,
+  ContextMenuHide,
+  ScaffoldSet,
 ])
 Serializers serializers = _$serializers;
 

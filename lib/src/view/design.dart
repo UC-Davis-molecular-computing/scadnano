@@ -19,6 +19,7 @@ import 'package:scadnano/src/state/strands_move.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
+import 'design_context_menu.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -51,6 +52,8 @@ class DesignViewComponent {
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
+
+  DivElement context_menu_div = DivElement()..attributes = {'id': 'context-menu-div'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -90,7 +93,10 @@ class DesignViewComponent {
       ..attributes = {
         'id': SIDE_VIEW_SVG_VIEWPORT_GROUP,
       };
-    var main_view_svg_viewport = svg.GElement()..attributes = {'id': MAIN_VIEW_SVG_VIEWPORT_GROUP};
+    var main_view_svg_viewport = svg.GElement()
+      ..attributes = {
+        'id': MAIN_VIEW_SVG_VIEWPORT_GROUP,
+      };
 
     side_view_svg.children.add(side_view_svg_viewport);
     main_view_svg.children.add(main_view_svg_viewport);
@@ -103,6 +109,7 @@ class DesignViewComponent {
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
     this.root_element.children.add(design_above_footer_pane);
+    this.root_element.children.add(this.context_menu_div);
     this.root_element.children.add(this.footer_separator);
     this.root_element.children.add(this.footer_element);
 
@@ -139,6 +146,17 @@ class DesignViewComponent {
   };
 
   handle_keyboard_mouse_events() {
+    // put away context menu if click occured anywhere outside of it
+    document.onClick.listen((MouseEvent event) {
+      Element target = event.target;
+      if (app.state.ui_state.context_menu != null &&
+          !(target.classes.contains('context-menu-item') ||
+              target.classes.contains('context-menu') ||
+              target.classes.contains('context-menu-div'))) {
+        app.dispatch(actions.ContextMenuHide());
+      }
+    });
+
     side_view_svg.onMouseLeave.listen((_) => side_view_mouse_leave_update_mouseover());
     side_view_svg.onMouseMove.listen((event) {
       side_view_mouse_position = event.client;
@@ -266,6 +284,9 @@ class DesignViewComponent {
       }
       if (app.state.ui_state.strands_move != null) {
         app.dispatch(actions.StrandsMoveStop());
+      }
+      if (app.state.ui_state.context_menu != null) {
+        app.dispatch(actions.ContextMenuHide());
       }
     } else if (key == KeyCode.DELETE) {
       app.dispatch(actions.DeleteAllSelected());
@@ -428,6 +449,15 @@ class DesignViewComponent {
           ),
         ),
         this.footer_element,
+      );
+
+      react_dom.render(
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignContextMenu()(),
+          ),
+        ),
+        this.context_menu_div,
       );
 
       if (!svg_panzoom_has_been_set_up) {

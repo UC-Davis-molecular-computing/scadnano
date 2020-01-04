@@ -4,6 +4,11 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
+// https://www.w3schools.com/jsref/event_button.asp
+const LEFT_CLICK_BUTTON = 0;
+const MIDDLE_CLICK_BUTTON = 1;
+const RIGHT_CLICK_BUTTON = 2;
+
 const KEY_CODE_SHOW_POTENTIAL_HELIX = KeyCode.H;
 const KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO = KeyCode.W;
 final KEY_CODE_COMMAND_MAC =

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/insertion_deletion_pairing.dart';
 import 'package:scadnano/src/state/app_state.dart';
@@ -26,6 +27,7 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
+  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
@@ -100,16 +102,6 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
           ..insertions
               .replace(substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta))),
       );
-
-//      for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
-//        int new_offset = dnaend.offset_inclusive + strands_move.delta;
-//        bound_ss = bound_ss.rebuild(
-//            (b) => dnaend == substrand.dnaend_start ? (b..start = new_offset) : (b..end = new_offset + 1));
-//        List<int> remaining_deletions = get_remaining_deletions(substrand, new_offset, dnaend);
-//        List<Insertion> remaining_insertions = get_remaining_insertions(substrand, new_offset, dnaend);
-//        bound_ss = bound_ss.rebuild(
-//            (b) => b..deletions.replace(remaining_deletions)..insertions.replace(remaining_insertions));
-//      }
       new_substrand = bound_ss_moved;
     }
     substrands[i] = new_substrand;
@@ -283,4 +275,22 @@ BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actio
   var new_strands = strands.rebuild((s) => s..add(strand));
 
   return new_strands;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set scaffold property
+
+BuiltList<Strand> scaffold_set_reducer(BuiltList<Strand> strands, actions.ScaffoldSet action) {
+  Strand strand = action.strand;
+  int strand_idx = strands.indexOf(strand);
+
+  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
+  strand = strand.rebuild((b) => b
+    ..is_scaffold = action.is_scaffold
+    ..color = new_color);
+  strand = strand.initialize();
+
+  var strands_builder = strands.toBuilder();
+  strands_builder[strand_idx] = strand;
+  return strands_builder.build();
 }

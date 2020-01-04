@@ -4,7 +4,6 @@ import 'package:scadnano/src/state/app_state.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
-import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import '../state/helix.dart';

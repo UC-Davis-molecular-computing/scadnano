@@ -18,6 +18,7 @@ part 'local_storage.g.dart';
 class Storable extends EnumClass {
   const Storable._(String name) : super(name);
 
+  static const Storable dna_design = _$dna_design;
   static const Storable show_dna = _$show_dna;
   static const Storable show_mismatches = _$show_mismatches;
   static const Storable show_editor = _$show_editor;

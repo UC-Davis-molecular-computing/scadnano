@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
-import 'package:scadnano/src/serializers.dart';
 
+import '../serializers.dart';
+import 'context_menu.dart';
 import 'dna_design.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
@@ -19,7 +20,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..edit_modes.replace([EditModeChoice.select])
   ..loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
-  ..mouseover_datas = ListBuilder<MouseoverData>()
+  ..mouseover_datas.replace([])
   ..selection_box_displayed_main = false
   ..selection_box_displayed_side = false
   ..selectables_store = SelectablesStoreBuilder()
@@ -33,6 +34,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..side_view_grid_position_mouse_cursor = null
   ..side_view_position_mouse_cursor = null
   ..strands_move = null
+  ..context_menu = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
@@ -91,6 +93,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   SelectModeState get select_mode_state;
 
   BuiltSet<EditModeChoice> get edit_modes;
+
+  @nullable
+  ContextMenu get context_menu;
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;

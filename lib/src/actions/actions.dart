@@ -7,6 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
@@ -1356,3 +1357,51 @@ abstract class GridChange
 
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// context menu
+
+abstract class ContextMenuShow
+    with BuiltJsonSerializable
+    implements Action, Built<ContextMenuShow, ContextMenuShowBuilder> {
+  ContextMenu get context_menu;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ContextMenuShow({ContextMenu context_menu}) = _$ContextMenuShow._;
+
+  ContextMenuShow._();
+
+  static Serializer<ContextMenuShow> get serializer => _$contextMenuShowSerializer;
+}
+
+abstract class ContextMenuHide
+    with BuiltJsonSerializable
+    implements Action, Built<ContextMenuHide, ContextMenuHideBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ContextMenuHide() = _$ContextMenuHide;
+
+  ContextMenuHide._();
+
+  static Serializer<ContextMenuHide> get serializer => _$contextMenuHideSerializer;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// scaffold set/unset
+
+abstract class ScaffoldSet
+    with BuiltJsonSerializable
+    implements Action, Built<ScaffoldSet, ScaffoldSetBuilder> {
+  Strand get strand;
+
+  bool get is_scaffold;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ScaffoldSet({Strand strand, bool is_scaffold}) = _$ScaffoldSet._;
+
+  ScaffoldSet._();
+
+  static Serializer<ScaffoldSet> get serializer => _$scaffoldSetSerializer;
+}
+//ScaffoldSet

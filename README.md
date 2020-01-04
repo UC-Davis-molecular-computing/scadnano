@@ -81,6 +81,9 @@ TODO: explain data model: 5'/3' ends, strands, substrands, forward, offsets, cro
 Pressing Ctrl+Z will undo the last action that changed the design.
 Pressing Shift+Ctrl+Z will redo it.
 
+**Right-click:**
+Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. 
+
 ## Menu
 
 The menu layout is currently hacky and will [change to something more elegant in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/63).
