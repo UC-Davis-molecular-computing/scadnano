@@ -625,6 +625,8 @@ abstract class SelectionsAdjust
   static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
 }
 
+// This selects all that are specified in constructor. SelectAllSelectable selects all selectable items
+// in the whole design.
 abstract class SelectAll with BuiltJsonSerializable implements Action, Built<SelectAll, SelectAllBuilder> {
   BuiltList<Selectable> get selectables;
 
@@ -637,6 +639,18 @@ abstract class SelectAll with BuiltJsonSerializable implements Action, Built<Sel
   SelectAll._();
 
   static Serializer<SelectAll> get serializer => _$selectAllSerializer;
+}
+
+// Selects all selectable items in the whole design.
+abstract class SelectAllSelectable
+    with BuiltJsonSerializable
+    implements Action, Built<SelectAllSelectable, SelectAllSelectableBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectAllSelectable() = _$SelectAllSelectable;
+
+  SelectAllSelectable._();
+
+  static Serializer<SelectAllSelectable> get serializer => _$selectAllSelectableSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

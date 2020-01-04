@@ -111,6 +111,55 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
+  BuiltMap<String, DNAEnd> get ends_5p_strand_by_id {
+    var builder = MapBuilder<String, DNAEnd>();
+    for (var strand in strands) {
+      var end = strand.dnaend_5p;
+      builder[end.id()] = end;
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, DNAEnd> get ends_3p_strand_by_id {
+    var builder = MapBuilder<String, DNAEnd>();
+    for (var strand in strands) {
+      var end = strand.dnaend_3p;
+      builder[end.id()] = end;
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
+    var builder = MapBuilder<String, DNAEnd>();
+    for (var strand in strands) {
+      for (var bound_substrand in strand.bound_substrands()) {
+        var end = bound_substrand.dnaend_5p;
+        if (!bound_substrand.is_first) {
+          builder[end.id()] = end;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
+    var builder = MapBuilder<String, DNAEnd>();
+    for (var strand in strands) {
+      for (var bound_substrand in strand.bound_substrands()) {
+        var end = bound_substrand.dnaend_3p;
+        if (!bound_substrand.is_last) {
+          builder[end.id()] = end;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+
+  @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
     for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id]) {
@@ -120,29 +169,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       }
     }
     return map.build();
-//    Selectable selectable;
-//
-//    selectable = strands_by_id[id];
-//    if (selectable != null) {
-//      return selectable;
-//    }
-//
-//    selectable = loopouts_by_id[id];
-//    if (selectable != null) {
-//      return selectable;
-//    }
-//
-//    selectable = crossovers_by_id[id];
-//    if (selectable != null) {
-//      return selectable;
-//    }
-//
-//    selectable = ends_by_id[id];
-//    if (selectable != null) {
-//      return selectable;
-//    }
-//
-//    return selectable;
   }
 
   @memoized

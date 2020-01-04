@@ -175,6 +175,11 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
 
   List<Loopout> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
 
+  List<DNAEnd> ends_5p_not_first() => [for (var ss in bound_substrands().sublist(1)) ss.dnaend_5p];
+
+  List<DNAEnd> ends_3p_not_last() =>
+      [for (var ss in bound_substrands().sublist(0, bound_substrands().length - 1)) ss.dnaend_3p];
+
   int dna_length() {
     int num = 0;
     for (var substrand in substrands) {
@@ -423,7 +428,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     BoundSubstrand first_ss = first_bound_substrand();
     BoundSubstrand last_ss = last_bound_substrand();
     String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
-    return is_scaffold? 'SCAF$id}':'ST$id';
+    return is_scaffold ? 'SCAF$id}' : 'ST$id';
   }
 }
 

@@ -269,7 +269,11 @@ class DesignViewComponent {
             key == constants.KEY_CODE_SELECT)) {
       install_draggable(true, DraggableComponent.main, main_view_svg);
       install_draggable(false, DraggableComponent.side, side_view_svg);
-    } else if (EditModeChoice.key_code_to_mode.keys.contains(key)) {
+    } else if (!ev.ctrlKey &&
+        !ev.metaKey &&
+        !ev.shiftKey &&
+        !ev.altKey &&
+        EditModeChoice.key_code_to_mode.keys.contains(key)) {
       app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
     } else if (key == KeyCode.ESC) {
       clear_copy_buffer();
@@ -303,6 +307,14 @@ class DesignViewComponent {
     // can paste even if nothing selected or not in select mode, if something is in copy buffer
     if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
       paste_selected_strands();
+    }
+
+    // Ctrl+A for select all
+    if ((ev.ctrlKey || ev.metaKey) &&
+        key == KeyCode.A &&
+        app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+      ev.preventDefault();
+      app.dispatch(actions.SelectAllSelectable());
     }
 
     if (key == EditModeChoice.helix.key_code()) {

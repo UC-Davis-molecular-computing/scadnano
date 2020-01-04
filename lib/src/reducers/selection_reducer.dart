@@ -3,6 +3,7 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/select_mode.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/view/design.dart';
@@ -24,7 +25,32 @@ Reducer<SelectionBox> optimized_selection_box_reducer = combineReducers([
 
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
+  TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
 ]);
+
+SelectablesStore select_all_selectables_reducer(
+    SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
+  BuiltSet<SelectModeChoice> modes = state.ui_state.select_mode_state.modes;
+  bool scaffold_selectable = modes.contains(SelectModeChoice.scaffold);
+  bool staple_selectable = modes.contains(SelectModeChoice.staple);
+
+  List<Selectable> selected = [];
+  for (var strand in state.dna_design.strands) {
+    if (!state.dna_design.is_origami ||
+        (strand.is_scaffold && scaffold_selectable) ||
+        (!strand.is_scaffold && staple_selectable)) {
+      if (modes.contains(SelectModeChoice.strand)) selected.add(strand);
+      if (modes.contains(SelectModeChoice.loopout)) selected.addAll(strand.loopouts());
+      if (modes.contains(SelectModeChoice.crossover)) selected.addAll(strand.crossovers);
+      if (modes.contains(SelectModeChoice.end_5p_strand)) selected.add(strand.dnaend_5p);
+      if (modes.contains(SelectModeChoice.end_3p_strand)) selected.add(strand.dnaend_3p);
+      if (modes.contains(SelectModeChoice.end_5p_substrand)) selected.addAll(strand.ends_5p_not_first());
+      if (modes.contains(SelectModeChoice.end_3p_substrand)) selected.addAll(strand.ends_3p_not_last());
+    }
+  }
+
+  return selectables_store.select_all(selected);
+}
 
 SelectablesStore selections_adjust_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectionsAdjust action) {
