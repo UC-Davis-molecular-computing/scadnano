@@ -151,7 +151,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
       app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
     } else if (pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
       PotentialCrossover potential_crossover = app.store_potential_crossover.state;
-
+      if (props.is_5p == potential_crossover.dna_end_first_click.is_5p) {
+        // can only connect opposite type ends with crossover
+        return;
+      }
       //FIXME: can we avoid this global variable access? probably not since there's multiple stores
       app.dispatch(actions.PotentialCrossoverRemove());
       if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
