@@ -110,7 +110,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
   This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
 
-  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. 
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.
 
   Unlike other drawing programs, clicking on the background will not unselect the objects. To unselect all selected objects, press the Esc key.
 
