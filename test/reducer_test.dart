@@ -29,6 +29,7 @@ import 'package:scadnano/src/state/selection_box.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
+import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
@@ -1431,33 +1432,33 @@ main() {
   //   v
   // 1 [------------------->
   //   <-------------------]
-  test('pencil should ignore connecting a 5p end to a 5p end', () {
-    AppState state = app_state_from_dna_design(two_helices_design);
+  // test('pencil should ignore connecting a 5p end to a 5p end', () {
+  //   AppState state = app_state_from_dna_design(two_helices_design);
 
-    Strand h0_forward_strand = two_helices_design.strands[0];
-    Strand h1_forward_strand = two_helices_design.strands[2];
-    Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point = h0.svg_base_pos(0, true);
-    PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
-      helix_idx: 0,
-      forward: true,
-      offset: 0,
-      color: h0_forward_strand.color.toHexColor().toCssString(),
-      dna_end_first_click: h0_forward_strand.dnaend_5p,
-      start_point: start_point,
-      current_point: start_point,
-    );
-    DNAEnd helix_1_5p_end_second_click = h1_forward_strand.dnaend_5p;
+  //   Strand h0_forward_strand = two_helices_design.strands[0];
+  //   Strand h1_forward_strand = two_helices_design.strands[2];
+  //   Helix h0 = two_helices_design.helices[0];
+  //   Point<num> start_point = h0.svg_base_pos(0, true);
+  //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
+  //     helix_idx: 0,
+  //     forward: true,
+  //     offset: 0,
+  //     color: h0_forward_strand.color.toHexColor().toCssString(),
+  //     dna_end_first_click: h0_forward_strand.dnaend_5p,
+  //     start_point: start_point,
+  //     current_point: start_point,
+  //   );
+  //   DNAEnd helix_1_5p_end_second_click = h1_forward_strand.dnaend_5p;
 
-    state = app_state_reducer(
-        state,
-        JoinStrandsByCrossover(
-          dna_end_second_click: helix_1_5p_end_second_click,
-          potential_crossover: helix_0_5p_end_potential_crossover,
-        ));
+  //   state = app_state_reducer(
+  //       state,
+  //       JoinStrandsByCrossover(
+  //         dna_end_second_click: helix_1_5p_end_second_click,
+  //         potential_crossover: helix_0_5p_end_potential_crossover,
+  //       ));
 
-    expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
-  });
+  //   expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
+  // });
 
   //   0                  16
   //
@@ -1472,33 +1473,33 @@ main() {
   //                       v
   // 1 [------------------->
   //   <-------------------]
-  test('pencil should ignore connecting a 3p end to a 3p end', () {
-    AppState state = app_state_from_dna_design(two_helices_design);
+  // test('pencil should ignore connecting a 3p end to a 3p end', () {
+  //   AppState state = app_state_from_dna_design(two_helices_design);
 
-    Strand h0_forward_strand = two_helices_design.strands[0];
-    Strand h1_forward_strand = two_helices_design.strands[2];
-    Helix h0 = two_helices_design.helices[0];
-    Point<num> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
-    PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
-      helix_idx: 0,
-      forward: true,
-      offset: 15,
-      color: h0_forward_strand.color.toHexColor().toCssString(),
-      dna_end_first_click: h0_forward_strand.dnaend_3p,
-      start_point: start_point,
-      current_point: start_point,
-    );
-    DNAEnd helix_1_3p_end_second_click = h1_forward_strand.dnaend_3p;
+  //   Strand h0_forward_strand = two_helices_design.strands[0];
+  //   Strand h1_forward_strand = two_helices_design.strands[2];
+  //   Helix h0 = two_helices_design.helices[0];
+  //   Point<num> start_point = h0.svg_base_pos(15, true); // 3p is located on offset = 15 and forward = true
+  //   PotentialCrossover helix_0_5p_end_potential_crossover = PotentialCrossover(
+  //     helix_idx: 0,
+  //     forward: true,
+  //     offset: 15,
+  //     color: h0_forward_strand.color.toHexColor().toCssString(),
+  //     dna_end_first_click: h0_forward_strand.dnaend_3p,
+  //     start_point: start_point,
+  //     current_point: start_point,
+  //   );
+  //   DNAEnd helix_1_3p_end_second_click = h1_forward_strand.dnaend_3p;
 
-    state = app_state_reducer(
-        state,
-        JoinStrandsByCrossover(
-          dna_end_second_click: helix_1_3p_end_second_click,
-          potential_crossover: helix_0_5p_end_potential_crossover,
-        ));
+  //   state = app_state_reducer(
+  //       state,
+  //       JoinStrandsByCrossover(
+  //         dna_end_second_click: helix_1_3p_end_second_click,
+  //         potential_crossover: helix_0_5p_end_potential_crossover,
+  //       ));
 
-    expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
-  });
+  //   expect_strands_equal(state.dna_design.strands, two_helices_design.strands);
+  // });
   //   0                  16
   //
   // 0 [------------------->
@@ -3706,7 +3707,7 @@ main() {
       // Test AppState reducer
       state = app_state_reducer(state, action);
       AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = true);
-      expect(state, expected_state);
+      expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
@@ -3720,7 +3721,7 @@ main() {
       // Test AppState reducer (should not change).
       AppState expected_state = state;
       state = app_state_reducer(state, action);
-      expect(state, expected_state);
+      expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
       PotentialCrossover expectedPotentialCrossover = potentialCrossover.rebuild((b) => b.current_point = movePoint);
@@ -3734,7 +3735,7 @@ main() {
       // Test AppState reducer
       AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = false);
       state = app_state_reducer(state, action);
-      expect(state, expected_state);
+      expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
       PotentialCrossover expectedPotentialCrossover = null;
@@ -3801,20 +3802,27 @@ main() {
       //
       //
       BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 7;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
-      state = app_state_reducer(state, StrandsMoveStart(offset: 7, helix: helix0, copy: false));
+      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: false));
 
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
-          original_address: 7,
+          original_address: address,
           original_helix_idx: helix0.idx,
           helices: state.dna_design.helices,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
+
+      // Passes this value on for StrandsMoveCommit test.
+      strandsMove = state.ui_state.strands_move;
     });
 
     test('StrandsMoveAdjustOffset (not allowable)', () {
@@ -3828,12 +3836,17 @@ main() {
       // 1 -------------------->
       //   <-------------------]
       int offset = 30;
-      StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
-        ..allowable = false
-        ..current_address = offset);
-      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      // StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+      //   ..allowable = false
+      //   ..current_address.replace(address));
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
-      expect(state.ui_state.strands_move, expected_strands_move);
+      expect(state.ui_state.strands_move, strandsMove);
+      // Passes this value on for StrandsMoveCommit test.
+      strandsMove = state.ui_state.strands_move;
     });
 
     test('StrandsMoveAdjustOffset (is allowable)', () {
@@ -3847,10 +3860,13 @@ main() {
       // 1 -------------------->
       //   <-------------------]
       int offset = 23;
+      int helix_idx = 0;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
         ..allowable = true
-        ..current_address = offset);
-      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
+        ..current_address.replace(address));
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -3903,7 +3919,7 @@ main() {
       """;
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
 
-      expect(state.dna_design, expected_design);
+      expect_dna_design_equal(state.dna_design, expected_design);
 
       // Should unselect the strands
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
@@ -3924,17 +3940,19 @@ main() {
       Strand new_strand2 = state.dna_design.strands[2];
       BuiltList<Selectable> selectables = [new_strand2].toBuiltList();
       int offset = 16;
-
+      int helix_idx = 1;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
 
       expect(state.ui_state.selectables_store.selected_items, selectables);
 
-      state = app_state_reducer(state, StrandsMoveStart(offset: offset, helix: helix1, copy: true));
+      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: true));
 
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
-          original_address: offset,
+          original_address: address,
           original_helix_idx: helix1.idx,
           helices: state.dna_design.helices,
           copy: true);
@@ -3945,7 +3963,7 @@ main() {
       strandsMove = expected_strands_move;
     });
 
-    test('StrandsMoveCommit (for copy)', () {
+    test('StrandsMoveCommit (for copy) (see issue #114)', () {
       //   0        7            16      23    30    32
       //
       // 0 [------------------->
@@ -3956,9 +3974,12 @@ main() {
       // 1                        -------------------->
       //   <-------------------] <-------------------]
       int offset = 0;
-      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
+      int helix_idx = 1;
+      bool forward = false;
+      Address address = Address(helix_idx: helix_idx, offset: offset, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
-      strandsMove = strandsMove.rebuild((b) => b.current_address = offset);
+      strandsMove = strandsMove.rebuild((b) => b.current_address = address.toBuilder());
       expect(state.ui_state.strands_move, strandsMove);
 
       state = app_state_reducer(state, StrandsMoveStop());
@@ -3999,7 +4020,7 @@ main() {
       """;
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
 
-      expect(state.dna_design, expected_design);
+      expect_dna_design_equal(state.dna_design, expected_design);
 
       // Should unselect the strands
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
@@ -4043,7 +4064,7 @@ main() {
       // 0   [-------------->
       //     <--------------]
       //     TTGCATGCTACGTAGG
-      expect(state.dna_design, simple_helix_design);
+      expect_dna_design_equal(state.dna_design, simple_helix_design);
 
       // Assigning on strands that already have dna sequence (not sure if this is allowed yet)
       // Strand strand_last = expected_design.strands.last;
@@ -4094,5 +4115,283 @@ main() {
 
       expect_dna_design_equal(state.dna_design, simple_helix_no_seq_design);
     });
+  });
+
+  group('insertion/deletion', () {
+    test('InsertionAdd', () {
+      // Before
+      //     0               16
+      // 0   [--------------->
+      //     <---------------]
+      // After:
+      //     0      8        16
+      // 0   [------I-------->
+      //     <------I--------]
+      //
+      // I = Insertion
+      AppState state = app_state_from_dna_design(simple_helix_no_seq_design);
+
+      int offset = 8;
+      BoundSubstrand substrand0 = simple_helix_no_seq_design.strands.first.bound_substrands().first;
+      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: substrand0));
+      BoundSubstrand substrand1 = simple_helix_no_seq_design.strands.last.bound_substrands().first;
+      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: substrand1));
+      String expected_json = r"""
+      {
+        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "strands": [
+          {
+            "substrands": [
+              { "helix": 0, "forward": true , "start": 0, "end": 16, "insertions": [[8, 1]] }
+            ]
+          },
+          {
+            "substrands": [
+              { "helix": 0, "forward": false , "start": 0, "end": 16, "insertions": [[8, 1]] }
+            ]
+          }
+        ]
+      }
+      """;
+      DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('InsertionLengthChange', () {
+      //   simple_helix_with_insertion_design
+      //
+      //     0            16               32
+      // 0  [-------------I: 3--------------->
+      //    <-------------I: 3----------------]
+      AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
+
+      BoundSubstrand boundSubstrand = simple_helix_with_insertion_design.strands.first.bound_substrands().first;
+      Insertion insertion = boundSubstrand.insertions.first;
+      int length = 5;
+      state = app_state_reducer(
+        state,
+        InsertionLengthChange(
+          substrand: boundSubstrand,
+          insertion: insertion,
+          length: length,
+        ),
+      );
+
+      String expected_json = r"""
+        {
+          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "strands": [
+            {
+              "substrands": [
+                {"helix": 0, "forward": true, "start": 0, "end": 32, "insertions": [[16, 5]]}
+              ]
+            },
+            {
+              "substrands": [
+                {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
+              ]
+            }
+          ]
+        }
+      """;
+      DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('DeletionAdd', () {
+      // Before
+      //     0               16
+      // 0   [--------------->
+      //     <---------------]
+      // After:
+      //     0      8        16
+      // 0   [------X-------->
+      //     <------X--------]
+      //
+      AppState state = app_state_from_dna_design(simple_helix_no_seq_design);
+
+      int offset = 8;
+      BoundSubstrand substrand0 = simple_helix_no_seq_design.strands.first.bound_substrands().first;
+      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: substrand0));
+      BoundSubstrand substrand1 = simple_helix_no_seq_design.strands.last.bound_substrands().first;
+      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: substrand1));
+      String expected_json = r"""
+      {
+        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "strands": [
+          {
+            "substrands": [
+              { "helix": 0, "forward": true , "start": 0, "end": 16, "deletions": [8] }
+            ]
+          },
+          {
+            "substrands": [
+              { "helix": 0, "forward": false , "start": 0, "end": 16, "deletions": [8] }
+            ]
+          }
+        ]
+      }
+      """;
+      DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('InsertionRemove', () {
+      //   simple_helix_with_insertion_design
+      //
+      //     0            16               32
+      // 0  [-------------I: 3--------------->
+      //    <-------------I: 3----------------]
+      AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
+      BoundSubstrand boundSubstrand = simple_helix_with_insertion_design.strands.first.bound_substrands().first;
+      Insertion insertion = boundSubstrand.insertions.first;
+      //   simple_helix_with_insertion_design
+      //
+      //     0            16               32
+      // 0  [--------------------------------->
+      //    <-------------I: 3----------------]
+      state = app_state_reducer(
+        state,
+        InsertionRemove(
+          substrand: boundSubstrand,
+          insertion: insertion,
+        ),
+      );
+      String expected_json = r"""
+        {
+          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "strands": [
+            {
+              "substrands": [
+                {"helix": 0, "forward": true, "start": 0, "end": 32 }
+              ]
+            },
+            {
+              "substrands": [
+                {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
+              ]
+            }
+          ]
+        }
+      """;
+      DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('DeletionRemove', () {
+      //   simple_helix_with_deletion_design
+      //     0            16               32
+      // 0  [-------------X--------------->
+      //    <-------------X----------------]
+      AppState state = app_state_from_dna_design(simple_helix_with_deletion_design);
+      BoundSubstrand boundSubstrand = simple_helix_with_deletion_design.strands.first.bound_substrands().first;
+      //   simple_helix_with_insertion_design
+      //     0            16               32
+      // 0  [----------------------------->
+      //    <-------------X----------------]
+      state = app_state_reducer(
+        state,
+        DeletionRemove(
+          substrand: boundSubstrand,
+          offset: 16,
+        ),
+      );
+      String expected_json = r"""
+        {
+          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "strands": [
+            {
+              "substrands": [
+                {"helix": 0, "forward": true, "start": 0, "end": 32 }
+              ]
+            },
+            {
+              "substrands": [
+                {"helix": 0, "forward": false, "start": 0, "end": 32, "deletions": [16]}
+              ]
+            }
+          ]
+        }
+      """;
+      DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+  });
+
+  group('Grid change tests: ', () {
+    test('GridChange square to hex', () {
+      AppState state = app_state_from_dna_design(two_helices_design);
+      state = app_state_reducer(state, GridChange(grid: Grid.hex));
+
+      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
+      for (int i = 0; i < helices_builder.length; i++) {
+        helices_builder[i].grid = Grid.hex;
+      }
+      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+      DNADesign expected_design = two_helices_design.rebuild((b) => b
+        ..grid = Grid.hex
+        ..helices.replace(new_helices));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('GridChange square to none', () {
+      AppState state = app_state_from_dna_design(two_helices_design);
+      Grid grid = Grid.none;
+      state = app_state_reducer(state, GridChange(grid: grid));
+
+      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
+      for (int i = 0; i < helices_builder.length; i++) {
+        GridPosition gridPosition = helices_builder[i].grid_position.build();
+        helices_builder[i]
+          ..grid = grid
+          ..position = grid_to_position3d(gridPosition, Grid.square).toBuilder()
+          ..grid_position = null;
+      }
+      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+      DNADesign expected_design = two_helices_design.rebuild((b) => b
+        ..grid = grid
+        ..helices.replace(new_helices));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    //   test('GridChange none to square', () {
+    //     String two_helices_json = r"""
+    //       {
+    //         "version": "0.0.1",
+    //         "helices": [
+    //           {
+    //             "grid_position": [0, 0],
+    //             "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+    //           },
+    //           {
+    //             "grid_position": [0, 1],
+    //             "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+    //           }
+    //         ],
+    //         "strands": [
+    //           {
+    //             "substrands": [
+    //               {"helix": 0, "forward": true , "start": 0, "end": 16}
+    //             ]
+    //           },
+    //           {
+    //             "substrands": [
+    //               {"helix": 0, "forward": false , "start": 0, "end": 16}
+    //             ]
+    //           },
+    //           {
+    //             "substrands": [
+    //               {"helix": 1, "forward": true , "start": 0, "end": 16}
+    //             ]
+    //           },
+    //           {
+    //             "substrands": [
+    //               {"helix": 1, "forward": false , "start": 0, "end": 16}
+    //             ]
+    //           }
+    //         ]
+    //       }
+    //     """;
+    //   });
   });
 }
