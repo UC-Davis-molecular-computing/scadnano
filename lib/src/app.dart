@@ -31,6 +31,7 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+
 //import 'test.dart';
 //import 'constants.dart' as constants;
 
@@ -214,8 +215,7 @@ class App {
   }
 
   make_dart_functions_available_to_js(AppState state) {
-    util.make_dart_function_available_to_js(
-        'dart_main_view_dna_ends_move_stop', main_view_dna_ends_move_stop);
+    util.make_dart_function_available_to_js('dart_main_view_move_stop', main_view_move_stop);
   }
 }
 

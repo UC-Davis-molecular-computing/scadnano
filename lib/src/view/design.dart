@@ -192,7 +192,7 @@ class DesignViewComponent {
       DNAEndsMove moves_store = app.store_dna_ends_move.state;
       if (moves_store != null) {
         Helix helix = moves_store.helix;
-        int offset = util.get_offset_forward(event, helix).offset;
+        int offset = util.get_address_on_helix(event, helix).offset;
         int old_offset = moves_store.current_offset;
         if (offset != old_offset) {
           app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
@@ -202,12 +202,6 @@ class DesignViewComponent {
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-//        Helix helix = strands_move.original_helix;
-//        int offset = util.get_offset_forward(event, helix).offset;
-//        int old_offset = strands_move.current_address.offset;
-//        if (offset != old_offset) {
-//          app.dispatch(actions.StrandsMoveAdjustAddress(offset: offset));
-//        }
         var old_address = strands_move.current_address;
         var address = util.get_closest_address(event, app.state.dna_design.helices);
         if (address != old_address) {
@@ -558,7 +552,13 @@ class DesignViewComponent {
   }
 }
 
-main_view_dna_ends_move_stop() {
+main_view_move_stop(MouseEvent event) {
+  if (app.store_dna_ends_move.state != null || app.state.ui_state.strands_move != null) {
+    // since this is called from Javascript on a pointerUp event, this stops anything from being selected on
+    // mouse up, which is the default behavior for selectable elements
+//    event.stopPropagation();
+  }
+
   if (app.store_dna_ends_move.state != null) {
     DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
     app.dispatch(actions.DNAEndsMoveStop());

@@ -99,9 +99,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
   create_strand(SyntheticMouseEvent event_syn) {
     MouseEvent event = event_syn.nativeEvent;
-    var offset_forward = util.get_offset_forward(event, props.helix);
-    int offset = offset_forward.offset;
-    bool forward = offset_forward.forward;
+    var address = util.get_address_on_helix(event, props.helix);
+    int offset = address.offset;
+    bool forward = address.forward;
     if (offset <= props.helix.min_offset) {
       return;
     }

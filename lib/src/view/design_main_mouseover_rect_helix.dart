@@ -88,9 +88,9 @@ mouse_leave_update_mouseover() {
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
   MouseEvent event = event_syn.nativeEvent;
-  var offset_forward = util.get_offset_forward(event, helix);
-  int offset = offset_forward.offset;
-  bool forward = offset_forward.forward;
+  var address = util.get_address_on_helix(event, helix);
+  int offset = address.offset;
+  bool forward = address.forward;
 
   if (DEBUG_PRINT_MOUSEOVER) {
     Point<num> pan = util.current_pan(true);

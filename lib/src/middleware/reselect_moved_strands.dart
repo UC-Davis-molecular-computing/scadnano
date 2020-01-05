@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
@@ -13,14 +14,15 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
     // only reselect if there is more than 1 selected, otherwise this builds up many selected items
     // as the user repeatedly clicks on one at a time
 
-    List<Tuple3<int, int, bool>> addresses = [];
+    List<Address> addresses = [];
 
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (Strand strand in action.strands_move.strands_moving) {
       BoundSubstrand old_substrand = strand.first_bound_substrand();
       DNAEnd old_5p_end = old_substrand.dnaend_5p;
       int new_offset = old_5p_end.offset_inclusive + action.strands_move.delta_offset;
-      addresses.add(Tuple3<int, int, bool>(old_substrand.helix, new_offset, old_substrand.forward));
+      addresses
+          .add(Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward));
     }
 
     // then apply action

@@ -23,6 +23,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..select_mode_state = state.ui_state.select_mode_state
     ..edit_modes = state.ui_state.edit_modes
     ..is_origami = state.dna_design.is_origami
+    ..currently_moving = state.ui_state.strands_move != null || state.ui_state.moving_dna_ends
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
     ..moving_dna_ends = state.ui_state.moving_dna_ends;
 })(DesignMainStrands);
@@ -41,6 +42,7 @@ class _$DesignMainStrandsProps extends UiProps {
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool is_origami;
+  bool currently_moving;
 }
 
 @Component2()
@@ -81,6 +83,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
           ..selectables_store = props.selectables_store
           ..select_mode_state = props.select_mode_state
           ..edit_modes = props.edit_modes
+          ..currently_moving = props.currently_moving
           ..drawing_potential_crossover = props.drawing_potential_crossover
           ..moving_dna_ends = props.moving_dna_ends
           ..key = strand.toString())()

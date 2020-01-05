@@ -92,13 +92,28 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
   int delta_offset = strands_move.delta_offset;
   bool delta_forward = strands_move.delta_forward;
 
+  strand = moved_strand(strand,
+      delta_helix_idx: delta_helix_idx, delta_offset: delta_offset, delta_forward: delta_forward);
+  if (strands_move.copy) {
+    //FIXME: this makes the reducer not pure
+    strand = strand.rebuild((b) => b..color = util.color_cycler.next());
+  }
+  return strand;
+}
+
+Strand moved_strand(Strand strand, {int delta_helix_idx, int delta_offset, bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
+  if (delta_forward) {
+    substrands = substrands.reversed.toList();
+  }
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     if (substrand is BoundSubstrand) {
       BoundSubstrand bound_ss_moved = substrand.rebuild(
         (b) => b
+          ..is_first = i == 0
+          ..is_last = i == substrands.length - 1
           ..helix = substrand.helix + delta_helix_idx
           ..forward = (delta_forward != substrand.forward)
           ..start = substrand.start + delta_offset
@@ -112,10 +127,7 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
     substrands[i] = new_substrand;
   }
   strand = strand.rebuild((b) => b..substrands.replace(substrands));
-  if (strands_move.copy) {
-    //FIXME: this makes the reducer not pure
-    strand = strand.rebuild((b) => b..color = util.color_cycler.next());
-  }
+  strand = strand.initialize();
   return strand;
 }
 

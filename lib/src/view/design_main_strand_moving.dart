@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/reducers/strands_reducer.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 
@@ -66,27 +67,30 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
   }
 
   ReactElement _draw_strand_lines_single_path() {
-    BoundSubstrand substrand = props.strand.first_bound_substrand();
-    int delta_offset = props.delta_offset;
-    bool forward = props.delta_forward ? !substrand.forward : substrand.forward;
+    Strand strand_moved = moved_strand(props.strand,
+        delta_helix_idx: props.delta_helix_idx,
+        delta_offset: props.delta_offset,
+        delta_forward: props.delta_forward);
 
-    var helix = props.helices[substrand.helix + props.delta_helix_idx];
-    var start_svg = helix.svg_base_pos(substrand.offset_5p + delta_offset, forward);
+    List<BoundSubstrand> bound_substrands = strand_moved.bound_substrands();
+    BoundSubstrand substrand = bound_substrands.first;
+
+    var helix = props.helices[substrand.helix];
+    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
-    var bound_substrands = props.strand.bound_substrands();
     for (int i = 0; i < bound_substrands.length; i++) {
       // substrand line
-      var end_svg = helix.svg_base_pos(substrand.offset_3p + delta_offset, forward);
+      var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
       path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
       // crossover/loopout line/arc
       if (i < bound_substrands.length - 1) {
         var old_substrand = substrand;
         substrand = bound_substrands[i + 1];
-        helix = props.helices[substrand.helix + props.delta_helix_idx];
-        start_svg = helix.svg_base_pos(substrand.offset_5p + delta_offset, forward);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand, delta: delta_offset);
+        helix = props.helices[substrand.helix];
+        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
+        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
     }

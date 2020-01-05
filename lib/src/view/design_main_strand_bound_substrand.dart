@@ -63,8 +63,8 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
     if (nick_mode || insertion_mode || deletion_mode) {
       var substrand = props.substrand;
       MouseEvent event = event_syn.nativeEvent;
-      var offset_forward = util.get_offset_forward(event, props.helix);
-      int offset = offset_forward.offset;
+      var address = util.get_address_on_helix(event, props.helix);
+      int offset = address.offset;
 
       if (offset <= substrand.start || offset >= substrand.end) {
         return; // cannot have nick/insertion/deletion on end

@@ -36,7 +36,7 @@ StrandsMove strands_adjust_address_reducer(
     StrandsMove strands_move, AppState state, actions.StrandsMoveAdjustAddress action) {
   StrandsMove new_strands_move = strands_move.rebuild((b) => b..current_address.replace(action.address));
   if (in_bounds(new_strands_move)) {
-    bool allowable = is_allowable(strands_move);
+    bool allowable = is_allowable(new_strands_move);
     return new_strands_move.rebuild((b) => b..allowable = allowable);
   } else {
     return strands_move;
@@ -52,36 +52,26 @@ bool in_bounds(StrandsMove strands_move) {
   // look for helix out of bounds
   int min_helix_moving = strands_move.helices_moving.reduce(min);
   int max_helix_moving = strands_move.helices_moving.reduce(max);
-  if (min_helix_moving + delta_helix_idx < 0) {
-    return false;
-  }
-  if (max_helix_moving + delta_helix_idx >= strands_move.helices.length) {
-    return false;
-  }
+  if (min_helix_moving + delta_helix_idx < 0) return false;
+  if (max_helix_moving + delta_helix_idx >= strands_move.helices.length) return false;
 
   // look for offset out of bounds
   for (int original_helix_idx = 0; original_helix_idx < strands_move.num_helices; original_helix_idx++) {
     var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
-    if (substrands_moving.isEmpty) {
-      continue;
-    }
+    if (substrands_moving.isEmpty) continue;
 
     int new_helix_idx = original_helix_idx + delta_helix_idx;
     Helix helix = strands_move.helices[new_helix_idx];
     for (var ss in substrands_moving) {
-      if (ss.start + delta_offset < helix.min_offset) {
-        return false;
-      }
-      if (ss.end + delta_offset > helix.max_offset) {
-        return false;
-      }
+      if (ss.start + delta_offset < helix.min_offset) return false;
+      if (ss.end + delta_offset > helix.max_offset) return false;
     }
   }
 
   return true;
 }
 
-//FIXME: some code is being reused between here and in_bounds
+// XXX: assumes in_bounds check has already passed
 bool is_allowable(StrandsMove strands_move) {
   int delta_helix_idx = strands_move.delta_helix_idx;
   int delta_offset = strands_move.delta_offset;
@@ -90,9 +80,7 @@ bool is_allowable(StrandsMove strands_move) {
   int num_helices = strands_move.helix_idx_to_substrands_moving.length;
   for (int original_helix_idx = 0; original_helix_idx < num_helices; original_helix_idx++) {
     var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
-    if (substrands_moving.isEmpty) {
-      continue;
-    }
+    if (substrands_moving.isEmpty) continue;
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
     // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
@@ -101,9 +89,7 @@ bool is_allowable(StrandsMove strands_move) {
 
     Helix new_helix = strands_move.helices[new_helix_idx];
     var substrands_fixed = strands_move.helix_idx_to_substrands_fixed[new_helix_idx];
-    if (substrands_fixed.isEmpty) {
-      continue;
-    }
+    if (substrands_fixed.isEmpty) continue;
 
     // below, note that delta_forward != ss.forward is equivalent to delta_forward XOR ss.forward, i.e.,
     // if delta_forward is false (i.e., the forward bit isn't changing) then use the value of ss.forward,

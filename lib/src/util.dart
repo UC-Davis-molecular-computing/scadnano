@@ -434,44 +434,19 @@ num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetA
 
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
-class OffsetForward {
-  int offset;
-  bool forward;
-
-  OffsetForward(this.offset, this.forward);
-}
-
 /// Return offset and direction on helix where click event occurred.
-OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
-  var svg_coord;
-  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-  if (browser.isFirefox) {
-    svg_coord = event.offset;
-  } else {
-    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
-  }
-  num svg_x = svg_coord.x;
-  num svg_y = svg_coord.y;
-
-  int offset = helix.svg_x_to_offset(svg_x);
-  bool forward = helix.svg_y_is_forward(svg_y);
-
-  return OffsetForward(offset, forward);
+Address get_address_on_helix(MouseEvent event, Helix helix) {
+  var svg_coord = svg_position_of_mouse_click(event);
+  int offset = helix.svg_x_to_offset(svg_coord.x);
+  bool forward = helix.svg_y_is_forward(svg_coord.y);
+  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
 
 /// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
 Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord;
-  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-  if (browser.isFirefox) {
-    svg_coord = event.offset;
-  } else {
-    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
-  }
-  num svg_y = svg_coord.y;
+  var svg_coord = svg_position_of_mouse_click(event);
 
+  num svg_y = svg_coord.y;
   for (Helix helix in helices) {
     if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
       return helix;
@@ -494,23 +469,17 @@ num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGH
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord;
-  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-  if (browser.isFirefox) {
-    svg_coord = event.offset;
-  } else {
-    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
-  }
-  num svg_x = svg_coord.x;
-  num svg_y = svg_coord.y;
-
+  var svg_coord = svg_position_of_mouse_click(event);
   Helix helix = get_closest_helix(event, helices);
-  int offset = helix.svg_x_to_offset(svg_x);
-  bool forward = helix.svg_y_is_forward(svg_y);
-
+  int offset = helix.svg_x_to_offset(svg_coord.x);
+  bool forward = helix.svg_y_is_forward(svg_coord.y);
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
+
+//XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+// might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+Point<num> svg_position_of_mouse_click(MouseEvent event) =>
+    browser.isFirefox ? event.offset : transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
 
 String remove_whitespace_and_uppercase(String string) {
   var string_no_spaces = string.replaceAll(RegExp(r'\s+'), '');

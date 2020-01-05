@@ -54,6 +54,7 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
+  bool currently_moving;
   bool origami_type_is_selectable;
 }
 
@@ -138,11 +139,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
       // select/deselect
       MouseEvent event = event_syn.nativeEvent;
+//      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
         props.strand.handle_selection_mouse_down(event);
       }
 
       // set up drag detection for moving DNA ends
+//      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
         var address = util.get_closest_address(event, props.helices);
         app.dispatch(actions.StrandsMoveStart(address: address, copy: false));
@@ -156,6 +159,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   handle_click_up(react.SyntheticPointerEvent event_syn) {
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
+      //XXX: This is tricky. If we condition on !props.currently_moving, then this achieves something we
+      // want, which is that if we are moving a group of strands, and we are in a disallowed position where
+      // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
+      // then it would otherwise become selected on mouse up, when really we just want to end the move.
+      // But it also achieves something we don't want.
+      // See also commented out checks in handle_click_down.
+//      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
         props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
       }
