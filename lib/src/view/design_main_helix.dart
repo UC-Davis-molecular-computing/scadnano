@@ -105,8 +105,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (offset <= props.helix.min_offset) {
       return;
     }
-    int start = offset - 1;
-    int end = offset + 1;
+    int start = offset;
+    int end = offset + 2;
     app.dispatch(actions.StrandCreate(helix_idx: props.helix.idx, forward: forward, start: start, end: end));
   }
 

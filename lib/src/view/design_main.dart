@@ -18,6 +18,7 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
+import 'edit_mode_queryable.dart';
 import 'potential_crossover_view.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';
@@ -50,7 +51,7 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
 UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
-class _$DesignMainProps extends UiProps {
+class _$DesignMainProps extends EditModePropsAbstract {
   BuiltList<Helix> helices;
   BuiltList<Strand> strands;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
@@ -63,7 +64,7 @@ class _$DesignMainProps extends UiProps {
 }
 
 @Component2()
-class DesignMainComponent extends UiComponent2<DesignMainProps> {
+class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQueryable<DesignMainProps> {
   @override
   render() {
     if (props.has_error) {
@@ -82,9 +83,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
-      (DesignMainPotentialVerticalCrossovers()
-        ..potential_vertical_crossovers = props.potential_vertical_crossovers
-        ..key = 'potential-vertical-crossovers')(),
+      if (pencil_mode)
+        (DesignMainPotentialVerticalCrossovers()
+          ..potential_vertical_crossovers = props.potential_vertical_crossovers
+          ..key = 'potential-vertical-crossovers')(),
       (DesignMainDNASequences()
         ..show_dna = props.show_dna
         ..strands = props.strands
@@ -97,7 +99,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
-      if (props.edit_modes.contains(EditModeChoice.backbone))
+      if (backbone_mode)
         (DesignMainMouseoverRectHelices()
           ..helices = props.helices
           ..key = 'mouseover-rect')(),
