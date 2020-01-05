@@ -26,7 +26,7 @@ StrandsMove strands_move_start_reducer(
       strands_moving: selected_strands,
       all_strands: state.dna_design.strands,
       original_offset: action.offset,
-      helix: action.helix,
+      original_helix: action.helix,
       helices: state.dna_design.helices,
       copy: action.copy);
 }

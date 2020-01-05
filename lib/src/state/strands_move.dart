@@ -1,4 +1,3 @@
-
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -22,7 +21,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       {BuiltList<Strand> strands_moving,
       BuiltList<Strand> all_strands,
       int original_offset,
-      Helix helix,
+      Helix original_helix,
       BuiltList<Helix> helices,
       bool copy = false}) {
     var strands_fixed =
@@ -31,7 +30,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
-      ..helix.replace(helix)
+      ..original_helix.replace(original_helix)
+      ..current_helix.replace(original_helix)
       ..original_offset = original_offset
       ..current_offset = original_offset
       ..copy = copy
@@ -44,7 +44,9 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   BuiltList<Strand> get strands_fixed;
 
-  Helix get helix;
+  Helix get original_helix;
+
+  Helix get current_helix;
 
   int get original_offset;
 

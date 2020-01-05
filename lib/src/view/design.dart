@@ -202,7 +202,7 @@ class DesignViewComponent {
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-        Helix helix = strands_move.helix;
+        Helix helix = strands_move.original_helix;
         int offset = util.get_offset_forward(event, helix).offset;
         int old_offset = strands_move.current_offset;
         if (offset != old_offset) {

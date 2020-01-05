@@ -3810,7 +3810,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
           original_offset: 7,
-          helix: helix0,
+          original_helix: helix0,
           helices: state.dna_design.helices,
           copy: false);
 
@@ -3935,7 +3935,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
           original_offset: offset,
-          helix: helix1,
+          original_helix: helix1,
           helices: state.dna_design.helices,
           copy: true);
 
