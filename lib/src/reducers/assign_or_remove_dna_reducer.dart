@@ -32,7 +32,7 @@ BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDN
 
   List<Strand> strands_builder = strands.toList();
   for (int idx in idxs) {
-    strands_builder[idx] = strands_builder[idx].rebuild((b) => b..dna_sequence = null);
+    strands_builder[idx] = strands_builder[idx].remove_dna_sequence();
   }
 
   return strands_builder.toBuiltList();

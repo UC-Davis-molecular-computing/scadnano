@@ -217,6 +217,22 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     return json_map;
   }
 
+  Strand remove_dna_sequence() {
+    int start_idx_ss = 0;
+    List<Substrand> substrands_new = [];
+    // assign DNA substrings to substrands
+    for (var ss in substrands) {
+      int end_idx_ss = start_idx_ss + ss.dna_length();
+      Substrand ss_new = ss.set_dna_sequence(null);
+      substrands_new.add(ss_new);
+      start_idx_ss = end_idx_ss;
+    }
+
+    return rebuild((strand) => strand
+      ..substrands.replace(substrands_new)
+      ..dna_sequence = null);
+  }
+
   /// Sets DNA sequence of strand (but does not assign complement to any Strands bound to it).
   Strand set_dna_sequence(String dna_sequence_new) {
     // truncate dna_sequence_new if too long; pad with ?'s if to short
