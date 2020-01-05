@@ -17,6 +17,25 @@ import 'package:built_value/built_value.dart';
 
 part 'helix.g.dart';
 
+// "Address" of a base; (helix, offset, direction)
+abstract class Address with BuiltJsonSerializable implements Built<Address, AddressBuilder> {
+  factory Address({int helix_idx, int offset, bool forward}) = _$Address._;
+
+  factory Address.from([void Function(AddressBuilder) updates]) = _$Address;
+
+  Address._();
+
+  static Serializer<Address> get serializer => _$addressSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  int get helix_idx;
+
+  int get offset;
+
+  bool get forward;
+}
+
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
 abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBuilder> {
   Helix._();
@@ -128,7 +147,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   Position3D default_position() {
     num z = grid_position.b * constants.BASE_WIDTH_SVG;
     Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..z=z);
+    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..z = z);
     return position3d;
   }
 

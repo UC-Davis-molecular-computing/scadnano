@@ -123,7 +123,7 @@ part 'serializers.g.dart';
   StrandsMove,
   StrandsMoveStart,
   StrandsMoveStop,
-  StrandsMoveAdjustOffset,
+  StrandsMoveAdjustAddress,
   StrandsMoveCommit,
   GridChange,
   ThrottledActionFast,
@@ -133,6 +133,7 @@ part 'serializers.g.dart';
   ContextMenuShow,
   ContextMenuHide,
   ScaffoldSet,
+  Address,
 ])
 Serializers serializers = _$serializers;
 

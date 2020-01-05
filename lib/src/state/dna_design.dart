@@ -158,7 +158,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return builder.build();
   }
 
-
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
@@ -257,12 +256,12 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Gets DNAEnd at given address (helix,offset,forward)
   /// Offset is inclusive, i.e., dna_end.offset_inclusive
   @memoized
-  BuiltMap<Tuple3<int, int, bool>, DNAEnd> get address_to_end {
-    var map = Map<Tuple3<int, int, bool>, DNAEnd>();
+  BuiltMap<Address, DNAEnd> get address_to_end {
+    var map = Map<Address, DNAEnd>();
     for (var strand in strands) {
       for (var ss in strand.bound_substrands()) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
-          var key = Tuple3(ss.helix, end.offset_inclusive, ss.forward);
+          var key = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
           map[key] = end;
         }
       }
@@ -273,11 +272,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Gets Strand with 5p end at given address (helix,offset,forward)
   /// Offset is inclusive, i.e., dna_end.offset_inclusive
   @memoized
-  BuiltMap<Tuple3<int, int, bool>, Strand> get address_5p_to_strand {
-    var map = Map<Tuple3<int, int, bool>, Strand>();
+  BuiltMap<Address, Strand> get address_5p_to_strand {
+    var map = Map<Address, Strand>();
     for (var strand in strands) {
       var ss = strand.first_bound_substrand();
-      var key = Tuple3(ss.helix, ss.dnaend_5p.offset_inclusive, ss.forward);
+      var key = Address(helix_idx: ss.helix, offset: ss.dnaend_5p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
     return map.build();

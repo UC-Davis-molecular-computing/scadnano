@@ -489,6 +489,26 @@ OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
   return OffsetForward(offset, forward);
 }
 
+/// Return (closest) helix, offset and direction where click event occurred.
+Address get_address(MouseEvent event, BuiltList<Helix> helices) {
+  var svg_coord;
+  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+  if (browser.isFirefox) {
+    svg_coord = event.offset;
+  } else {
+    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
+  }
+  num svg_x = svg_coord.x;
+  num svg_y = svg_coord.y;
+
+  Helix helix = get_helix(event, helices);
+  int offset = helix.svg_x_to_offset(svg_x);
+  bool forward = helix.svg_y_is_forward(svg_y);
+
+  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
+}
+
 String remove_whitespace_and_uppercase(String string) {
   var string_no_spaces = string.replaceAll(RegExp(r'\s+'), '');
   return string_no_spaces.toUpperCase();

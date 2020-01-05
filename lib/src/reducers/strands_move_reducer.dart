@@ -11,7 +11,7 @@ import '../actions/actions.dart' as actions;
 
 GlobalReducer<StrandsMove, AppState> strands_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),
-  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveAdjustOffset>(strands_adjust_offset_reducer),
+  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveAdjustAddress>(strands_adjust_address_reducer),
 ]);
 
 Reducer<StrandsMove> strands_move_local_reducer = combineReducers([
@@ -25,50 +25,102 @@ StrandsMove strands_move_start_reducer(
   return StrandsMove(
       strands_moving: selected_strands,
       all_strands: state.dna_design.strands,
-      original_offset: action.offset,
-      original_helix: action.helix,
+      original_address: action.address,
       helices: state.dna_design.helices,
       copy: action.copy);
 }
 
 StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsMoveStop action) => null;
 
-StrandsMove strands_adjust_offset_reducer(
-    StrandsMove strands_move, AppState state, actions.StrandsMoveAdjustOffset action) {
-  strands_move = strands_move.rebuild((b) => b..current_offset = action.offset);
-  bool allowable = is_allowable(strands_move);
-  return strands_move.rebuild((b) => b..allowable = allowable);
+StrandsMove strands_adjust_address_reducer(
+    StrandsMove strands_move, AppState state, actions.StrandsMoveAdjustAddress action) {
+  StrandsMove new_strands_move = strands_move.rebuild((b) => b..current_address.replace(action.address));
+  if (in_bounds(new_strands_move)) {
+    bool allowable = is_allowable(strands_move);
+    return new_strands_move.rebuild((b) => b..allowable = allowable);
+  } else {
+    return strands_move;
+  }
 }
 
-bool is_allowable(StrandsMove strands_move) {
-  int delta = strands_move.delta;
-  if (delta == 0) {
-    return true;
+// if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
+// where the strands would go if it were allowable.
+bool in_bounds(StrandsMove strands_move) {
+  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_offset = strands_move.delta_offset;
+
+  // look for helix out of bounds
+  int min_helix_moving = strands_move.helices_moving.reduce(min);
+  int max_helix_moving = strands_move.helices_moving.reduce(max);
+  if (min_helix_moving + delta_helix_idx < 0) {
+    return false;
   }
+  if (max_helix_moving + delta_helix_idx >= strands_move.helices.length) {
+    return false;
+  }
+
+  // look for offset out of bounds
+  for (int original_helix_idx = 0; original_helix_idx < strands_move.num_helices; original_helix_idx++) {
+    var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
+    if (substrands_moving.isEmpty) {
+      continue;
+    }
+
+    int new_helix_idx = original_helix_idx + delta_helix_idx;
+    Helix helix = strands_move.helices[new_helix_idx];
+    for (var ss in substrands_moving) {
+      if (ss.start + delta_offset < helix.min_offset) {
+        return false;
+      }
+      if (ss.end + delta_offset > helix.max_offset) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+//FIXME: some code is being reused between here and in_bounds
+bool is_allowable(StrandsMove strands_move) {
+  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_offset = strands_move.delta_offset;
+  bool delta_forward = strands_move.delta_forward;
+
   int num_helices = strands_move.helix_idx_to_substrands_moving.length;
-  for (int helix_idx = 0; helix_idx < num_helices; helix_idx++) {
-    Helix helix = strands_move.helices[helix_idx];
-    var substrands_moving = strands_move.helix_idx_to_substrands_moving[helix_idx];
-    var substrands_fixed = strands_move.helix_idx_to_substrands_fixed[helix_idx];
+  for (int original_helix_idx = 0; original_helix_idx < num_helices; original_helix_idx++) {
+    var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
+    if (substrands_moving.isEmpty) {
+      continue;
+    }
+
+    // if we made it here then there are substrands actually moving, so if the reducer that processed
+    // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
+    int new_helix_idx = original_helix_idx + delta_helix_idx;
+    assert(0 <= new_helix_idx && new_helix_idx < num_helices);
+
+    Helix new_helix = strands_move.helices[new_helix_idx];
+    var substrands_fixed = strands_move.helix_idx_to_substrands_fixed[new_helix_idx];
+    if (substrands_fixed.isEmpty) {
+      continue;
+    }
+
+    // below, note that delta_forward != ss.forward is equivalent to delta_forward XOR ss.forward, i.e.,
+    // if delta_forward is false (i.e., the forward bit isn't changing) then use the value of ss.forward,
+    // otherwise use its negation
     for (bool forward in [true, false]) {
       List<Point<int>> intervals_moving = substrands_moving
-          .where((ss) => ss.forward == forward)
-          .map((ss) => Point<int>(ss.start + delta, ss.end - 1 + delta))
+          .where((ss) => delta_forward != (ss.forward == forward))
+          .map((ss) => Point<int>(ss.start + delta_offset, ss.end - 1 + delta_offset))
           .toList();
       if (intervals_moving.isNotEmpty) {
-        if (intervals_moving[0].x < helix.min_offset) {
-          return false;
-        }
-        if (intervals_moving[intervals_moving.length - 1].y >= helix.max_offset) {
-          return false;
-        }
-      }
-      List<Point<int>> intervals_fixed = substrands_fixed
-          .where((ss) => ss.forward == forward)
-          .map((ss) => Point<int>(ss.start, ss.end - 1))
-          .toList();
-      if (intersection(intervals_moving, intervals_fixed)) {
-        return false;
+        if (intervals_moving[0].x < new_helix.min_offset) return false;
+        if (intervals_moving[intervals_moving.length - 1].y >= new_helix.max_offset) return false;
+        List<Point<int>> intervals_fixed = substrands_fixed
+            .where((ss) => ss.forward == forward)
+            .map((ss) => Point<int>(ss.start, ss.end - 1))
+            .toList();
+        if (intersection(intervals_moving, intervals_fixed)) return false;
       }
     }
   }

@@ -39,7 +39,9 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
       for (var strand in props.strands_move.strands_moving)
         (DesignMainStrandMoving()
           ..strand = strand
-          ..delta = props.strands_move.delta
+          ..delta_helix_idx = props.strands_move.delta_helix_idx
+          ..delta_offset = props.strands_move.delta_offset
+          ..delta_forward = props.strands_move.delta_forward
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..helices = props.helices
           ..allowable = props.strands_move.allowable

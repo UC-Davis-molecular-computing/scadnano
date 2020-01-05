@@ -1060,14 +1060,12 @@ abstract class PotentialCrossoverRemove
 abstract class StrandsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<StrandsMoveStart, StrandsMoveStartBuilder> {
-  int get offset;
-
-  Helix get helix;
+  Address get address;
 
   bool get copy;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStart({int offset, Helix helix, bool copy}) = _$StrandsMoveStart._;
+  factory StrandsMoveStart({Address address, bool copy}) = _$StrandsMoveStart._;
 
   StrandsMoveStart._();
 
@@ -1085,17 +1083,17 @@ abstract class StrandsMoveStop
   static Serializer<StrandsMoveStop> get serializer => _$strandsMoveStopSerializer;
 }
 
-abstract class StrandsMoveAdjustOffset
+abstract class StrandsMoveAdjustAddress
     with BuiltJsonSerializable
-    implements Action, Built<StrandsMoveAdjustOffset, StrandsMoveAdjustOffsetBuilder> {
-  int get offset;
+    implements Action, Built<StrandsMoveAdjustAddress, StrandsMoveAdjustAddressBuilder> {
+  Address get address;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveAdjustOffset({int offset}) = _$StrandsMoveAdjustOffset._;
+  factory StrandsMoveAdjustAddress({Address address}) = _$StrandsMoveAdjustAddress._;
 
-  StrandsMoveAdjustOffset._();
+  StrandsMoveAdjustAddress._();
 
-  static Serializer<StrandsMoveAdjustOffset> get serializer => _$strandsMoveAdjustOffsetSerializer;
+  static Serializer<StrandsMoveAdjustAddress> get serializer => _$strandsMoveAdjustAddressSerializer;
 }
 
 abstract class StrandsMoveCommit

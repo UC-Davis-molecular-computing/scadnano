@@ -19,7 +19,7 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
     for (Strand strand in action.strands_move.strands_moving) {
       BoundSubstrand old_substrand = strand.first_bound_substrand();
       DNAEnd old_5p_end = old_substrand.dnaend_5p;
-      int new_offset = old_5p_end.offset_inclusive + action.strands_move.delta;
+      int new_offset = old_5p_end.offset_inclusive + action.strands_move.delta_offset;
       addresses.add(Tuple3<int, int, bool>(old_substrand.helix, new_offset, old_substrand.forward));
     }
 

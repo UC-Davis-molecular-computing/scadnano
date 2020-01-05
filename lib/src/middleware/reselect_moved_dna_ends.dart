@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
@@ -13,14 +14,15 @@ reselect_moved_dna_ends_middleware(Store<AppState> store, action, NextDispatcher
     // only reselect if there is more than 1 selected, otherwise this builds up many selected items
     // as the user repeatedly clicks on one at a time
 
-    List<Tuple3<int, int, bool>> addresses = [];
+    List<Address> addresses = [];
 
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (DNAEndMove move in action.dna_ends_move.moves) {
       DNAEnd old_end = move.dna_end;
       BoundSubstrand old_substrand = store.state.dna_design.end_to_substrand[old_end];
       int new_offset = action.dna_ends_move.current_capped_offset_of(old_end);
-      addresses.add(Tuple3<int, int, bool>(old_substrand.helix, new_offset, old_substrand.forward));
+      addresses
+          .add(Address(helix_idx: old_substrand.helix, offset: new_offset, forward: old_substrand.forward));
     }
 
     // then apply action

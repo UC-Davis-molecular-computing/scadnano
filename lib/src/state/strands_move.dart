@@ -20,8 +20,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   factory StrandsMove(
       {BuiltList<Strand> strands_moving,
       BuiltList<Strand> all_strands,
-      int original_offset,
-      Helix original_helix,
+      Address original_address,
+      int original_helix_idx,
       BuiltList<Helix> helices,
       bool copy = false}) {
     var strands_fixed =
@@ -30,10 +30,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
-      ..original_helix.replace(original_helix)
-      ..current_helix.replace(original_helix)
-      ..original_offset = original_offset
-      ..current_offset = original_offset
+      ..original_address.replace(original_address)
+      ..current_address.replace(original_address)
       ..copy = copy
       ..allowable = true);
   }
@@ -44,13 +42,13 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   BuiltList<Strand> get strands_fixed;
 
-  Helix get original_helix;
+  Address get original_address;
 
-  Helix get current_helix;
+  Address get current_address;
 
-  int get original_offset;
+  Helix get original_helix => helices[original_address.helix_idx];
 
-  int get current_offset;
+  Helix get current_helix => helices[current_address.helix_idx];
 
   bool get allowable;
 
@@ -60,9 +58,13 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   int get num_helices => helices.length;
 
-  int get delta => current_offset - original_offset;
+  int get delta_offset => current_address.offset - original_address.offset;
 
-  bool get is_nontrivial => delta != 0;
+  int get delta_helix_idx => current_address.helix_idx - original_address.helix_idx;
+
+  bool get delta_forward => current_address.forward != original_address.forward;
+
+  bool get is_nontrivial => original_address != current_address;
 
   @memoized
   BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands_moving =>
@@ -71,4 +73,15 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   @memoized
   BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands_fixed =>
       construct_helix_idx_to_substrands_map(num_helices, strands_fixed);
+
+  @memoized
+  BuiltList<int> get helices_moving {
+    Set<int> ret = {};
+    for (var strand in strands_moving) {
+      for (var ss in strand.bound_substrands()) {
+        ret.add(ss.helix);
+      }
+    }
+    return ret.toBuiltList();
+  }
 }

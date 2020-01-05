@@ -202,11 +202,16 @@ class DesignViewComponent {
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-        Helix helix = strands_move.original_helix;
-        int offset = util.get_offset_forward(event, helix).offset;
-        int old_offset = strands_move.current_offset;
-        if (offset != old_offset) {
-          app.dispatch(actions.StrandsMoveAdjustOffset(offset: offset));
+//        Helix helix = strands_move.original_helix;
+//        int offset = util.get_offset_forward(event, helix).offset;
+//        int old_offset = strands_move.current_address.offset;
+//        if (offset != old_offset) {
+//          app.dispatch(actions.StrandsMoveAdjustAddress(offset: offset));
+//        }
+        var old_address = strands_move.current_address;
+        var address = util.get_address(event, app.state.dna_design.helices);
+        if (address != old_address) {
+          app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
         }
       }
     });
@@ -495,19 +500,22 @@ class DesignViewComponent {
     var strands = app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand).toList();
     int min_helix_idx;
     int min_offset;
+    bool min_forward;
     for (Strand strand in strands) {
       for (BoundSubstrand substrand in strand.bound_substrands()) {
         if (min_helix_idx == null || min_helix_idx > substrand.helix) {
           min_helix_idx = substrand.helix;
           min_offset = substrand.start; // reset this absolutely since helix got smaller
+          min_forward = substrand.forward; //
         } else if (min_offset == null || (min_helix_idx == substrand.helix && min_offset > substrand.start)) {
           min_offset = substrand.start;
+          min_forward = substrand.forward;
         }
       }
     }
 
-    Helix helix = app.state.dna_design.helices[min_helix_idx];
-    copy_action = actions.StrandsMoveStart(offset: min_offset, helix: helix, copy: true);
+    copy_action = actions.StrandsMoveStart(
+        address: Address(helix_idx: min_helix_idx, offset: min_offset, forward: min_forward), copy: true);
   }
 
   clear_copy_buffer() {

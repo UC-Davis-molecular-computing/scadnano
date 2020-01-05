@@ -88,7 +88,10 @@ BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions
 }
 
 Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move) {
-  int delta = strands_move.delta;
+  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_offset = strands_move.delta_offset;
+  bool delta_forward = strands_move.delta_forward;
+
   List<Substrand> substrands = strand.substrands.toList();
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
@@ -96,11 +99,13 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
     if (substrand is BoundSubstrand) {
       BoundSubstrand bound_ss_moved = substrand.rebuild(
         (b) => b
-          ..start = substrand.start + delta
-          ..end = substrand.end + delta
-          ..deletions.replace(substrand.deletions.map((d) => d + delta))
-          ..insertions
-              .replace(substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta))),
+          ..helix = substrand.helix + delta_helix_idx
+          ..forward = (delta_forward != substrand.forward)
+          ..start = substrand.start + delta_offset
+          ..end = substrand.end + delta_offset
+          ..deletions.replace(substrand.deletions.map((d) => d + delta_offset))
+          ..insertions.replace(
+              substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
       new_substrand = bound_ss_moved;
     }

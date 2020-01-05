@@ -3809,8 +3809,8 @@ main() {
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
-          original_offset: 7,
-          original_helix: helix0,
+          original_address: 7,
+          original_helix_idx: helix0.idx,
           helices: state.dna_design.helices,
           copy: false);
 
@@ -3830,8 +3830,8 @@ main() {
       int offset = 30;
       StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
         ..allowable = false
-        ..current_offset = offset);
-      state = app_state_reducer(state, StrandsMoveAdjustOffset(offset: offset));
+        ..current_address = offset);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
 
       expect(state.ui_state.strands_move, expected_strands_move);
     });
@@ -3849,8 +3849,8 @@ main() {
       int offset = 23;
       StrandsMove expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
         ..allowable = true
-        ..current_offset = offset);
-      state = app_state_reducer(state, StrandsMoveAdjustOffset(offset: offset));
+        ..current_address = offset);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
 
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -3934,8 +3934,8 @@ main() {
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
-          original_offset: offset,
-          original_helix: helix1,
+          original_address: offset,
+          original_helix_idx: helix1.idx,
           helices: state.dna_design.helices,
           copy: true);
 
@@ -3956,9 +3956,9 @@ main() {
       // 1                        -------------------->
       //   <-------------------] <-------------------]
       int offset = 0;
-      state = app_state_reducer(state, StrandsMoveAdjustOffset(offset: offset));
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(offset: offset));
 
-      strandsMove = strandsMove.rebuild((b) => b.current_offset = offset);
+      strandsMove = strandsMove.rebuild((b) => b.current_address = offset);
       expect(state.ui_state.strands_move, strandsMove);
 
       state = app_state_reducer(state, StrandsMoveStop());
