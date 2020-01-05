@@ -12,6 +12,7 @@ import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
 import 'state/export_dna_format.dart';
 import 'state/potential_crossover.dart';
+import 'state/potential_vertical_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
 import 'state/strands_move.dart';
@@ -101,6 +102,7 @@ part 'serializers.g.dart';
   Nick,
   Ligate,
   JoinStrandsByCrossover,
+  PotentialVerticalCrossover,
   PotentialCrossover,
   PotentialCrossoverCreate,
   PotentialCrossoverMove,

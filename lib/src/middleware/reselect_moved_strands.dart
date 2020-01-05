@@ -1,7 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:tuple/tuple.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';

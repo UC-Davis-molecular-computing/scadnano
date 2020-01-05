@@ -448,9 +448,22 @@ html, body {
   fill: none;
 }
 
+.potential-vertical-crossover-curve {
+  stroke-width: 4;
+  fill: none;
+  visibility: hidden;
+  pointer-events: all;
+}
+
+.potential-vertical-crossover-curve:hover {
+  stroke-width: 4;
+  stroke-opacity: 0.3;
+  fill: none;
+  visibility: visible;
+}
+
 .potential-crossover {
   stroke-width: 4;
-  /*stroke-dasharray: 2;*/
   stroke-opacity: 0.3;
   fill: none;
   pointer-events: none;

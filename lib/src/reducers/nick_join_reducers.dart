@@ -188,7 +188,7 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
 BuiltList<Strand> join_strands_by_crossover_reducer(
     BuiltList<Strand> strands, AppState state, actions.JoinStrandsByCrossover action) {
   // gather substrand data
-  DNAEnd dna_end_first_click = action.potential_crossover.dna_end_first_click;
+  DNAEnd dna_end_first_click = action.dna_end_first_click;
   DNAEnd dna_end_second_click = action.dna_end_second_click;
 
   // should be going from 3p end of one to 5p end of other

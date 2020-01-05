@@ -160,7 +160,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
       if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
           (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {
         app.dispatch(actions.JoinStrandsByCrossover(
-            potential_crossover: potential_crossover, dna_end_second_click: dna_end));
+            dna_end_first_click: potential_crossover.dna_end_first_click, dna_end_second_click: dna_end));
       }
     } else if (ligate_mode && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));

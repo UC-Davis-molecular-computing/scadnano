@@ -5,7 +5,6 @@ import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/helix.dart';
-import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 

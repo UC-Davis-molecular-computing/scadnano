@@ -5,8 +5,8 @@ import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
-import 'package:tuple/tuple.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -280,6 +280,88 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       map[key] = strand;
     }
     return map.build();
+  }
+
+  /// Gets Strand with 5p end at given address (helix,offset,forward)
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<Address, Strand> get address_3p_to_strand {
+    var map = Map<Address, Strand>();
+    for (var strand in strands) {
+      var ss = strand.last_bound_substrand();
+      var key = Address(helix_idx: ss.helix, offset: ss.dnaend_3p.offset_inclusive, forward: ss.forward);
+      map[key] = strand;
+    }
+    return map.build();
+  }
+
+  /// Maps Addresses to PotentialVerticalCrossovers.
+  /// The end on TOP (i.e., lower helix idx) has the address with the key in the map.
+  @memoized
+  BuiltList<PotentialVerticalCrossover> get potential_vertical_crossovers {
+    List<PotentialVerticalCrossover> crossovers = [];
+    for (var strand_5p in strands) {
+      var ss = strand_5p.first_bound_substrand();
+      int helix_idx = ss.helix;
+      int offset = ss.dnaend_5p.offset_inclusive;
+      bool forward = ss.forward;
+      var address_5p = Address(helix_idx: helix_idx, offset: offset, forward: forward);
+      for (var address_3p in [
+        Address(helix_idx: helix_idx - 1, offset: offset, forward: !forward),
+        Address(helix_idx: helix_idx + 1, offset: offset, forward: !forward)
+      ]) {
+        int helix_idx_top;
+        int helix_idx_bot;
+        var address_top;
+        bool forward_top;
+        BoundSubstrand  substrand_top;
+        BoundSubstrand  substrand_bot;
+        DNAEnd dna_end_top;
+        DNAEnd dna_end_bot;
+        if (address_3p_to_strand.keys.contains(address_3p)) {
+          Strand strand_3p = address_3p_to_strand[address_3p];
+          if (strand_5p != strand_3p) {
+            if (helix_idx + 1 == address_3p.helix_idx) {
+              // 5' end is on top, 3' is on bottom
+              helix_idx_top = address_5p.helix_idx;
+              address_top = address_5p;
+              forward_top = forward;
+              substrand_top = ss;
+              dna_end_top = substrand_top.dnaend_5p;
+
+              helix_idx_bot = address_3p.helix_idx;
+              substrand_bot = strand_3p.last_bound_substrand();
+              dna_end_bot = substrand_bot.dnaend_3p;
+            } else {
+              // 3' end is on top, 5' is on bottom
+              helix_idx_top = address_3p.helix_idx;
+              address_top = address_3p;
+              forward_top = !forward;
+              substrand_top = strand_3p.last_bound_substrand();
+              dna_end_top = substrand_top.dnaend_3p;
+
+              helix_idx_bot = address_5p.helix_idx;
+              substrand_bot = ss;
+              dna_end_bot = substrand_bot.dnaend_5p;
+            }
+          }
+        }
+        if (helix_idx_top != null) {
+          crossovers.add(PotentialVerticalCrossover(
+            helix_idx_top: helix_idx_top,
+            helix_idx_bot: helix_idx_bot,
+            offset: offset,
+            forward_top: forward_top,
+            color: strand_5p.color.toHexColor().toCssString(),
+            substrand_top: substrand_top,
+            substrand_bot: substrand_bot,
+            dna_end_top: dna_end_top,
+            dna_end_bot: dna_end_bot,
+          ));
+        }
+      }
+    }
+    return crossovers.build();
   }
 
 //  _add_helix(HelixUseActionParameters params) {

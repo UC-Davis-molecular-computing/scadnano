@@ -979,12 +979,12 @@ abstract class Ligate with BuiltJsonSerializable implements UndoableAction, Buil
 abstract class JoinStrandsByCrossover
     with BuiltJsonSerializable
     implements UndoableAction, Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
-  PotentialCrossover get potential_crossover;
+  DNAEnd get dna_end_first_click;
 
   DNAEnd get dna_end_second_click;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory JoinStrandsByCrossover({PotentialCrossover potential_crossover, DNAEnd dna_end_second_click}) =
+  factory JoinStrandsByCrossover({DNAEnd dna_end_first_click, DNAEnd dna_end_second_click}) =
       _$JoinStrandsByCrossover._;
 
   JoinStrandsByCrossover._();
@@ -1370,7 +1370,6 @@ abstract class GridChange
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // context menu
 
@@ -1397,7 +1396,6 @@ abstract class ContextMenuHide
 
   static Serializer<ContextMenuHide> get serializer => _$contextMenuHideSerializer;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // scaffold set/unset

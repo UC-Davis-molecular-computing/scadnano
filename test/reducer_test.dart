@@ -1555,7 +1555,7 @@ main() {
         state,
         JoinStrandsByCrossover(
           dna_end_second_click: helix_1_5p_end_second_click,
-          potential_crossover: helix_0_3p_end_potential_crossover,
+          dna_end_first_click: helix_0_3p_end_potential_crossover.dna_end_first_click,
         ));
 
     expect_strands_equal(state.dna_design.strands, two_helices_join_inner_strands.strands);
@@ -1582,7 +1582,7 @@ main() {
         state,
         JoinStrandsByCrossover(
           dna_end_second_click: helix_0_3p_end_second_click,
-          potential_crossover: helix_1_5p_end_potential_crossover,
+          dna_end_first_click: helix_1_5p_end_potential_crossover.dna_end_first_click,
         ));
 
     expect_strands_equal(state.dna_design.strands, two_helices_join_inner_strands.strands);
