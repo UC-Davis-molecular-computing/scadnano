@@ -31,6 +31,7 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+//import 'test.dart';
 //import 'constants.dart' as constants;
 
 // global variable for whole program
@@ -45,7 +46,13 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
-test_stuff() async {}
+test_stuff() async {
+//  List<int> numbers = [1,2,3];
+//  Value value = Value(numbers: numbers);
+//  print(value);
+//  numbers[0] = 9;
+//  print(value);
+}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -102,6 +109,7 @@ class App {
 
   initialize_model() async {
     String filename_in_directory = '3_helix_deletions_insertions.dna';
+//    String filename_in_directory = '3_helix_scaf_only.dna';
 //    String filename_in_directory = '1_staple_1_helix_origami.dna';
 //    String filename_in_directory = '2_helix_2_strands_multiple_substrands_no_seq.dna';
 //    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions_no_seq.dna';

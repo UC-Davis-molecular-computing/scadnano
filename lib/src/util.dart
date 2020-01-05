@@ -441,35 +441,6 @@ class OffsetForward {
   OffsetForward(this.offset, this.forward);
 }
 
-/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
-Helix get_helix(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord;
-  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-  if (browser.isFirefox) {
-    svg_coord = event.offset;
-  } else {
-    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
-  }
-  num svg_y = svg_coord.y;
-
-  for (Helix helix in helices) {
-    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
-      return helix;
-    }
-  }
-
-  // didn't find a helix, so we'll find the closest one
-  Helix helix_closest = helices.first;
-  num dist = (helix_closest.svg_position.y - svg_y).abs();
-  for (Helix helix in helices) {
-    if ((helix.svg_position.y - svg_y).abs() < dist) {
-      helix_closest = helix;
-    }
-  }
-  return helix_closest;
-}
-
 /// Return offset and direction on helix where click event occurred.
 OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
   var svg_coord;
@@ -489,8 +460,40 @@ OffsetForward get_offset_forward(MouseEvent event, Helix helix) {
   return OffsetForward(offset, forward);
 }
 
+/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
+Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
+  var svg_coord;
+  //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+  // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+  if (browser.isFirefox) {
+    svg_coord = event.offset;
+  } else {
+    svg_coord = transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
+  }
+  num svg_y = svg_coord.y;
+
+  for (Helix helix in helices) {
+    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
+      return helix;
+    }
+  }
+
+  // didn't find a helix, so we'll find the closest one
+  Helix helix_closest = helices.first;
+  num min_dist = distance(helix_closest, svg_y);
+  for (Helix helix in helices) {
+    if (distance(helix, svg_y) < min_dist) {
+      helix_closest = helix;
+      min_dist = distance(helix, svg_y);
+    }
+  }
+  return helix_closest;
+}
+
+num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
+
 /// Return (closest) helix, offset and direction where click event occurred.
-Address get_address(MouseEvent event, BuiltList<Helix> helices) {
+Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
   var svg_coord;
   //XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
   // might be related to the fact that the mouse coordinates for the selection box are detected outside of React
@@ -502,7 +505,7 @@ Address get_address(MouseEvent event, BuiltList<Helix> helices) {
   num svg_x = svg_coord.x;
   num svg_y = svg_coord.y;
 
-  Helix helix = get_helix(event, helices);
+  Helix helix = get_closest_helix(event, helices);
   int offset = helix.svg_x_to_offset(svg_x);
   bool forward = helix.svg_y_is_forward(svg_y);
 
