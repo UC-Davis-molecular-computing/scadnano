@@ -101,7 +101,7 @@ class DesignMainLoopoutComponent
       // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
       return (Dom.path()
         ..d = path
-        ..stroke = color.toRgbColor().toCssString()
+        ..stroke = color.toHexColor().toCssString()
         ..onMouseEnter = (ev) {
           setState(newState()..mouse_hover = true);
           if (show_mouseover_rect) {
@@ -208,7 +208,7 @@ ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_sub
   String id = loopout.id();
   ReactElement arc = (Dom.path()
     ..className = classname
-    ..stroke = color.toRgbColor().toCssString()
+    ..stroke = color.toHexColor().toCssString()
     ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
     ..key = id
     ..id = id)();

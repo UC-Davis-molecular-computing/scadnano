@@ -83,7 +83,7 @@ class DesignMainStrandCrossoverComponent
     }
 
     var path = crossover_path_description(prev_substrand, next_substrand);
-    var color = strand.color.toRgbColor().toCssString();
+    var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 
     if (show_mouseover_rect && mouse_hover) {

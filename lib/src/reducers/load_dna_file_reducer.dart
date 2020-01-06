@@ -63,13 +63,14 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
     }
     var new_selectables_store = SelectablesStore();
 //    new_selectables_store = new_selectables_store.register_dna_design(dna_design_new);
+    var new_filename = action.filename ?? state.ui_state.loaded_filename;
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
       ..dna_design = dna_design_new.toBuilder()
       ..ui_state.update((u) => u
         ..selectables_store.replace(new_selectables_store)
         ..changed_since_last_save = false
-        ..loaded_filename = action.filename
+        ..loaded_filename = new_filename
         ..side_selected_helix_idxs.replace(side_selected_helix_idxs))
       ..error_message = "");
   } else {

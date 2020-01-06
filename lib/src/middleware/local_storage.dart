@@ -6,6 +6,7 @@ import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 
+import '../json_serializable.dart';
 import '../state/app_state.dart';
 import '../state/select_mode.dart';
 import '../app.dart';
@@ -33,11 +34,16 @@ class Storable extends EnumClass {
 
 const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
+const String _FILENAME_KEY = _LOCAL_STORAGE_PREFIX + 'loaded_filename';
+
 save(Storable storable) {
   String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
   String value_string;
 
-  if (storable == Storable.show_dna) {
+  if (storable == Storable.dna_design) {
+    value_string = json_encode(app.state.dna_design);
+    window.localStorage[_FILENAME_KEY] = app.state.ui_state.loaded_filename;
+  } else if (storable == Storable.show_dna) {
     value_string = app.state.ui_state.show_dna.toString();
   } else if (storable == Storable.show_mismatches) {
     value_string = app.state.ui_state.show_mismatches.toString();
@@ -77,16 +83,20 @@ _restore(Storable storable) {
 
     actions.Action action = null;
 
-    if (storable == Storable.show_dna) {
-//      action = dispatcher.SetShowDNA.from((s) => s..show_dna = (value == 'true'));
+    if (storable == Storable.dna_design) {
+      var filename;
+      if (window.localStorage.containsKey(_FILENAME_KEY)) {
+        filename = window.localStorage[_FILENAME_KEY];
+      } else {
+        filename = null;
+      }
+      action = actions.LoadDNAFile(value, filename);
+    } else if (storable == Storable.show_dna) {
       action = actions.SetShowDNA(value == 'true');
-
     } else if (storable == Storable.show_mismatches) {
       action = actions.SetShowMismatches(value == 'true');
-
     } else if (storable == Storable.show_editor) {
       action = actions.SetShowEditor(value == 'true');
-
     } else if (storable == Storable.editor_mode) {
 //      EditModeChoice mode = EditModeChoice.from_json(value);
       //FIXME: implement this
@@ -95,7 +105,6 @@ _restore(Storable storable) {
       List<dynamic> mode_names = jsonDecode(value);
       List<EditModeChoice> modes = mode_names.map((name) => EditModeChoice.from_json(name)).toList();
       action = actions.EditModesSet(modes);
-
     } else if (storable == Storable.select_modes) {
       List<dynamic> mode_names = jsonDecode(value);
       List<SelectModeChoice> modes = mode_names.map((name) => SelectModeChoice.from_json(name)).toList();
@@ -103,6 +112,7 @@ _restore(Storable storable) {
     }
 
     if (action != null) {
+      print('action in localStorage restore: $action');
       app.dispatch(action);
     }
   }

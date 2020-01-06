@@ -192,8 +192,8 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     var json_map = Map<String, dynamic>();
 
     if (this.color != null) {
-      var color_rgb = color.toRgbColor();
-      String color_json = color_rgb.toCssString();
+      String color_json = color.toHexColor().toCssString();
+      print('writing color as json: $color_json');
       json_map[constants.color_key] = color_json;
     }
 

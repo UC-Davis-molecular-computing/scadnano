@@ -49,10 +49,14 @@ abstract class Action {
 
 // Actions that affect the DNADesign (i.e., not purely UIAppState-affecting actions such as selecting items).
 // Only Undo and Redo implement this directly; all others implement the subtype UndoableAction.
-abstract class DNADesignChangingAction extends Action {}
+abstract class DNADesignChangingAction implements StorableAction {
+  Iterable<Storable> storables() => [Storable.dna_design];
+}
 
 /// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
-abstract class UndoableAction extends DNADesignChangingAction {}
+abstract class UndoableAction implements DNADesignChangingAction {
+  Iterable<Storable> storables() => [Storable.dna_design];
+}
 
 /// Fast actions happen rapidly and are not dispatched to normal store for optimization
 abstract class FastAction extends Action {}
@@ -80,7 +84,7 @@ abstract class StorableAction extends Action {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Undo/Redo
 
-abstract class Undo with BuiltJsonSerializable implements DNADesignChangingAction, Built<Undo, UndoBuilder> {
+abstract class Undo with BuiltJsonSerializable, DNADesignChangingAction implements Built<Undo, UndoBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Undo() => Undo.from((b) => b);
 
@@ -91,7 +95,7 @@ abstract class Undo with BuiltJsonSerializable implements DNADesignChangingActio
   static Serializer<Undo> get serializer => _$undoSerializer;
 }
 
-abstract class Redo with BuiltJsonSerializable implements DNADesignChangingAction, Built<Redo, RedoBuilder> {
+abstract class Redo with BuiltJsonSerializable, DNADesignChangingAction implements Built<Redo, RedoBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Redo() => Redo.from((b) => b);
 
@@ -121,8 +125,8 @@ abstract class UndoRedoClear
 /// [Action] intended for applying >= 2 other [UndoableAction]s at once,
 /// which can be undone/redone in a single step by [UndoRedo].
 abstract class BatchAction
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<BatchAction, BatchActionBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<BatchAction, BatchActionBuilder> {
   BuiltList<UndoableAction> get actions;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -340,6 +344,8 @@ abstract class LoadDNAFile
     implements Action, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
+  // set to null when getting file from another source such as localStorage
+  @nullable
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -387,8 +393,8 @@ abstract class MouseoverDataUpdate
 }
 
 abstract class HelixRotationSet
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<HelixRotationSet, HelixRotationSetBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixRotationSet, HelixRotationSetBuilder> {
   int get helix_idx;
 
   double get rotation;
@@ -410,8 +416,8 @@ abstract class HelixRotationSet
 
 // set helix rotation at anchor to point at helix_other
 abstract class HelixRotationSetAtOther
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
   int get helix_idx;
 
   int get helix_other_idx;
@@ -658,8 +664,8 @@ abstract class SelectAllSelectable
 // Delete selected non-helix items
 
 abstract class DeleteAllSelected
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<DeleteAllSelected, DeleteAllSelectedBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<DeleteAllSelected, DeleteAllSelectedBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory DeleteAllSelected() => DeleteAllSelected.from((b) => b);
 
@@ -674,8 +680,8 @@ abstract class DeleteAllSelected
 // Helix add/remove
 
 abstract class HelixAdd
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<HelixAdd, HelixAddBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixAdd, HelixAddBuilder> {
   @nullable
   GridPosition get grid_position;
 
@@ -700,8 +706,8 @@ abstract class HelixAdd
 }
 
 abstract class HelixRemove
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<HelixRemove, HelixRemoveBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixRemove, HelixRemoveBuilder> {
   int get helix_idx;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -779,8 +785,8 @@ abstract class HelixIndividualAction {
 }
 
 abstract class HelixOffsetChange
-    with BuiltJsonSerializable
-    implements UndoableAction, HelixIndividualAction, Built<HelixOffsetChange, HelixOffsetChangeBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixOffsetChange, HelixOffsetChangeBuilder> {
   int get helix_idx;
 
   @nullable
@@ -798,8 +804,8 @@ abstract class HelixOffsetChange
 }
 
 abstract class HelixOffsetChangeAll
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<HelixOffsetChangeAll, HelixOffsetChangeAllBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixOffsetChangeAll, HelixOffsetChangeAllBuilder> {
   @nullable
   int get min_offset;
 
@@ -903,8 +909,8 @@ abstract class StrandPartAction extends Action {
 // loopout length change
 
 abstract class LoopoutLengthChange
-    with BuiltJsonSerializable
-    implements StrandPartAction, UndoableAction, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<LoopoutLengthChange, LoopoutLengthChangeBuilder> {
   Loopout get loopout;
 
   int get length;
@@ -925,11 +931,8 @@ abstract class LoopoutLengthChange
 }
 
 abstract class ConvertCrossoverToLoopout
-    with BuiltJsonSerializable
-    implements
-        StrandPartAction,
-        UndoableAction,
-        Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {
   Crossover get crossover;
 
   int get length;
@@ -953,7 +956,7 @@ abstract class ConvertCrossoverToLoopout
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // nick/join
 
-abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<Nick, NickBuilder> {
+abstract class Nick with BuiltJsonSerializable, UndoableAction implements Built<Nick, NickBuilder> {
   BoundSubstrand get bound_substrand;
 
   int get offset;
@@ -966,7 +969,7 @@ abstract class Nick with BuiltJsonSerializable implements UndoableAction, Built<
   static Serializer<Nick> get serializer => _$nickSerializer;
 }
 
-abstract class Ligate with BuiltJsonSerializable implements UndoableAction, Built<Ligate, LigateBuilder> {
+abstract class Ligate with BuiltJsonSerializable, UndoableAction implements Built<Ligate, LigateBuilder> {
   DNAEnd get dna_end;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -978,8 +981,8 @@ abstract class Ligate with BuiltJsonSerializable implements UndoableAction, Buil
 }
 
 abstract class JoinStrandsByCrossover
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
   DNAEnd get dna_end_first_click;
 
   DNAEnd get dna_end_second_click;
@@ -1036,8 +1039,8 @@ abstract class StrandCreateStop
 }
 
 abstract class StrandCreateCommit
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<StrandCreateCommit, StrandCreateCommitBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<StrandCreateCommit, StrandCreateCommitBuilder> {
   int get helix_idx;
 
   int get start;
@@ -1049,7 +1052,8 @@ abstract class StrandCreateCommit
   Color get color;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandCreateCommit({int helix_idx, bool forward, int start, int end, Color color}) = _$StrandCreateCommit._;
+  factory StrandCreateCommit({int helix_idx, bool forward, int start, int end, Color color}) =
+      _$StrandCreateCommit._;
 
   StrandCreateCommit._();
 
@@ -1139,8 +1143,8 @@ abstract class StrandsMoveAdjustAddress
 }
 
 abstract class StrandsMoveCommit
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<StrandsMoveCommit, StrandsMoveCommitBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<StrandsMoveCommit, StrandsMoveCommitBuilder> {
   StrandsMove get strands_move;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1222,8 +1226,8 @@ abstract class DNAEndsMoveStop
 }
 
 abstract class DNAEndsMoveCommit
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<DNAEndsMoveCommit, DNAEndsMoveCommitBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<DNAEndsMoveCommit, DNAEndsMoveCommitBuilder> {
   DNAEndsMove get dna_ends_move;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1238,8 +1242,8 @@ abstract class DNAEndsMoveCommit
 // assign/remove dna
 
 abstract class AssignDNA
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<AssignDNA, AssignDNABuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDNA, AssignDNABuilder> {
   Strand get strand;
 
   String get dna_sequence;
@@ -1255,8 +1259,8 @@ abstract class AssignDNA
 }
 
 abstract class RemoveDNA
-    with BuiltJsonSerializable
-    implements UndoableAction, Built<RemoveDNA, RemoveDNABuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<RemoveDNA, RemoveDNABuilder> {
   Strand get strand;
 
   bool get remove_complements;
@@ -1279,13 +1283,13 @@ abstract class InsertionOrDeletionAction implements UndoableAction, StrandPartAc
 
   int get offset;
 
-  StrandPart get strand_part => substrand;
+  StrandPart get strand_part; // => substrand;
 
   InsertionOrDeletionAction clone_for_adjacent_substrand(BoundSubstrand other_substrand);
 }
 
 abstract class InsertionAdd
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements InsertionOrDeletionAction, Built<InsertionAdd, InsertionAddBuilder> {
   BoundSubstrand get substrand;
 
@@ -1305,7 +1309,7 @@ abstract class InsertionAdd
 }
 
 abstract class InsertionLengthChange
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements InsertionOrDeletionAction, Built<InsertionLengthChange, InsertionLengthChangeBuilder> {
   BoundSubstrand get substrand;
 
@@ -1333,7 +1337,7 @@ abstract class InsertionLengthChange
 }
 
 abstract class DeletionAdd
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements InsertionOrDeletionAction, Built<DeletionAdd, DeletionAddBuilder> {
   BoundSubstrand get substrand;
 
@@ -1353,7 +1357,7 @@ abstract class DeletionAdd
 }
 
 abstract class InsertionRemove
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements InsertionOrDeletionAction, Built<InsertionRemove, InsertionRemoveBuilder> {
   BoundSubstrand get substrand;
 
@@ -1377,7 +1381,7 @@ abstract class InsertionRemove
 }
 
 abstract class DeletionRemove
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements InsertionOrDeletionAction, Built<DeletionRemove, DeletionRemoveBuilder> {
   BoundSubstrand get substrand;
 
@@ -1400,8 +1404,8 @@ abstract class DeletionRemove
 // grid change
 
 abstract class GridChange
-    with BuiltJsonSerializable
-    implements DNADesignChangingAction, Built<GridChange, GridChangeBuilder> {
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<GridChange, GridChangeBuilder> {
   Grid get grid;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1443,7 +1447,7 @@ abstract class ContextMenuHide
 // scaffold set/unset
 
 abstract class ScaffoldSet
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements Action, Built<ScaffoldSet, ScaffoldSetBuilder> {
   Strand get strand;
 
@@ -1456,4 +1460,3 @@ abstract class ScaffoldSet
 
   static Serializer<ScaffoldSet> get serializer => _$scaffoldSetSerializer;
 }
-//ScaffoldSet

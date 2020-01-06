@@ -48,6 +48,6 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
       ..className = props.classname
       ..points = points
       ..id = props.id
-      ..fill = props.color.toRgbColor().toCssString())();
+      ..fill = props.color.toHexColor().toCssString())();
   }
 }

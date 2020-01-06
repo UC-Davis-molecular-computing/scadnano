@@ -49,7 +49,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
 
     return (Dom.line()
       ..onClick = _handle_click
-      ..stroke = props.color.toRgbColor().toCssString()
+      ..stroke = props.color.toHexColor().toCssString()
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
       ..x2 = '${end_svg.x}'

@@ -54,6 +54,6 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
       ..rx = '1.5px'
       ..ry = '1.5px'
       ..id = props.id
-      ..fill = props.color.toRgbColor().toCssString())();
+      ..fill = props.color.toHexColor().toCssString())();
   }
 }

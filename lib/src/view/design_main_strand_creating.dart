@@ -1,13 +1,9 @@
 import 'dart:math';
 
-import 'package:over_react/over_react_redux.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:react/react.dart' as react;
 
 import '../state/helix.dart';
-import '../app.dart';
-import '../state/app_state.dart';
 import '3p_end.dart';
 import '5p_end.dart';
 
@@ -37,7 +33,7 @@ class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCre
 
     return (Dom.g()..className = 'strand-creating')(
       (Dom.line()
-        ..stroke = props.color.toRgbColor().toCssString()
+        ..stroke = props.color.toHexColor().toCssString()
         ..x1 = '${start_svg.x}'
         ..y1 = '${start_svg.y}'
         ..x2 = '${end_svg.x}'

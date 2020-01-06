@@ -23,6 +23,17 @@ Please file bug reports and make feature requests at the
 
 
 
+## **WARNING**
+
+Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
+In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called "localStorage" to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
+
+**However, relying on your browser's localStore is not a safe or recommended way of saving your work.**
+The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
+It is strongly recommended that you frequently save your work by pressing the "Save" button and saving your design to a .dna file.
+
+
+
 ## Terms
 
 The main parts of the program are the *side view* on the left, and the *main view* in the center.

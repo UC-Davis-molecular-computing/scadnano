@@ -229,7 +229,7 @@ Point<num> control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, Boun
 //    path.attributes = {
 //      'id': substrand_line_id(substrand),
 //      'class': 'substrand-line',
-//      'stroke': strand.color.toRgbColor().toCssString(),
+//      'stroke': strand.color.toHexColor().toCssString(),
 //      'fill': 'none',
 //      'd': path_cmds.join(' '),
 //    };

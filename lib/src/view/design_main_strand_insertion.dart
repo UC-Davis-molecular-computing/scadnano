@@ -79,7 +79,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     ReactElement insertion_path = (Dom.path()
       ..onClick = ((_) => change_insertion_length())
       ..className = 'insertion-line'
-      ..stroke = color.toRgbColor().toCssString()
+      ..stroke = color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = 'M $x0 $y0 '
           'C $x1 $y1, $x2 $y2, $x3 $y2 '
