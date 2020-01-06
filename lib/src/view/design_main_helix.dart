@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
+import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
@@ -87,7 +88,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ),
       if (props.strand_create_enabled)
         (Dom.rect()
-          ..onClick = create_strand
+//          ..onClick = start_strand_create
+          ..onPointerDown = start_strand_create
           ..x = '0'
           ..y = '0'
           ..width = '$width'
@@ -97,17 +99,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     ]);
   }
 
-  create_strand(SyntheticMouseEvent event_syn) {
+  start_strand_create(react.SyntheticPointerEvent event_syn) {
     MouseEvent event = event_syn.nativeEvent;
+    if (event.button != constants.LEFT_CLICK_BUTTON) return;
+
     var address = util.get_address_on_helix(event, props.helix);
-    int offset = address.offset;
-    bool forward = address.forward;
-    if (offset <= props.helix.min_offset) {
-      return;
-    }
-    int start = offset;
-    int end = offset + 2;
-    app.dispatch(actions.StrandCreate(helix_idx: props.helix.idx, forward: forward, start: start, end: end));
+    app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
   }
 
   Future<void> handle_helix_adjust_length_button_pressed() async {

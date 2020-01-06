@@ -11,6 +11,7 @@ import '../state/mouseover_data.dart';
 import '../reducers/select_mode_state_reducer.dart';
 import '../reducers/edit_modes_reducer.dart';
 import '../actions/actions.dart' as actions;
+import 'strand_creation_reducer.dart';
 import 'strands_move_reducer.dart';
 import 'util_reducer.dart';
 import 'selection_reducer.dart';
@@ -137,6 +138,7 @@ Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePosition
 AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) => ui_state.rebuild((u) => u
   ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
+  ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
   ..side_selected_helix_idxs
       .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action))
   ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, state, action)));

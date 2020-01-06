@@ -8,7 +8,9 @@ import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/strand_creation.dart';
 import 'package:scadnano/src/state/strands_move.dart';
+import 'package:scadnano/src/view/design_main_strand_creating.dart';
 import 'package:scadnano/src/view/design_main_strands_moving.dart';
 
 import 'design_main_mismatches.dart';
@@ -40,6 +42,7 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..has_error = state.has_error()
         ..edit_modes = state.ui_state.edit_modes
         ..strands_move = state.ui_state.strands_move
+        ..strand_creation = state.ui_state.strand_creation
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna);
@@ -58,6 +61,7 @@ class _$DesignMainProps extends EditModePropsAbstract {
   BuiltSet<int> side_selected_helix_idxs;
   BuiltSet<EditModeChoice> edit_modes;
   StrandsMove strands_move;
+  StrandCreation strand_creation;
   bool has_error;
   bool show_mismatches;
   bool show_dna;
@@ -87,6 +91,14 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..key = 'potential-vertical-crossovers')(),
+      if (props.strand_creation != null)
+        (DesignMainStrandCreating()
+          ..helix = props.strand_creation.helix
+          ..forward = props.strand_creation.forward
+          ..start = props.strand_creation.start
+          ..end = props.strand_creation.end
+          ..color = props.strand_creation.color
+          ..key = 'strand-creating')(),
       (DesignMainDNASequences()
         ..show_dna = props.show_dna
         ..strands = props.strands

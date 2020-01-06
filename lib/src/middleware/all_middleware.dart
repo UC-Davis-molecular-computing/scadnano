@@ -10,6 +10,7 @@ import 'reselect_moved_strands.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
+import 'strand_create.dart';
 import 'throttle.dart';
 import 'helix_remove.dart';
 //import 'thunk.dart';
@@ -23,6 +24,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   load_file_middleware,
   throttle_middleware,
 //  thunk_middleware,
+  strand_create_middleware,
   helix_remove_middleware,
   grid_change_middleware,
   dna_ends_move_start_middleware,

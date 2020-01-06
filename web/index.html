@@ -275,7 +275,7 @@
         // main_view_svg_pan_zoom.onpointerup = function() {
         var main_view_svg = document.getElementById('main-view-svg');
         main_view_svg.onpointerup = function(ev) {
-            dart_main_view_move_stop(ev);
+            dart_main_view_pointer_up(ev);
         };
 
         // attempting to remove the dummy node here causes a race condition with the Dart code that clears out

@@ -38,8 +38,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -215,7 +215,7 @@ class App {
   }
 
   make_dart_functions_available_to_js(AppState state) {
-    util.make_dart_function_available_to_js('dart_main_view_move_stop', main_view_move_stop);
+    util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
   }
 }
 

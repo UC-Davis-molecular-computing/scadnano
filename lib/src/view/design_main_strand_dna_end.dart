@@ -18,6 +18,7 @@ import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 
@@ -89,7 +90,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
     end_props = end_props
       ..on_pointer_down = handle_end_click_select_and_or_move_start
       ..on_pointer_up = handle_end_pointer_up_select
-      ..on_mouse_up = ((ev) => handle_end_click_ligate_or_potential_crossover())
+      ..on_mouse_up = handle_end_click_ligate_or_potential_crossover
       ..pos = pos
       ..color = props.color
       ..classname = classname
@@ -135,7 +136,11 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
     }
   }
 
-  handle_end_click_ligate_or_potential_crossover() {
+  handle_end_click_ligate_or_potential_crossover(SyntheticMouseEvent event) {
+    if (event.nativeEvent.button != constants.LEFT_CLICK_BUTTON) {
+      return;
+    }
+
     if (pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
       int offset = props.is_5p ? props.substrand.offset_5p : props.substrand.offset_3p;
       Point<num> start_point = props.helix.svg_base_pos(offset, props.substrand.forward);

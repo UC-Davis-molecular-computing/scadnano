@@ -15,6 +15,7 @@ import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/strand_creation.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 
 import '../state/app_state.dart';
@@ -163,19 +164,13 @@ class DesignViewComponent {
       side_view_update_position(event: event);
     });
 
-    // move potential crossover
-    main_view_svg.onMouseMove.listen((event) {
-      main_view_mouse_position = event.client;
-      main_view_move_potential_crossover(event);
-    });
-
     // disable pan in svg-pan-zoom unless background SVG object was clicked
     for (var view_svg in [main_view_svg, side_view_svg]) {
       view_svg.onMouseDown.listen((event) {
         util.set_allow_pan(event.target is svg.SvgSvgElement);
       });
       //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
-      // which calls main_view_dna_ends_move_stop below
+      // which calls [main_view_pointer_up] below
 //      view_svg.onMouseUp.listen((event) {
 //        util.set_allow_pan(true);
 //        print('mouse up');
@@ -188,6 +183,10 @@ class DesignViewComponent {
     }
 
     main_view_svg.onMouseMove.listen((event) {
+      // move potential crossover
+      main_view_mouse_position = event.client;
+      main_view_move_potential_crossover(event);
+
       // move selected DNA ends
       DNAEndsMove moves_store = app.store_dna_ends_move.state;
       if (moves_store != null) {
@@ -206,6 +205,21 @@ class DesignViewComponent {
         var address = util.get_closest_address(event, app.state.dna_design.helices);
         if (address != old_address) {
           app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+        }
+      }
+
+      // move strand creation
+      StrandCreation strand_creation = app.state.ui_state.strand_creation;
+      if (strand_creation != null) {
+        int old_offset = strand_creation.current_offset;
+        int new_offset = util.get_address_on_helix(event, strand_creation.helix).offset;
+        var new_address = Address(
+            helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
+        if (old_offset != new_offset &&
+            !app.state.dna_design.is_occupied(new_address) &&
+            new_offset != strand_creation.original_offset) {
+          // can't draw strand over existing strand, and can't put start and end at same offset
+          app.dispatch(actions.StrandCreateAdjustOffset(offset: new_offset));
         }
       }
     });
@@ -287,6 +301,9 @@ class DesignViewComponent {
       }
       if (app.state.ui_state.strands_move != null) {
         app.dispatch(actions.StrandsMoveStop());
+      }
+      if (app.state.ui_state.strand_creation != null) {
+        app.dispatch(actions.StrandCreateStop());
       }
       if (app.state.ui_state.context_menu != null) {
         app.dispatch(actions.ContextMenuHide());
@@ -552,12 +569,12 @@ class DesignViewComponent {
   }
 }
 
-main_view_move_stop(MouseEvent event) {
-  if (app.store_dna_ends_move.state != null || app.state.ui_state.strands_move != null) {
-    // since this is called from Javascript on a pointerUp event, this stops anything from being selected on
-    // mouse up, which is the default behavior for selectable elements
+main_view_pointer_up(MouseEvent event) {
+//  if (app.store_dna_ends_move.state != null || app.state.ui_state.strands_move != null) {
+//    // since this is called from Javascript on a pointerUp event, this stops anything from being selected on
+//    // mouse up, which is the default behavior for selectable elements
 //    event.stopPropagation();
-  }
+//  }
 
   if (app.store_dna_ends_move.state != null) {
     DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
@@ -566,11 +583,25 @@ main_view_move_stop(MouseEvent event) {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
     }
   }
+
   if (app.state.ui_state.strands_move != null) {
     StrandsMove strands_move = app.state.ui_state.strands_move;
     app.dispatch(actions.StrandsMoveStop());
     if (strands_move.allowable && strands_move.is_nontrivial) {
       app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
+    }
+  }
+
+  if (app.state.ui_state.strand_creation != null) {
+    StrandCreation strand_creation = app.state.ui_state.strand_creation;
+    app.dispatch(actions.StrandCreateStop());
+    if (strand_creation.original_offset != strand_creation.current_offset) {
+      app.dispatch(actions.StrandCreateCommit(
+          helix_idx: strand_creation.helix.idx,
+          forward: strand_creation.forward,
+          start: strand_creation.start,
+          end: strand_creation.end,
+          color: strand_creation.color));
     }
   }
 }

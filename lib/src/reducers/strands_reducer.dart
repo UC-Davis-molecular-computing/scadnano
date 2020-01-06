@@ -34,7 +34,7 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
       strands_dna_ends_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
-  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreate>(strand_create),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandCreateCommit>(strand_create),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DeleteAllSelected>(delete_all_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Nick>(nick_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
@@ -271,13 +271,15 @@ DNAEndMove find_move(BuiltList<DNAEndMove> moves, DNAEnd end) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create Strand
 
-BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actions.StrandCreate action) {
+BuiltList<Strand> strand_create(
+    BuiltList<Strand> strands, AppState state, actions.StrandCreateCommit action) {
   int helix_idx = action.helix_idx;
   int start = action.start;
   int end = action.end;
   bool forward = action.forward;
 
   // skip creating Strand if one is already there
+  //FIXME: this doesn't seem necessary anymore, given how we've done this error checking while creating
   var existing_substrands_start = state.dna_design.substrands_on_helix_at(helix_idx, start);
   var existing_substrands_end = state.dna_design.substrands_on_helix_at(helix_idx, end - 1);
   for (var ss in existing_substrands_start.union(existing_substrands_end)) {
@@ -288,7 +290,7 @@ BuiltList<Strand> strand_create(BuiltList<Strand> strands, AppState state, actio
 
   BoundSubstrand substrand = BoundSubstrand(
       helix: helix_idx, forward: forward, start: start, end: end, is_first: true, is_last: true);
-  Strand strand = Strand([substrand]);
+  Strand strand = Strand([substrand], color: action.color);
   var new_strands = strands.rebuild((s) => s..add(strand));
 
   return new_strands;

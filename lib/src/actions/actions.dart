@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/context_menu.dart';
@@ -995,9 +996,48 @@ abstract class JoinStrandsByCrossover
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create new Strand with a single BoundSubstrand with no deletions or insertions
 
-abstract class StrandCreate
+abstract class StrandCreateStart
     with BuiltJsonSerializable
-    implements UndoableAction, Built<StrandCreate, StrandCreateBuilder> {
+    implements Action, Built<StrandCreateStart, StrandCreateStartBuilder> {
+  Address get address;
+
+  Color get color;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandCreateStart({Address address, Color color}) = _$StrandCreateStart._;
+
+  StrandCreateStart._();
+
+  static Serializer<StrandCreateStart> get serializer => _$strandCreateStartSerializer;
+}
+
+abstract class StrandCreateAdjustOffset
+    with BuiltJsonSerializable
+    implements Action, Built<StrandCreateAdjustOffset, StrandCreateAdjustOffsetBuilder> {
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandCreateAdjustOffset({int offset}) = _$StrandCreateAdjustOffset._;
+
+  StrandCreateAdjustOffset._();
+
+  static Serializer<StrandCreateAdjustOffset> get serializer => _$strandCreateAdjustOffsetSerializer;
+}
+
+abstract class StrandCreateStop
+    with BuiltJsonSerializable
+    implements Action, Built<StrandCreateStop, StrandCreateStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandCreateStop() = _$StrandCreateStop;
+
+  StrandCreateStop._();
+
+  static Serializer<StrandCreateStop> get serializer => _$strandCreateStopSerializer;
+}
+
+abstract class StrandCreateCommit
+    with BuiltJsonSerializable
+    implements UndoableAction, Built<StrandCreateCommit, StrandCreateCommitBuilder> {
   int get helix_idx;
 
   int get start;
@@ -1006,12 +1046,14 @@ abstract class StrandCreate
 
   bool get forward;
 
+  Color get color;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandCreate({int helix_idx, bool forward, int start, int end}) = _$StrandCreate._;
+  factory StrandCreateCommit({int helix_idx, bool forward, int start, int end, Color color}) = _$StrandCreateCommit._;
 
-  StrandCreate._();
+  StrandCreateCommit._();
 
-  static Serializer<StrandCreate> get serializer => _$strandCreateSerializer;
+  static Serializer<StrandCreateCommit> get serializer => _$strandCreateCommitSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

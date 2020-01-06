@@ -3637,7 +3637,7 @@ main() {
     bool forward = true;
     int start = 3;
     int end = 10;
-    state = app_state_reducer(state, StrandCreate(helix_idx: helix_idx, forward: forward, start: start, end: end));
+    state = app_state_reducer(state, StrandCreateCommit(helix_idx: helix_idx, forward: forward, start: start, end: end));
     BoundSubstrand boundSubstrand = BoundSubstrand(
         helix: helix_idx,
         forward: true,
@@ -3662,7 +3662,7 @@ main() {
     int bad_end = 14;
 
     state =
-        app_state_reducer(state, StrandCreate(helix_idx: helix_idx, forward: forward, start: bad_start, end: bad_end));
+        app_state_reducer(state, StrandCreateCommit(helix_idx: helix_idx, forward: forward, start: bad_start, end: bad_end));
 
     expect_dna_design_equal(state.dna_design, expected);
   });

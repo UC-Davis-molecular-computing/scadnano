@@ -314,8 +314,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         int helix_idx_bot;
         var address_top;
         bool forward_top;
-        BoundSubstrand  substrand_top;
-        BoundSubstrand  substrand_bot;
+        BoundSubstrand substrand_top;
+        BoundSubstrand substrand_bot;
         DNAEnd dna_end_top;
         DNAEnd dna_end_bot;
         if (address_3p_to_strand.keys.contains(address_3p)) {
@@ -662,6 +662,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return substrands_at_offset.build();
   }
 
+  /// Return [Substrand] at [address], INCLUSIVE, or null if there is none.
+  BoundSubstrand substrand_on_helix_at(Address address) {
+    for (var substrand in this.helix_idx_to_substrands[address.helix_idx]) {
+      if (substrand.contains_offset(address.offset) && substrand.forward == address.forward) {
+        return substrand;
+      }
+    }
+    return null;
+  }
+
   /// Return list of Substrands overlapping `substrand`.
   List<BoundSubstrand> _other_substrands_overlapping(BoundSubstrand substrand) {
     List<BoundSubstrand> ret = [];
@@ -770,6 +780,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
     return helices_view_order_inverse.toBuiltList();
   }
+
+  bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
 }
 
 BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(

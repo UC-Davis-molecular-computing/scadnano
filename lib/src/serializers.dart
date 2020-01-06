@@ -15,6 +15,7 @@ import 'state/potential_crossover.dart';
 import 'state/potential_vertical_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
+import 'state/strand_creation.dart';
 import 'state/strands_move.dart';
 import 'state/substrand.dart';
 import 'state/grid.dart';
@@ -98,7 +99,6 @@ part 'serializers.g.dart';
   HelixRemove,
   HelixOffsetChange,
   HelixOffsetChangeAll,
-  StrandCreate,
   Nick,
   Ligate,
   JoinStrandsByCrossover,
@@ -117,6 +117,11 @@ part 'serializers.g.dart';
   InsertionRemove,
   DeletionRemove,
   InsertionLengthChange,
+  StrandCreation,
+  StrandCreateStart,
+  StrandCreateAdjustOffset,
+  StrandCreateStop,
+  StrandCreateCommit,
   DNAEndMove,
   DNAEndsMove,
   DNAEndsMoveStart,

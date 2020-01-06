@@ -76,6 +76,8 @@ abstract class $CLASS_NAME$
   /************************ begin BuiltValue boilerplate ************************/
   factory $CLASS_NAME$({$FIELD_TYPE$ $FIELD_NAME$}) = _$$$CLASS_NAME$._;
 
+  factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
+
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 

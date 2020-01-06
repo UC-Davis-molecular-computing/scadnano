@@ -12,6 +12,7 @@ import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import 'selectable.dart';
+import 'strand_creation.dart';
 import 'strands_move.dart';
 
 part 'app_ui_state.g.dart';
@@ -35,6 +36,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..side_view_position_mouse_cursor = null
   ..strands_move = null
   ..context_menu = null
+  ..strand_creation = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
@@ -83,6 +85,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get selection_box_displayed_side;
 
   BuiltList<MouseoverData> get mouseover_datas;
+
+  @nullable
+  StrandCreation get strand_creation;
 
   @nullable // null when mouse outside of side view or helix edit mode not enabled
   GridPosition get side_view_grid_position_mouse_cursor;
