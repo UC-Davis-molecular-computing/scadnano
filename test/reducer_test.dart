@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
@@ -21,6 +22,7 @@ import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
@@ -47,7 +49,7 @@ AppState default_state() {
 }
 
 /// Returns an [AppState] based on dna design.
-AppState app_state_from_dna_design(dna_design) {
+AppState app_state_from_dna_design(DNADesign dna_design) {
   var ui_state = AppUIState.from_dna_design(dna_design);
   var state = (DEFAULT_AppStateBuilder
         ..dna_design.replace(dna_design)
@@ -87,10 +89,19 @@ void expect_ui_state_equal(AppUIState actual, AppUIState matcher) {
   expect(actual, matcher);
 }
 
+/// Asserts that [actual] stack matches [matcher] stack.
+void expect_stack_equal(BuiltList<DNADesign> actual, BuiltList<DNADesign> matcher) {
+  expect(actual.length, matcher.length);
+
+  for (int i = 0; i < actual.length; ++i) {
+    expect_dna_design_equal(actual[i], matcher[i]);
+  }
+}
+
 /// Asserts that the [actual] matches [matcher] UndoRedo.
 void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
-  // Not neccessary to split assertion at the moment.
-  expect(actual, matcher);
+  expect_stack_equal(actual.undo_stack, matcher.undo_stack);
+  expect_stack_equal(actual.redo_stack, matcher.redo_stack);
 }
 
 /// Asserts that the [actual] matches [matcher] AppState.
@@ -3637,17 +3648,27 @@ main() {
     bool forward = true;
     int start = 3;
     int end = 10;
-    state = app_state_reducer(state, StrandCreateCommit(helix_idx: helix_idx, forward: forward, start: start, end: end));
-    BoundSubstrand boundSubstrand = BoundSubstrand(
-        helix: helix_idx,
-        forward: true,
+    state = app_state_reducer(
+      state,
+      StrandCreateCommit(
+        helix_idx: helix_idx,
+        forward: forward,
         start: start,
         end: end,
-        deletions: [],
-        insertions: [],
-        dna_sequence: null,
-        is_first: true,
-        is_last: true);
+        color: Color.rgb(0, 0, 0),
+      ),
+    );
+    BoundSubstrand boundSubstrand = BoundSubstrand(
+      helix: helix_idx,
+      forward: true,
+      start: start,
+      end: end,
+      deletions: [],
+      insertions: [],
+      dna_sequence: null,
+      is_first: true,
+      is_last: true,
+    );
     Strand strand = Strand([boundSubstrand].toBuiltList());
     DNADesign expected = one_empty_helix_design.rebuild((b) => b.strands.replace([strand]));
     expect_dna_design_equal(state.dna_design, expected);
@@ -3661,8 +3682,16 @@ main() {
     int bad_start = 4;
     int bad_end = 14;
 
-    state =
-        app_state_reducer(state, StrandCreateCommit(helix_idx: helix_idx, forward: forward, start: bad_start, end: bad_end));
+    state = app_state_reducer(
+      state,
+      StrandCreateCommit(
+        helix_idx: helix_idx,
+        forward: forward,
+        start: bad_start,
+        end: bad_end,
+        color: Color.rgb(0, 0, 0),
+      ),
+    );
 
     expect_dna_design_equal(state.dna_design, expected);
   });
@@ -4354,44 +4383,91 @@ main() {
       expect_dna_design_equal(state.dna_design, expected_design);
     });
 
-    //   test('GridChange none to square', () {
-    //     String two_helices_json = r"""
-    //       {
-    //         "version": "0.0.1",
-    //         "helices": [
-    //           {
-    //             "grid_position": [0, 0],
-    //             "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
-    //           },
-    //           {
-    //             "grid_position": [0, 1],
-    //             "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
-    //           }
-    //         ],
-    //         "strands": [
-    //           {
-    //             "substrands": [
-    //               {"helix": 0, "forward": true , "start": 0, "end": 16}
-    //             ]
-    //           },
-    //           {
-    //             "substrands": [
-    //               {"helix": 0, "forward": false , "start": 0, "end": 16}
-    //             ]
-    //           },
-    //           {
-    //             "substrands": [
-    //               {"helix": 1, "forward": true , "start": 0, "end": 16}
-    //             ]
-    //           },
-    //           {
-    //             "substrands": [
-    //               {"helix": 1, "forward": false , "start": 0, "end": 16}
-    //             ]
-    //           }
-    //         ]
-    //       }
-    //     """;
-    //   });
+    test('GridChange none to square', () {
+      Position3D position0 = Position3D(x: 30, y: 60, z: 0);
+      Position3D position1 = Position3D(x: 50, y: 80, z: 0);
+      //   0                  16
+      //
+      // 0 [------------------->
+      //   <-------------------]
+      //
+      // 1 [------------------->
+      //   <-------------------]
+      String no_grid_two_helices_json = r"""
+          {
+            "version": "0.0.1",
+            "helices": [
+              {
+                "grid_position": [0, 0],
+                "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+              },
+              {
+                "grid_position": [0, 1],
+                "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+              }
+            ],
+            "strands": [
+              {
+                "substrands": [
+                  {"helix": 0, "forward": true , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 0, "forward": false , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 1, "forward": true , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 1, "forward": false , "start": 0, "end": 16}
+                ]
+              }
+            ]
+          }
+      """;
+      DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
+      AppState state = app_state_from_dna_design(no_grid_two_helices_design);
+      Grid grid = Grid.square;
+      state = app_state_reducer(state, GridChange(grid: grid));
+
+      Helix new_helix0 = two_helices_design.helices.first.rebuild((b) => b.position.replace(position0));
+      Helix new_helix1 = two_helices_design.helices.last.rebuild((b) => b.position.replace(position1));
+
+      List<Helix> new_helices = [new_helix0, new_helix1];
+
+      DNADesign expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+  });
+
+  test('Scaffold set', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+
+    //   0                  16
+    //
+    // 0 [------------------->
+    //   <-------------------]  <-- set this one to be scaffold
+    //
+    // 1 [------------------->
+    //   <-------------------]
+
+    Strand strand = two_helices_design.strands[1];
+
+    Strand new_strand = strand.rebuild((b) => b.is_scaffold = true);
+
+    BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b[1] = new_strand);
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.strands.replace(new_strands)
+      ..undo_redo.undo_stack.add(two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    state = app_state_reducer(state, ScaffoldSet(strand: strand, is_scaffold: true));
+    expect_app_state_equal(state, expected_state);
   });
 }
