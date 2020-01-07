@@ -34,6 +34,7 @@ class _$DesignMainBoundSubstrandProps extends EditModePropsAbstract {
 
   BuiltSet<EditModeChoice> edit_modes;
   Helix helix;
+  String strand_tooltip;
 }
 
 @Component2()
@@ -56,7 +57,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
       ..y2 = '${end_svg.y}'
       ..key = id
       ..id = id
-      ..className = 'substrand-line')();
+      ..className = 'substrand-line')(Dom.svgTitle()(tooltip_text(substrand) + '\n' + props.strand_tooltip));
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
@@ -84,3 +85,8 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
   }
 
 }
+
+tooltip_text(BoundSubstrand substrand) => '${substrand.forward? 'forward' : 'reverse'} substrand:\n'
+    '    helix=${substrand.helix}\n'
+    '    start=${substrand.start}\n'
+    '    end=${substrand.end}';

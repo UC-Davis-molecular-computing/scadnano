@@ -5,6 +5,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 
@@ -95,6 +96,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..selectables_store = props.selectables_store
         ..select_mode_state = props.select_mode_state
         ..edit_modes = props.edit_modes
+        ..strand_tooltip = tooltip_text(props.strand)
         ..origami_type_is_selectable = props.origami_type_is_selectable
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends)(),
@@ -253,6 +255,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ),
       ];
 }
+
+String tooltip_text(Strand strand) => "Strand:\n"
+    "    length=${strand.dna_length()}\n"
+    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n"
+    "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}";
+
+String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);

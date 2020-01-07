@@ -71,8 +71,9 @@ String side_pane_width() {
 restore(Storable storable) {
   try {
     _restore(storable);
-  } catch (e) {
-    print('ERROR: loading from localStorage, encountered this error:\n${e.toString()}');
+  } catch (e, stackTrace) {
+    print(
+        'ERROR: loading ${storable} from localStorage, encountered this error:\n${e.toString()}\n\nstack trace:\n\n${stackTrace}');
   }
 }
 
@@ -112,7 +113,6 @@ _restore(Storable storable) {
     }
 
     if (action != null) {
-      print('action in localStorage restore: $action');
       app.dispatch(action);
     }
   }
@@ -130,11 +130,20 @@ restore_all_local_storage() {
   }
 }
 
+save_async(Iterable<Storable> storables) async {
+  for (var storable in storables) {
+    save(storable);
+  }
+}
+
 local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.StorableAction) {
-    for (var storable in action.storables()) {
-      save(storable);
-    }
+    save_async(action.storables());
+//    (() async {
+//      for (var storable in action.storables()) {
+//        save(storable);
+//      }
+//    })();
   }
 }

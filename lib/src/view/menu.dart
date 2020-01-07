@@ -171,6 +171,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
       (Dom.a()
         ..className = 'docs-link menu-item'
         ..href = 'README.html'
+        //TODO: when repository is public, make the github link the official documentation link
+//        ..href = 'https://github.com/UC-Davis-molecular-computing/scadnano'
         ..target = '_blank')('Help'),
       (Dom.a()
         ..className = 'docs-link menu-item'

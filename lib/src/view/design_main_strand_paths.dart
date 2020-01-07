@@ -50,6 +50,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool origami_type_is_selectable;
+  String strand_tooltip;
 }
 
 @Component2()
@@ -91,6 +92,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
             ..edit_modes = props.edit_modes
+            ..strand_tooltip = props.strand_tooltip
             ..key = "bound-substrand-$i")());
 
 //        ends.add((ConnectedDesignMainDNAEnd()

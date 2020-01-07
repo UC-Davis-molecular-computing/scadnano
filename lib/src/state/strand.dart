@@ -192,9 +192,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     var json_map = Map<String, dynamic>();
 
     if (this.color != null) {
-      String color_json = color.toHexColor().toCssString();
-      print('writing color as json: $color_json');
-      json_map[constants.color_key] = color_json;
+      json_map[constants.color_key] = color.toHexColor().toCssString();
     }
 
     if (this.dna_sequence != null) {

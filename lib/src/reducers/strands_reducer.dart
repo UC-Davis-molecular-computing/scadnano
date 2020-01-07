@@ -94,7 +94,7 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
 
   strand = moved_strand(strand,
       delta_helix_idx: delta_helix_idx, delta_offset: delta_offset, delta_forward: delta_forward);
-  if (strands_move.copy) {
+  if (strands_move.copy && !strand.is_scaffold) {
     //FIXME: this makes the reducer not pure
     strand = strand.rebuild((b) => b..color = util.color_cycler.next());
   }

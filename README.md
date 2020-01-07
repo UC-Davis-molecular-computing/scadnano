@@ -2,6 +2,8 @@
 title: "scadnano help"
 ---
 
+<!--- # scadnano --->
+
 [scadnano](https://web.cs.ucdavis.edu/~doty/scadnano2) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
@@ -28,7 +30,7 @@ Please file bug reports and make feature requests at the
 Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
 In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
 
-**However, relying on your browser's localStore is not a safe or recommended way of saving your work.**
+**However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
 It is strongly recommended that you frequently save your work by pressing the "Save" button and saving your design to a .dna file.
 
@@ -103,10 +105,10 @@ The menu layout is currently hacky and will [change to something more elegant in
 Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
 * **Save:**
-Saves the current design in a .dna file. This is the same format output by (and readable by) the Python scripting package.
+Saves the current design in a .dna file. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
 * **Load:**
-Loads a .dna file. Note that due to browser security restrictions on accessing the local file system it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
 
 * **show DNA:**
 Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
@@ -156,7 +158,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(i)nsertion / (d)eletion:**
   These have the same meaning as in cadnano. They are a visual trick used to allow  bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. Normally, each offset (small white square outlined in gray on a helix) represents a single base. Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. Clicking an existing insertion/deletion removes it. (Note that this requires clicking in the small square where the bound substrand is drawn; clicking on an insertion outside of that position allows one to change its length.) If a deletion appears at that position, then it does not correspond to any DNA base. If an insertion appears at that position, it has a *length*, which is a positive integer, and the number of bases represented by that position is actually *length*+1. In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
-  Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface.
+  Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
   This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. This is not intended to be a predictive model based on molecular kinetics, nor is it even intended to be meaningful over the entirety of a helix. Rather, it is useful to set the rotation at one offset on a helix and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
