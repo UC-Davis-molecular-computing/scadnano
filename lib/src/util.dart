@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:html' hide ImageElement;
 import 'dart:js' as js;
 import 'dart:math';
+import 'dart:async';
 import 'dart:svg' hide Point;
 import 'dart:typed_data';
 
@@ -17,6 +18,7 @@ import 'package:scadnano/src/view/design.dart';
 
 import 'app.dart';
 import 'state/crossover.dart';
+import 'state/dialog.dart';
 import 'state/dna_end.dart';
 import 'state/grid.dart';
 import 'state/grid_position.dart';
@@ -92,6 +94,18 @@ Future<ByteBuffer> get_binary_file_content(String url) async {
   return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
     return request.response;
   });
+}
+
+/// Pops up dialog to ask user for information and returns responses.
+/// Returns null if dialog was canceled.
+Future<List<DialogItem>> dialog(Dialog dialog) async {
+  // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
+  Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
+  dialog = dialog.rebuild((b) => b..on_submit = (List<DialogItem> items) {
+    completer.complete(items);
+  });
+  app.dispatch(actions.DialogShow(dialog: dialog));
+  return completer.future;
 }
 
 /// Gets grid position of mouse cursor in side view.

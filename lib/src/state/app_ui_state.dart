@@ -6,6 +6,7 @@ import 'package:built_value/built_value.dart';
 
 import '../serializers.dart';
 import 'context_menu.dart';
+import 'dialog.dart';
 import 'dna_design.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
@@ -36,6 +37,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..side_view_position_mouse_cursor = null
   ..strands_move = null
   ..context_menu = null
+  ..dialog = null
   ..strand_creation = null
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
@@ -85,6 +87,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get selection_box_displayed_side;
 
   BuiltList<MouseoverData> get mouseover_datas;
+
+  @nullable
+  Dialog get dialog;
 
   @nullable
   StrandCreation get strand_creation;

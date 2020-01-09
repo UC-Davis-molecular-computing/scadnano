@@ -1,10 +1,13 @@
 import 'dart:html';
 import 'dart:math';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
+import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../state/helix.dart';
@@ -54,16 +57,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..transform = 'translate(${translation.x} ${translation.y})')([
       (Dom.circle()
         ..className = 'main-view-helix-circle'
+        ..id = helix_circle_id()
         ..cx = '$cx'
         ..cy = '$cy'
         ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}'
-        ..onClick = ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
         ..key = 'main-view-helix-circle')(Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'
+        ..id = helix_text_id()
         ..x = '$cx'
         ..y = '$cy'
-        ..onClick = ((_) => app.disable_keyboard_shortcuts_while(handle_helix_adjust_length_button_pressed))
         ..key = 'main-view-helix-text')(Dom.svgTitle()(tooltip_helix_length_adjust), '$idx'),
       (Dom.g()
         ..className = 'helix-lines-group'
@@ -99,6 +102,33 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     ]);
   }
 
+  // needed for capturing right-click events with React:
+  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
+  @override
+  componentDidMount() {
+    for (var id in [helix_circle_id(), helix_text_id()]) {
+      var elt = querySelector('#${id}');
+      elt.addEventListener('contextmenu', on_context_menu);
+    }
+  }
+
+  @override
+  componentWillUnmount() {
+    for (var id in [helix_circle_id(), helix_text_id()]) {
+      var elt = querySelector('#${id}');
+      elt.removeEventListener('contextmenu', on_context_menu);
+    }
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(items: context_menu_helix(props.helix).build(), position: event.page)));
+    }
+  }
+
   start_strand_create(react.SyntheticPointerEvent event_syn) {
     MouseEvent event = event_syn.nativeEvent;
     if (event.button != constants.LEFT_CLICK_BUTTON) return;
@@ -107,54 +137,32 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
   }
 
-  Future<void> handle_helix_adjust_length_button_pressed() async {
+  helix_adjust_length() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
+  }
+
+  Future<void> dialog_helix_adjust_length() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
 
-    // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-    String buttontype = DiaAttr.CHECKBOX;
-    String htmlTitleText = 'helix ${helix_idx} new offsets';
-    List<String> textLabels = ['minimum:', 'maximum:', 'apply to all helices'];
-    List<List<String>> comboInfo = null;
-    List<String> defaultInputTexts = ['${helix.min_offset}', '${helix.max_offset}', null];
-    List<int> widths = [1, 1, 0];
-    List<String> isChecked = [null, null, 'true'];
-    bool alternateRowColor = false;
-    List<String> buttonLabels = ['OK', 'Cancel'];
+    var dialog = Dialog(title: 'helix adjust', items: [
+      DialogNumber(label: 'minimum', value: helix.min_offset),
+      DialogNumber(label: 'maximum', value: helix.max_offset),
+      DialogCheckbox(label: 'apply to all helices', value: true),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
 
-    UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-        widths, isChecked, alternateRowColor, buttonLabels);
-
-    if (result.buttonCode != 'DIA_ACT_OK') {
-      return;
-    }
-
-    String min_offset_str = result.getUserInput(0)[0];
-    String max_offset_str = result.getUserInput(1)[0];
-
-    int min_offset;
-    int max_offset;
-
-    try {
-      min_offset = int.parse(min_offset_str);
-    } on FormatException {
-      Info.show('minimum offset value "${min_offset_str}" is not an integer');
-      return;
-    }
-    try {
-      max_offset = int.parse(max_offset_str);
-    } on FormatException {
-      Info.show('maximum offset value "${max_offset_str}" is not an integer');
-      return;
-    }
+    int min_offset = (results[0] as DialogNumber).value;
+    int max_offset = (results[1] as DialogNumber).value;
+    bool apply_to_all = (results[2] as DialogCheckbox).value;
 
     if (min_offset >= max_offset) {
-      Info.show('minimum offset ${min_offset} must be strictly less than maximum offset, '
+      window.alert('minimum offset ${min_offset} must be strictly less than maximum offset, '
           'but maximum offset is ${max_offset}');
       return;
     }
 
-    bool apply_to_all = result.getCheckedState(2) == 'true';
     if (apply_to_all) {
       app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
     } else {
@@ -162,6 +170,17 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
     }
   }
+
+  String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
+
+  String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
+
+  List<ContextMenuItem> context_menu_helix(Helix helix) => [
+        ContextMenuItem(
+          title: 'adjust length',
+          on_click: helix_adjust_length,
+        ),
+      ];
 }
 
 //static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);

@@ -21,6 +21,7 @@ import 'package:scadnano/src/state/strands_move.dart';
 import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
+import 'design_dialog_form.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -54,7 +55,8 @@ class DesignViewComponent {
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
 
-  DivElement context_menu_div = DivElement()..attributes = {'id': 'context-menu-div'};
+  DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
+  DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -110,7 +112,8 @@ class DesignViewComponent {
     main_view_svg_viewport.children.add(main_view_dummy_elt);
 
     this.root_element.children.add(design_above_footer_pane);
-    this.root_element.children.add(this.context_menu_div);
+    this.root_element.children.add(this.context_menu_container);
+    this.root_element.children.add(this.dialog_form_container);
     this.root_element.children.add(this.footer_separator);
     this.root_element.children.add(this.footer_element);
 
@@ -150,11 +153,11 @@ class DesignViewComponent {
     // put away context menu if click occured anywhere outside of it
     document.onClick.listen((MouseEvent event) {
       Element target = event.target;
-      if (app.state.ui_state.context_menu != null &&
-          !(target.classes.contains('context-menu-item') ||
-              target.classes.contains('context-menu') ||
-              target.classes.contains('context-menu-div'))) {
-        app.dispatch(actions.ContextMenuHide());
+      if (app.state.ui_state.context_menu != null) {
+        var context_menu_elt = querySelector('#context-menu');
+        if (context_menu_elt != null && !context_menu_elt.contains(target)) {
+          app.dispatch(actions.ContextMenuHide());
+        }
       }
     });
 
@@ -232,7 +235,10 @@ class DesignViewComponent {
       if (!ev.repeat) {
         app.keys_pressed.add(key);
 
-        if (app.keyboard_shortcuts_enabled) {
+        if (key == KeyCode.ESC) {
+          // special case for ESC so we can close dialogs with it
+          handle_esc_keyboard_shortcuts();
+        } else if (app.keyboard_shortcuts_enabled) {
           handle_keyboard_shortcuts(key, ev);
         }
       }
@@ -275,6 +281,32 @@ class DesignViewComponent {
 //    });
   }
 
+  handle_esc_keyboard_shortcuts() {
+    clear_copy_buffer();
+    if (app.state.ui_state.selectables_store.isNotEmpty) {
+      app.dispatch(actions.SelectionsClear());
+    }
+    if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
+      app.dispatch(actions.HelixSelectionsClear());
+    }
+    if (app.state.ui_state.drawing_potential_crossover) {
+      app.dispatch(actions.PotentialCrossoverRemove());
+    }
+    if (app.state.ui_state.strands_move != null) {
+      app.dispatch(actions.StrandsMoveStop());
+    }
+    if (app.state.ui_state.strand_creation != null) {
+      app.dispatch(actions.StrandCreateStop());
+    }
+    if (app.state.ui_state.context_menu != null) {
+      app.dispatch(actions.ContextMenuHide());
+    }
+    if (app.state.ui_state.dialog != null) {
+      app.dispatch(actions.DialogHide());
+    }
+    app.keyboard_shortcuts_enabled = true;
+  }
+
   handle_keyboard_shortcuts(int key, KeyboardEvent ev) {
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
@@ -288,26 +320,6 @@ class DesignViewComponent {
         !ev.altKey &&
         EditModeChoice.key_code_to_mode.keys.contains(key)) {
       app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
-    } else if (key == KeyCode.ESC) {
-      clear_copy_buffer();
-      if (app.state.ui_state.selectables_store.isNotEmpty) {
-        app.dispatch(actions.SelectionsClear());
-      }
-      if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
-        app.dispatch(actions.HelixSelectionsClear());
-      }
-      if (app.state.ui_state.drawing_potential_crossover) {
-        app.dispatch(actions.PotentialCrossoverRemove());
-      }
-      if (app.state.ui_state.strands_move != null) {
-        app.dispatch(actions.StrandsMoveStop());
-      }
-      if (app.state.ui_state.strand_creation != null) {
-        app.dispatch(actions.StrandCreateStop());
-      }
-      if (app.state.ui_state.context_menu != null) {
-        app.dispatch(actions.ContextMenuHide());
-      }
     } else if (key == KeyCode.DELETE) {
       app.dispatch(actions.DeleteAllSelected());
     }
@@ -485,7 +497,16 @@ class DesignViewComponent {
             ConnectedDesignContextMenu()(),
           ),
         ),
-        this.context_menu_div,
+        this.context_menu_container,
+      );
+
+      react_dom.render(
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignDialogForm()(),
+          ),
+        ),
+        this.dialog_form_container,
       );
 
       if (!svg_panzoom_has_been_set_up) {

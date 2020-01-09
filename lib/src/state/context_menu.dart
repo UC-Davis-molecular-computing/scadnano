@@ -44,6 +44,6 @@ abstract class ContextMenuItem
 
   String get title;
 
-  @BuiltValueField(serialize: false)
+  @BuiltValueField(serialize: false, compare: false)
   Callback get on_click;
 }

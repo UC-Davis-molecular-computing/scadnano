@@ -1,10 +1,10 @@
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 
+import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/view/pure_component.dart';
 import '../app.dart';
-import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 
 part 'design_context_menu.over_react.g.dart';
@@ -29,15 +29,14 @@ class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> wi
     if (props.context_menu == null) {
       return null;
     }
-    num x = props.context_menu.position.x;
-    num y = props.context_menu.position.y;
+
     return (Dom.div()
-      ..className = 'context-menu-div'
+      ..className = 'context-menu'
+      ..id = 'context-menu'
       ..style = {
-        'left': x,
-        'top': y,
-        'display': 'block',
-      })((Dom.ul()..className = 'context-menu')([
+        'left': props.context_menu.position.x,
+        'top': props.context_menu.position.y,
+      })((Dom.ul()..className = 'context-menu-list')([
       for (var item in props.context_menu.items)
         (Dom.li()
           ..onClick = ((_) {

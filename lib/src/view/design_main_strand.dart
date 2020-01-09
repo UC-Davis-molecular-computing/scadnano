@@ -5,6 +5,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/context_menu.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -174,29 +175,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() async {
-    DNAAssignOptions options =
-        await app.disable_keyboard_shortcuts_while(() => ask_for_dna_sequence(props.strand.dna_sequence));
-    if (options == null) {
-      return;
-    }
-    app.dispatch(actions.AssignDNA(
-        strand: props.strand,
-        dna_sequence: options.dna_sequence,
-        assign_complements: options.assign_complements));
-  }
+  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand));
 
-  remove_dna() async {
-    DNARemoveOptions options =
-        await app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence());
-    if (options == null) {
-      return;
-    }
-    app.dispatch(actions.RemoveDNA(
-        strand: props.strand,
-        remove_complements: options.remove_complements,
-        remove_all: options.remove_all));
-  }
+  remove_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence(props.strand));
 
   ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
     List<ReactElement> paths = [];
@@ -280,58 +261,40 @@ class DNARemoveOptions {
   DNARemoveOptions({this.remove_complements = false, this.remove_all = false});
 }
 
-Future<DNAAssignOptions> ask_for_dna_sequence(String existing_dna) async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = 'assign DNA sequence';
-  List<String> textLabels = ['sequence:', 'assign complement to bound strands'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = [existing_dna ?? '', null];
-  List<int> widths = [100, 0];
-  List<String> isChecked = [null, 'true'];
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
-  if (result.buttonCode != 'DIA_ACT_OK') return null;
+Future<void> ask_for_assign_dna_sequence(Strand strand) async {
+  var dialog = Dialog(title: 'assign DNA sequence', items: [
+    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
+//    DialogTextArea(label: 'sequence', value: existing_dna ?? ''),
+    DialogCheckbox(label: 'assign complement to bound strands', value: true),
+  ]);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
 
-  String dna_sequence = result.getUserInput(0)[0];
-  bool assign_to_complements = result.getCheckedState(1) == 'true';
-  var options = DNAAssignOptions(
-    dna_sequence: dna_sequence,
-    assign_complements: assign_to_complements,
-  );
+  String dna_sequence = (results[0] as DialogText).value;
+  bool assign_complements = (results[1] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);
   } on FormatException catch (e) {
-    Info.show(e.message);
-    return null;
+    window.alert(e.message);
+    return;
   }
-  return options;
+
+  app.dispatch(
+      actions.AssignDNA(strand: strand, dna_sequence: dna_sequence, assign_complements: assign_complements));
 }
 
-Future<DNARemoveOptions> ask_for_remove_dna_sequence() async {
-  // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-  String buttontype = DiaAttr.CHECKBOX;
-  String htmlTitleText = 'remove DNA sequence';
-  List<String> textLabels = ['remove from bound strands', 'remove from all strands'];
-  List<List<String>> comboInfo = null;
-  List<String> defaultInputTexts = [null, null];
-  List<int> widths = [0, 0];
-  List<String> isChecked = ['true', 'false'];
-  bool alternateRowColor = false;
-  List<String> buttonLabels = ['OK', 'Cancel'];
-  UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-      widths, isChecked, alternateRowColor, buttonLabels);
-  if (result.buttonCode != 'DIA_ACT_OK') return null;
+Future<void> ask_for_remove_dna_sequence(Strand strand) async {
+  var dialog = Dialog(title: 'remove DNA sequence', items: [
+    DialogCheckbox(label: 'remove from bound strands', value: true),
+    DialogCheckbox(label: 'remove from all strands', value: false),
+  ]);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
 
-  bool remove_from_complements = result.getCheckedState(0) == 'true';
-  bool remove_from_all = result.getCheckedState(1) == 'true';
-  var options = DNARemoveOptions(
-    remove_complements: remove_from_complements,
-    remove_all: remove_from_all,
-  );
+  bool remove_complements = (results[0] as DialogCheckbox).value;
+  bool remove_all = (results[1] as DialogCheckbox).value;
 
-  return options;
+  app.dispatch(
+      actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
 }

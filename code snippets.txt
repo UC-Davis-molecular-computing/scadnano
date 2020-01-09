@@ -37,11 +37,42 @@ class _$$$MyComponent$Props extends UiProps {}
 @Component2()
 class $MyComponent$Component extends UiComponent2<$MyComponent$Props> {
   @override
-  Map getDefaultProps() => (newProps());
+  Map get defaultProps => (newProps());
 
   @override
   render() {}
 }
+
+
+// ord2Stful
+
+FileName = snakeCase(MyComponent)
+
+import 'package:over_react/over_react.dart';
+
+part '$FileName$.over_react.g.dart';
+
+@Factory()
+UiFactory<$MyComponent$Props> $MyComponent$ = _$$$MyComponent$;
+
+@Props()
+class _$$$MyComponent$Props extends UiProps {}
+
+@State()
+class _$$$MyComponent$State extends UiState {}
+
+@Component2()
+class $MyComponent$Component extends UiStatefulComponent2<$MyComponent$Props, $MyComponent$State> {
+  @override
+  Map get defaultProps => (newProps());
+
+  @override
+  Map get initialState => (newState());
+
+  @override
+  render() {}
+}
+
 
 
 
@@ -89,14 +120,14 @@ abstract class $CLASS_NAME$
 abstract class $CLASS_NAME$ 
     with BuiltJsonSerializable 
     implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> {
-  
-  factory $CLASS_NAME$({$FIELD_TYPE$ $FIELD_NAME$}) = _$$$CLASS_NAME$._;
-
   factory $CLASS_NAME$.from([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;
 
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  factory $CLASS_NAME$({$FIELD_TYPE$ $FIELD_NAME$}) = _$$$CLASS_NAME$._;
+  
   /************************ end BuiltValue boilerplate ************************/
 
   $FIELD_TYPE$ get $FIELD_NAME$;

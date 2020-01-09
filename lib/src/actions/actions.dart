@@ -10,6 +10,7 @@ import 'package:js/js.dart';
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/crossover.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
@@ -340,8 +341,8 @@ abstract class SaveDNAFile
 }
 
 abstract class LoadDNAFile
-    with BuiltJsonSerializable
-    implements Action, Built<LoadDNAFile, LoadDNAFileBuilder> {
+    with BuiltJsonSerializable, DNADesignChangingAction
+    implements Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   // set to null when getting file from another source such as localStorage
@@ -1414,6 +1415,29 @@ abstract class GridChange
   GridChange._();
 
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// interactive dialog
+
+abstract class DialogShow with BuiltJsonSerializable implements Action, Built<DialogShow, DialogShowBuilder> {
+  Dialog get dialog;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DialogShow({Dialog dialog}) = _$DialogShow._;
+
+  DialogShow._();
+
+  static Serializer<DialogShow> get serializer => _$dialogShowSerializer;
+}
+
+abstract class DialogHide with BuiltJsonSerializable implements Action, Built<DialogHide, DialogHideBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DialogHide() = _$DialogHide;
+
+  DialogHide._();
+
+  static Serializer<DialogHide> get serializer => _$dialogHideSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

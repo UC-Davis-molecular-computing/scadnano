@@ -7,6 +7,7 @@ import 'package:color/color.dart';
 
 import 'actions/actions.dart';
 import 'state/context_menu.dart';
+import 'state/dialog.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
@@ -143,6 +144,14 @@ part 'serializers.g.dart';
   ContextMenuHide,
   ScaffoldSet,
   Address,
+  Dialog,
+  DialogItem,
+  DialogText,
+  DialogNumber,
+  DialogTextArea,
+  DialogCheckbox,
+  DialogShow,
+  DialogHide,
 ])
 Serializers serializers = _$serializers;
 
