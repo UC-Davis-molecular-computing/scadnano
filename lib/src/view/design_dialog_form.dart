@@ -42,7 +42,10 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         return prevState;
       }
     } else {
-      return null;
+      //XXX: cannot just return null here. Must set responses to null in state, so the next time props
+      // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
+      // and the dialog won't be refreshed for the new use.
+      return newState()..responses = null;
     }
   }
 
