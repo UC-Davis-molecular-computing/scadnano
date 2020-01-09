@@ -1,4 +1,3 @@
-import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';

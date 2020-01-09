@@ -12,7 +12,6 @@ import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
-import 'package:smart_dialogs/smart_dialogs.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';

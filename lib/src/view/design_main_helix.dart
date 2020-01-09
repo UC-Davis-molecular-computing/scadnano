@@ -8,7 +8,6 @@ import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
-import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
