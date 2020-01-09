@@ -15,6 +15,9 @@ Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
+  TypedReducer<BuiltList<Helix>, actions.HelixMajorTickDistanceChangeAll>(
+      helix_major_tick_distance_change_all_reducer),
+  TypedReducer<BuiltList<Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_reducer),
 ]);
@@ -33,26 +36,50 @@ BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.Heli
 
 Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
+  TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
+  TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change min/max offsets
 
-Helix helix_offset_change_reducer(Helix helix, actions.HelixOffsetChange action) {
-  return _change_offset_one_helix(helix, action.min_offset, action.max_offset);
-}
+Helix helix_offset_change_reducer(Helix helix, actions.HelixOffsetChange action) =>
+    _change_offset_one_helix(helix, action.min_offset, action.max_offset);
 
-Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) {
-  return helix.rebuild((b) => b
-    ..min_offset = min_offset ?? helix.min_offset
-    ..max_offset = max_offset ?? helix.max_offset);
-}
+Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => helix.rebuild((b) => b
+  ..min_offset = min_offset ?? helix.min_offset
+  ..max_offset = max_offset ?? helix.max_offset);
 
 BuiltList<Helix> helix_offset_change_all_reducer(
         BuiltList<Helix> helices, actions.HelixOffsetChangeAll action) =>
     helices
         .map((helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset))
         .toBuiltList();
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change major ticks
+
+BuiltList<Helix> helix_major_tick_distance_change_all_reducer(
+        BuiltList<Helix> helices, actions.HelixMajorTickDistanceChangeAll action) =>
+    helices
+        .map((helix) => _change_major_tick_distance_one_helix(helix, action.major_tick_distance))
+        .toBuiltList();
+
+BuiltList<Helix> helix_major_ticks_change_all_reducer(
+        BuiltList<Helix> helices, actions.HelixMajorTicksChangeAll action) =>
+    helices.map((helix) => _change_major_ticks_one_helix(helix, action.major_ticks)).toBuiltList();
+
+Helix helix_major_tick_distance_change_reducer(Helix helix, actions.HelixMajorTickDistanceChange action) =>
+    _change_major_tick_distance_one_helix(helix, action.major_tick_distance);
+
+Helix helix_major_ticks_change_reducer(Helix helix, actions.HelixMajorTicksChange action) =>
+    _change_major_ticks_one_helix(helix, action.major_ticks);
+
+Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) =>
+    helix.rebuild((b) => b..major_tick_distance = major_tick_distance);
+
+Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) =>
+    helix.rebuild((b) => b..major_ticks.replace(major_ticks));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone

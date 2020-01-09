@@ -779,11 +779,74 @@ abstract class HelixSelectionsAdjust
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix change min/max offsets
+// Helix change major ticks
 
-abstract class HelixIndividualAction {
+abstract class HelixIndividualAction implements Action {
   int get helix_idx;
 }
+
+abstract class HelixMajorTickDistanceChange
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        HelixIndividualAction,
+        Built<HelixMajorTickDistanceChange, HelixMajorTickDistanceChangeBuilder> {
+  int get helix_idx;
+
+  int get major_tick_distance;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickDistanceChange({int helix_idx, int major_tick_distance}) =
+      _$HelixMajorTickDistanceChange._;
+
+  HelixMajorTickDistanceChange._();
+
+  static Serializer<HelixMajorTickDistanceChange> get serializer => _$helixMajorTickDistanceChangeSerializer;
+}
+
+abstract class HelixMajorTickDistanceChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMajorTickDistanceChangeAll, HelixMajorTickDistanceChangeAllBuilder> {
+  int get major_tick_distance;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickDistanceChangeAll({int major_tick_distance}) = _$HelixMajorTickDistanceChangeAll._;
+
+  HelixMajorTickDistanceChangeAll._();
+
+  static Serializer<HelixMajorTickDistanceChangeAll> get serializer =>
+      _$helixMajorTickDistanceChangeAllSerializer;
+}
+
+abstract class HelixMajorTicksChange
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixMajorTicksChange, HelixMajorTicksChangeBuilder> {
+  int get helix_idx;
+
+  BuiltList<int> get major_ticks;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTicksChange({int helix_idx, BuiltList<int> major_ticks}) = _$HelixMajorTicksChange._;
+
+  HelixMajorTicksChange._();
+
+  static Serializer<HelixMajorTicksChange> get serializer => _$helixMajorTicksChangeSerializer;
+}
+
+abstract class HelixMajorTicksChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMajorTicksChangeAll, HelixMajorTicksChangeAllBuilder> {
+  BuiltList<int> get major_ticks;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTicksChangeAll({BuiltList<int> major_ticks}) = _$HelixMajorTicksChangeAll._;
+
+  HelixMajorTicksChangeAll._();
+
+  static Serializer<HelixMajorTicksChangeAll> get serializer => _$helixMajorTicksChangeAllSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helix change min/max offsets
 
 abstract class HelixOffsetChange
     with BuiltJsonSerializable, UndoableAction

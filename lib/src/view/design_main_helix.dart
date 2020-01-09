@@ -140,11 +140,15 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
   }
 
+  helix_adjust_major_tick_marks() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
+  }
+
   Future<void> dialog_helix_adjust_length() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
 
-    var dialog = Dialog(title: 'helix adjust', items: [
+    var dialog = Dialog(title: 'adjust helix length', items: [
       DialogNumber(label: 'minimum', value: helix.min_offset),
       DialogNumber(label: 'maximum', value: helix.max_offset),
       DialogCheckbox(label: 'apply to all helices', value: true),
@@ -170,6 +174,85 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     }
   }
 
+  Future<void> dialog_helix_adjust_major_tick_marks() async {
+    Helix helix = props.helix;
+    int helix_idx = helix.idx;
+
+    var dialog = Dialog(title: 'adjust helix tick marks', items: [
+      DialogCheckbox(label: 'regular spacing', value: true),
+      DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
+      DialogText(
+          label: 'varying major tick distances (space-separated)',
+          value: helix.major_ticks == null ? '' : helix.major_ticks.toList().join(' ')),
+      DialogCheckbox(label: 'apply to all', value: true),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    bool use_major_tick_distance = (results[0] as DialogCheckbox).value;
+    int major_tick_distance = (results[1] as DialogNumber).value;
+    List<String> major_ticks_str = (results[2] as DialogText).value.trim().split(' ').toList();
+    bool apply_to_all = (results[3] as DialogCheckbox).value;
+
+    List<int> major_ticks = [];
+    if (!use_major_tick_distance && major_ticks_str.isNotEmpty) {
+      for (var major_tick_str in major_ticks_str) {
+        int major_tick = int.tryParse(major_tick_str);
+        if (major_tick == null) {
+          window.alert('"${major_tick_str}" is not a valid integer');
+          return;
+        } else {
+          major_ticks.add(major_tick + (major_ticks.isEmpty ? 0 : major_ticks.last));
+        }
+      }
+
+      int t = major_ticks.firstWhere((t) => t < helix.min_offset, orElse: () => null);
+      if (t != null) {
+        window.alert('major tick ${t} is less than minimum offset ${helix.min_offset}');
+        return;
+      }
+      t = major_ticks.firstWhere((t) => t > helix.max_offset, orElse: () => null);
+      if (t != null) {
+        window.alert('major tick ${t} is greater than maximum offset ${helix.max_offset}');
+        return;
+      }
+
+      if (apply_to_all) {
+        for (var other_helix in app.state.dna_design.helices) {
+          t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
+          if (t != null) {
+            window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
+            return;
+          }
+        }
+        for (var other_helix in app.state.dna_design.helices) {
+          t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
+          if (t != null) {
+            window.alert('major tick ${t} is greater than maximum offset ${other_helix.max_offset}');
+            return;
+          }
+        }
+      }
+    }
+
+    actions.Action action;
+    if (apply_to_all) {
+      if (use_major_tick_distance) {
+        action = actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance);
+      } else {
+        action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks.toBuiltList());
+      }
+    } else {
+      if (use_major_tick_distance) {
+        action = actions.HelixMajorTickDistanceChange(
+            helix_idx: helix_idx, major_tick_distance: major_tick_distance);
+      } else {
+        action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks.toBuiltList());
+      }
+    }
+    app.dispatch(action);
+  }
+
   String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
@@ -178,6 +261,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ContextMenuItem(
           title: 'adjust length',
           on_click: helix_adjust_length,
+        ),
+        ContextMenuItem(
+          title: 'adjust tick marks',
+          on_click: helix_adjust_major_tick_marks,
         ),
       ];
 }

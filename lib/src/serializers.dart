@@ -100,6 +100,10 @@ part 'serializers.g.dart';
   HelixRemove,
   HelixOffsetChange,
   HelixOffsetChangeAll,
+  HelixMajorTickDistanceChange,
+  HelixMajorTickDistanceChangeAll,
+  HelixMajorTicksChange,
+  HelixMajorTicksChangeAll,
   Nick,
   Ligate,
   JoinStrandsByCrossover,
@@ -152,6 +156,7 @@ part 'serializers.g.dart';
   DialogCheckbox,
   DialogShow,
   DialogHide,
+
 ])
 Serializers serializers = _$serializers;
 

@@ -364,61 +364,14 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return crossovers.build();
   }
 
-//  _add_helix(HelixUseActionParameters params) {
-////    Helix helix = Helix(
-////        grid_position: params.grid_position,
-////        max_offset: params.max_offset,
-////        min_offset: params.min_offset,
-////        major_tick_distance: params.major_tick_distance,
-////        major_ticks: params.major_ticks);
-////    helix.set_idx(params.idx);
-//
-//    Helix helix = Helix((h) => h
-//      ..grid_position = params.grid_position.toBuilder()
-//      ..max_offset = params.max_offset
-//      ..min_offset = params.min_offset
-//      ..major_tick_distance = params.major_tick_distance
-//      ..major_ticks = params.major_ticks
-//      ..idx = params.idx
-//      ..svg_position = _default_svg_position(params.idx));
-//
-//    this.helices.insert(params.idx, helix);
-//    this.gp_to_helix[params.grid_position] = helix;
-////    this.helices_store.gp_to_helix[params.grid_position] = helix;
-//
-//    for (int idx = params.idx + 1; idx < this.helices.length; idx++) {
-//      helices[idx] = helices[idx].rebuild((h) => h
-//        ..idx = idx
-//        ..svg_position = _default_svg_position(idx));
-//    }
-//
-////    for (Helix helix_after_idx_used in this.helices.sublist(params.idx + 1)) {
-////      int prev_idx = helix_after_idx_used.idx();
-////      helix_after_idx_used.set_idx(prev_idx + 1);
-////    }
-//  }
-//
-//  _remove_helix(HelixUseActionParameters params) {
-////    Helix old_helix = this.helices_store.gp_to_helix[params.grid_position];
-//    Helix old_helix = this.gp_to_helix[params.grid_position];
-////    int old_idx = old_helix.idx;
-////    assert(old_idx == params.idx);
-//
-//    this.helices.removeAt(old_helix.idx);
-//    for (int idx = old_helix.idx; idx < this.helices.length; idx++) {
-//      helices[idx] = helices[idx].rebuild((h) => h
-//        ..idx = idx
-//        ..svg_position = _default_svg_position(idx));
-//    }
-//
-////    for (Helix helix_after_idx_unused in this.helices.sublist(old_idx)) {
-////      int prev_idx = helix_after_idx_unused.idx();
-////      helix_after_idx_unused.set_idx(prev_idx - 1);
-////    }
-//  }
+  /// max offset allowed on any Helix in the Model
+  @memoized
+  int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
 
-  //TODO: profile to see if it would help to optimize rebuilding of memoized data; currently it is
-  // rebuilt from scratch even if we only add a single Strand
+  /// min offset allowed on any Helix in the Model
+  @memoized
+  int get min_offset => helices.map((helix) => helix.min_offset).reduce(min);
+
   DNADesign add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
   DNADesign add_strands(Iterable<Strand> new_strands) => rebuild((d) => d..strands.addAll(new_strands));
@@ -429,14 +382,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     Set<Strand> strands_to_remove_set = strands_to_remove.toSet();
     return rebuild((d) => d..strands.removeWhere((strand) => strands_to_remove_set.contains(strand)));
   }
-
-  /// max offset allowed on any Helix in the Model
-  @memoized
-  int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
-
-  /// min offset allowed on any Helix in the Model
-  @memoized
-  int get min_offset => helices.map((helix) => helix.min_offset).reduce(min);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
@@ -782,6 +727,28 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
+
+  @memoized
+  int max_offset_of_strands_at(int helix_idx) {
+    var substrands = helix_idx_to_substrands[helix_idx];
+    int max_offset =
+        substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+    for (var substrand in substrands) {
+      max_offset = max(max_offset, substrand.end);
+    }
+    return max_offset;
+  }
+
+  @memoized
+  int min_offset_of_strands_at(int helix_idx) {
+    var substrands = helix_idx_to_substrands[helix_idx];
+    int min_offset =
+        substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+    for (var substrand in substrands) {
+      min_offset = min(min_offset, substrand.start);
+    }
+    return min_offset;
+  }
 }
 
 BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(
