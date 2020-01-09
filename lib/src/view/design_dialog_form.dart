@@ -1,4 +1,3 @@
-
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -42,7 +41,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         return prevState;
       }
     } else {
-      //XXX: cannot just return null here. Must set responses to null in state, so the next time props
+      //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
       // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
       // and the dialog won't be refreshed for the new use.
       return newState()..responses = null;

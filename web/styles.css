@@ -121,7 +121,9 @@ html, body {
     transform: translate(-50%, -50%);
 }
 
-.dialog-form {
+.dialog-form-form {
+    display: flex;
+    flex-direction: column;
     text-align: center;
     padding: 10px;
     border-radius: 10px;
@@ -131,6 +133,7 @@ html, body {
 }
 
 .dialog-form-item {
+    align-self: flex-start;
     /*float: left;*/
     /*display: block;*/
 }
