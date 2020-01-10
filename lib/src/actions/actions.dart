@@ -1574,7 +1574,7 @@ abstract class ScaffoldSet
 // Strand color set
 
 abstract class StrandColorSet
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<StrandColorSet, StrandColorSetBuilder> {
   Strand get strand;
 
