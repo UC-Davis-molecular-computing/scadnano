@@ -13,7 +13,7 @@ with two main differences:
 
 1) It runs entirely in the browser, with no installation required. Currently only [Chrome](https://www.google.com/chrome/) is supported, with support for [Firefox](https://www.mozilla.org/en-US/firefox/), [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge), and [Safari](https://www.apple.com/safari/) planned in the future.
 
-2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
+2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
 
 A secondary goal is that the file format should be easily readable, to help when debugging scripts.
 
@@ -95,7 +95,7 @@ Pressing Ctrl+Z will undo the last action that changed the design.
 Pressing Shift+Ctrl+Z will redo it.
 
 **Right-click:**
-Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. 
+Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. (**Note for cadnano users:** Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand.)
 
 ## Menu
 
@@ -174,11 +174,10 @@ There are different edit modes available, shown on the right side of the screen.
 * **(h)elix:**
   Clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
-* **(a)ssign DNA:**
-  Clicking on a strand allows one to assign a DNA sequence to a strand. Any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. You have the option of automatically assigning the complementary sequence to all strands bound to this strand.
 
-  This mode is also used to remove DNA sequences. Sequences can be removed from just one strand, or that strand and all strands bound to it, or all strands in the whole design.
 
+## Assigning DNA
+  Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. Disabling this allows one to create intential mismatches.
 
 
 

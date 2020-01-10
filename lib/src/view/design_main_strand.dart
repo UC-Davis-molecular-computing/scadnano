@@ -154,9 +154,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
 
-      if (assign_dna_mode) {
-        props.strand.dna_sequence == null ? assign_dna() : remove_dna();
-      }
+//      if (assign_dna_mode) {
+//        props.strand.dna_sequence == null ? assign_dna() : remove_dna();
+//      }
     }
   }
 

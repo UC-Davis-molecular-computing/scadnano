@@ -9,8 +9,8 @@ import '../state/select_mode_state.dart';
 Reducer<SelectModeState> select_mode_state_reducer = combineReducers<SelectModeState>([
   TypedReducer<SelectModeState, actions.SelectModeToggle>(toggle_select_mode_reducer),
   TypedReducer<SelectModeState, actions.SelectModesSet>(set_select_modes_reducer),
-  TypedReducer<SelectModeState, actions.EditModeToggle>(edit_mode_toggle_changes_select_mode_reducer),
-  TypedReducer<SelectModeState, actions.EditModesSet>(edit_modes_set_changes_select_mode_reducer),
+//  TypedReducer<SelectModeState, actions.EditModeToggle>(edit_mode_toggle_changes_select_mode_reducer),
+//  TypedReducer<SelectModeState, actions.EditModesSet>(edit_modes_set_changes_select_mode_reducer),
 ]);
 
 SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.SelectModeToggle action) {
@@ -43,16 +43,16 @@ SelectModeState set_select_modes_reducer(SelectModeState state, actions.SelectMo
 
 SelectModeState edit_mode_toggle_changes_select_mode_reducer(
     SelectModeState state, actions.EditModeToggle action) {
-  if (action.mode == EditModeChoice.assign_dna) {
-    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
-  }
+//  if (action.mode == EditModeChoice.assign_dna) {
+//    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
+//  }
   return state;
 }
 
 SelectModeState edit_modes_set_changes_select_mode_reducer(
     SelectModeState state, actions.EditModesSet action) {
-  if (action.edit_modes.contains(EditModeChoice.assign_dna)) {
-    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
-  }
+//  if (action.edit_modes.contains(EditModeChoice.assign_dna)) {
+//    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
+//  }
   return state;
 }
