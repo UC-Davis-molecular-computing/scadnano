@@ -136,6 +136,7 @@ part 'serializers.g.dart';
   DNAEndsMoveCommit,
   StrandsMove,
   StrandsMoveStart,
+  StrandsMoveStartSelectedStrands,
   StrandsMoveStop,
   StrandsMoveAdjustAddress,
   StrandsMoveCommit,

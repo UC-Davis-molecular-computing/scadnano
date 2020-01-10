@@ -4,6 +4,7 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
+import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
@@ -529,7 +530,8 @@ class DesignViewComponent {
 
   copy_selected_strands() {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
-    var strands = app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand).toList();
+    var strands = BuiltList<Strand>(
+        app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
     int min_helix_idx;
     int min_offset;
     bool min_forward;
@@ -547,7 +549,9 @@ class DesignViewComponent {
     }
 
     copy_action = actions.StrandsMoveStart(
-        address: Address(helix_idx: min_helix_idx, offset: min_offset, forward: min_forward), copy: true);
+        strands: strands,
+        address: Address(helix_idx: min_helix_idx, offset: min_offset, forward: min_forward),
+        copy: true);
   }
 
   clear_copy_buffer() {

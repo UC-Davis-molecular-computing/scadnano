@@ -1170,16 +1170,34 @@ abstract class PotentialCrossoverRemove
 abstract class StrandsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<StrandsMoveStart, StrandsMoveStartBuilder> {
+  BuiltList<Strand> get strands;
+
   Address get address;
 
   bool get copy;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStart({Address address, bool copy}) = _$StrandsMoveStart._;
+  factory StrandsMoveStart({BuiltList<Strand> strands, Address address, bool copy}) = _$StrandsMoveStart._;
 
   StrandsMoveStart._();
 
   static Serializer<StrandsMoveStart> get serializer => _$strandsMoveStartSerializer;
+}
+
+abstract class StrandsMoveStartSelectedStrands
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMoveStartSelectedStrands, StrandsMoveStartSelectedStrandsBuilder> {
+  Address get address;
+
+  bool get copy;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMoveStartSelectedStrands({Address address, bool copy}) = _$StrandsMoveStartSelectedStrands._;
+
+  StrandsMoveStartSelectedStrands._();
+
+  static Serializer<StrandsMoveStartSelectedStrands> get serializer =>
+      _$strandsMoveStartSelectedStrandsSerializer;
 }
 
 abstract class StrandsMoveStop

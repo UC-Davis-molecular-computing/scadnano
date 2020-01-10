@@ -150,7 +150,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 //      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
         var address = util.get_closest_address(event, props.helices);
-        app.dispatch(actions.StrandsMoveStart(address: address, copy: false));
+
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
 
       if (assign_dna_mode) {

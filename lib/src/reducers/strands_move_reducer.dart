@@ -11,6 +11,8 @@ import '../actions/actions.dart' as actions;
 
 GlobalReducer<StrandsMove, AppState> strands_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),
+  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStartSelectedStrands>(
+      strands_move_start_selected_strands_reducer),
   TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveAdjustAddress>(strands_adjust_address_reducer),
 ]);
 
@@ -20,6 +22,16 @@ Reducer<StrandsMove> strands_move_local_reducer = combineReducers([
 
 StrandsMove strands_move_start_reducer(
     StrandsMove strands_move, AppState state, actions.StrandsMoveStart action) {
+  return StrandsMove(
+      strands_moving: action.strands,
+      all_strands: state.dna_design.strands,
+      original_address: action.address,
+      helices: state.dna_design.helices,
+      copy: action.copy);
+}
+
+StrandsMove strands_move_start_selected_strands_reducer(
+    StrandsMove strands_move, AppState state, actions.StrandsMoveStartSelectedStrands action) {
   BuiltList<Strand> selected_strands =
       BuiltList<Strand>(state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
   return StrandsMove(
