@@ -102,10 +102,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
     EndMovingProps end_moving_props = ConnectedEndMoving();
     end_moving_props = end_moving_props
       ..dna_end = dna_end
-      ..original_offset = offset
+      ..helix = helix
       ..color = props.color
       ..forward = substrand.forward
-      ..helix = helix
       ..is_5p = props.is_5p
       ..key = 'moving-end';
 

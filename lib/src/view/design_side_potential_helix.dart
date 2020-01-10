@@ -19,6 +19,7 @@ UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSide
 class _$DesignSidePotentialHelixProps extends UiProps {
   Grid grid;
   GridPosition grid_position;
+
 //  Set<GridPosition> existing_helix_grid_positions;
   Point<num> mouse_svg_pos;
 }
@@ -64,9 +65,9 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       Position3D position = util.svg_side_view_to_position3d(props.mouse_svg_pos);
       app.dispatch(actions.HelixAdd(position: position));
     } else {
-      app.dispatch(actions.HelixAdd(grid_position: props.grid_position));
+      if (props.grid != Grid.honeycomb || props.grid_position.in_honeycomb_lattice()) {
+        app.dispatch(actions.HelixAdd(grid_position: props.grid_position));
+      }
     }
-
-
   }
 }

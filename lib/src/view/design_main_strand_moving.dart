@@ -38,32 +38,29 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     BoundSubstrand last_ss = props.strand.last_bound_substrand();
     DNAEnd end_5p = first_ss.dnaend_5p;
     DNAEnd end_3p = last_ss.dnaend_3p;
-    return (Dom.g()..className = 'strand-moving')([
+    //XXX: need to switch 3' and 5' if delta_forward is true
+    return (Dom.g()..className = 'strand-moving')(
 //        (ConnectedDesignMainStrandPaths()
       _draw_strand_lines_single_path(),
       (EndMoving()
-        ..dna_end = end_5p
-        ..original_offset = end_5p.offset_inclusive
-        ..color = props.strand.color
-        ..forward = props.delta_forward != first_ss.forward
         ..helix = props.helices[first_ss.helix + props.delta_helix_idx]
-        ..is_5p = true
+        ..dna_end = end_5p
+        ..color = props.strand.color
+        ..forward = first_ss.forward != props.delta_forward
+        ..is_5p = true != props.delta_forward
         ..allowable = props.allowable
-        ..current_offset =
-            (props.delta_forward ? end_3p.offset_inclusive : end_5p.offset_inclusive) + props.delta_offset
+        ..current_offset = end_5p.offset_inclusive + props.delta_offset
         ..key = 'end-5p')(),
       (EndMoving()
+        ..helix = props.helices[last_ss.helix + props.delta_helix_idx]
         ..dna_end = end_3p
-        ..original_offset = end_3p.offset_inclusive
         ..color = props.strand.color
         ..forward = props.delta_forward != last_ss.forward
-        ..helix = props.helices[last_ss.helix + props.delta_helix_idx]
-        ..is_5p = false
+        ..is_5p = false != props.delta_forward
         ..allowable = props.allowable
-        ..current_offset =
-            (props.delta_forward ? end_5p.offset_inclusive : end_3p.offset_inclusive) + props.delta_offset
+        ..current_offset = end_3p.offset_inclusive + props.delta_offset
         ..key = 'end-3p')(),
-    ]);
+    );
   }
 
   ReactElement _draw_strand_lines_single_path() {

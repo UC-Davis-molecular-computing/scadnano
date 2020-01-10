@@ -35,10 +35,9 @@ UiFactory<EndMovingProps> EndMoving = _$EndMoving;
 @Props()
 class _$EndMovingProps extends UiProps {
   DNAEnd dna_end;
-  int original_offset;
+  Helix helix;
   Color color;
   bool forward;
-  Helix helix;
   bool is_5p;
   bool allowable;
 
