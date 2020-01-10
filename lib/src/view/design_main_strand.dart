@@ -179,6 +179,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   remove_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence(props.strand));
 
+  set_color() => app.disable_keyboard_shortcuts_while(() => ask_for_color(props.strand));
+
   ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
     List<ReactElement> paths = [];
     for (BoundSubstrand substrand in strand.bound_substrands()) {
@@ -233,6 +235,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           on_click: () {
             strand.dna_sequence == null ? assign_dna() : remove_dna();
           },
+        ),
+        ContextMenuItem(
+          title: 'set color',
+          on_click: set_color,
         ),
       ];
 }
@@ -297,4 +303,19 @@ Future<void> ask_for_remove_dna_sequence(Strand strand) async {
 
   app.dispatch(
       actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
+}
+
+Future<void> ask_for_color(Strand strand) async {
+  var dialog = Dialog(title: 'set color', items: [
+    DialogText(
+      label: 'color',
+//      label: 'color (hex rgb, e.g., "#00ff00")',
+      value: strand.color.toHexColor().toCssString(),
+    ),
+  ]);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  String color_hex = (results[0] as DialogText).value;
+  app.dispatch(actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
 }

@@ -1551,9 +1551,13 @@ abstract class ContextMenuHide
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // scaffold set/unset
 
+abstract class SingleStrandAction implements Action {
+  Strand get strand;
+}
+
 abstract class ScaffoldSet
     with BuiltJsonSerializable, UndoableAction
-    implements Action, Built<ScaffoldSet, ScaffoldSetBuilder> {
+    implements SingleStrandAction, Built<ScaffoldSet, ScaffoldSetBuilder> {
   Strand get strand;
 
   bool get is_scaffold;
@@ -1564,4 +1568,22 @@ abstract class ScaffoldSet
   ScaffoldSet._();
 
   static Serializer<ScaffoldSet> get serializer => _$scaffoldSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Strand color set
+
+abstract class StrandColorSet
+    with BuiltJsonSerializable
+    implements SingleStrandAction, Built<StrandColorSet, StrandColorSetBuilder> {
+  Strand get strand;
+
+  Color get color;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandColorSet({Strand strand, Color color}) = _$StrandColorSet._;
+
+  StrandColorSet._();
+
+  static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
 }

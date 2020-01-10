@@ -27,7 +27,8 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
-  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
+//  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
+  TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
@@ -43,6 +44,7 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
 ]);
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
+// action may not have the strand itself
 BuiltList<Strand> strands_part_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
   Strand strand = state.dna_design.strands_by_id[action.strand_part.strand_id];
@@ -297,19 +299,50 @@ BuiltList<Strand> strand_create(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// set scaffold property
+// single strand properties
 
-BuiltList<Strand> scaffold_set_reducer(BuiltList<Strand> strands, actions.ScaffoldSet action) {
+//BuiltList<Strand> scaffold_set_reducer(BuiltList<Strand> strands, actions.ScaffoldSet action) {
+//  Strand strand = action.strand;
+//  int strand_idx = strands.indexOf(strand);
+//
+//  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
+//  strand = strand.rebuild((b) => b
+//    ..is_scaffold = action.is_scaffold
+//    ..color = new_color);
+//  strand = strand.initialize();
+//
+//  var strands_builder = strands.toBuilder();
+//  strands_builder[strand_idx] = strand;
+//  return strands_builder.build();
+//}
+
+
+// Unlike a strand part reducer, this sort of action actually stores the strand itself.
+BuiltList<Strand> strands_single_strand_reducer(
+    BuiltList<Strand> strands, actions.SingleStrandAction action) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand);
 
-  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
-  strand = strand.rebuild((b) => b
-    ..is_scaffold = action.is_scaffold
-    ..color = new_color);
+  strand = single_strand_reducer(strand, action);
   strand = strand.initialize();
 
   var strands_builder = strands.toBuilder();
   strands_builder[strand_idx] = strand;
   return strands_builder.build();
 }
+
+Reducer<Strand> single_strand_reducer = combineReducers([
+  TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
+  TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
+]);
+
+Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
+  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
+  strand = strand.rebuild((b) => b
+    ..is_scaffold = action.is_scaffold
+    ..color = new_color);
+  return strand;
+}
+
+Strand strand_color_set_reducer(Strand strand, actions.StrandColorSet action) =>
+    strand.rebuild((b) => b..color = action.color);

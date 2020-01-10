@@ -157,7 +157,7 @@ part 'serializers.g.dart';
   DialogCheckbox,
   DialogShow,
   DialogHide,
-
+  StrandColorSet,
 ])
 Serializers serializers = _$serializers;
 
