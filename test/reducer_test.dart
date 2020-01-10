@@ -59,13 +59,31 @@ AppState app_state_from_dna_design(DNADesign dna_design) {
   return state;
 }
 
+Color DUMMY_COLOR = Color.rgb(0, 0, 0);
+
+Strand recolor_strand(Strand strand) {
+  return strand.rebuild((b) => b.color = DUMMY_COLOR);
+}
+
+BuiltList<Strand> recolor_strands(BuiltList<Strand> strands) {
+  var strandsBuilder = strands.toBuilder();
+  for (int i = 0; i < strands.length; ++i) {
+    strandsBuilder[i] = recolor_strand(strands[i]);
+  }
+
+  return strandsBuilder.build();
+}
+
 /// Checks that two lists of strands contain the same elements.
 void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> expected_strands) {
+  var actual_recolored_strands = recolor_strands(actual_strands);
+  var expected_recolored_strands = recolor_strands(expected_strands);
+
   // Check hashing for potential quick comparison.
-  if (actual_strands.hashCode != expected_strands.hashCode) {
-    expect(actual_strands.length == expected_strands.length, true);
-    for (Strand strand in expected_strands) {
-      expect(actual_strands.contains(strand), true);
+  if (actual_recolored_strands.hashCode != expected_recolored_strands.hashCode) {
+    expect(actual_recolored_strands.length == expected_recolored_strands.length, true);
+    for (Strand strand in expected_recolored_strands) {
+      expect(actual_recolored_strands.contains(strand), true);
     }
   }
 }
@@ -500,8 +518,9 @@ main() {
     DNADesign h5_after_nick1 = DNADesign.from_json(jsonDecode(h5_after_nick_json));
     Strand h5_96_reverse = h5_after_nick1.strands[0];
     Strand h5_48_reverse = h5_after_nick1.strands[1];
-    expect(state.dna_design.strands.contains(h5_96_reverse), true);
-    expect(state.dna_design.strands.contains(h5_48_reverse), true);
+
+    expect(recolor_strands(state.dna_design.strands).contains(h5_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h5_48_reverse), true);
 
     // design.add_nick(helix=0, offset=40, forward=False)
     BoundSubstrand h0_reverse = six_helix_rectangle.strands[1].substrands[0];
@@ -526,8 +545,8 @@ main() {
     DNADesign h0_after_nick2 = DNADesign.from_json(jsonDecode(h0_after_nick_json));
     Strand h0_96_reverse = h0_after_nick2.strands[0];
     Strand h0_40_reverse = h0_after_nick2.strands[1];
-    expect(state.dna_design.strands.contains(h0_96_reverse), true);
-    expect(state.dna_design.strands.contains(h0_40_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h0_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h0_40_reverse), true);
 
     // design.add_nick(helix=0, offset=72, forward=False)
     BoundSubstrand h0_reverse_for_nick3 = h0_96_reverse.substrands[0];
@@ -552,8 +571,8 @@ main() {
     DNADesign h0_after_nick3 = DNADesign.from_json(jsonDecode(h0_after_nick3_json));
     Strand h0_40_72_reverse = h0_after_nick3.strands[0];
     Strand h0_72_96_reverse = h0_after_nick3.strands[1];
-    expect(state.dna_design.strands.contains(h0_40_72_reverse), true);
-    expect(state.dna_design.strands.contains(h0_72_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h0_40_72_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h0_72_96_reverse), true);
     // design.add_nick(helix=2, offset=40, forward=False)
     BoundSubstrand h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h2_reverse_for_nick4, offset: 40));
@@ -577,8 +596,8 @@ main() {
     DNADesign h2_after_nick4 = DNADesign.from_json(jsonDecode(h2_after_nick4_json));
     Strand h2_00_40_reverse = h2_after_nick4.strands[0];
     Strand h2_40_96_reverse = h2_after_nick4.strands[1];
-    expect(state.dna_design.strands.contains(h2_00_40_reverse), true);
-    expect(state.dna_design.strands.contains(h2_40_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h2_00_40_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h2_40_96_reverse), true);
     // design.add_nick(helix=2, offset=72, forward=False)
     BoundSubstrand h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h2_reverse_for_nick5, offset: 72));
@@ -602,8 +621,8 @@ main() {
     DNADesign h2_after_nick5 = DNADesign.from_json(jsonDecode(h2_after_nick5_json));
     Strand h2_40_72_reverse = h2_after_nick5.strands[0];
     Strand h2_72_96_reverse = h2_after_nick5.strands[1];
-    expect(state.dna_design.strands.contains(h2_40_72_reverse), true);
-    expect(state.dna_design.strands.contains(h2_72_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h2_40_72_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h2_72_96_reverse), true);
     // design.add_nick(helix=4, offset=40, forward=False)
     BoundSubstrand h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h4_reverse_for_nick6, offset: 40));
@@ -627,8 +646,8 @@ main() {
     DNADesign h4_after_nick6 = DNADesign.from_json(jsonDecode(h4_after_nick6_json));
     Strand h4_00_40_reverse = h4_after_nick6.strands[0];
     Strand h4_40_96_reverse = h4_after_nick6.strands[1];
-    expect(state.dna_design.strands.contains(h4_00_40_reverse), true);
-    expect(state.dna_design.strands.contains(h4_40_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h4_00_40_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h4_40_96_reverse), true);
     // design.add_nick(helix=4, offset=72, forward=False)
     BoundSubstrand h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h4_reverse_for_nick7, offset: 72));
@@ -652,8 +671,8 @@ main() {
     DNADesign h4_after_nick7 = DNADesign.from_json(jsonDecode(h4_after_nick7_json));
     Strand h4_40_72_reverse = h4_after_nick7.strands[0];
     Strand h4_72_96_reverse = h4_after_nick7.strands[1];
-    expect(state.dna_design.strands.contains(h4_40_72_reverse), true);
-    expect(state.dna_design.strands.contains(h4_72_96_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h4_40_72_reverse), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h4_72_96_reverse), true);
     // design.add_nick(helix=1, offset=24, forward=True)
     BoundSubstrand h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h1_forward_for_nick8, offset: 24));
@@ -677,8 +696,8 @@ main() {
     DNADesign h1_after_nick8 = DNADesign.from_json(jsonDecode(h1_after_nick8_json));
     Strand h1_00_24_forward = h1_after_nick8.strands[0];
     Strand h1_24_96_forward = h1_after_nick8.strands[1];
-    expect(state.dna_design.strands.contains(h1_00_24_forward), true);
-    expect(state.dna_design.strands.contains(h1_24_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h1_00_24_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h1_24_96_forward), true);
     // design.add_nick(helix=1, offset=56, forward=True)
     BoundSubstrand h1_forward_for_nick9 = h1_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h1_forward_for_nick9, offset: 56));
@@ -702,8 +721,8 @@ main() {
     DNADesign h1_after_nick9 = DNADesign.from_json(jsonDecode(h1_after_nick9_json));
     Strand h1_24_56_forward = h1_after_nick9.strands[0];
     Strand h1_56_96_forward = h1_after_nick9.strands[1];
-    expect(state.dna_design.strands.contains(h1_24_56_forward), true);
-    expect(state.dna_design.strands.contains(h1_56_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h1_24_56_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h1_56_96_forward), true);
     // design.add_nick(helix=3, offset=24, forward=True)
     BoundSubstrand h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h3_forward_for_nick10, offset: 24));
@@ -727,8 +746,8 @@ main() {
     DNADesign h3_after_nick10 = DNADesign.from_json(jsonDecode(h3_after_nick10_json));
     Strand h3_00_24_forward = h3_after_nick10.strands[0];
     Strand h3_24_96_forward = h3_after_nick10.strands[1];
-    expect(state.dna_design.strands.contains(h3_00_24_forward), true);
-    expect(state.dna_design.strands.contains(h3_24_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h3_00_24_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h3_24_96_forward), true);
     // design.add_nick(helix=3, offset=56, forward=True)
     BoundSubstrand h3_forward_for_nick11 = h3_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h3_forward_for_nick11, offset: 56));
@@ -752,8 +771,8 @@ main() {
     DNADesign h3_after_nick11 = DNADesign.from_json(jsonDecode(h3_after_nick11_json));
     Strand h3_24_56_forward = h3_after_nick11.strands[0];
     Strand h3_56_96_forward = h3_after_nick11.strands[1];
-    expect(state.dna_design.strands.contains(h3_24_56_forward), true);
-    expect(state.dna_design.strands.contains(h3_56_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h3_24_56_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h3_56_96_forward), true);
     // design.add_nick(helix=5, offset=24, forward=True)
     BoundSubstrand h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h5_forward_for_nick12, offset: 24));
@@ -777,8 +796,8 @@ main() {
     DNADesign h5_after_nick12 = DNADesign.from_json(jsonDecode(h5_after_nick12_json));
     Strand h5_00_24_forward = h5_after_nick12.strands[0];
     Strand h5_24_96_forward = h5_after_nick12.strands[1];
-    expect(state.dna_design.strands.contains(h5_00_24_forward), true);
-    expect(state.dna_design.strands.contains(h5_24_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h5_00_24_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h5_24_96_forward), true);
     // design.add_nick(helix=5, offset=56, forward=True)
     BoundSubstrand h5_forward_for_nick13 = h5_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h5_forward_for_nick13, offset: 56));
@@ -802,8 +821,8 @@ main() {
     DNADesign h5_after_nick13 = DNADesign.from_json(jsonDecode(h5_after_nick13_json));
     Strand h5_24_56_forward = h5_after_nick13.strands[0];
     Strand h5_56_96_forward = h5_after_nick13.strands[1];
-    expect(state.dna_design.strands.contains(h5_24_56_forward), true);
-    expect(state.dna_design.strands.contains(h5_56_96_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h5_24_56_forward), true);
+    expect(recolor_strands(state.dna_design.strands).contains(h5_56_96_forward), true);
 
     String content_after = r"""
  {
@@ -3836,7 +3855,7 @@ main() {
       bool forward = true;
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
-      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: false));
+      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: false, strands: selectables));
 
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
@@ -3976,7 +3995,7 @@ main() {
 
       expect(state.ui_state.selectables_store.selected_items, selectables);
 
-      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: true));
+      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: true, strands: selectables));
 
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
