@@ -90,6 +90,9 @@ class DesignMainStrandCrossoverComponent
       update_mouseover_crossover();
     }
 
+    String tooltip = 'in "backbone" edit mode, click to set backbone angles\n'
+        'of helices ${prev_substrand.helix} and ${next_substrand.helix} pointing at each other';
+
     return (Dom.path()
       ..d = path
       ..stroke = color
@@ -121,7 +124,7 @@ class DesignMainStrandCrossoverComponent
         }
       })
       ..id = id
-      ..key = id)();
+      ..key = id)(Dom.svgTitle()(tooltip));
   }
 
   handle_crossover_click() {

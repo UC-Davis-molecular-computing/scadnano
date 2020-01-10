@@ -88,9 +88,11 @@ class DesignMainLoopoutComponent
       update_mouseover_loopout();
     }
 
+    String tooltip = 'loopout: length ${props.loopout.loopout_length}';
+
     if (util.is_hairpin(prev_ss, next_ss)) {
       // special case for hairpin so it's not a short straight line
-      return _hairpin_arc(prev_ss, next_ss, loopout, classname, color);
+      return _hairpin_arc(prev_ss, next_ss, loopout, classname, color, tooltip);
     } else {
       String path = crossover_path_description(prev_ss, next_ss);
       String id = loopout.id();
@@ -129,7 +131,7 @@ class DesignMainLoopoutComponent
         })
         ..className = classname
         ..id = id
-        ..key = id)();
+        ..key = id)(Dom.svgTitle()(tooltip));
     }
   }
 
@@ -180,7 +182,7 @@ Future<int> ask_for_length(String title, {int current_length, int lower_bound}) 
 }
 
 ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
-    String classname, Color color) {
+    String classname, Color color, String tooltip) {
   var helix = app.state.dna_design.helices[prev_substrand.helix];
   var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
   var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
@@ -206,11 +208,10 @@ ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_sub
   var c2 = Point<num>(x_offset2, y_offset2);
 
   String id = loopout.id();
-  ReactElement arc = (Dom.path()
+  return (Dom.path()
     ..className = classname
     ..stroke = color.toHexColor().toCssString()
     ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
     ..key = id
-    ..id = id)();
-  return arc;
+    ..id = id)(Dom.svgTitle()(tooltip));
 }

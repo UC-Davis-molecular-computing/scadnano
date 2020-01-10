@@ -49,7 +49,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
-    String tooltip_helix_length_adjust = 'click to adjust helix length';
+//    String tooltip_helix_length_adjust = 'click to adjust helix length';
 
     return (Dom.g()
       ..className = 'helix-main-view'
@@ -60,13 +60,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..cx = '$cx'
         ..cy = '$cy'
         ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}'
-        ..key = 'main-view-helix-circle')(Dom.svgTitle()(tooltip_helix_length_adjust)),
+        ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'
         ..id = helix_text_id()
         ..x = '$cx'
         ..y = '$cy'
-        ..key = 'main-view-helix-text')(Dom.svgTitle()(tooltip_helix_length_adjust), '$idx'),
+        ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.g()
         ..className = 'helix-lines-group'
         ..key = 'helix-lines-group')(
