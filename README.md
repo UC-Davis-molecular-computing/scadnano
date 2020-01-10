@@ -118,7 +118,8 @@ Shows any DNA sequences that have been assigned to the strands. For large design
 Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
 
 * **grid:**
-The grid type can be changed to square, hex, honeycomb, or none. TODO explain more what this means
+The grid type can be changed to square, hex, honeycomb, or none. 
+[TODO explain more what this means]
 
 ## Edit modes
 

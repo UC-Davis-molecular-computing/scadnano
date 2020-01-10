@@ -220,9 +220,10 @@ class DesignViewComponent {
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
-            !app.state.dna_design.is_occupied(new_address) &&
-            new_offset != strand_creation.original_offset) {
-          // can't draw strand over existing strand, and can't put start and end at same offset
+            !app.state.dna_design.is_occupied(new_address) && // can't draw strand over existing strand
+            new_offset != strand_creation.original_offset && // can't put start and end at same offset
+            strand_creation.helix.min_offset <= new_offset && // can't go off end of helix
+            new_offset < strand_creation.helix.max_offset) {
           app.dispatch(actions.StrandCreateAdjustOffset(offset: new_offset));
         }
       }
@@ -530,8 +531,8 @@ class DesignViewComponent {
 
   copy_selected_strands() {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
-    var strands = BuiltList<Strand>(
-        app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
+    var strands =
+        BuiltList<Strand>(app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
     int min_helix_idx;
     int min_offset;
     bool min_forward;
