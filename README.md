@@ -41,7 +41,7 @@ It is strongly recommended that you frequently save your work by pressing the "S
 The main parts of the program are the *side view* on the left, and the *main view* in the center.
 The side view shows DNA helices "head on", with the interpretation that as you move left-to-right in the main view, this is like moving "into the screen" in the side view.
 
-![screenshot](doc-images/screenshot-initial-marked-up.png)
+![screenshot](doc-images/screenshot-initial.png)
 
 The screenshot above shows many of the terms used in scadnano. To see how it is represented as a .dna file (which is itself something called JSON format): here is part of the file representing the above design:
 

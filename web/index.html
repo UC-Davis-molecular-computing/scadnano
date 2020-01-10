@@ -246,11 +246,37 @@
         window.onmousedown = set_ctrl_shift_alt;
         window.onmouseup = set_ctrl_shift_alt;
 
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // browser detection
+        // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+        // Opera 8.0+
+        var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        // Firefox 1.0+
+        var isFirefox = typeof InstallTrigger !== 'undefined';
+        // Safari 3.0+ "[object HTMLElementConstructor]"
+        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        // Internet Explorer 6-11
+        var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        // Edge 20+
+        var isEdge = !isIE && !!window.StyleMedia;
+        // Chrome 1 - 71
+        var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        // Edge (based on chromium) detection
+        var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
+        // Blink engine detection
+        var isBlink = (isChrome || isOpera) && !!window.CSS;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        var zoom_speed = 0.3;
+        if (isEdge) {
+            zoom_speed = 0.06;
+        }
 
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
-            zoomScaleSensitivity: 0.3,
+            zoomScaleSensitivity: zoom_speed,
             minZoom: 0.05,
             maxZoom: 20,
             beforePan: before_pan,
@@ -262,7 +288,7 @@
 
         main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
-            zoomScaleSensitivity: 0.3,
+            zoomScaleSensitivity: zoom_speed,
             minZoom: 0.05,
             maxZoom: 20,
             beforePan: before_pan,

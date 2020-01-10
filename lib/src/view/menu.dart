@@ -58,12 +58,12 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..className = 'app-name menu-item'
         ..key = 'title-label')('scadnano'),
       //XXX: I like to keep this button around to simulate random things that require user interaction
-      (Dom.button()
-        ..onClick = (_) {
-//          util.set_allow_pan(false);
-        }
-        ..key = 'dummy'
-        ..className = 'dummy-button menu-item')('Dummy'),
+//      (Dom.button()
+//        ..onClick = (_) {
+////          util.set_allow_pan(false);
+//        }
+//        ..key = 'dummy'
+//        ..className = 'dummy-button menu-item')('Dummy'),
       (Dom.button()
         ..onClick = //((_) => export_dna())
           ((_) => app.disable_keyboard_shortcuts_while(export_dna))
