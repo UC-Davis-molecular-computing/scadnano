@@ -39,6 +39,8 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..context_menu = null
   ..dialog = null
   ..strand_creation = null
+  ..assign_complement_to_bound_strands_default = true
+  ..warn_on_change_strand_dna_assign_default = true
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
@@ -85,6 +87,10 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get selection_box_displayed_main;
 
   bool get selection_box_displayed_side;
+
+  bool get assign_complement_to_bound_strands_default;
+
+  bool get warn_on_change_strand_dna_assign_default;
 
   BuiltList<MouseoverData> get mouseover_datas;
 

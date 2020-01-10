@@ -57,6 +57,8 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   bool moving_dna_ends;
   bool currently_moving;
   bool origami_type_is_selectable;
+  bool assign_complement_to_bound_strands_default;
+  bool warn_on_change_strand_dna_assign_default;
 }
 
 @Component2()
@@ -105,15 +107,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     ]);
   }
 
-//  context_menu() {
-//    return (Dom.foreignObject()
-//      ..x = '0'
-//      ..y = '0'
-//      ..width = '100'
-//      ..height = '100'
-//      ..key = 'context_menu')();
-//  }
-
   // needed for capturing right-click events with React:
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
@@ -150,13 +143,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 //      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
         var address = util.get_closest_address(event, props.helices);
-
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
-
-//      if (assign_dna_mode) {
-//        props.strand.dna_sequence == null ? assign_dna() : remove_dna();
-//      }
     }
   }
 
@@ -175,7 +163,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand));
+  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(
+      props.strand, props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
   remove_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence(props.strand));
 
@@ -227,14 +216,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   List<ContextMenuItem> context_menu_strand(Strand strand) => [
         ContextMenuItem(
+          title: 'assign DNA',
+          on_click: assign_dna,
+        ),
+        if (strand.dna_sequence != null)
+          ContextMenuItem(
+            title: 'remove DNA',
+            on_click: remove_dna,
+          ),
+        ContextMenuItem(
           title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
           on_click: () => app.dispatch(actions.ScaffoldSet(strand: strand, is_scaffold: !strand.is_scaffold)),
-        ),
-        ContextMenuItem(
-          title: strand.dna_sequence == null ? 'assign DNA' : 'remove DNA',
-          on_click: () {
-            strand.dna_sequence == null ? assign_dna() : remove_dna();
-          },
         ),
         ContextMenuItem(
           title: 'set color',
@@ -267,17 +259,22 @@ class DNARemoveOptions {
   DNARemoveOptions({this.remove_complements = false, this.remove_all = false});
 }
 
-Future<void> ask_for_assign_dna_sequence(Strand strand) async {
+Future<void> ask_for_assign_dna_sequence(
+    Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
     DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
 //    DialogTextArea(label: 'sequence', value: existing_dna ?? ''),
-    DialogCheckbox(label: 'assign complement to bound strands', value: true),
+    DialogCheckbox(
+        label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
+    DialogCheckbox(
+        label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
   ]);
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
   String dna_sequence = (results[0] as DialogText).value;
   bool assign_complements = (results[1] as DialogCheckbox).value;
+  bool warn_on_change = (results[2] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);
@@ -286,8 +283,11 @@ Future<void> ask_for_assign_dna_sequence(Strand strand) async {
     return;
   }
 
-  app.dispatch(
-      actions.AssignDNA(strand: strand, dna_sequence: dna_sequence, assign_complements: assign_complements));
+  app.dispatch(actions.AssignDNA(
+      strand: strand,
+      dna_sequence: dna_sequence,
+      assign_complements: assign_complements,
+      warn_on_change: warn_on_change));
 }
 
 Future<void> ask_for_remove_dna_sequence(Strand strand) async {

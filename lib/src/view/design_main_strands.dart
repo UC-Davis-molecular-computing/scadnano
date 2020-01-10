@@ -25,7 +25,9 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..is_origami = state.dna_design.is_origami
     ..currently_moving = state.ui_state.strands_move != null || state.ui_state.moving_dna_ends
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
-    ..moving_dna_ends = state.ui_state.moving_dna_ends;
+    ..moving_dna_ends = state.ui_state.moving_dna_ends
+    ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
+    ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default;
 })(DesignMainStrands);
 
 @Factory()
@@ -43,11 +45,12 @@ class _$DesignMainStrandsProps extends UiProps {
   bool moving_dna_ends;
   bool is_origami;
   bool currently_moving;
+  bool assign_complement_to_bound_strands_default;
+  bool warn_on_change_strand_dna_assign_default;
 }
 
 @Component2()
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
-
   bool origami_type_is_selectable(Strand strand) {
     if (!props.is_origami) {
       return true;
@@ -60,7 +63,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
   }
 
   bool strand_is_selectable(Strand strand) {
-    if (! (props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+    if (!(props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
         props.edit_modes.contains(EditModeChoice.select))) {
       return false;
     }
@@ -69,7 +72,6 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
 
   @override
   render() {
-
     return (Dom.g()..className = 'strands-main-view')([
       for (var strand in props.strands)
 //        (ConnectedDesignMainStrand()
@@ -86,6 +88,8 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
           ..currently_moving = props.currently_moving
           ..drawing_potential_crossover = props.drawing_potential_crossover
           ..moving_dna_ends = props.moving_dna_ends
+          ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default
+          ..warn_on_change_strand_dna_assign_default = props.warn_on_change_strand_dna_assign_default
           ..key = strand.toString())()
     ]);
   }

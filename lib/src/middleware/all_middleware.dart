@@ -1,5 +1,7 @@
 import 'package:redux/redux.dart';
 
+//import 'thunk.dart';
+import 'assign_dna.dart';
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
 import 'grid_change.dart';
@@ -14,17 +16,17 @@ import 'local_storage.dart';
 import 'strand_create.dart';
 import 'throttle.dart';
 import 'helix_remove.dart';
-//import 'thunk.dart';
 import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
+//  thunk_middleware,
   local_storage_middleware,
   export_svg_main_middleware,
   export_svg_side_middleware,
   save_file_middleware,
   load_file_middleware,
   throttle_middleware,
-//  thunk_middleware,
+  assign_dna_middleware,
   strand_create_middleware,
   helix_remove_middleware,
   helix_change_offsets_middleware,

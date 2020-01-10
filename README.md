@@ -177,8 +177,24 @@ There are different edit modes available, shown on the right side of the screen.
 
 
 ## Assigning DNA
-  Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. Disabling this allows one to create intential mismatches.
+Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
+By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. 
+Disabling this allows one to create intential mismatches.
 
+It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. 
+However, be careful in automatically assigning DNA complements to strands bound to this one.
+This is allowed, but only if the new sequence will not conflict with the old one, unless option "warn if assigning different sequence to bound strand" is disabled.
+If doing such an assignment would result in trying to write over a DNA base on a bound strand with a different base than it already has, this is not allowed.
+First, remove the DNA sequence from the strand and its bound strands, then assign a fresh DNA sequence.
+You can also disable the warning "warn if assigning different sequence to bound strand", in which case the bound strands will be silently overwritten with the new complementary sequence.
+
+One reason to keep the warning enabled, but still assign DNA to a strand bound to another with DNA already assigned, is that complementary DNA can be built partially in stages.
+For example, if a strand *s1* is connected to two others *s2* and *s3*, then DNA can be assigned to *s2*, followed by *s3*.
+Any bases on *s1* not bound to *s2* (for instance, those bound to *s3*) will receive the wildcard symbol `?` as their "DNA base".
+On assigning a DNA sequence to *s3*, the complementary portions of *s1* (which have a `?`) will be overwritten with the appropriate DNA sequence, even if the warning is enabled.
+Thus it warns only if a concrete DNA base, one of `A`, `C`, `G`, or `T` already exist and are about to be overwritten with a different base.
+
+[TODO: make a figure showing this]
 
 
 ## Exporting SVG

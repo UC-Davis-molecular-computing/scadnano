@@ -40,6 +40,10 @@ BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDN
 
 BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDNA action) {
   Strand strand = action.strand;
+  int strand_idx = strands.indexOf(strand); // need index before we start changing strand
+
+  if (strand.dna_sequence != null) strand = strand.remove_dna_sequence();
+
   String seq = action.dna_sequence;
   seq = util.remove_whitespace_and_uppercase(seq);
   seq = util.pad_dna(seq, strand.dna_length());
@@ -48,7 +52,6 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
   // first overwrite this strand in the builder list
   List<Strand> strands_builder = strands.toList();
   Strand strand_with_new_sequence = strand.set_dna_sequence(seq);
-  int strand_idx = strands.indexOf(strand);
   strands_builder[strand_idx] = strand_with_new_sequence;
 
   // then assign to other strands if requested
@@ -63,7 +66,8 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
         continue;
       }
       if (other_strand.overlaps(strand)) {
-        String new_dna = compute_dna_complement_from(other_strand, strand_with_new_sequence);
+        String new_dna =
+            compute_dna_complement_from(other_strand, strand_with_new_sequence, action.warn_on_change);
         if (new_dna != other_strand.dna_sequence) {
           strands_builder[i] = other_strand.set_dna_sequence(new_dna);
         }
@@ -102,7 +106,7 @@ int compare_overlap(
 /// with an assigned DNA sequence where they overlap. In this case no error checking
 /// about sequence complementarity is done. This can be used to intentionally assign *mismatching*
 /// DNA sequences to :any:`Strand`'s that are bound on a :any:`Helix`.
-String compute_dna_complement_from(Strand strand_to, Strand strand_from) {
+String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool error_on_change) {
   bool already_assigned = strand_to.dna_sequence != null;
 
   // put DNA sequences to assign to substrands in List, one position per substrand
@@ -171,31 +175,40 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from) {
 
     // merge with existing pre-assigned sequence
     String existing_substrand_to_dna_sequence = strand_complement_builder[ss_idx];
-    String merged_substrand_to_dna_sequence = util.merge_wildcards(
-        substrand_to_dna_sequence, existing_substrand_to_dna_sequence, constants.DNA_BASE_WILDCARD);
+    var merge = error_on_change ? util.merge_wildcards : util.merge_wildcards_favor_first;
+    String merged_substrand_to_dna_sequence =
+        merge(substrand_to_dna_sequence, existing_substrand_to_dna_sequence, constants.DNA_BASE_WILDCARD);
     strand_complement_builder[ss_idx] = merged_substrand_to_dna_sequence;
   }
 
   String strand_complement = strand_complement_builder.join('');
   String new_dna_sequence = strand_complement;
   if (strand_to.dna_sequence != null) {
-    try {
-      new_dna_sequence =
-          util.merge_wildcards(strand_to.dna_sequence, new_dna_sequence, constants.DNA_BASE_WILDCARD);
-    } on ArgumentError {
-      BoundSubstrand ss_to = strand_to.first_bound_substrand();
-      BoundSubstrand ss_from = strand_from.first_bound_substrand();
-      var msg = 'strand starting at helix ${ss_to.helix}, offset ${ss_to.offset_5p} has '
-          'length '
-          '${strand_to.dna_length()} and already has a partial DNA sequence assignment of length '
-          '${strand_to.dna_sequence.length}, which is \n'
-          '${strand_to.dna_sequence}, '
-          'but you tried to assign sequence of length ${new_dna_sequence.length} to it, which '
-          'is\n${new_dna_sequence} (this assignment was indirect, since you assigned directly '
-          'to a strand bound to this one). This occurred while directly assigning a DNA '
-          'sequence to the strand whose 5\' end is at helix ${ss_from.helix}, and is of '
-          'length ${strand_from.dna_length}.';
-      throw IllegalDNADesignError(msg);
+    // previously we threw an error, but now we will default to the new sequence. The user should use
+    // the option "warn if assigning different sequence to bound strand" when assigning DNA to avoid this
+    // choice silently overwriting their DNA
+    if (!error_on_change) {
+      new_dna_sequence = util.merge_wildcards_favor_first(
+          new_dna_sequence, strand_to.dna_sequence, constants.DNA_BASE_WILDCARD);
+    } else {
+      try {
+        new_dna_sequence =
+            util.merge_wildcards(strand_to.dna_sequence, new_dna_sequence, constants.DNA_BASE_WILDCARD);
+      } on ArgumentError {
+        BoundSubstrand ss_to = strand_to.first_bound_substrand();
+        BoundSubstrand ss_from = strand_from.first_bound_substrand();
+        var msg = 'strand starting at helix ${ss_to.helix}, offset ${ss_to.offset_5p} has '
+            'length '
+            '${strand_to.dna_length()} and already has a partial DNA sequence assignment of length '
+            '${strand_to.dna_sequence.length}, which is \n'
+            '${strand_to.dna_sequence}, '
+            'but you tried to assign sequence of length ${new_dna_sequence.length} to it, which '
+            'is\n${new_dna_sequence} (this assignment was indirect, since you assigned directly '
+            'to a strand bound to this one). This occurred while directly assigning a DNA '
+            'sequence to the strand whose 5\' end is at helix ${ss_from.helix}, and is of '
+            'length ${strand_from.dna_length}.';
+        throw IllegalDNADesignError(msg);
+      }
     }
   }
   return new_dna_sequence;

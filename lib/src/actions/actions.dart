@@ -1332,8 +1332,11 @@ abstract class AssignDNA
 
   bool get assign_complements;
 
+  bool get warn_on_change;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements}) = _$AssignDNA._;
+  factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements, bool warn_on_change}) =
+      _$AssignDNA._;
 
   AssignDNA._();
 

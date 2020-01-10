@@ -542,6 +542,29 @@ String merge_wildcards(String s1, String s2, String wildcard) {
   return union_builder.join('');
 }
 
+/// Takes a "union" of two equal-length strings [s1] and [s2].
+/// Whenever one has a symbol [wildcard] and the other does not, the result has the non-wildcard symbol.
+/// Throws [ArgumentError] if [s1] and [s2] are not the same length or do not agree on non-wildcard
+/// symbols at any position.
+String merge_wildcards_favor_first(String s1, String s2, String wildcard) {
+  if (s1.length != s2.length) {
+    throw ArgumentError('\ns1=${s1} and\ns2=${s2}\nare not the same length.');
+  }
+  List<String> union_builder = [];
+  for (int i = 0; i < s1.length; i++) {
+    String c1 = s1[i];
+    String c2 = s2[i];
+    if (c1 == wildcard) {
+      union_builder.add(c2);
+    } else if (c2 == wildcard) {
+      union_builder.add(c1);
+    } else {
+      union_builder.add(c1);
+    }
+  }
+  return union_builder.join('');
+}
+
 /// Ensure is a valid DNA sequence.
 /// Throw [FormatException] if it contains symbols other than base symbols a c g t A C G T and whitespace,
 /// and if it does not have at least one base symbol.

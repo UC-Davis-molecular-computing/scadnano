@@ -43,8 +43,12 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
-//  ..selection_box_main_view = main_view_selection_box_reducer(ui_state.selection_box_main_view, action)?.toBuilder()
-//  ..selection_box_side_view = side_view_selection_box_reducer(ui_state.selection_box_side_view, action)?.toBuilder()
+  ..assign_complement_to_bound_strands_default =
+      TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
+          ui_state.assign_complement_to_bound_strands_default, action)
+  ..warn_on_change_strand_dna_assign_default =
+      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(
+          ui_state.warn_on_change_strand_dna_assign_default, action)
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action)));
 
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
@@ -71,6 +75,12 @@ bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
 bool show_mismatches_reducer(bool prev_show, actions.SetShowMismatches action) => action.show;
 
 bool show_editor_reducer(bool prev_show, actions.SetShowEditor action) => action.show;
+
+bool assign_complement_to_bound_strands_default_reducer(bool _, actions.AssignDNA action) =>
+    action.assign_complements;
+
+bool warn_on_change_strand_dna_assign_default_reducer(bool _, actions.AssignDNA action) =>
+    action.warn_on_change;
 
 Reducer<bool> show_mousever_rect_reducer = combineReducers([
   TypedReducer<bool, actions.ShowMouseoverRectSet>(show_mouseover_rect_set_reducer),
