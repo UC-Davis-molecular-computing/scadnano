@@ -12,8 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: setup-chromedriver
-      uses: nanasess/setup-chromedriver@v1.0.1
+    - name: Puppeteer Container
+      uses: ianwalter/puppeteer@v2.0.0
     - name: Install dependencies
       run: pub get
     - name: Run tests
