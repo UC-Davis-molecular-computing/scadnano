@@ -1,0 +1,11 @@
+# This is a browser-only package, so test on chrome by default.
+platforms: [chrome]
+
+filename: "reducer_test.dart"
+
+presets:
+  # Pass "-P debug" to enable debugging configuration
+  debug:
+    pause_after_load: true
+    exclude_tags: undebuggable
+    reporter: expanded
