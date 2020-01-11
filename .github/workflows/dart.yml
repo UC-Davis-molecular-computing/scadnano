@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: setup-chromedriver
+      uses: nanasess/setup-chromedriver@v1.0.1
     - name: Install dependencies
       run: pub get
     - name: Run tests
