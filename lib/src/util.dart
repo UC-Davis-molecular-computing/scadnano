@@ -197,16 +197,13 @@ Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.
 Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
     MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
   Point<num> point;
-//    point = untransformed_svg_point(view_svg, event: event);
-
+  if (!browser.isFirefox) {
+    point = event.offset;
     point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-//  if (!browser.isFirefox) {
-//    point = event.offset;
-//    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-//  } else {
-//    point = untransformed_svg_point(view_svg, event: event);
-//    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-//  }
+  } else {
+    point = untransformed_svg_point(view_svg, event: event);
+    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+  }
   return point;
 }
 
