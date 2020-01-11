@@ -11,7 +11,15 @@ Its design is based on [cadnano](https://cadnano.org/),
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
 with two main differences: 
 
-1) It runs entirely in the browser, with no installation required. Currently only [Chrome](https://www.google.com/chrome/) is supported, with support for [Firefox](https://www.mozilla.org/en-US/firefox/), [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge), and [Safari](https://www.apple.com/safari/) planned in the future.
+1) It runs entirely in the browser, with no installation required. Currently only 
+[Chrome](https://www.google.com/chrome/) 
+and 
+[Firefox](https://www.mozilla.org/en-US/firefox/) 
+are supported, with support for 
+[Safari](https://www.apple.com/safari/) 
+and 
+[Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
+planned in the future.
 
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
 
@@ -43,7 +51,7 @@ The side view shows DNA helices "head on", with the interpretation that as you m
 
 ![screenshot](doc-images/screenshot-initial.png)
 
-The screenshot above shows many of the terms used in scadnano. To see how it is represented as a .dna file (which is itself something called JSON format): here is the file representing the above design:
+The screenshot above shows many of the terms used in scadnano. To see how it is represented as a .dna file (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)): here is the file representing the above design:
 
 ```json
 {

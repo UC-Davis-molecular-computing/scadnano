@@ -1,5 +1,4 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
 
 import '../actions/actions.dart' as actions;
 import '../state/select_mode.dart';

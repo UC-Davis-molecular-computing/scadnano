@@ -243,22 +243,17 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   int svg_x_to_offset(num x) {
     var offset;
-    if (browser.isFirefox) {
-      offset = (x / constants.BASE_WIDTH_SVG).floor();
-    } else {
-      offset = ((x - this.svg_position.x) / constants.BASE_WIDTH_SVG).floor();
-    }
+//    if (browser.isFirefox) {
+//      offset = (x / constants.BASE_WIDTH_SVG).floor();
+//    } else {
+      offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+//    }
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   bool svg_y_is_forward(num y) {
-    var relative_y;
-    if (browser.isFirefox) {
-      relative_y = y;
-    } else {
-      relative_y = (y - this.svg_position.y);
-    }
+    var relative_y = (y - svg_position.y);
     return relative_y < 10;
   }
 

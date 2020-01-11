@@ -104,9 +104,10 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
-  dialog = dialog.rebuild((b) => b..on_submit = (List<DialogItem> items) {
-    completer.complete(items);
-  });
+  dialog = dialog.rebuild((b) => b
+    ..on_submit = (List<DialogItem> items) {
+      completer.complete(items);
+    });
   app.dispatch(actions.DialogShow(dialog: dialog));
   return completer.future;
 }
@@ -120,16 +121,92 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
   return grid_pos;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// transforming of points
+
+/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
+Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
+  var svg_coord = round_point(svg_position_of_mouse_click(event));
+
+  num svg_y = svg_coord.y;
+  for (Helix helix in helices) {
+//    print('  helix pos: ${helix.svg_position}');
+    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
+      return helix;
+    }
+  }
+
+  // didn't find a helix, so we'll find the closest one
+  Helix helix_closest = helices.first;
+  num min_dist = distance(helix_closest, svg_y);
+  for (Helix helix in helices) {
+    if (distance(helix, svg_y) < min_dist) {
+      helix_closest = helix;
+      min_dist = distance(helix, svg_y);
+    }
+  }
+  return helix_closest;
+}
+
+num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
+
+/// Return (closest) helix, offset and direction where click event occurred.
+Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
+  var svg_coord = round_point(svg_position_of_mouse_click(event));
+//  print('svg_coord: ${svg_coord}');
+  Helix helix = get_closest_helix(event, helices);
+  int offset = helix.svg_x_to_offset(svg_coord.x);
+  bool forward = helix.svg_y_is_forward(svg_coord.y);
+  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
+}
+
+//XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+// might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+Point<num> svg_position_of_mouse_click(MouseEvent event) {
+  Point<num> offset_in_svg_elt;
+  if (browser.isFirefox) {
+    offset_in_svg_elt = get_svg_point(event);
+  } else {
+    offset_in_svg_elt = event.offset;
+  }
+  return transform_mouse_coord_to_svg_current_panzoom(offset_in_svg_elt, true);
+}
+
+Point<num> get_svg_point(MouseEvent event) {
+  if (browser.isFirefox) {
+    Element svg_elt = svg_ancestor(event.target);
+    var rect = svg_elt.getBoundingClientRect().topLeft;
+    var offset = event.client - rect;
+    return offset;
+  } else {
+    return event.client;
+  }
+}
+
+SvgSvgElement svg_ancestor(SvgElement elt) {
+  while (!(elt is SvgSvgElement)) {
+    elt = elt.parent;
+  }
+  return elt;
+}
+
+Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
+
+Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.round());
+
 Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
     MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
   Point<num> point;
-  if (!browser.isFirefox) {
-    point = event.offset;
+//    point = untransformed_svg_point(view_svg, event: event);
+
     point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-  } else {
-    point = untransformed_svg_point(view_svg, event: event);
-    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
-  }
+//  if (!browser.isFirefox) {
+//    point = event.offset;
+//    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+//  } else {
+//    point = untransformed_svg_point(view_svg, event: event);
+//    point = transform_mouse_coord_to_svg_current_panzoom(point, is_main_view);
+//  }
   return point;
 }
 
@@ -458,45 +535,6 @@ Address get_address_on_helix(MouseEvent event, Helix helix) {
   bool forward = helix.svg_y_is_forward(svg_coord.y);
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
-
-/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
-Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord = svg_position_of_mouse_click(event);
-
-  num svg_y = svg_coord.y;
-  for (Helix helix in helices) {
-    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
-      return helix;
-    }
-  }
-
-  // didn't find a helix, so we'll find the closest one
-  Helix helix_closest = helices.first;
-  num min_dist = distance(helix_closest, svg_y);
-  for (Helix helix in helices) {
-    if (distance(helix, svg_y) < min_dist) {
-      helix_closest = helix;
-      min_dist = distance(helix, svg_y);
-    }
-  }
-  return helix_closest;
-}
-
-num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
-
-/// Return (closest) helix, offset and direction where click event occurred.
-Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord = svg_position_of_mouse_click(event);
-  Helix helix = get_closest_helix(event, helices);
-  int offset = helix.svg_x_to_offset(svg_coord.x);
-  bool forward = helix.svg_y_is_forward(svg_coord.y);
-  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
-}
-
-//XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-// might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-Point<num> svg_position_of_mouse_click(MouseEvent event) =>
-    browser.isFirefox ? event.offset : transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
 
 String remove_whitespace_and_uppercase(String string) {
   var string_no_spaces = string.replaceAll(RegExp(r'\s+'), '');
