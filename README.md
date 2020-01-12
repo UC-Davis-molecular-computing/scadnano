@@ -300,7 +300,8 @@ since scadnano allows one to copy and paste strands (unlike cadnano),
 encouraging a less opinionated method of creating large designs rapidly.
 
 Recursive copy/pasting speeds up this process even further.
-For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 1 staple, copy/paste it to make 2, copy/paste *those* to make 4, then 8, 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste *those* to make 8, then 16, and finally 32 staples. 
+Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
 The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
