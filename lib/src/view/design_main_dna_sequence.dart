@@ -14,14 +14,15 @@ import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'pure_component.dart';
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
-UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
-    connect<AppState, DesignMainDNASequenceProps>(
-  mapStateToProps: (state) =>
-      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
-)(DesignMainDNASequence);
+//UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
+//    connect<AppState, DesignMainDNASequenceProps>(
+//  mapStateToProps: (state) =>
+//      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
+//)(DesignMainDNASequence);
 
 @Factory()
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
@@ -36,7 +37,7 @@ bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_i
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
 
 @Component2()
-class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> {
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
 
   @override
   render() {

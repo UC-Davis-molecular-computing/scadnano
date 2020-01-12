@@ -4,6 +4,8 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
+const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
 const MIDDLE_CLICK_BUTTON = 1;

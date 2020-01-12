@@ -34,7 +34,7 @@ import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
 const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
-    'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+    '  ${constants.BUG_REPORT_URL}';
 
 final ColorCycler color_cycler = ColorCycler();
 

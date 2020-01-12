@@ -99,10 +99,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..end = props.strand_creation.end
           ..color = props.strand_creation.color
           ..key = 'strand-creating')(),
-      (DesignMainDNASequences()
-        ..show_dna = props.show_dna
-        ..strands = props.strands
-        ..key = 'dna')(),
+      if (props.show_dna)
+        (DesignMainDNASequences()
+          ..strands = props.strands
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),

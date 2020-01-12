@@ -23,6 +23,7 @@ import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
+import 'design_main_error_boundary.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -470,7 +471,7 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        ErrorBoundary()(
+        DesignMainErrorBoundary()(
           (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)((ReduxProvider()
