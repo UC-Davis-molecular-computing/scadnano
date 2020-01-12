@@ -198,7 +198,7 @@ There are different edit modes available, shown on the right side of the screen.
   A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.
 
   Unlike other drawing programs, clicking on the background will not unselect the objects.
-  (This is a deliberate design choices, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
+  (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
   To unselect all selected objects, press the Esc key.
 
   The following are the types of objects that can be selected in the main view.
@@ -293,14 +293,17 @@ These are the side view and main view, respectively, and the extension will save
 
 
 ## How to design structures using scadnano
+Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than a dozen different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
 cadnano provides *autostaple* and *autobreak* utilities for quickly creating a large number of staple strands.
-Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than 10 different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
 We have found that the autotaple and autobreak tools are largely unnecessary,
 since scadnano allows one to copy and paste strands (unlike cadnano), 
-giving a less opinionated way of creaing large designs rapidly.
-A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
+encouraging a less opinionated method of creating large designs rapidly.
 
 Recursive copy/pasting speeds up this process even further.
 For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 1 staple, copy/paste it to make 2, copy/paste *those* to make 4, then 8, 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+
+A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
+The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
+However, numerous example designs are provided to learn what good staple design looks like. 
 
 [TODO: make a separate tutorial showing this process, with screenshot figures]
