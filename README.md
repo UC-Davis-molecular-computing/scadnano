@@ -281,9 +281,11 @@ These are the side view and main view, respectively, and the extension will save
 
 ## How to design structures using scadnano
 cadnano provides *autostaple* and *autobreak* utilities for quickly creating a large number of staple strands.
-Because scadnano allows one to copy and paste strands (unlike cadnano), We have found that these tools are largely unnecessary.
-A large design for a standard DNA origami rectangle, for instance, can be created in about 10 minutes.
 Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than 10 different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
+We have found that the autotaple and autobreak tools are largely unnecessary,
+since scadnano allows one to copy and paste strands (unlike cadnano), 
+giving a less opinionated way of creaing large designs rapidly.
+A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
 
 Recursive copy/pasting speeds up this process even further.
 For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 1 staple, copy/paste it to make 2, copy/paste *those* to make 4, then 8, 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
