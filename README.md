@@ -56,7 +56,9 @@ The side view shows DNA helices "head on", with the interpretation that as you m
 
 ![screenshot](doc-images/screenshot-initial.png)
 
-The screenshot above shows many of the terms used in scadnano. To see how it is represented as a .dna file (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)): here is the file representing the above design:
+The screenshot above shows many of the terms used in scadnano. 
+It is instructive to see how that example design is represented as a .dna file 
+(which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)):
 
 ```json
 {
@@ -101,7 +103,7 @@ Although it is not necessary to deal directly with the above JSON data, it is wo
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
-A design consists of a grid type (square, hex, honeycomb, or none), a list of helices, and a list of strands. 
+A design consists of a *grid* type (square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *n*-1.
 (The strands have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands, for instance.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
@@ -147,7 +149,8 @@ However, it is often best to mostly finalize the design before assigning a DNA s
 Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it's not clear what to do. 
 (e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)
 
-Each helix has a integer *rotation anchor* and a real number *rotation*, with the interpretation that at the offset *rotation anchor*, the rotation of the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view.
+Each helix has a integer *rotation anchor* and a real number *rotation*, with the following interpretation. 
+At the offset *rotation anchor*, the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view. Rotation is *clockwise* as the rotation increases from 0 up to 360 degrees.
 
 
 
@@ -232,9 +235,19 @@ There are different edit modes available, shown on the right side of the screen.
   Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
-  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. This is not intended to be a predictive model based on molecular kinetics, nor is it even intended to be meaningful over the entirety of a helix. Rather, it is useful to set the rotation at one offset on a helix and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
+  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. 
+  The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
+  Most interesting crossovers will be between two helices that are tangent to each other in the side view.
+  Ideally, the rotation of each helix is such that the backbones "point at each other".
 
-  If a crossover is clicked while backbone mode is enabled, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
+  This is not intended to be a predictive model based on molecular kinetics, 
+  nor is it even intended to be meaningful over the entirety of a helix. 
+  Rather, it is useful to set the rotation at one offset on a helix to be "perfect"
+  (i.e., the backbones of the two helices at that offset point directly at each other)
+  and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
+
+  If a crossover is clicked while backbone mode is enabled, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
+  The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 * **l(o)opout:**
   Clicking on a crossover or loopout lets one toggle between a crossover or loopout or change the length of a loopout. Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.
