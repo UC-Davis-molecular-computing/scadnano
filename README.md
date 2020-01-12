@@ -7,11 +7,12 @@ title: "scadnano help"
 [scadnano](https://web.cs.ucdavis.edu/~doty/scadnano2) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
-Its design is based on [cadnano](https://cadnano.org/), 
+Its design is based heavily on [cadnano](https://cadnano.org/), 
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
 with two main differences: 
 
-1) It runs entirely in the browser, with no installation required. Currently only 
+1) scadnano runs entirely in the browser, with no installation required. 
+Currently only 
 [Chrome](https://www.google.com/chrome/) 
 and 
 [Firefox](https://www.mozilla.org/en-US/firefox/) 
@@ -21,9 +22,9 @@ and
 [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
 planned in the future.
 
-2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package)/[documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
+2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / [documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
 
-A secondary goal is that the file format should be easily readable, to help when debugging scripts.
+A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
 
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
@@ -98,6 +99,7 @@ The screenshot above shows many of the terms used in scadnano. To see how it is 
 
 Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. 
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
+This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
 A design consists of a grid type (square, hex, honeycomb, or none), a list of helices, and a list of strands. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *n*-1.
@@ -134,6 +136,10 @@ Bound substrands may have optional fields, notably *deletions* (called *skips* i
 Each strand also has a *color* and a Boolean field *is_scaffold*.
 DNA origami designs have at least one strand that is a scaffold (but can have more than one), and a non-DNA-origami design is simply one in which every strand has *is_scaffold* = false.
 Unlike cadnano, a scaffold strand can have either direction on any helix.
+When there is at least one scaffold, all non-scaffold strands are called *staples*.
+The general idea behind DNA origami is that every staple strand binds only to a scaffold, never to another staple.
+(Neither does any scaffold bind to another scaffold or itself.)
+See the [(very readable) original paper](https://www.nature.com/articles/nature04586) for more details about how to design DNA origami.
 
 A strand can have an optional DNA sequence.
 Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands.
@@ -188,7 +194,9 @@ There are different edit modes available, shown on the right side of the screen.
 
   A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.
 
-  Unlike other drawing programs, clicking on the background will not unselect the objects. To unselect all selected objects, press the Esc key.
+  Unlike other drawing programs, clicking on the background will not unselect the objects.
+  (This is a deliberate design choices, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
+  To unselect all selected objects, press the Esc key.
 
   The following are the types of objects that can be selected in the main view.
 
@@ -235,6 +243,9 @@ There are different edit modes available, shown on the right side of the screen.
   Clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
 
+[^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
+
+
 
 ## Assigning DNA
 Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
@@ -268,4 +279,13 @@ It will report that there are two SVG elements on the page.
 These are the side view and main view, respectively, and the extension will save both of them.
 
 
-[^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
+## How to design structures using scadnano
+cadnano provides *autostaple* and *autobreak* utilities for quickly creating a large number of staple strands.
+Because scadnano allows one to copy and paste strands (unlike cadnano), We have found that these tools are largely unnecessary.
+A large design for a standard DNA origami rectangle, for instance, can be created in about 10 minutes.
+Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than 10 different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
+
+Recursive copy/pasting speeds up this process even further.
+For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 1 staple, copy/paste it to make 2, copy/paste *those* to make 4, then 8, 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
+
+[TODO: make a separate tutorial showing this process, with screenshot figures]
