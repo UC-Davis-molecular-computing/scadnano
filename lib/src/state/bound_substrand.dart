@@ -123,6 +123,10 @@ abstract class BoundSubstrand
   String get strand_id;
 
   @memoized
+  BuiltMap<int, int> get insertion_offset_to_length =>
+      BuiltMap<int, int>({for (var insertion in insertions) insertion.offset: insertion.length});
+
+  @memoized
   DNAEnd get dnaend_start => DNAEnd(
       is_5p: forward,
       is_start: true,
@@ -211,7 +215,6 @@ abstract class BoundSubstrand
   int get offset_3p => this.forward ? this.end - 1 : this.start;
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions();
-
 
   /// Number of bases in this [BoundSubstrand] between [left] and [right] offsets (INCLUSIVE).
   int dna_length_in(int left, int right) {
@@ -317,12 +320,12 @@ abstract class BoundSubstrand
   }
 
   /// Return DNA sequence of this Substrand in the interval of offsets given by
-  //  [`left`, `right`], INCLUSIVE.
-  //
-  //  WARNING: This is inclusive on both ends,
-  //  unlike other parts of this API where the right endpoint is exclusive.
-  //  This is to make the notion well-defined when one of the endpoints is on an offset with a
-  //  deletion or insertion.
+  ///  [`left`, `right`], INCLUSIVE.
+  ///
+  ///  WARNING: This is inclusive on both ends,
+  ///  unlike other parts of this API where the right endpoint is exclusive.
+  ///  This is to make the notion well-defined when one of the endpoints is on an offset with a
+  ///  deletion or insertion.
   String dna_sequence_in(int offset_low, int offset_high) {
     if (dna_sequence == null) {
       return null;

@@ -534,10 +534,37 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         continue;
       }
 
-      this._ensure_other_substrand_same_deletion_or_insertion(substrand, other_ss, offset);
-
+      // most of the time, the sequence is length 1, but we have to handle insertions
       var seq = substrand.dna_sequence_in(offset, offset);
       var other_seq = other_ss.dna_sequence_in(offset, offset);
+
+//      this._ensure_other_substrand_same_deletion_or_insertion(substrand, other_ss, offset);
+      // rather than banning single deletions/insertions outright, we'll simply declare it a mismatch
+      // if they are not the same on both strands
+
+      // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
+      if (other_ss.deletions.contains(offset)) {
+        // This throws an error if substrand has a deletion at offset.
+        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int within_insertion = seq.length == 1 ? -1 : 0;
+        var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+        mismatches.add(mismatch);
+        continue;
+      }
+
+      int length_insertion_substrand = substrand.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
+      if (length_insertion_substrand != length_insertion_other_ss) {
+        // one has an insertion and the other doesn't, or they both have insertions of different lengths
+        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int within_insertion = seq.length == 1 ? -1 : 0;
+        var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+        mismatches.add(mismatch);
+        continue;
+      }
+
+      // at this point, they both have an insertion here, or the both don't,
+      // and if they both do, they're the same length
       assert(other_seq.length == seq.length);
 
       for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
