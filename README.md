@@ -33,7 +33,7 @@ Please file bug reports and make feature requests as
 
 
 
-## **WARNING**
+## **WARNING: Save your work**
 
 Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
 In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
@@ -41,6 +41,10 @@ In particular, your design is not automatically saved in an easily recoverable w
 **However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
 It is strongly recommended that you frequently save your work by pressing the "Save" button and saving your design to a .dna file.
+Unfortunately, due to browser security restrictions on accessing the local file system,
+it is not possible to save your file automatically without further interaction;
+after pressing "Save", your will always be prompted to specify a filename to which to save.
+
 
 
 
@@ -92,8 +96,54 @@ The screenshot above shows many of the terms used in scadnano. To see how it is 
 }
 ```
 
+Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. 
+This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 
-TODO: explain data model: 5'/3' ends, strands, substrands, forward, offsets, crossovers, loopouts, helix rotations and anchors, etc.
+A design consists of a grid type (square, hex, honeycomb, or none), a list of helices, and a list of strands. 
+The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *n*-1.
+(The strands have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands, for instance.)
+Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
+Each offset is a position where a DNA base of a strand can go.
+
+Helices in a grid have a two-integer *grid position* depicted in the side view.
+See the [Python scripting documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
+Helices without a grid have a *position*, a six-real-number vector describing their *x*, *y*, *z* positions, as well as *pitch*, *roll*, and *yaw*, but this feature is currently 
+[not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
+The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise.
+They are listed from top to bottom in the order they appear in the sequence (unless the property *helices_view_order* is specified in the design to display them in a different order, though currently this can only be done in the scripting library).
+Currently they are spaced equally apart, though this will be [generalized](https://github.com/UC-Davis-molecular-computing/scadnano/issues/15) soon.
+
+Each strand is defined primarily by an ordered list of *substrands*.
+Each substrand is either a single-stranded *loopout* not associated to any helix, or it is a *bound substrand*: a region of the strand that is contiguous on a single helix.
+The phrase is a bit misleading, since a bound substrand is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.
+
+Each bound substrand is specified by four properties:
+*helix*, direction (*forward* or reverse), *start* offset, and a larger *end* offset.
+As with common string/list indexing in programming languages, start is inclusive but end is exclusive.
+So for example, a bound substrand with *end*=8 is adjacent to one with *start*=8.
+In the main view, *forward* bound substrands are depicted on the top half of the helix, and *reverse* are on the bottom half.
+If a bound substrand is forward, then *start* is the offset of its 5' end, and *end*-1 is the offset of its 3' end, 
+otherwise these roles are reversed.
+There is implicitly a crossover between adjacent bound substrands in a strand.
+Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) substrand in between two bound substrands.
+Currently, two loopouts cannot be consecutive (and this will remain a requirement),
+and a loopout cannot be the first or last substrand of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
+
+Bound substrands may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions*, explained below.
+
+Each strand also has a *color* and a Boolean field *is_scaffold*.
+DNA origami designs have at least one strand that is a scaffold (but can have more than one), and a non-DNA-origami design is simply one in which every strand has *is_scaffold* = false.
+Unlike cadnano, a scaffold strand can have either direction on any helix.
+
+A strand can have an optional DNA sequence.
+Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands.
+However, it is often best to mostly finalize the design before assigning a DNA sequence, which is why the field is optional.
+Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it's not clear what to do. 
+(e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)
+
+Each helix has a integer *rotation anchor* and a real number *rotation*, with the interpretation that at the offset *rotation anchor*, the rotation of the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view.
+
+
 
 ## Navigation and control
 
