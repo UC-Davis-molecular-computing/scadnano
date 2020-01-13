@@ -72,25 +72,25 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 }
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
-  DNAEnd dna_end = action.dna_end;
-  BoundSubstrand substrand = state.dna_design.end_to_substrand[dna_end];
+  DNAEnd dna_end_clicked = action.dna_end;
+  BoundSubstrand substrand = state.dna_design.end_to_substrand[dna_end_clicked];
   Strand strand = state.dna_design.substrand_to_strand[substrand];
   int helix = substrand.helix;
   bool forward = substrand.forward;
-  int offset = dna_end.offset;
+  int offset = dna_end_clicked.offset;
 
   // Look at adjacent locations for a substrand not equal to current substrand,
   // Need strange logic with offset because BoundSubstrand.end is exclusive.
   BoundSubstrand other_substrand;
   BuiltSet<BoundSubstrand> substrands_adjacent;
   DNAEnd strand_end;
-  if (dna_end.is_start)
+  if (dna_end_clicked.is_start)
     substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset - 1);
   else
     substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset);
   for (var substrand_adj in substrands_adjacent) {
     Strand strand_adj = state.dna_design.substrand_to_strand[substrand_adj];
-    var ends = strand.ligatable_ends(strand_adj);
+    var ends = strand.ligatable_ends_with(strand_adj);
     if (ends != null) {
       strand_end = ends.item1;
       other_substrand = substrand_adj;
@@ -119,7 +119,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   // So strand_5p is the one whose 3' end will be the 3' end of the whole new Strand
   BoundSubstrand ss_5p, ss_3p;
   Strand strand_5p, strand_3p;
-  if (dna_end.is_5p && !forward) {
+  if (!forward) {
     ss_5p = ss_left;
     ss_3p = ss_right;
     strand_5p = strand_left;

@@ -401,9 +401,13 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     }
   }
 
+  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
+
+  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
+
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
-  Tuple2<DNAEnd, DNAEnd> ligatable_ends(Strand other) {
+  Tuple2<DNAEnd, DNAEnd> ligatable_ends_with(Strand other) {
     if (this == other) {
       return null;
     } else if (_ligatable_3p_to_5p_of(other)) {
@@ -414,10 +418,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       return null;
     }
   }
-
-  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
-
-  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
 
   bool _ligatable_3p_to_5p_of(Strand other) {
     BoundSubstrand last_ss_this = last_bound_substrand();

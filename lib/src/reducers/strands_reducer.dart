@@ -19,7 +19,7 @@ import 'assign_or_remove_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
-import 'nick_join_reducers.dart';
+import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
 import '../util.dart' as util;
 
