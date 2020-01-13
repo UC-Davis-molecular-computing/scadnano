@@ -93,8 +93,7 @@ class DesignMainStrandCrossoverComponent
       update_mouseover_crossover();
     }
 
-    String tooltip = 'in "backbone" edit mode, click to set backbone angles\n'
-        'of helices ${prev_substrand.helix} and ${next_substrand.helix} pointing at each other';
+    String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     return (Dom.path()
       ..d = path
@@ -123,7 +122,9 @@ class DesignMainStrandCrossoverComponent
         }
       })
       ..id = id
-      ..key = id)(Dom.svgTitle()(tooltip));
+      ..key = id)(
+//        Dom.svgTitle()(tooltip)
+    );
   }
 
   @override
