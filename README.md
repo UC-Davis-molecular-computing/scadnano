@@ -165,6 +165,11 @@ Pressing Shift+Ctrl+Z will redo it.
 **Right-click:**
 Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. (**Note for cadnano users:** Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand.)
 
+Right-clicking on a crossover or loopout lets one toggle between a crossover or loopout or change the length of a loopout. 
+Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.
+
+
+
 ## Menu
 
 The menu layout is currently hacky and will [change to something more elegant in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/63).
@@ -235,7 +240,9 @@ There are different edit modes available, shown on the right side of the screen.
   Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
-  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. 
+  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. 
+  (It doesn't actually enable any edits, but it *disables* other edits for technical reasons related detecting click events.)
+  Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. 
   The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
   Most interesting crossovers will be between two helices that are tangent to each other in the side view.
   Ideally, the rotation of each helix is such that the backbones "point at each other".
@@ -246,11 +253,10 @@ There are different edit modes available, shown on the right side of the screen.
   (i.e., the backbones of the two helices at that offset point directly at each other)
   and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
 
-  If a crossover is clicked while backbone mode is enabled, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
-  The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
-
-* **l(o)opout:**
-  Clicking on a crossover or loopout lets one toggle between a crossover or loopout or change the length of a loopout. Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.
+  Each crossover has a right-click option "unstrain backbone here".
+  If this is selected, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
+  The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. 
+  It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 * **(h)elix:**
   Clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
