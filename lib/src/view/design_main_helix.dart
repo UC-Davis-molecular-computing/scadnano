@@ -26,6 +26,7 @@ class _$DesignMainHelixProps extends UiProps {
   Helix helix;
   int view_order;
   bool strand_create_enabled;
+  int design_major_tick_distance;
 }
 
 @Component2()
@@ -42,7 +43,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     num width = helix.svg_width();
     num height = helix.svg_height();
 
-    var vert_line_paths = _vert_line_paths(helix);
+    var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
 
     var x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
@@ -217,6 +218,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         return;
       }
 
+      // TODO: avoid global variable here if possible (move this logic to middleware)
       if (apply_to_all) {
         for (var other_helix in app.state.dna_design.helices) {
           t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
@@ -284,7 +286,7 @@ Point<num> helix_main_view_translation(Helix helix) {
 }
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
-Map<String, String> _vert_line_paths(Helix helix) {
+Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
   List<int> regularly_spaced_ticks(int distance, int start, int end) {
     if (distance == null || distance == 0) {
       return [];
@@ -296,7 +298,7 @@ Map<String, String> _vert_line_paths(Helix helix) {
   }
 
   var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : app.state.dna_design.major_tick_distance;
+      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
   Set<int> major_ticks = (helix.has_major_ticks()
           ? helix.major_ticks
           : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))

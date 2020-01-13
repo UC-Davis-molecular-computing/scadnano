@@ -75,11 +75,13 @@ Helix helix_major_tick_distance_change_reducer(Helix helix, actions.HelixMajorTi
 Helix helix_major_ticks_change_reducer(Helix helix, actions.HelixMajorTicksChange action) =>
     _change_major_ticks_one_helix(helix, action.major_ticks);
 
-Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) =>
-    helix.rebuild((b) => b..major_tick_distance = major_tick_distance);
+Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) => helix.rebuild((b) => b
+  ..major_tick_distance = major_tick_distance
+  ..major_ticks = null);
 
-Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) =>
-    helix.rebuild((b) => b..major_ticks.replace(major_ticks));
+Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => helix.rebuild((b) => b
+  ..major_ticks.replace(major_ticks)
+  ..major_tick_distance = null);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone

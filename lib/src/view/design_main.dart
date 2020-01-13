@@ -45,7 +45,8 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..strand_creation = state.ui_state.strand_creation
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
-        ..show_dna = state.ui_state.show_dna);
+        ..show_dna = state.ui_state.show_dna
+        ..design_major_tick_distance = state.dna_design.major_tick_distance);
     }
   },
 )(DesignMain);
@@ -65,6 +66,7 @@ class _$DesignMainProps extends EditModePropsAbstract {
   bool has_error;
   bool show_mismatches;
   bool show_dna;
+  int design_major_tick_distance;
 }
 
 @Component2()
@@ -80,6 +82,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..helices = props.helices
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
+        ..design_major_tick_distance = props.design_major_tick_distance
         ..key = 'helices')(),
       (DesignMainMismatches()
         ..show_mismatches = props.show_mismatches

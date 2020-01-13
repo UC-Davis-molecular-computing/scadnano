@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 
 import 'design_main_helix.dart';
 import '../state/helix.dart';
@@ -15,20 +16,11 @@ class _$DesignMainHelicesProps extends UiProps {
   BuiltList<Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
   bool strand_create_enabled;
+  int design_major_tick_distance;
 }
 
 @Component2()
-class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> {
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    var helices = nextProps['DesignMainHelicesProps.helices'];
-    var side_selected_helix_idxs = nextProps['DesignMainHelicesProps.side_selected_helix_idxs'];
-    var strand_create_enabled = nextProps['DesignMainHelicesProps.strand_create_enabled'];
-    return !(helices == props.helices &&
-        side_selected_helix_idxs == props.side_selected_helix_idxs &&
-        strand_create_enabled == props.strand_create_enabled);
-  }
-
+class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -39,6 +31,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> {
         children.add((DesignMainHelix()
           ..helix = helix
           ..strand_create_enabled = props.strand_create_enabled
+          ..design_major_tick_distance = props.design_major_tick_distance
           ..key = helix.idx)());
       }
     }
