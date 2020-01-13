@@ -84,11 +84,21 @@ Future<DNADesign> dna_design_from_url(String url) async {
   return dna_design;
 }
 
-Future<String> get_text_file_content(String url) async {
-  return await HttpRequest.getString(url).then((content) {
-    return content;
-  });
-}
+Future<String> get_text_file_content(String url) async =>
+    await HttpRequest.getString(url).then((content) => content);
+
+///// Go to url specifying a directory, and if directory listing is enabled, parse the names of the
+///// files ending in .dna. TODO: implement this, doesn't work now with local server
+//Future<List<String>> get_dna_files_in_directory(String url) async {
+//  String page = await HttpRequest.getString(url).then((content) => content);
+//  print('page=\n$page');
+//  var regex = RegExp(r'href="(.*\.dna)"');
+//  var matches = regex.allMatches(page);
+//  for (var match in matches) {
+//    print('match: $match');
+//  }
+//  return [];
+//}
 
 Future<ByteBuffer> get_binary_file_content(String url) async {
   return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
@@ -104,7 +114,8 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
-  dialog = dialog.rebuild((b) => b
+  dialog = dialog.rebuild((b) =>
+  b
     ..on_submit = (List<DialogItem> items) {
       completer.complete(items);
     });
@@ -175,7 +186,9 @@ Point<num> svg_position_of_mouse_click(MouseEvent event) {
 Point<num> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
     Element svg_elt = svg_ancestor(event.target);
-    var rect = svg_elt.getBoundingClientRect().topLeft;
+    var rect = svg_elt
+        .getBoundingClientRect()
+        .topLeft;
     var offset = event.client - rect;
     return offset;
   } else {
@@ -194,8 +207,8 @@ Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
 
 Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.round());
 
-Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
-    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
+Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(MouseEvent event, bool is_main_view,
+    SvgSvgElement view_svg) {
   Point<num> point;
   if (!browser.isFirefox) {
     point = event.offset;
@@ -262,8 +275,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   }
 }
 
-transform_rect(
-    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
+transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan,
+    num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -330,7 +343,8 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
-  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
+  num x = svg_coord.x / (2 * radius),
+      y = svg_coord.y / (2 * radius);
   int h, v;
   int b = 0;
   if (grid.is_none()) {
@@ -348,17 +362,20 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   return GridPosition(h, v, b);
 }
 
-Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
-    (position.z / 0.34) * constants.BASE_WIDTH_SVG,
-    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
+Point<num> position3d_to_main_view_svg(Position3D position) =>
+    Point<num>(
+        (position.z / 0.34) * constants.BASE_WIDTH_SVG,
+        (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
-Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
-    position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
-    position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
+Point<num> position3d_to_side_view_svg(Position3D position) =>
+    Point<num>(
+        position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
+        position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
-    x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
-    y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
+Position3D svg_side_view_to_position3d(Point<num> svg_pos) =>
+    Position3D(
+        x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
+        y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
 //  return Point<num>((position.z / 0.34) * constants.BASE_WIDTH_SVG,
 //      (position.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
@@ -439,7 +456,7 @@ String blob_type_to_string(BlobType blob_type) {
     case BlobType.image:
       return 'data:image/svg+xml;charset=utf-8,';
     case BlobType.excel:
-      // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
+    // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
 //      return 'application/vnd.ms-excel';
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
@@ -646,7 +663,12 @@ String with_newlines(String string, int width) {
 }
 
 /// Return reverse Watson-Crick complement of seq. (leave non-base symbols alone)
-String wc(String seq) => seq.split('').reversed.map((base) => wc_base(base)).join('');
+String wc(String seq) =>
+    seq
+        .split('')
+        .reversed
+        .map((base) => wc_base(base))
+        .join('');
 
 String wc_base(String base) {
   switch (base) {
@@ -733,8 +755,8 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
   return l1 >= l2 && h1 <= h2;
 }
 
-List<E> generalized_intersection_list<E>(
-    List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+List<E> generalized_intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box,
+    bool overlap(num l1, num h1, num l2, num h2)) {
   if (elts.length != bboxes.length) {
     throw ArgumentError(
         'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
@@ -769,8 +791,8 @@ List<SvgElement> enclosure_list_in_elt(String classname, Rect select_box_bbox) {
   return generalized_intersection_list_in_elt(classname, select_box_bbox, interval_contained);
 }
 
-generalized_intersection_list_in_elt(
-    String classname, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+generalized_intersection_list_in_elt(String classname, Rect select_box_bbox,
+    bool overlap(num l1, num h1, num l2, num h2)) {
   List<SvgElement> elts_intersecting = [];
   List<Element> selectable_elts = querySelectorAll('.selectable');
   for (GraphicsElement elt in selectable_elts) {
@@ -783,8 +805,8 @@ generalized_intersection_list_in_elt(
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(
-    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox,
+    bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

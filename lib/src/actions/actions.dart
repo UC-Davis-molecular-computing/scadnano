@@ -350,9 +350,7 @@ abstract class LoadDNAFile
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDNAFile(String content, String filename) => LoadDNAFile.from((b) => b
-    ..content = content
-    ..filename = filename);
+  factory LoadDNAFile({String content, String filename}) = _$LoadDNAFile._;
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
 
@@ -1589,4 +1587,20 @@ abstract class StrandColorSet
   StrandColorSet._();
 
   static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// example DNA design
+
+abstract class ExampleDNADesignsIdxSet
+    with BuiltJsonSerializable
+    implements Action, Built<ExampleDNADesignsIdxSet, ExampleDNADesignsIdxSetBuilder> {
+  int get selected_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExampleDNADesignsIdxSet({int selected_idx}) = _$ExampleDNADesignsIdxSet._;
+
+  ExampleDNADesignsIdxSet._();
+
+  static Serializer<ExampleDNADesignsIdxSet> get serializer => _$exampleDNADesignsIdxSetSerializer;
 }

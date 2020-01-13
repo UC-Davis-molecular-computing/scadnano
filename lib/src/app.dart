@@ -3,7 +3,6 @@ library app;
 
 import 'dart:html';
 
-//import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -14,13 +13,11 @@ import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 
 import 'package:scadnano/src/middleware/throttle.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
-import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
 import 'state/undo_redo.dart';
@@ -71,7 +68,6 @@ class App {
   Store store_dna_ends_move;
   var context_dna_ends_move = createContext();
 
-
   // for optimization; don't want to dispatch Actions changing model on every keypress
   // This is updated in view/design.dart; consider moving it higher-level.
   final Set<int> keys_pressed = {};
@@ -108,56 +104,41 @@ class App {
   }
 
   initialize_model() async {
-
-    String filename_in_directory = '3_helix_deletions_insertions.dna';
-//    String filename_in_directory = '3_helix_scaf_only.dna';
-//    String filename_in_directory = '1_staple_1_helix_origami.dna';
-//    String filename_in_directory = '2_helix_2_strands_multiple_substrands_no_seq.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions_no_seq.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
-//    String filename_in_directory = '6_helix_origami_rectangle_helices_out_of_order.dna';
-//    String filename_in_directory = '6_helix_origami_rectangle.dna';
-//    String filename_in_directory = '16_helix_origami_rectangle.dna';
-//    String filename_in_directory = '16_helix_origami_barrel_from_algoSST_paper-rotator.dna';
-//    String filename_in_directory = '6_helix_bundle_honeycomb.dna';
-//    String filename_in_directory = 'loopouts_all_types.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
-//    String filename_in_directory = '1_staple_1_helix_origami_mismatches.dna';
-
-    document.title = filename_in_directory;
-
-    String directory = 'examples/output_designs/';
-    String filename = directory + filename_in_directory;
-
-    DNADesign dna_design;
-    String error_message;
-    try {
-      if (error_message == null) {
-        dna_design = await util.dna_design_from_url(filename);
-      }
-    } on IllegalDNADesignError catch (error) {
-      error_message = error.cause;
-    }
-
-//    String initial_editor_content = await util.file_content(filename);
-    String initial_editor_content = "";
+//    document.title = example_dna_designs.selected_filename;
+//
+//    DNADesign dna_design;
+//    String error_message;
+//    try {
+//      if (error_message == null) {
+//        dna_design = await util.dna_design_from_url(example_dna_designs.selected_full_filename);
+//      }
+//    } on IllegalDNADesignError catch (error) {
+//      error_message = error.cause;
+//    }
+//
+//    print('loaded dna_design: ${dna_design}');
+//
+////    String initial_editor_content = await util.file_content(filename);
+//    String initial_editor_content = "";
+//
 
     AppState state;
+    String error_message = 'No DNA Design loaded. Try choosing an example from the list above, '
+        'or click "Choose file" to load a .dna file from your local drive.';
 
-    if (error_message == null) {
-      var ui_state = AppUIState.from_dna_design(dna_design);
-      state = (DEFAULT_AppStateBuilder
-            ..dna_design.replace(dna_design)
-            ..ui_state.replace(ui_state)
-            ..editor_content = initial_editor_content)
-          .build();
-    } else {
-      print('error on loading:\n$error_message');
-      state = (DEFAULT_AppStateBuilder
-            ..error_message = error_message
-            ..editor_content = initial_editor_content)
-          .build();
-    }
+//    if (error_message == null) {
+//      var ui_state = AppUIState.from_dna_design(dna_design);
+//      state = (DEFAULT_AppStateBuilder
+//            ..dna_design.replace(dna_design)
+//            ..ui_state.replace(ui_state)
+//            ..editor_content = initial_editor_content)
+//          .build();
+//    } else {
+    print('error on loading:\n$error_message');
+    state = (DEFAULT_AppStateBuilder
+          ..error_message = error_message
+          ..editor_content = '')
+        .build();
 
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
@@ -224,7 +205,7 @@ class App {
 
 warn_wrong_browser() {
   if (!(browser.isChrome || browser.isFirefox)) {
-    var msg = 'You appear to be using the ${browser.name}. '
+    var msg = 'You appear to be using ${browser.name}. '
         'scadnano does not currently support this browser. '
         'Please use Chrome or Firefox instead.';
     window.alert(msg);

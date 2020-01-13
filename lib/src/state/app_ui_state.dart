@@ -8,6 +8,7 @@ import '../serializers.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'dna_design.dart';
+import 'example_dna_designs.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -39,6 +40,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..context_menu = null
   ..dialog = null
   ..strand_creation = null
+  ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
@@ -50,7 +52,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   factory AppUIState.from_dna_design(DNADesign design) {
     var selectables_store = SelectablesStore();
-//    selectables_store = selectables_store.register_dna_design(design);
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
 
@@ -93,6 +94,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   BuiltList<MouseoverData> get mouseover_datas;
+
+  ExampleDNADesigns get example_dna_designs;
 
   @nullable
   Dialog get dialog;

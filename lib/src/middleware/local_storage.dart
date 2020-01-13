@@ -91,7 +91,7 @@ _restore(Storable storable) {
       } else {
         filename = null;
       }
-      action = actions.LoadDNAFile(value, filename);
+      action = actions.LoadDNAFile(content: value, filename: filename);
     } else if (storable == Storable.show_dna) {
       action = actions.SetShowDNA(value == 'true');
     } else if (storable == Storable.show_mismatches) {

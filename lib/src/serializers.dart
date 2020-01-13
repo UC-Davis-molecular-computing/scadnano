@@ -11,6 +11,7 @@ import 'state/dialog.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
+import 'state/example_dna_designs.dart';
 import 'state/export_dna_format.dart';
 import 'state/potential_crossover.dart';
 import 'state/potential_vertical_crossover.dart';
@@ -158,6 +159,8 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   StrandColorSet,
+  ExampleDNADesigns,
+  ExampleDNADesignsIdxSet,
 ])
 Serializers serializers = _$serializers;
 

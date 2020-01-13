@@ -1,0 +1,34 @@
+{
+  "version": "0.0.1",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]}
+  ],
+  "strands": [
+    {
+      "color": "#32b86c",
+      "dna_sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12]},
+        {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12]}
+      ]
+    },
+    {
+      "color": "#333333",
+      "dna_sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24]},
+        {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24]}
+      ]
+    },
+    {
+      "color": "#0066cc",
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAAC",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12]},
+        {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24]},
+        {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24]}
+      ]
+    }
+  ]
+}

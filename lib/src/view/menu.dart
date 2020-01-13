@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
@@ -19,7 +20,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (state) => (Menu()
     ..show_dna = state.ui_state.show_dna
     ..show_mismatches = state.ui_state.show_mismatches
-    ..grid = state.dna_design.grid),
+    ..grid = state.dna_design?.grid
+    ..example_dna_designs = state.ui_state.example_dna_designs),
 )(Menu);
 
 @Factory()
@@ -30,6 +32,7 @@ class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool show_dna;
   bool show_mismatches;
   Grid grid;
+  ExampleDNADesigns example_dna_designs;
 }
 
 @Component2()
@@ -53,7 +56,9 @@ class MenuComponent extends UiComponent2<MenuProps> {
     Grid grid = props.grid;
 //    bool show_editor = this.props.store.show_editor_store.show_editor;
 
-    return (Dom.div())(
+    String load_example_title = 'Load example';
+
+    return [
       (Dom.label()
         ..className = 'app-name menu-item'
         ..key = 'title-label')('scadnano'),
@@ -64,11 +69,25 @@ class MenuComponent extends UiComponent2<MenuProps> {
 //        }
 //        ..key = 'dummy'
 //        ..className = 'dummy-button menu-item')('Dummy'),
-      (Dom.button()
-        ..onClick = //((_) => export_dna())
-          ((_) => app.disable_keyboard_shortcuts_while(export_dna))
-        ..key = 'export-dna-sequences'
-        ..className = 'export-dna-sequences-button menu-item')('Export DNA'),
+      (Dom.select()
+        ..onChange = (ev) {
+          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to title option
+          props.dispatch(actions.ExampleDNADesignsIdxSet(selected_idx: idx));
+        }
+        ..defaultValue = load_example_title
+        ..className = 'example-load'
+        ..key = 'save')([
+        (Dom.option()
+          ..value = load_example_title
+          ..disabled = true
+          ..key = 'title')('Load example'),
+        ...[
+          for (var example_filename in props.example_dna_designs.filenames)
+            (Dom.option()
+              ..value = example_filename
+              ..key = example_filename)(example_filename)
+        ]
+      ]),
       (Dom.button()
         ..className = 'menu-item'
         ..onClick = (_) {
@@ -123,6 +142,11 @@ class MenuComponent extends UiComponent2<MenuProps> {
 //        }
 //        ..className = 'export-svg'
 //        ..key = 'export-svg-main')('Export SVG main'),
+      (Dom.button()
+        ..onClick = //((_) => export_dna())
+            ((_) => app.disable_keyboard_shortcuts_while(export_dna))
+        ..className = 'export-dna-sequences-button menu-item'
+        ..key = 'export-dna-sequences')('Export DNA'),
       (Dom.span()
         ..className = 'show-dna-span menu-item'
         ..key = 'show-dna')(
@@ -156,7 +180,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
           int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to Grid title option
           props.dispatch(actions.GridChange(grid: grid_options[idx]));
         })
-        ..value = grid.toString())([
+        ..value = grid.toString()
+        ..key = 'grid')([
         (Dom.option()
           ..value = 'Grid'
           ..disabled = true
@@ -173,12 +198,14 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..href = 'README.html'
         //TODO: when repository is public, make the github link the official documentation link
 //        ..href = 'https://github.com/UC-Davis-molecular-computing/scadnano'
-        ..target = '_blank')('Help'),
+        ..target = '_blank'
+        ..key = 'help-link')('Help'),
       (Dom.a()
         ..className = 'docs-link menu-item'
         ..href = './docs/'
-        ..target = '_blank')('Script Docs'),
-    );
+        ..target = '_blank'
+        ..key = 'script-help-link')('Script Docs'),
+    ];
   }
 
   final List<Grid> grid_options = [Grid.square, Grid.honeycomb, Grid.hex, Grid.none];
@@ -230,11 +257,5 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
 
 file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
-
-//  Actions.load_dna_file(LoadDNAFileParameters(json_model_text, filename));
-  app.dispatch(actions.LoadDNAFile(json_model_text, filename));
-
-//  app.send_action(LoadDNAFileActionPack(LoadDNAFileParameters(json_model_text, filename)));
-//  app.state.menu_view_ui_model.loaded_filename = filename;
-//  app.state.set_new_design_from_json(json_model_text);
+  app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
 }

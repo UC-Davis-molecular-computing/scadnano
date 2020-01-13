@@ -2,6 +2,7 @@ import 'package:redux/redux.dart';
 
 //import 'thunk.dart';
 import 'assign_dna.dart';
+import 'example_dna_design_selected.dart';
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
 import 'grid_change.dart';
@@ -25,6 +26,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_svg_side_middleware,
   save_file_middleware,
   load_file_middleware,
+  example_dna_design_selected_middleware,
   throttle_middleware,
   assign_dna_middleware,
   strand_create_middleware,

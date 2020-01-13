@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/context_menu_reducer.dart';
+import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 
 import '../state/app_state.dart';
@@ -43,6 +44,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+  ..example_dna_designs.replace(
+      TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsIdxSet>(example_dna_designs_idx_set_reducer)(
+          ui_state.example_dna_designs, action))
   ..assign_complement_to_bound_strands_default =
       TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
           ui_state.assign_complement_to_bound_strands_default, action)
@@ -106,6 +110,10 @@ bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, ac
 Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
 ]);
+
+ExampleDNADesigns example_dna_designs_idx_set_reducer(
+        ExampleDNADesigns example_dna_designs, actions.ExampleDNADesignsIdxSet action) =>
+    example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers
