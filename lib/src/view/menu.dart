@@ -76,7 +76,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
         }
         ..defaultValue = load_example_title
         ..className = 'example-load'
-        ..key = 'save')([
+        ..key = 'example-load')([
         (Dom.option()
           ..value = load_example_title
           ..disabled = true
