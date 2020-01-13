@@ -7,6 +7,7 @@ import 'dart:html';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
@@ -38,8 +39,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-//const USE_REDUX_DEV_TOOLS = false;
-const USE_REDUX_DEV_TOOLS = true;
+const USE_REDUX_DEV_TOOLS = false;
+//const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -85,10 +86,7 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
-//      Timer.periodic(new Duration(seconds: 1), (timer) {
-//        print('${document.hasFocus()}');
-//      });
-//      document.onVisibilityChange.listen((ev) => print('visibility changed: $ev'));
+      warn_wrong_browser();
 
       react.setClientConfiguration();
 
@@ -110,6 +108,7 @@ class App {
   }
 
   initialize_model() async {
+
     String filename_in_directory = '3_helix_deletions_insertions.dna';
 //    String filename_in_directory = '3_helix_scaf_only.dna';
 //    String filename_in_directory = '1_staple_1_helix_origami.dna';
@@ -133,7 +132,9 @@ class App {
     DNADesign dna_design;
     String error_message;
     try {
-      dna_design = await util.dna_design_from_url(filename);
+      if (error_message == null) {
+        dna_design = await util.dna_design_from_url(filename);
+      }
     } on IllegalDNADesignError catch (error) {
       error_message = error.cause;
     }
@@ -151,6 +152,7 @@ class App {
             ..editor_content = initial_editor_content)
           .build();
     } else {
+      print('error on loading:\n$error_message');
       state = (DEFAULT_AppStateBuilder
             ..error_message = error_message
             ..editor_content = initial_editor_content)
@@ -218,6 +220,28 @@ class App {
   make_dart_functions_available_to_js(AppState state) {
     util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
   }
+}
+
+warn_wrong_browser() {
+  if (!(browser.isChrome || browser.isFirefox)) {
+    var msg = 'You appear to be using the ${browser.name}. '
+        'scadnano does not currently support this browser. '
+        'Please use Chrome or Firefox instead.';
+    window.alert(msg);
+  }
+  print('current browser: ${browser.name}');
+}
+
+/// Return null if browser is fine.
+String error_message_wrong_browser() {
+  String error_message = null;
+  if (browser.isSafari) {
+    error_message = 'You appear to be using the Safari browser. '
+        'scadnano does not currently support Safari. '
+        'Please use Chrome or Firefox instead.';
+    print(error_message);
+  }
+  return error_message;
 }
 
 setup_undo_redo_keyboard_listeners() {
