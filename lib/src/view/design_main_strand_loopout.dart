@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/context_menu.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -120,9 +121,6 @@ class DesignMainLoopoutComponent
           if (select_mode && props.selectable) {
             loopout.handle_selection_mouse_down(ev.nativeEvent);
           }
-          if (loopout_mode) {
-            loopout_length_change();
-          }
         })
         ..onPointerUp = ((ev) {
           if (select_mode && props.selectable) {
@@ -135,13 +133,44 @@ class DesignMainLoopoutComponent
     }
   }
 
+  @override
+  componentDidMount() {
+    var element = querySelector('#${props.loopout.id()}');
+    element.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var element = querySelector('#${props.loopout.id()}');
+    element.removeEventListener('contextmenu', on_context_menu);
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation(); // needed to prevent strand context menu from popping up
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
+    }
+  }
+
+  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+        ContextMenuItem(
+          title: 'change loopout length',
+          on_click: loopout_length_change,
+        ),
+      ];
+
   update_mouseover_loopout() {
     //FIXME: implement this
   }
 
   loopout_length_change() async {
-    int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length('change loopout length',
-        current_length: props.loopout.loopout_length, lower_bound: 0));
+    int new_length = await app.disable_keyboard_shortcuts_while(() => ask_for_length(
+        'change loopout length (0 to convert to crossover)',
+        current_length: props.loopout.loopout_length,
+        lower_bound: 0));
     if (new_length == null || new_length == props.loopout.loopout_length) {
       return;
     }

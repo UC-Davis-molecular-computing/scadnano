@@ -125,6 +125,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     MouseEvent event = ev;
     if (!event.shiftKey) {
       event.preventDefault();
+      event.stopPropagation();
       app.dispatch(actions.ContextMenuShow(
           context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
     }

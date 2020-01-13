@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'package:built_collection/built_collection.dart';
@@ -112,10 +115,6 @@ class DesignMainStrandCrossoverComponent
       ..onPointerDown = ((ev) {
         if (select_mode && props.selectable) {
           props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-        } else if (show_mouseover_rect) {
-          handle_crossover_click();
-        } else if (loopout_mode) {
-          convert_crossover_to_loopout();
         }
       })
       ..onPointerUp = ((ev) {
@@ -126,6 +125,39 @@ class DesignMainStrandCrossoverComponent
       ..id = id
       ..key = id)(Dom.svgTitle()(tooltip));
   }
+
+  @override
+  componentDidMount() {
+    var element = querySelector('#${props.crossover.id()}');
+    element.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var element = querySelector('#${props.crossover.id()}');
+    element.removeEventListener('contextmenu', on_context_menu);
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation(); // needed to prevent strand context menu from popping up
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
+    }
+  }
+
+  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+    ContextMenuItem(
+      title: 'convert to loopout',
+      on_click: convert_crossover_to_loopout,
+    ),
+    ContextMenuItem(
+      title: 'unstrain backbone here',
+      on_click: handle_crossover_click,
+    ),
+  ];
 
   handle_crossover_click() {
     BoundSubstrand prev_substrand = props.prev_substrand;
@@ -162,4 +194,5 @@ class DesignMainStrandCrossoverComponent
     }
     app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
   }
+
 }

@@ -2560,7 +2560,7 @@ main() {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
       BuiltSet<EditModeChoice> edit_modes =
-          [EditModeChoice.pencil, EditModeChoice.nick, EditModeChoice.loopout, EditModeChoice.helix].toBuiltSet();
+          [EditModeChoice.pencil, EditModeChoice.nick, EditModeChoice.helix].toBuiltSet();
 
       AppState final_state = app_state_reducer(initial_state, EditModesSet(edit_modes));
 
