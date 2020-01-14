@@ -8,20 +8,17 @@ import '../state/select_mode_state.dart';
 
 part 'select_mode.over_react.g.dart';
 
-UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(mapStateToProps: (state) {
-  bool is_origami = false;
-  if (state.dna_design?.is_origami == true) {
-    is_origami = true;
-  }
-  return SelectMode()
-    ..select_mode_state = state.ui_state.select_mode_state
-    ..is_origami = is_origami;
-}
-//  mapDispatchToProps: (dispatch) => (SelectMode()
-//    ..toggle_select_mode = (SelectModeChoice mode) {
-//      dispatch(Actions.toggle_select_mode());
-//    }),
-    )(SelectMode);
+UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModeProps>(
+  mapStateToProps: (state) {
+    bool is_origami = false;
+    if (state.dna_design?.is_origami == true) {
+      is_origami = true;
+    }
+    return SelectMode()
+      ..select_mode_state = state.ui_state.select_mode_state
+      ..is_origami = is_origami;
+  },
+)(SelectMode);
 
 @Factory()
 UiFactory<SelectModeProps> SelectMode = _$SelectMode;

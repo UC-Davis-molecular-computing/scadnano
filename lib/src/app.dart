@@ -104,37 +104,10 @@ class App {
   }
 
   initialize_model() async {
-//    document.title = example_dna_designs.selected_filename;
-//
-//    DNADesign dna_design;
-//    String error_message;
-//    try {
-//      if (error_message == null) {
-//        dna_design = await util.dna_design_from_url(example_dna_designs.selected_full_filename);
-//      }
-//    } on IllegalDNADesignError catch (error) {
-//      error_message = error.cause;
-//    }
-//
-//    print('loaded dna_design: ${dna_design}');
-//
-////    String initial_editor_content = await util.file_content(filename);
-//    String initial_editor_content = "";
-//
-
     AppState state;
     String error_message = 'No DNA Design loaded. Try choosing an example from the list above, '
         'or click "Choose file" to load a .dna file from your local drive.';
 
-//    if (error_message == null) {
-//      var ui_state = AppUIState.from_dna_design(dna_design);
-//      state = (DEFAULT_AppStateBuilder
-//            ..dna_design.replace(dna_design)
-//            ..ui_state.replace(ui_state)
-//            ..editor_content = initial_editor_content)
-//          .build();
-//    } else {
-    print('error on loading:\n$error_message');
     state = (DEFAULT_AppStateBuilder
           ..error_message = error_message
           ..editor_content = '')
