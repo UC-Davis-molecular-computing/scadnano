@@ -38,6 +38,7 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
+  TypedReducer<Helix, actions.HelixPositionSet>(helix_position_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,3 +209,6 @@ BuiltList<Helix> helix_grid_reducer(BuiltList<Helix> helices, actions.GridChange
   BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
   return new_helices;
 }
+
+Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) =>
+    helix.rebuild((b) => b..position.replace(action.position));

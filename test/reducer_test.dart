@@ -4417,6 +4417,52 @@ main() {
     });
   });
 
+  //   0                  16
+  //
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  // 1 [------------------->
+  //   <-------------------]
+  String no_grid_two_helices_json = r"""
+          {
+            "version": "0.0.1",
+            "helices": [
+              {
+                "grid_position": [0, 0],
+                "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+              },
+              {
+                "grid_position": [0, 1],
+                "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+              }
+            ],
+            "strands": [
+              {
+                "substrands": [
+                  {"helix": 0, "forward": true , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 0, "forward": false , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 1, "forward": true , "start": 0, "end": 16}
+                ]
+              },
+              {
+                "substrands": [
+                  {"helix": 1, "forward": false , "start": 0, "end": 16}
+                ]
+              }
+            ]
+          }
+      """;
+  DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
+
   group('Grid change tests: ', () {
     test('GridChange square to hex', () {
       AppState state = app_state_from_dna_design(two_helices_design);
@@ -4456,51 +4502,6 @@ main() {
     test('GridChange none to square', () {
       Position3D position0 = Position3D(x: 30, y: 60, z: 0);
       Position3D position1 = Position3D(x: 50, y: 80, z: 0);
-      //   0                  16
-      //
-      // 0 [------------------->
-      //   <-------------------]
-      //
-      // 1 [------------------->
-      //   <-------------------]
-      String no_grid_two_helices_json = r"""
-          {
-            "version": "0.0.1",
-            "helices": [
-              {
-                "grid_position": [0, 0],
-                "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
-              },
-              {
-                "grid_position": [0, 1],
-                "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
-              }
-            ],
-            "strands": [
-              {
-                "substrands": [
-                  {"helix": 0, "forward": true , "start": 0, "end": 16}
-                ]
-              },
-              {
-                "substrands": [
-                  {"helix": 0, "forward": false , "start": 0, "end": 16}
-                ]
-              },
-              {
-                "substrands": [
-                  {"helix": 1, "forward": true , "start": 0, "end": 16}
-                ]
-              },
-              {
-                "substrands": [
-                  {"helix": 1, "forward": false , "start": 0, "end": 16}
-                ]
-              }
-            ]
-          }
-      """;
-      DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
       AppState state = app_state_from_dna_design(no_grid_two_helices_design);
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
@@ -4538,6 +4539,25 @@ main() {
       ..ui_state.changed_since_last_save = true);
 
     state = app_state_reducer(state, ScaffoldSet(strand: strand, is_scaffold: true));
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixPositionSet', () {
+    AppState state = app_state_from_dna_design(no_grid_two_helices_design);
+
+    Helix helix = no_grid_two_helices_design.helices.first;
+    Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
+
+    Helix expected_helix = helix.rebuild((b) => b.position.replace(position));
+    var expected_helices = no_grid_two_helices_design.helices.toBuilder();
+    expected_helices[0] = expected_helix;
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.helices.replace(expected_helices.build())
+      ..undo_redo.undo_stack.add(no_grid_two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    state = app_state_reducer(state, HelixPositionSet(helix: helix, position: position));
     expect_app_state_equal(state, expected_state);
   });
 }

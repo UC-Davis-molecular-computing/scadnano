@@ -1604,3 +1604,22 @@ abstract class ExampleDNADesignsIdxSet
 
   static Serializer<ExampleDNADesignsIdxSet> get serializer => _$exampleDNADesignsIdxSetSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change helix position
+
+abstract class HelixPositionSet
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixPositionSet, HelixPositionSetBuilder> {
+  Helix get helix;
+  Position3D get position;
+
+  int get helix_idx => helix.idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixPositionSet({Helix helix, Position3D position}) = _$HelixPositionSet._;
+
+  HelixPositionSet._();
+
+  static Serializer<HelixPositionSet> get serializer => _$helixPositionSetSerializer;
+}

@@ -161,6 +161,7 @@ part 'serializers.g.dart';
   StrandColorSet,
   ExampleDNADesigns,
   ExampleDNADesignsIdxSet,
+  HelixPositionSet,
 ])
 Serializers serializers = _$serializers;
 
