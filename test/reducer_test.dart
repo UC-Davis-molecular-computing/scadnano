@@ -4489,7 +4489,7 @@ main() {
         GridPosition gridPosition = helices_builder[i].grid_position.build();
         helices_builder[i]
           ..grid = grid
-          ..position = grid_to_position3d(gridPosition, Grid.square).toBuilder()
+          ..position_.replace(grid_to_position3d(gridPosition, Grid.square))
           ..grid_position = null;
       }
       BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
@@ -4506,8 +4506,8 @@ main() {
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
 
-      Helix new_helix0 = two_helices_design.helices.first.rebuild((b) => b.position.replace(position0));
-      Helix new_helix1 = two_helices_design.helices.last.rebuild((b) => b.position.replace(position1));
+      Helix new_helix0 = two_helices_design.helices.first.rebuild((b) => b.position_.replace(position0));
+      Helix new_helix1 = two_helices_design.helices.last.rebuild((b) => b.position_.replace(position1));
 
       List<Helix> new_helices = [new_helix0, new_helix1];
 
@@ -4549,7 +4549,7 @@ main() {
     Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
 
     Helix expected_helix = helix.rebuild((b) => b
-      ..position.replace(position)
+      ..position_.replace(position)
       ..grid_position = null);
     var expected_helices = no_grid_two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
