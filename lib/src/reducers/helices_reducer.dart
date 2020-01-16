@@ -214,5 +214,5 @@ BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.Gri
 // change helix position
 
 Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
-  ..position.replace(action.position)
+  ..position_.replace(action.position)
   ..grid_position = null);
