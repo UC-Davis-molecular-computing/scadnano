@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "grid": "none",
   "helices": [
-    {"grid_position": [0, 0], "position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
-    {"max_offset": 10, "grid_position": [0, 1], "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
-    {"max_offset": 10, "grid_position": [0, 2], "position": {"x": 60, "y": -60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
-    {"max_offset": 10, "grid_position": [0, 3], "position": {"x": 90, "y": 10, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}}
+    {"position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 3, "y": 3, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 8, "y": -3, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 11, "y": 1, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}}
   ],
   "strands": [
     {

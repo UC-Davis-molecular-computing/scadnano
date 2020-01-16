@@ -6,7 +6,7 @@
   ],
   "strands": [
     {
-      "color": "#32b86c",
+      "color": "#57bb00",
       "dna_sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12]},
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#888888",
       "dna_sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24]},

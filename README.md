@@ -154,6 +154,23 @@ At the offset *rotation anchor*, the backbone of the forward strand on that heli
 
 
 
+## Relation of grid_position and position to side and main view display
+The main view and side views are 2D projection of what might be a 3D object.
+The views display helices in the following way.
+Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if it is not specified explicitly in the .dna file.)
+The *x* and *y* coordinates are shown in the side view, with x increasing to the right and y increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
+
+In the main view, the horizontal direction is the *z* coordinate.
+The vertical direction, however, is not the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
+Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices.
+If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *x* coordinate, or they all have the same *y* coordinate),
+then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
+Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
+
+[TODO: make some figures showing examples]
+
+
 ## Navigation and control
 
 **Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).

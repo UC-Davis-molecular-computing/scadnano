@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
@@ -122,16 +124,42 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
   var min_offset = design.helices.length > 0 ? design.min_offset : 0;
   var max_offset = design.helices.length > 0 ? design.max_offset : constants.default_max_offset;
 
+//  num x = 0; //TODO: shift x by grid_position.b or position.z
+//  num y = 0;
+//  if (design.helices.isNotEmpty) {
+//    Helix prev_helix = design.helices.last;
+//    num prev_y = prev_helix.svg_position.y;
+//    num delta_y;
+//    if (design.grid.is_none()) {
+//      var prev_pos = prev_helix.position;
+//      var pos = action.position;
+//      delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+//    } else {
+//      var prev_grid_position = prev_helix.grid_position;
+//      var grid_position = action.grid_position;
+//      delta_y = prev_grid_position.distance_lattice(grid_position, design.grid) *
+//          constants.DISTANCE_BETWEEN_HELICES_SVG;
+//    }
+//    y = prev_y + delta_y;
+//  }
+//  Point<num> svg_position = Point<num>(x, y);
+
+  //TODO: re-process whole list
+
   Helix helix = Helix(
-      idx: new_idx,
-      grid: design.grid,
-      grid_position: action.grid_position,
-      position: action.position,
-      min_offset: min_offset,
-      max_offset: max_offset,
-      view_order: new_idx);
+    idx: new_idx,
+    grid: design.grid,
+    grid_position: action.grid_position,
+    position: action.position,
+    min_offset: min_offset,
+    max_offset: max_offset,
+    view_order: new_idx,
+  );
   List<Helix> helices = design.helices.toList();
+  print('old helices: $helices');
   helices.add(helix);
+  helices = util.helices_assign_svg(helices, design.grid);
+  print('new helices: $helices');
 
   return design.rebuild((d) => d..helices.replace(helices));
 }
@@ -144,8 +172,9 @@ DNADesign helix_remove_dna_design_global_reducer(
   var strands_with_helix_indices_updated =
       change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_bound_substrands(design.helices, action);
-  return design
-      .rebuild((d) => d..helices.replace(new_helices)..strands.replace(strands_with_helix_indices_updated));
+  var new_helices_list = util.helices_assign_svg(new_helices.toList(), design.grid);
+  return design.rebuild(
+      (d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_helix_indices_updated));
 }
 
 /// Change (by amount `increment`) all helix_idx's of all BoundSubstrands with helix >= helix_idx.

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:scadnano/src/json_serializable.dart';
@@ -41,4 +43,6 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   to_json_serializable({bool suppress_indent = false}) =>
       {'x': x, 'y': y, 'z': z, 'pitch': pitch, 'roll': roll, 'yaw': yaw};
+
+  num distance_xy(Position3D other) => sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
 }

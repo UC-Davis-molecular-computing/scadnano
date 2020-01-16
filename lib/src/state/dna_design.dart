@@ -443,6 +443,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     dna_design_builder.grid =
         util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
 
+    bool grid_is_none = dna_design_builder.grid == Grid.none;
+
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
     } else if (!dna_design_builder.grid.is_none()) {
@@ -459,10 +461,17 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // create HelixBuilders
     int idx = 0;
-    for (var helix_json in deserialized_helices_list) {
+    for (Map<String, dynamic> helix_json in deserialized_helices_list) {
       HelixBuilder helix_builder = Helix.from_json(helix_json);
       helix_builder.idx = idx;
       helix_builder.grid = dna_design_builder.grid;
+      if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
+        throw IllegalDNADesignError(
+            'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
+      } else if (!grid_is_none && helix_json.containsKey(constants.position3d_key)) {
+        throw IllegalDNADesignError(
+            'grid is not none, but Helix $idx has position = ${helix_json[constants.position3d_key]}');
+      }
       helix_builders.add(helix_builder);
       idx++;
     }
@@ -480,18 +489,47 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     if (!ListEquality().equals(helices_view_order_sorted, identity_permutation)) {
       throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation');
     }
+
     for (int i = 0; i < helices_view_order.length; i++) {
       int i_unsorted = helices_view_order[i];
       var helix_builder = helix_builders[i_unsorted];
       int view_order = i;
       helix_builder.view_order = view_order;
-//      if (helix_builder.svg_position == null) {
-//        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
-//      }
-//      if (helix_builder.grid_position == null) {
-//        helix_builder.grid_position = DNADesign._default_grid_position(view_order);
-//      }
     }
+
+//    num prev_y = null;
+//    for (int i = 0; i < helices_view_order.length; i++) {
+//      int i_unsorted = helices_view_order[i];
+//      var helix_builder = helix_builders[i_unsorted];
+//      int view_order = i;
+//      helix_builder.view_order = view_order;
+//      Map<String, dynamic> helix_json = deserialized_helices_list[i_unsorted];
+//      helix_builder.svg_position_explicit = helix_json.containsKey(constants.svg_position_key);
+//      if (!helix_builder.svg_position_explicit) {
+////        helix_builder.svg_position_ = DNADesign._default_svg_position(view_order);
+//        //Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
+//        num x = 0; //TODO: shift x by grid_position.b or position.z
+//        num y = 0;
+//        if (i > 0) {
+//          int prev_i_unsorted = helices_view_order[i - 1];
+//          var prev_helix_builder = helix_builders[prev_i_unsorted];
+//          num delta_y;
+//          if (grid_is_none) {
+//            var prev_pos = prev_helix_builder.position_.build();
+//            var pos = helix_builder.position_.build();
+//            delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+//          } else {
+//            var prev_grid_position = prev_helix_builder.grid_position.build();
+//            var grid_position = helix_builder.grid_position.build();
+//            delta_y = prev_grid_position.distance_lattice(grid_position, dna_design_builder.grid) *
+//                constants.DISTANCE_BETWEEN_HELICES_SVG;
+//          }
+//          y = prev_y + delta_y;
+//        }
+//        prev_y = y;
+//        helix_builder.svg_position_ = Point<num>(x, y);
+//      }
+//    }
 
     // strands
     List<Strand> strands = [];
@@ -506,6 +544,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // build Helices
     List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
+    helices = util.helices_assign_svg(helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
     var dna_design = dna_design_builder.build();

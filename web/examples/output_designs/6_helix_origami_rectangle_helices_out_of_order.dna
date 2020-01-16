@@ -29,7 +29,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#333333",
+      "color": "#888888",
       "dna_sequence": "GTGAGACGGGCAACAGGTTTTTCTTTTCACCA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 16, "end": 32},
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#32b86c",
       "dna_sequence": "AGGGTTGAGTGTTGTTAAGAATAGCCCGAGAT",
       "substrands": [
         {"helix": 3, "forward": true, "start": 16, "end": 32},
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#333333",
       "dna_sequence": "AAATCGGAACCCTAAAGGTGCCGTAAAGCACT",
       "substrands": [
         {"helix": 5, "forward": true, "start": 16, "end": 32},
@@ -53,7 +53,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#320096",
       "dna_sequence": "GTGCCTAATGAGTGAGAAGTGTAAAGCCTGGG",
       "substrands": [
         {"helix": 0, "forward": false, "start": 160, "end": 176},
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#03b6a2",
       "dna_sequence": "AGTGCCAAGCTTGCATTTGTAAAACGACGGCC",
       "substrands": [
         {"helix": 2, "forward": false, "start": 160, "end": 176},
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#7300de",
       "dna_sequence": "AGCGCCATTCGCCATTGCCGGAAACCAGGCAA",
       "substrands": [
         {"helix": 4, "forward": false, "start": 160, "end": 176},
@@ -77,14 +77,14 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#f7931e",
       "dna_sequence": "CCAGTCGGGAAACCTGTCGTGCCAGCTGCATT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 88, "end": 120}
       ]
     },
     {
-      "color": "#007200",
+      "color": "#aaaa00",
       "dna_sequence": "CGAAAATCCACGCTGGTTTGCCCTGTTTCC",
       "substrands": [
         {"helix": 2, "forward": false, "start": 80, "end": 88, "deletions": [81]},
@@ -92,7 +92,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#b8056c",
       "dna_sequence": "TGTGTGAAGTAATCATGGTCATAGCCAGCAGG",
       "substrands": [
         {"helix": 1, "forward": true, "start": 104, "end": 112},
@@ -100,7 +100,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#007200",
       "dna_sequence": "AGGGCGACAAAGGGCGAAAAACGAAAGGGG",
       "substrands": [
         {"helix": 4, "forward": false, "start": 80, "end": 88, "deletions": [81]},
@@ -108,7 +108,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#cc0000",
       "dna_sequence": "GATGTGCTTATTACGCCAGCTGGCCGTCTATC",
       "substrands": [
         {"helix": 3, "forward": true, "start": 104, "end": 112},
@@ -116,14 +116,14 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f74308",
       "dna_sequence": "AACGTGGCGAGAAAGGAAGGGAAACGACGAC",
       "substrands": [
         {"helix": 5, "forward": true, "start": 72, "end": 104, "deletions": [81]}
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#57bb00",
       "dna_sequence": "TTTGCGTATTGGGCGCCAGGGTGCTGATTG",
       "substrands": [
         {"helix": 0, "forward": false, "start": 32, "end": 56, "deletions": [33]},
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#888888",
       "dna_sequence": "CCCTTCACTCCCTTATAAATCAACCAGTTT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 40, "end": 48},
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#32b86c",
       "dna_sequence": "GGAACAAGGTTTTTTGGGGTCGAGGGAGCC",
       "substrands": [
         {"helix": 3, "forward": true, "start": 40, "end": 48},
@@ -149,7 +149,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#333333",
       "dna_sequence": "CCCGATTTAGAGCTTGACGGGGAACCATCACC",
       "substrands": [
         {"helix": 5, "forward": true, "start": 40, "end": 64},
@@ -157,7 +157,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#320096",
       "dna_sequence": "CGGCAAAACGCCTGGCCCTGAGAGAGAGGCGG",
       "substrands": [
         {"helix": 2, "forward": false, "start": 48, "end": 56},
@@ -166,7 +166,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#03b6a2",
       "dna_sequence": "CAAATCAAAGTCCACTATTAAAGATCCGAAAT",
       "substrands": [
         {"helix": 4, "forward": false, "start": 48, "end": 56},
@@ -175,7 +175,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#7300de",
       "dna_sequence": "AATGAATCGGCCAACGCGCGGGGAGTTGCAG",
       "substrands": [
         {"helix": 0, "forward": false, "start": 64, "end": 88, "deletions": [81]},
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#aaaa00",
       "dna_sequence": "CAAGCGGTCCTGTTTGATGGTGGTACGTGGAC",
       "substrands": [
         {"helix": 1, "forward": true, "start": 72, "end": 80},
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#b8056c",
       "dna_sequence": "TCCAACGTTGGCCCACTACGTGAAAGCCGGCG",
       "substrands": [
         {"helix": 3, "forward": true, "start": 72, "end": 80},
@@ -201,7 +201,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#007200",
       "dna_sequence": "AGTATCGGCCTCAGGAAGATCGCAGTGCGGGC",
       "substrands": [
         {"helix": 5, "forward": true, "start": 104, "end": 128},
@@ -209,7 +209,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#cc0000",
       "dna_sequence": "TCGAATTCATTGTTATCCGCTCACCCCGCTTT",
       "substrands": [
         {"helix": 2, "forward": false, "start": 112, "end": 120},
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#f7931e",
       "dna_sequence": "CTCTTCGCGCAAGGCGATTAAGTTTACCGAGC",
       "substrands": [
         {"helix": 4, "forward": false, "start": 112, "end": 120},
@@ -227,7 +227,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f74308",
       "dna_sequence": "CATTAATTGCGTTGCGCTCACTGAATTCCA",
       "substrands": [
         {"helix": 0, "forward": false, "start": 128, "end": 152, "deletions": [129]},
@@ -235,7 +235,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#57bb00",
       "dna_sequence": "CACAACATTAGAGGATCCCCGGGGGGTAAC",
       "substrands": [
         {"helix": 1, "forward": true, "start": 136, "end": 144},
@@ -244,7 +244,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#888888",
       "dna_sequence": "GCCAGGGTTGGGAAGGGCGATCGCTCCAGC",
       "substrands": [
         {"helix": 3, "forward": true, "start": 136, "end": 144},
@@ -253,7 +253,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#32b86c",
       "dna_sequence": "CAGCTTTCCGGCACCGCTTCTGGTCAGGCTGC",
       "substrands": [
         {"helix": 5, "forward": true, "start": 136, "end": 160},
@@ -261,7 +261,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#333333",
       "dna_sequence": "GTCGACTCACGAGCCGGAAGCATACTAACTCA",
       "substrands": [
         {"helix": 2, "forward": false, "start": 144, "end": 152},
@@ -270,7 +270,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#320096",
       "dna_sequence": "GCAACTGTTTTCCCAGTCACGACGGCCTGCAG",
       "substrands": [
         {"helix": 4, "forward": false, "start": 144, "end": 152},

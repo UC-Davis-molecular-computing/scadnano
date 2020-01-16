@@ -114,8 +114,7 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
-  dialog = dialog.rebuild((b) =>
-  b
+  dialog = dialog.rebuild((b) => b
     ..on_submit = (List<DialogItem> items) {
       completer.complete(items);
     });
@@ -130,6 +129,49 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
   var grid_pos = side_view_svg_to_grid(grid, svg_pos);
   return grid_pos;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// assign SVG coordinates to helices
+
+List<Helix> helices_assign_svg(List<Helix> helices, Grid grid) {
+  List<int> view_order = List<int>(helices.length);
+  for (int i = 0; i < helices.length; i++) {
+    view_order[i] = helices[i].view_order;
+  }
+
+  List<Helix> new_helices = List<Helix>(helices.length);
+  num prev_y = null;
+
+  for (int i = 0; i < view_order.length; i++) {
+    int i_unsorted = view_order[i];
+    Helix helix = helices[i_unsorted];
+
+    num x = 0; //TODO: shift x by grid_position.b or position.z
+    num y = 0;
+    if (i > 0) {
+      int prev_i_unsorted = view_order[i - 1];
+      var prev_helix = helices[prev_i_unsorted];
+      num delta_y;
+      if (grid.is_none()) {
+        var prev_pos = prev_helix.position_;
+        var pos = helix.position_;
+        delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+      } else {
+        var prev_grid_position = prev_helix.grid_position;
+        var grid_position = helix.grid_position;
+        delta_y =
+            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_SVG;
+      }
+      y = prev_y + delta_y;
+    }
+    prev_y = y;
+    helix = helix.rebuild((b) => b..svg_position_ = Point<num>(x, y));
+
+    new_helices[i_unsorted] = helix;
+  }
+
+  return new_helices;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,17 +191,18 @@ Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
 
   // didn't find a helix, so we'll find the closest one
   Helix helix_closest = helices.first;
-  num min_dist = distance(helix_closest, svg_y);
+  num min_dist = distance_y_coord_to_closest_helix(helix_closest, svg_y);
   for (Helix helix in helices) {
-    if (distance(helix, svg_y) < min_dist) {
+    if (distance_y_coord_to_closest_helix(helix, svg_y) < min_dist) {
       helix_closest = helix;
-      min_dist = distance(helix, svg_y);
+      min_dist = distance_y_coord_to_closest_helix(helix, svg_y);
     }
   }
   return helix_closest;
 }
 
-num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
+num distance_y_coord_to_closest_helix(Helix helix, num y) =>
+    (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
@@ -186,9 +229,7 @@ Point<num> svg_position_of_mouse_click(MouseEvent event) {
 Point<num> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
     Element svg_elt = svg_ancestor(event.target);
-    var rect = svg_elt
-        .getBoundingClientRect()
-        .topLeft;
+    var rect = svg_elt.getBoundingClientRect().topLeft;
     var offset = event.client - rect;
     return offset;
   } else {
@@ -207,8 +248,8 @@ Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
 
 Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.round());
 
-Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(MouseEvent event, bool is_main_view,
-    SvgSvgElement view_svg) {
+Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
+    MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
   Point<num> point;
   if (!browser.isFirefox) {
     point = event.offset;
@@ -275,8 +316,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
   }
 }
 
-transform_rect(Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan,
-    num zoom) {
+transform_rect(
+    Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
   var up_left = Point<num>(rect.x, rect.y);
   var low_right = Point<num>(rect.x + rect.width, rect.y + rect.height);
   var up_left_tran = transform(up_left, pan, zoom);
@@ -343,8 +384,7 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   num radius = constants.SIDE_HELIX_RADIUS;
-  num x = svg_coord.x / (2 * radius),
-      y = svg_coord.y / (2 * radius);
+  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
   int b = 0;
   if (grid.is_none()) {
@@ -362,20 +402,17 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
   return GridPosition(h, v, b);
 }
 
-Point<num> position3d_to_main_view_svg(Position3D position) =>
-    Point<num>(
-        (position.z / 0.34) * constants.BASE_WIDTH_SVG,
-        (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
+Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
+    (position.z / 0.34) * constants.BASE_WIDTH_SVG,
+    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
-Point<num> position3d_to_side_view_svg(Position3D position) =>
-    Point<num>(
-        position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
-        position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
+Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
+    position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
+    position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos) =>
-    Position3D(
-        x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
-        y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
+Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
+    x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
+    y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
 //  return Point<num>((position.z / 0.34) * constants.BASE_WIDTH_SVG,
 //      (position.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
@@ -456,7 +493,7 @@ String blob_type_to_string(BlobType blob_type) {
     case BlobType.image:
       return 'data:image/svg+xml;charset=utf-8,';
     case BlobType.excel:
-    // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
+      // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
 //      return 'application/vnd.ms-excel';
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   }
@@ -663,12 +700,7 @@ String with_newlines(String string, int width) {
 }
 
 /// Return reverse Watson-Crick complement of seq. (leave non-base symbols alone)
-String wc(String seq) =>
-    seq
-        .split('')
-        .reversed
-        .map((base) => wc_base(base))
-        .join('');
+String wc(String seq) => seq.split('').reversed.map((base) => wc_base(base)).join('');
 
 String wc_base(String base) {
   switch (base) {
@@ -755,8 +787,8 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
   return l1 >= l2 && h1 <= h2;
 }
 
-List<E> generalized_intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box,
-    bool overlap(num l1, num h1, num l2, num h2)) {
+List<E> generalized_intersection_list<E>(
+    List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
   if (elts.length != bboxes.length) {
     throw ArgumentError(
         'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
@@ -791,8 +823,8 @@ List<SvgElement> enclosure_list_in_elt(String classname, Rect select_box_bbox) {
   return generalized_intersection_list_in_elt(classname, select_box_bbox, interval_contained);
 }
 
-generalized_intersection_list_in_elt(String classname, Rect select_box_bbox,
-    bool overlap(num l1, num h1, num l2, num h2)) {
+generalized_intersection_list_in_elt(
+    String classname, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   List<SvgElement> elts_intersecting = [];
   List<Element> selectable_elts = querySelectorAll('.selectable');
   for (GraphicsElement elt in selectable_elts) {
@@ -805,8 +837,8 @@ generalized_intersection_list_in_elt(String classname, Rect select_box_bbox,
   return elts_intersecting;
 }
 
-bool bboxes_intersect_generalized(Rect elt_bbox, Rect select_box_bbox,
-    bool overlap(num l1, num h1, num l2, num h2)) {
+bool bboxes_intersect_generalized(
+    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
   num elt_x2 = elt_bbox.x + elt_bbox.width;
   num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
   num elt_y2 = elt_bbox.y + elt_bbox.height;

@@ -46,16 +46,18 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
 //  factory Helix([void Function(HelixBuilder) updates]) = _$Helix;
 
-  factory Helix(
-      {int idx,
-      Grid grid,
-      int view_order = null,
-      GridPosition grid_position = null,
-      num rotation = constants.default_helix_rotation,
-      int rotation_anchor = constants.default_helix_rotation_anchor,
-      int min_offset = 0,
-      int max_offset = constants.default_max_offset,
-      Position3D position = null}) {
+  factory Helix({
+    int idx,
+    Grid grid,
+    int view_order = null,
+    GridPosition grid_position = null,
+    num rotation = constants.default_helix_rotation,
+    int rotation_anchor = constants.default_helix_rotation_anchor,
+    int min_offset = 0,
+    int max_offset = constants.default_max_offset,
+    Position3D position = null,
+    Point<num> svg_position = null,
+  }) {
     if (view_order == null) {
       view_order = idx;
     }
@@ -72,6 +74,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
+      ..svg_position_ = svg_position
       ..rotation = rotation
       ..rotation_anchor = rotation_anchor
       ..min_offset = min_offset

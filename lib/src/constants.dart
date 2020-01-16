@@ -41,7 +41,10 @@ const default_max_offset = 256;
 /// in a DNA origami or an other DNA nanostructure with many parallel DNA helices---e.g., single-stranded tile
 /// lattices---is larger than 2 nm.)
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
-final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+const double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+
+// unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
+const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const SIDE_HELIX_RADIUS = 25.0;
 
