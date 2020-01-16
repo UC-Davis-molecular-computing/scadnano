@@ -59,19 +59,19 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     if (view_order == null) {
       view_order = idx;
     }
-    if (grid_position == null) {
-      if (position == null) {
-        grid_position = GridPosition(0, idx);
-      } else if (!grid.is_none()) {
-        grid_position = util.position3d_to_grid(position, grid);
-      }
-    }
+//    if (grid_position == null) {
+//      if (position == null) {
+//        grid_position = GridPosition(0, idx);
+//      } else if (!grid.is_none()) {
+//        grid_position = util.position3d_to_grid(position, grid);
+//      }
+//    }
     return Helix.from((b) => b
       ..idx = idx
       ..view_order = view_order
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
-      ..position = position?.toBuilder()
+      ..position_ = position?.toBuilder()
       ..rotation = rotation
       ..rotation_anchor = rotation_anchor
       ..min_offset = min_offset
@@ -79,6 +79,17 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   }
 
   /************************ end BuiltValue boilerplate ************************/
+
+  static void _finalizeBuilder(HelixBuilder builder) {
+    if (builder._grid_position == null && builder._position_ == null) {
+      throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
+          'but both are null.');
+    }
+    if (builder._grid_position != null && builder._position_ != null) {
+      throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
+          'but both are non-null.');
+    }
+  }
 
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
@@ -102,7 +113,9 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   Point<num> get svg_position_;
 
   @nullable
-  Position3D get position;
+  Position3D get position_;
+
+  Position3D get position => position_ != null ? position_ : util.grid_to_position3d(grid_position, grid);
 
   double get rotation;
 
@@ -175,8 +188,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
   Position3D position3d() {
-    if (position != null) {
-      return position;
+    if (position_ != null) {
+      return position_;
     }
     return default_position();
   }
@@ -198,12 +211,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   bool has_nondefault_rotation() => (this.rotation - constants.default_helix_rotation).abs() > 0.0001;
 
   bool has_nondefault_rotation_anchor() => this.rotation_anchor != constants.default_helix_rotation_anchor;
-
-  num get gh => this.grid_position.h;
-
-  num get gv => this.grid_position.v;
-
-  num get gb => this.grid_position.b;
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
@@ -320,7 +327,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     Position3D position = util.get_value_with_default(json_map, constants.position3d_key, null,
         transformer: (map) => Position3D.from_json(map));
-    helix_builder.position = position?.toBuilder();
+    helix_builder.position_ = position?.toBuilder();
 
     return helix_builder;
   }

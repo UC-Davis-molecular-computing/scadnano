@@ -28,10 +28,11 @@ class _$DesignSidePotentialHelixProps extends UiProps {
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {
-//    Point<num> mouse_svg_pos = props.mouse_svg_pos;
-//    if (mouse_svg_pos == null) {
-//      return null;
-//    }
+    if (!props.grid.is_none()) {
+      if (props.grid_position == null) {
+        return null;
+      }
+    }
 
     Point<num> svg_ideal_pos;
     Grid grid = props.grid;

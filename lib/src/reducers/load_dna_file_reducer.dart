@@ -48,6 +48,10 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '${_stack_trace_message(stack_trace)}';
   }
 
+  if (error_message == null && dna_design_new == null) {
+    error_message = constants.NO_DNA_DESIGN_MESSAGE;
+  }
+
   AppState new_state;
   if (error_message != null) {
     new_state = state.rebuild((m) => m

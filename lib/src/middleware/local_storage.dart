@@ -56,7 +56,10 @@ save(Storable storable) {
     value_string = app.state.ui_state.select_mode_state.to_json();
   }
 
-  window.localStorage[storable_key] = value_string;
+  if (value_string != null)
+    window.localStorage[storable_key] = value_string;
+  else
+    window.localStorage.remove(storable_key);
 }
 
 String side_pane_width() {

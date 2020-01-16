@@ -82,7 +82,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
           ..selected = helix_idxs_selected.contains(helix.idx)
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
-          ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
+          ..key = '${helix.position_ == null ? helix.grid_position : helix.position_}')()
     ];
     Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
 

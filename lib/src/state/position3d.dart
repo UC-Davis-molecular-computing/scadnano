@@ -1,5 +1,6 @@
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:scadnano/src/json_serializable.dart';
 
 //import '../built_intern.dart';
 import '../serializers.dart';
@@ -22,18 +23,6 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
   factory Position3D.from_json(Map<String, dynamic> map) => Position3D(
       x: map['x'], y: map['y'], z: map['z'], pitch: map['pitch'], roll: map['roll'], yaw: map['yaw']);
 
-  List<num> to_json_serializable({bool suppress_indent = false}) {
-    var list = [
-      this.x,
-      this.y,
-      this.z,
-      this.pitch,
-      this.roll,
-      this.yaw,
-    ];
-    return list;
-  }
-
   /************************ begin BuiltValue boilerplate ************************/
   factory Position3D({num x = 0, num y = 0, num z = 0, num pitch = 0, num roll = 0, num yaw = 0}) =>
       Position3D.from((b) => b
@@ -49,4 +38,7 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
   Position3D._();
 
   static Serializer<Position3D> get serializer => _$position3DSerializer;
+
+  to_json_serializable({bool suppress_indent = false}) =>
+      {'x': x, 'y': y, 'z': z, 'pitch': pitch, 'roll': roll, 'yaw': yaw};
 }

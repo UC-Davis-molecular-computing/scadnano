@@ -19,7 +19,7 @@ Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
       helix_major_tick_distance_change_all_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
-  TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_reducer),
+  TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_change_reducer),
 ]);
 
 BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.HelixIndividualAction action) {
@@ -191,18 +191,18 @@ BuiltList<Helix> remove_helix_assuming_no_bound_substrands(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change, so helix must change positions
 
-BuiltList<Helix> helix_grid_reducer(BuiltList<Helix> helices, actions.GridChange action) {
+BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.GridChange action) {
   List<HelixBuilder> helices_builder = helices.map((h) => h.toBuilder()).toList();
   for (int i = 0; i < helices.length; i++) {
     Helix helix = helices[i];
     helices_builder[i].grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
       helices_builder[i].grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
-      helices_builder[i].position = null;
+      helices_builder[i].position_ = null;
     }
-    if (action.grid.is_none() && helix.position == null) {
+    if (action.grid.is_none() && helix.position_ == null) {
       helices_builder[i].grid_position = null;
-      helices_builder[i].position = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+      helices_builder[i].position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
     }
   }
 

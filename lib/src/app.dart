@@ -29,6 +29,7 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+import 'constants.dart' as constants;
 
 //import 'test.dart';
 //import 'constants.dart' as constants;
@@ -36,8 +37,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -105,8 +106,7 @@ class App {
 
   initialize_model() async {
     AppState state;
-    String error_message = 'No DNA Design loaded. Try choosing an example from the list above, '
-        'or click "Choose file" to load a .dna file from your local drive.';
+    String error_message = constants.NO_DNA_DESIGN_MESSAGE;
 
     state = (DEFAULT_AppStateBuilder
           ..error_message = error_message

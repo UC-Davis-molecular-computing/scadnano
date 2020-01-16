@@ -5,6 +5,8 @@ import 'package:platform_detect/platform_detect.dart';
 import 'state/grid.dart';
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded. Try choosing an example from the list above, '
+    'or click "Choose file" to load a .dna file from your local drive.';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
@@ -92,7 +94,7 @@ const rotation_key = 'rotation';
 const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
-const position3d_key = 'position'; // support in the future
+const position3d_key = 'position';
 
 // Strand keys
 const color_key = 'color';

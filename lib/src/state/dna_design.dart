@@ -434,6 +434,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
+    if (json_map == null) return null;
+
     var dna_design_builder = DNADesignBuilder();
 
     dna_design_builder.version =
@@ -486,9 +488,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //      if (helix_builder.svg_position == null) {
 //        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
 //      }
-      if (helix_builder.grid_position == null) {
-        helix_builder.grid_position = DNADesign._default_grid_position(view_order);
-      }
+//      if (helix_builder.grid_position == null) {
+//        helix_builder.grid_position = DNADesign._default_grid_position(view_order);
+//      }
     }
 
     // strands
