@@ -259,9 +259,13 @@ class DesignViewComponent {
         uninstall_draggable(false, DraggableComponent.side);
       }
 
-      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
-          app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-        app.dispatch(actions.MouseGridPositionSideClear());
+      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
+        if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
+          app.dispatch(actions.MouseGridPositionSideClear());
+        }
+        if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+          app.dispatch(actions.MousePositionSideClear());
+        }
       }
     });
 
@@ -570,6 +574,9 @@ class DesignViewComponent {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
       app.dispatch(actions.MouseGridPositionSideClear());
     }
+    if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+      app.dispatch(actions.MousePositionSideClear());
+    }
   }
 
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
@@ -591,6 +598,9 @@ class DesignViewComponent {
     } else {
       if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
         app.dispatch(actions.MouseGridPositionSideClear());
+      }
+      if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+        app.dispatch(actions.MousePositionSideClear());
       }
     }
   }

@@ -89,6 +89,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     bool should_display_potential_helix = props.mouse_svg_pos != null ||
         (props.grid_position_mouse_cursor != null &&
             !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor));
+
     return (Dom.g()..className = 'side-view')([
       if (should_display_potential_helix)
         (DesignSidePotentialHelix()
