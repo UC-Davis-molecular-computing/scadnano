@@ -169,7 +169,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// More like "has *assigned* SVG position"; if not one is calculated from grid_position or position
   bool has_svg_position() => this.svg_position_ != null;
 
-  bool has_position() => this.position != null;
+  bool has_position() => this.position_ != null;
 
 //  @override
 //  String toString() =>
