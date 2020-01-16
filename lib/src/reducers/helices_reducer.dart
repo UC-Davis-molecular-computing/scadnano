@@ -156,10 +156,8 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
     view_order: new_idx,
   );
   List<Helix> helices = design.helices.toList();
-  print('old helices: $helices');
   helices.add(helix);
   helices = util.helices_assign_svg(helices, design.grid);
-  print('new helices: $helices');
 
   return design.rebuild((d) => d..helices.replace(helices));
 }
