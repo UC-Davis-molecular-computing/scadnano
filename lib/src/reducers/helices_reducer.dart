@@ -210,5 +210,9 @@ BuiltList<Helix> helix_grid_reducer(BuiltList<Helix> helices, actions.GridChange
   return new_helices;
 }
 
-Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) =>
-    helix.rebuild((b) => b..position.replace(action.position));
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change helix position
+
+Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
+  ..position.replace(action.position)
+  ..grid_position = null);

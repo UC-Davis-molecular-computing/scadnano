@@ -4548,7 +4548,9 @@ main() {
     Helix helix = no_grid_two_helices_design.helices.first;
     Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
 
-    Helix expected_helix = helix.rebuild((b) => b.position.replace(position));
+    Helix expected_helix = helix.rebuild((b) => b
+      ..position.replace(position)
+      ..grid_position = null);
     var expected_helices = no_grid_two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
 

@@ -213,6 +213,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
           this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
+    if (this.has_position()) {
+      json_map[constants.position3d_key] =
+          this.position.to_json_serializable(suppress_indent: suppress_indent);
+    }
+
     if (this.has_nondefault_svg_position()) {
       json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
     }
@@ -246,7 +251,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 //    if (browser.isFirefox) {
 //      offset = (x / constants.BASE_WIDTH_SVG).floor();
 //    } else {
-      offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+    offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
 //    }
     return offset;
   }
