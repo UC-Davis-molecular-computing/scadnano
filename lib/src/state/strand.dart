@@ -397,7 +397,9 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       return null;
     } else {
       int start_idx = get_seq_start_idx(substrand);
-      return dna_sequence.substring(start_idx, start_idx + substrand.dna_length());
+      int ss_dna_length = substrand.dna_length();
+      int end_idx = start_idx + ss_dna_length;
+      return dna_sequence.substring(start_idx, end_idx);
     }
   }
 

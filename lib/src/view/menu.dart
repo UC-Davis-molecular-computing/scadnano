@@ -147,6 +147,11 @@ class MenuComponent extends UiComponent2<MenuProps> {
             ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..className = 'export-dna-sequences-button menu-item'
         ..key = 'export-dna-sequences')('Export DNA'),
+      (Dom.button()
+        ..onClick =
+            ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
+        ..className = 'inline-ins-del-button menu-item'
+        ..key = 'inline-ins-del')('Inline I/D'),
       (Dom.span()
         ..className = 'show-dna-span menu-item'
         ..key = 'show-dna')(

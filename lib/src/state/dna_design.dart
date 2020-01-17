@@ -211,6 +211,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
+  BuiltMap<Strand, int> get strand_to_index {
+    var strand_to_index = Map<Strand, int>();
+    int idx = 0;
+    for (var strand in strands) {
+      strand_to_index[strand] = idx++;
+    }
+    return strand_to_index.build();
+  }
+
+  @memoized
   BuiltMap<Crossover, Strand> get crossover_to_strand {
     var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
     for (var strand in strands) {
@@ -817,6 +827,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
     return min_offset;
   }
+
 }
 
 BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(

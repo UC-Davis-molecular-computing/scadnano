@@ -162,6 +162,7 @@ part 'serializers.g.dart';
   ExampleDNADesigns,
   ExampleDNADesignsIdxSet,
   HelixPositionSet,
+  InlineInsertionsDeletions,
 ])
 Serializers serializers = _$serializers;
 

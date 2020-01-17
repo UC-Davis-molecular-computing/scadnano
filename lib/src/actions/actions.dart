@@ -1623,3 +1623,17 @@ abstract class HelixPositionSet
 
   static Serializer<HelixPositionSet> get serializer => _$helixPositionSetSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change helix position
+
+abstract class InlineInsertionsDeletions
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<InlineInsertionsDeletions, InlineInsertionsDeletionsBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InlineInsertionsDeletions() = _$InlineInsertionsDeletions;
+
+  InlineInsertionsDeletions._();
+
+  static Serializer<InlineInsertionsDeletions> get serializer => _$inlineInsertionsDeletionsSerializer;
+}

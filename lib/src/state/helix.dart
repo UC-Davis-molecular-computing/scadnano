@@ -84,11 +84,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /************************ end BuiltValue boilerplate ************************/
 
   static void _finalizeBuilder(HelixBuilder builder) {
-    if (builder._grid_position == null && builder._position_ == null) {
+    if (builder._$this._grid_position == null && builder._$this._position_ == null) {
       throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
           'but both are null.');
     }
-    if (builder._grid_position != null && builder._position_ != null) {
+    if (builder._$this._grid_position != null && builder._$this._position_ != null) {
       throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
           'but both are non-null.');
     }
@@ -344,6 +344,21 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
 
   int num_bases() => this.max_offset - this.min_offset;
+
+  /// Calculates full list of major tick marks, whether using [DNADesign.default_major_tick_distance],
+  /// [Helix.major_tick_distance], or [Helix.major_ticks].
+  /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
+  /// overrides [Helix.major_tick_distance], which overrides
+  /// [DNADesign.default_major_tick_distance].
+  List<int> calculate_major_ticks(int default_major_tick_distance) {
+    if (major_ticks != null) {
+      return major_ticks.toList();
+    }
+    int distance = major_tick_distance != null && major_tick_distance > 0
+        ? major_tick_distance
+        : default_major_tick_distance;
+    return [for (int t = min_offset; t <= max_offset; t += distance) t];
+  }
 
 //  /// Number of bases between start and end offsets, inclusive, on this [Helix].
 //  /// Accounts for substrands with insertions and deletions on [BoundSubstrand]s on this Helix, but not if they

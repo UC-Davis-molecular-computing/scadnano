@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/grid.dart';
 import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';
+import 'inline_insertions_deletions_reducer.dart';
 import 'strands_reducer.dart';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,7 @@ DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState stat
 // local: don't need the whole AppState
 Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
   TypedReducer<DNADesign, actions.HelixAdd>(helix_add_dna_design_local_reducer),
+  TypedReducer<DNADesign, actions.InlineInsertionsDeletions>(inline_insertions_deletions_reducer),
 ]);
 
 // whole: operate on the whole DNADesign
