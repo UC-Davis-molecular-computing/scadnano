@@ -828,6 +828,18 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return min_offset;
   }
 
+  @memoized
+  bool get has_insertions_or_deletions {
+    for (var strand in strands) {
+      for (var substrand in strand.bound_substrands()) {
+        if (substrand.deletions.isNotEmpty || substrand.insertions.isNotEmpty) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 }
 
 BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(

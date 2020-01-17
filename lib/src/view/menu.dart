@@ -21,7 +21,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_dna = state.ui_state.show_dna
     ..show_mismatches = state.ui_state.show_mismatches
     ..grid = state.dna_design?.grid
-    ..example_dna_designs = state.ui_state.example_dna_designs),
+    ..example_dna_designs = state.ui_state.example_dna_designs
+    ..design_has_insertions_or_deletions = state.dna_design.has_insertions_or_deletions),
 )(Menu);
 
 @Factory()
@@ -33,6 +34,7 @@ class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool show_mismatches;
   Grid grid;
   ExampleDNADesigns example_dna_designs;
+  bool design_has_insertions_or_deletions;
 }
 
 @Component2()
@@ -148,8 +150,8 @@ class MenuComponent extends UiComponent2<MenuProps> {
         ..className = 'export-dna-sequences-button menu-item'
         ..key = 'export-dna-sequences')('Export DNA'),
       (Dom.button()
-        ..onClick =
-            ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
+        ..disabled = !props.design_has_insertions_or_deletions
+        ..onClick = ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
         ..className = 'inline-ins-del-button menu-item'
         ..key = 'inline-ins-del')('Inline I/D'),
       (Dom.span()

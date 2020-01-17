@@ -38,7 +38,16 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
 abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBuilder> {
-  Helix._();
+  Helix._() {
+    if (grid_position == null && position_ == null) {
+      throw ArgumentError('exactly one of Helix.grid_position and Helix.position should be null, '
+          'but both are null.');
+    }
+    if (grid_position != null && position_ != null) {
+      throw ArgumentError('exactly one of Helix.grid_position and Helix.position should be null, '
+          'but both are non-null.');
+    }
+  }
 
   static Serializer<Helix> get serializer => _$helixSerializer;
 
@@ -83,16 +92,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   /************************ end BuiltValue boilerplate ************************/
 
-  static void _finalizeBuilder(HelixBuilder builder) {
-    if (builder._$this._grid_position == null && builder._$this._position_ == null) {
-      throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
-          'but both are null.');
-    }
-    if (builder._$this._grid_position != null && builder._$this._position_ != null) {
-      throw ArgumentError('exactly one of Helix.grid_position and Helix.position can be null, '
-          'but both are non-null.');
-    }
-  }
+//  static void _finalizeBuilder(HelixBuilder b) {
+//  }
 
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
