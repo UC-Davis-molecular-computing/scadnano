@@ -35,6 +35,7 @@ import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
+import 'package:scadnano/src/util.dart' as util;
 
 /// Returns the default state of the app.
 AppState default_state() {
@@ -142,8 +143,8 @@ main() {
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
     final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
-    var correct_helices = new BuiltList<Helix>([correct_helix]);
-    expect(state.dna_design.helices, correct_helices);
+    var correct_helices = util.helices_assign_svg([correct_helix], Grid.square);
+    expect(state.dna_design.helices, correct_helices.toBuiltList());
   });
 
   test('should remove helix in respond to HelixRemove', () {
@@ -4427,13 +4428,12 @@ main() {
   String no_grid_two_helices_json = r"""
           {
             "version": "0.0.1",
+            "grid": "none",
             "helices": [
               {
-                "grid_position": [0, 0],
                 "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
               },
               {
-                "grid_position": [0, 1],
                 "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
               }
             ],
@@ -4506,12 +4506,20 @@ main() {
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
 
-      Helix new_helix0 = two_helices_design.helices.first.rebuild((b) => b.position_.replace(position0));
-      Helix new_helix1 = two_helices_design.helices.last.rebuild((b) => b.position_.replace(position1));
+      Helix new_helix0 = no_grid_two_helices_design.helices.first.rebuild((b) => b
+        ..grid = grid
+        ..position_ = null
+        ..grid_position.replace(util.position3d_to_grid(position0, grid)));
+      Helix new_helix1 = no_grid_two_helices_design.helices.last.rebuild((b) => b
+        ..grid = grid
+        ..position_ = null
+        ..grid_position.replace(util.position3d_to_grid(position1, grid)));
 
       List<Helix> new_helices = [new_helix0, new_helix1];
 
-      DNADesign expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      DNADesign expected_design = no_grid_two_helices_design.rebuild((b) => b
+        ..helices.replace(new_helices)
+        ..grid = grid);
       expect_dna_design_equal(state.dna_design, expected_design);
     });
   });
