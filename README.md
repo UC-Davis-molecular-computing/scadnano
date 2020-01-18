@@ -29,8 +29,10 @@ A secondary goal is that the file format should be easily human-readable (see ex
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
 
-Please file bug reports and make feature requests as 
-[GitHub repository issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
+Please file bug reports and make feature requests as GitHub repository issues in the repositories for the
+[web interface](https://github.com/UC-Davis-molecular-computing/scadnano/issues)
+or the
+[Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
 
 
