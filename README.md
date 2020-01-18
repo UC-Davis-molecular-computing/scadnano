@@ -77,7 +77,7 @@ It is instructive to see how that example design is represented as a .dna file
   "strands": [
     {
       "color": "#0066cc",
-      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTA",
+      "dna_sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
       "substrands": [
         {"helix": 1, "forward": false, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": true, "start": 8, "end": 40, "insertions": [[14, 1], [26, 2]]},
@@ -88,7 +88,7 @@ It is instructive to see how that example design is represented as a .dna file
     },
     {
       "color": "#f74308",
-      "dna_sequence": "GTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTA",
+      "dna_sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[14, 1]]}
@@ -96,7 +96,7 @@ It is instructive to see how that example design is represented as a .dna file
     },
     {
       "color": "#57bb00",
-      "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAGT",
+      "dna_sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
       "substrands": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
@@ -110,6 +110,7 @@ Here is Python code that would produce this design using the scripting library.
 
 ```python
 import scadnano as sc
+
 
 def main():
     # helices
@@ -133,7 +134,8 @@ def main():
     scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
 
     # whole design
-    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
+    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square,
+                                 scaffold=scaf)
 
     # deletions and insertions added to design are added to both strands on a helix
     design.add_deletion(helix=1, offset=20)
@@ -141,8 +143,8 @@ def main():
     design.add_insertion(helix=0, offset=26, length=2)
 
     # also assigns complement to strands other than scaf bound to it
-    design.assign_dna(scaf, 'AACT' * 18)
-    
+    design.assign_dna(scaf, 'AACGT' * 18)
+
     return design
 
 
