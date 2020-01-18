@@ -134,8 +134,7 @@ def main():
     scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
 
     # whole design
-    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square,
-                                 scaffold=scaf)
+    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
 
     # deletions and insertions added to design are added to both strands on a helix
     design.add_deletion(helix=1, offset=20)
@@ -157,7 +156,7 @@ Although it is not necessary to deal directly with the above JSON data, it is wo
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
-A design consists of a *grid* type (square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
+A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *n*-1.
 (The strands have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands, for instance.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
@@ -194,7 +193,8 @@ DNA origami designs have at least one strand that is a scaffold (but can have mo
 Unlike cadnano, a scaffold strand can have either direction on any helix.
 When there is at least one scaffold, all non-scaffold strands are called *staples*.
 The general idea behind DNA origami is that every staple strand binds only to a scaffold, never to another staple.
-(Neither does any scaffold bind to another scaffold or itself.)
+Neither does any scaffold bind to another scaffold or itself.
+However, neither of these conventions is enforced by scadnano.
 See the [(very readable) original paper](https://www.nature.com/articles/nature04586) for more details about how to design DNA origami.
 
 A strand can have an optional DNA sequence.
@@ -291,21 +291,21 @@ There are different edit modes available, shown on the right side of the screen.
   The following are the types of objects that can be selected in the main view.
 
   - **5' end (strand), 3' end (strand):**
-  These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
+    These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
 
   - **5' end (other), 3' end (other):**
-  Each strand is composed of one or more *bound substrands*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound substrand that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.
+    Each strand is composed of one or more *bound substrands*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound substrand that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.
 
   - **crossover, loopout:**
-  Two consecutive bound substrands on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
+    Two consecutive bound substrands on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
 
   - **strand:**
-  The whole strand can be selected.
+    The whole strand can be selected.
 
   - **scaffold/staple:**
-  In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both.
+    In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
 
-  It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
+    It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
 
   
 * **(p)encil:**
@@ -377,16 +377,16 @@ You can also disable the warning "warn if assigning different sequence to bound 
 
 One reason to keep the warning enabled, but still assign DNA to a strand bound to another with DNA already assigned, is that complementary DNA can be built partially in stages.
 For example, if a strand *s1* is connected to two others *s2* and *s3*, then DNA can be assigned to *s2*, followed by *s3*.
-Any bases on *s1* not bound to *s2* (for instance, those bound to *s3*) will receive the wildcard symbol `?` as their "DNA base".
-On assigning a DNA sequence to *s3*, the complementary portions of *s1* (which have a `?`) will be overwritten with the appropriate DNA sequence, even if the warning is enabled.
-Thus it warns only if a concrete DNA base, one of `A`, `C`, `G`, or `T` already exist and are about to be overwritten with a different base.
+Any bases on *s1* not bound to *s2* (for instance, those bound to *s3*), after *s2* has a sequence assigned to it, will receive the wildcard symbol `?` as their "DNA base".
+Upon subsequently assigning a DNA sequence to *s3*, the complementary portions of *s1* (which have a `?`) will be overwritten with the appropriate DNA sequence, even if the warning is enabled.
+Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`, if it already exists and is about to be overwritten with a different base.
 
 [TODO: make a figure showing this]
 
 
 ## Exporting SVG
 
-Exporting the design to SVG is [currently not directly supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/8). However, by installing the Chrome extension
+Exporting the design to SVG (for instance, for making figures) is [currently not directly supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/8). However, by installing the Chrome extension
 [Export SVG with Style](https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi),
 you can export it yourself:
 
@@ -395,10 +395,11 @@ It will report that there are two SVG elements on the page.
 These are the side view and main view, respectively, and the extension will save both of them.
 
 
-## How to design structures using scadnano
-Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than a dozen different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
+## How to design structures manually using scadnano
+A full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, which are tedious to create manually.
 cadnano provides *autostaple* and *autobreak* utilities for quickly creating a large number of staple strands.
-We have found that the autostaple and autobreak tools are largely unnecessary,
+However, there are fewer than a dozen different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
+We have found that the autostaple and autobreak tools are largely unnecessary in scadnano,
 since scadnano allows one to copy and paste strands (unlike cadnano), 
 encouraging a less opinionated method of creating large designs rapidly.
 
