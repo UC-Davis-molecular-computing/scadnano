@@ -54,7 +54,7 @@ after pressing "Save", your will always be prompted to specify a filename to whi
 The main parts of the program are the *side view* on the left, and the *main view* in the center.
 The side view shows DNA helices "head on", with the interpretation that as you move left-to-right in the main view, this is like moving "into the screen" in the side view.
 
-![screenshot](doc-images/screenshot-initial.png)
+![screenshot of scadnano web interface](doc-images/screenshot-initial.png)
 
 The screenshot above shows many of the terms used in scadnano. 
 It is instructive to see how that example design is represented as a .dna file 
@@ -97,6 +97,55 @@ It is instructive to see how that example design is represented as a .dna file
     }
   ]
 }
+```
+
+Here is Python code that would produce this design using the scripting library.
+
+```python
+import scadnano as sc
+
+def main():
+    # left staple
+    stap_left_ss1 = sc.Substrand(helix=1, forward=True, start=0, end=16)
+    stap_left_ss0 = sc.Substrand(helix=0, forward=False, start=0, end=16)
+    stap_left = sc.Strand(substrands=[stap_left_ss1, stap_left_ss0])
+
+    # right staple
+    stap_right_ss0 = sc.Substrand(helix=0, forward=False, start=16, end=32)
+    stap_right_ss1 = sc.Substrand(helix=1, forward=True, start=16, end=32)
+    stap_right = sc.Strand(substrands=[stap_right_ss0, stap_right_ss1])
+
+    # scaffold
+    scaf_ss1_left = sc.Substrand(helix=1, forward=False, start=0, end=16)
+    scaf_ss0 = sc.Substrand(helix=0, forward=True, start=0, end=32)
+    loopout = sc.Loopout(length=3)
+    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
+    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
+
+    # whole design
+    design = sc.DNAOrigamiDesign(strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
+
+    # deletions and insertions added to design so they can be added to both strands on a helix
+    design.add_deletion(helix=0, offset=11)
+    design.add_deletion(helix=0, offset=12)
+    design.add_deletion(helix=0, offset=24)
+    design.add_deletion(helix=1, offset=12)
+    design.add_deletion(helix=1, offset=24)
+
+    design.add_insertion(helix=0, offset=6, length=1)
+    design.add_insertion(helix=0, offset=18, length=2)
+    design.add_insertion(helix=1, offset=6, length=3)
+    design.add_insertion(helix=1, offset=18, length=4)
+
+    # DNA assigned to whole design so complement can be assigned to strands other than scaf
+    design.assign_dna(scaf, 'AACT' * 18)
+    
+    return design
+
+
+if __name__ == '__main__':
+    design = main()
+    design.write_scadnano_file(directory='output_designs')
 ```
 
 Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. 
@@ -192,23 +241,34 @@ Setting length to a positive integer converts to a loopout and setting a length 
 The menu layout is currently hacky and will [change to something more elegant in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/63).
 
 * **Export DNA:**
-Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
+  Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
 * **Save:**
-Saves the current design in a .dna file. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
+  Saves the current design in a .dna file. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
 * **Load:**
-Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+  Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
 
 * **show DNA:**
-Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
+  Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
 
 * **show mismatches:**
-Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
+  Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
+
+* **Inline insertions/deletions:**
+  The "Inline I/D" button "inlines" insertions and deletions in the following way.
+  Insertions and deletions are removed, and their substrands have their lengths altered. 
+  Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. 
+  For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, 
+  then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.
+
+  We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
+  e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
 * **grid:**
-The grid type can be changed to square, hex, honeycomb, or none. 
-[TODO explain more what this means]
+  The grid type can be changed to square, hex, honeycomb, or none. 
+
+  [TODO explain more what this means]
 
 ## Edit modes
 
@@ -252,12 +312,27 @@ There are different edit modes available, shown on the right side of the screen.
   Technically these operations are unnecessary, but they give a fast way to create large designs. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
 
 * **(i)nsertion / (d)eletion:**
-  These have the same meaning as in cadnano. They are a visual trick used to allow  bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. Normally, each offset (small white square outlined in gray on a helix) represents a single base. Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. Clicking an existing insertion/deletion removes it. (Note that this requires clicking in the small square where the bound substrand is drawn; clicking on an insertion outside of that position allows one to change its length.) If a deletion appears at that position, then it does not correspond to any DNA base. If an insertion appears at that position, it has a *length*, which is a positive integer, and the number of bases represented by that position is actually *length*+1. In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
+  These have the same meaning as in cadnano. 
+  They are a visual trick used to allow bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. 
+  Normally, each offset (small white square outlined in gray on a helix) represents a single base. 
+  Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. 
+  Clicking an existing insertion/deletion removes it. 
+  (Note that this requires clicking in the small square where the bound substrand is drawn; 
+  clicking on an insertion outside of that square allows one to change its length.) 
+  If a deletion appears at that position, then it does not correspond to any DNA base. 
+  If an insertion appears at that position, it has a *length*, which is a positive integer, 
+  and the number of bases represented by that position is actually *length*+1. 
+  In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
-  Currently, if one offset on a helix has two bound substrands (going in opposite directions), then either both have an insertion/deletion at that offset, or neither does. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
+  Currently, if one offset on a helix has two bound substrands (going in opposite directions), 
+  then adding/removing an insertion/deletion at that offset adds/removes on both boudn substrands.
+  The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, 
+  but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
+  (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
-  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. 
+  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, 
+  or of two helices when the pointer is over a crossover joining those two helices. 
   (It doesn't actually enable any edits, but it *disables* other edits for technical reasons related detecting click events.)
   Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. 
   The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
@@ -318,7 +393,7 @@ These are the side view and main view, respectively, and the extension will save
 ## How to design structures using scadnano
 Although a full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, there are fewer than a dozen different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
 cadnano provides *autostaple* and *autobreak* utilities for quickly creating a large number of staple strands.
-We have found that the autotaple and autobreak tools are largely unnecessary,
+We have found that the autostaple and autobreak tools are largely unnecessary,
 since scadnano allows one to copy and paste strands (unlike cadnano), 
 encouraging a less opinionated method of creating large designs rapidly.
 
