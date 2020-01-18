@@ -14,6 +14,8 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
 
 import 'app.dart';
@@ -845,4 +847,19 @@ bool bboxes_intersect_generalized(
   num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
   return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
       overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// unit testing utilities
+
+/// Returns the default state of the app.
+AppState default_state() {
+  var dna_design = DNADesign();
+  var ui_state = AppUIState.from_dna_design(dna_design);
+  var state = (DEFAULT_AppStateBuilder
+        ..dna_design.replace(dna_design)
+        ..ui_state.replace(ui_state)
+        ..editor_content = '')
+      .build();
+  return state;
 }

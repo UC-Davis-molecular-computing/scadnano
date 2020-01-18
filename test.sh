@@ -9,7 +9,7 @@ else
 fi
 
 if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
-  $PUB run build_runner test -- -p chrome test/reducer_test.dart --pause-after-load
+  $PUB run build_runner test -- -P debug
 else
-  $PUB run build_runner test -- -p chrome test/reducer_test.dart
+  $PUB run build_runner test
 fi

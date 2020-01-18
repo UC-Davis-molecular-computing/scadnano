@@ -37,18 +37,6 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/util.dart' as util;
 
-/// Returns the default state of the app.
-AppState default_state() {
-  var dna_design = DNADesign();
-  var ui_state = AppUIState.from_dna_design(dna_design);
-  var state = (DEFAULT_AppStateBuilder
-        ..dna_design.replace(dna_design)
-        ..ui_state.replace(ui_state)
-        ..editor_content = '')
-      .build();
-  return state;
-}
-
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_dna_design(DNADesign dna_design) {
   var ui_state = AppUIState.from_dna_design(dna_design);
@@ -137,7 +125,7 @@ void expect_app_state_equal(AppState actual, AppState matcher) {
 
 main() {
   test('should add a helix in response to HelixAdd', () {
-    var state = default_state();
+    var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
@@ -148,7 +136,7 @@ main() {
   });
 
   test('should remove helix in respond to HelixRemove', () {
-    var state = default_state();
+    var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
@@ -3000,7 +2988,7 @@ main() {
   });
 
   test('Error message set', () {
-    AppState state = default_state();
+    AppState state = util.default_state();
     String message = 'This is an error';
     state = app_state_reducer(state, ErrorMessageSet(message));
 
@@ -3036,7 +3024,7 @@ main() {
   });
 
   group('Mouse grid position (side view) tests: ', () {
-    AppState state = default_state();
+    AppState state = util.default_state();
     test('MouseGridPositionSideUpdate', () {
       GridPosition gridPosition = GridPosition(4, 2);
       state = app_state_reducer(state, MouseGridPositionSideUpdate(gridPosition));
