@@ -26,6 +26,9 @@ planned in the future.
 
 A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
 
+This document explains how to use the web interface for viewing and manually editing designs.
+The documentation for the Python scripting package is 
+[here](https://web.cs.ucdavis.edu/~doty/scadnano/docs/).
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
 
@@ -44,9 +47,11 @@ In particular, your design is not automatically saved in an easily recoverable w
 **However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
 It is strongly recommended that you frequently save your work by pressing the "Save" button and saving your design to a .dna file.
-Unfortunately, due to browser security restrictions on accessing the local file system,
+Unfortunately, due to 
+[browser security restrictions on accessing the local file system](https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/),
 it is not possible to save your file automatically without further interaction;
 after pressing "Save", your will always be prompted to specify a filename to which to save.
+
 
 
 
@@ -66,24 +71,24 @@ It is instructive to see how that example design is represented as a .dna file
 {
   "version": "0.0.1",
   "helices": [
-    {"grid_position": [0, 0], "rotation": 180, "max_offset": 48},
-    {"grid_position": [0, 1], "rotation": 210, "max_offset": 48}
+    {"max_offset": 48, "grid_position": [0, 0]},
+    {"max_offset": 48, "grid_position": [0, 1]}
   ],
   "strands": [
     {
       "color": "#0066cc",
-      "dna_sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
-      "is_scaffold": true,
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTA",
       "substrands": [
         {"helix": 1, "forward": false, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": true, "start": 8, "end": 40, "insertions": [[14, 1], [26, 2]]},
         {"loopout": 3},
         {"helix": 1, "forward": false, "start": 24, "end": 40}
-      ]
+      ],
+      "is_scaffold": true
     },
     {
       "color": "#f74308",
-      "dna_sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
+      "dna_sequence": "GTTAGTTAGTTAGTTAGTTAGTTAGTTAGTTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[14, 1]]}
@@ -91,7 +96,7 @@ It is instructive to see how that example design is represented as a .dna file
     },
     {
       "color": "#57bb00",
-      "dna_sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAGT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
@@ -107,40 +112,36 @@ Here is Python code that would produce this design using the scripting library.
 import scadnano as sc
 
 def main():
+    # helices
+    helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
+
     # left staple
-    stap_left_ss1 = sc.Substrand(helix=1, forward=True, start=0, end=16)
-    stap_left_ss0 = sc.Substrand(helix=0, forward=False, start=0, end=16)
+    stap_left_ss1 = sc.Substrand(helix=1, forward=True, start=8, end=24)
+    stap_left_ss0 = sc.Substrand(helix=0, forward=False, start=8, end=24)
     stap_left = sc.Strand(substrands=[stap_left_ss1, stap_left_ss0])
 
     # right staple
-    stap_right_ss0 = sc.Substrand(helix=0, forward=False, start=16, end=32)
-    stap_right_ss1 = sc.Substrand(helix=1, forward=True, start=16, end=32)
+    stap_right_ss0 = sc.Substrand(helix=0, forward=False, start=24, end=40)
+    stap_right_ss1 = sc.Substrand(helix=1, forward=True, start=24, end=40)
     stap_right = sc.Strand(substrands=[stap_right_ss0, stap_right_ss1])
 
     # scaffold
-    scaf_ss1_left = sc.Substrand(helix=1, forward=False, start=0, end=16)
-    scaf_ss0 = sc.Substrand(helix=0, forward=True, start=0, end=32)
+    scaf_ss1_left = sc.Substrand(helix=1, forward=False, start=8, end=24)
+    scaf_ss0 = sc.Substrand(helix=0, forward=True, start=8, end=40)
     loopout = sc.Loopout(length=3)
-    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
+    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=24, end=40)
     scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
 
     # whole design
-    design = sc.DNAOrigamiDesign(strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
+    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
 
-    # deletions and insertions added to design so they can be added to both strands on a helix
-    design.add_deletion(helix=0, offset=11)
-    design.add_deletion(helix=0, offset=12)
-    design.add_deletion(helix=0, offset=24)
-    design.add_deletion(helix=1, offset=12)
-    design.add_deletion(helix=1, offset=24)
+    # deletions and insertions added to design are added to both strands on a helix
+    design.add_deletion(helix=1, offset=20)
+    design.add_insertion(helix=0, offset=14, length=1)
+    design.add_insertion(helix=0, offset=26, length=2)
 
-    design.add_insertion(helix=0, offset=6, length=1)
-    design.add_insertion(helix=0, offset=18, length=2)
-    design.add_insertion(helix=1, offset=6, length=3)
-    design.add_insertion(helix=1, offset=18, length=4)
-
-    # DNA assigned to whole design so complement can be assigned to strands other than scaf
-    design.assign_dna(scaf, 'AACGT' * 18)
+    # also assigns complement to strands other than scaf bound to it
+    design.assign_dna(scaf, 'AACT' * 18)
     
     return design
 
