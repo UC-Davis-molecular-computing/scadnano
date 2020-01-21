@@ -10,6 +10,8 @@ fi
 
 if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   $PUB run build_runner test -- -P debug
+elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
+  $PUB run build_runner test -- $2
 else
   $PUB run build_runner test
 fi
