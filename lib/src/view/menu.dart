@@ -22,7 +22,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_mismatches = state.ui_state.show_mismatches
     ..grid = state.dna_design?.grid
     ..example_dna_designs = state.ui_state.example_dna_designs
-    ..design_has_insertions_or_deletions = state.dna_design.has_insertions_or_deletions),
+    ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true),
 )(Menu);
 
 @Factory()
