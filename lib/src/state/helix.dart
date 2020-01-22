@@ -324,6 +324,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       helix_builder.max_offset = json_map[constants.max_offset_key];
     }
 
+    if (json_map.containsKey(constants.min_offset_key)) {
+      helix_builder.min_offset = json_map[constants.min_offset_key];
+    }
+
     helix_builder.rotation =
         util.get_value_with_default(json_map, constants.rotation_key, constants.default_helix_rotation);
     helix_builder.rotation_anchor = util.get_value_with_default(
