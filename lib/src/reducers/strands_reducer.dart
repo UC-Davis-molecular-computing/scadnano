@@ -301,22 +301,6 @@ BuiltList<Strand> strand_create(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // single strand properties
 
-//BuiltList<Strand> scaffold_set_reducer(BuiltList<Strand> strands, actions.ScaffoldSet action) {
-//  Strand strand = action.strand;
-//  int strand_idx = strands.indexOf(strand);
-//
-//  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
-//  strand = strand.rebuild((b) => b
-//    ..is_scaffold = action.is_scaffold
-//    ..color = new_color);
-//  strand = strand.initialize();
-//
-//  var strands_builder = strands.toBuilder();
-//  strands_builder[strand_idx] = strand;
-//  return strands_builder.build();
-//}
-
-
 // Unlike a strand part reducer, this sort of action actually stores the strand itself.
 BuiltList<Strand> strands_single_strand_reducer(
     BuiltList<Strand> strands, actions.SingleStrandAction action) {
