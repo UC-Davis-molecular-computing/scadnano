@@ -52,6 +52,7 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
   TypedReducer<Helix, actions.HelixPositionSet>(helix_position_set_reducer),
+  TypedReducer<Helix, actions.HelixGridPositionSet>(helix_grid_position_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,6 +255,11 @@ BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.Gri
 Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
   ..position_.replace(action.position)
   ..grid_position = null);
+
+Helix helix_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
+    helix.rebuild((b) => b
+      ..position_ = null
+      ..grid_position.replace(action.grid_position));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated

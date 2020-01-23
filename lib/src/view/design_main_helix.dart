@@ -8,6 +8,8 @@ import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/grid_position.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
 import '../state/helix.dart';
@@ -150,39 +152,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_position);
   }
 
-  Future<void> dialog_helix_adjust_position() async {
-    var position = props.helix.position ?? Position3D();
-
-    var dialog = Dialog(title: 'adjust helix position', items: [
-      DialogNumber(label: 'x', value: position.x),
-      DialogNumber(label: 'y', value: position.y),
-      DialogNumber(label: 'z', value: position.z),
-      DialogNumber(label: 'pitch', value: position.pitch),
-      DialogNumber(label: 'roll', value: position.roll),
-      DialogNumber(label: 'yaw', value: position.yaw),
-    ]);
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    num x = (results[0] as DialogNumber).value;
-    num y = (results[1] as DialogNumber).value;
-    num z = (results[2] as DialogNumber).value;
-    num pitch = (results[3] as DialogNumber).value;
-    num roll = (results[4] as DialogNumber).value;
-    num yaw = (results[5] as DialogNumber).value;
-
-    // TODO: (check validity)
-    app.dispatch(actions.HelixPositionSet(
-        helix: props.helix,
-        position: Position3D(
-          x: x,
-          y: y,
-          z: z,
-          pitch: pitch,
-          roll: roll,
-          yaw: yaw,
-        )));
+  helix_adjust_grid_position() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_grid_position);
   }
 
   Future<void> dialog_helix_adjust_length() async {
@@ -295,24 +266,87 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.dispatch(action);
   }
 
+  Future<void> dialog_helix_adjust_grid_position() async {
+    var grid_position = props.helix.grid_position ?? GridPosition(0, 0);
+
+    var dialog = Dialog(title: 'adjust helix grid position', items: [
+      DialogNumber(label: 'h', value: grid_position.h),
+      DialogNumber(label: 'v', value: grid_position.v),
+      DialogNumber(label: 'b', value: grid_position.b),
+    ]);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    num h = (results[0] as DialogNumber).value;
+    num v = (results[1] as DialogNumber).value;
+    num b = (results[2] as DialogNumber).value;
+
+    app.dispatch(actions.HelixGridPositionSet(helix: props.helix, grid_position: GridPosition(h, v, b)));
+  }
+
+  Future<void> dialog_helix_adjust_position() async {
+    var position = props.helix.position ?? Position3D();
+
+    var dialog = Dialog(title: 'adjust helix position', items: [
+      DialogNumber(label: 'x', value: position.x),
+      DialogNumber(label: 'y', value: position.y),
+      DialogNumber(label: 'z', value: position.z),
+      DialogNumber(label: 'pitch', value: position.pitch),
+      DialogNumber(label: 'roll', value: position.roll),
+      DialogNumber(label: 'yaw', value: position.yaw),
+    ]);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    num x = (results[0] as DialogNumber).value;
+    num y = (results[1] as DialogNumber).value;
+    num z = (results[2] as DialogNumber).value;
+    num pitch = (results[3] as DialogNumber).value;
+    num roll = (results[4] as DialogNumber).value;
+    num yaw = (results[5] as DialogNumber).value;
+
+    // TODO: (check validity)
+    app.dispatch(actions.HelixPositionSet(
+        helix: props.helix,
+        position: Position3D(
+          x: x,
+          y: y,
+          z: z,
+          pitch: pitch,
+          roll: roll,
+          yaw: yaw,
+        )));
+  }
+
   String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
 
-  List<ContextMenuItem> context_menu_helix(Helix helix) => [
-        ContextMenuItem(
-          title: 'adjust length',
-          on_click: helix_adjust_length,
-        ),
-        ContextMenuItem(
-          title: 'adjust tick marks',
-          on_click: helix_adjust_major_tick_marks,
-        ),
-        ContextMenuItem(
-          title: 'adjust position',
-          on_click: helix_adjust_position,
-        )
-      ];
+  List<ContextMenuItem> context_menu_helix(Helix helix) {
+    ContextMenuItem context_menu_item_adjust_position = (props.helix.grid == Grid.none)
+        ? ContextMenuItem(
+            title: 'adjust position',
+            on_click: helix_adjust_position,
+          )
+        : ContextMenuItem(
+            title: 'adjust grid position',
+            on_click: helix_adjust_grid_position,
+          );
+
+    return [
+      ContextMenuItem(
+        title: 'adjust length',
+        on_click: helix_adjust_length,
+      ),
+      ContextMenuItem(
+        title: 'adjust tick marks',
+        on_click: helix_adjust_major_tick_marks,
+      ),
+      context_menu_item_adjust_position,
+    ];
+  }
 }
 
 //static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);

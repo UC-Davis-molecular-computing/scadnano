@@ -4544,9 +4544,7 @@ main() {
     Helix helix = no_grid_two_helices_design.helices.first;
     Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
 
-    Helix expected_helix = helix.rebuild((b) => b
-      ..position_.replace(position)
-      ..grid_position = null);
+    Helix expected_helix = helix.rebuild((b) => b..position_.replace(position));
     var expected_helices = no_grid_two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
 
@@ -4556,6 +4554,25 @@ main() {
       ..ui_state.changed_since_last_save = true);
 
     state = app_state_reducer(state, HelixPositionSet(helix: helix, position: position));
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixGridPositionSet', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+    Helix helix = two_helices_design.helices.first;
+
+    GridPosition grid_position = GridPosition(5, -3);
+    Helix expected_helix = helix.rebuild((b) => b..grid_position.replace(grid_position));
+
+    var expected_helices = two_helices_design.helices.toBuilder();
+    expected_helices[0] = expected_helix;
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.helices.replace(expected_helices.build())
+      ..undo_redo.undo_stack.add(two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    state = app_state_reducer(state, HelixGridPositionSet(helix: helix, grid_position: grid_position));
     expect_app_state_equal(state, expected_state);
   });
 }

@@ -1624,6 +1624,22 @@ abstract class HelixPositionSet
   static Serializer<HelixPositionSet> get serializer => _$helixPositionSetSerializer;
 }
 
+abstract class HelixGridPositionSet
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixGridPositionSet, HelixGridPositionSetBuilder> {
+  Helix get helix;
+  GridPosition get grid_position;
+
+  int get helix_idx => helix.idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGridPositionSet({Helix helix, GridPosition grid_position}) = _$HelixGridPositionSet._;
+
+  HelixGridPositionSet._();
+
+  static Serializer<HelixGridPositionSet> get serializer => _$helixGridPositionSetSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
