@@ -141,9 +141,11 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
     int idx_crossover = 0;
     for (var crossover in strand.crossovers) {
+      BoundSubstrand prev_ss = strand.substrands[crossover.prev_substrand_idx];
       BoundSubstrand next_ss = strand.substrands[crossover.next_substrand_idx];
+      bool draw_prev_ss = should_draw_bound_ss(prev_ss.helix, props.side_selected_helix_idxs);
       bool draw_next_ss = should_draw_bound_ss(next_ss.helix, props.side_selected_helix_idxs);
-      if (draw_next_ss) {
+      if (draw_prev_ss && draw_next_ss) {
         var crossover = strand.crossovers[idx_crossover++];
 
 //        paths.add((ConnectedDesignMainStrandCrossover()
@@ -155,8 +157,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               props.edit_modes.contains(EditModeChoice.select) &&
               props.origami_type_is_selectable
           ..edit_modes = props.edit_modes
-          ..prev_substrand = strand.substrands[crossover.prev_substrand_idx]
-          ..next_substrand = strand.substrands[crossover.next_substrand_idx]
+          ..prev_substrand = prev_ss
+          ..next_substrand = next_ss
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }
