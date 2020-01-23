@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/serializers.dart';
 import 'grid.dart';
+import '../util.dart' as util;
 
 part 'grid_position.g.dart';
 
@@ -60,12 +61,10 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
       x_diff = h - other.h;
       y_diff = v - other.v;
     } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-      num x = h + v % 2 == 1 ? 0.5 : 0;
-      num x_other = other.h + other.v % 2 == 1 ? 0.5 : 0;
-      num y = h * 0.5 * sqrt(3);
-      num y_other = other.h * 0.5 * sqrt(3);
-      x_diff = x - x_other;
-      y_diff = y - y_other;
+      var pos = util.hex_grid_position_to_position2d_diameter_1_circles(this);
+      var other_pos = util.hex_grid_position_to_position2d_diameter_1_circles(other);
+      x_diff = other_pos.x - pos.x;
+      y_diff = other_pos.y - pos.y;
     } else {
       throw ArgumentError('grid cannot be Grid.none to evaluate distance');
     }
@@ -84,3 +83,4 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   static Serializer<GridPosition> get serializer => _$gridPositionSerializer;
 }
+

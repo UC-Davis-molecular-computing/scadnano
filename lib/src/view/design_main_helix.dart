@@ -53,7 +53,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
-//    String tooltip_helix_length_adjust = 'click to adjust helix length';
 
     return (Dom.g()
       ..className = 'helix-main-view'

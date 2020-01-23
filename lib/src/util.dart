@@ -352,17 +352,24 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
   } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-    num x = gp.h; // x offset from h
-    if (gp.v % 2 == 1) {
-      x += cos(2 * pi / 6); // x offset from v
-    }
-    num y = sin(2 * pi / 6) * gp.v; // y offset from v
-    point = Point<num>(x, y);
+    point = hex_grid_position_to_position2d_diameter_1_circles(gp);
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return point * 2 * radius;
+}
+
+/// Converts from hex grid_position to absolute real-number position,
+/// assuming each grid circle has diameter 1,
+/// and the center of circle at grid_position (0,0) is the origin.
+Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
+  num x = gp.h; // x offset from h
+  if (gp.v % 2 == 1) {
+    x += cos(2 * pi / 6); // x offset from v
+  }
+  num y = sin(2 * pi / 6) * gp.v; // y offset from v
+  return Point<num>(x, y);
 }
 
 GridPosition position3d_to_grid(Position3D position, Grid grid) {
