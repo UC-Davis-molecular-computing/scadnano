@@ -289,23 +289,23 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var position = props.helix.position ?? Position3D();
 
     var dialog = Dialog(title: 'adjust helix position', items: [
-      DialogNumber(label: 'x', value: position.x),
-      DialogNumber(label: 'y', value: position.y),
-      DialogNumber(label: 'z', value: position.z),
-      DialogNumber(label: 'pitch', value: position.pitch),
-      DialogNumber(label: 'roll', value: position.roll),
-      DialogNumber(label: 'yaw', value: position.yaw),
+      DialogFloatingNumber(label: 'x', value: position.x),
+      DialogFloatingNumber(label: 'y', value: position.y),
+      DialogFloatingNumber(label: 'z', value: position.z),
+      DialogFloatingNumber(label: 'pitch', value: position.pitch),
+      DialogFloatingNumber(label: 'roll', value: position.roll),
+      DialogFloatingNumber(label: 'yaw', value: position.yaw),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num x = (results[0] as DialogNumber).value;
-    num y = (results[1] as DialogNumber).value;
-    num z = (results[2] as DialogNumber).value;
-    num pitch = (results[3] as DialogNumber).value;
-    num roll = (results[4] as DialogNumber).value;
-    num yaw = (results[5] as DialogNumber).value;
+    num x = (results[0] as DialogFloatingNumber).value;
+    num y = (results[1] as DialogFloatingNumber).value;
+    num z = (results[2] as DialogFloatingNumber).value;
+    num pitch = (results[3] as DialogFloatingNumber).value;
+    num roll = (results[4] as DialogFloatingNumber).value;
+    num yaw = (results[5] as DialogFloatingNumber).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(

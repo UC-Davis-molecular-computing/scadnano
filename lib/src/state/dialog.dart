@@ -57,6 +57,25 @@ abstract class DialogNumber
   num get value;
 }
 
+abstract class DialogFloatingNumber
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogFloatingNumber, DialogFloatingNumberBuilder> {
+  factory DialogFloatingNumber({String label, num value}) = _$DialogFloatingNumber._;
+
+  factory DialogFloatingNumber.from([void Function(DialogFloatingNumberBuilder) updates]) =
+      _$DialogFloatingNumber;
+
+  DialogFloatingNumber._();
+
+  static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  String get label;
+
+  num get value;
+}
+
 abstract class DialogText
     with BuiltJsonSerializable
     implements DialogItem, Built<DialogText, DialogTextBuilder> {

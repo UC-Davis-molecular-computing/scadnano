@@ -141,6 +141,23 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
+    } else if (item is DialogFloatingNumber) {
+      return Dom.label()(
+        '${item.label}: ',
+        (Dom.input()
+          ..type = 'number'
+          ..pattern = r'[+-]?([0-9]*[.])?[0-9]+' // allow to type floating numbers
+          ..value = item.value
+          ..step = 'any'
+          ..onChange = (SyntheticFormEvent e) {
+            var new_responses = state.responses.toBuilder();
+            num new_value = double.tryParse(e.target.value);
+            if (new_value == null) return;
+            DialogFloatingNumber response = state.responses[idx];
+            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            setState(newState()..responses = new_responses.build());
+          })(),
+      );
     } else if (item is DialogTextArea) {}
     return null;
   }
