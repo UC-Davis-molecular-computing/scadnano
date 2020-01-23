@@ -53,7 +53,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   factory Helix.from([void Function(HelixBuilder) updates]) = _$Helix;
 
-//  factory Helix([void Function(HelixBuilder) updates]) = _$Helix;
+  /************************ end BuiltValue boilerplate ************************/
 
   factory Helix({
     int idx,
@@ -70,13 +70,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     if (view_order == null) {
       view_order = idx;
     }
-//    if (grid_position == null) {
-//      if (position == null) {
-//        grid_position = GridPosition(0, idx);
-//      } else if (!grid.is_none()) {
-//        grid_position = util.position3d_to_grid(position, grid);
-//      }
-//    }
     return Helix.from((b) => b
       ..idx = idx
       ..view_order = view_order
@@ -89,11 +82,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..min_offset = min_offset
       ..max_offset = max_offset);
   }
-
-  /************************ end BuiltValue boilerplate ************************/
-
-//  static void _finalizeBuilder(HelixBuilder b) {
-//  }
 
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)

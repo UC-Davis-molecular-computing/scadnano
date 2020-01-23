@@ -136,13 +136,19 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-List<Helix> helices_assign_svg(List<Helix> helices, Grid grid) {
-  List<int> view_order = List<int>(helices.length);
-  for (int i = 0; i < helices.length; i++) {
-    view_order[i] = helices[i].view_order;
+List<Helix> helices_assign_svg(List<Helix> helices, Grid grid, [BuiltSet<int> selected_helix_idxs = null]) {
+  if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
+    selected_helix_idxs = [for (int i = 0; i < helices.length; i++) i].toBuiltSet();
   }
 
-  List<Helix> new_helices = List<Helix>(helices.length);
+  var selected_helices = [for (var helix in helices) if (selected_helix_idxs.contains(helix.idx)) helix];
+
+  List<int> view_order = List<int>(selected_helices.length);
+  for (int i = 0; i < selected_helices.length; i++) {
+    view_order[i] = selected_helices[i].view_order;
+  }
+
+  List<Helix> new_helices = List<Helix>.from(helices);
   num prev_y = null;
 
   for (int i = 0; i < view_order.length; i++) {

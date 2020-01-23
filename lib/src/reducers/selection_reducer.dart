@@ -183,20 +183,20 @@ Reducer<BuiltSet<int>> side_selected_helices_reducer = combineReducers([
   TypedReducer<BuiltSet<int>, actions.HelixSelectionsClear>(helices_selected_clear_reducer),
 ]);
 
-BuiltSet<int> helix_select_reducer(BuiltSet<int> helices, actions.HelixSelect action) {
+BuiltSet<int> helix_select_reducer(BuiltSet<int> side_selected_helix_idxs, actions.HelixSelect action) {
   int idx = action.helix_idx;
   bool toggle = action.toggle;
-  if (!helices.contains(idx)) {
-    helices = helices.rebuild((h) => h.add(idx));
+  if (!side_selected_helix_idxs.contains(idx)) {
+    side_selected_helix_idxs = side_selected_helix_idxs.rebuild((h) => h.add(idx));
   } else {
     if (toggle) {
-      helices = helices.rebuild((h) => h.remove(idx));
+      side_selected_helix_idxs = side_selected_helix_idxs.rebuild((h) => h.remove(idx));
     }
   }
-  return helices;
+  return side_selected_helix_idxs;
 }
 
-BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.HelixSelectionsClear action) =>
+BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> _, actions.HelixSelectionsClear action) =>
     BuiltSet<int>();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

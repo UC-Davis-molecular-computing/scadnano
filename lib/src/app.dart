@@ -37,8 +37,8 @@ import 'constants.dart' as constants;
 // global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -84,22 +84,15 @@ class App {
       await test_stuff();
     } else {
       warn_wrong_browser();
-
       react.setClientConfiguration();
-
       await initialize_model();
-
       setup_undo_redo_keyboard_listeners();
-
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
       this.setup_warning_before_unload();
-
       make_dart_functions_available_to_js(state);
-
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
-
       this.view.render(state);
     }
   }

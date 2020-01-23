@@ -32,7 +32,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..helix = helix
           ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance
-          ..key = helix.idx)());
+          ..key = helix.toString())());
       }
     }
 

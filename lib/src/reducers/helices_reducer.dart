@@ -2,16 +2,19 @@ import 'dart:math';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/reducers/util_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 
 import 'package:scadnano/src/state/bound_substrand.dart';
 import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import '../state/helix.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
+import 'selection_reducer.dart';
 
 Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
@@ -22,6 +25,14 @@ Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltList<Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
   TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_change_reducer),
+]);
+
+GlobalReducer<BuiltList<Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelect>(helix_select_helices_reducer),
+  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelectionsAdjust>(
+      helix_selections_adjust_helices_reducer),
+  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelectionsClear>(
+      helix_selections_clear_helices_reducer),
 ]);
 
 BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.HelixIndividualAction action) {
@@ -243,3 +254,36 @@ BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.Gri
 Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
   ..position_.replace(action.position)
   ..grid_position = null);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// select/unselect Helices (so SVG positions need to be recalculated
+
+BuiltList<Helix> _reassign_svg_positions(BuiltList<Helix> helices, BuiltSet<int> selected_helix_idxs) {
+  if (helices.length == 0) {
+    return helices;
+  }
+  Grid grid = helices.first.grid;
+  List<Helix> helices_list = helices.toList();
+  helices_list = util.helices_assign_svg(helices_list, grid, selected_helix_idxs);
+  print('selected helix idxs: ${selected_helix_idxs}');
+  print('svg y positions: ${helices_list.map((h) => h.svg_position.y).toList()}');
+  return helices_list.toBuiltList();
+}
+
+BuiltList<Helix> helix_select_helices_reducer(
+    BuiltList<Helix> helices, AppState state, actions.HelixSelect action) {
+  var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
+  return _reassign_svg_positions(helices, selected_helix_idxs);
+}
+
+BuiltList<Helix> helix_selections_adjust_helices_reducer(
+    BuiltList<Helix> helices, AppState state, actions.HelixSelectionsAdjust action) {
+  var selected_helix_idxs =
+      helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
+  var new_helices = _reassign_svg_positions(helices, selected_helix_idxs);
+  return new_helices;
+}
+
+BuiltList<Helix> helix_selections_clear_helices_reducer(
+        BuiltList<Helix> helices, AppState _, actions.HelixSelectionsClear action) =>
+    _reassign_svg_positions(helices, BuiltSet<int>());

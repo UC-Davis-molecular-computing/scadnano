@@ -51,7 +51,7 @@ Grid grid_local_reducer(Grid grid, actions.GridChange action) => action.grid;
 // global: need the whole AppState
 DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState state, action) =>
     dna_design?.rebuild((d) => d
-//      ..helices.replace(helices_global_reducer(dna_design.helices, state, action))
+      ..helices.replace(helices_global_reducer(dna_design.helices, state, action))
       ..strands.replace(strands_global_reducer(dna_design.strands, state, action)));
 
 // whole: operate on the whole DNADesign
