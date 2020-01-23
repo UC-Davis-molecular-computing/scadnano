@@ -94,26 +94,34 @@ _inline_deletions_insertions_on_helix(
   helices_new[helix_idx] = helix;
 
   // fix substrand start/end offsets
-  List<BoundSubstrand> substrands = design.substrands_on_helix(helix_idx).toList();
-  substrands.sort((ss1, ss2) => ss1.start - ss2.start);
-  int delta_acc = 0;
-  for (var substrand in substrands) {
-    int new_start = substrand.start + delta_acc;
-    delta_acc += substrand.dna_length() - substrand.visual_length;
-    int new_end = substrand.end + delta_acc;
-    BoundSubstrand new_substrand = substrand.rebuild((b) => b
-      ..start = new_start
-      ..end = new_end
-      ..insertions.replace([])
-      ..deletions.replace([]));
+  var substrands_both_directions = design.substrands_on_helix(helix_idx);
+  // go one direction at a time so we never have overlapping substrands
+  var substrands_one_direction = {
+    true: substrands_both_directions.where((ss) => ss.forward),
+    false: substrands_both_directions.where((ss) => !ss.forward),
+  };
+  for (bool forward in [true, false]) {
+    var substrands = substrands_one_direction[forward].toList();
+    int delta_acc = 0;
+    substrands.sort((ss1, ss2) => ss1.start - ss2.start);
+    for (var substrand in substrands) {
+      int new_start = substrand.start + delta_acc;
+      delta_acc += substrand.dna_length() - substrand.visual_length;
+      int new_end = substrand.end + delta_acc;
+      BoundSubstrand new_substrand = substrand.rebuild((b) => b
+        ..start = new_start
+        ..end = new_end
+        ..insertions.replace([])
+        ..deletions.replace([]));
 
-    // find strand where this substrand resides and replace it
-    Strand strand = design.substrand_to_strand[substrand];
-    int strand_idx = design.strand_to_index[strand];
-    for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
-      if (strand.substrands[ss_idx] is BoundSubstrand && strand.substrands[ss_idx] == substrand) {
-        strands_new[strand_idx].substrands[ss_idx] = new_substrand;
-        break;
+      // find strand where this substrand resides and replace it
+      Strand strand = design.substrand_to_strand[substrand];
+      int strand_idx = design.strand_to_index[strand];
+      for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
+        if (strand.substrands[ss_idx] is BoundSubstrand && strand.substrands[ss_idx] == substrand) {
+          strands_new[strand_idx].substrands[ss_idx] = new_substrand;
+          break;
+        }
       }
     }
   }
