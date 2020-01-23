@@ -415,8 +415,6 @@ Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
 Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
     x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
     y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
-//  return Point<num>((position.z / 0.34) * constants.BASE_WIDTH_SVG,
-//      (position.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
