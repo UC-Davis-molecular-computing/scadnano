@@ -41,12 +41,14 @@ or the
 
 ## **WARNING: Save your work**
 
+It is strongly recommended that you frequently save your work by pressing the "Save" button to save your design to a `.dna` file on your computer.
+
 Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
 In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
 
 **However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
-It is strongly recommended that you frequently save your work by pressing the "Save" button and saving your design to a .dna file.
+You should press the "Save" button to save your design to your local file system.
 Unfortunately, due to 
 [browser security restrictions on accessing the local file system](https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/),
 it is not possible to save your file automatically without further interaction;
