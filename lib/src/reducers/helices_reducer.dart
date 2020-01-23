@@ -265,8 +265,6 @@ BuiltList<Helix> _reassign_svg_positions(BuiltList<Helix> helices, BuiltSet<int>
   Grid grid = helices.first.grid;
   List<Helix> helices_list = helices.toList();
   helices_list = util.helices_assign_svg(helices_list, grid, selected_helix_idxs);
-  print('selected helix idxs: ${selected_helix_idxs}');
-  print('svg y positions: ${helices_list.map((h) => h.svg_position.y).toList()}');
   return helices_list.toBuiltList();
 }
 

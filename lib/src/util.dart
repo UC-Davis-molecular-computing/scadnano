@@ -191,7 +191,6 @@ Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
 
   num svg_y = svg_coord.y;
   for (Helix helix in helices) {
-//    print('  helix pos: ${helix.svg_position}');
     if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
       return helix;
     }
@@ -215,7 +214,6 @@ num distance_y_coord_to_closest_helix(Helix helix, num y) =>
 /// Return (closest) helix, offset and direction where click event occurred.
 Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
   var svg_coord = round_point(svg_position_of_mouse_click(event));
-//  print('svg_coord: ${svg_coord}');
   Helix helix = get_closest_helix(event, helices);
   int offset = helix.svg_x_to_offset(svg_coord.x);
   bool forward = helix.svg_y_is_forward(svg_coord.y);
@@ -278,19 +276,11 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt,
   if (mouse_pos == null) {
     assert(event != null);
     mouse_pos = event.client;
-//    print('event.client: ${event.client}');
   }
-//  SvgElement target_svg = event.target as SvgElement;
-//  GraphicsElement target_graphics = target_svg as GraphicsElement;
-//  var bbox = target_svg.getBoundingClientRect();
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
-//  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
   //TODO: consider using svg_elt.getCtm(): https://github.com/anvaka/panzoom/commit/49be4a1bd6361598b79f29fe99adc2c125d93678
   var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-//  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
-//  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
-//  print('svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
   Point<num> svg_point = Point<num>(svg_point_SVG_1.x, svg_point_SVG_1.y);
   return svg_point;
 }
