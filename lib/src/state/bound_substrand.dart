@@ -186,10 +186,6 @@ abstract class BoundSubstrand
     var helix = util.get_value(json_map, constants.helix_idx_key, name);
     var start = util.get_value(json_map, constants.start_key, name);
     var end = util.get_value(json_map, constants.end_key, name);
-//    List<int> deletions =
-//        json_map.containsKey(constants.deletions_key) ? List<int>.from(json_map[constants.deletions_key]) : [];
-//    List<Tuple2<int, int>> insertions =
-//        json_map.containsKey(constants.insertions_key) ? parse_json_insertions(json_map[constants.insertions_key]) : [];
     var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
     var insertions =
         parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
