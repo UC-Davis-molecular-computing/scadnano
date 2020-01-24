@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
@@ -17,7 +17,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "dna_sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "dna_sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
       "substrands": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
