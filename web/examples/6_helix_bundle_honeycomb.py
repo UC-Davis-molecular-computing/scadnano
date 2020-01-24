@@ -16,11 +16,17 @@ def initial_design():
     max_offset = 1295
     helices = [
         sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
+        sc.Helix(grid_position=(0, 0, 0), max_offset=max_offset),
         sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(1, 2, 0), max_offset=max_offset),
-        sc.Helix(grid_position=(2, 2, 0), max_offset=max_offset),
         sc.Helix(grid_position=(2, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(1, 2, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(2, 2, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(2, 1, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
     ]
     scafs = [
         sc.Strand([sc.Substrand(helix=0, forward=True, start=16, end=1276)]),

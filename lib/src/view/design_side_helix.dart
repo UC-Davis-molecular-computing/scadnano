@@ -48,9 +48,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 
     Helix helix = props.helix;
 
-    Position3D pos3d = helix.position3d();
-    Point<num> svg_pos = util.position3d_to_side_view_svg(pos3d);
-    Point<num> center = Point<num>(svg_pos.x, svg_pos.y);
     bool selected = props.selected;
 
     String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';
@@ -85,6 +82,9 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation')();
       children.add(rot_component);
     }
+
+    Position3D pos3d = helix.position3d();
+    Point<num> center = util.position3d_to_side_view_svg(pos3d);
 
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})')(children);

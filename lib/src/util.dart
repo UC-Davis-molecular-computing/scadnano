@@ -360,15 +360,30 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   return point * 2 * radius;
 }
 
+/// see here for definitions: https://www.redblobgames.com/grids/hexagons/
+enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
+
 /// Converts from hex grid_position to absolute real-number position,
 /// assuming each grid circle has diameter 1,
 /// and the center of circle at grid_position (0,0) is the origin.
-Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
-  num x = gp.h; // x offset from h
-  if (gp.v % 2 == 1) {
-    x += cos(2 * pi / 6); // x offset from v
+Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.even_q]) {
+  num x, y;
+  if (coordinate_system == HexGridCoordinateSystem.odd_r) {
+    x = gp.h; // x offset from h
+    if (gp.v % 2 == 1) {
+      x += cos(2 * pi / 6); // x offset from v
+    }
+    y = sin(2 * pi / 6) * gp.v; // y offset from v
+  } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
+    y = gp.v;
+    if (gp.h % 2 == 1) {
+      y -= cos(2 * pi / 6);
+    }
+    x = sin(2 * pi / 6) * gp.h;
+  } else {
+    throw UnsupportedError('coordinate system ${coordinate_system} not supported');
   }
-  num y = sin(2 * pi / 6) * gp.v; // y offset from v
   return Point<num>(x, y);
 }
 

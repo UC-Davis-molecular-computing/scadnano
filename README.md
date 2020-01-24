@@ -61,7 +61,7 @@ after pressing "Save", your will always be prompted to specify a filename to whi
 ## Terms
 
 The main parts of the program are the *side view* on the left, and the *main view* in the center.
-The side view shows DNA helices "head on", with the interpretation that as you move left-to-right in the main view, this is like moving "into the screen" in the side view.
+The side view shows DNA helices "head on", with the interpretation that as you move to the right in the main view, this is like moving "into the screen" in the side view.
 
 ![screenshot of scadnano web interface](doc-images/screenshot-initial.png)
 
