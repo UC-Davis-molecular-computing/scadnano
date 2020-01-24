@@ -2,8 +2,6 @@
 
 The goal of this tutorial will be to create a design for a 24-helix DNA origami rectangle, with "twist correction". It will look like this when we are done:
 
-TODO
-
 ## Start
 
 Open scadnano in your browser : 
@@ -82,7 +80,7 @@ Click OK and the helix lengths should increase:
 
 
 
-## Creating first strand
+## Create first substrand of scaffold
 
 Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign DNA. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand with DNA) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
 
@@ -134,7 +132,7 @@ Note that we stop a bit short on either end, because 304&middot;24 = 7296 is a b
 
 
 
-## Adding other substrands of scaffold
+## Add other substrands of scaffold
 
 First, we copy and paste the strand we just made. To do this, remain in select edit mode, but choose "strand" under "Select":
 
@@ -167,15 +165,51 @@ Now, every other substrand of the scaffold looks just like this, so we can copy/
 ![](images/helix_2_scaffold_substrands.png)
 
 
-Now, observe that this alternation of "reverse on helix 1, forward on helix 2" continues though helices 3 and 4, and helices 5 and 6, etc.
 
-At this point it might be simpler to select strands by zooming out and doing Shift+drag:
+
+
+
+## Link substrands into one long scaffold strand
+
+We will want these to be joined by crossovers in the middle, so let's add those now.
+
+Select pencil mode. Click on the 5' end of the left strand on helix 1. A "potential crossover" will be drawn wherever you drag the cursor:
+
+![](images/potential_crossover.png)
+
+Click on the 3' end of the strand directly below to connect them with a crossover:
+
+![](images/crossover.png)
+
+This method enables and 5' end to be connected to any 3' end, as long as they are not already on the same strand. (which would create a [circular strand](https://github.com/UC-Davis-molecular-computing/scadnano/issues/5).)
+
+For the common case that the 5'/3' ends that you wish to connect with a crossover are at the same offset and on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
+
+![](images/potential_vertical_crossover.png)
+
+When this is done, the design should look like this:
+
+![](images/scaffold_substrands_helices_0_1_2_seam_crossover.png)
+
+
+
+## Recursive copy/paste to complete the substrands of the scaffold
+
+We also want to connect the strands on helix 0 and 1 by crossovers near the edge of the helix, but not yet, because we aren't done copying the existing shorter strands.
+
+Observe that this alternation of "reverse on helix 1, forward on helix 2" continues though helices 3 and 4, and helices 5 and 6, etc.
+
+Switch back to select edit mode. At this point it might be simpler to select strands by zooming out and doing Shift+drag:
 
 ![](images/shift_drag_select_4_scaffold_substrands.png)
 
 Select all four substrands on helices, and copy/paste them to helices 3 and 4, respectively, ensuring that the top substrands on helix 3 go in the reverse direction.
 
 ![](images/paste_scaffold_substrands_to_helices_3_4.png)
+
+Switch to pencil mode, and connect substrands on helices 2 and 3 by crossovers near the edges of the helices:
+
+![](images/scaffold_substrands_helices_0_4_out_crossovers.png)
 
 Now, recursively copy/paste: select all the substrands on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the substrands except the topmost substrand, one simple way is to press Ctrl+A to select all strands, 
 
@@ -189,16 +223,39 @@ Now copy/paste to helices 6-9:
 
 ![](images/scaffold_helices_0_9.png)
 
-Do this again with all substrands but the top to cover helices 9-16:
+In pencil mode, connect helices 4 and 5 by "outer" crossovers:
+
+![](images/scaffold_substrands_helices_0_8_outer_crossovers.png)
+
+In select mode, copy paste strands from helices 1-8 to helices 9-16, and in pencil mode, connect helices 8 and 9 by outer crossovers:
 
 ![](images/scaffold_substrands_helices_0_16.png)
 
-The last step should not involve copying more strands. We have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So copy the substrands on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23:
+The last step should not involve copying more strands. We have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So copy the substrands on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
 
-![](images/all_scaffold_substrands.png)
+To do this, first temporarily disconnect the inner crossovers between helices 7 and 8 by changing to select edit, then pick "crossover" under "select":
+
+![](images/crossover_select_mode.png)
+
+Then select the "inner" crossovers between helices 7 and 8:
+
+![](images/select_crossovers_to_disconnect.png)
+
+Press the delete key to delete them:
+
+![](images/inner_crossovers_disconnected.png)
+
+Now, pick "strand" under "select", copy the strands on helices 1-7, and paste them to helices 17-23:
+
+![](images/all_scaffold_substrands_almost_crossover_connected.png)
+
+Finally, in pencil mode add the final remaining crossovers:
+
+![](images/full_scaffold.png)
+
+The above steps could have been simplified somewhat by waiting until the substrands were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable; it's your preference how much to try to plan ahead with copying substructures in order to save time later.
 
 
-## Linking substrands into one long scaffold strand
 
-Now, we need to add crossovers to link the various strands into a single scaffold strand.
+## add staples
 
