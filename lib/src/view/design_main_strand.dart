@@ -164,8 +164,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(
-      props.strand, props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
+  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
+      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
   remove_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence(props.strand));
 
@@ -263,8 +263,8 @@ class DNARemoveOptions {
 Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
-    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
-//    DialogTextArea(label: 'sequence', value: existing_dna ?? ''),
+//    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
+    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 30, cols: 120),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
@@ -273,7 +273,7 @@ Future<void> ask_for_assign_dna_sequence(
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
-  String dna_sequence = (results[0] as DialogText).value;
+  String dna_sequence = (results[0] as DialogTextArea).value;
   bool assign_complements = (results[1] as DialogCheckbox).value;
   bool warn_on_change = (results[2] as DialogCheckbox).value;
 

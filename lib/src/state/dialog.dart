@@ -111,11 +111,11 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea({String label, int height, int width, String value = ''}) {
+  factory DialogTextArea({String label, int cols, int rows, String value = ''}) {
     return DialogTextArea.from((b) => b
       ..label = label
-      ..height = height
-      ..width = width
+      ..cols = cols
+      ..rows = rows
       ..value = value);
   }
 
@@ -123,9 +123,9 @@ abstract class DialogTextArea
 
   String get label;
 
-  int get height;
+  int get cols;
 
-  int get width;
+  int get rows;
 
   String get value;
 }

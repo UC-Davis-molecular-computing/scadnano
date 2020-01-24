@@ -132,12 +132,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         (Dom.textarea()
           ..form = 'dialog-form-form'
           ..value = item.value
-          ..width = item.width
-          ..width = item.height
+          ..rows = item.rows
+          ..cols = item.cols
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;
-            DialogText response = state.responses[idx];
+            DialogTextArea response = state.responses[idx];
             new_responses[idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
