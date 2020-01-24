@@ -61,6 +61,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       ..id = 'dialog-form')(
       (Dom.form()
         ..onSubmit = submit_form
+        ..id = 'dialog-form-form'
         ..className = 'dialog-form-form')([
         (Dom.p()
           ..className = 'dialog-form-title'
@@ -125,6 +126,22 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
+    } else if (item is DialogTextArea) {
+      return Dom.label()(
+        '${item.label}: ',
+        (Dom.textarea()
+          ..form = 'dialog-form-form'
+          ..value = item.value
+          ..width = item.width
+          ..width = item.height
+          ..onChange = (SyntheticFormEvent e) {
+            var new_responses = state.responses.toBuilder();
+            String new_value = e.target.value;
+            DialogText response = state.responses[idx];
+            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            setState(newState()..responses = new_responses.build());
+          })(),
+      );
     } else if (item is DialogNumber) {
       return Dom.label()(
         '${item.label}: ',
@@ -158,7 +175,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogTextArea) {}
+    }
     return null;
   }
 
