@@ -41,7 +41,7 @@ or the
 
 ## Tutorial
 
-A [tutorial](tutorial.md) is available.
+A [tutorial](tutorial/tutorial.md) is available.
 
 
 ## **WARNING: Save your work**
