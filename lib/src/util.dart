@@ -71,6 +71,8 @@ class ColorCycler {
   static final Color scaffold_color = Color.rgb(0, 102, 204);
 }
 
+final scaffold_color = ColorCycler.scaffold_color;
+
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
 }
@@ -367,7 +369,7 @@ enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
 /// assuming each grid circle has diameter 1,
 /// and the center of circle at grid_position (0,0) is the origin.
 Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
-    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.even_q]) {
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   num x, y;
   if (coordinate_system == HexGridCoordinateSystem.odd_r) {
     x = gp.h; // x offset from h
@@ -381,29 +383,21 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
       y -= cos(2 * pi / 6);
     }
     x = sin(2 * pi / 6) * gp.h;
+  } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
+    y = gp.v;
+    if (gp.h % 2 == 1) {
+      y += cos(2 * pi / 6);
+    }
+    x = sin(2 * pi / 6) * gp.h;
   } else {
     throw UnsupportedError('coordinate system ${coordinate_system} not supported');
   }
   return Point<num>(x, y);
 }
 
-GridPosition position3d_to_grid(Position3D position, Grid grid) {
-//  Point<num> svg_coord = position3d_to_main_view_svg(position);
-  Point<num> svg_coord = position3d_to_side_view_svg(position);
-  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord);
-  return grid_position;
-}
-
-Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
-//  GridPosition grid_position = side_view_svg_to_grid(grid_position, svg_coord);
-  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid);
-  Position3D position3d = svg_side_view_to_position3d(svg_coord);
-  return position3d;
-}
-
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
-    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.even_q]) {
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   num radius = constants.SIDE_HELIX_RADIUS;
   num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
@@ -426,11 +420,31 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
         y += cos(2 * pi / 6);
       }
       v = y.round();
+    } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
+      h = (x / sin(2 * pi / 6)).round();
+      if (h % 2 == 1) {
+        y -= cos(2 * pi / 6);
+      }
+      v = y.round();
     } else {
       throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
   }
   return GridPosition(h, v, b);
+}
+
+GridPosition position3d_to_grid(Position3D position, Grid grid) {
+//  Point<num> svg_coord = position3d_to_main_view_svg(position);
+  Point<num> svg_coord = position3d_to_side_view_svg(position);
+  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord);
+  return grid_position;
+}
+
+Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
+//  GridPosition grid_position = side_view_svg_to_grid(grid_position, svg_coord);
+  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid);
+  Position3D position3d = svg_side_view_to_position3d(svg_coord);
+  return position3d;
 }
 
 Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
