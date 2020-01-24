@@ -1,4 +1,5 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/adjust_grid_position.dart';
 
 //import 'thunk.dart';
 import 'assign_dna.dart';
@@ -38,4 +39,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reselect_moved_dna_ends_middleware,
   reselect_moved_strands_middleware,
   insertion_deletion_pairing_middleware,
+  adjust_grid_position_middleware,
 ]);
