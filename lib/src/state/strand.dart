@@ -26,7 +26,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   factory Strand(Iterable<Substrand> substrands,
       {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = false}) {
     if (color == null) {
-      color = util.color_cycler.next();
+      color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
     }
 
     var strand = Strand.from((b) => b

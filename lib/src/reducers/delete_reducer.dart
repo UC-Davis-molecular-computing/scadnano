@@ -146,11 +146,10 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     var substrands = substrands_list[i];
     var dna_sequence = dna_sequences[i];
     // assign old properties to first new strand and find new/default properties for remaining
-    var color = i == 0 ? strand.color : util.color_cycler.next();
     var idt = i == 0 ? strand.idt : null;
-    var is_scaffold = i == 0 ? strand.is_scaffold : false;
+    var is_scaffold = strand.is_scaffold; //i == 0 ? strand.is_scaffold : false;
     var new_strand =
-        Strand(substrands, color: color, dna_sequence: dna_sequence, idt: idt, is_scaffold: is_scaffold);
+        Strand(substrands, dna_sequence: dna_sequence, idt: idt, is_scaffold: is_scaffold);
     new_strand = new_strand.initialize();
     new_strands.add(new_strand);
   }
