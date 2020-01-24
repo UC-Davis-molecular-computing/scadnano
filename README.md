@@ -39,6 +39,11 @@ or the
 
 
 
+## Tutorial
+
+A [tutorial](tutorial.md) is available.
+
+
 ## **WARNING: Save your work**
 
 It is strongly recommended that you frequently save your work by pressing the "Save" button to save your design to a `.dna` file on your computer.
