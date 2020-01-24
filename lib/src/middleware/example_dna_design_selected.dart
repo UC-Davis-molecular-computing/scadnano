@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:redux/redux.dart';
 
 import '../actions/actions.dart' as actions;

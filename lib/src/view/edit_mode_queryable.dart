@@ -22,6 +22,4 @@ abstract class EditModeQueryable<P extends EditModePropsAbstract> {
   bool get deletion_mode => props.edit_modes.contains(EditModeChoice.deletion);
 
   bool get backbone_mode => props.edit_modes.contains(EditModeChoice.backbone);
-
-  bool get helix_mode => props.edit_modes.contains(EditModeChoice.helix);
 }

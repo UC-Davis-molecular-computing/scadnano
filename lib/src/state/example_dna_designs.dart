@@ -7,9 +7,10 @@ import '../serializers.dart';
 part 'example_dna_designs.g.dart';
 
 final DEFAULT_example_dna_designs = ExampleDNADesigns(
-  directory: 'example_designs',
+  directory: 'examples/output_designs',
   selected_idx: -1,
   filenames: [
+    'empty',
     '2_staple_2_helix_origami_deletions_insertions',
     '6_helix_origami_rectangle',
     '6_helix_bundle_honeycomb',

@@ -5,7 +5,7 @@ import 'package:platform_detect/platform_detect.dart';
 import 'state/grid.dart';
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded. Try choosing an example from the list above, '
+const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded. Try loading an example from the list above,\n'
     'or click "Choose file" to load a .dna file from your local drive.';
 
 // https://www.w3schools.com/jsref/event_button.asp
@@ -22,9 +22,9 @@ const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
 const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
-const String INITIAL_VERSION = "0.0.1";
+const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.0.1";
+const String CURRENT_VERSION = "0.1.0";
 
 const String DNA_BASE_WILDCARD = '?';
 

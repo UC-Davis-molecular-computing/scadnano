@@ -54,7 +54,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     if (selected) {
       classname_circle += ' selected';
     }
-    if (props.mouse_is_over && props.edit_modes.contains(EditModeChoice.helix)) {
+    if (props.mouse_is_over && props.edit_modes.contains(EditModeChoice.pencil)) {
       classname_circle += ' deletable';
     }
 
@@ -91,7 +91,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {
-    if (props.edit_modes.contains(EditModeChoice.helix)) {
+    if (props.edit_modes.contains(EditModeChoice.pencil)) {
       app.dispatch(actions.HelixRemove(helix.idx));
     } else if (event.shiftKey) {
       app.dispatch(actions.HelixSelect(helix.idx, false));

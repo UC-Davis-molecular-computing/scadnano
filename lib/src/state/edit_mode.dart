@@ -18,7 +18,6 @@ class EditModeChoice extends EnumClass {
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice backbone = _$backbone;
-  static const EditModeChoice helix = _$helix;
 
 //  static const EditModeChoice python = _$python;
 
@@ -34,7 +33,6 @@ class EditModeChoice extends EnumClass {
     KeyCode.I: insertion,
     KeyCode.D: deletion,
     KeyCode.B: backbone,
-    KeyCode.H: helix,
   };
 
   int key_code() {
@@ -66,10 +64,6 @@ class EditModeChoice extends EnumClass {
         return [select, nick, ligate, insertion,  backbone].toBuiltSet();
       case backbone:
         return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
-      case helix:
-        return <EditModeChoice>[].toBuiltSet();
-//      case assign_dna:
-//        return [select, pencil, nick, ligate, insertion, deletion, loopout, backbone].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
     }
@@ -96,8 +90,6 @@ class EditModeChoice extends EnumClass {
         return '(d)eletion';
       case backbone:
         return '(b)ackbone';
-      case helix:
-        return '(h)elix';
     }
     return super.toString();
   }

@@ -352,7 +352,7 @@ class DesignViewComponent {
       app.dispatch(actions.SelectAllSelectable());
     }
 
-    if (key == EditModeChoice.helix.key_code()) {
+    if (key == EditModeChoice.pencil.key_code()) {
       side_view_update_position(mouse_pos: side_view_mouse_position);
     }
   }
@@ -406,6 +406,9 @@ class DesignViewComponent {
   }
 
   drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+    if (app.store_selection_box.state == null) {
+      return;
+    }
     var action_remove = actions.SelectionBoxRemove(is_main_view);
     bool toggle = app.store_selection_box.state.toggle;
     var action_adjust;
@@ -581,8 +584,7 @@ class DesignViewComponent {
 
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
-//  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
       if (!app.state.dna_design.grid.is_none()) {
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
             mouse_pos: mouse_pos, event: event);
