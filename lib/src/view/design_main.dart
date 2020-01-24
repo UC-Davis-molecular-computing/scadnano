@@ -39,6 +39,7 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..helices = state.dna_design.helices
         ..strands = state.dna_design.strands
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
+        ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
         ..has_error = state.has_error()
         ..edit_modes = state.ui_state.edit_modes
         ..strands_move = state.ui_state.strands_move
@@ -67,6 +68,7 @@ class _$DesignMainProps extends EditModePropsAbstract {
   bool show_mismatches;
   bool show_dna;
   int design_major_tick_distance;
+  bool drawing_potential_crossover;
 }
 
 @Component2()
@@ -90,7 +92,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
-      if (pencil_mode)
+      if (pencil_mode && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..key = 'potential-vertical-crossovers')(),
