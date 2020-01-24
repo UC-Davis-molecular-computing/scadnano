@@ -45,7 +45,8 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
   String toString() => '(${this.h},${this.v}' + (this.b == 0 ? ')' : ', ${this.b})');
 
   /// Indicates if given hex position is in the honeycomb lattice.
-  bool in_honeycomb_lattice() => !(((v % 2 == 0) && (h % 3 == 0)) || ((v % 2 == 1) && (h % 3 == 1)));
+  bool in_honeycomb_lattice() => !(h % 2 == 1 && v % 2 == 1); // even-q system
+  //!(((v % 2 == 0) && (h % 3 == 0)) || ((v % 2 == 1) && (h % 3 == 1))); // odd-r system
 
   /// Distance in nanometers between two grid positions,
   /// assuming each position is a circle of diameter 2.5 nm.
@@ -83,4 +84,3 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   static Serializer<GridPosition> get serializer => _$gridPositionSerializer;
 }
-

@@ -19,8 +19,6 @@ UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSide
 class _$DesignSidePotentialHelixProps extends UiProps {
   Grid grid;
   GridPosition grid_position;
-
-//  Set<GridPosition> existing_helix_grid_positions;
   Point<num> mouse_svg_pos;
 }
 
@@ -40,7 +38,6 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     bool allowed_grid_position = true;
 
     if (grid.is_none()) {
-//      throw UnsupportedError('currently unsupported to draw potential helix with Grid.none');
       svg_ideal_pos = props.mouse_svg_pos;
     } else {
       if (grid == Grid.honeycomb && !grid_position.in_honeycomb_lattice()) {

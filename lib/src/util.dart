@@ -402,7 +402,8 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.even_q]) {
   num radius = constants.SIDE_HELIX_RADIUS;
   num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
@@ -413,11 +414,21 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
     h = x.round();
     v = y.round();
   } else if (grid == Grid.honeycomb || grid == Grid.hex) {
-    v = (y / sin(2 * pi / 6)).round();
-    if (v % 2 == 1) {
-      x -= cos(2 * pi / 6); // x offset from v
+    if (coordinate_system == HexGridCoordinateSystem.odd_r) {
+      v = (y / sin(2 * pi / 6)).round();
+      if (v % 2 == 1) {
+        x -= cos(2 * pi / 6);
+      }
+      h = x.round();
+    } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
+      h = (x / sin(2 * pi / 6)).round();
+      if (h % 2 == 1) {
+        y += cos(2 * pi / 6);
+      }
+      v = y.round();
+    } else {
+      throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
-    h = x.round();
   }
   return GridPosition(h, v, b);
 }
