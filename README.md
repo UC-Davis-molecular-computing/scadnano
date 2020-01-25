@@ -41,7 +41,7 @@ or the
 
 ## Tutorial
 
-A [tutorial](tutorial/tutorial.md) is available.
+A [tutorial](tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
 
 
 ## **WARNING: Save your work**
@@ -57,21 +57,21 @@ You should press the "Save" button to save your design to your local file system
 Unfortunately, due to 
 [browser security restrictions on accessing the local file system](https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/),
 it is not possible to save your file automatically without further interaction;
-after pressing "Save", your will always be prompted to specify a filename to which to save.
+after pressing "Save", you will always be prompted to specify a filename to which to save.
 
 
 
 
 
-## Terms
+## Terminology
 
-The main parts of the program are the *side view* on the left, and the *main view* in the center.
+The main parts of the program are the *side view* on the left, and the *main view* in the center. 
 The side view shows DNA helices "head on", with the interpretation that as you move to the right in the main view, this is like moving "into the screen" in the side view.
 
 ![screenshot of scadnano web interface](doc-images/screenshot-initial.png)
 
 The screenshot above shows many of the terms used in scadnano. 
-It is instructive to see how that example design is represented as a .dna file 
+It is instructive to see how that example design is represented as a `.dna` file 
 (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)):
 
 ```json
@@ -164,8 +164,8 @@ This model is manipulated directly in the Python scripting library, and indirect
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
 A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
-The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *n*-1.
-(The strands have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands, for instance.)
+The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
+(The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
 Each offset is a position where a DNA base of a strand can go.
 
@@ -173,9 +173,9 @@ Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
 Helices without a grid have a *position*, a six-real-number vector describing their *x*, *y*, *z* positions, as well as *pitch*, *roll*, and *yaw*, but this feature is currently 
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
-The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise.
+The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
+(Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
 They are listed from top to bottom in the order they appear in the sequence (unless the property *helices_view_order* is specified in the design to display them in a different order, though currently this can only be done in the scripting library).
-Currently they are spaced equally apart, though this will be [generalized](https://github.com/UC-Davis-molecular-computing/scadnano/issues/15) soon.
 
 Each strand is defined primarily by an ordered list of *substrands*.
 Each substrand is either a single-stranded *loopout* not associated to any helix, or it is a *bound substrand*: a region of the strand that is contiguous on a single helix.
@@ -193,7 +193,7 @@ Although the visual depiction of a loopout is similar to a crossover, loopouts a
 Currently, two loopouts cannot be consecutive (and this will remain a requirement),
 and a loopout cannot be the first or last substrand of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
 
-Bound substrands may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions*, explained below.
+Bound substrands may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions* (called *loops* in cadnano), explained below.
 
 Each strand also has a *color* and a Boolean field *is_scaffold*.
 DNA origami designs have at least one strand that is a scaffold (but can have more than one), and a non-DNA-origami design is simply one in which every strand has *is_scaffold* = false.
@@ -201,8 +201,8 @@ Unlike cadnano, a scaffold strand can have either direction on any helix.
 When there is at least one scaffold, all non-scaffold strands are called *staples*.
 The general idea behind DNA origami is that every staple strand binds only to a scaffold, never to another staple.
 Neither does any scaffold bind to another scaffold or itself.
-However, neither of these conventions is enforced by scadnano.
-See the [(very readable) original paper](https://www.nature.com/articles/nature04586) for more details about how to design DNA origami.
+However, neither of these conventions is enforced by scadnano, and there are legitimate reasons to want non-scaffold strands to bind to each other (e.g., for DNA [walkers](https://www.ncbi.nlm.nih.gov/pubmed/20463734) or [circuits](https://www.nature.com/articles/nnano.2017.127) on the surface of an origami).
+See the [original paper](https://www.nature.com/articles/nature04586) for more detailed instructions for designing DNA origami.
 
 A strand can have an optional DNA sequence.
 Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands.
@@ -212,6 +212,7 @@ Many of the operations attempt to keep things consistent when modifying a design
 
 Each helix has a integer *rotation anchor* and a real number *rotation*, with the following interpretation. 
 At the offset *rotation anchor*, the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view. Rotation is *clockwise* as the rotation increases from 0 up to 360 degrees.
+The purpose of this feature is to help reduce strain by ensuring crossovers are "locally consistent", without enforcing a global notion of absolute backbone rotation on all offsets in the system.
 
 
 
@@ -322,6 +323,8 @@ There are different edit modes available, shown on the right side of the screen.
 
   A faster alternative that works in most circumstances is this. In pencil mode, if two bound substrands on adjacent helices have their 5'/3' ends at the *same horizontal offset*, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.
 
+  In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
+
 * **(n)ick / (l)igate:**
   Technically these operations are unnecessary, but they are faster than creating/moving/deleting substrands in some circumstances. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
 
@@ -364,8 +367,6 @@ There are different edit modes available, shown on the right side of the screen.
   The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. 
   It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
-* **(h)elix:**
-  Clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
 
 [^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
@@ -420,4 +421,4 @@ A standard DNA origami rectangle, for instance, can be created in about 10 minut
 The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
-[TODO: make a separate tutorial showing this process, with screenshot figures]
+See the [tutorial](tutorial/tutorual.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
