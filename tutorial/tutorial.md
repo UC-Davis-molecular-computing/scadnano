@@ -4,6 +4,8 @@ The goal of this tutorial will be to create a design for a 24-helix DNA origami 
 
 ![](images/full_design.png)
 
+The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna).
+
 ## Start
 
 Open scadnano in your browser : 
@@ -17,11 +19,20 @@ If you have never used scadnano before, you will see a screen similar to this:
 ![initial screenshot of scadnano web interface](images/initial.png)
 
 
-## Load design
+## Load completed design to see what it looks like
 
-You can load one of the example designs, or load a file from your local file system.
+Download the [completed design](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) and save it somewhere on your local file system.
 
-Let's load an empty design by selecting "empty" from the "Load example" list:
+Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different)":
+
+![](images/load_file_button.png)
+
+Choose the file you downloaded.
+
+
+## Load empty design
+
+Now, to see how to make this design ourselves, let's load an empty design by selecting "empty" from the "Load example" list:
 
 ![](images/load_empty.png)
 
