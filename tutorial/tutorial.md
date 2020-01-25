@@ -1,10 +1,10 @@
 # scadnano web interface tutorial
 
-The goal of this tutorial will be to create a design for a 24-helix DNA origami rectangle, with "twist correction". It will look like this when we are done:
+The goal of this tutorial will be to create a design for a 24-helix DNA origami rectangle, with "twist correction". (See [this paper](https://www.nature.com/articles/nchem.1070) for an explanation of twist correction in 2D DNA origami) The design will look like this when we are done:
 
 ![](images/full_design.png)
 
-The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna).
+The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) readable by scadnano.
 
 ## Start
 
@@ -27,12 +27,12 @@ Press the button next to the word "Load" at the top (in Chrome the button says "
 
 ![](images/load_file_button.png)
 
-Choose the file you downloaded.
+Choose the file you downloaded. The design should look similar to the first screenshot in the tutorial.
 
 
 ## Load empty design
 
-Now, to see how to make this design ourselves, let's load an empty design by selecting "empty" from the "Load example" list:
+Now, let's learn how to make this design ourselves. First, load an empty design by selecting "empty" from the "Load example" list:
 
 ![](images/load_empty.png)
 
@@ -60,17 +60,17 @@ You can use the mouse wheel or the two-finger motion on the touchpad to zoom out
 
 ![](images/one_helix_zoomed_out.png)
 
-You can also use the mouse/touchpad to pan the image in the main view (and also the side view). Let's zoom in on helix 0 in both views:
+You can also use the mouse/touchpad to click+drag and translate the image in the main view (and also the side view). Let's zoom in on helix 0 in both views:
 
 ![](images/one_helix_zoomed_in.png)
 
-In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" where DNA strands can go. By default the allowed offsets are 0 through 255. This zoom shows only the first 10 offsets of helix 0: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
+In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" (small white squares with gray borders) where DNA strands *could* go; each DNA base occupies one offset. By default the allowed offsets are 0 through 255. This zoom shows only the first 10 offsets of helix 0: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
 
-Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end is to the right; this strand is a "forward" strand. If there is another strand occupying some of the same offsets, it must be moving in the opposite direction, i.e., its 3' end is to the left, a so-called "reverse" strand, and it will be drawn in the second row of the helix's offsets.
+Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end is to the right of its 5' end; this strand is a "forward" strand. If there is another strand occupying some of the same offsets, it must be oriented in the opposite direction, i.e., its 3' end is to the left, a so-called "reverse" strand, and it will be drawn in the second row of the helix's offsets.
 
-For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D projections of the 3D space in which helices live. The side view shows the *x*-*y* place (where moving in the *x* and/or *y* direction moves us between two helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases along a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not exactly a projection.
+For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D projections of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a projection. See the [documentation](../README.md) for an explanation of how the main view decides helix positions in the main view.
 
-Each helix has given an integer *index*, starting at 0 in the order you create them. If a helix is deleted, all larger indices are decremented to ensure that they are numbered 0, ..., *h* - 1, where *h* is the number of helices. By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface, but these will be supported soon.
+Each helix has given an integer *index*, starting at 0 in the order you create them. If a helix is deleted, all larger indices are decremented to ensure that they are numbered 0, ..., *h* - 1, where *h* is the number of helices. By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
 
 For now, we just have to be careful to add helices in the order we want them to appear in the main view. In both the main view and side view, we'd like them to appear 0,1,...,23 in order from top to bottom, so zoom out in the side view, and click in the side view to create 23 more helices below the first. If you mess up and click somewhere incorrectly, you can press Ctrl+Z to undo the last action (and Ctrl+Shift+Z to redo):
 
@@ -80,7 +80,7 @@ Finally, we need to ensure each helix has enough offsets for all the bases we wi
 
 ![](images/adjust_helix_length.png)
 
-Enter a value of 304 for "maximum offset" and ensure "apply to all helices is checked:
+Enter a value of 304 for "maximum offset" and ensure "apply to all helices" is checked:
 
 ![](images/adjust_helix_length_dialog.png)
 
@@ -97,7 +97,7 @@ Click OK and the helix lengths should increase:
 
 ## Create first substrand of scaffold
 
-Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign DNA. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand with DNA) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
+Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign a DNA sequence to any strand. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
 
 Many DNA origami designs are quite repetitive. Thus, it is helpful to look at a mockup of the design you want and notice which strands are similar. Generally the fastest way to make a design is to identify a few repetitive strands and copy/paste them.
 
@@ -121,7 +121,7 @@ Now, we need to lengthen the strand to cross most of the helix. We could have ma
 
 ![](images/select_mode.png)
 
-Different types of objects can be selectable or not, and some are mutually exclusive. For now, we want to be able to select 5'/3' ends of strands, so click those (see the [README](../README.md) for a description of all the selection options):
+Different types of objects can be selectable or not, and some are mutually exclusive. For now, we want to be able to select 5'/3' ends of strands, so click those under "Select" (see the [README](../README.md) for a description of all the selection options):
 
 ![](images/selecton_5p_3p_strand.png)
 
@@ -137,11 +137,11 @@ Now, zoom out and repeat to lengthen it all the way to (almost) the end of the h
 
 ![](images/selection_box_over_3p_end.png)
 
-Unfortunately, to drag the 3' end, you do have to select it. So it may require zooming in and dragging a few times to get it all the way to the right:
+Unfortunately, to drag the 3' end, you do have to click it. So it may require zooming in and dragging a few times to get it all the way to the right:
 
 ![](images/scaffold_helix_0_full_length.png)
 
-Note that we stop a bit short on either end, because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912.
+Note that we stop a bit short on either  (leaving 8 unoccupied offsets on each side of the helix), because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912.
 
 
 
@@ -153,7 +153,7 @@ First, we copy and paste the strand we just made. To do this, remain in select e
 
 ![](images/strand_selection_mode.png)
 
-Now click the strand and press Ctrl+C (or Cmd+C on Mac) to copy it.
+Now click the strand and press Ctrl+C (the Ctrl key on Windows or Linux behaves the same as the Cmd key on Mac) to copy it.
 
 ![](images/strand_selected.png)
 
@@ -161,13 +161,13 @@ Pressing Ctrl+V and moving the cursor gives you options where to paste the copy.
 
 ![](images/scaffold_substrand_first_copy.png)
 
-Observing the final design and noticing that these two so-called *substrands* are connected by a crossover, at this point you might think we want to add those crossovers. Unfortunately, scadnano does not yet support *circular strands*, and add those crossovers now would create a circular strand.
+Observing the final design and noticing that these two so-called *substrands* are connected by a crossover, at this point you might think we want to add those crossovers. Unfortunately, scadnano does not yet support *circular strands*, but adding those crossovers now would create a circular strand.
 
-Instead, generally it is best to draw all the substrands you want first before connecting them with crossovers. In this case, the substrand we just drew should not span the entire length of the helix, but instead we want two substrands that are adjacent in the middle. To split this substrand into two, select the "nick" edit mode:
+In this case, the substrand we just drew should not span the entire length of the helix, but instead we want two substrands that are adjacent in the middle. To split this substrand into two, select the "nick" edit mode:
 
 ![](images/nick_edit_mode.png)
 
-and click somewhere around the middle of the substrand (we can edit the exact points later):
+and click somewhere around the middle of the substrand (if this doesn't get exactly to the middle; you can edit the exact offsets of the 5'/3' ends later by selecting and dragging them):
 
 ![](images/nick_second_substrand.png)
 
@@ -186,9 +186,9 @@ Now, every other substrand of the scaffold looks just like this, so we can copy/
 
 ## Link substrands into one long scaffold strand
 
-We will want these to be joined by crossovers in the middle, so let's add those now.
+We will want the strands on helices 1 and 2 to be joined by crossovers in the middle, so let's add those now.
 
-Select pencil mode. Click on the 5' end of the left strand on helix 1. A "potential crossover" will be drawn wherever you drag the cursor:
+Select pencil mode and zoom in to the middle. Click on the 5' end of the left strand on helix 1. A "potential crossover" will be drawn wherever you drag the cursor:
 
 ![](images/potential_crossover.png)
 
@@ -196,9 +196,9 @@ Click on the 3' end of the strand directly below to connect them with a crossove
 
 ![](images/crossover.png)
 
-This method enables and 5' end to be connected to any 3' end, as long as they are not already on the same strand. (which would create a [circular strand](https://github.com/UC-Davis-molecular-computing/scadnano/issues/5).)
+This method enables any 5' end to be connected to any 3' end, as long as they are not already on the same strand (which would create a [circular strand](https://github.com/UC-Davis-molecular-computing/scadnano/issues/5).)
 
-For the common case that the 5'/3' ends that you wish to connect with a crossover are at the same offset and on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
+For the common case that you wish to connect ends at the same offset on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
 
 ![](images/potential_vertical_crossover.png)
 
@@ -214,7 +214,7 @@ We also want to connect the strands on helix 0 and 1 by crossovers near the edge
 
 Observe that this alternation of "reverse on helix 1, forward on helix 2" continues though helices 3 and 4, and helices 5 and 6, etc.
 
-Switch back to select edit mode. At this point it might be simpler to select strands by zooming out and doing Shift+drag:
+Switch back to *select* edit mode. At this point it might be simpler to select strands by zooming out and doing Shift+drag:
 
 ![](images/shift_drag_select_4_scaffold_substrands.png)
 
@@ -222,11 +222,11 @@ Select all four substrands on helices, and copy/paste them to helices 3 and 4, r
 
 ![](images/paste_scaffold_substrands_to_helices_3_4.png)
 
-Switch to pencil mode, and connect substrands on helices 2 and 3 by crossovers near the edges of the helices:
+Switch to pencil mode, and connect substrands on helices 2 and 3 by crossovers near the outer edges of the helices:
 
 ![](images/scaffold_substrands_helices_0_4_out_crossovers.png)
 
-Now, recursively copy/paste: select all the substrands on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the substrands except the topmost substrand, one simple way is to press Ctrl+A to select all strands, 
+Now, recursively copy/paste: select all the substrands on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the substrands except the topmost substrand, one fast way is to press Ctrl+A to select all strands:
 
 ![](images/all_substrands_selected.png)
 
@@ -246,7 +246,7 @@ In select mode, copy paste strands from helices 1-8 to helices 9-16, and in penc
 
 ![](images/scaffold_substrands_helices_0_16.png)
 
-The last step should not involve copying more strands. We have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So copy the substrands on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
+Now, we have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So we will copy the substrands on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
 
 To do this, first temporarily disconnect the inner crossovers between helices 7 and 8 by changing to select edit, then pick "crossover" under "select":
 
@@ -260,25 +260,25 @@ Press the delete key to delete them:
 
 ![](images/inner_crossovers_disconnected.png)
 
-Now, enabling strand selection, copy the strands on helices 1-7, and paste them to helices 17-23:
+Now, enabling *strand* under "Select", copy the strands on helices 1-7, and paste them to helices 17-23:
 
 ![](images/all_scaffold_substrands_almost_crossover_connected.png)
 
-Finally, in pencil mode add the final remaining crossovers:
+Finally, in pencil mode add the final remaining crossovers (outer crossovers between helices 0-1, 16-17, and inner crossovers between helices 7-8):
 
 ![](images/full_scaffold.png)
 
-The above steps could have been simplified somewhat by waiting until the substrands were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable; it's your preference how much to try to plan ahead so that the copied substructures are more complete.
+The above steps could have been simplified somewhat by waiting until the substrands were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable. It's your preference how much to try to plan ahead so that the copied substructures are more complete.
 
 
 
 ## add staples
 
-**Note:** Due to a mistake, I forgot to add a few crossovers in the scaffold before adding the staples, so the scaffold below is missing a few crossovers that it should have. The scaffold should look like it does in the previous image. 
+**Note:** Due to a mistake, I forgot to add a few crossovers in the scaffold before adding the staples, so the scaffold below is missing a few crossovers that it should have. The scaffold you are working with should look like it does in the previous image, not like it does in several images below. I'll correct the images below eventually.
 
 ### edge staples
 
-There aren't too many types of staples in a standard DNA origami rectangle.
+There aren't too many "shapes" of staples in a standard DNA origami rectangle. We follow the same strategy above of manually drawing one shape of staple and copy/pasting it to get the rest.
 
 First, we add an edge staple by drawing a reverse substrand on helix 0 and a forward substrand on helix 1, both in the upper-left of the scaffold:
 
@@ -292,16 +292,20 @@ In staple select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
-Recurisvely copy paste until there are 16 edge staples:
+Recurisvely copy/paste until there are 12 edge staples. In other words, copy/paste the current 2 edge staples to make 4:
 
 ![](images/four_edge_staples.png)
 
+Then copy/paste those 4 to make 8:
+
 ![](images/eight_edge_staples.png)
+
+Then paste the same 4 again to make 12:
 
 ![](images/twelve_edge_staples.png)
 
 
-Repeat to make the right edge staples:
+Follow the same strategy to make the right edge staples:
 
 ![](images/all_edge_staples.png)
 
@@ -323,11 +327,11 @@ Recursively copy-paste to get the rest:
 
 ### inner staples
 
-Most of the staples in the origami look like the one of the right here. Draw this staple on helices 0, 1, 2:
+Draw this staple on helices 0, 1, 2:
 
 ![](images/first_inner_staple.png)
 
-Recursively copy/paste it to fill in the rest of the "column" (width-16 region):
+Most of the staples in the origami look like this. Recursively copy/paste it to fill in the rest of the "column" (width-16 region):
 
 ![](images/first_column_inner_staples.png)
 
@@ -371,13 +375,13 @@ This would only take a few minutes, though it would be quite tedious. Furthermor
 
 ### Adding deletions using a Python script
 
-This is a good opportunity to show how the Python scripting library can be used for tasks such as this.
+This is a good opportunity to show how the Python scripting library can be used for repetitive tasks such as this.
 
 First, follow the [installation instructions](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-Save the file using the "Save" button. We assume it named `24_helix_rectangle.dna`.
+Save the file using the "Save" button. Name it `24_helix_rectangle.dna`.
 
-Next, put a file named `add_deletions_to_24_helix_rectangle.py` in the same folder, and give the file this content:
+Next, put a Python file named `add_deletions_to_24_helix_rectangle.py` in the same folder, with this content:
 
 ```python
 import scadnano as sc
@@ -391,7 +395,7 @@ if __name__ == '__main__':
     design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.dna')
 ```
 
-If you run the above code, you it will output the same design into the file `24_helix_rectangle_twist_corrected.dna` that was in `24_helix_rectangle.dna`. Our goal now is to add the appropriate deletions in the script before writing the output design.
+If you run the above code, it will simply read the design from `24_helix_rectangle.dna` and write the same design to `24_helix_rectangle_twist_corrected.dna`. Our goal now is to add the appropriate deletions in the script before writing the output.
 
 We can simply loop over the helices and the offsets we need to do this. The three new lines are marked with `###`
 
@@ -410,7 +414,7 @@ if __name__ == '__main__':
     design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.dna')
 ```
 
-This code will only work for this particular design. One could imagine a more general algorithm that works on arbitrary DNA origami rectangles, making some assumptions about how they are designed. But this code is fairly easy to write for just this one specific design.
+This code will only work for this particular design. One could imagine a more general algorithm that works on arbitrary DNA origami rectangles, making some assumptions about how they are designed. But this code is fairly easy to write for just this one specific design: we want deletions on every helix (outer `for` loop), starting after offset 27 and incrementing every 48 bases until the end (inner `for` loop).
 
 If we now load the file `24_helix_rectangle_twist_corrected.dna`, we see this:
 
@@ -426,7 +430,80 @@ Finally, we complete the design by assigning a DNA sequence to the scaffold. Thi
 Paste this string into the text box:
 
 ```
-TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCTCTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTCGCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTGCCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTTCCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCTTATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTCTAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAAATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAATAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATATCTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTTCTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTGTTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTATTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTGGTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTCGGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCATCAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTCAGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATATTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTTGCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCGTTATTGTTTCTCCCGATGTAAAAGGTACTGTTACTGTATATTCATCTGACGTTAAACCTGAAAATCTACGCAATTTCTTTATTTCTGTTTTACGTGCAAATAATTTTGATATGGTAGGTTCTAACCCTTCCATTATTCAGAAGTATAATCCAAACAATCAGGATTATATTGATGAATTGCCATCATCTGATAATCAGGAATATGATGATAATTCCGCTCCTTCTGGTGGTTTCTTTGTTCCGCAAAATGATAATGTTACTCAAACTTTTAAAATTAATAACGTTCGGGCAAAGGATTTAATACGAGTTGTCGAATTGTTTGTAAAGTCTAATACTTCTAAATCCTCAAATGTATTATCTATTGACGGCTCTAATCTATTAGTTGTTAGTGCTCCTAAAGATATTTTAGATAACCTTCCTCAATTCCTTTCAACTGTTGATTTGCCAACTGACCAGATATTGATTGAGGGTTTGATATTTGAGGTTCAGCAAGGTGATGCTTTAGATTTTTCATTTGCTGCTGGCTCTCAGCGTGGCACTGTTGCAGGCGGTGTTAATACTGACCGCCTCACCTCTGTTTTATCTTCTGCTGGTGGTTCGTTCGGTATTTTTAATGGCGATGTTTTAGGGCTATCAGTTCGCGCATTAAAGACTAATAGCCATTCAAAAATATTGTCTGTGCCACGTATTCTTACGCTTTCAGGTCAGAAGGGTTCTATCTCTGTTGGCCAGAATGTCCCTTTTATTACTGGTCGTGTGACTGGTGAATCTGCCAATGTAAATAATCCATTTCAGACGATTGAGCGTCAAAATGTAGGTATTTCCATGAGCGTTTTTCCTGTTGCAATGGCTGGCGGTAATATTGTTCTGGATATTACCAGCAAGGCCGATAGTTTGAGTTCTTCTACTCAGGCAAGTGATGTTATTACTAATCAAAGAAGTATTGCTACAACGGTTAATTTGCGTGATGGACAGACTCTTTTACTCGGTGGCCTCACTGATTATAAAAACACTTCTCAGGATTCTGGCGTACCGTTCCTGTCTAAAATCCCTTTAATCGGCCTCCTGTTTAGCTCCCGCTCTGATTCTAACGAGGAAAGCACGTTATACGTGCTCGTCAAAGCAACCATAGTACGCGCCCTGTAGCGGCGCATTAAGCGCGGCGGGTGTGGTGGTTACGCGCAGCGTGACCGCTACACTTGCCAGCGCCCTAGCGCCCGCTCCTTTCGCTTTC
+TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGAC
+CCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGT
+GGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGG
+ATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGA
+AAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAA
+GCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATT
+GTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGC
+AAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTG
+GCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGT
+GCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAA
+CGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACA
+GGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACG
+TTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTA
+CCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTA
+TCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCA
+TTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACC
+GATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGA
+ATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACT
+CGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATT
+CAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGT
+CTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAAT
+AGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCC
+GCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGT
+CTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCT
+CAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCA
+GTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCA
+AGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATG
+CGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATG
+GAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGA
+GTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAA
+GTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTC
+CCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCAC
+CTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTT
+TAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACA
+AAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGG
+TTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTG
+AGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTT
+CTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTC
+AAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTT
+TCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTG
+GTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCG
+GTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTG
+ATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCT
+CTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTC
+GCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTG
+CCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTT
+CCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCT
+TATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTC
+TAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAA
+ATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAA
+TAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATAT
+CTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTT
+CTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTG
+TTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTA
+TTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTG
+GTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTC
+GGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCAT
+CAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTC
+AGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATA
+TTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTT
+GCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCGTTATTGTTTCTCCCGATGTAAAA
+GGTACTGTTACTGTATATTCATCTGACGTTAAACCTGAAAATCTACGCAATTTCTTTATTTCTGTTTTACGTGCAAATAATTTTGATATGGTAGGTTCT
+AACCCTTCCATTATTCAGAAGTATAATCCAAACAATCAGGATTATATTGATGAATTGCCATCATCTGATAATCAGGAATATGATGATAATTCCGCTCCT
+TCTGGTGGTTTCTTTGTTCCGCAAAATGATAATGTTACTCAAACTTTTAAAATTAATAACGTTCGGGCAAAGGATTTAATACGAGTTGTCGAATTGTTT
+GTAAAGTCTAATACTTCTAAATCCTCAAATGTATTATCTATTGACGGCTCTAATCTATTAGTTGTTAGTGCTCCTAAAGATATTTTAGATAACCTTCCT
+CAATTCCTTTCAACTGTTGATTTGCCAACTGACCAGATATTGATTGAGGGTTTGATATTTGAGGTTCAGCAAGGTGATGCTTTAGATTTTTCATTTGCT
+GCTGGCTCTCAGCGTGGCACTGTTGCAGGCGGTGTTAATACTGACCGCCTCACCTCTGTTTTATCTTCTGCTGGTGGTTCGTTCGGTATTTTTAATGGC
+GATGTTTTAGGGCTATCAGTTCGCGCATTAAAGACTAATAGCCATTCAAAAATATTGTCTGTGCCACGTATTCTTACGCTTTCAGGTCAGAAGGGTTCT
+ATCTCTGTTGGCCAGAATGTCCCTTTTATTACTGGTCGTGTGACTGGTGAATCTGCCAATGTAAATAATCCATTTCAGACGATTGAGCGTCAAAATGTA
+GGTATTTCCATGAGCGTTTTTCCTGTTGCAATGGCTGGCGGTAATATTGTTCTGGATATTACCAGCAAGGCCGATAGTTTGAGTTCTTCTACTCAGGCA
+AGTGATGTTATTACTAATCAAAGAAGTATTGCTACAACGGTTAATTTGCGTGATGGACAGACTCTTTTACTCGGTGGCCTCACTGATTATAAAAACACT
+TCTCAGGATTCTGGCGTACCGTTCCTGTCTAAAATCCCTTTAATCGGCCTCCTGTTTAGCTCCCGCTCTGATTCTAACGAGGAAAGCACGTTATACGTG
+CTCGTCAAAGCAACCATAGTACGCGCCCTGTAGCGGCGCATTAAGCGCGGCGGGTGTGGTGGTTACGCGCAGCGTGACCGCTACACTTGCCAGCGCCCT
+AGCGCCCGCTCCTTTCGCTTTC
 ```
 
 ![](images/assign_DNA_dialog.png)
@@ -437,8 +514,14 @@ Finally, check the box "show DNA":
 
 ![](images/show_dna.png)
 
-The performance of scadnano can suffer when a large design displays its full DNA sequence, so normally this box will be unchecked. But when checked, we can inspect the entire DNA sequence of both the scaffold and the staples.
+When a large design displays its full DNA sequence, it can be slow to do things like zooming in and out, so normally it's a good idea to leave this box unchecked. But when checked, we can inspect the entire DNA sequence of both the scaffold and the staples.
 
 And there we have it, the completed design:
 
 ![](images/full_design.png)
+
+## Exporting DNA sequences
+
+Finally, to create a text file or Excel spreadsheet containing the staple sequences, click the button "Export DNA". A few default options are available. 
+
+The Python scripting library gives more control than the web interface. Currently, some default options are available for both the web interface and the scripting library for making files that can be uploaded to the web site of the synthesis company IDT. In the future, scadnano will support export formats for other biotech companies.
