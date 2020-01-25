@@ -342,7 +342,7 @@ There are different edit modes available, shown on the right side of the screen.
   In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
   Currently, if one offset on a helix has two bound substrands (going in opposite directions), 
-  then adding/removing an insertion/deletion at that offset adds/removes on both boudn substrands.
+  then adding/removing an insertion/deletion at that offset adds/removes on both bound substrands.
   The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, 
   but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
   (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)

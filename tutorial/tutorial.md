@@ -2,7 +2,7 @@
 
 The goal of this tutorial will be to create a design for a 24-helix DNA origami rectangle, with "twist correction". (See [this paper](https://www.nature.com/articles/nchem.1070) for an explanation of twist correction in 2D DNA origami) The design will look like this when we are done:
 
-![](images/full_design_no_dna.png)
+![](images/complete_design_no_DNA.png)
 
 The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) readable by scadnano.
 
