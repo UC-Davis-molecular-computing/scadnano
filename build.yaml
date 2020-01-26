@@ -26,5 +26,5 @@ targets:
         options:
           templates:
             "test/_templates/react_components_test_template.html":
-              - "test/components/connected_edit_mode_test.dart"
+              - "test/components/*_test.dart"
               

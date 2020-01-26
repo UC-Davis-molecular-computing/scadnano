@@ -1,5 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
@@ -30,7 +31,7 @@ class _$SelectModeProps extends UiProps with ConnectPropsMixin {
 }
 
 @Component2()
-class SelectModeComponent extends UiComponent2<SelectModeProps> {
+class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCounterMixin {
   @override
   render() {
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
@@ -44,6 +45,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> {
                 (props.select_mode_state.modes.contains(mode)
                     ? 'select-mode-button-selected'
                     : 'select-mode-button-unselected')
+            ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
             ..key = mode.display_name())(mode.display_name())
       ],
     ];

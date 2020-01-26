@@ -6,6 +6,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
@@ -38,7 +39,7 @@ class _$MenuProps extends UiProps with ConnectPropsMixin {
 }
 
 @Component2()
-class MenuComponent extends UiComponent2<MenuProps> {
+class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
   // If not, then the onChange event won't fire and we won't reload the file.
@@ -163,6 +164,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
             ..onChange = (_) {
               props.dispatch(actions.SetShowDNA(!show_dna));
             }
+            ..addTestId('scadnano.MenuComponent.input.show_dna')
             ..type = 'checkbox')(),
           'show DNA',
         ),
@@ -177,6 +179,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
 //                Actions.set_show_mismatches(!show_mismatches);
               props.dispatch(actions.SetShowMismatches(!show_mismatches));
             }
+            ..addTestId('scadnano.MenuComponent.input.show_mismatches')
             ..type = 'checkbox')(),
           'show mismatches',
         ),
@@ -187,6 +190,7 @@ class MenuComponent extends UiComponent2<MenuProps> {
           int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to Grid title option
           props.dispatch(actions.GridChange(grid: grid_options[idx]));
         })
+        ..addTestId('scadnano.MenuComponent.select.grid')
         ..value = grid.toString()
         ..key = 'grid')([
         (Dom.option()

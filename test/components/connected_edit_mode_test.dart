@@ -1,54 +1,41 @@
 @TestOn('browser')
-import 'package:over_react/over_react.dart';
+// import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
-import 'package:react/react_client.dart';
-import 'package:redux/redux.dart';
+// import 'package:react/react_client.dart';
+// import 'package:redux/redux.dart';
 import 'package:scadnano/src/app.dart';
-import 'package:scadnano/src/reducers/app_state_reducer.dart';
+// import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/view/edit_mode.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/util.dart' as util;
-
-void initializeComponentTests() {
-  setClientConfiguration();
-  enableTestMode();
-}
+import '../utils.dart' as utils;
 
 String testIdEditModeChoiceButton(EditModeChoice choice) {
   return 'scadnano.EditModeComponent.button.${choice.name}';
 }
 
-Store<AppState> testStore;
 const EditModeComponentTestID = 'scadnano.EditModeComponent';
-void initializeTestStore() {
-  addTearDown(() {
-    testStore = null;
-  });
 
-  testStore = Store<AppState>(
-    app_state_reducer,
-    initialState: util
-        .default_state()
-        .rebuild((b) => b.ui_state.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick])),
-  );
-
-  app.store = testStore;
+AppState initializeTestState() {
+  return util
+      .default_state()
+      .rebuild((b) => b.ui_state.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]));
 }
 
 void main() {
-  initializeComponentTests();
+  utils.initializeComponentTests();
 
   group('ConnectedEditModes', () {
     EditModeComponent component;
 
     setUp(() {
-      initializeTestStore();
-      var testJacket = mount((ReduxProvider()..store = testStore)(
+      utils.initializeTestStore(initializeTestState());
+      var testJacket = mount((ReduxProvider()..store = app.store)(
         (ConnectedEditMode()..addTestId(EditModeComponentTestID))(),
       ));
 

@@ -1,0 +1,77 @@
+import 'package:over_react/over_react_redux.dart';
+import 'package:over_react_test/jacket.dart';
+import 'package:over_react_test/over_react_test.dart';
+import 'package:scadnano/src/app.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano/src/state/select_mode_state.dart';
+import 'package:scadnano/src/view/select_mode.dart';
+import 'package:test/test.dart';
+
+import 'package:scadnano/src/util.dart' as util;
+import '../utils.dart' as utils;
+
+AppState initializeTestState() {
+  List<SelectModeChoice> modes = [
+    SelectModeChoice.crossover,
+    SelectModeChoice.loopout,
+    SelectModeChoice.scaffold
+  ];
+  return util
+      .default_state()
+      .rebuild((b) => b.ui_state.select_mode_state.replace(SelectModeState().set_modes(modes)));
+}
+
+const SelectModeTestId = 'scadnano.SelectModeComponent';
+String testIdSelectModeChoiceButton(SelectModeChoice choice) {
+  return '${SelectModeTestId}.button.${choice.name}';
+}
+
+main() {
+  utils.initializeComponentTests();
+
+  group('ConnectedSelectModes', () {
+    SelectModeComponent component;
+
+    setUp(() {
+      utils.initializeTestStore(initializeTestState());
+      var testJacket = mount((ReduxProvider()..store = app.store)(
+        (ConnectedSelectMode()..addTestId(SelectModeTestId))(),
+      ));
+
+      component = getComponentByTestId(testJacket.getInstance(), SelectModeTestId);
+      expect(component, isNotNull, reason: 'ConnectedSelectMode should be mounted');
+    });
+
+    tearDown(() {
+      component = null;
+    });
+
+    group('renders a ConnectedSelectModes', () {
+      test('that renders the crossover button', () {
+        final crossover_button =
+            getByTestId(component, testIdSelectModeChoiceButton(SelectModeChoice.crossover));
+        expect(crossover_button, isNotNull);
+      });
+
+      test('that the loopout button is selected', () {
+        final loopout_button = getByTestId(component, testIdSelectModeChoiceButton(SelectModeChoice.loopout));
+        expect(loopout_button, isNotNull);
+
+        ClassNameMatcher matcher = ClassNameMatcher.expected('select-mode-button-selected');
+        expect(loopout_button.className, matcher);
+      });
+
+      test('that selecting the loopout button unselects it', () async {
+        final loopout_button = getByTestId(component, testIdSelectModeChoiceButton(SelectModeChoice.loopout));
+        click(loopout_button);
+        expect(loopout_button, isNotNull);
+
+        final redrawCount = await component.didRedraw().future.timeout(Duration(milliseconds: 20));
+        expect(redrawCount, 1);
+        ClassNameMatcher matcher = ClassNameMatcher.expected('select-mode-button-unselected');
+        expect(loopout_button.className, matcher);
+      });
+    });
+  });
+}
