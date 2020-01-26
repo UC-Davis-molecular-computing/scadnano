@@ -32,8 +32,9 @@ void initializeTestStore() {
 
   testStore = Store<AppState>(
     app_state_reducer,
-    initialState: util.default_state().rebuild((b) =>
-        b.ui_state.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick, EditModeChoice.helix])),
+    initialState: util
+        .default_state()
+        .rebuild((b) => b.ui_state.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick])),
   );
 
   app.store = testStore;
@@ -84,35 +85,31 @@ void main() {
         final deletion_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.deletion));
         expect(deletion_button, isNotNull);
       });
-      test('that renders the helix button', () {
-        final helix_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.helix));
-        expect(helix_button, isNotNull);
-      });
       test('that renders the backbone button', () {
         final backbone_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.backbone));
         expect(backbone_button, isNotNull);
       });
 
-      test('that helix buttons is selected', () {
-        final helix_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.helix));
+      test('that nick buttons is selected', () {
+        final nick_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.nick));
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-selected');
-        expect(helix_button.className, matcher);
+        expect(nick_button.className, matcher);
       });
       test('that backbone button is unselected', () {
         final backbone_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.backbone));
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-unselected');
         expect(backbone_button.className, matcher);
       });
-      test('that clicking helix buttons unselects it', () async {
-        final helix_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.helix));
-        expect(app.state.ui_state.edit_modes.contains(EditModeChoice.helix), true);
-        click(helix_button);
-        expect(app.state.ui_state.edit_modes.contains(EditModeChoice.helix), false);
+      test('that clicking nick buttons unselects it', () async {
+        final nick_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.nick));
+        expect(app.state.ui_state.edit_modes.contains(EditModeChoice.nick), true);
+        click(nick_button);
+        expect(app.state.ui_state.edit_modes.contains(EditModeChoice.nick), false);
 
         final redrawCount = await component.didRedraw().future.timeout(Duration(milliseconds: 20));
         expect(redrawCount, 1);
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-unselected');
-        expect(helix_button.className, matcher);
+        expect(nick_button.className, matcher);
       });
     });
   });
