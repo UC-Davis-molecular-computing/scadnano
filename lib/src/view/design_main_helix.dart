@@ -194,7 +194,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
       DialogText(
           label: 'varying major tick distances (space-separated)',
-          value: helix.major_ticks == null ? '' : helix.major_ticks.toList().join(' ')),
+          value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
       DialogCheckbox(label: 'apply to all', value: true),
     ]);
     List<DialogItem> results = await util.dialog(dialog);

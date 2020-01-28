@@ -73,6 +73,25 @@ class ColorCycler {
 
 final scaffold_color = ColorCycler.scaffold_color;
 
+
+/// Given list of ints, return list of distances between them, with first equal to first, e.g.
+///   deltas([2,3,5,7,11]) == [2, 1, 2, 2, 4]
+List<int> deltas(Iterable<int> nums) {
+  if (nums.isEmpty) {
+    return [];
+  }
+
+  List<int> deltas = [nums.first];
+  int prev = nums.first;
+  for (int num in nums) {
+    int delta = num - prev;
+    deltas.add(delta);
+    prev = num;
+  }
+  return deltas;
+}
+
+
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
 }
