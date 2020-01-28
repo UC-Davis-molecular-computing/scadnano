@@ -1343,7 +1343,7 @@ abstract class AssignDNA
 
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
-    implements Built<RemoveDNA, RemoveDNABuilder> {
+    implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {
   Strand get strand;
 
   bool get remove_complements;

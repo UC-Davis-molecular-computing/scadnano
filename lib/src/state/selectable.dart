@@ -9,6 +9,7 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import 'dna_end.dart';
 import 'select_mode.dart';
+import 'strand.dart';
 
 part 'selectable.g.dart';
 
@@ -27,6 +28,9 @@ abstract class SelectablesStore
   /************************ end BuiltValue boilerplate ************************/
 
   BuiltSet<Selectable> get selected_items;
+
+  @memoized
+  BuiltSet<Strand> get selected_strands => BuiltSet<Strand>.from(selected_items.where((s) => s is Strand));
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));

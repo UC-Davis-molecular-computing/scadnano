@@ -50,8 +50,11 @@ BuiltList<Strand> strands_part_reducer(
   Strand strand = state.dna_design.strands_by_id[action.strand_part.strand_id];
   int strand_idx = strands.indexOf(strand);
 
+  if (strand_idx < 0) {
+    return strands;
+  }
+
   strand = strand_part_reducer(strand, action);
-  //FIXME: is initialize still needed here after adjusting Strand._finalizeBuilder? also below
   strand = strand.initialize();
 
   var strands_builder = strands.toBuilder();
@@ -306,6 +309,10 @@ BuiltList<Strand> strands_single_strand_reducer(
     BuiltList<Strand> strands, actions.SingleStrandAction action) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand);
+
+  if (strand_idx < 0) {
+    return strands;
+  }
 
   strand = single_strand_reducer(strand, action);
   strand = strand.initialize();
