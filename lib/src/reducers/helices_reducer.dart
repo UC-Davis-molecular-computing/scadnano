@@ -254,12 +254,14 @@ BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.Gri
 
 Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
   ..position_.replace(action.position)
-  ..grid_position = null);
+  ..grid_position = null
+  ..svg_position_ = null);
 
 Helix helix_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
     helix.rebuild((b) => b
       ..position_ = null
-      ..grid_position.replace(action.grid_position));
+      ..grid_position.replace(action.grid_position)
+      ..svg_position_ = null);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated
