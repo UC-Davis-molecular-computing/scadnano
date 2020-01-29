@@ -33,11 +33,18 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
     var new_props = typedPropsFactory(nextPropsUntyped);
-    var prev_state = typedStateFactory(prevStateUntyped);
-    if (new_props.dialog != null && prev_state.responses == null) {
-      return newState()..responses = new_props.dialog.items;
+    if (new_props.dialog != null) {
+      var prev_state = typedStateFactory(prevStateUntyped);
+      if (prev_state.responses == null) {
+        return newState()..responses = new_props.dialog.items;
+      } else {
+        return prevStateUntyped;
+      }
     } else {
-      return prevStateUntyped;
+      //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
+      // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
+      // and the dialog won't be refreshed for the new use.
+      return newState()..responses = null;
     }
   }
 
