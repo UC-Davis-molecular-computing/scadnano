@@ -56,6 +56,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
     int idx = 0;
 
+    List<DialogCheckbox> checks = [for (var item in state.responses) if (item is DialogCheckbox) item];
+
     return (Dom.div()
       ..className = 'dialog-form'
       ..id = 'dialog-form')(
@@ -70,7 +72,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           for (var item in state.responses)
             (Dom.div()
               ..className = 'dialog-form-item'
-              ..key = item.label)(dialog_for(item, idx++))
+              ..key = item.label)(dialog_for(item, idx++, checks))
         ],
         (Dom.span()
           ..className = 'dialog-buttons'
@@ -96,11 +98,13 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
     props.dialog.on_submit(null);
   }
 
-  ReactElement dialog_for(DialogItem item, int idx) {
+  ReactElement dialog_for(DialogItem item, int idx, List<DialogCheckbox> checks) {
+
     if (item is DialogCheckbox) {
       return Dom.label()(
         (Dom.input()
           ..type = 'checkbox'
+          ..disabled = item.disabled
           ..checked = item.value
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
@@ -116,6 +120,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'text'
+          ..disabled = item.disabled
           ..value = item.value
           ..size = item.size
           ..onChange = (SyntheticFormEvent e) {
@@ -131,6 +136,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.textarea()
           ..form = 'dialog-form-form'
+          ..disabled = item.disabled
           ..value = item.value
           ..rows = item.rows
           ..cols = item.cols
@@ -147,6 +153,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
+          ..disabled = item.disabled
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
@@ -163,6 +170,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
+          ..disabled = item.disabled
           ..pattern = r'[+-]?([0-9]*[.])?[0-9]+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'

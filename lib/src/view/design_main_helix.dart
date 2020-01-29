@@ -189,14 +189,25 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     Helix helix = props.helix;
     int helix_idx = helix.idx;
 
+    var dialog_regular_spacing_check = DialogCheckbox(label: 'regular spacing', value: true);
+    var dialog_regular_spacing_distance =
+        DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0);
+    var dialog_hard_coded_spacing_distances = DialogText(
+        label: 'varying major tick distances (space-separated)',
+        value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' '));
+    var dialog_apply_to_all_check = DialogCheckbox(label: 'apply to all', value: true);
+
     var dialog = Dialog(title: 'adjust helix tick marks', items: [
-      DialogCheckbox(label: 'regular spacing', value: true),
-      DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
-      DialogText(
-          label: 'varying major tick distances (space-separated)',
-          value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
-      DialogCheckbox(label: 'apply to all', value: true),
-    ]);
+      dialog_regular_spacing_check,
+      dialog_regular_spacing_distance,
+      dialog_hard_coded_spacing_distances,
+      dialog_apply_to_all_check,
+    ], disable_when_on: {
+      dialog_hard_coded_spacing_distances: dialog_regular_spacing_check
+    }, disable_when_off: {
+      dialog_regular_spacing_distance: dialog_regular_spacing_check
+    });
+
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 

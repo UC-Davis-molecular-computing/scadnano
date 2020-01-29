@@ -16,10 +16,22 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   static Serializer<Dialog> get serializer => _$dialogSerializer;
 
-  factory Dialog({String title, Iterable<DialogItem> items}) {
+  factory Dialog(
+      {String title,
+      Iterable<DialogItem> items,
+      Map<DialogItem, DialogCheckbox> disable_when_on = null,
+      Map<DialogItem, DialogCheckbox> disable_when_off = null}) {
+    if (disable_when_on == null) {
+      disable_when_on = {};
+    }
+    if (disable_when_off == null) {
+      disable_when_off = {};
+    }
     return Dialog.from((b) => b
       ..title = title
-      ..items.replace(items));
+      ..items.replace(items)
+      ..disable_when_on.replace(disable_when_on)
+      ..disable_when_off.replace(disable_when_off));
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -27,6 +39,10 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   String get title;
 
   BuiltList<DialogItem> get items;
+
+  BuiltMap<DialogItem, DialogCheckbox> get disable_when_on;
+
+  BuiltMap<DialogItem, DialogCheckbox> get disable_when_off;
 
   @nullable
   @BuiltValueField(serialize: false, compare: false)
@@ -36,23 +52,32 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 abstract class DialogItem {
   String get label;
 
+  bool get disabled;
+
   dynamic get value;
 }
 
 abstract class DialogNumber
     with BuiltJsonSerializable
     implements DialogItem, Built<DialogNumber, DialogNumberBuilder> {
-  factory DialogNumber({String label, num value}) = _$DialogNumber._;
-
   factory DialogNumber.from([void Function(DialogNumberBuilder) updates]) = _$DialogNumber;
 
   DialogNumber._();
 
   static Serializer<DialogNumber> get serializer => _$dialogNumberSerializer;
 
+  factory DialogNumber({String label, num value, bool disabled = false}) {
+    return DialogNumber.from((b) => b
+      ..label = label
+      ..value = value
+      ..disabled = disabled);
+  }
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
+
+  bool get disabled;
 
   num get value;
 }
@@ -60,8 +85,6 @@ abstract class DialogNumber
 abstract class DialogFloatingNumber
     with BuiltJsonSerializable
     implements DialogItem, Built<DialogFloatingNumber, DialogFloatingNumberBuilder> {
-  factory DialogFloatingNumber({String label, num value}) = _$DialogFloatingNumber._;
-
   factory DialogFloatingNumber.from([void Function(DialogFloatingNumberBuilder) updates]) =
       _$DialogFloatingNumber;
 
@@ -69,9 +92,18 @@ abstract class DialogFloatingNumber
 
   static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
 
+  factory DialogFloatingNumber({String label, num value, bool disabled = false}) {
+    return DialogFloatingNumber.from((b) => b
+      ..label = label
+      ..value = value
+      ..disabled = disabled);
+  }
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
+
+  bool get disabled;
 
   num get value;
 }
@@ -85,16 +117,19 @@ abstract class DialogText
 
   static Serializer<DialogText> get serializer => _$dialogTextSerializer;
 
-  factory DialogText({String label, int size = null, String value = ''}) {
+  factory DialogText({String label, int size = null, String value = '', bool disabled = false}) {
     return DialogText.from((b) => b
       ..label = label
       ..size = size
-      ..value = value);
+      ..value = value
+      ..disabled = disabled);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
+
+  bool get disabled;
 
   String get value;
 
@@ -111,17 +146,20 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea({String label, int cols, int rows, String value = ''}) {
+  factory DialogTextArea({String label, int cols, int rows, String value = '', bool disabled = false}) {
     return DialogTextArea.from((b) => b
       ..label = label
       ..cols = cols
       ..rows = rows
-      ..value = value);
+      ..value = value
+      ..disabled = disabled);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
+
+  bool get disabled;
 
   int get cols;
 
@@ -139,15 +177,18 @@ abstract class DialogCheckbox
 
   static Serializer<DialogCheckbox> get serializer => _$dialogCheckboxSerializer;
 
-  factory DialogCheckbox({String label, bool value = false}) {
+  factory DialogCheckbox({String label, bool value = false, bool disabled = false}) {
     return DialogCheckbox.from((b) => b
       ..label = label
-      ..value = value);
+      ..value = value
+      ..disabled = disabled);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
+
+  bool get disabled;
 
   bool get value;
 }
