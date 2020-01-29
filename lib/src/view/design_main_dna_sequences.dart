@@ -1,5 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/view/pure_component.dart';
 
 import '../state/strand.dart';
@@ -12,6 +13,7 @@ UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNAS
 
 @Props()
 class _$DesignMainDNASequencesProps extends UiProps {
+  BuiltList<Helix> helices;
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
 }
@@ -25,6 +27,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
         if (strand.dna_sequence != null)
           (DesignMainDNASequence()
 //            (ConnectedDesignMainDNASequence()
+            ..helices = props.helices
             ..strand = strand
             ..side_selected_helix_idxs = props.side_selected_helix_idxs
             ..key = strand.toString()

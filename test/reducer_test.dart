@@ -4543,7 +4543,9 @@ main() {
     Helix helix = no_grid_two_helices_design.helices.first;
     Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
 
-    Helix expected_helix = helix.rebuild((b) => b..position_.replace(position));
+    Helix expected_helix = helix.rebuild((b) => b
+      ..position_.replace(position)
+      ..svg_position_ = null);
     var expected_helices = no_grid_two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
 
@@ -4561,7 +4563,9 @@ main() {
     Helix helix = two_helices_design.helices.first;
 
     GridPosition grid_position = GridPosition(5, -3);
-    Helix expected_helix = helix.rebuild((b) => b..grid_position.replace(grid_position));
+    Helix expected_helix = helix.rebuild((b) => b
+      ..grid_position.replace(grid_position)
+      ..svg_position_ = null);
 
     var expected_helices = two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;

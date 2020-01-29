@@ -5,6 +5,7 @@ import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import 'package:scadnano/src/view/pure_component.dart';
 import '../state/crossover.dart';
@@ -51,6 +52,7 @@ class _$DesignMainStrandCrossoverProps extends EditModePropsAbstract {
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
+  BuiltList<Helix> helices;
 }
 
 @State()
@@ -85,7 +87,7 @@ class DesignMainStrandCrossoverComponent
       classname_this_curve += ' selectable';
     }
 
-    var path = crossover_path_description(prev_substrand, next_substrand);
+    var path = crossover_path_description(prev_substrand, next_substrand, props.helices);
     var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 
@@ -96,35 +98,35 @@ class DesignMainStrandCrossoverComponent
     String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     return (Dom.path()
-      ..d = path
-      ..stroke = color
-      ..className = classname_this_curve
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-        if (show_mouseover_rect) {
-          update_mouseover_crossover();
-        }
-      }
-      ..onMouseLeave = ((_) {
-        setState(newState()..mouse_hover = false);
-        if (show_mouseover_rect) {
-          mouse_leave_update_mouseover();
-        }
-      })
-      ..onPointerDown = ((ev) {
-        if (select_mode && props.selectable) {
-          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (select_mode && props.selectable) {
-          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..id = id
-      ..key = id)(
+          ..d = path
+          ..stroke = color
+          ..className = classname_this_curve
+          ..onMouseEnter = (ev) {
+            setState(newState()..mouse_hover = true);
+            if (show_mouseover_rect) {
+              update_mouseover_crossover();
+            }
+          }
+          ..onMouseLeave = ((_) {
+            setState(newState()..mouse_hover = false);
+            if (show_mouseover_rect) {
+              mouse_leave_update_mouseover();
+            }
+          })
+          ..onPointerDown = ((ev) {
+            if (select_mode && props.selectable) {
+              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+            }
+          })
+          ..onPointerUp = ((ev) {
+            if (select_mode && props.selectable) {
+              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+            }
+          })
+          ..id = id
+          ..key = id)(
 //        Dom.svgTitle()(tooltip)
-    );
+        );
   }
 
   @override
@@ -150,15 +152,15 @@ class DesignMainStrandCrossoverComponent
   }
 
   List<ContextMenuItem> context_menu_strand(Strand strand) => [
-    ContextMenuItem(
-      title: 'convert to loopout',
-      on_click: convert_crossover_to_loopout,
-    ),
-    ContextMenuItem(
-      title: 'unstrain backbone here',
-      on_click: handle_crossover_click,
-    ),
-  ];
+        ContextMenuItem(
+          title: 'convert to loopout',
+          on_click: convert_crossover_to_loopout,
+        ),
+        ContextMenuItem(
+          title: 'unstrain backbone here',
+          on_click: handle_crossover_click,
+        ),
+      ];
 
   handle_crossover_click() {
     BoundSubstrand prev_substrand = props.prev_substrand;
@@ -195,5 +197,4 @@ class DesignMainStrandCrossoverComponent
     }
     app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
   }
-
 }

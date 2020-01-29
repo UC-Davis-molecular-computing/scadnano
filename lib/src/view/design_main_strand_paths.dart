@@ -9,7 +9,7 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
 
-import '../app.dart';
+// import '../app.dart';
 import '../state/dna_design.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
@@ -126,6 +126,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           paths.add((DesignMainLoopout()
             ..loopout = substrand
             ..strand = strand
+            ..helices = props.helices
             ..color = strand.color
             ..selected = props.selectables_store.selected(substrand)
             ..selectable = props.select_mode_state.is_selectable(substrand) &&
@@ -152,6 +153,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         paths.add((DesignMainStrandCrossover()
           ..crossover = crossover
           ..strand = strand
+          ..helices = props.helices
           ..selected = props.selectables_store.selected(crossover)
           ..selectable = props.select_mode_state.is_selectable(crossover) &&
               props.edit_modes.contains(EditModeChoice.select) &&
@@ -167,11 +169,15 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
   }
 }
 
-String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand next_substrand) {
-  var prev_helix = app.state.dna_design.helices[prev_substrand.helix];
-  var next_helix = app.state.dna_design.helices[next_substrand.helix];
+String crossover_path_description(
+  BoundSubstrand prev_substrand,
+  BoundSubstrand next_substrand,
+  BuiltList<Helix> helices,
+) {
+  var prev_helix = helices[prev_substrand.helix];
+  var next_helix = helices[next_substrand.helix];
   var start_svg = prev_helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
-  var control = control_point_for_crossover_bezier_curve(prev_substrand, next_substrand);
+  var control = control_point_for_crossover_bezier_curve(prev_substrand, next_substrand, helices);
   var end_svg = next_helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
@@ -179,11 +185,12 @@ String crossover_path_description(BoundSubstrand prev_substrand, BoundSubstrand 
   return path;
 }
 
-Point<num> control_point_for_crossover_bezier_curve(BoundSubstrand from_ss, BoundSubstrand to_ss,
+Point<num> control_point_for_crossover_bezier_curve(
+    BoundSubstrand from_ss, BoundSubstrand to_ss, BuiltList<Helix> helices,
     {int delta = 0}) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
-  var from_helix = app.state.dna_design.helices[from_ss.helix];
-  var to_helix = app.state.dna_design.helices[to_ss.helix];
+  var from_helix = helices[from_ss.helix];
+  var to_helix = helices[to_ss.helix];
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward);
   bool from_strand_below = from_ss.helix - to_ss.helix > 0;

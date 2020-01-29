@@ -106,6 +106,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
+          ..helices = props.helices
           ..strands = props.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'dna')(),

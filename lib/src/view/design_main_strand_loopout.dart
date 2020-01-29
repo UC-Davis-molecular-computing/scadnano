@@ -7,6 +7,7 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
@@ -50,6 +51,7 @@ class _$DesignMainLoopoutProps extends EditModePropsAbstract {
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
+  BuiltList<Helix> helices;
 }
 
 @State()
@@ -95,7 +97,7 @@ class DesignMainLoopoutComponent
       // special case for hairpin so it's not a short straight line
       return _hairpin_arc(prev_ss, next_ss, loopout, classname, color, tooltip);
     } else {
-      String path = crossover_path_description(prev_ss, next_ss);
+      String path = crossover_path_description(prev_ss, next_ss, props.helices);
       String id = loopout.id();
 
       //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:

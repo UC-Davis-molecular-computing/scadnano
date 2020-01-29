@@ -2,13 +2,14 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
+// import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
-import '../state/app_state.dart';
-import '../app.dart';
+// import '../state/app_state.dart';
+// import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
@@ -31,6 +32,7 @@ UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASeq
 class _$DesignMainDNASequenceProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
+  BuiltList<Helix> helices;
 }
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
@@ -38,7 +40,6 @@ bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_i
 
 @Component2()
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
-
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -78,7 +79,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    var helix = app.state.dna_design.helices[substrand.helix];
+    var helix = props.helices[substrand.helix];
     Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
