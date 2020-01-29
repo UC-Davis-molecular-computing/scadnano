@@ -191,7 +191,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         (Dom.input()
           ..type = 'number'
           ..disabled = disabled
-          ..pattern = r'[+-]?([0-9]*[.])?[0-9]+' // allow to type floating numbers
+          ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'
           ..onChange = (SyntheticFormEvent e) {

@@ -23,7 +23,7 @@ If you have never used scadnano before, you will see a screen similar to this:
 
 Download the [completed design](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) and save it somewhere on your local file system.
 
-Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different)":
+Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different):
 
 ![](images/load_file_button.png)
 
