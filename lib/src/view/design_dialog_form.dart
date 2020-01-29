@@ -20,31 +20,24 @@ UiFactory<DesignDialogFormProps> DesignDialogForm = _$DesignDialogForm;
 
 @Props()
 class _$DesignDialogFormProps extends UiProps {
-  Dialog dialog;
+  Dialog dialog; // these are INITIAL values only
 }
 
 @State()
 class _$DesignDialogFormState extends UiState {
-  BuiltList<DialogItem> responses;
+  BuiltList<DialogItem> responses; // these are UPDATED as user changes form inputs
 }
 
 @Component2()
 class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> {
   @override
-  Map getDerivedStateFromProps(Map nextProps, Map prevState) {
-    var new_props = typedPropsFactory(nextProps);
-    if (new_props.dialog != null) {
-      var prev_state = typedStateFactory(prevState);
-      if (prev_state.responses == null) {
-        return newState()..responses = new_props.dialog.items;
-      } else {
-        return prevState;
-      }
+  Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
+    var new_props = typedPropsFactory(nextPropsUntyped);
+    var prev_state = typedStateFactory(prevStateUntyped);
+    if (new_props.dialog != null && prev_state.responses == null) {
+      return newState()..responses = new_props.dialog.items;
     } else {
-      //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
-      // are set (when a new dialog is created), we have a fresh dialog. Otherwise the old state persists
-      // and the dialog won't be refreshed for the new use.
-      return newState()..responses = null;
+      return prevStateUntyped;
     }
   }
 
@@ -54,9 +47,35 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
-    int idx = 0;
+    int component_idx = 0;
+    List<ReactElement> components = [];
+    for (var item in state.responses) {
+      bool disabled = false;
 
-    List<DialogCheckbox> checks = [for (var item in state.responses) if (item is DialogCheckbox) item];
+      // disable if checkbox in disable_when_off to which this maps is false
+      if (props.dialog.disable_when_off.containsKey(component_idx)) {
+        int check_idx = props.dialog.disable_when_off[component_idx];
+        DialogCheckbox check = state.responses[check_idx];
+        if (check.value == false) {
+          disabled = true;
+        }
+      }
+
+      // disable if checkbox in disable_when_on to which this maps is true
+      if (props.dialog.disable_when_on.containsKey(component_idx)) {
+        int check_idx = props.dialog.disable_when_on[component_idx];
+        DialogCheckbox check = state.responses[check_idx];
+        if (check.value == true) {
+          disabled = true;
+        }
+      }
+
+      var component = (Dom.div()
+        ..className = 'dialog-form-item'
+        ..key = item.label)(dialog_for(item, component_idx++, disabled));
+
+      components.add(component);
+    }
 
     return (Dom.div()
       ..className = 'dialog-form'
@@ -68,12 +87,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         (Dom.p()
           ..className = 'dialog-form-title'
           ..key = 'dialog-form-title')(props.dialog.title),
-        ...[
-          for (var item in state.responses)
-            (Dom.div()
-              ..className = 'dialog-form-item'
-              ..key = item.label)(dialog_for(item, idx++, checks))
-        ],
+        ...components,
         (Dom.span()
           ..className = 'dialog-buttons'
           ..key = 'buttons')(
@@ -98,13 +112,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
     props.dialog.on_submit(null);
   }
 
-  ReactElement dialog_for(DialogItem item, int idx, List<DialogCheckbox> checks) {
-
+  ReactElement dialog_for(DialogItem item, int idx, bool disabled) {
     if (item is DialogCheckbox) {
       return Dom.label()(
         (Dom.input()
           ..type = 'checkbox'
-          ..disabled = item.disabled
+          ..disabled = disabled
           ..checked = item.value
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
@@ -120,7 +133,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'text'
-          ..disabled = item.disabled
+          ..disabled = disabled
           ..value = item.value
           ..size = item.size
           ..onChange = (SyntheticFormEvent e) {
@@ -136,7 +149,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.textarea()
           ..form = 'dialog-form-form'
-          ..disabled = item.disabled
+          ..disabled = disabled
           ..value = item.value
           ..rows = item.rows
           ..cols = item.cols
@@ -153,7 +166,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
-          ..disabled = item.disabled
+          ..disabled = disabled
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
@@ -170,7 +183,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
-          ..disabled = item.disabled
+          ..disabled = disabled
           ..pattern = r'[+-]?([0-9]*[.])?[0-9]+' // allow to type floating numbers
           ..value = item.value
           ..step = 'any'

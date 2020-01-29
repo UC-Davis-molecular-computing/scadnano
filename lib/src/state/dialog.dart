@@ -19,8 +19,8 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   factory Dialog(
       {String title,
       Iterable<DialogItem> items,
-      Map<DialogItem, DialogCheckbox> disable_when_on = null,
-      Map<DialogItem, DialogCheckbox> disable_when_off = null}) {
+      Map<int, int> disable_when_on = null,
+      Map<int, int> disable_when_off = null}) {
     if (disable_when_on == null) {
       disable_when_on = {};
     }
@@ -40,9 +40,9 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   BuiltList<DialogItem> get items;
 
-  BuiltMap<DialogItem, DialogCheckbox> get disable_when_on;
+  BuiltMap<int, int> get disable_when_on;
 
-  BuiltMap<DialogItem, DialogCheckbox> get disable_when_off;
+  BuiltMap<int, int> get disable_when_off;
 
   @nullable
   @BuiltValueField(serialize: false, compare: false)
@@ -51,8 +51,6 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
 abstract class DialogItem {
   String get label;
-
-  bool get disabled;
 
   dynamic get value;
 }
@@ -66,18 +64,15 @@ abstract class DialogNumber
 
   static Serializer<DialogNumber> get serializer => _$dialogNumberSerializer;
 
-  factory DialogNumber({String label, num value, bool disabled = false}) {
+  factory DialogNumber({String label, num value}) {
     return DialogNumber.from((b) => b
       ..label = label
-      ..value = value
-      ..disabled = disabled);
+      ..value = value);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
-
-  bool get disabled;
 
   num get value;
 }
@@ -92,18 +87,15 @@ abstract class DialogFloatingNumber
 
   static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
 
-  factory DialogFloatingNumber({String label, num value, bool disabled = false}) {
+  factory DialogFloatingNumber({String label, num value}) {
     return DialogFloatingNumber.from((b) => b
       ..label = label
-      ..value = value
-      ..disabled = disabled);
+      ..value = value);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
-
-  bool get disabled;
 
   num get value;
 }
@@ -117,19 +109,16 @@ abstract class DialogText
 
   static Serializer<DialogText> get serializer => _$dialogTextSerializer;
 
-  factory DialogText({String label, int size = null, String value = '', bool disabled = false}) {
+  factory DialogText({String label, int size = null, String value = ''}) {
     return DialogText.from((b) => b
       ..label = label
       ..size = size
-      ..value = value
-      ..disabled = disabled);
+      ..value = value);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
-
-  bool get disabled;
 
   String get value;
 
@@ -146,20 +135,17 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea({String label, int cols, int rows, String value = '', bool disabled = false}) {
+  factory DialogTextArea({String label, int cols, int rows, String value = ''}) {
     return DialogTextArea.from((b) => b
       ..label = label
       ..cols = cols
       ..rows = rows
-      ..value = value
-      ..disabled = disabled);
+      ..value = value);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
-
-  bool get disabled;
 
   int get cols;
 
@@ -177,18 +163,15 @@ abstract class DialogCheckbox
 
   static Serializer<DialogCheckbox> get serializer => _$dialogCheckboxSerializer;
 
-  factory DialogCheckbox({String label, bool value = false, bool disabled = false}) {
+  factory DialogCheckbox({String label, bool value = false}) {
     return DialogCheckbox.from((b) => b
       ..label = label
-      ..value = value
-      ..disabled = disabled);
+      ..value = value);
   }
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
-
-  bool get disabled;
 
   bool get value;
 }
