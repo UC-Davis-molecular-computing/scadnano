@@ -421,4 +421,4 @@ A standard DNA origami rectangle, for instance, can be created in about 10 minut
 The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
-See the [tutorial](tutorial/tutorual.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
