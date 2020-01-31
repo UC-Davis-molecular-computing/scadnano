@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "helices": [
+    {"grid_position": [0, 0], "rotation": 1.5707963267948966, "rotation_anchor": 2}
+  ],
+  "strands": [
+    {
+      "color": "#b8056c",
+      "dna_sequence": "?AGTTAGTT",
+      "substrands": [
+        {"helix": 0, "forward": true, "start": 0, "end": 9}
+      ]
+    },
+    {
+      "color": "#0066cc",
+      "dna_sequence": "AACTAACT?",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 0, "end": 9}
+      ]
+    }
+  ]
+}

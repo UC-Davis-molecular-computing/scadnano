@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "helices": [
+    {"grid_position": [0, 0]}
+  ],
+  "strands": [
+    {
+      "color": "#03b6a2",
+      "dna_sequence": "AAAAACCCCCTGCATGGGGGTTTTT",
+      "substrands": [
+        {"helix": 0, "forward": true, "start": 0, "end": 10},
+        {"loopout": 5},
+        {"helix": 0, "forward": false, "start": 0, "end": 10}
+      ]
+    }
+  ]
+}

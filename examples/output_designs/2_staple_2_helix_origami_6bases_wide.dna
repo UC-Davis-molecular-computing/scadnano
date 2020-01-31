@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]}
+  ],
+  "strands": [
+    {
+      "color": "#f7931e",
+      "dna_sequence": "TTTG",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 0, "end": 3, "deletions": [1]},
+        {"helix": 0, "forward": false, "start": 0, "end": 3, "deletions": [1]}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "dna_sequence": "GAAC",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 3, "end": 6, "deletions": [4]},
+        {"helix": 1, "forward": true, "start": 3, "end": 6, "deletions": [4]}
+      ]
+    },
+    {
+      "color": "#0066cc",
+      "dna_sequence": "AACATCGT",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 0, "end": 3, "deletions": [1]},
+        {"helix": 0, "forward": true, "start": 0, "end": 6, "deletions": [1, 4]},
+        {"helix": 1, "forward": false, "start": 3, "end": 6, "deletions": [4]}
+      ]
+    }
+  ]
+}

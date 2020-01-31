@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0",
+  "grid": "none",
+  "helices": [
+    {"position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 3, "y": 3, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 8, "y": -3, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
+    {"max_offset": 10, "position": {"x": 11, "y": 1, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}}
+  ],
+  "strands": [
+    {
+      "color": "#7300de",
+      "substrands": [
+        {"helix": 0, "forward": true, "start": 0, "end": 10}
+      ]
+    },
+    {
+      "color": "#0066cc",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 0, "end": 10}
+      ]
+    }
+  ]
+}
