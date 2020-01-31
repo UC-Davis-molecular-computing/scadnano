@@ -6,7 +6,7 @@
   ],
   "strands": [
     {
-      "color": "#0066cc",
+      "color": "#888888",
       "substrands": [
         {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
         {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24], "insertions": [[6, 1], [18, 2]]},
@@ -16,14 +16,14 @@
       "is_scaffold": true
     },
     {
-      "color": "#03b6a2",
+      "color": "#f74308",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
         {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12], "insertions": [[6, 1]]}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#57bb00",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
         {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 4]]}

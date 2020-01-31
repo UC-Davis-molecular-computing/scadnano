@@ -34,8 +34,8 @@ def main():
     scaffold = sc.Strand([sc.Substrand(helix=0, forward=False, start=0, end=start),
                           sc.Substrand(helix=1, forward=True, start=0, end=start)])
     strands.append(scaffold)
-    design = sc.DNADesign(strands=strands, grid=sc.square)
-    design.assign_dna(scaffold, sc.m13_sequence)
+    design = sc.DNAOrigamiDesign(strands=strands, grid=sc.square, scaffold=scaffold)
+    design.assign_m13_to_scaffold()
 
     return design
 

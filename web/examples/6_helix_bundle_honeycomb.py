@@ -15,12 +15,24 @@ def main():
 def initial_design():
     max_offset = 1295
     helices = [
-        sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
+
+        # below uses odd-q coordinates:
+        sc.Helix(grid_position=(1, -1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(0, 0, 0), max_offset=max_offset),
         sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
-        sc.Helix(grid_position=(1, 2, 0), max_offset=max_offset),
+        sc.Helix(grid_position=(1, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(2, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
+
+        # below uses even-q coordinates:
+        # sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(0, 0, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(1, 2, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(2, 1, 0), max_offset=max_offset),
+        # sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
+
+        # below uses odd-r coordinates:
         # sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
         # sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
         # sc.Helix(grid_position=(1, 2, 0), max_offset=max_offset),
