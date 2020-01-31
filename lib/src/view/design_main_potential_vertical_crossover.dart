@@ -18,7 +18,7 @@ UiFactory<DesignMainPotentialVerticalCrossoverProps> DesignMainPotentialVertical
 @Props()
 class _$DesignMainPotentialVerticalCrossoverProps extends UiProps {
   PotentialVerticalCrossover potential_vertical_crossover;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
 }
 
 @Component2()

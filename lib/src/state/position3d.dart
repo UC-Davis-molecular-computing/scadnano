@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/json_serializable.dart';
 
 //import '../built_intern.dart';
 import '../serializers.dart';

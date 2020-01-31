@@ -43,7 +43,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
 
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;
   BuiltSet<EditModeChoice> edit_modes;
@@ -172,7 +172,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 String crossover_path_description(
   BoundSubstrand prev_substrand,
   BoundSubstrand next_substrand,
-  BuiltList<Helix> helices,
+  BuiltMap<int, Helix> helices,
 ) {
   var prev_helix = helices[prev_substrand.helix];
   var next_helix = helices[next_substrand.helix];
@@ -186,7 +186,7 @@ String crossover_path_description(
 }
 
 Point<num> control_point_for_crossover_bezier_curve(
-    BoundSubstrand from_ss, BoundSubstrand to_ss, BuiltList<Helix> helices,
+    BoundSubstrand from_ss, BoundSubstrand to_ss, BuiltMap<int, Helix> helices,
     {int delta = 0}) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
   var from_helix = helices[from_ss.helix];

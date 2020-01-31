@@ -52,7 +52,7 @@ class _$DesignMainStrandCrossoverProps extends EditModePropsAbstract {
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
 }
 
 @State()

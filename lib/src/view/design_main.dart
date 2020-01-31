@@ -57,7 +57,7 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
 class _$DesignMainProps extends EditModePropsAbstract {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
@@ -95,6 +95,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
       if (pencil_mode && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
+          ..helices = props.helices
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()

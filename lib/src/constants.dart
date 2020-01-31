@@ -90,7 +90,7 @@ const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 
 // Helix keys
-const idx_key = 'idx';
+const idx_on_helix_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';

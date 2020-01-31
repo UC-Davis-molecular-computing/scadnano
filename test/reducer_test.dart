@@ -36,6 +36,7 @@ import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano/src/extension_methods.dart';
 
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_dna_design(DNADesign dna_design) {
@@ -131,8 +132,8 @@ main() {
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
     final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
-    var correct_helices = util.helices_assign_svg([correct_helix], Grid.square);
-    expect(state.dna_design.helices, correct_helices.toBuiltList());
+    var correct_helices = util.helices_assign_svg({correct_helix.idx: correct_helix}, Grid.square);
+    expect(state.dna_design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
   test('should remove helix in respond to HelixRemove', () {
@@ -142,7 +143,7 @@ main() {
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
     state = app_state_reducer(state, new HelixRemove(0));
 
-    var correct_helices = new BuiltList<Helix>([]);
+    var correct_helices = BuiltMap<int, Helix>();
     expect(state.dna_design.helices, correct_helices);
   });
 
@@ -2438,7 +2439,7 @@ main() {
     //    <-------------X----------------]
     AppState initial_state = app_state_from_dna_design(simple_helix_with_deletion_design);
 
-    Helix helix0 = simple_helix_with_deletion_design.helices.first;
+    Helix helix0 = simple_helix_with_deletion_design.helices.values.first;
     Strand forward_strand = simple_helix_with_deletion_design.strands.first;
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 30);
@@ -2491,7 +2492,7 @@ main() {
     //    <-------------I----------------]
     AppState initial_state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-    Helix helix0 = simple_helix_with_insertion_design.helices.first;
+    Helix helix0 = simple_helix_with_insertion_design.helices.values.first;
     Strand forward_strand = simple_helix_with_insertion_design.strands.first;
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 30);
@@ -2956,21 +2957,21 @@ main() {
       state = app_state_reducer(
           state, HelixRotationSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
         ..rotation = 30
         ..rotation_anchor = 15);
 
-      expect(state.dna_design.helices.first, expected_helix0);
+      expect(state.dna_design.helices.values.first, expected_helix0);
 
       state = app_state_reducer(
           state, HelixRotationSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix1 = two_helices_crossover_design.helices.last.rebuild((b) => b
+      Helix expected_helix1 = two_helices_crossover_design.helices.values.last.rebuild((b) => b
         ..rotation = 0
         ..rotation_anchor = 15);
 
-      expect(state.dna_design.helices.first, expected_helix0);
-      expect(state.dna_design.helices.last, expected_helix1);
+      expect(state.dna_design.helices.values.first, expected_helix0);
+      expect(state.dna_design.helices.values.last, expected_helix1);
     });
 
     test('HelixRotationSet', () {
@@ -2978,11 +2979,11 @@ main() {
 
       state = app_state_reducer(state, HelixRotationSet(0, 150, 4));
 
-      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
         ..rotation = 150
         ..rotation_anchor = 4);
 
-      expect(state.dna_design.helices.first, expected_helix0);
+      expect(state.dna_design.helices.values.first, expected_helix0);
     });
   });
 
@@ -3749,7 +3750,7 @@ main() {
     //   <-------------------]
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
-    Helix helix0 = two_helices_design.helices.first;
+    Helix helix0 = two_helices_design.helices.values.first;
     Point<num> start_point = helix0.svg_base_pos(0, true);
 
     // The two states of the two store's reducers we want to test:
@@ -3859,8 +3860,8 @@ main() {
     AppState state = app_state_from_dna_design(two_helices_with_empty_offsets);
     StrandsMove strandsMove = null;
 
-    Helix helix0 = two_helices_with_empty_offsets.helices.first;
-    Helix helix1 = two_helices_with_empty_offsets.helices.last;
+    Helix helix0 = two_helices_with_empty_offsets.helices.values.first;
+    Helix helix1 = two_helices_with_empty_offsets.helices.values.last;
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
     test('StrandsMoveStart (no copy)', () {
@@ -4455,11 +4456,13 @@ main() {
       AppState state = app_state_from_dna_design(two_helices_design);
       state = app_state_reducer(state, GridChange(grid: Grid.hex));
 
-      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
+      List<HelixBuilder> helices_builder =
+          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
       for (int i = 0; i < helices_builder.length; i++) {
         helices_builder[i].grid = Grid.hex;
       }
-      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+      BuiltMap<int, Helix> new_helices =
+          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
       DNADesign expected_design = two_helices_design.rebuild((b) => b
         ..grid = Grid.hex
         ..helices.replace(new_helices));
@@ -4471,7 +4474,8 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid));
 
-      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
+      List<HelixBuilder> helices_builder =
+          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
       for (int i = 0; i < helices_builder.length; i++) {
         GridPosition gridPosition = helices_builder[i].grid_position.build();
         helices_builder[i]
@@ -4479,7 +4483,8 @@ main() {
           ..position_.replace(grid_to_position3d(gridPosition, Grid.square))
           ..grid_position = null;
       }
-      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+      BuiltMap<int, Helix> new_helices =
+          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
       DNADesign expected_design = two_helices_design.rebuild((b) => b
         ..grid = grid
         ..helices.replace(new_helices));
@@ -4493,16 +4498,16 @@ main() {
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
 
-      Helix new_helix0 = no_grid_two_helices_design.helices.first.rebuild((b) => b
+      Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
         ..position_ = null
         ..grid_position.replace(util.position3d_to_grid(position0, grid)));
-      Helix new_helix1 = no_grid_two_helices_design.helices.last.rebuild((b) => b
+      Helix new_helix1 = no_grid_two_helices_design.helices.values.last.rebuild((b) => b
         ..grid = grid
         ..position_ = null
         ..grid_position.replace(util.position3d_to_grid(position1, grid)));
 
-      List<Helix> new_helices = [new_helix0, new_helix1];
+      Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
 
       DNADesign expected_design = no_grid_two_helices_design.rebuild((b) => b
         ..helices.replace(new_helices)
@@ -4540,7 +4545,7 @@ main() {
   test('HelixPositionSet', () {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
 
-    Helix helix = no_grid_two_helices_design.helices.first;
+    Helix helix = no_grid_two_helices_design.helices.values.first;
     Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
 
     Helix expected_helix = helix.rebuild((b) => b
@@ -4560,7 +4565,7 @@ main() {
 
   test('HelixGridPositionSet', () {
     AppState state = app_state_from_dna_design(two_helices_design);
-    Helix helix = two_helices_design.helices.first;
+    Helix helix = two_helices_design.helices.values.first;
 
     GridPosition grid_position = GridPosition(5, -3);
     Helix expected_helix = helix.rebuild((b) => b

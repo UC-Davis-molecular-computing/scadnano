@@ -139,10 +139,10 @@ BuiltSet<int> helix_selections_adjust_reducer(
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
   var all_helices = state.dna_design.helices;
-  List<util.Box> all_bboxes = all_helices.map((helix) => helix_to_box(helix)).toList();
+  List<util.Box> all_bboxes = all_helices.values.map((helix) => helix_to_box(helix)).toList();
   var selection_box_as_box = util.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping =
-      util.enclosure_list(all_helices.toList(), all_bboxes, selection_box_as_box);
+      util.enclosure_list(all_helices.values, all_bboxes, selection_box_as_box);
 //      util.intersection_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
   List<int> helix_idxs_overlapping = helices_overlapping.map((helix) => helix.idx).toList();
 

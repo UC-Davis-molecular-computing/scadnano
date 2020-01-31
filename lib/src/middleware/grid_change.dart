@@ -13,7 +13,7 @@ grid_change_middleware(Store<AppState> store, dynamic action, NextDispatcher nex
   if (action is actions.GridChange && action.grid == Grid.honeycomb) {
     List<int> illegal_helices = [];
     List<GridPosition> illegal_grid_positions = [];
-    for (Helix helix in store.state.dna_design.helices) {
+    for (Helix helix in store.state.dna_design.helices.values) {
       if (!helix.grid_position.in_honeycomb_lattice()) {
         illegal_helices.add(helix.idx);
         illegal_grid_positions.add(helix.grid_position);

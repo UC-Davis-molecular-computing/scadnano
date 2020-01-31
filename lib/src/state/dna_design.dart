@@ -30,7 +30,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
-    ..helices.replace([])
+    ..helices.replace({})
     ..strands.replace([]));
 
   /****************************** end built_value boilerplate ******************************/
@@ -42,7 +42,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   @nullable
   int get major_tick_distance;
 
-  BuiltList<Helix> get helices;
+  BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
 
@@ -242,7 +242,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   @memoized
   bool get helices_view_order_is_identity {
-    for (var helix in helices) {
+    for (var helix in helices.values) {
       if (helix.idx != helix.view_order) {
         return false;
       }
@@ -250,14 +250,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return true;
   }
 
-  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-
-  static _default_grid_position(int idx) => GridPosition(0, idx);
+//  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
+//  static _default_grid_position(int idx) => GridPosition(0, idx);
 
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {
     var map_builder = MapBuilder<GridPosition, Helix>();
-    for (var helix in helices) {
+    for (var helix in helices.values) {
       map_builder[helix.grid_position] = helix;
     }
     return map_builder.build();
@@ -376,11 +375,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   /// max offset allowed on any Helix in the Model
   @memoized
-  int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
+  int get max_offset => helices.values.map((helix) => helix.max_offset).reduce(max);
 
   /// min offset allowed on any Helix in the Model
   @memoized
-  int get min_offset => helices.map((helix) => helix.min_offset).reduce(min);
+  int get min_offset => helices.values.map((helix) => helix.min_offset).reduce(min);
 
   DNADesign add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
@@ -404,16 +403,20 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
-    List<dynamic> helix_jsons = json_map[constants.helices_key] = [
-      for (var helix in this.helices) helix.to_json_serializable(suppress_indent: suppress_indent)
+    var helix_jsons = json_map[constants.helices_key] = [
+      for (var helix in helices.values) helix.to_json_serializable(suppress_indent: suppress_indent)
     ];
     json_map[constants.strands_key] = [
-      for (var strand in this.strands) strand.to_json_serializable(suppress_indent: suppress_indent)
+      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
     ];
 
-    for (int i = 0; i < helices.length; i++) {
-      var helix = helices[i];
-      var helix_json = suppress_indent ? helix_jsons[i].value : helix_jsons[i];
+    // unwrap from NoIndent if necessary
+    var helix_jsons_unwrapped = List<Map<String, dynamic>>.from(helix_jsons.map(util.unwrap_from_noindent));
+    _remove_helix_idxs_if_default(helix_jsons_unwrapped);
+
+    //
+    for (var helix in helices.values) {
+      var helix_json = util.unwrap_from_noindent(helix_jsons[helix.idx]);
       if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
@@ -473,7 +476,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     int idx = 0;
     for (Map<String, dynamic> helix_json in deserialized_helices_list) {
       HelixBuilder helix_builder = Helix.from_json(helix_json);
-      helix_builder.idx = idx;
+      if (helix_builder.idx == null) {
+        helix_builder.idx = idx;
+      }
       helix_builder.grid = dna_design_builder.grid;
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDNADesignError(
@@ -553,7 +558,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     _set_helices_min_max_offsets(helix_builders, dna_design_builder.strands.build());
 
     // build Helices
-    List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
+    Map<int, Helix> helices = {
+      for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
+    };
     helices = util.helices_assign_svg(helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
@@ -642,23 +649,23 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return null;
   }
 
-  void _ensure_other_substrand_same_deletion_or_insertion(
-      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
-    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
-      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
-          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-          'occupying offset intervals\n'
-          '(${substrand.start}, ${substrand.end}) and\n'
-          '(${other_ss.start}, ${other_ss.end})');
-    }
-    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
-      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
-          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-          'occupying offset intervals\n'
-          '(${substrand.start}, ${substrand.end}) and\n'
-          '(${other_ss.start}, ${other_ss.end})');
-    }
-  }
+//  void _ensure_other_substrand_same_deletion_or_insertion(
+//      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
+//    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
+//      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
+//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
+//          'occupying offset intervals\n'
+//          '(${substrand.start}, ${substrand.end}) and\n'
+//          '(${other_ss.start}, ${other_ss.end})');
+//    }
+//    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
+//      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
+//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
+//          'occupying offset intervals\n'
+//          '(${substrand.start}, ${substrand.end}) and\n'
+//          '(${other_ss.start}, ${other_ss.end})');
+//    }
+//  }
 
   /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
   /// If a mismatch occurs outside an insertion, within_insertion = -1).
@@ -840,6 +847,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return false;
   }
 
+  _remove_helix_idxs_if_default(List<Map<String, dynamic>> helix_jsons) {
+    bool use_default = true;
+    for (int expected_idx = 0; expected_idx < helix_jsons.length; expected_idx++) {
+      Map<String, dynamic> helix_json = helix_jsons[expected_idx];
+      int idx = helix_json[constants.idx_on_helix_key];
+      if (idx != expected_idx) {
+        use_default = false;
+        break;
+      }
+    }
+    if (use_default) {
+      for (Map helix_json in helix_jsons) {
+        helix_json.remove(constants.idx_on_helix_key);
+      }
+    }
+  }
 }
 
 BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(

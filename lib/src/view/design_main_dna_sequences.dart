@@ -13,7 +13,7 @@ UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNAS
 
 @Props()
 class _$DesignMainDNASequencesProps extends UiProps {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
 }

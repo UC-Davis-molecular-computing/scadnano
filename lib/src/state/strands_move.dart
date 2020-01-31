@@ -22,7 +22,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       BuiltList<Strand> all_strands,
       Address original_address,
       int original_helix_idx,
-      BuiltList<Helix> helices,
+      BuiltMap<int, Helix> helices,
       bool copy = false}) {
     var strands_fixed =
         copy ? all_strands : [for (var strand in all_strands) if (!strands_moving.contains(strand)) strand];
@@ -54,7 +54,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   bool get copy;
 
-  BuiltList<Helix> get helices;
+  BuiltMap<int, Helix> get helices;
 
   int get num_helices => helices.length;
 
