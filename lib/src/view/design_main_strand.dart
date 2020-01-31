@@ -278,10 +278,11 @@ ActionCreator remove_dna_strand_action_creator(bool remove_complements, bool rem
 ActionCreator color_set_strand_action_creator(String color_hex) =>
     ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
 
-String tooltip_text(Strand strand) => "Strand:\n"
-    "    length=${strand.dna_length()}\n"
-    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n"
-    "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}";
+String tooltip_text(Strand strand) => "Strand:\n" +
+    "    length=${strand.dna_length()}\n" +
+    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n" +
+    "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}\n" +
+    (strand.idt == null? "": "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
