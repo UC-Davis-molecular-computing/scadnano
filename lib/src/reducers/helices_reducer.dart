@@ -142,8 +142,8 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
   if (num_helices > 0) {
     max_idx_current = design.helices.keys.reduce(max);
     new_idx = max_idx_current + 1;
-    min_offset = 0;
-    max_offset = constants.default_max_offset;
+    min_offset = design.min_offset;
+    max_offset = design.max_offset;
   } else {
     new_idx = 0;
     min_offset = constants.default_min_offset;
