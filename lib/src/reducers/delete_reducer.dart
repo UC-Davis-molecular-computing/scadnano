@@ -11,7 +11,6 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 import '../actions/actions.dart' as actions;
-import '../util.dart' as util;
 
 BuiltList<Strand> delete_all_reducer(
     BuiltList<Strand> strands, AppState state, actions.DeleteAllSelected action) {

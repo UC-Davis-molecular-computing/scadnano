@@ -6,7 +6,7 @@
   ],
   "strands": [
     {
-      "color": "#007200",
+      "color": "#333333",
       "substrands": [
         {"helix": 0, "forward": false, "start": 0, "end": 4},
         {"helix": 1, "forward": true, "start": 0, "end": 8},
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#320096",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]

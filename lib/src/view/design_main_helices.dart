@@ -13,7 +13,7 @@ UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
 
 @Props()
 class _$DesignMainHelicesProps extends UiProps {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
   bool strand_create_enabled;
   int design_major_tick_distance;
@@ -26,7 +26,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
 
     var children = [];
-    for (Helix helix in props.helices) {
+    for (Helix helix in props.helices.values) {
       if (side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(helix.idx)) {
         children.add((DesignMainHelix()
           ..helix = helix

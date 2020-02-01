@@ -9,7 +9,7 @@
   ],
   "strands": [
     {
-      "color": "#7300de",
+      "color": "#57bb00",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 10}
       ]

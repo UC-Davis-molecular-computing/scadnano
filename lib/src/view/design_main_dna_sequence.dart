@@ -32,7 +32,7 @@ UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASeq
 class _$DesignMainDNASequenceProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
 }
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>

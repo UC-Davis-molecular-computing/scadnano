@@ -23,7 +23,7 @@ UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainSt
 @Props()
 class _$DesignMainStrandsMovingProps extends UiProps {
   StrandsMove strands_move;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
 }
 

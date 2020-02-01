@@ -15,33 +15,35 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'selection_reducer.dart';
+import '../extension_methods.dart';
 
-Reducer<BuiltList<Helix>> helices_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
-  TypedReducer<BuiltList<Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
-  TypedReducer<BuiltList<Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
-  TypedReducer<BuiltList<Helix>, actions.HelixMajorTickDistanceChangeAll>(
+Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
-  TypedReducer<BuiltList<Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
-  TypedReducer<BuiltList<Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
-  TypedReducer<BuiltList<Helix>, actions.GridChange>(helix_grid_change_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.GridChange>(helix_grid_change_reducer),
 ]);
 
-GlobalReducer<BuiltList<Helix>, AppState> helices_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelect>(helix_select_helices_reducer),
-  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelectionsAdjust>(
+GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelect>(helix_select_helices_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelectionsAdjust>(
       helix_selections_adjust_helices_reducer),
-  TypedGlobalReducer<BuiltList<Helix>, AppState, actions.HelixSelectionsClear>(
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelectionsClear>(
       helix_selections_clear_helices_reducer),
 ]);
 
-BuiltList<Helix> helix_individual_reducer(BuiltList<Helix> helices, actions.HelixIndividualAction action) {
+BuiltMap<int, Helix> helix_individual_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixIndividualAction action) {
   Helix helix = helices[action.helix_idx];
   var new_helix = _helix_individual_reducers(helix, action);
   if (new_helix != helix) {
-    var helices_list = helices.toBuilder();
-    helices_list[action.helix_idx] = new_helix;
-    return helices_list.build();
+    var helices_map = helices.toBuilder();
+    helices_map[action.helix_idx] = new_helix;
+    return helices_map.build();
   } else {
     return helices;
   }
@@ -65,24 +67,22 @@ Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => h
   ..min_offset = min_offset ?? helix.min_offset
   ..max_offset = max_offset ?? helix.max_offset);
 
-BuiltList<Helix> helix_offset_change_all_reducer(
-        BuiltList<Helix> helices, actions.HelixOffsetChangeAll action) =>
-    helices
-        .map((helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset))
-        .toBuiltList();
+BuiltMap<int, Helix> helix_offset_change_all_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixOffsetChangeAll action) {
+  Helix map_func(Helix helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset);
+  return helices.map_values(map_func);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change major ticks
 
-BuiltList<Helix> helix_major_tick_distance_change_all_reducer(
-        BuiltList<Helix> helices, actions.HelixMajorTickDistanceChangeAll action) =>
-    helices
-        .map((helix) => _change_major_tick_distance_one_helix(helix, action.major_tick_distance))
-        .toBuiltList();
+BuiltMap<int, Helix> helix_major_tick_distance_change_all_reducer(
+        BuiltMap<int, Helix> helices, actions.HelixMajorTickDistanceChangeAll action) =>
+    helices.map_values((helix) => _change_major_tick_distance_one_helix(helix, action.major_tick_distance));
 
-BuiltList<Helix> helix_major_ticks_change_all_reducer(
-        BuiltList<Helix> helices, actions.HelixMajorTicksChangeAll action) =>
-    helices.map((helix) => _change_major_ticks_one_helix(helix, action.major_ticks)).toBuiltList();
+BuiltMap<int, Helix> helix_major_ticks_change_all_reducer(
+        BuiltMap<int, Helix> helices, actions.HelixMajorTicksChangeAll action) =>
+    helices.map_values((helix) => _change_major_ticks_one_helix(helix, action.major_ticks));
 
 Helix helix_major_tick_distance_change_reducer(Helix helix, actions.HelixMajorTickDistanceChange action) =>
     _change_major_tick_distance_one_helix(helix, action.major_tick_distance);
@@ -101,18 +101,19 @@ Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone
 
-BuiltList<Helix> helix_rotation_set_reducer(BuiltList<Helix> helices, actions.HelixRotationSet action) {
+BuiltMap<int, Helix> helix_rotation_set_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixRotationSet action) {
   Helix helix_new = helices[action.helix_idx].rebuild((h) => h
     ..rotation = action.rotation
     ..rotation_anchor = action.anchor);
-  ListBuilder<Helix> helix_list_builder = helices.toBuilder();
-  helix_list_builder[action.helix_idx] = helix_new;
+  MapBuilder<int, Helix> helix_map_builder = helices.toBuilder();
+  helix_map_builder[action.helix_idx] = helix_new;
 
-  return helix_list_builder.build();
+  return helix_map_builder.build();
 }
 
-BuiltList<Helix> helix_rotation_set_at_other_reducer(
-    BuiltList<Helix> helices, actions.HelixRotationSetAtOther action) {
+BuiltMap<int, Helix> helix_rotation_set_at_other_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
   num rotation = util.rotation_between_helices(helices, action);
 
   Helix helix = helices[action.helix_idx];
@@ -132,9 +133,22 @@ BuiltList<Helix> helix_rotation_set_at_other_reducer(
 // helix add/remove
 
 DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd action) {
-  int new_idx = design.helices.length;
-  var min_offset = design.helices.length > 0 ? design.min_offset : 0;
-  var max_offset = design.helices.length > 0 ? design.max_offset : constants.default_max_offset;
+  int max_idx_current;
+  int new_idx;
+  int min_offset;
+  int max_offset;
+
+  int num_helices = design.helices.length;
+  if (num_helices > 0) {
+    max_idx_current = design.helices.keys.reduce(max);
+    new_idx = max_idx_current + 1;
+    min_offset = design.min_offset;
+    max_offset = design.max_offset;
+  } else {
+    new_idx = 0;
+    min_offset = constants.default_min_offset;
+    max_offset = constants.default_max_offset;
+  }
 
 //  num x = 0; //TODO: shift x by grid_position.b or position.z
 //  num y = 0;
@@ -165,10 +179,10 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
     position: action.position,
     min_offset: min_offset,
     max_offset: max_offset,
-    view_order: new_idx,
+    view_order: num_helices,
   );
-  List<Helix> helices = design.helices.toList();
-  helices.add(helix);
+  Map<int, Helix> helices = design.helices.toMap();
+  helices[helix.idx] = helix;
   helices = util.helices_assign_svg(helices, design.grid);
 
   return design.rebuild((d) => d..helices.replace(helices));
@@ -182,7 +196,7 @@ DNADesign helix_remove_dna_design_global_reducer(
   var strands_with_helix_indices_updated =
       change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_bound_substrands(design.helices, action);
-  var new_helices_list = util.helices_assign_svg(new_helices.toList(), design.grid);
+  var new_helices_list = util.helices_assign_svg(new_helices.toMap(), design.grid);
   return design.rebuild(
       (d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_helix_indices_updated));
 }
@@ -209,16 +223,16 @@ List<Strand> change_all_bound_substrand_helix_idxs(BuiltList<Strand> strands, in
 }
 
 /// Remove helix from list, assuming no BoundSubstrands are on it.
-BuiltList<Helix> remove_helix_assuming_no_bound_substrands(
-    BuiltList<Helix> helices, actions.HelixRemove action) {
-  ListBuilder<Helix> helices_builder = helices.toBuilder();
+BuiltMap<int, Helix> remove_helix_assuming_no_bound_substrands(
+    BuiltMap<int, Helix> helices, actions.HelixRemove action) {
+  Map<int, Helix> helices_builder = helices.toMap();
   int removed_view_order = helices[action.helix_idx].view_order;
-  helices_builder.removeAt(action.helix_idx);
-  for (int i = 0; i < helices_builder.length; i++) {
+  helices_builder.remove(action.helix_idx);
+  for (int i in helices_builder.keys) {
     HelixBuilder helix_builder = helices_builder[i].toBuilder();
-    if (i >= action.helix_idx) {
-      helix_builder.idx = i;
-    }
+//    if (i >= action.helix_idx) {
+//      helix_builder.idx = i;
+//    }
     if (helix_builder.view_order >= removed_view_order) {
       helix_builder.view_order--;
     }
@@ -230,9 +244,9 @@ BuiltList<Helix> remove_helix_assuming_no_bound_substrands(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change, so helix must change positions
 
-BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.GridChange action) {
-  List<HelixBuilder> helices_builder = helices.map((h) => h.toBuilder()).toList();
-  for (int i = 0; i < helices.length; i++) {
+BuiltMap<int, Helix> helix_grid_change_reducer(BuiltMap<int, Helix> helices, actions.GridChange action) {
+  Map<int, HelixBuilder> helices_builder = helices.toMap().map_values((h) => h.toBuilder());
+  for (int i in helices.keys) {
     Helix helix = helices[i];
     helices_builder[i].grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
@@ -245,7 +259,8 @@ BuiltList<Helix> helix_grid_change_reducer(BuiltList<Helix> helices, actions.Gri
     }
   }
 
-  BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
+  BuiltMap<int, Helix> new_helices =
+      {for (var helix in helices_builder.values) helix.idx: helix.build()}.build();
   return new_helices;
 }
 
@@ -266,30 +281,31 @@ Helix helix_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated
 
-BuiltList<Helix> _reassign_svg_positions(BuiltList<Helix> helices, BuiltSet<int> selected_helix_idxs) {
+BuiltMap<int, Helix> _reassign_svg_positions(
+    BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
   if (helices.length == 0) {
     return helices;
   }
-  Grid grid = helices.first.grid;
-  List<Helix> helices_list = helices.toList();
-  helices_list = util.helices_assign_svg(helices_list, grid, selected_helix_idxs);
-  return helices_list.toBuiltList();
+  Grid grid = helices.values.first.grid;
+  Map<int, Helix> helices_map = helices.toMap();
+  helices_map = util.helices_assign_svg(helices_map, grid, selected_helix_idxs);
+  return BuiltMap<int, Helix>(helices_map);
 }
 
-BuiltList<Helix> helix_select_helices_reducer(
-    BuiltList<Helix> helices, AppState state, actions.HelixSelect action) {
+BuiltMap<int, Helix> helix_select_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixSelect action) {
   var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
   return _reassign_svg_positions(helices, selected_helix_idxs);
 }
 
-BuiltList<Helix> helix_selections_adjust_helices_reducer(
-    BuiltList<Helix> helices, AppState state, actions.HelixSelectionsAdjust action) {
+BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsAdjust action) {
   var selected_helix_idxs =
       helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
   var new_helices = _reassign_svg_positions(helices, selected_helix_idxs);
   return new_helices;
 }
 
-BuiltList<Helix> helix_selections_clear_helices_reducer(
-        BuiltList<Helix> helices, AppState _, actions.HelixSelectionsClear action) =>
+BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
+        BuiltMap<int, Helix> helices, AppState _, actions.HelixSelectionsClear action) =>
     _reassign_svg_positions(helices, BuiltSet<int>());

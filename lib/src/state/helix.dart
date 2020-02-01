@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:built_value/serializer.dart';
-import 'package:platform_detect/platform_detect.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/position3d.dart';
 
@@ -207,27 +206,29 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
 
-    if (this.has_grid_position()) {
+    if (has_grid_position()) {
       json_map[constants.grid_position_key] =
           this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
-    if (this.has_position()) {
+    if (has_position()) {
       json_map[constants.position3d_key] =
           this.position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
-    if (this.has_nondefault_svg_position()) {
-      json_map[constants.svg_position_key] = [this.svg_position.x, this.svg_position.y];
+    if (has_nondefault_svg_position()) {
+      json_map[constants.svg_position_key] = [svg_position.x, svg_position.y];
     }
 
-    if (this.has_nondefault_rotation()) {
-      json_map[constants.rotation_key] = this.rotation;
+    if (has_nondefault_rotation()) {
+      json_map[constants.rotation_key] = rotation;
     }
 
-    if (this.has_nondefault_rotation_anchor()) {
-      json_map[constants.rotation_anchor_key] = this.rotation_anchor;
+    if (has_nondefault_rotation_anchor()) {
+      json_map[constants.rotation_anchor_key] = rotation_anchor;
     }
+
+    json_map[constants.idx_on_helix_key] = idx;
 
     return suppress_indent ? NoIndent(json_map) : json_map;
   }
@@ -314,6 +315,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     if (json_map.containsKey(constants.min_offset_key)) {
       helix_builder.min_offset = json_map[constants.min_offset_key];
+    }
+
+    if (json_map.containsKey(constants.idx_on_helix_key)) {
+      helix_builder.idx = json_map[constants.idx_on_helix_key];
     }
 
     helix_builder.rotation =

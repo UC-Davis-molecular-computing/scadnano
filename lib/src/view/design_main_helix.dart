@@ -235,14 +235,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
       // TODO: avoid global variable here if possible (move this logic to middleware)
       if (apply_to_all) {
-        for (var other_helix in app.state.dna_design.helices) {
+        for (var other_helix in app.state.dna_design.helices.values) {
           t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
           if (t != null) {
             window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
             return;
           }
         }
-        for (var other_helix in app.state.dna_design.helices) {
+        for (var other_helix in app.state.dna_design.helices.values) {
           t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
           if (t != null) {
             window.alert('major tick ${t} is greater than maximum offset ${other_helix.max_offset}');

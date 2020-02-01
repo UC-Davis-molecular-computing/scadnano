@@ -49,7 +49,7 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
 
   bool selected;
   bool selectable;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;
   BuiltSet<EditModeChoice> edit_modes;
@@ -143,7 +143,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // set up drag detection for moving DNA ends
 //      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
-        var address = util.get_closest_address(event, props.helices);
+        var address = util.get_closest_address(event, props.helices.values);
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
     }

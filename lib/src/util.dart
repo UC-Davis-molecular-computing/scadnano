@@ -19,6 +19,7 @@ import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
 
 import 'app.dart';
+import 'json_serializable.dart';
 import 'state/crossover.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
@@ -73,7 +74,6 @@ class ColorCycler {
 
 final scaffold_color = ColorCycler.scaffold_color;
 
-
 /// Given list of ints, return list of distances between them, with first equal to first, e.g.
 ///   deltas([2,3,5,7,11]) == [2, 1, 2, 2, 4]
 List<int> deltas(Iterable<int> nums) {
@@ -90,7 +90,6 @@ List<int> deltas(Iterable<int> nums) {
   }
   return deltas;
 }
-
 
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
@@ -157,35 +156,45 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-List<Helix> helices_assign_svg(List<Helix> helices, Grid grid, [BuiltSet<int> selected_helix_idxs = null]) {
+Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
+    [BuiltSet<int> selected_helix_idxs = null]) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
-    selected_helix_idxs = [for (int i = 0; i < helices.length; i++) i].toBuiltSet();
+    selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
-  var selected_helices = [for (var helix in helices) if (selected_helix_idxs.contains(helix.idx)) helix];
+  var selected_helices = [
+    for (var helix in helices.values) if (selected_helix_idxs.contains(helix.idx)) helix
+  ];
 
   List<int> view_order = List<int>(selected_helices.length);
   for (int i = 0; i < selected_helices.length; i++) {
     view_order[i] = selected_helices[i].view_order;
   }
 
-  List<Helix> new_helices = List<Helix>.from(helices);
+  List<Helix> new_helices_sorted_by_idx = List<Helix>.from(helices.values);
   num prev_y = null;
+
+  new_helices_sorted_by_idx.sort((h1, h2) => h1.idx - h2.idx);
 
   for (int i = 0; i < view_order.length; i++) {
     int i_unsorted = view_order[i];
-    Helix helix = helices[i_unsorted];
+    int idx_unsorted = new_helices_sorted_by_idx[i_unsorted].idx;
+    Helix helix = helices[idx_unsorted];
+    assert(helix != null);
 
     num x = 0; //TODO: shift x by grid_position.b or position.z
     num y = 0;
     if (i > 0) {
       int prev_i_unsorted = view_order[i - 1];
-      var prev_helix = helices[prev_i_unsorted];
+      int prev_idx_unsorted = new_helices_sorted_by_idx[prev_i_unsorted].idx;
+      var prev_helix = helices[prev_idx_unsorted];
+      assert(prev_helix != null);
+
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
@@ -197,11 +206,16 @@ List<Helix> helices_assign_svg(List<Helix> helices, Grid grid, [BuiltSet<int> se
     prev_y = y;
     helix = helix.rebuild((b) => b..svg_position_ = Point<num>(x, y));
 
-    new_helices[i_unsorted] = helix;
+    new_helices_sorted_by_idx[i_unsorted] = helix;
   }
 
-  return new_helices;
+  return helices_list_to_map(new_helices_sorted_by_idx);
 }
+
+Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
+
+/// If obj is a NoIndent, unwrap the object from it, otherwise return obj.
+dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points
@@ -627,7 +641,7 @@ num to_degrees(num radians) => radians * 360 / (2 * pi);
 
 num to_radians(num degrees) => degrees * 2 * pi / 360;
 
-num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetAtOther action) {
+num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
   Helix helix = helices[action.helix_idx];
   Helix helix_other = helices[action.helix_other_idx];
 
@@ -836,7 +850,7 @@ List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
     generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
 
 // gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> enclosure_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
+List<E> enclosure_list<E>(Iterable<E> elts, List<Box> bboxes, Box select_box) =>
     generalized_intersection_list(elts, bboxes, select_box, interval_contained);
 
 // indicates if (l1,h1) intersect (l2,h2) \neq empty
@@ -850,15 +864,16 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
 }
 
 List<E> generalized_intersection_list<E>(
-    List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+    Iterable<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
   if (elts.length != bboxes.length) {
     throw ArgumentError(
         'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
   }
   List<E> elts_intersecting = [];
-  for (int i = 0; i < elts.length; i++) {
-    Box elt_bbox = bboxes[i];
-    E elt = elts[i];
+//  for (int i = 0; i < elts.length; i++) {
+  int i = 0;
+  for (E elt in elts) {
+    Box elt_bbox = bboxes[i++];
     if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
       elts_intersecting.add(elt);
     }

@@ -16,7 +16,7 @@ def main():
     # add_twist_correct_deletions(design)
     # add_tiles_and_assign_dna(design)
 
-    design.assign_dna(design.scaffold, sc.m13_sequence)
+    design.assign_m13_to_scaffold()
 
     return design
 
@@ -27,10 +27,10 @@ def set_helix_major_ticks(design):
         major_ticks.append(tick)
     major_ticks.extend([490, 501])
 
-    for helix in design.helices:
+    for helix in design.helices.values():
         helix.major_ticks = list(major_ticks)
 
-    for _,helix in zip([0,1,2], design.helices):
+    for _,helix in zip([0,1,2], design.helices.values()):
         ticks = [11, 22, 32, 40, 48]
         tick = 58
         offset = 11

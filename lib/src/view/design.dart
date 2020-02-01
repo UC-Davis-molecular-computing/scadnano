@@ -207,7 +207,7 @@ class DesignViewComponent {
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
         var old_address = strands_move.current_address;
-        var address = util.get_closest_address(event, app.state.dna_design.helices);
+        var address = util.get_closest_address(event, app.state.dna_design.helices.values);
         if (address != old_address) {
           app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
         }

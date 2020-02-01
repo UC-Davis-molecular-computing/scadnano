@@ -21,7 +21,7 @@ def main():
     add_tiles_and_assign_dna(design)
     assign_dna_to_unzipper_toeholds(design)
 
-    design.assign_dna(design.scaffold, sc.m13_sequence)
+    design.assign_m13_to_scaffold()
 
     return design
 
@@ -32,7 +32,7 @@ def set_helix_major_tickets(design):
         major_ticks.append(tick)
     major_ticks.extend([490, 501])
 
-    for helix in design.helices:
+    for helix in design.helices.values():
         helix.major_ticks = list(major_ticks)
 
 

@@ -31,6 +31,7 @@ const String DNA_BASE_WILDCARD = '?';
 const int BASE_WIDTH_SVG = 10;
 const int BASE_HEIGHT_SVG = 10;
 
+const default_min_offset = 0;
 const default_max_offset = 256;
 
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
@@ -90,7 +91,7 @@ const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 
 // Helix keys
-const idx_key = 'idx';
+const idx_on_helix_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';

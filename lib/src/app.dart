@@ -3,6 +3,7 @@ library app;
 
 import 'dart:html';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
@@ -47,11 +48,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-//  List<int> numbers = [1,2,3];
-//  Value value = Value(numbers: numbers);
-//  print(value);
-//  numbers[0] = 9;
-//  print(value);
+
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
