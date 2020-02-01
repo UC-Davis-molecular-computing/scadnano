@@ -146,8 +146,8 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
     max_offset = constants.default_max_offset;
   } else {
     new_idx = 0;
-    min_offset = design.min_offset;
-    max_offset = design.max_offset;
+    min_offset = constants.default_min_offset;
+    max_offset = constants.default_max_offset;
   }
 
 //  num x = 0; //TODO: shift x by grid_position.b or position.z
