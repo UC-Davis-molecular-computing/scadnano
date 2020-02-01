@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
@@ -131,9 +133,22 @@ BuiltMap<int, Helix> helix_rotation_set_at_other_reducer(
 // helix add/remove
 
 DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd action) {
-  int new_idx = design.helices.length;
-  var min_offset = design.helices.length > 0 ? design.min_offset : 0;
-  var max_offset = design.helices.length > 0 ? design.max_offset : constants.default_max_offset;
+  int max_idx_current;
+  int new_idx;
+  int min_offset;
+  int max_offset;
+
+  int num_helices = design.helices.length;
+  if (num_helices > 0) {
+    max_idx_current = design.helices.keys.reduce(max);
+    new_idx = max_idx_current + 1;
+    min_offset = 0;
+    max_offset = constants.default_max_offset;
+  } else {
+    new_idx = 0;
+    min_offset = design.min_offset;
+    max_offset = design.max_offset;
+  }
 
 //  num x = 0; //TODO: shift x by grid_position.b or position.z
 //  num y = 0;
@@ -164,7 +179,7 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
     position: action.position,
     min_offset: min_offset,
     max_offset: max_offset,
-    view_order: new_idx,
+    view_order: num_helices,
   );
   Map<int, Helix> helices = design.helices.toMap();
   helices[helix.idx] = helix;
@@ -210,14 +225,14 @@ List<Strand> change_all_bound_substrand_helix_idxs(BuiltList<Strand> strands, in
 /// Remove helix from list, assuming no BoundSubstrands are on it.
 BuiltMap<int, Helix> remove_helix_assuming_no_bound_substrands(
     BuiltMap<int, Helix> helices, actions.HelixRemove action) {
-  MapBuilder<int, Helix> helices_builder = helices.toBuilder();
+  Map<int, Helix> helices_builder = helices.toMap();
   int removed_view_order = helices[action.helix_idx].view_order;
   helices_builder.remove(action.helix_idx);
-  for (int i = 0; i < helices_builder.length; i++) {
+  for (int i in helices_builder.keys) {
     HelixBuilder helix_builder = helices_builder[i].toBuilder();
-    if (i >= action.helix_idx) {
-      helix_builder.idx = i;
-    }
+//    if (i >= action.helix_idx) {
+//      helix_builder.idx = i;
+//    }
     if (helix_builder.view_order >= removed_view_order) {
       helix_builder.view_order--;
     }

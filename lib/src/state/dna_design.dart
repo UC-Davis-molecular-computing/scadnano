@@ -236,8 +236,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
 
   @memoized
-  BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
-    return construct_helix_idx_to_substrands_map(helices.length, strands);
+  BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
+
+  @memoized
+  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
+    return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
 
   @memoized
@@ -403,20 +406,23 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
-    var helix_jsons = json_map[constants.helices_key] = [
-      for (var helix in helices.values) helix.to_json_serializable(suppress_indent: suppress_indent)
-    ];
     json_map[constants.strands_key] = [
       for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
     ];
 
+    var helix_jsons_map = {
+      for (var helix in helices.values)
+        helix.idx: helix.to_json_serializable(suppress_indent: suppress_indent)
+    };
+
     // unwrap from NoIndent if necessary
-    var helix_jsons_unwrapped = List<Map<String, dynamic>>.from(helix_jsons.map(util.unwrap_from_noindent));
+    var helix_jsons_unwrapped =
+        List<Map<String, dynamic>>.from(helix_jsons_map.values.map(util.unwrap_from_noindent));
     _remove_helix_idxs_if_default(helix_jsons_unwrapped);
 
     //
     for (var helix in helices.values) {
-      var helix_json = util.unwrap_from_noindent(helix_jsons[helix.idx]);
+      var helix_json = util.unwrap_from_noindent(helix_jsons_map[helix.idx]);
       if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
@@ -424,6 +430,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         helix_json[constants.min_offset_key] = helix.min_offset;
       }
     }
+
+    json_map[constants.helices_key] = helix_jsons_map.values.toList();
 
     return json_map;
   }
@@ -865,32 +873,42 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 }
 
-BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(
-    int num_helices, Iterable<Strand> strands) {
-  var helix_idx_to_substrands_builder = List<List<BoundSubstrand>>();
-  for (int _ = 0; _ < num_helices; _++) {
-    helix_idx_to_substrands_builder.add(List<BoundSubstrand>());
+BuiltMap<int, BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
+    [Iterable<int> helix_idxs = null]) {
+  var helix_idx_to_substrands = Map<int, List<BoundSubstrand>>();
+
+  if (helix_idxs != null) {
+    for (int helix_idx in helix_idxs) {
+      helix_idx_to_substrands[helix_idx] = [];
+    }
   }
+
   for (Strand strand in strands) {
     for (Substrand substrand in strand.substrands) {
       if (substrand.is_bound_substrand()) {
         var bound_ss = substrand as BoundSubstrand;
-        helix_idx_to_substrands_builder[bound_ss.helix].add(bound_ss);
+        if (helix_idx_to_substrands.containsKey(bound_ss.helix)) {
+          helix_idx_to_substrands[bound_ss.helix].add(bound_ss);
+        } else {
+          helix_idx_to_substrands[bound_ss.helix] = [bound_ss];
+        }
       }
     }
   }
 
-  var helix_idx_to_substrands_builtset_builder = List<BuiltList<BoundSubstrand>>();
-  for (var substrands in helix_idx_to_substrands_builder) {
+  var helix_idx_to_substrands_builtset_builder = Map<int, BuiltList<BoundSubstrand>>();
+  for (var helix_idx in helix_idx_to_substrands.keys) {
     // sort by start offset; since the intervals are disjoint, this sorts them by end as well
+    var substrands = helix_idx_to_substrands[helix_idx];
     substrands.sort((ss1, ss2) => ss1.start - ss2.start);
-    helix_idx_to_substrands_builtset_builder.add(substrands.build());
+    helix_idx_to_substrands_builtset_builder[helix_idx] = substrands.build();
   }
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
 _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
-  var helix_idx_to_substrands = construct_helix_idx_to_substrands_map(helix_builders.length, strands);
+  var helix_idx_to_substrands =
+      construct_helix_idx_to_substrands_map(strands, helix_builders.map((h) => h.idx));
 
   for (int idx = 0; idx < helix_builders.length; idx++) {
     HelixBuilder helix_builder = helix_builders[idx];

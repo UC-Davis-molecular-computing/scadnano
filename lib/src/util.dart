@@ -159,7 +159,7 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
 Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
     [BuiltSet<int> selected_helix_idxs = null]) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
-    selected_helix_idxs = [for (int i = 0; i < helices.length; i++) i].toBuiltSet();
+    selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
   var selected_helices = [
@@ -171,23 +171,30 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
     view_order[i] = selected_helices[i].view_order;
   }
 
-  List<Helix> new_helices = List<Helix>.from(helices.values);
+  List<Helix> new_helices_sorted_by_idx = List<Helix>.from(helices.values);
   num prev_y = null;
+
+  new_helices_sorted_by_idx.sort((h1, h2) => h1.idx - h2.idx);
 
   for (int i = 0; i < view_order.length; i++) {
     int i_unsorted = view_order[i];
-    Helix helix = helices[i_unsorted];
+    int idx_unsorted = new_helices_sorted_by_idx[i_unsorted].idx;
+    Helix helix = helices[idx_unsorted];
+    assert(helix != null);
 
     num x = 0; //TODO: shift x by grid_position.b or position.z
     num y = 0;
     if (i > 0) {
       int prev_i_unsorted = view_order[i - 1];
-      var prev_helix = helices[prev_i_unsorted];
+      int prev_idx_unsorted = new_helices_sorted_by_idx[prev_i_unsorted].idx;
+      var prev_helix = helices[prev_idx_unsorted];
+      assert(prev_helix != null);
+
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
@@ -199,10 +206,10 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
     prev_y = y;
     helix = helix.rebuild((b) => b..svg_position_ = Point<num>(x, y));
 
-    new_helices[i_unsorted] = helix;
+    new_helices_sorted_by_idx[i_unsorted] = helix;
   }
 
-  return helices_list_to_map(new_helices);
+  return helices_list_to_map(new_helices_sorted_by_idx);
 }
 
 Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};

@@ -67,12 +67,12 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   bool get is_nontrivial => original_address != current_address;
 
   @memoized
-  BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands_moving =>
-      construct_helix_idx_to_substrands_map(num_helices, strands_moving);
+  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands_moving =>
+      construct_helix_idx_to_substrands_map(strands_moving, helices.keys);
 
   @memoized
-  BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands_fixed =>
-      construct_helix_idx_to_substrands_map(num_helices, strands_fixed);
+  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands_fixed =>
+      construct_helix_idx_to_substrands_map(strands_fixed, helices.keys);
 
   @memoized
   BuiltList<int> get helices_moving {
