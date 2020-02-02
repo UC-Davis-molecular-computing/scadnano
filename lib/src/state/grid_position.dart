@@ -62,8 +62,15 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
       x_diff = h - other.h;
       y_diff = v - other.v;
     } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-      var pos = util.hex_grid_position_to_position2d_diameter_1_circles(this);
-      var other_pos = util.hex_grid_position_to_position2d_diameter_1_circles(other);
+      var pos;
+      var other_pos;
+      if (grid == Grid.hex) {
+        pos = util.hex_grid_position_to_position2d_diameter_1_circles(this);
+        other_pos = util.hex_grid_position_to_position2d_diameter_1_circles(other);
+      } else if (grid == Grid.honeycomb) {
+        pos = util.honeycomb_grid_position_to_position2d_diameter_1_circles(this);
+        other_pos = util.honeycomb_grid_position_to_position2d_diameter_1_circles(other);
+      }
       x_diff = other_pos.x - pos.x;
       y_diff = other_pos.y - pos.y;
     } else {

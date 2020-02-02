@@ -386,8 +386,10 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
-  } else if (grid == Grid.hex || grid == Grid.honeycomb) {
+  } else if (grid == Grid.hex) {
     point = hex_grid_position_to_position2d_diameter_1_circles(gp);
+  } else if (grid == Grid.honeycomb) {
+    point = honeycomb_grid_position_to_position2d_diameter_1_circles(gp);
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
@@ -428,6 +430,20 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
   return Point<num>(x, y);
 }
 
+// Uses cadnano coordinate system:
+//   https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
+Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
+  num x, y;
+  y = 1.5 * gp.v;
+  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
+    y += 0.5;
+  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
+    y += cos(2 * pi / 6);
+  }
+  x = gp.h * sin(2 * pi / 6);
+  return Point<num>(x, y);
+}
+
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
@@ -435,12 +451,27 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
   num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
   int b = 0;
-  if (grid.is_none()) {
+  // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
+  if (grid == Grid.none) {
     throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
   } else if (grid == Grid.square) {
     h = x.round();
     v = y.round();
-  } else if (grid == Grid.honeycomb || grid == Grid.hex) {
+  } else if (grid == Grid.honeycomb) {
+    h = (x / sin(2 * pi / 6)).round();
+    if (h % 2 == 0) {
+      int remainder_by_3 = y.floor() % 3;
+      if (remainder_by_3 == 2) {
+        y -= 0.5;
+      }
+    } else if (h % 2 == 1) {
+      int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
+      if (remainder_by_3 == 1) {
+        y -= cos(2 * pi / 6);
+      }
+    }
+    v = (y / 1.5).round();
+  } else if (grid == Grid.hex) {
     if (coordinate_system == HexGridCoordinateSystem.odd_r) {
       v = (y / sin(2 * pi / 6)).round();
       if (v % 2 == 1) {
@@ -561,12 +592,15 @@ external fit_and_center();
 @JS()
 @anonymous
 class Pan {
-  external int get x;
-  external int get y;
-  external factory Pan({int x, int y});
+  external num get x;
+
+  external num get y;
+
+  external factory Pan({num x, num y});
 }
 
 set_pan_side(Point<num> pos) => _set_pan_side_js(Pan(x: pos.x, y: pos.y));
+
 set_pan_main(Point<num> pos) => _set_pan_main_js(Pan(x: pos.x, y: pos.y));
 
 Point<num> current_pan(bool is_main) {

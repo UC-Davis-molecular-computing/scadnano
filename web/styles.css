@@ -603,7 +603,7 @@ html, body {
 
 .main-view-helix-text {
     font-family: Helvetica, serif;
-    font-size: 36pt;
+    font-size: 32pt;
     fill: DarkBlue;
     stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
     text-anchor: middle;
@@ -612,7 +612,7 @@ html, body {
 
 .side-view-helix-text {
     font-family: Helvetica, serif;
-    font-size: 24pt;
+    font-size: 22pt;
     fill: DarkBlue;
     text-anchor: middle;
     dominant-baseline: central;

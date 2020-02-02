@@ -33,7 +33,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   strand_create_middleware,
   helix_remove_middleware,
   helix_change_offsets_middleware,
-  grid_change_middleware,
+//  grid_change_middleware,
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
