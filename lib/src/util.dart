@@ -555,6 +555,9 @@ external _set_pan_side_js(Pan pan);
 @JS(constants.js_function_name_set_pan_main)
 external _set_pan_main_js(Pan pan);
 
+@JS(constants.js_function_name_fit_and_center)
+external fit_and_center();
+
 @JS()
 @anonymous
 class Pan {

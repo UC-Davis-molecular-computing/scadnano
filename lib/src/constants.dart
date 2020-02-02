@@ -64,6 +64,7 @@ const js_function_name_set_pan_side = 'set_pan_side';
 const js_function_name_set_pan_main = 'set_pan_main';
 const js_function_name_set_zoom_side = 'set_zoom_side';
 const js_function_name_set_zoom_main = 'set_zoom_main';
+const js_function_name_fit_and_center = 'fit_and_center';
 const js_function_name_compile = 'compile';
 
 const js_function_name_start_brython = 'start_brython';

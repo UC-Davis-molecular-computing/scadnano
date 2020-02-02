@@ -32,6 +32,7 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
       }
       util.set_pan_side(pan_side);
       util.set_pan_main(pan_main);
+//      util.fit_and_center(); // doesn't work like I had hoped
     }
   }
 }
