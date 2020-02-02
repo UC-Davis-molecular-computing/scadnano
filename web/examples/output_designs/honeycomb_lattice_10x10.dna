@@ -1,6 +1,6 @@
 {
-  "version": "0.0.1",
-  "grid": "hex",
+  "version": "0.2.0",
+  "grid": "honeycomb",
   "helices": [
     {"max_offset": 16, "grid_position": [0, 0]},
     {"max_offset": 16, "grid_position": [1, 0]},
