@@ -44,7 +44,7 @@ After loading you should see this:
 
 ![](images/empty.png)
 
-The left part is called the "side view" and the right part is called the "main view".
+The left part is called the "side view" and the middle part is called the "main view".
 
 First, save this design into a file by pressing the "Save" button. Name the file `24_helix_rectangle.dna`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically using the "Save" button.
 
@@ -72,9 +72,9 @@ In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D s
 
 Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end is to the right of its 5' end; this strand is a "forward" strand. If there is another strand occupying some of the same offsets, it must be oriented in the opposite direction, i.e., its 3' end is to the left, a so-called "reverse" strand, and it will be drawn in the second row of the helix's offsets.
 
-For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D projections of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a projection. See the [documentation](../README.md) for an explanation of how the main view decides helix positions in the main view.
+For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D [projections](https://en.wikipedia.org/wiki/3D_projection) of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a [linear projection](https://en.wikipedia.org/wiki/Projection_(linear_algebra)). See the [documentation](../README.md) for an explanation of how scadnano chooses helix positions in the main view.
 
-Each helix has given an integer *index*, starting at 0 in the order you create them. If a helix is deleted, all larger indices are decremented to ensure that they are numbered 0, ..., *h* - 1, where *h* is the number of helices. By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
+Each helix has given an integer *index*, starting at 0 in the order you create them. The helix indices can be any integers, but they must be unique to a helix. By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
 
 For now, we just have to be careful to add helices in the order we want them to appear in the main view. In both the main view and side view, we'd like them to appear 0,1,...,23 in order from top to bottom, so zoom out in the side view, and click in the side view to create 23 more helices below the first. If you mess up and click somewhere incorrectly, you can press Ctrl+Z to undo the last action (and Ctrl+Shift+Z to redo):
 
@@ -145,7 +145,7 @@ Unfortunately, to drag the 3' end, you do have to click it. So it may require zo
 
 ![](images/scaffold_helix_0_full_length.png)
 
-Note that we stop a bit short on either  (leaving 8 unoccupied offsets on each side of the helix), because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912.
+Note that we stop a bit short on each side (leaving 8 unoccupied offsets on each side of the helix), because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912. (Actually it will be slightly shorter because of the deletions we add near the end.)
 
 
 
