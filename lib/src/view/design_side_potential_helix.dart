@@ -46,6 +46,15 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       svg_ideal_pos = util.side_view_grid_to_svg(props.grid_position, props.grid);
     }
 
+    String tooltip = '';
+    if (props.grid.is_none()){
+//      var pos = props.helix.position3d();
+//      tooltip = '${pos.x}, ${pos.y}';
+    } else {
+      var pos = props.grid_position;
+      tooltip = '${pos.h}, ${pos.v}';
+    }
+
     return (Dom.circle()
       ..cx = svg_ideal_pos.x
       ..cy = svg_ideal_pos.y
@@ -53,7 +62,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       ..onClick = _handle_click
       ..className = allowed_grid_position
           ? 'side-view-potential-helix'
-          : 'side-view-potential-helix-disallowed-position')();
+          : 'side-view-potential-helix-disallowed-position')(Dom.svgTitle()(tooltip));
   }
 
   _handle_click(SyntheticMouseEvent event) {

@@ -58,16 +58,25 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       classname_circle += ' deletable';
     }
 
+    String tooltip;
+    if (props.grid.is_none()){
+      var pos = props.helix.position3d();
+      tooltip = '${pos.x}, ${pos.y}';
+    } else {
+      var pos = props.helix.grid_position;
+      tooltip = '${pos.h}, ${pos.v}';
+    }
+
     var children = [
       (Dom.circle()
         ..className = classname_circle
         ..r = '${constants.SIDE_HELIX_RADIUS}'
         ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'circle')(),
+        ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
         ..className = '$SIDE_VIEW_PREFIX-helix-text'
         ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'text')(this.props.helix.idx.toString()),
+        ..key = 'text')(this.props.helix.idx.toString(), Dom.svgTitle()(tooltip)),
     ];
 
 //    print('checking mouseover data');
