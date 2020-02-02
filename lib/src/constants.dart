@@ -24,7 +24,7 @@ const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.1.0";
+const String CURRENT_VERSION = "0.2.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
