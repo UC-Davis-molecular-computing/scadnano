@@ -2684,18 +2684,18 @@ main() {
     test('Test SetShowDNA', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
-      AppState final_state = app_state_reducer(initial_state, SetShowDNA(true));
+      AppState final_state = app_state_reducer(initial_state, ShowDNASet(true));
       expect(final_state.ui_state.show_dna, true);
-      final_state = app_state_reducer(final_state, SetShowDNA(false));
+      final_state = app_state_reducer(final_state, ShowDNASet(false));
       expect(final_state.ui_state.show_dna, false);
     });
 
     test('Test SetShowMismatches', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
-      AppState final_state = app_state_reducer(initial_state, SetShowMismatches(true));
+      AppState final_state = app_state_reducer(initial_state, ShowMismatchesSet(true));
       expect(final_state.ui_state.show_mismatches, true);
-      final_state = app_state_reducer(final_state, SetShowMismatches(false));
+      final_state = app_state_reducer(final_state, ShowMismatchesSet(false));
       expect(final_state.ui_state.show_mismatches, false);
     });
 

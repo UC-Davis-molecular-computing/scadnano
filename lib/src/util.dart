@@ -221,7 +221,7 @@ dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 // transforming of points
 
 /// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
-Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
+Helix get_closest_helix(MouseEvent event, Iterable<Helix> helices) {
   var svg_coord = round_point(svg_position_of_mouse_click(event));
 
   num svg_y = svg_coord.y;
@@ -247,7 +247,7 @@ num distance_y_coord_to_closest_helix(Helix helix, num y) =>
     (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
 
 /// Return (closest) helix, offset and direction where click event occurred.
-Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
+Address get_closest_address(MouseEvent event, Iterable<Helix> helices) {
   var svg_coord = round_point(svg_position_of_mouse_click(event));
   Helix helix = get_closest_helix(event, helices);
   int offset = helix.svg_x_to_offset(svg_coord.x);
@@ -538,13 +538,36 @@ external num current_zoom_main_js();
 external num current_zoom_side_js();
 
 @JS(constants.js_function_name_current_pan_main)
-external List<num> current_pan_main_js();
+external List<num> _current_pan_main_js();
 
 @JS(constants.js_function_name_current_pan_side)
-external List<num> current_pan_side_js();
+external List<num> _current_pan_side_js();
+
+@JS(constants.js_function_name_set_zoom_side)
+external set_zoom_side(num zoom);
+
+@JS(constants.js_function_name_set_zoom_main)
+external set_zoom_main(num zoom);
+
+@JS(constants.js_function_name_set_pan_side)
+external _set_pan_side_js(Pan pan);
+
+@JS(constants.js_function_name_set_pan_main)
+external _set_pan_main_js(Pan pan);
+
+@JS()
+@anonymous
+class Pan {
+  external int get x;
+  external int get y;
+  external factory Pan({int x, int y});
+}
+
+set_pan_side(Point<num> pos) => _set_pan_side_js(Pan(x: pos.x, y: pos.y));
+set_pan_main(Point<num> pos) => _set_pan_main_js(Pan(x: pos.x, y: pos.y));
 
 Point<num> current_pan(bool is_main) {
-  var ret = is_main ? current_pan_main_js() : current_pan_side_js();
+  var ret = is_main ? _current_pan_main_js() : _current_pan_side_js();
   return Point<num>(ret[0], ret[1]);
 }
 

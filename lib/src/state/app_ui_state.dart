@@ -31,6 +31,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..show_dna = false
   ..show_editor = false
   ..show_mismatches = true
+  ..autofit = true
   ..drawing_potential_crossover = false
   ..moving_dna_ends = false
   ..changed_since_last_save = false
@@ -79,6 +80,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_mismatches;
 
+  bool get autofit;
+
   bool get show_editor;
 
   bool get drawing_potential_crossover;
@@ -118,6 +121,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
+
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

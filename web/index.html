@@ -343,6 +343,31 @@
 
     }
 
+    function set_pan_side(pan) {
+        if (typeof side_view_svg_pan_zoom !== 'undefined') {
+            side_view_svg_pan_zoom.pan(pan);
+        }
+    }
+
+    function set_pan_main(pan) {
+        if (typeof main_view_svg_pan_zoom !== 'undefined') {
+            main_view_svg_pan_zoom.pan(pan);
+        }
+    }
+
+    function set_zoom_side(zoom) {
+        if (typeof side_view_svg_pan_zoom !== 'undefined') {
+            side_view_svg_pan_zoom.zoom(zoom);
+        }
+    }
+
+    function set_zoom_main(zoom) {
+        if (typeof main_view_svg_pan_zoom !== 'undefined') {
+            main_view_svg_pan_zoom.zoom(zoom);
+        }
+    }
+
+
     function current_pan_main() {
         //XXX: dartdevc can handle passing the object pan directly, but the release version requires
         // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot

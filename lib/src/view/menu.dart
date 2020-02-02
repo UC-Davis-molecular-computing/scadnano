@@ -21,6 +21,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (state) => (Menu()
     ..show_dna = state.ui_state.show_dna
     ..show_mismatches = state.ui_state.show_mismatches
+    ..autofit = state.ui_state.autofit
     ..grid = state.dna_design?.grid
     ..example_dna_designs = state.ui_state.example_dna_designs
     ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true),
@@ -33,6 +34,7 @@ UiFactory<MenuProps> Menu = _$Menu;
 class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool show_dna;
   bool show_mismatches;
+  bool autofit;
   Grid grid;
   ExampleDNADesigns example_dna_designs;
   bool design_has_insertions_or_deletions;
@@ -54,11 +56,6 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 
   @override
   render() {
-    bool show_dna = props.show_dna;
-    bool show_mismatches = props.show_mismatches;
-    Grid grid = props.grid;
-//    bool show_editor = this.props.store.show_editor_store.show_editor;
-
     String load_example_title = 'Load example';
 
     return [
@@ -156,13 +153,16 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..className = 'inline-ins-del-button menu-item'
         ..key = 'inline-ins-del')('Inline I/D'),
       (Dom.span()
+        ..title = '''Check to show DNA sequences that have been assigned to strands.
+In a large design, this can slow down the performance of panning and
+zooming navigation, so uncheck it to speed up navigation.'''
         ..className = 'show-dna-span menu-item'
         ..key = 'show-dna')(
         (Dom.label()..key = 'show-dna-label')(
           (Dom.input()
-            ..checked = show_dna
+            ..checked = props.show_dna
             ..onChange = (_) {
-              props.dispatch(actions.SetShowDNA(!show_dna));
+              props.dispatch(actions.ShowDNASet(!props.show_dna));
             }
             ..addTestId('scadnano.MenuComponent.input.show_dna')
             ..type = 'checkbox')(),
@@ -172,16 +172,43 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       (Dom.span()
         ..className = 'show-mismatches-span menu-item'
         ..key = 'show-mismatches')(
-        (Dom.label()..key = 'show-mismatches-label')(
+        (Dom.label()
+          ..title = '''Check to show mismatches between DNA assigned to one strand 
+and the strand on the same helix with the opposite orientation.'''
+          ..key = 'show-mismatches-label')(
           (Dom.input()
-            ..checked = show_mismatches
+            ..checked = props.show_mismatches
             ..onChange = (_) {
-//                Actions.set_show_mismatches(!show_mismatches);
-              props.dispatch(actions.SetShowMismatches(!show_mismatches));
+              props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
             }
             ..addTestId('scadnano.MenuComponent.input.show_mismatches')
             ..type = 'checkbox')(),
           'show mismatches',
+        ),
+      ),
+      (Dom.span()
+        ..className = 'center-on-load-span menu-item'
+        ..key = 'center-on-load')(
+        (Dom.label()
+          ..title = '''Check this so that, when loading a new design, the side and main views will be 
+translated to show the lowest-index helix in the upper-left. Otherwise, after 
+loading the design, you may not be able to see it because it is translated off 
+the screen.              
+
+You may want to uncheck this when working on a design with the scripting library. 
+In that case, when repeatedly re-running the script to modify the design and then 
+re-loading it, it is preferable to keep the design centered at the same location 
+you had before, in order to be able to see the same part of the design you were 
+looking at before changing the script.'''
+          ..key = 'center-on-load-label')(
+          (Dom.input()
+            ..checked = props.autofit
+            ..onChange = (_) {
+              props.dispatch(actions.AutofitSet(autofit: !props.autofit));
+            }
+            ..addTestId('scadnano.MenuComponent.input.center_on_load')
+            ..type = 'checkbox')(),
+          'auto-fit',
         ),
       ),
       (Dom.select()
@@ -191,7 +218,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           props.dispatch(actions.GridChange(grid: grid_options[idx]));
         })
         ..addTestId('scadnano.MenuComponent.select.grid')
-        ..value = grid.toString()
+        ..value = props.grid.toString()
         ..key = 'grid')([
         (Dom.option()
           ..value = 'Grid'

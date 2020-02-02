@@ -275,38 +275,38 @@ abstract class SelectModesSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show/hide DNA/mismatches/editor
 
-abstract class SetShowDNA
+abstract class ShowDNASet
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowDNA, SetShowDNABuilder> {
+    implements StorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.show_dna];
 
-  factory SetShowDNA(bool show) => SetShowDNA.from((b) => b..show = show);
+  factory ShowDNASet(bool show) => ShowDNASet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetShowDNA.from([void Function(SetShowDNABuilder) updates]) = _$SetShowDNA;
+  factory ShowDNASet.from([void Function(ShowDNASetBuilder) updates]) = _$ShowDNASet;
 
-  SetShowDNA._();
+  ShowDNASet._();
 
-  static Serializer<SetShowDNA> get serializer => _$setShowDNASerializer;
+  static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
 }
 
-abstract class SetShowMismatches
+abstract class ShowMismatchesSet
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowMismatches, SetShowMismatchesBuilder> {
+    implements StorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.show_mismatches];
 
-  factory SetShowMismatches(bool show) => SetShowMismatches.from((b) => b..show = show);
+  factory ShowMismatchesSet(bool show) => ShowMismatchesSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetShowMismatches.from([void Function(SetShowMismatchesBuilder) updates]) = _$SetShowMismatches;
+  factory ShowMismatchesSet.from([void Function(ShowMismatchesSetBuilder) updates]) = _$ShowMismatchesSet;
 
-  SetShowMismatches._();
+  ShowMismatchesSet._();
 
-  static Serializer<SetShowMismatches> get serializer => _$setShowMismatchesSerializer;
+  static Serializer<ShowMismatchesSet> get serializer => _$showMismatchesSetSerializer;
 }
 
 abstract class SetShowEditor
@@ -1652,4 +1652,21 @@ abstract class InlineInsertionsDeletions
   InlineInsertionsDeletions._();
 
   static Serializer<InlineInsertionsDeletions> get serializer => _$inlineInsertionsDeletionsSerializer;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// center on load
+
+abstract class AutofitSet
+    with BuiltJsonSerializable
+    implements Action, Built<AutofitSet, AutofitSetBuilder> {
+  bool get autofit;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AutofitSet({bool autofit}) = _$AutofitSet._;
+
+  AutofitSet._();
+
+  static Serializer<AutofitSet> get serializer => _$autofitSetSerializer;
 }

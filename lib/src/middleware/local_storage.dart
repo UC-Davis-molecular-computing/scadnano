@@ -96,9 +96,9 @@ _restore(Storable storable) {
       }
       action = actions.LoadDNAFile(content: value, filename: filename);
     } else if (storable == Storable.show_dna) {
-      action = actions.SetShowDNA(value == 'true');
+      action = actions.ShowDNASet(value == 'true');
     } else if (storable == Storable.show_mismatches) {
-      action = actions.SetShowMismatches(value == 'true');
+      action = actions.ShowMismatchesSet(value == 'true');
     } else if (storable == Storable.show_editor) {
       action = actions.SetShowEditor(value == 'true');
     } else if (storable == Storable.editor_mode) {

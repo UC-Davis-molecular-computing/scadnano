@@ -60,6 +60,10 @@ const js_function_name_current_pan_main = 'current_pan_main';
 const js_function_name_current_pan_side = 'current_pan_side';
 const js_function_name_current_zoom_main = 'current_zoom_main';
 const js_function_name_current_zoom_side = 'current_zoom_side';
+const js_function_name_set_pan_side = 'set_pan_side';
+const js_function_name_set_pan_main = 'set_pan_main';
+const js_function_name_set_zoom_side = 'set_zoom_side';
+const js_function_name_set_zoom_main = 'set_zoom_main';
 const js_function_name_compile = 'compile';
 
 const js_function_name_start_brython = 'start_brython';

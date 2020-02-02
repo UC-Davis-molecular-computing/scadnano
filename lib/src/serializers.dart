@@ -42,8 +42,8 @@ part 'serializers.g.dart';
   SelectModeToggle,
   SelectModesSet,
   SelectionBox,
-  SetShowDNA,
-  SetShowMismatches,
+  ShowDNASet,
+  ShowMismatchesSet,
   SetShowEditor,
   SaveDNAFile,
   LoadDNAFile,
@@ -164,6 +164,7 @@ part 'serializers.g.dart';
   HelixPositionSet,
   HelixGridPositionSet,
   InlineInsertionsDeletions,
+  AutofitSet,
 ])
 Serializers serializers = _$serializers;
 

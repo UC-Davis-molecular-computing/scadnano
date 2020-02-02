@@ -28,9 +28,10 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
   ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
   ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
-  ..show_dna = TypedReducer<bool, actions.SetShowDNA>(show_dna_reducer)(ui_state.show_dna, action)
+  ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
   ..show_mismatches =
-      TypedReducer<bool, actions.SetShowMismatches>(show_mismatches_reducer)(ui_state.show_mismatches, action)
+      TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
+  ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
@@ -74,11 +75,13 @@ bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart a
 
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
 
-bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
+bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
-bool show_mismatches_reducer(bool prev_show, actions.SetShowMismatches action) => action.show;
+bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool show_editor_reducer(bool prev_show, actions.SetShowEditor action) => action.show;
+bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
+
+bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
 
 bool assign_complement_to_bound_strands_default_reducer(bool _, actions.AssignDNA action) =>
     action.assign_complements;
@@ -162,3 +165,5 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
       mouseover_data_update_reducer),
 ]);
+
+
