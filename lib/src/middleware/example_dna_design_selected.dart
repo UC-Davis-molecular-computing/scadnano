@@ -7,7 +7,7 @@ import '../util.dart' as util;
 
 example_dna_design_selected_middleware(Store<AppState> store, action, NextDispatcher next) {
   next(action);
-  if (action is actions.ExampleDNADesignsIdxSet) {
+  if (action is actions.ExampleDNADesignsLoad) {
     var example_dna_designs = store.state.ui_state.example_dna_designs;
     String url = example_dna_designs.url;
     String filename = example_dna_designs.selected_filename;

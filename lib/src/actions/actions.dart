@@ -1592,17 +1592,17 @@ abstract class StrandColorSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // example DNA design
 
-abstract class ExampleDNADesignsIdxSet
+abstract class ExampleDNADesignsLoad
     with BuiltJsonSerializable
-    implements Action, Built<ExampleDNADesignsIdxSet, ExampleDNADesignsIdxSetBuilder> {
+    implements Action, Built<ExampleDNADesignsLoad, ExampleDNADesignsLoadBuilder> {
   int get selected_idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExampleDNADesignsIdxSet({int selected_idx}) = _$ExampleDNADesignsIdxSet._;
+  factory ExampleDNADesignsLoad({int selected_idx}) = _$ExampleDNADesignsLoad._;
 
-  ExampleDNADesignsIdxSet._();
+  ExampleDNADesignsLoad._();
 
-  static Serializer<ExampleDNADesignsIdxSet> get serializer => _$exampleDNADesignsIdxSetSerializer;
+  static Serializer<ExampleDNADesignsLoad> get serializer => _$exampleDNADesignsLoadSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
@@ -13,7 +14,7 @@ import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/app_ui_state.dart';
-//import 'menu_card.dart';
+import '../util.dart' as util;
 
 part 'menu.over_react.g.dart';
 
@@ -69,25 +70,34 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 //        }
 //        ..key = 'dummy'
 //        ..className = 'dummy-button menu-item')('Dummy'),
-      (Dom.select()
-        ..onChange = (ev) {
-          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to title option
-          props.dispatch(actions.ExampleDNADesignsIdxSet(selected_idx: idx));
+//      (Dom.select()
+//        ..onChange = (ev) {
+//          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to title option
+//          if (idx >= 0) {
+//            // idx could be -1 when we programmatically change the option back to the "Load example" title
+//            props.dispatch(actions.ExampleDNADesignsLoad(selected_idx: idx));
+//          }
+//        }
+//        ..defaultValue = load_example_title
+//        ..className = 'example-load'
+//        ..key = 'example-load')([
+//        (Dom.option()
+//          ..value = load_example_title
+//          ..disabled = true
+//          ..key = 'title')('Load example'),
+//        ...[
+//          for (var example_filename in props.example_dna_designs.filenames)
+//            (Dom.option()
+//              ..value = example_filename
+//              ..key = example_filename)(example_filename)
+//        ]
+//      ]),
+      (Dom.button()
+        ..onClick = (_) {
+          app.disable_keyboard_shortcuts_while(load_example_dialog);
         }
-        ..defaultValue = load_example_title
         ..className = 'example-load'
-        ..key = 'example-load')([
-        (Dom.option()
-          ..value = load_example_title
-          ..disabled = true
-          ..key = 'title')('Load example'),
-        ...[
-          for (var example_filename in props.example_dna_designs.filenames)
-            (Dom.option()
-              ..value = example_filename
-              ..key = example_filename)(example_filename)
-        ]
-      ]),
+        ..key = 'example-load')('Example'),
       (Dom.button()
         ..className = 'menu-item'
         ..onClick = (_) {
@@ -272,6 +282,20 @@ looking at before changing the script.'''
     ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
 
     props.dispatch(actions.ExportDNA(include_scaffold: include_scaffold, export_dna_format: format));
+  }
+
+  Future<void> load_example_dialog() async {
+    var dialog = Dialog(title: 'Load example DNA design', items: [
+      DialogRadio(
+        label: 'designs',
+        options: props.example_dna_designs.filenames,
+      ),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    int selected_idx = (results[0] as DialogRadio).selected_idx;
+    props.dispatch(actions.ExampleDNADesignsLoad(selected_idx: selected_idx));
   }
 }
 

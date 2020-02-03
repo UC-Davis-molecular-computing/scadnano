@@ -175,3 +175,58 @@ abstract class DialogCheckbox
 
   bool get value;
 }
+
+abstract class DialogSelect
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogSelect, DialogSelectBuilder> {
+  factory DialogSelect.from([void Function(DialogSelectBuilder) updates]) = _$DialogSelect;
+
+  DialogSelect._();
+
+  static Serializer<DialogSelect> get serializer => _$dialogSelectSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  factory DialogSelect({String label, BuiltList<String> options, int selected_idx = 0, String value = null}) {
+    return DialogSelect.from((b) => b
+      ..options.replace(options)
+      ..selected_idx = selected_idx
+      ..label = label
+      ..value = value);
+  }
+
+  BuiltList<String> get options;
+
+  int get selected_idx;
+
+  String get label;
+
+  String get value;
+}
+
+abstract class DialogRadio
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogRadio, DialogRadioBuilder> {
+  factory DialogRadio.from([void Function(DialogRadioBuilder) updates]) = _$DialogRadio;
+
+  DialogRadio._();
+
+  static Serializer<DialogRadio> get serializer => _$dialogRadioSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  factory DialogRadio({String label, BuiltList<String> options, int selected_idx = 0}) {
+    return DialogRadio.from((b) => b
+      ..options.replace(options)
+      ..selected_idx = selected_idx
+      ..label = label);
+  }
+
+  BuiltList<String> get options;
+
+  int get selected_idx;
+
+  String get label;
+
+  String get value => options[selected_idx];
+}

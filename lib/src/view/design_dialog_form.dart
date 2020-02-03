@@ -119,7 +119,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
     props.dialog.on_submit(null);
   }
 
-  ReactElement dialog_for(DialogItem item, int idx, bool disabled) {
+  ReactElement dialog_for(DialogItem item, int dialog_item_idx, bool disabled) {
     if (item is DialogCheckbox) {
       return Dom.label()(
         (Dom.input()
@@ -129,8 +129,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             bool new_checked = e.target.checked;
-            DialogCheckbox response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_checked);
+            DialogCheckbox response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_checked);
             setState(newState()..responses = new_responses.build());
           })(),
         item.label,
@@ -146,8 +146,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;
-            DialogText response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogText response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
@@ -163,8 +163,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;
-            DialogTextArea response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogTextArea response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
@@ -180,8 +180,8 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             var new_responses = state.responses.toBuilder();
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogNumber response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogNumber response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
@@ -198,11 +198,37 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             var new_responses = state.responses.toBuilder();
             num new_value = double.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogFloatingNumber response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogFloatingNumber response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
+    } else if (item is DialogSelect) {
+      throw UnsupportedError('not yet implemented');
+    } else if (item is DialogRadio) {
+      int radio_idx = 0;
+      List<ReactElement> components = [];
+      for (var option in item.options) {
+        components.add((Dom.br()..key='br-$radio_idx')());
+        components.add((Dom.input()
+          ..type = 'radio'
+          ..id = 'radio-example-filename-${radio_idx}'
+          ..name = item.label
+          ..checked = (item.selected_idx == radio_idx)
+          ..value = option
+          ..onChange = (SyntheticFormEvent e) {
+            var selected_title = e.target.value;
+            int selected_radio_idx = item.options.indexOf(selected_title);
+            DialogRadio response = state.responses[dialog_item_idx];
+            var new_responses = state.responses.toBuilder();
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
+            setState(newState()..responses = new_responses.build());
+          }
+          ..key = '$radio_idx')());
+        components.add((Dom.label()..key = 'label-$radio_idx')(option));
+        radio_idx++;
+      }
+      return (Dom.div()..className='radio-left')('${item.label}: ', components);
     }
     return null;
   }

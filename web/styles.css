@@ -11,6 +11,10 @@ html, body {
 ** BEGIN layout
 ************************************************/
 
+.radio-left {
+    text-align:left;
+}
+
 .error-message {
     height: 100%;
     max-height: 100%;
