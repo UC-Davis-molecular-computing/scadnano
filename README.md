@@ -396,13 +396,9 @@ Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`
 
 ## Exporting SVG
 
-Exporting the design to SVG (for instance, for making figures) is [currently not directly supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/8). However, by installing the Chrome extension
-[Export SVG with Style](https://chrome.google.com/webstore/detail/export-svg-with-style/dkjdcaddoplepioppogpckelchefhddi),
-you can export it yourself:
+Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
 
-Add the extension, then restart scadnano (press F5 button to refresh the page), and after loading the design you want to export to SVG, click the Export SVG Button.
-It will report that there are two SVG elements on the page.
-These are the side view and main view, respectively, and the extension will save both of them.
+**Inkscape bug:** Currently there is a [bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues/177) affecting the display of insertions (both the length and the DNA sequence) when viewed in Inkscape. So for designs using insertions, we recommend using viewing and editing the exported file with an alternative SVG editor such as [Vecteezy](https://www.vecteezy.com/editor/) (free) or [Boxy SVG](https://boxy-svg.com/) (paid).
 
 
 ## How to design structures manually using scadnano
