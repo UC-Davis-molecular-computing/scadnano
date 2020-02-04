@@ -6,7 +6,6 @@ import 'assign_dna.dart';
 import 'example_dna_design_selected.dart';
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
-import 'grid_change.dart';
 import 'helix_offsets_change.dart';
 import 'insertion_deletion_pairing.dart';
 import 'load_file.dart';
@@ -23,8 +22,7 @@ import '../state/app_state.dart';
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
 //  thunk_middleware,
   local_storage_middleware,
-  export_svg_main_middleware,
-  export_svg_side_middleware,
+  export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
   example_dna_design_selected_middleware,

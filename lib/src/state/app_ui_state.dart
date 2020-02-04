@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -16,6 +17,7 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import '../constants.dart' as constants;
 
 part 'app_ui_state.g.dart';
 
@@ -41,10 +43,25 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..context_menu = null
   ..dialog = null
   ..strand_creation = null
+  ..css_styles.replace(find_css_styles())
   ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
+
+List<String> find_css_styles() {
+  var stylesheets = document.styleSheets;
+  CssStyleSheet stylesheet =
+      stylesheets.firstWhere((s) => s.href.contains(constants.scadnano_css_stylesheet_name_no_ext));
+  List<CssRule> rules = stylesheet.cssRules;
+  Set<String> styles = {};
+//  for (CssStyleRule rule in rules) {
+//    for (var key in rule.styleMap.keys) {
+//
+//    }
+//  }
+  return styles.toList();
+}
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -68,6 +85,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// Special case for helices, which can always be selected, but only in the side view.
   BuiltSet<int> get side_selected_helix_idxs;
+
+  // list of names of styles (e.g., "width", "margin-bottom") applied to elements from external style sheet
+  BuiltList<String> get css_styles;
 
   String get loaded_filename;
 
@@ -121,7 +141,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
-
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

@@ -307,7 +307,7 @@ Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
 //    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
-    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 30, cols: 120),
+    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 20, cols: 80),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(

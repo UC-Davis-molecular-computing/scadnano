@@ -34,6 +34,8 @@ const int BASE_HEIGHT_SVG = 10;
 const default_min_offset = 0;
 const default_max_offset = 256;
 
+const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
+
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:
 /// The width of one base pair of double-stranded DNA bp is 0.34 nm.

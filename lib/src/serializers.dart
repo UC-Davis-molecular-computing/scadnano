@@ -167,6 +167,7 @@ part 'serializers.g.dart';
   HelixGridPositionSet,
   InlineInsertionsDeletions,
   AutofitSet,
+  ExportSvg,
 ])
 Serializers serializers = _$serializers;
 

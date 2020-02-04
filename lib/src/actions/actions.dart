@@ -934,30 +934,21 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 
-abstract class ExportSvgMain
+enum ExportSvgType { main, side, both }
+
+abstract class ExportSvg
     with BuiltJsonSerializable
-    implements Action, Built<ExportSvgMain, ExportSvgMainBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ExportSvgMain() => ExportSvgMain.from((b) => b);
+    implements Action, Built<ExportSvg, ExportSvgBuilder> {
 
-  factory ExportSvgMain.from([void Function(ExportSvgMainBuilder) updates]) = _$ExportSvgMain;
+  factory ExportSvg.from([void Function(ExportSvgBuilder) updates]) = _$ExportSvg;
 
-  ExportSvgMain._();
+  ExportSvg._();
 
-  static Serializer<ExportSvgMain> get serializer => _$exportSvgMainSerializer;
-}
+  static Serializer<ExportSvg> get serializer => _$exportSvgSerializer;
+  /************************ end BuiltValue boilerplate ************************/
+  factory ExportSvg({ExportSvgType type}) = _$ExportSvg._;
 
-abstract class ExportSvgSide
-    with BuiltJsonSerializable
-    implements Action, Built<ExportSvgSide, ExportSvgSideBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ExportSvgSide() => ExportSvgSide.from((b) => b);
-
-  factory ExportSvgSide.from([void Function(ExportSvgSideBuilder) updates]) = _$ExportSvgSide;
-
-  ExportSvgSide._();
-
-  static Serializer<ExportSvgSide> get serializer => _$exportSvgSideSerializer;
+  ExportSvgType get type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

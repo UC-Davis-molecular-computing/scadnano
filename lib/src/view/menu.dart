@@ -70,28 +70,6 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 //        }
 //        ..key = 'dummy'
 //        ..className = 'dummy-button menu-item')('Dummy'),
-//      (Dom.select()
-//        ..onChange = (ev) {
-//          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to title option
-//          if (idx >= 0) {
-//            // idx could be -1 when we programmatically change the option back to the "Load example" title
-//            props.dispatch(actions.ExampleDNADesignsLoad(selected_idx: idx));
-//          }
-//        }
-//        ..defaultValue = load_example_title
-//        ..className = 'example-load'
-//        ..key = 'example-load')([
-//        (Dom.option()
-//          ..value = load_example_title
-//          ..disabled = true
-//          ..key = 'title')('Load example'),
-//        ...[
-//          for (var example_filename in props.example_dna_designs.filenames)
-//            (Dom.option()
-//              ..value = example_filename
-//              ..key = example_filename)(example_filename)
-//        ]
-//      ]),
       (Dom.button()
         ..onClick = (_) {
           app.disable_keyboard_shortcuts_while(load_example_dialog);
@@ -138,20 +116,20 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 //            'show editor',
 //          ),
 //        ),
-//      (Dom.button()
-//        ..className = 'menu-item'
-//        ..onClick = (_) {
-//          props.dispatch(dispatcher.ExportSvgSide());
-//        }
-//        ..className = 'export-svg'
-//        ..key = 'export-svg-side')('Export SVG side'),
-//      (Dom.button()
-//        ..className = 'menu-item'
-//        ..onClick = (_) {
-//          props.dispatch(dispatcher.ExportSvgMain());
-//        }
-//        ..className = 'export-svg'
-//        ..key = 'export-svg-main')('Export SVG main'),
+      (Dom.button()
+        ..className = 'menu-item'
+        ..onClick = (_) {
+          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
+        }
+        ..className = 'export-svg'
+        ..key = 'export-svg-side')('Export SVG side'),
+      (Dom.button()
+        ..className = 'menu-item'
+        ..onClick = (_) {
+          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
+        }
+        ..className = 'export-svg'
+        ..key = 'export-svg-main')('Export SVG main'),
       (Dom.button()
         ..onClick = //((_) => export_dna())
             ((_) => app.disable_keyboard_shortcuts_while(export_dna))
