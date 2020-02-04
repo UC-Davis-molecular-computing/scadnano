@@ -18,7 +18,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#b8056c",
+      "color": "#32b86c",
       "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#333333",
       "dna_sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAGTTAGT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
@@ -34,53 +34,53 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#03b6a2",
       "dna_sequence": "AACTAACTAACTAACT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#7300de",
       "dna_sequence": "GGTAGGTAGGTAGGTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 2, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#888888",
+      "color": "#b8056c",
       "substrands": [
         {"helix": 2, "forward": true, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#333333",
+      "color": "#cc0000",
       "dna_sequence": "AGTTAGTTAGTTAGTT",
       "substrands": [
         {"helix": 1, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#320096",
+      "color": "#f7931e",
       "dna_sequence": "TACCTACCTACCTACC",
       "substrands": [
         {"helix": 1, "forward": false, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#f74308",
       "substrands": [
         {"helix": 2, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#007200",
       "substrands": [
         {"helix": 2, "forward": true, "start": 0, "end": 16}
       ]
