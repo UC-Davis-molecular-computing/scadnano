@@ -4,7 +4,6 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
@@ -12,6 +11,7 @@ import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import '../state/context_menu.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
@@ -94,6 +94,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..strand = strand
         ..key = 'strand-paths'
         ..helices = props.helices
+        ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..selectables_store = props.selectables_store
         ..select_mode_state = props.select_mode_state
@@ -107,29 +108,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     ]);
   }
 
-  // needed for capturing right-click events with React:
-  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
-  @override
-  componentDidMount() {
-    var element = querySelector('#${props.strand.id()}');
-    element.addEventListener('contextmenu', on_context_menu);
-  }
 
-  @override
-  componentWillUnmount() {
-    var element = querySelector('#${props.strand.id()}');
-    element.removeEventListener('contextmenu', on_context_menu);
-  }
-
-  on_context_menu(Event ev) {
-    MouseEvent event = ev;
-    if (!event.shiftKey) {
-      event.preventDefault();
-      event.stopPropagation();
-      app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
-    }
-  }
 
   handle_click_down(react.SyntheticPointerEvent event_syn) {
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {

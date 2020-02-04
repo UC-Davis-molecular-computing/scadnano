@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -38,6 +39,8 @@ part 'design_main_strand_paths.over_react.g.dart';
 @Factory()
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
 
+
+
 @Props()
 class _$DesignMainStrandPathsProps extends UiProps {
   Strand strand;
@@ -51,6 +54,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   bool moving_dna_ends;
   bool origami_type_is_selectable;
   String strand_tooltip;
+  List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
 @Component2()
@@ -88,6 +92,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 //          paths.add((ConnectedDesignMainBoundSubstrand()
           paths.add((DesignMainBoundSubstrand()
             ..substrand = substrand
+            ..strand = props.strand
+            ..context_menu_strand = props.context_menu_strand
             ..color = strand.color
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
