@@ -48,6 +48,8 @@ class _$DesignMainLoopoutProps extends EditModePropsAbstract {
 
   BoundSubstrand prev_substrand;
   BoundSubstrand next_substrand;
+  Helix prev_helix;
+  Helix next_helix;
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
@@ -93,46 +95,49 @@ class DesignMainLoopoutComponent
 
     String tooltip = 'loopout: length ${props.loopout.loopout_length}';
 
-    if (util.is_hairpin(prev_ss, next_ss)) {
-      // special case for hairpin so it's not a short straight line
-      return _hairpin_arc(prev_ss, next_ss, loopout, classname, color, tooltip);
-    } else {
-      String path = crossover_path_description(prev_ss, next_ss, props.helices);
-      String id = loopout.id();
+    return _hairpin_arc(classname, color, tooltip);
 
-      //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:
-      // https://github.com/marcojakob/dart-dnd/issues/27
-      // perhaps not implemented by Safari though:
-      // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
-      return (Dom.path()
-        ..d = path
-        ..stroke = color.toHexColor().toCssString()
-        ..onMouseEnter = (ev) {
-          setState(newState()..mouse_hover = true);
-          if (show_mouseover_rect) {
-            update_mouseover_loopout();
-          }
-        }
-        ..onMouseLeave = ((_) {
-          setState(newState()..mouse_hover = false);
-          if (show_mouseover_rect) {
-            update_mouseover_loopout();
-          }
-        })
-        ..onPointerDown = ((ev) {
-          if (select_mode && props.selectable) {
-            loopout.handle_selection_mouse_down(ev.nativeEvent);
-          }
-        })
-        ..onPointerUp = ((ev) {
-          if (select_mode && props.selectable) {
-            loopout.handle_selection_mouse_up(ev.nativeEvent);
-          }
-        })
-        ..className = classname
-        ..id = id
-        ..key = id)(Dom.svgTitle()(tooltip));
-    }
+//    if (util.is_hairpin(prev_ss, next_ss)) {
+//      // special case for hairpin so it's not a short straight line
+//      return _hairpin_arc(
+//          prev_ss, next_ss, props.prev_helix, props.next_helix, loopout, classname, color, tooltip);
+//    } else {
+//      String path = crossover_path_description(prev_ss, next_ss, props.helices);
+//      String id = loopout.id();
+//
+//      //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:
+//      // https://github.com/marcojakob/dart-dnd/issues/27
+//      // perhaps not implemented by Safari though:
+//      // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
+//      return (Dom.path()
+//        ..d = path
+//        ..stroke = color.toHexColor().toCssString()
+//        ..onMouseEnter = (ev) {
+//          setState(newState()..mouse_hover = true);
+//          if (show_mouseover_rect) {
+//            update_mouseover_loopout();
+//          }
+//        }
+//        ..onMouseLeave = ((_) {
+//          setState(newState()..mouse_hover = false);
+//          if (show_mouseover_rect) {
+//            update_mouseover_loopout();
+//          }
+//        })
+//        ..onPointerDown = ((ev) {
+//          if (select_mode && props.selectable) {
+//            loopout.handle_selection_mouse_down(ev.nativeEvent);
+//          }
+//        })
+//        ..onPointerUp = ((ev) {
+//          if (select_mode && props.selectable) {
+//            loopout.handle_selection_mouse_up(ev.nativeEvent);
+//          }
+//        })
+//        ..className = classname
+//        ..id = id
+//        ..key = id)(Dom.svgTitle()(tooltip));
+//    }
   }
 
   @override
@@ -178,6 +183,71 @@ class DesignMainLoopoutComponent
     }
     app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
   }
+
+
+
+  ReactElement _hairpin_arc(String classname, Color color, String tooltip) {
+    var start_svg = props.prev_helix.svg_base_pos(props.prev_substrand.offset_3p, props.prev_substrand.forward);
+    var end_svg = props.next_helix.svg_base_pos(props.next_substrand.offset_5p, props.next_substrand.forward);
+//  var strand = prev_substrand.strand;
+
+    var w,h;
+
+    if (props.prev_helix.idx == props.next_helix.idx) {
+      w = 1.5 * util.sigmoid(props.loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
+      h = 10 * util.sigmoid(props.loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
+    } else {
+      w = 2 * util.sigmoid(props.loopout.loopout_length) * constants.BASE_WIDTH_SVG;
+      h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
+    }
+
+    var x_offset1, x_offset2, y_offset1, y_offset2;
+    if (props.prev_substrand.forward) {
+      x_offset1 = start_svg.x + w;
+      y_offset1 = start_svg.y - h;
+      x_offset2 = end_svg.x + w;
+      y_offset2 = end_svg.y + h;
+    } else {
+      x_offset1 = start_svg.x - w;
+      y_offset1 = start_svg.y + h;
+      x_offset2 = end_svg.x - w;
+      y_offset2 = end_svg.y - h;
+    }
+
+    var c1 = Point<num>(x_offset1, y_offset1);
+    var c2 = Point<num>(x_offset2, y_offset2);
+
+    String id = props.loopout.id();
+    return (Dom.path()
+      ..className = classname
+      ..stroke = color.toHexColor().toCssString()
+      ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+        if (backbone_mode) {
+          update_mouseover_loopout();
+        }
+      }
+      ..onMouseLeave = ((_) {
+        setState(newState()..mouse_hover = false);
+        if (backbone_mode) {
+          update_mouseover_loopout();
+        }
+      })
+      ..onPointerDown = ((ev) {
+        if (select_mode && props.selectable) {
+          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (select_mode && props.selectable) {
+          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..key = id
+      ..id = id)(Dom.svgTitle()(tooltip));
+  }
+
 }
 
 Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {
@@ -210,39 +280,4 @@ Future<int> ask_for_length(String title, {int current_length, int lower_bound}) 
   }
 
   return length;
-}
-
-ReactElement _hairpin_arc(BoundSubstrand prev_substrand, BoundSubstrand next_substrand, Loopout loopout,
-    String classname, Color color, String tooltip) {
-  var helix = app.state.dna_design.helices[prev_substrand.helix];
-  var start_svg = helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
-  var end_svg = helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
-//  var strand = prev_substrand.strand;
-
-  var w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
-  var h = 10 * util.sigmoid(loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
-
-  var x_offset1, x_offset2, y_offset1, y_offset2;
-  if (prev_substrand.forward) {
-    x_offset1 = start_svg.x + w;
-    y_offset1 = start_svg.y - h;
-    x_offset2 = end_svg.x + w;
-    y_offset2 = end_svg.y + h;
-  } else {
-    x_offset1 = start_svg.x - w;
-    y_offset1 = start_svg.y + h;
-    x_offset2 = end_svg.x - w;
-    y_offset2 = end_svg.y - h;
-  }
-
-  var c1 = Point<num>(x_offset1, y_offset1);
-  var c2 = Point<num>(x_offset2, y_offset2);
-
-  String id = loopout.id();
-  return (Dom.path()
-    ..className = classname
-    ..stroke = color.toHexColor().toCssString()
-    ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
-    ..key = id
-    ..id = id)(Dom.svgTitle()(tooltip));
 }

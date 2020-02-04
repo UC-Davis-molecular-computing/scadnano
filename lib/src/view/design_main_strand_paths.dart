@@ -120,6 +120,9 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         }
       } else if (substrand is Loopout) {
         BoundSubstrand next_ss = strand.substrands[i + 1];
+        BoundSubstrand prev_ss = strand.substrands[i - 1];
+        Helix prev_helix = props.helices[prev_ss.helix];
+        Helix next_helix = props.helices[next_ss.helix];
         bool draw_next_ss = should_draw_bound_ss(next_ss.helix, props.side_selected_helix_idxs);
         if (draw_prev_ss && draw_next_ss) {
 //          paths.add((ConnectedDesignMainLoopout()
@@ -133,8 +136,10 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 props.edit_modes.contains(EditModeChoice.select) &&
                 props.origami_type_is_selectable
             ..edit_modes = props.edit_modes
-            ..prev_substrand = strand.substrands[i - 1]
+            ..prev_substrand = prev_ss
             ..next_substrand = next_ss
+            ..prev_helix = prev_helix
+            ..next_helix = next_helix
             ..key = "loopout-$i")());
         }
       }
