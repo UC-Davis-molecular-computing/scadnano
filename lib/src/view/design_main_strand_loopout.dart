@@ -184,16 +184,34 @@ class DesignMainLoopoutComponent
     app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
   }
 
-
-
   ReactElement _hairpin_arc(String classname, Color color, String tooltip) {
-    var start_svg = props.prev_helix.svg_base_pos(props.prev_substrand.offset_3p, props.prev_substrand.forward);
-    var end_svg = props.next_helix.svg_base_pos(props.next_substrand.offset_5p, props.next_substrand.forward);
-//  var strand = prev_substrand.strand;
+    Helix top_helix = props.prev_helix;
+    Helix bot_helix = props.next_helix;
+    BoundSubstrand top_ss = props.prev_substrand;
+    BoundSubstrand bot_ss = props.next_substrand;
+    if (top_helix.idx == bot_helix.idx) {
+      top_helix = bot_helix = props.next_helix;
+      if (!props.prev_substrand.forward) {
+        top_ss = props.next_substrand;
+        bot_ss = props.prev_substrand;
+      }
+    } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+      top_helix = props.next_helix;
+      bot_helix = props.prev_helix;
+      top_ss = props.next_substrand;
+      bot_ss = props.prev_substrand;
+    }
+    bool top_ss_is_prev = top_ss == props.prev_substrand;
 
-    var w,h;
+    int top_offset = top_ss_is_prev ? top_ss.offset_3p : top_ss.offset_5p;
+    int bot_offset = top_ss_is_prev ? bot_ss.offset_5p : bot_ss.offset_3p;
 
-    if (props.prev_helix.idx == props.next_helix.idx) {
+    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
+    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
+
+    var w, h;
+
+    if (top_helix.idx == bot_helix.idx) {
       w = 1.5 * util.sigmoid(props.loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
       h = 10 * util.sigmoid(props.loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
     } else {
@@ -202,16 +220,14 @@ class DesignMainLoopoutComponent
     }
 
     var x_offset1, x_offset2, y_offset1, y_offset2;
-    if (props.prev_substrand.forward) {
-      x_offset1 = start_svg.x + w;
-      y_offset1 = start_svg.y - h;
-      x_offset2 = end_svg.x + w;
-      y_offset2 = end_svg.y + h;
+    y_offset1 = top_svg.y - h;
+    y_offset2 = bot_svg.y + h;
+    if (top_offset == top_ss.end - 1) {
+      x_offset1 = top_svg.x + w;
+      x_offset2 = bot_svg.x + w;
     } else {
-      x_offset1 = start_svg.x - w;
-      y_offset1 = start_svg.y + h;
-      x_offset2 = end_svg.x - w;
-      y_offset2 = end_svg.y - h;
+      x_offset1 = top_svg.x - w;
+      x_offset2 = bot_svg.x - w;
     }
 
     var c1 = Point<num>(x_offset1, y_offset1);
@@ -221,7 +237,7 @@ class DesignMainLoopoutComponent
     return (Dom.path()
       ..className = classname
       ..stroke = color.toHexColor().toCssString()
-      ..d = 'M ${start_svg.x} ${start_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${end_svg.x} ${end_svg.y}'
+      ..d = 'M ${top_svg.x} ${top_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${bot_svg.x} ${bot_svg.y}'
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
         if (backbone_mode) {
@@ -247,7 +263,6 @@ class DesignMainLoopoutComponent
       ..key = id
       ..id = id)(Dom.svgTitle()(tooltip));
   }
-
 }
 
 Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {
