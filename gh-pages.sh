@@ -10,6 +10,15 @@ else
   echo "Using pub.bat as dart pub command"
 fi
 
+if type peanut > /dev/null; then
+  PEANUT=peanut
+  echo "Using peanut as dart peanut command"
+else 
+  # on Windows the pub command is called pub.bat
+  PEANUT=peanut.bat
+  echo "Using peanut.bat as dart peanut command"
+fi
+
 $PUB get # might not be needed
-peanut
+$PEANUT
 git push origin --set-upstream gh-pages
