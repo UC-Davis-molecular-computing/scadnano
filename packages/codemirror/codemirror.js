@@ -2211,10 +2211,10 @@
 
   function updateLineWidgets(cm, lineView, dims) {
     if (lineView.alignable) { lineView.alignable = null; }
+    var isWidget = classTest("CodeMirror-linewidget");
     for (var node = lineView.node.firstChild, next = (void 0); node; node = next) {
       next = node.nextSibling;
-      if (node.className == "CodeMirror-linewidget")
-        { lineView.node.removeChild(node); }
+      if (isWidget.test(node.className)) { lineView.node.removeChild(node); }
     }
     insertLineWidgets(cm, lineView, dims);
   }
@@ -2244,7 +2244,7 @@
     if (!line.widgets) { return }
     var wrap = ensureLineWrapped(lineView);
     for (var i = 0, ws = line.widgets; i < ws.length; ++i) {
-      var widget = ws[i], node = elt("div", [widget.node], "CodeMirror-linewidget");
+      var widget = ws[i], node = elt("div", [widget.node], "CodeMirror-linewidget" + (widget.className ? " " + widget.className : ""));
       if (!widget.handleMouseEvents) { node.setAttribute("cm-ignore-events", "true"); }
       positionLineWidget(widget, node, lineView, dims);
       cm.display.input.setUneditable(node);
@@ -2967,7 +2967,7 @@
     try { x = e.clientX - space.left; y = e.clientY - space.top; }
     catch (e) { return null }
     var coords = coordsChar(cm, x, y), line;
-    if (forRect && coords.xRel == 1 && (line = getLine(cm.doc, coords.line).text).length == coords.ch) {
+    if (forRect && coords.xRel > 0 && (line = getLine(cm.doc, coords.line).text).length == coords.ch) {
       var colDiff = countColumn(line, line.length, cm.options.tabSize) - line.length;
       coords = Pos(coords.line, Math.max(0, Math.round((x - paddingH(cm.display).left) / charWidth(cm.display)) - colDiff));
     }
@@ -7241,6 +7241,8 @@
       if (!handled && code == 88 && !hasCopyEvent && (mac ? e.metaKey : e.ctrlKey))
         { cm.replaceSelection("", null, "cut"); }
     }
+    if (gecko && !mac && !handled && code == 46 && e.shiftKey && !e.ctrlKey && document.execCommand)
+      { document.execCommand("cut"); }
 
     // Turn mouse into crosshair when Alt is held on Mac.
     if (code == 18 && !/\bCodeMirror-crosshair\b/.test(cm.display.lineDiv.className))
@@ -9778,7 +9780,7 @@
 
   addLegacyProps(CodeMirror);
 
-  CodeMirror.version = "5.49.2";
+  CodeMirror.version = "5.50.2";
 
   return CodeMirror;
 
@@ -10032,7 +10034,8 @@
             lineCmt && (found = line.lastIndexOf(lineCmt, pos.ch - 1)) > -1 &&
             /\bcomment\b/.test(cm.getTokenTypeAt({line: pos.line, ch: found + 1}))) {
           // ...then don't continue it
-        } else if ((found = line.lastIndexOf(blockStart, pos.ch - blockStart.length)) > -1 &&
+        } else if (pos.ch >= blockStart.length &&
+                   (found = line.lastIndexOf(blockStart, pos.ch - blockStart.length)) > -1 &&
                    found > end) {
           // reuse the existing leading spaces/tabs/mixed
           // or build the correct indent using CM's tab/indent options
@@ -10537,7 +10540,7 @@
       if (!tagName ||
           tok.type == "string" && (tok.end != pos.ch || !/[\"\']/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length == 1) ||
           tok.type == "tag" && tagInfo.close ||
-          tok.string.indexOf("/") == (tok.string.length - 1) || // match something like <someTagName />
+          tok.string.indexOf("/") == (pos.ch - tok.start - 1) || // match something like <someTagName />
           dontCloseTags && indexOf(dontCloseTags, lowerTagName) > -1 ||
           closingTagExists(cm, inner.mode.xmlCurrentContext && inner.mode.xmlCurrentContext(state) || [], tagName, pos, true))
         return CodeMirror.Pass;
@@ -11124,9 +11127,15 @@
 })(function(CodeMirror) {
   "use strict";
 
-  var pseudoClasses = {link: 1, visited: 1, active: 1, hover: 1, focus: 1,
-                       "first-letter": 1, "first-line": 1, "first-child": 1,
-                       before: 1, after: 1, lang: 1};
+  var pseudoClasses = {"active":1, "after":1, "before":1, "checked":1, "default":1,
+    "disabled":1, "empty":1, "enabled":1, "first-child":1, "first-letter":1,
+    "first-line":1, "first-of-type":1, "focus":1, "hover":1, "in-range":1,
+    "indeterminate":1, "invalid":1, "lang":1, "last-child":1, "last-of-type":1,
+    "link":1, "not":1, "nth-child":1, "nth-last-child":1, "nth-last-of-type":1,
+    "nth-of-type":1, "only-of-type":1, "only-child":1, "optional":1, "out-of-range":1,
+    "placeholder":1, "read-only":1, "read-write":1, "required":1, "root":1,
+    "selection":1, "target":1, "valid":1, "visited":1
+  };
 
   CodeMirror.registerHelper("hint", "css", function(cm) {
     var cur = cm.getCursor(), token = cm.getTokenAt(cur);
@@ -11954,15 +11963,15 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: https://codemirror.net/LICENSE
 
-(function(mod) {
+(function (mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     mod(require("../../lib/codemirror"));
   else if (typeof define == "function" && define.amd) // AMD
     define(["../../lib/codemirror"], mod);
   else // Plain browser env
     mod(CodeMirror);
-})(function(CodeMirror) {
-  CodeMirror.defineExtension("addPanel", function(node, options) {
+})(function (CodeMirror) {
+  CodeMirror.defineExtension("addPanel", function (node, options) {
     options = options || {};
 
     if (!this.state.panels) initPanels(this);
@@ -11978,8 +11987,7 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
       wrapper.insertBefore(node, options.before.node);
     } else if (replace) {
       wrapper.insertBefore(node, options.replace.node);
-      info.panels++;
-      options.replace.clear();
+      options.replace.clear(true);
     } else if (options.position == "bottom") {
       wrapper.appendChild(node);
     } else if (options.position == "before-bottom") {
@@ -11991,14 +11999,15 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
     }
 
     var height = (options && options.height) || node.offsetHeight;
-    this._setSize(null, info.heightLeft -= height);
-    if (!replace) {
-      info.panels++;
-    }
-    if (options.stable && isAtTop(this, node))
-      this.scrollTo(null, this.getScrollInfo().top + height)
 
-    return new Panel(this, node, options, height);
+    var panel = new Panel(this, node, options, height);
+    info.panels.push(panel);
+
+    this.setSize();
+    if (options.stable && isAtTop(this, node))
+      this.scrollTo(null, this.getScrollInfo().top + height);
+
+    return panel;
   });
 
   function Panel(cm, node, options, height) {
@@ -12009,22 +12018,23 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
     this.cleared = false;
   }
 
-  Panel.prototype.clear = function() {
+  /* when skipRemove is true, clear() was called from addPanel().
+   * Thus removePanels() should not be called (issue 5518) */
+  Panel.prototype.clear = function (skipRemove) {
     if (this.cleared) return;
     this.cleared = true;
     var info = this.cm.state.panels;
-    this.cm._setSize(null, info.heightLeft += this.height);
+    info.panels.splice(info.panels.indexOf(this), 1);
+    this.cm.setSize();
     if (this.options.stable && isAtTop(this.cm, this.node))
       this.cm.scrollTo(null, this.cm.getScrollInfo().top - this.height)
     info.wrapper.removeChild(this.node);
-    if (--info.panels == 0) removePanels(this.cm);
+    if (info.panels.length == 0 && !skipRemove) removePanels(this.cm);
   };
 
-  Panel.prototype.changed = function(height) {
-    var newHeight = height == null ? this.node.offsetHeight : height;
-    var info = this.cm.state.panels;
-    this.cm._setSize(null, info.heightLeft -= (newHeight - this.height));
-    this.height = newHeight;
+  Panel.prototype.changed = function () {
+    this.height = this.node.getBoundingClientRect().height;
+    this.cm.setSize();
   };
 
   function initPanels(cm) {
@@ -12033,8 +12043,7 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
     var height = parseInt(style.height);
     var info = cm.state.panels = {
       setHeight: wrap.style.height,
-      heightLeft: height,
-      panels: 0,
+      panels: [],
       wrapper: document.createElement("div")
     };
     wrap.parentNode.insertBefore(info.wrapper, wrap);
@@ -12043,8 +12052,8 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
     if (hasFocus) cm.focus();
 
     cm._setSize = cm.setSize;
-    if (height != null) cm.setSize = function(width, newHeight) {
-      if (newHeight == null) return this._setSize(width, newHeight);
+    if (height != null) cm.setSize = function (width, newHeight) {
+      if (!newHeight) newHeight = info.wrapper.offsetHeight;
       info.setHeight = newHeight;
       if (typeof newHeight != "number") {
         var px = /^(\d+\.?\d*)px$/.exec(newHeight);
@@ -12053,10 +12062,12 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
         } else {
           info.wrapper.style.height = newHeight;
           newHeight = info.wrapper.offsetHeight;
-          info.wrapper.style.height = "";
         }
       }
-      cm._setSize(width, info.heightLeft += (newHeight - height));
+      var editorheight = newHeight - info.panels
+        .map(function (p) { return p.node.getBoundingClientRect().height; })
+        .reduce(function (a, b) { return a + b; }, 0);
+      cm._setSize(width, editorheight);
       height = newHeight;
     };
   }
@@ -12418,24 +12429,26 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
     }
   }
 
-  function lastMatchIn(string, regexp) {
-    var cutOff = 0, match
-    for (;;) {
-      regexp.lastIndex = cutOff
+  function lastMatchIn(string, regexp, endMargin) {
+    var match, from = 0
+    while (from <= string.length) {
+      regexp.lastIndex = from
       var newMatch = regexp.exec(string)
-      if (!newMatch) return match
-      match = newMatch
-      cutOff = match.index + (match[0].length || 1)
-      if (cutOff == string.length) return match
+      if (!newMatch) break
+      var end = newMatch.index + newMatch[0].length
+      if (end > string.length - endMargin) break
+      if (!match || end > match.index + match[0].length)
+        match = newMatch
+      from = newMatch.index + 1
     }
+    return match
   }
 
   function searchRegexpBackward(doc, regexp, start) {
     regexp = ensureFlags(regexp, "g")
     for (var line = start.line, ch = start.ch, first = doc.firstLine(); line >= first; line--, ch = -1) {
       var string = doc.getLine(line)
-      if (ch > -1) string = string.slice(0, ch)
-      var match = lastMatchIn(string, regexp)
+      var match = lastMatchIn(string, regexp, ch < 0 ? 0 : string.length - ch)
       if (match)
         return {from: Pos(line, match.index),
                 to: Pos(line, match.index + match[0].length),
@@ -12444,16 +12457,17 @@ CodeMirror.registerHelper("lint", "css", function(text, options) {
   }
 
   function searchRegexpBackwardMultiline(doc, regexp, start) {
+    if (!maybeMultiline(regexp)) return searchRegexpBackward(doc, regexp, start)
     regexp = ensureFlags(regexp, "gm")
-    var string, chunk = 1
+    var string, chunkSize = 1, endMargin = doc.getLine(start.line).length - start.ch
     for (var line = start.line, first = doc.firstLine(); line >= first;) {
-      for (var i = 0; i < chunk; i++) {
+      for (var i = 0; i < chunkSize && line >= first; i++) {
         var curLine = doc.getLine(line--)
-        string = string == null ? curLine.slice(0, start.ch) : curLine + "\n" + string
+        string = string == null ? curLine : curLine + "\n" + string
       }
-      chunk *= 2
+      chunkSize *= 2
 
-      var match = lastMatchIn(string, regexp)
+      var match = lastMatchIn(string, regexp, endMargin)
       if (match) {
         var before = string.slice(0, match.index).split("\n"), inside = match[0].split("\n")
         var startLine = line + before.length, startCh = before[before.length - 1].length
@@ -13144,6 +13158,7 @@ CodeMirror.overlayMode = function(base, overlay, combine) {
   };
 
   CodeMirror.findModeByExtension = function(ext) {
+    ext = ext.toLowerCase();
     for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
       var info = CodeMirror.modeInfo[i];
       if (info.ext) for (var j = 0; j < info.ext.length; j++)
