@@ -1,2 +1,21 @@
+# Default ignores
 node_modules/
 /README.html
+
+# Files and directories created by pub
+.dart_tool/
+.packages
+# Remove the following pattern if you wish to check in your lock file
+pubspec.lock
+
+# Conventional directory for build outputs
+build/
+
+.vscode/
+
+# Directory created by dartdoc
+doc/api/
+/.idea/
+/bak/
+/Brython-3.7.4.zip
+/cadnano-screenshot.png
