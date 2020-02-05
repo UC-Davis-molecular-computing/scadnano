@@ -205,9 +205,13 @@ class DesignMainLoopoutComponent
 
     int top_offset = top_ss_is_prev ? top_ss.offset_3p : top_ss.offset_5p;
     int bot_offset = top_ss_is_prev ? bot_ss.offset_5p : bot_ss.offset_3p;
+    int prev_offset = top_ss_is_prev? top_offset: bot_offset;
+    int next_offset = top_ss_is_prev? bot_offset: top_offset;
 
-    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
-    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
+//    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
+//    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
+    var prev_svg = props.prev_helix.svg_base_pos(prev_offset, props.prev_substrand.forward);
+    var next_svg = props.next_helix.svg_base_pos(next_offset, props.next_substrand.forward);
 
     var w, h;
 
@@ -220,15 +224,45 @@ class DesignMainLoopoutComponent
     }
 
     var x_offset1, x_offset2, y_offset1, y_offset2;
-    y_offset1 = top_svg.y - h;
-    y_offset2 = bot_svg.y + h;
+    y_offset1 = prev_svg.y;
+    y_offset2 = next_svg.y;
+    x_offset1 = prev_svg.x;
+    x_offset2 = next_svg.x;
     if (top_offset == top_ss.end - 1) {
-      x_offset1 = top_svg.x + w;
-      x_offset2 = bot_svg.x + w;
+      x_offset1 += w;
+      x_offset2 += w;
     } else {
-      x_offset1 = top_svg.x - w;
-      x_offset2 = bot_svg.x - w;
+      x_offset1 -= w;
+      x_offset2 -= w;
     }
+    if (top_ss_is_prev) {
+      y_offset1 -= h;
+      y_offset2 += h;
+    } else {
+      y_offset1 += h;
+      y_offset2 -= h;
+    }
+//    if (top_ss == props.prev_substrand) {
+//      y_offset1 = top_svg.y - h;
+//      y_offset2 = bot_svg.y + h;
+//      if (top_offset == top_ss.end - 1) {
+//        x_offset1 = top_svg.x + w;
+//        x_offset2 = bot_svg.x + w;
+//      } else {
+//        x_offset1 = top_svg.x - w;
+//        x_offset2 = bot_svg.x - w;
+//      }
+//    } else {
+//      y_offset2 = top_svg.y - h;
+//      y_offset1 = bot_svg.y + h;
+//      if (top_offset == top_ss.end - 1) {
+//        x_offset2 = top_svg.x + w;
+//        x_offset1 = bot_svg.x + w;
+//      } else {
+//        x_offset2 = top_svg.x - w;
+//        x_offset1 = bot_svg.x - w;
+//      }
+//    }
 
     var c1 = Point<num>(x_offset1, y_offset1);
     var c2 = Point<num>(x_offset2, y_offset2);
@@ -237,7 +271,7 @@ class DesignMainLoopoutComponent
     return (Dom.path()
       ..className = classname
       ..stroke = color.toHexColor().toCssString()
-      ..d = 'M ${top_svg.x} ${top_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${bot_svg.x} ${bot_svg.y}'
+      ..d = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}'
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
         if (backbone_mode) {
