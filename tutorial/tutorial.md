@@ -12,8 +12,8 @@ The completed design is available as a [`.dna` file](https://github.com/UC-Davis
 
 ## Start
 
-Open scadnano in your browser : 
-https://web.cs.ucdavis.edu/~doty/scadnano/.
+Open scadnano in your browser:
+http://scadnano.org.
 Currently only [Chrome](https://www.google.com/chrome/) 
 or [Firefox](https://www.mozilla.org/en-US/firefox/)
 are supported.

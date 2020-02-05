@@ -4,7 +4,7 @@ title: "scadnano help"
 
 <!--- # scadnano --->
 
-[scadnano](https://web.cs.ucdavis.edu/~doty/scadnano2) 
+[scadnano](http://scadnano.org) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
 Its design is based heavily on [cadnano](https://cadnano.org/), 
@@ -22,13 +22,13 @@ and
 [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
 planned in the future.
 
-2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / [documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/)), to help automate tedious tasks.
+2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / [documentation](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
 
 A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
 
 This document explains how to use the web interface for viewing and manually editing designs.
 The documentation for the Python scripting package is 
-[here](https://web.cs.ucdavis.edu/~doty/scadnano/docs/).
+[here](https://scadnano-python-package.readthedocs.io).
 This document does not assume any familiarity with cadnano, 
 although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.
 
@@ -170,7 +170,7 @@ Each helix defines a set of integer *offsets* with a minimum and maximum; in the
 Each offset is a position where a DNA base of a strand can go.
 
 Helices in a grid have a two-integer *grid position* depicted in the side view.
-See the [Python scripting documentation](https://web.cs.ucdavis.edu/~doty/scadnano/docs/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
+See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
 Helices without a grid have a *position*, a six-real-number vector describing their *x*, *y*, *z* positions, as well as *pitch*, *roll*, and *yaw*, but this feature is currently 
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
