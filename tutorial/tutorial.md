@@ -296,7 +296,7 @@ In staple select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
-Recurisvely copy/paste until there are 12 edge staples. In other words, copy/paste the current 2 edge staples to make 4:
+Recursively copy/paste until there are 12 edge staples. In other words, copy/paste the current 2 edge staples to make 4:
 
 ![](images/four_edge_staples.png)
 
@@ -324,7 +324,7 @@ Draw two seam staples like this between helices 1 and 2:
 
 ![](images/first_two_seam_staples.png)
 
-Recursively copy-paste to get the rest:
+Recursively copy/paste to get the rest:
 
 ![](images/all_seam_staples.png)
 
@@ -375,11 +375,11 @@ And manually click where the deletions should go:
 
 This would only take a few minutes, though it would be quite tedious. Furthermore, if we decided to change the location of the deletions slightly, we would have to go back through and re-click on all the deletions we want to remove and click new locations to add deletions.
 
+This is a good opportunity to show how the Python scripting library can be used for repetitive tasks such as this. If you don't want to learn the Python scripting library just yet, continue clicking to add deletions until the design looks like the next full screenshot below, and skip the next subsection "Adding deletions using a Python script".
+
 
 
 ### Adding deletions using a Python script
-
-This is a good opportunity to show how the Python scripting library can be used for repetitive tasks such as this.
 
 First, follow the [installation instructions](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 

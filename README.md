@@ -165,6 +165,7 @@ This section explains the meaning of the terms, although some more detail about 
 
 A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
+This can be overridden by specifying a field called `idx` in each helix, but the default is to number them consecutively in order.
 (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
 Each offset is a position where a DNA base of a strand can go.
@@ -181,7 +182,7 @@ Each strand is defined primarily by an ordered list of *substrands*.
 Each substrand is either a single-stranded *loopout* not associated to any helix, or it is a *bound substrand*: a region of the strand that is contiguous on a single helix.
 The phrase is a bit misleading, since a bound substrand is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.
 
-Each bound substrand is specified by four properties:
+Each bound substrand is specified by four mandatory properties:
 *helix*, direction (*forward* or reverse), *start* offset, and a larger *end* offset.
 As with common string/list indexing in programming languages, start is inclusive but end is exclusive.
 So for example, a bound substrand with *end*=8 is adjacent to one with *start*=8.
@@ -261,6 +262,16 @@ The menu layout is currently hacky and will [change to something more elegant in
 
 * **Load:**
   Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+
+* **Export SVG:**
+
+Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
+
+SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with [Inkscape](https://inkscape.org/), a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.
+
+If you [report a bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues) with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.
+
+
 
 * **show DNA:**
   Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
@@ -394,11 +405,6 @@ Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`
 [TODO: make a figure showing this]
 
 
-## Exporting SVG
-
-Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
-
-**Inkscape bug:** Currently there is a [bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues/177) affecting the display of insertions (both the length and the DNA sequence) when viewed in Inkscape. So for designs using insertions, we recommend using viewing and editing the exported file with an alternative SVG editor such as [Vecteezy](https://www.vecteezy.com/editor/) (free) or [Boxy SVG](https://boxy-svg.com/) (paid).
 
 
 ## How to design structures manually using scadnano
