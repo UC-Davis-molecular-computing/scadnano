@@ -129,7 +129,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
-      ..href = '#${util.id_insertion(substrand, offset)}'
+      //XXX: xlink:href is deprecated, but this is needed  for exporting SVG, due to a bug in InkScape
+      // https://gitlab.com/inkscape/inbox/issues/1763
+//      ..href = '#${util.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${util.id_insertion(substrand, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
@@ -162,7 +165,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
-      ..href = '#${loopout.id()}'
+//      ..href = '#${loopout.id()}'
+      ..xlinkHref = '#${loopout.id()}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
