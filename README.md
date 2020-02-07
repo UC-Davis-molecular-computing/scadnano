@@ -165,6 +165,7 @@ This section explains the meaning of the terms, although some more detail about 
 
 A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
+This can be overridden by specifying a field called `idx` in each helix, but the default is to number them consecutively in order.
 (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
 Each offset is a position where a DNA base of a strand can go.
