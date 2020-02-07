@@ -1,12 +1,12 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]}
   ],
   "strands": [
     {
-      "color": "#f74308",
+      "color": "#333333",
       "substrands": [
         {"helix": 0, "forward": false, "start": 0, "end": 4},
         {"helix": 1, "forward": true, "start": 0, "end": 8},
@@ -14,7 +14,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#320096",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]

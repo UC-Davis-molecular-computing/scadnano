@@ -20,25 +20,25 @@ UiFactory<DesignDialogFormProps> DesignDialogForm = _$DesignDialogForm;
 
 @Props()
 class _$DesignDialogFormProps extends UiProps {
-  Dialog dialog;
+  Dialog dialog; // these are INITIAL values only
 }
 
 @State()
 class _$DesignDialogFormState extends UiState {
-  BuiltList<DialogItem> responses;
+  BuiltList<DialogItem> responses; // these are UPDATED as user changes form inputs
 }
 
 @Component2()
 class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> {
   @override
-  Map getDerivedStateFromProps(Map nextProps, Map prevState) {
-    var new_props = typedPropsFactory(nextProps);
+  Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
+    var new_props = typedPropsFactory(nextPropsUntyped);
     if (new_props.dialog != null) {
-      var prev_state = typedStateFactory(prevState);
+      var prev_state = typedStateFactory(prevStateUntyped);
       if (prev_state.responses == null) {
         return newState()..responses = new_props.dialog.items;
       } else {
-        return prevState;
+        return prevStateUntyped;
       }
     } else {
       //XXX: We cannot simply return null here. Must set responses to null in state, so the next time props
@@ -54,23 +54,47 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
-    int idx = 0;
+    int component_idx = 0;
+    List<ReactElement> components = [];
+    for (var item in state.responses) {
+      bool disabled = false;
+
+      // disable if checkbox in disable_when_off to which this maps is false
+      if (props.dialog.disable_when_off.containsKey(component_idx)) {
+        int check_idx = props.dialog.disable_when_off[component_idx];
+        DialogCheckbox check = state.responses[check_idx];
+        if (check.value == false) {
+          disabled = true;
+        }
+      }
+
+      // disable if checkbox in disable_when_on to which this maps is true
+      if (props.dialog.disable_when_on.containsKey(component_idx)) {
+        int check_idx = props.dialog.disable_when_on[component_idx];
+        DialogCheckbox check = state.responses[check_idx];
+        if (check.value == true) {
+          disabled = true;
+        }
+      }
+
+      var component = (Dom.div()
+        ..className = 'dialog-form-item'
+        ..key = item.label)(dialog_for(item, component_idx++, disabled));
+
+      components.add(component);
+    }
 
     return (Dom.div()
       ..className = 'dialog-form'
       ..id = 'dialog-form')(
       (Dom.form()
         ..onSubmit = submit_form
+        ..id = 'dialog-form-form'
         ..className = 'dialog-form-form')([
         (Dom.p()
           ..className = 'dialog-form-title'
           ..key = 'dialog-form-title')(props.dialog.title),
-        ...[
-          for (var item in state.responses)
-            (Dom.div()
-              ..className = 'dialog-form-item'
-              ..key = item.label)(dialog_for(item, idx++))
-        ],
+        ...components,
         (Dom.span()
           ..className = 'dialog-buttons'
           ..key = 'buttons')(
@@ -95,17 +119,18 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
     props.dialog.on_submit(null);
   }
 
-  ReactElement dialog_for(DialogItem item, int idx) {
+  ReactElement dialog_for(DialogItem item, int dialog_item_idx, bool disabled) {
     if (item is DialogCheckbox) {
       return Dom.label()(
         (Dom.input()
           ..type = 'checkbox'
+          ..disabled = disabled
           ..checked = item.value
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             bool new_checked = e.target.checked;
-            DialogCheckbox response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_checked);
+            DialogCheckbox response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_checked);
             setState(newState()..responses = new_responses.build());
           })(),
         item.label,
@@ -115,13 +140,31 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'text'
+          ..disabled = disabled
           ..value = item.value
           ..size = item.size
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;
-            DialogText response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogText response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
+            setState(newState()..responses = new_responses.build());
+          })(),
+      );
+    } else if (item is DialogTextArea) {
+      return Dom.label()(
+        '${item.label}: ',
+        (Dom.textarea()
+          ..form = 'dialog-form-form'
+          ..disabled = disabled
+          ..value = item.value
+          ..rows = item.rows
+          ..cols = item.cols
+          ..onChange = (SyntheticFormEvent e) {
+            var new_responses = state.responses.toBuilder();
+            String new_value = e.target.value;
+            DialogTextArea response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
@@ -130,18 +173,63 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         '${item.label}: ',
         (Dom.input()
           ..type = 'number'
+          ..disabled = disabled
           ..pattern = r'-?\d+' // allow to type integers
           ..value = item.value
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogNumber response = state.responses[idx];
-            new_responses[idx] = response.rebuild((b) => b.value = new_value);
+            DialogNumber response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogTextArea) {}
+    } else if (item is DialogFloatingNumber) {
+      return Dom.label()(
+        '${item.label}: ',
+        (Dom.input()
+          ..type = 'number'
+          ..disabled = disabled
+          ..pattern = r'[+-]?(\d*[.])?\d+' // allow to type floating numbers
+          ..value = item.value
+          ..step = 'any'
+          ..onChange = (SyntheticFormEvent e) {
+            var new_responses = state.responses.toBuilder();
+            num new_value = double.tryParse(e.target.value);
+            if (new_value == null) return;
+            DialogFloatingNumber response = state.responses[dialog_item_idx];
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
+            setState(newState()..responses = new_responses.build());
+          })(),
+      );
+    } else if (item is DialogSelect) {
+      throw UnsupportedError('not yet implemented');
+    } else if (item is DialogRadio) {
+      int radio_idx = 0;
+      List<ReactElement> components = [];
+      for (var option in item.options) {
+        components.add((Dom.br()..key='br-$radio_idx')());
+        components.add((Dom.input()
+          ..type = 'radio'
+          ..id = 'radio-example-filename-${radio_idx}'
+          ..name = item.label
+          ..checked = (item.selected_idx == radio_idx)
+          ..value = option
+          ..onChange = (SyntheticFormEvent e) {
+            var selected_title = e.target.value;
+            int selected_radio_idx = item.options.indexOf(selected_title);
+            DialogRadio response = state.responses[dialog_item_idx];
+            var new_responses = state.responses.toBuilder();
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
+            setState(newState()..responses = new_responses.build());
+          }
+          ..key = '$radio_idx')());
+        components.add((Dom.label()..key = 'label-$radio_idx')(option));
+        radio_idx++;
+      }
+      return (Dom.div()..className='radio-left')('${item.label}: ', components);
+    }
     return null;
   }
 

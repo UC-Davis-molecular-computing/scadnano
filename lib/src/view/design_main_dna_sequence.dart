@@ -2,26 +2,28 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
+// import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
-import '../state/app_state.dart';
-import '../app.dart';
+// import '../state/app_state.dart';
+// import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'pure_component.dart';
 
 part 'design_main_dna_sequence.over_react.g.dart';
 
-UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
-    connect<AppState, DesignMainDNASequenceProps>(
-  mapStateToProps: (state) =>
-      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
-)(DesignMainDNASequence);
+//UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
+//    connect<AppState, DesignMainDNASequenceProps>(
+//  mapStateToProps: (state) =>
+//      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
+//)(DesignMainDNASequence);
 
 @Factory()
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
@@ -30,14 +32,14 @@ UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASeq
 class _$DesignMainDNASequenceProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
+  BuiltMap<int, Helix> helices;
 }
 
 bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
     side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
 
 @Component2()
-class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> {
-
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -77,7 +79,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     var rotate_degrees = 0;
     int offset = substrand.offset_5p;
-    var helix = app.state.dna_design.helices[substrand.helix];
+    var helix = props.helices[substrand.helix];
     Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
@@ -127,7 +129,10 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
-      ..href = '#${util.id_insertion(substrand, offset)}'
+      //XXX: xlink:href is deprecated, but this is needed  for exporting SVG, due to a bug in InkScape
+      // https://gitlab.com/inkscape/inbox/issues/1763
+//      ..href = '#${util.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${util.id_insertion(substrand, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
@@ -160,7 +165,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
-      ..href = '#${loopout.id()}'
+//      ..href = '#${loopout.id()}'
+      ..xlinkHref = '#${loopout.id()}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()

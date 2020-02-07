@@ -11,6 +11,7 @@ import 'state/dialog.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
+import 'state/example_dna_designs.dart';
 import 'state/export_dna_format.dart';
 import 'state/potential_crossover.dart';
 import 'state/potential_vertical_crossover.dart';
@@ -41,8 +42,8 @@ part 'serializers.g.dart';
   SelectModeToggle,
   SelectModesSet,
   SelectionBox,
-  SetShowDNA,
-  SetShowMismatches,
+  ShowDNASet,
+  ShowMismatchesSet,
   SetShowEditor,
   SaveDNAFile,
   LoadDNAFile,
@@ -155,9 +156,18 @@ part 'serializers.g.dart';
   DialogNumber,
   DialogTextArea,
   DialogCheckbox,
+  DialogSelect,
+  DialogRadio,
   DialogShow,
   DialogHide,
   StrandColorSet,
+  ExampleDNADesigns,
+  ExampleDNADesignsLoad,
+  HelixPositionSet,
+  HelixGridPositionSet,
+  InlineInsertionsDeletions,
+  AutofitSet,
+  ExportSvg,
 ])
 Serializers serializers = _$serializers;
 

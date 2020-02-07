@@ -43,7 +43,7 @@ UiFactory<DesignSideProps> DesignSide = _$DesignSide;
 
 @Props()
 class _$DesignSideProps extends UiProps {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltSet<int> helix_idxs_selected;
   BuiltList<MouseoverData> mouseover_datas;
   BuiltSet<EditModeChoice> edit_modes;
@@ -66,14 +66,13 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     Map<int, MouseoverData> helix_idx_to_mouseover_data = {
       for (var mod in mouseover_datas) mod.helix.idx: mod
     };
-    BuiltList<Helix> helices = props.helices;
     BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
 //    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
 //        'DesignSide.render()  using helices:\n${helices}');
 
     List helices_components = [
-      for (var helix in helices)
+      for (var helix in props.helices.values)
         (DesignSideHelix()
 //        (ConnectedDesignSideHelix()
           ..helix = helix
@@ -82,13 +81,16 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
           ..selected = helix_idxs_selected.contains(helix.idx)
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
-          ..key = '${helix.has_grid_position() ? helix.grid_position : helix.svg_position}')()
+          ..key = '${helix.position_ == null ? helix.grid_position : helix.position_}')()
     ];
-    Set<GridPosition> existing_helix_grid_positions = {for (var helix in helices) helix.grid_position};
+    Set<GridPosition> existing_helix_grid_positions = {
+      for (var helix in props.helices.values) helix.grid_position
+    };
 
     bool should_display_potential_helix = props.mouse_svg_pos != null ||
         (props.grid_position_mouse_cursor != null &&
             !existing_helix_grid_positions.contains(props.grid_position_mouse_cursor));
+
     return (Dom.g()..className = 'side-view')([
       if (should_display_potential_helix)
         (DesignSidePotentialHelix()

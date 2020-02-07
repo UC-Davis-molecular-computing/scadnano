@@ -35,18 +35,8 @@ import 'package:scadnano/src/util.dart';
 import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
-
-/// Returns the default state of the app.
-AppState default_state() {
-  var dna_design = DNADesign();
-  var ui_state = AppUIState.from_dna_design(dna_design);
-  var state = (DEFAULT_AppStateBuilder
-        ..dna_design.replace(dna_design)
-        ..ui_state.replace(ui_state)
-        ..editor_content = '')
-      .build();
-  return state;
-}
+import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano/src/extension_methods.dart';
 
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_dna_design(DNADesign dna_design) {
@@ -136,24 +126,24 @@ void expect_app_state_equal(AppState actual, AppState matcher) {
 
 main() {
   test('should add a helix in response to HelixAdd', () {
-    var state = default_state();
+    var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
     final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
-    var correct_helices = new BuiltList<Helix>([correct_helix]);
-    expect(state.dna_design.helices, correct_helices);
+    var correct_helices = util.helices_assign_svg({correct_helix.idx: correct_helix}, Grid.square);
+    expect(state.dna_design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
   test('should remove helix in respond to HelixRemove', () {
-    var state = default_state();
+    var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
     state = app_state_reducer(state, new HelixRemove(0));
 
-    var correct_helices = new BuiltList<Helix>([]);
+    var correct_helices = BuiltMap<int, Helix>();
     expect(state.dna_design.helices, correct_helices);
   });
 
@@ -991,7 +981,8 @@ main() {
   ]
  }
   """;
-  DNADesign simple_helix_with_deletion_design = DNADesign.from_json(jsonDecode(simple_helix_with_deletion_json));
+  DNADesign simple_helix_with_deletion_design =
+      DNADesign.from_json(jsonDecode(simple_helix_with_deletion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1101,7 +1092,8 @@ main() {
   ]
  }
   """;
-  DNADesign simple_helix_with_insertion_design = DNADesign.from_json(jsonDecode(simple_helix_with_insertion_json));
+  DNADesign simple_helix_with_insertion_design =
+      DNADesign.from_json(jsonDecode(simple_helix_with_insertion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1562,7 +1554,8 @@ main() {
   ]
  }
   """;
-  DNADesign two_helices_join_inner_strands = DNADesign.from_json(jsonDecode(two_helices_join_inner_strands_json));
+  DNADesign two_helices_join_inner_strands =
+      DNADesign.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_dna_design(two_helices_design);
 
@@ -1653,8 +1646,8 @@ main() {
     AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
     two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
       ..ui_state.changed_since_last_save = true
-      ..undo_redo
-          .replace(two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
+      ..undo_redo.replace(
+          two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
 
     expect_app_state_equal(state, two_helices_helix_add_state);
   });
@@ -1696,8 +1689,8 @@ main() {
   DNADesign simple_helix_no_seq_design = DNADesign.from_json(jsonDecode(simple_helix_no_seq_json));
   test('Testing DNAEndsMoveStart', () {
     AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
-    AppState actual_state =
-        app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
+    AppState actual_state = app_state_reducer(
+        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
     AppState expect_state = initial_state.rebuild((b) => b.ui_state.moving_dna_ends = true);
     expect_app_state_equal(actual_state, expect_state);
   });
@@ -1706,8 +1699,8 @@ main() {
     AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
 
     // Starts DNA Ends move.
-    AppState actual_state =
-        app_state_reducer(initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
+    AppState actual_state = app_state_reducer(
+        initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
 
@@ -1931,11 +1924,13 @@ main() {
 
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_forward =
+        DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
 
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_3p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_reverse =
+        DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
 
     // Create and dispatch DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -1988,7 +1983,8 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_forward =
+        DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2004,7 +2000,8 @@ main() {
     final_state = app_state_reducer(final_state, DNAEndsMoveStop());
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_reverse =
+        DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2058,7 +2055,8 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_forward =
+        DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2074,7 +2072,8 @@ main() {
     final_state = app_state_reducer(final_state, DNAEndsMoveStop());
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_reverse =
+        DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2116,8 +2115,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.dna_design));
+    expected_undo_redo = UndoRedo().rebuild(
+        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.dna_design));
     expected_state = app_state_from_dna_design(mid_state.dna_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2126,7 +2125,8 @@ main() {
     expect_app_state_equal(state_undo_1, expected_state);
 
     // Second Undo.
-    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.dna_design, mid_state.dna_design]));
+    expected_undo_redo =
+        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.dna_design, mid_state.dna_design]));
     expected_state = app_state_from_dna_design(simple_helix_no_seq_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = false
       ..undo_redo.replace(expected_undo_redo));
@@ -2147,7 +2147,8 @@ main() {
     mid_state = app_state_reducer(mid_state, DNAEndsMoveStop());
     // Constructs move on forward strand.
     DNAEnd dna_end_forward = forward_strand.dnaend_5p;
-    DNAEndMove dna_end_move_forward = DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_forward =
+        DNAEndMove(dna_end: dna_end_forward, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch first DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_forward = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_forward]),
@@ -2172,7 +2173,8 @@ main() {
 
     // Constructs move on reverse strand.
     DNAEnd dna_end_reverse = reverse_strand.dnaend_5p;
-    DNAEndMove dna_end_move_reverse = DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
+    DNAEndMove dna_end_move_reverse =
+        DNAEndMove(dna_end: dna_end_reverse, lowest_offset: 0, highest_offset: 15);
     // Create and dispatch second DNAEndsMoveCommit action.
     DNAEndsMove dna_ends_move_reverse = DNAEndsMove(
       moves: BuiltList<DNAEndMove>([dna_end_move_reverse]),
@@ -2214,8 +2216,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo()
-        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.dna_design));
+    expected_undo_redo = UndoRedo().rebuild(
+        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.dna_design));
     expected_state = app_state_from_dna_design(mid_state.dna_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2224,7 +2226,8 @@ main() {
     expect_app_state_equal(state_undo_1, expected_state);
 
     // Second Undo.
-    expected_undo_redo = UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.dna_design, mid_state.dna_design]));
+    expected_undo_redo =
+        UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.dna_design, mid_state.dna_design]));
     expected_state = app_state_from_dna_design(simple_helix_no_seq_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = false
       ..undo_redo.replace(expected_undo_redo));
@@ -2253,7 +2256,8 @@ main() {
 ]
 }
 """;
-  DNADesign simple_helix_no_seq_smaller_design = DNADesign.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
+  DNADesign simple_helix_no_seq_smaller_design =
+      DNADesign.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
   test('Dragging end less than helix min offset (see issue #77)', () {
     AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_smaller_design);
     Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
@@ -2296,7 +2300,8 @@ main() {
 }
     """;
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2350,7 +2355,8 @@ main() {
 }
     """;
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2382,8 +2388,8 @@ main() {
 
     // Selects new end
     DNAEnd new_dna_end = actual_state.dna_design.strands[0].dnaend_5p;
-    actual_state =
-        app_state_reducer(actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
+    actual_state = app_state_reducer(
+        actual_state, SelectAll(selectables: BuiltList<Selectable>([new_dna_end]), only: true));
 
     // Undo DNA Ends move
     actual_state = app_state_reducer(actual_state, Undo());
@@ -2433,7 +2439,7 @@ main() {
     //    <-------------X----------------]
     AppState initial_state = app_state_from_dna_design(simple_helix_with_deletion_design);
 
-    Helix helix0 = simple_helix_with_deletion_design.helices.first;
+    Helix helix0 = simple_helix_with_deletion_design.helices.values.first;
     Strand forward_strand = simple_helix_with_deletion_design.strands.first;
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 30);
@@ -2470,7 +2476,8 @@ main() {
   """;
 
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_deletion_design));
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_deletion_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2485,7 +2492,7 @@ main() {
     //    <-------------I----------------]
     AppState initial_state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-    Helix helix0 = simple_helix_with_insertion_design.helices.first;
+    Helix helix0 = simple_helix_with_insertion_design.helices.values.first;
     Strand forward_strand = simple_helix_with_insertion_design.strands.first;
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 30);
@@ -2521,7 +2528,8 @@ main() {
  }
   """;
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_insertion_design));
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_insertion_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2559,8 +2567,7 @@ main() {
     test('test EditModesSet', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
-      BuiltSet<EditModeChoice> edit_modes =
-          [EditModeChoice.pencil, EditModeChoice.nick, EditModeChoice.loopout, EditModeChoice.helix].toBuiltSet();
+      BuiltSet<EditModeChoice> edit_modes = [EditModeChoice.pencil, EditModeChoice.nick].toBuiltSet();
 
       AppState final_state = app_state_reducer(initial_state, EditModesSet(edit_modes));
 
@@ -2572,10 +2579,11 @@ main() {
     test('test SelectModeToggle to toggle off', () {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
-      AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
+      AppState final_state =
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
 
       SelectModeState expected_modes = SelectModeState().set_modes([SelectModeChoice.end_5p_substrand]);
       expect(final_state.ui_state.select_mode_state, expected_modes);
@@ -2584,10 +2592,11 @@ main() {
     test('test SelectModeToggle to toggle on', () {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
-      AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_substrand));
+      AppState final_state =
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_substrand));
 
       SelectModeState expected_modes = modes.add_mode(SelectModeChoice.end_3p_substrand);
       expect(final_state.ui_state.select_mode_state, expected_modes);
@@ -2596,8 +2605,8 @@ main() {
     test('test SelectModeToggle to turn strand on', () {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.strand));
 
@@ -2606,10 +2615,10 @@ main() {
     });
 
     test('test SelectModeToggle to turn crossover on', () {
-      SelectModeState modes = SelectModeState()
-          .set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      SelectModeState modes = SelectModeState().set_modes(
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.crossover));
 
@@ -2619,10 +2628,10 @@ main() {
     });
 
     test('test SelectModeToggle to turn loopout on', () {
-      SelectModeState modes = SelectModeState()
-          .set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      SelectModeState modes = SelectModeState().set_modes(
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.loopout));
 
@@ -2633,10 +2642,11 @@ main() {
     test('test SelectModeToggle to turn end on  / turn crossover and loopouts off', () {
       SelectModeState modes = SelectModeState()
           .set_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold]);
-      AppState initial_state =
-          app_state_from_dna_design(two_helices_design).rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
 
-      AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
+      AppState final_state =
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
 
       SelectModeState expected_modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.scaffold]);
@@ -2647,15 +2657,21 @@ main() {
       SelectModeState modes = SelectModeState()
           .set_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold]);
       SelectablesStore selectables_store = SelectablesStore().select(two_helices_design.strands[0].dnaend_3p);
-      AppState initial_state = app_state_from_dna_design(two_helices_design).rebuild(
-          (b) => b..ui_state.select_mode_state.replace(modes)..ui_state.selectables_store.replace(selectables_store));
+      AppState initial_state = app_state_from_dna_design(two_helices_design).rebuild((b) => b
+        ..ui_state.select_mode_state.replace(modes)
+        ..ui_state.selectables_store.replace(selectables_store));
 
-      AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
+      AppState final_state =
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
       expect(final_state.ui_state.selectables_store, SelectablesStore());
     });
 
     test('test SelectModeSet', () {
-      List<SelectModeChoice> modes = [SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold];
+      List<SelectModeChoice> modes = [
+        SelectModeChoice.crossover,
+        SelectModeChoice.loopout,
+        SelectModeChoice.scaffold
+      ];
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
       AppState final_state = app_state_reducer(initial_state, SelectModesSet(modes));
@@ -2668,18 +2684,18 @@ main() {
     test('Test SetShowDNA', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
-      AppState final_state = app_state_reducer(initial_state, SetShowDNA(true));
+      AppState final_state = app_state_reducer(initial_state, ShowDNASet(true));
       expect(final_state.ui_state.show_dna, true);
-      final_state = app_state_reducer(final_state, SetShowDNA(false));
+      final_state = app_state_reducer(final_state, ShowDNASet(false));
       expect(final_state.ui_state.show_dna, false);
     });
 
     test('Test SetShowMismatches', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
-      AppState final_state = app_state_reducer(initial_state, SetShowMismatches(true));
+      AppState final_state = app_state_reducer(initial_state, ShowMismatchesSet(true));
       expect(final_state.ui_state.show_mismatches, true);
-      final_state = app_state_reducer(final_state, SetShowMismatches(false));
+      final_state = app_state_reducer(final_state, ShowMismatchesSet(false));
       expect(final_state.ui_state.show_mismatches, false);
     });
 
@@ -2745,8 +2761,8 @@ main() {
       AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
       two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
         ..ui_state.changed_since_last_save = false
-        ..undo_redo.replace(
-            two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
+        ..undo_redo.replace(two_helices_helix_add_state.undo_redo
+            .rebuild((b) => b..undo_stack.replace([two_helices_design]))));
 
       expect_app_state_equal(state, two_helices_helix_add_state);
     });
@@ -2755,10 +2771,11 @@ main() {
       AppState state = app_state_from_dna_design(two_helices_design);
 
       String filename = 'file_test.dna';
-      AppState final_state = app_state_reducer(state, LoadDNAFile(simple_strand_json, filename));
+      AppState final_state =
+          app_state_reducer(state, LoadDNAFile(content: simple_strand_json, filename: filename));
 
-      AppState expected_state =
-          app_state_from_dna_design(simple_strand_dna_design).rebuild((b) => b..ui_state.loaded_filename = filename);
+      AppState expected_state = app_state_from_dna_design(simple_strand_dna_design)
+          .rebuild((b) => b..ui_state.loaded_filename = filename);
 
       expect(final_state, expected_state);
     });
@@ -2767,7 +2784,7 @@ main() {
       AppState state = app_state_from_dna_design(two_helices_design);
 
       String filename = 'bad_file_test.dna';
-      AppState final_state = app_state_reducer(state, LoadDNAFile('not json', filename));
+      AppState final_state = app_state_reducer(state, LoadDNAFile(content: 'not json', filename: filename));
 
       expect(final_state.error_message != null, true);
       expect(final_state.dna_design == null, true);
@@ -2790,7 +2807,8 @@ main() {
       //   <-------------------]
       AppState state = app_state_from_dna_design(two_helices_design);
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
@@ -2815,7 +2833,8 @@ main() {
       //   <-------------------]
       AppState state = app_state_from_dna_design(two_helices_design);
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
@@ -2825,7 +2844,8 @@ main() {
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
       mouseoverParams = MouseoverParams(1, 13, true);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       mouseoverData = MouseoverData(helix, 13, boundSubstrand);
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
@@ -2851,7 +2871,8 @@ main() {
       //                  to here
       AppState state = app_state_from_dna_design(two_helices_design);
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
@@ -2861,7 +2882,8 @@ main() {
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
       mouseoverParams = MouseoverParams(1, 12, false);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       boundSubstrand = two_helices_design.strands[3].bound_substrands()[0];
       mouseoverData = MouseoverData(helix, offset, boundSubstrand);
@@ -2883,7 +2905,8 @@ main() {
       //   <-------------------]
       AppState state = app_state_from_dna_design(two_helices_design);
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
-      state = app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
+      state =
+          app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
@@ -2931,24 +2954,24 @@ main() {
     test('HelixRotationSetAtOther', () {
       AppState state = app_state_from_dna_design(two_helices_crossover_design);
 
-      state =
-          app_state_reducer(state, HelixRotationSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
+      state = app_state_reducer(
+          state, HelixRotationSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
         ..rotation = 30
         ..rotation_anchor = 15);
 
-      expect(state.dna_design.helices.first, expected_helix0);
+      expect(state.dna_design.helices.values.first, expected_helix0);
 
-      state =
-          app_state_reducer(state, HelixRotationSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
+      state = app_state_reducer(
+          state, HelixRotationSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix1 = two_helices_crossover_design.helices.last.rebuild((b) => b
+      Helix expected_helix1 = two_helices_crossover_design.helices.values.last.rebuild((b) => b
         ..rotation = 0
         ..rotation_anchor = 15);
 
-      expect(state.dna_design.helices.first, expected_helix0);
-      expect(state.dna_design.helices.last, expected_helix1);
+      expect(state.dna_design.helices.values.first, expected_helix0);
+      expect(state.dna_design.helices.values.last, expected_helix1);
     });
 
     test('HelixRotationSet', () {
@@ -2956,16 +2979,16 @@ main() {
 
       state = app_state_reducer(state, HelixRotationSet(0, 150, 4));
 
-      Helix expected_helix0 = two_helices_crossover_design.helices.first.rebuild((b) => b
+      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
         ..rotation = 150
         ..rotation_anchor = 4);
 
-      expect(state.dna_design.helices.first, expected_helix0);
+      expect(state.dna_design.helices.values.first, expected_helix0);
     });
   });
 
   test('Error message set', () {
-    AppState state = default_state();
+    AppState state = util.default_state();
     String message = 'This is an error';
     state = app_state_reducer(state, ErrorMessageSet(message));
 
@@ -2986,7 +3009,8 @@ main() {
 
     test('SelectionBoxSizeChange', () {
       Point dragPoint = new Point(5, 10);
-      selectionBox = optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main));
+      selectionBox =
+          optimized_selection_box_reducer(selectionBox, SelectionBoxSizeChange(dragPoint, is_main));
 
       SelectionBox expected = SelectionBox(point, toggle, is_main).rebuild((b) => b..current = dragPoint);
 
@@ -3000,7 +3024,7 @@ main() {
   });
 
   group('Mouse grid position (side view) tests: ', () {
-    AppState state = default_state();
+    AppState state = util.default_state();
     test('MouseGridPositionSideUpdate', () {
       GridPosition gridPosition = GridPosition(4, 2);
       state = app_state_reducer(state, MouseGridPositionSideUpdate(gridPosition));
@@ -3111,7 +3135,8 @@ main() {
       //   |
       //   this needs to be selected
       AppState local_state = app_state_reducer(state, SelectAll(selectables: selectables, only: false));
-      BuiltSet<Selectable> expected_selectables = selectables.rebuild((b) => b..add(h0_reverse_5p)).toBuiltSet();
+      BuiltSet<Selectable> expected_selectables =
+          selectables.rebuild((b) => b..add(h0_reverse_5p)).toBuiltSet();
       expect(local_state.ui_state.selectables_store.selected_items, expected_selectables);
     });
 
@@ -3197,10 +3222,11 @@ main() {
       // 1 --------------------> <--- select this end (this is intentionally reduntant)
       //   <-------------------] strand2
       AppState state = app_state_from_dna_design(two_helices_join_inner_strands);
-      BuiltList<Selectable> selectables = [strand0.dnaend_3p, strand1.dnaend_5p, strand1.dnaend_3p].toBuiltList();
+      BuiltList<Selectable> selectables =
+          [strand0.dnaend_3p, strand1.dnaend_5p, strand1.dnaend_3p].toBuiltList();
 
-      state =
-          app_state_reducer(state, SelectModesSet([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_strand]));
+      state = app_state_reducer(
+          state, SelectModesSet([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_strand]));
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
@@ -3724,7 +3750,7 @@ main() {
     //   <-------------------]
 
     DNAEnd dnaEnd = two_helices_design.strands.first.dnaend_5p;
-    Helix helix0 = two_helices_design.helices.first;
+    Helix helix0 = two_helices_design.helices.values.first;
     Point<num> start_point = helix0.svg_base_pos(0, true);
 
     // The two states of the two store's reducers we want to test:
@@ -3772,7 +3798,8 @@ main() {
       expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
-      PotentialCrossover expectedPotentialCrossover = potentialCrossover.rebuild((b) => b.current_point = movePoint);
+      PotentialCrossover expectedPotentialCrossover =
+          potentialCrossover.rebuild((b) => b.current_point = movePoint);
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
       expect(potentialCrossoverState, expectedPotentialCrossover);
     });
@@ -3828,12 +3855,13 @@ main() {
       ]
     }
     """;
-    DNADesign two_helices_with_empty_offsets = DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_json));
+    DNADesign two_helices_with_empty_offsets =
+        DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_json));
     AppState state = app_state_from_dna_design(two_helices_with_empty_offsets);
     StrandsMove strandsMove = null;
 
-    Helix helix0 = two_helices_with_empty_offsets.helices.first;
-    Helix helix1 = two_helices_with_empty_offsets.helices.last;
+    Helix helix0 = two_helices_with_empty_offsets.helices.values.first;
+    Helix helix1 = two_helices_with_empty_offsets.helices.values.last;
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
     test('StrandsMoveStart (no copy)', () {
@@ -4167,7 +4195,8 @@ main() {
 
       Strand strand = simple_helix_design.strands.last;
 
-      state = app_state_reducer(state, RemoveDNA(strand: strand, remove_all: false, remove_complements: true));
+      state =
+          app_state_reducer(state, RemoveDNA(strand: strand, remove_all: false, remove_complements: true));
 
       expect_dna_design_equal(state.dna_design, simple_helix_no_seq_design);
     });
@@ -4221,7 +4250,8 @@ main() {
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-      BoundSubstrand boundSubstrand = simple_helix_with_insertion_design.strands.first.bound_substrands().first;
+      BoundSubstrand boundSubstrand =
+          simple_helix_with_insertion_design.strands.first.bound_substrands().first;
       Insertion insertion = boundSubstrand.insertions.first;
       int length = 5;
       state = app_state_reducer(
@@ -4299,7 +4329,8 @@ main() {
       // 0  [-------------I: 3--------------->
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
-      BoundSubstrand boundSubstrand = simple_helix_with_insertion_design.strands.first.bound_substrands().first;
+      BoundSubstrand boundSubstrand =
+          simple_helix_with_insertion_design.strands.first.bound_substrands().first;
       Insertion insertion = boundSubstrand.insertions.first;
       //   simple_helix_with_insertion_design
       //
@@ -4340,7 +4371,8 @@ main() {
       // 0  [-------------X--------------->
       //    <-------------X----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_deletion_design);
-      BoundSubstrand boundSubstrand = simple_helix_with_deletion_design.strands.first.bound_substrands().first;
+      BoundSubstrand boundSubstrand =
+          simple_helix_with_deletion_design.strands.first.bound_substrands().first;
       //   simple_helix_with_insertion_design
       //     0            16               32
       // 0  [----------------------------->
@@ -4374,62 +4406,22 @@ main() {
     });
   });
 
-  group('Grid change tests: ', () {
-    test('GridChange square to hex', () {
-      AppState state = app_state_from_dna_design(two_helices_design);
-      state = app_state_reducer(state, GridChange(grid: Grid.hex));
-
-      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
-      for (int i = 0; i < helices_builder.length; i++) {
-        helices_builder[i].grid = Grid.hex;
-      }
-      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
-      DNADesign expected_design = two_helices_design.rebuild((b) => b
-        ..grid = Grid.hex
-        ..helices.replace(new_helices));
-      expect_dna_design_equal(state.dna_design, expected_design);
-    });
-
-    test('GridChange square to none', () {
-      AppState state = app_state_from_dna_design(two_helices_design);
-      Grid grid = Grid.none;
-      state = app_state_reducer(state, GridChange(grid: grid));
-
-      List<HelixBuilder> helices_builder = two_helices_design.helices.map((h) => h.toBuilder()).toList();
-      for (int i = 0; i < helices_builder.length; i++) {
-        GridPosition gridPosition = helices_builder[i].grid_position.build();
-        helices_builder[i]
-          ..grid = grid
-          ..position = grid_to_position3d(gridPosition, Grid.square).toBuilder()
-          ..grid_position = null;
-      }
-      BuiltList<Helix> new_helices = [for (var helix in helices_builder) helix.build()].build();
-      DNADesign expected_design = two_helices_design.rebuild((b) => b
-        ..grid = grid
-        ..helices.replace(new_helices));
-      expect_dna_design_equal(state.dna_design, expected_design);
-    });
-
-    test('GridChange none to square', () {
-      Position3D position0 = Position3D(x: 30, y: 60, z: 0);
-      Position3D position1 = Position3D(x: 50, y: 80, z: 0);
-      //   0                  16
-      //
-      // 0 [------------------->
-      //   <-------------------]
-      //
-      // 1 [------------------->
-      //   <-------------------]
-      String no_grid_two_helices_json = r"""
+  //   0                  16
+  //
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  // 1 [------------------->
+  //   <-------------------]
+  String no_grid_two_helices_json = r"""
           {
             "version": "0.0.1",
+            "grid": "none",
             "helices": [
               {
-                "grid_position": [0, 0],
                 "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
               },
               {
-                "grid_position": [0, 1],
                 "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
               }
             ],
@@ -4457,17 +4449,69 @@ main() {
             ]
           }
       """;
-      DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
+  DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
+
+  group('Grid change tests: ', () {
+    test('GridChange square to hex', () {
+      AppState state = app_state_from_dna_design(two_helices_design);
+      state = app_state_reducer(state, GridChange(grid: Grid.hex));
+
+      List<HelixBuilder> helices_builder =
+          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
+      for (int i = 0; i < helices_builder.length; i++) {
+        helices_builder[i].grid = Grid.hex;
+      }
+      BuiltMap<int, Helix> new_helices =
+          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
+      DNADesign expected_design = two_helices_design.rebuild((b) => b
+        ..grid = Grid.hex
+        ..helices.replace(new_helices));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('GridChange square to none', () {
+      AppState state = app_state_from_dna_design(two_helices_design);
+      Grid grid = Grid.none;
+      state = app_state_reducer(state, GridChange(grid: grid));
+
+      List<HelixBuilder> helices_builder =
+          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
+      for (int i = 0; i < helices_builder.length; i++) {
+        GridPosition gridPosition = helices_builder[i].grid_position.build();
+        helices_builder[i]
+          ..grid = grid
+          ..position_.replace(grid_to_position3d(gridPosition, Grid.square))
+          ..grid_position = null;
+      }
+      BuiltMap<int, Helix> new_helices =
+          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
+      DNADesign expected_design = two_helices_design.rebuild((b) => b
+        ..grid = grid
+        ..helices.replace(new_helices));
+      expect_dna_design_equal(state.dna_design, expected_design);
+    });
+
+    test('GridChange none to square', () {
+      Position3D position0 = Position3D(x: 30, y: 60, z: 0);
+      Position3D position1 = Position3D(x: 50, y: 80, z: 0);
       AppState state = app_state_from_dna_design(no_grid_two_helices_design);
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
 
-      Helix new_helix0 = two_helices_design.helices.first.rebuild((b) => b.position.replace(position0));
-      Helix new_helix1 = two_helices_design.helices.last.rebuild((b) => b.position.replace(position1));
+      Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
+        ..grid = grid
+        ..position_ = null
+        ..grid_position.replace(util.position3d_to_grid(position0, grid)));
+      Helix new_helix1 = no_grid_two_helices_design.helices.values.last.rebuild((b) => b
+        ..grid = grid
+        ..position_ = null
+        ..grid_position.replace(util.position3d_to_grid(position1, grid)));
 
-      List<Helix> new_helices = [new_helix0, new_helix1];
+      Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
 
-      DNADesign expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      DNADesign expected_design = no_grid_two_helices_design.rebuild((b) => b
+        ..helices.replace(new_helices)
+        ..grid = grid);
       expect_dna_design_equal(state.dna_design, expected_design);
     });
   });
@@ -4495,6 +4539,48 @@ main() {
       ..ui_state.changed_since_last_save = true);
 
     state = app_state_reducer(state, ScaffoldSet(strand: strand, is_scaffold: true));
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixPositionSet', () {
+    AppState state = app_state_from_dna_design(no_grid_two_helices_design);
+
+    Helix helix = no_grid_two_helices_design.helices.values.first;
+    Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
+
+    Helix expected_helix = helix.rebuild((b) => b
+      ..position_.replace(position)
+      ..svg_position_ = null);
+    var expected_helices = no_grid_two_helices_design.helices.toBuilder();
+    expected_helices[0] = expected_helix;
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.helices.replace(expected_helices.build())
+      ..undo_redo.undo_stack.add(no_grid_two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    state = app_state_reducer(state, HelixPositionSet(helix: helix, position: position));
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixGridPositionSet', () {
+    AppState state = app_state_from_dna_design(two_helices_design);
+    Helix helix = two_helices_design.helices.values.first;
+
+    GridPosition grid_position = GridPosition(5, -3);
+    Helix expected_helix = helix.rebuild((b) => b
+      ..grid_position.replace(grid_position)
+      ..svg_position_ = null);
+
+    var expected_helices = two_helices_design.helices.toBuilder();
+    expected_helices[0] = expected_helix;
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.helices.replace(expected_helices.build())
+      ..undo_redo.undo_stack.add(two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    state = app_state_reducer(state, HelixGridPositionSet(helix: helix, grid_position: grid_position));
     expect_app_state_equal(state, expected_state);
   });
 }

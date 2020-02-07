@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "helices": [
     {"max_offset": 64, "grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -18,7 +18,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "dna_sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
       "substrands": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "dna_sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAGTTAGT",
       "substrands": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
@@ -34,53 +34,53 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "dna_sequence": "AACTAACTAACTAACT",
       "substrands": [
         {"helix": 1, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "dna_sequence": "GGTAGGTAGGTAGGTA",
       "substrands": [
         {"helix": 1, "forward": true, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 2, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "substrands": [
         {"helix": 2, "forward": true, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "dna_sequence": "AGTTAGTTAGTTAGTT",
       "substrands": [
         {"helix": 1, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "dna_sequence": "TACCTACCTACCTACC",
       "substrands": [
         {"helix": 1, "forward": false, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "substrands": [
         {"helix": 2, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "substrands": [
         {"helix": 2, "forward": true, "start": 0, "end": 16}
       ]

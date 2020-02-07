@@ -139,10 +139,11 @@ BuiltSet<int> helix_selections_adjust_reducer(
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
   var all_helices = state.dna_design.helices;
-  List<util.Box> all_bboxes = all_helices.map((helix) => helix_to_box(helix)).toList();
+  List<util.Box> all_bboxes = all_helices.values.map((helix) => helix_to_box(helix)).toList();
+  var selection_box_as_box = util.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping =
+      util.enclosure_list(all_helices.values, all_bboxes, selection_box_as_box);
 //      util.intersection_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
-      util.enclosure_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
   List<int> helix_idxs_overlapping = helices_overlapping.map((helix) => helix.idx).toList();
 
   // start with all previously selected helices
@@ -164,10 +165,12 @@ BuiltSet<int> helix_selections_adjust_reducer(
 }
 
 util.Box helix_to_box(Helix helix) {
+  //FIXME: this is making boxes that are not far enough apart
   var position3d = helix.position3d();
   num x, y, width, height;
-  x = position3d.x - constants.SIDE_HELIX_RADIUS;
-  y = position3d.y - constants.SIDE_HELIX_RADIUS;
+  var svg_pos = util.position3d_to_side_view_svg(position3d);
+  x = svg_pos.x - constants.SIDE_HELIX_RADIUS;
+  y = svg_pos.y - constants.SIDE_HELIX_RADIUS;
   height = width = constants.SIDE_HELIX_RADIUS * 2.0;
   return util.Box(x, y, width: width, height: height);
 }
@@ -180,20 +183,20 @@ Reducer<BuiltSet<int>> side_selected_helices_reducer = combineReducers([
   TypedReducer<BuiltSet<int>, actions.HelixSelectionsClear>(helices_selected_clear_reducer),
 ]);
 
-BuiltSet<int> helix_select_reducer(BuiltSet<int> helices, actions.HelixSelect action) {
+BuiltSet<int> helix_select_reducer(BuiltSet<int> side_selected_helix_idxs, actions.HelixSelect action) {
   int idx = action.helix_idx;
   bool toggle = action.toggle;
-  if (!helices.contains(idx)) {
-    helices = helices.rebuild((h) => h.add(idx));
+  if (!side_selected_helix_idxs.contains(idx)) {
+    side_selected_helix_idxs = side_selected_helix_idxs.rebuild((h) => h.add(idx));
   } else {
     if (toggle) {
-      helices = helices.rebuild((h) => h.remove(idx));
+      side_selected_helix_idxs = side_selected_helix_idxs.rebuild((h) => h.remove(idx));
     }
   }
-  return helices;
+  return side_selected_helix_idxs;
 }
 
-BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> helices, actions.HelixSelectionsClear action) =>
+BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> _, actions.HelixSelectionsClear action) =>
     BuiltSet<int>();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,12 +208,11 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
   TypedReducer<SelectionBox, actions.SelectionBoxRemove>(selection_box_remove_reducer),
 ]);
 
-SelectionBox selection_box_create_reducer(SelectionBox selection_box, actions.SelectionBoxCreate action) =>
+SelectionBox selection_box_create_reducer(SelectionBox _, actions.SelectionBoxCreate action) =>
     SelectionBox(action.point, action.toggle, action.is_main);
 
 SelectionBox selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
     selection_box.rebuild((s) => s..current = action.point);
 
-SelectionBox selection_box_remove_reducer(SelectionBox selection_box, actions.SelectionBoxRemove action) =>
-    null;
+SelectionBox selection_box_remove_reducer(SelectionBox _, actions.SelectionBoxRemove __) => null;

@@ -10,7 +10,8 @@ import 'package:built_value/built_value.dart';
 part 'idt_fields.g.dart';
 
 abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, IDTFieldsBuilder> {
-  factory IDTFields(String name, String scale, String purification, {String plate = null, String well = null}) =>
+  factory IDTFields(String name, String scale, String purification,
+          {String plate = null, String well = null}) =>
       IDTFields.from((b) => b
         ..name = name
         ..scale = scale
@@ -75,4 +76,13 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
     }
     return new IDTFields(name, scale, purification, plate: plate, well: well);
   }
+
+  tooltip() =>
+      '      name: $name\n' +
+      '      scale: $scale\n' +
+      '      purification: $purification\n' +
+      (plate == null
+          ? ''
+          : '      plate: $plate\n'
+              '      well: $well');
 }

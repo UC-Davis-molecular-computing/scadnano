@@ -4,7 +4,6 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
@@ -12,6 +11,7 @@ import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import '../state/context_menu.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/bound_substrand.dart';
@@ -49,7 +49,7 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
 
   bool selected;
   bool selectable;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;
   BuiltSet<EditModeChoice> edit_modes;
@@ -94,6 +94,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..strand = strand
         ..key = 'strand-paths'
         ..helices = props.helices
+        ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..selectables_store = props.selectables_store
         ..select_mode_state = props.select_mode_state
@@ -107,28 +108,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     ]);
   }
 
-  // needed for capturing right-click events with React:
-  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
-  @override
-  componentDidMount() {
-    var element = querySelector('#${props.strand.id()}');
-    element.addEventListener('contextmenu', on_context_menu);
-  }
 
-  @override
-  componentWillUnmount() {
-    var element = querySelector('#${props.strand.id()}');
-    element.removeEventListener('contextmenu', on_context_menu);
-  }
-
-  on_context_menu(Event ev) {
-    MouseEvent event = ev;
-    if (!event.shiftKey) {
-      event.preventDefault();
-      app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
-    }
-  }
 
   handle_click_down(react.SyntheticPointerEvent event_syn) {
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
@@ -142,7 +122,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // set up drag detection for moving DNA ends
 //      if (select_mode && props.selectable && !props.currently_moving) {
       if (select_mode && props.selectable) {
-        var address = util.get_closest_address(event, props.helices);
+        var address = util.get_closest_address(event, props.helices.values);
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
     }
@@ -163,12 +143,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(
-      props.strand, props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
-
-  remove_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_remove_dna_sequence(props.strand));
-
-  set_color() => app.disable_keyboard_shortcuts_while(() => ask_for_color(props.strand));
+  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
+      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
   ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
     List<ReactElement> paths = [];
@@ -214,6 +190,24 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       ..className = 'deletions')(deletions);
   }
 
+  remove_dna() {
+    app.disable_keyboard_shortcuts_while(
+        () => ask_for_remove_dna_sequence(props.strand, props.selectables_store.selected_strands));
+  }
+
+  set_color() {
+    app.disable_keyboard_shortcuts_while(
+        () => ask_for_color(props.strand, props.selectables_store.selected_strands));
+  }
+
+  set_scaffold() {
+    Strand strand = props.strand;
+    var selected_strands = props.selectables_store.selected_strands;
+    actions.Action action = batch_if_multiple_selected(
+        scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands);
+    app.dispatch(action);
+  }
+
   List<ContextMenuItem> context_menu_strand(Strand strand) => [
         ContextMenuItem(
           title: 'assign DNA',
@@ -226,7 +220,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ),
         ContextMenuItem(
           title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
-          on_click: () => app.dispatch(actions.ScaffoldSet(strand: strand, is_scaffold: !strand.is_scaffold)),
+          on_click: set_scaffold,
         ),
         ContextMenuItem(
           title: 'set color',
@@ -235,10 +229,39 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       ];
 }
 
-String tooltip_text(Strand strand) => "Strand:\n"
-    "    length=${strand.dna_length()}\n"
-    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n"
-    "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}";
+actions.UndoableAction batch_if_multiple_selected(
+    ActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
+  actions.Action action;
+  if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
+    // set for single strand if nothing is selected, or exactly this strand is selected
+    action = action_creator(strand);
+  } else {
+    // if this strand is not selected, change it anyway along with all selected strands
+    if (!selected_strands.contains(strand)) {
+      selected_strands = selected_strands.rebuild((b) => b.add(strand));
+    }
+    action = actions.BatchAction([for (var strand in selected_strands) action_creator(strand)]);
+  }
+  return action;
+}
+
+typedef ActionCreator = actions.UndoableAction Function(Strand strand);
+
+ActionCreator scaffold_set_strand_action_creator(bool is_scaffold) =>
+    ((Strand strand) => actions.ScaffoldSet(strand: strand, is_scaffold: is_scaffold));
+
+ActionCreator remove_dna_strand_action_creator(bool remove_complements, bool remove_all) =>
+    ((Strand strand) =>
+        actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
+
+ActionCreator color_set_strand_action_creator(String color_hex) =>
+    ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
+
+String tooltip_text(Strand strand) => "Strand:\n" +
+    "    length=${strand.dna_length()}\n" +
+    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n" +
+    "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}\n" +
+    (strand.idt == null? "": "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
@@ -262,8 +285,8 @@ class DNARemoveOptions {
 Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
-    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
-//    DialogTextArea(label: 'sequence', value: existing_dna ?? ''),
+//    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
+    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 20, cols: 80),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
@@ -272,7 +295,7 @@ Future<void> ask_for_assign_dna_sequence(
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
-  String dna_sequence = (results[0] as DialogText).value;
+  String dna_sequence = (results[0] as DialogTextArea).value;
   bool assign_complements = (results[1] as DialogCheckbox).value;
   bool warn_on_change = (results[2] as DialogCheckbox).value;
 
@@ -290,7 +313,7 @@ Future<void> ask_for_assign_dna_sequence(
       warn_on_change: warn_on_change));
 }
 
-Future<void> ask_for_remove_dna_sequence(Strand strand) async {
+Future<void> ask_for_remove_dna_sequence(Strand strand, BuiltSet<Strand> selected_strands) async {
   var dialog = Dialog(title: 'remove DNA sequence', items: [
     DialogCheckbox(label: 'remove from bound strands', value: true),
     DialogCheckbox(label: 'remove from all strands', value: false),
@@ -301,11 +324,12 @@ Future<void> ask_for_remove_dna_sequence(Strand strand) async {
   bool remove_complements = (results[0] as DialogCheckbox).value;
   bool remove_all = (results[1] as DialogCheckbox).value;
 
-  app.dispatch(
-      actions.RemoveDNA(strand: strand, remove_complements: remove_complements, remove_all: remove_all));
+  actions.Action action = batch_if_multiple_selected(
+      remove_dna_strand_action_creator(remove_complements, remove_all), strand, selected_strands);
+  app.dispatch(action);
 }
 
-Future<void> ask_for_color(Strand strand) async {
+Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) async {
   var dialog = Dialog(title: 'set color', items: [
     DialogText(
       label: 'color',
@@ -317,5 +341,8 @@ Future<void> ask_for_color(Strand strand) async {
   if (results == null) return;
 
   String color_hex = (results[0] as DialogText).value;
-  app.dispatch(actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
+
+  actions.Action action =
+      batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
+  app.dispatch(action);
 }

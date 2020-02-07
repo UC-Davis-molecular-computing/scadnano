@@ -30,7 +30,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
-    ..helices.replace([])
+    ..helices.replace({})
     ..strands.replace([]));
 
   /****************************** end built_value boilerplate ******************************/
@@ -42,7 +42,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   @nullable
   int get major_tick_distance;
 
-  BuiltList<Helix> get helices;
+  BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
 
@@ -211,6 +211,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
+  BuiltMap<Strand, int> get strand_to_index {
+    var strand_to_index = Map<Strand, int>();
+    int idx = 0;
+    for (var strand in strands) {
+      strand_to_index[strand] = idx++;
+    }
+    return strand_to_index.build();
+  }
+
+  @memoized
   BuiltMap<Crossover, Strand> get crossover_to_strand {
     var crossover_to_strand_builder = MapBuilder<Crossover, Strand>();
     for (var strand in strands) {
@@ -226,13 +236,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
 
   @memoized
-  BuiltList<BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
-    return construct_helix_idx_to_substrands_map(helices.length, strands);
+  BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
+
+  @memoized
+  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
+    return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
 
   @memoized
   bool get helices_view_order_is_identity {
-    for (var helix in helices) {
+    for (var helix in helices.values) {
       if (helix.idx != helix.view_order) {
         return false;
       }
@@ -240,14 +253,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return true;
   }
 
-  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-
-  static _default_grid_position(int idx) => GridPosition(0, idx);
+//  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
+//  static _default_grid_position(int idx) => GridPosition(0, idx);
 
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {
     var map_builder = MapBuilder<GridPosition, Helix>();
-    for (var helix in helices) {
+    for (var helix in helices.values) {
       map_builder[helix.grid_position] = helix;
     }
     return map_builder.build();
@@ -366,11 +378,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   /// max offset allowed on any Helix in the Model
   @memoized
-  int get max_offset => helices.map((helix) => helix.max_offset).reduce(max);
+  int get max_offset => helices.values.map((helix) => helix.max_offset).reduce(max);
 
   /// min offset allowed on any Helix in the Model
   @memoized
-  int get min_offset => helices.map((helix) => helix.min_offset).reduce(min);
+  int get min_offset => helices.values.map((helix) => helix.min_offset).reduce(min);
 
   DNADesign add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
@@ -394,16 +406,19 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
-    List<dynamic> helix_jsons = json_map[constants.helices_key] = [
-      for (var helix in this.helices) helix.to_json_serializable(suppress_indent: suppress_indent)
-    ];
-    json_map[constants.strands_key] = [
-      for (var strand in this.strands) strand.to_json_serializable(suppress_indent: suppress_indent)
-    ];
+    var helix_jsons_map = {
+      for (var helix in helices.values)
+        helix.idx: helix.to_json_serializable(suppress_indent: suppress_indent)
+    };
 
-    for (int i = 0; i < helices.length; i++) {
-      var helix = helices[i];
-      var helix_json = suppress_indent ? helix_jsons[i].value : helix_jsons[i];
+    // unwrap from NoIndent if necessary
+    var helix_jsons_unwrapped =
+        List<Map<String, dynamic>>.from(helix_jsons_map.values.map(util.unwrap_from_noindent));
+    _remove_helix_idxs_if_default(helix_jsons_unwrapped);
+
+    //
+    for (var helix in helices.values) {
+      var helix_json = util.unwrap_from_noindent(helix_jsons_map[helix.idx]);
       if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
@@ -411,6 +426,12 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         helix_json[constants.min_offset_key] = helix.min_offset;
       }
     }
+
+    json_map[constants.helices_key] = helix_jsons_map.values.toList();
+
+    json_map[constants.strands_key] = [
+      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
+    ];
 
     return json_map;
   }
@@ -434,12 +455,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
+    if (json_map == null) return null;
+
     var dna_design_builder = DNADesignBuilder();
 
     dna_design_builder.version =
         util.get_value_with_default(json_map, constants.version_key, constants.INITIAL_VERSION);
     dna_design_builder.grid =
         util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
+
+    bool grid_is_none = dna_design_builder.grid == Grid.none;
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -457,10 +482,19 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // create HelixBuilders
     int idx = 0;
-    for (var helix_json in deserialized_helices_list) {
+    for (Map<String, dynamic> helix_json in deserialized_helices_list) {
       HelixBuilder helix_builder = Helix.from_json(helix_json);
-      helix_builder.idx = idx;
+      if (helix_builder.idx == null) {
+        helix_builder.idx = idx;
+      }
       helix_builder.grid = dna_design_builder.grid;
+      if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
+        throw IllegalDNADesignError(
+            'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
+      } else if (!grid_is_none && helix_json.containsKey(constants.position3d_key)) {
+        throw IllegalDNADesignError(
+            'grid is not none, but Helix $idx has position = ${helix_json[constants.position3d_key]}');
+      }
       helix_builders.add(helix_builder);
       idx++;
     }
@@ -478,17 +512,12 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     if (!ListEquality().equals(helices_view_order_sorted, identity_permutation)) {
       throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation');
     }
+
     for (int i = 0; i < helices_view_order.length; i++) {
       int i_unsorted = helices_view_order[i];
       var helix_builder = helix_builders[i_unsorted];
       int view_order = i;
       helix_builder.view_order = view_order;
-//      if (helix_builder.svg_position == null) {
-//        helix_builder.svg_position = DNADesign._default_svg_position(display_order);
-//      }
-      if (helix_builder.grid_position == null) {
-        helix_builder.grid_position = DNADesign._default_grid_position(view_order);
-      }
     }
 
     // strands
@@ -503,7 +532,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     _set_helices_min_max_offsets(helix_builders, dna_design_builder.strands.build());
 
     // build Helices
-    List<Helix> helices = [for (var helix_builder in helix_builders) helix_builder.build()];
+    Map<int, Helix> helices = {
+      for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
+    };
+    helices = util.helices_assign_svg(helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
     var dna_design = dna_design_builder.build();
@@ -534,10 +566,37 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         continue;
       }
 
-      this._ensure_other_substrand_same_deletion_or_insertion(substrand, other_ss, offset);
-
+      // most of the time, the sequence is length 1, but we have to handle insertions
       var seq = substrand.dna_sequence_in(offset, offset);
       var other_seq = other_ss.dna_sequence_in(offset, offset);
+
+//      this._ensure_other_substrand_same_deletion_or_insertion(substrand, other_ss, offset);
+      // rather than banning single deletions/insertions outright, we'll simply declare it a mismatch
+      // if they are not the same on both strands
+
+      // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
+      if (other_ss.deletions.contains(offset)) {
+        // This throws an error if substrand has a deletion at offset.
+        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int within_insertion = seq.length == 1 ? -1 : 0;
+        var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+        mismatches.add(mismatch);
+        continue;
+      }
+
+      int length_insertion_substrand = substrand.insertion_offset_to_length[offset];
+      int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
+      if (length_insertion_substrand != length_insertion_other_ss) {
+        // one has an insertion and the other doesn't, or they both have insertions of different lengths
+        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int within_insertion = seq.length == 1 ? -1 : 0;
+        var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
+        mismatches.add(mismatch);
+        continue;
+      }
+
+      // at this point, they both have an insertion here, or the both don't,
+      // and if they both do, they're the same length
       assert(other_seq.length == seq.length);
 
       for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
@@ -564,23 +623,23 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return null;
   }
 
-  void _ensure_other_substrand_same_deletion_or_insertion(
-      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
-    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
-      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
-          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-          'occupying offset intervals\n'
-          '(${substrand.start}, ${substrand.end}) and\n'
-          '(${other_ss.start}, ${other_ss.end})');
-    }
-    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
-      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
-          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-          'occupying offset intervals\n'
-          '(${substrand.start}, ${substrand.end}) and\n'
-          '(${other_ss.start}, ${other_ss.end})');
-    }
-  }
+//  void _ensure_other_substrand_same_deletion_or_insertion(
+//      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
+//    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
+//      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
+//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
+//          'occupying offset intervals\n'
+//          '(${substrand.start}, ${substrand.end}) and\n'
+//          '(${other_ss.start}, ${other_ss.end})');
+//    }
+//    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
+//      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
+//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
+//          'occupying offset intervals\n'
+//          '(${substrand.start}, ${substrand.end}) and\n'
+//          '(${other_ss.start}, ${other_ss.end})');
+//    }
+//  }
 
   /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
   /// If a mismatch occurs outside an insertion, within_insertion = -1).
@@ -749,34 +808,73 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
     return min_offset;
   }
+
+  @memoized
+  bool get has_insertions_or_deletions {
+    for (var strand in strands) {
+      for (var substrand in strand.bound_substrands()) {
+        if (substrand.deletions.isNotEmpty || substrand.insertions.isNotEmpty) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  _remove_helix_idxs_if_default(List<Map<String, dynamic>> helix_jsons) {
+    bool use_default = true;
+    for (int expected_idx = 0; expected_idx < helix_jsons.length; expected_idx++) {
+      Map<String, dynamic> helix_json = helix_jsons[expected_idx];
+      int idx = helix_json[constants.idx_on_helix_key];
+      if (idx != expected_idx) {
+        use_default = false;
+        break;
+      }
+    }
+    if (use_default) {
+      for (Map helix_json in helix_jsons) {
+        helix_json.remove(constants.idx_on_helix_key);
+      }
+    }
+  }
 }
 
-BuiltList<BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(
-    int num_helices, Iterable<Strand> strands) {
-  var helix_idx_to_substrands_builder = List<List<BoundSubstrand>>();
-  for (int _ = 0; _ < num_helices; _++) {
-    helix_idx_to_substrands_builder.add(List<BoundSubstrand>());
+BuiltMap<int, BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
+    [Iterable<int> helix_idxs = null]) {
+  var helix_idx_to_substrands = Map<int, List<BoundSubstrand>>();
+
+  if (helix_idxs != null) {
+    for (int helix_idx in helix_idxs) {
+      helix_idx_to_substrands[helix_idx] = [];
+    }
   }
+
   for (Strand strand in strands) {
     for (Substrand substrand in strand.substrands) {
       if (substrand.is_bound_substrand()) {
         var bound_ss = substrand as BoundSubstrand;
-        helix_idx_to_substrands_builder[bound_ss.helix].add(bound_ss);
+        if (helix_idx_to_substrands.containsKey(bound_ss.helix)) {
+          helix_idx_to_substrands[bound_ss.helix].add(bound_ss);
+        } else {
+          helix_idx_to_substrands[bound_ss.helix] = [bound_ss];
+        }
       }
     }
   }
 
-  var helix_idx_to_substrands_builtset_builder = List<BuiltList<BoundSubstrand>>();
-  for (var substrands in helix_idx_to_substrands_builder) {
+  var helix_idx_to_substrands_builtset_builder = Map<int, BuiltList<BoundSubstrand>>();
+  for (var helix_idx in helix_idx_to_substrands.keys) {
     // sort by start offset; since the intervals are disjoint, this sorts them by end as well
+    var substrands = helix_idx_to_substrands[helix_idx];
     substrands.sort((ss1, ss2) => ss1.start - ss2.start);
-    helix_idx_to_substrands_builtset_builder.add(substrands.build());
+    helix_idx_to_substrands_builtset_builder[helix_idx] = substrands.build();
   }
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
 _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
-  var helix_idx_to_substrands = construct_helix_idx_to_substrands_map(helix_builders.length, strands);
+  var helix_idx_to_substrands =
+      construct_helix_idx_to_substrands_map(strands, helix_builders.map((h) => h.idx));
 
   for (int idx = 0; idx < helix_builders.length; idx++) {
     HelixBuilder helix_builder = helix_builders[idx];

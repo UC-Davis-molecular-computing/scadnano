@@ -19,7 +19,7 @@ UiFactory<DesignMainStrandMovingProps> DesignMainStrandMoving = _$DesignMainStra
 class _$DesignMainStrandMovingProps extends UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   int delta_helix_idx;
   int delta_offset;
   bool delta_forward;
@@ -87,7 +87,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         substrand = bound_substrands[i + 1];
         helix = props.helices[substrand.helix];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand);
+        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand, props.helices);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
     }

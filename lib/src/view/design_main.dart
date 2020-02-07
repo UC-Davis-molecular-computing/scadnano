@@ -39,13 +39,15 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..helices = state.dna_design.helices
         ..strands = state.dna_design.strands
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
+        ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
         ..has_error = state.has_error()
         ..edit_modes = state.ui_state.edit_modes
         ..strands_move = state.ui_state.strands_move
         ..strand_creation = state.ui_state.strand_creation
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
-        ..show_dna = state.ui_state.show_dna);
+        ..show_dna = state.ui_state.show_dna
+        ..design_major_tick_distance = state.dna_design.major_tick_distance);
     }
   },
 )(DesignMain);
@@ -55,7 +57,7 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
 class _$DesignMainProps extends EditModePropsAbstract {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
@@ -65,6 +67,8 @@ class _$DesignMainProps extends EditModePropsAbstract {
   bool has_error;
   bool show_mismatches;
   bool show_dna;
+  int design_major_tick_distance;
+  bool drawing_potential_crossover;
 }
 
 @Component2()
@@ -80,6 +84,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..helices = props.helices
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
+        ..design_major_tick_distance = props.design_major_tick_distance
         ..key = 'helices')(),
       (DesignMainMismatches()
         ..show_mismatches = props.show_mismatches
@@ -87,9 +92,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
-      if (pencil_mode)
+      if (pencil_mode && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
+          ..helices = props.helices
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
@@ -99,10 +105,12 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..end = props.strand_creation.end
           ..color = props.strand_creation.color
           ..key = 'strand-creating')(),
-      (DesignMainDNASequences()
-        ..show_dna = props.show_dna
-        ..strands = props.strands
-        ..key = 'dna')(),
+      if (props.show_dna)
+        (DesignMainDNASequences()
+          ..helices = props.helices
+          ..strands = props.strands
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),

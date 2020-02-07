@@ -48,17 +48,23 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 
     Helix helix = props.helix;
 
-    Position3D pos3d = helix.position3d();
-    Point<num> svg_pos = util.position3d_to_side_view_svg(pos3d);
-    Point<num> center = Point<num>(svg_pos.x, svg_pos.y);
     bool selected = props.selected;
 
     String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';
     if (selected) {
       classname_circle += ' selected';
     }
-    if (props.mouse_is_over && props.edit_modes.contains(EditModeChoice.helix)) {
+    if (props.mouse_is_over && props.edit_modes.contains(EditModeChoice.pencil)) {
       classname_circle += ' deletable';
+    }
+
+    String tooltip;
+    if (props.grid.is_none()){
+      var pos = props.helix.position3d();
+      tooltip = '${pos.x}, ${pos.y}';
+    } else {
+      var pos = props.helix.grid_position;
+      tooltip = '${pos.h}, ${pos.v}';
     }
 
     var children = [
@@ -66,11 +72,11 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..className = classname_circle
         ..r = '${constants.SIDE_HELIX_RADIUS}'
         ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'circle')(),
+        ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
         ..className = '$SIDE_VIEW_PREFIX-helix-text'
         ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'text')(this.props.helix.idx.toString()),
+        ..key = 'text')(this.props.helix.idx.toString(), Dom.svgTitle()(tooltip)),
     ];
 
 //    print('checking mouseover data');
@@ -86,12 +92,15 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       children.add(rot_component);
     }
 
+    Position3D pos3d = helix.position3d();
+    Point<num> center = util.position3d_to_side_view_svg(pos3d);
+
     return (Dom.g()
       ..transform = 'translate(${center.x} ${center.y})')(children);
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {
-    if (props.edit_modes.contains(EditModeChoice.helix)) {
+    if (props.edit_modes.contains(EditModeChoice.pencil)) {
       app.dispatch(actions.HelixRemove(helix.idx));
     } else if (event.shiftKey) {
       app.dispatch(actions.HelixSelect(helix.idx, false));

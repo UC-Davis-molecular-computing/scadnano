@@ -19,8 +19,6 @@ UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSide
 class _$DesignSidePotentialHelixProps extends UiProps {
   Grid grid;
   GridPosition grid_position;
-
-//  Set<GridPosition> existing_helix_grid_positions;
   Point<num> mouse_svg_pos;
 }
 
@@ -28,34 +26,45 @@ class _$DesignSidePotentialHelixProps extends UiProps {
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {
-//    Point<num> mouse_svg_pos = props.mouse_svg_pos;
-//    if (mouse_svg_pos == null) {
-//      return null;
-//    }
+    if (!props.grid.is_none()) {
+      if (props.grid_position == null) {
+        return null;
+      }
+    }
 
     Point<num> svg_ideal_pos;
     Grid grid = props.grid;
-    GridPosition grid_position = props.grid_position;
-    bool allowed_grid_position = true;
+//    GridPosition grid_position = props.grid_position;
+//    bool allowed_grid_position = true;
 
     if (grid.is_none()) {
-//      throw UnsupportedError('currently unsupported to draw potential helix with Grid.none');
       svg_ideal_pos = props.mouse_svg_pos;
     } else {
-      if (grid == Grid.honeycomb && !grid_position.in_honeycomb_lattice()) {
-        allowed_grid_position = false;
-      }
+//      if (grid == Grid.honeycomb && !grid_position.in_honeycomb_lattice()) {
+//        allowed_grid_position = false;
+//      }
       svg_ideal_pos = util.side_view_grid_to_svg(props.grid_position, props.grid);
     }
 
+    String tooltip = '';
+    if (props.grid.is_none()) {
+      Position3D pos = util.svg_side_view_to_position3d(props.mouse_svg_pos);
+      tooltip = '${pos.x.toStringAsFixed(2)}, ${pos.y.toStringAsFixed(2)}';
+    } else {
+      var pos = props.grid_position;
+      tooltip = '${pos.h}, ${pos.v}';
+    }
+
     return (Dom.circle()
-      ..cx = svg_ideal_pos.x
-      ..cy = svg_ideal_pos.y
-      ..r = '${constants.SIDE_HELIX_RADIUS}'
-      ..onClick = _handle_click
-      ..className = allowed_grid_position
-          ? 'side-view-potential-helix'
-          : 'side-view-potential-helix-disallowed-position')();
+          ..cx = svg_ideal_pos.x
+          ..cy = svg_ideal_pos.y
+          ..r = '${constants.SIDE_HELIX_RADIUS}'
+          ..onClick = _handle_click
+          ..className =
+//      allowed_grid_position ?
+              'side-view-potential-helix'
+//          : 'side-view-potential-helix-disallowed-position'
+        )(Dom.svgTitle()(tooltip));
   }
 
   _handle_click(SyntheticMouseEvent event) {
@@ -65,9 +74,9 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
       Position3D position = util.svg_side_view_to_position3d(props.mouse_svg_pos);
       app.dispatch(actions.HelixAdd(position: position));
     } else {
-      if (props.grid != Grid.honeycomb || props.grid_position.in_honeycomb_lattice()) {
-        app.dispatch(actions.HelixAdd(grid_position: props.grid_position));
-      }
+//      if (props.grid != Grid.honeycomb || props.grid_position.in_honeycomb_lattice()) {
+      app.dispatch(actions.HelixAdd(grid_position: props.grid_position));
+//      }
     }
   }
 }

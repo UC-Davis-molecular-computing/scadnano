@@ -2,6 +2,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
 import '../state/edit_mode.dart';
@@ -22,7 +23,7 @@ class _$EditModeProps extends UiProps {
 }
 
 @Component2()
-class EditModeComponent extends UiComponent2<EditModeProps> {
+class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMixin {
   @override
   render() {
     return [
@@ -36,6 +37,8 @@ class EditModeComponent extends UiComponent2<EditModeProps> {
       ..onClick = ((_) => app.dispatch(actions.EditModeToggle(mode)))
       ..className = 'mode-button ' +
           (props.modes.contains(mode) ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
+      // TODO(benlee12): Find out how to only added this id for testing and not production if inefficient.
+      ..addTestId('scadnano.EditModeComponent.button.${mode.name}')
       ..key = mode.name)(mode.display_name());
   }
 }

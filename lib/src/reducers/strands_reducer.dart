@@ -19,7 +19,7 @@ import 'assign_or_remove_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
 import 'insertion_deletion_reducer.dart';
-import 'nick_join_reducers.dart';
+import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
 import '../util.dart' as util;
 
@@ -50,8 +50,11 @@ BuiltList<Strand> strands_part_reducer(
   Strand strand = state.dna_design.strands_by_id[action.strand_part.strand_id];
   int strand_idx = strands.indexOf(strand);
 
+  if (strand_idx < 0) {
+    return strands;
+  }
+
   strand = strand_part_reducer(strand, action);
-  //FIXME: is initialize still needed here after adjusting Strand._finalizeBuilder? also below
   strand = strand.initialize();
 
   var strands_builder = strands.toBuilder();
@@ -301,27 +304,15 @@ BuiltList<Strand> strand_create(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // single strand properties
 
-//BuiltList<Strand> scaffold_set_reducer(BuiltList<Strand> strands, actions.ScaffoldSet action) {
-//  Strand strand = action.strand;
-//  int strand_idx = strands.indexOf(strand);
-//
-//  Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
-//  strand = strand.rebuild((b) => b
-//    ..is_scaffold = action.is_scaffold
-//    ..color = new_color);
-//  strand = strand.initialize();
-//
-//  var strands_builder = strands.toBuilder();
-//  strands_builder[strand_idx] = strand;
-//  return strands_builder.build();
-//}
-
-
 // Unlike a strand part reducer, this sort of action actually stores the strand itself.
 BuiltList<Strand> strands_single_strand_reducer(
     BuiltList<Strand> strands, actions.SingleStrandAction action) {
   Strand strand = action.strand;
   int strand_idx = strands.indexOf(strand);
+
+  if (strand_idx < 0) {
+    return strands;
+  }
 
   strand = single_strand_reducer(strand, action);
   strand = strand.initialize();

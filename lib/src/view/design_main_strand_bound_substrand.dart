@@ -6,6 +6,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/strand.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import '../state/bound_substrand.dart';
@@ -13,6 +14,8 @@ import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
+import '../state/context_menu.dart';
+import 'design_main_strand.dart';
 
 part 'design_main_strand_bound_substrand.over_react.g.dart';
 
@@ -35,6 +38,8 @@ class _$DesignMainBoundSubstrandProps extends EditModePropsAbstract {
   BuiltSet<EditModeChoice> edit_modes;
   Helix helix;
   String strand_tooltip;
+  Strand strand;
+  List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
 @Component2()
@@ -84,9 +89,33 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
     }
   }
 
+  // needed for capturing right-click events with React:
+  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
+  @override
+  componentDidMount() {
+    var element = querySelector('#${props.substrand.id()}');
+    element.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var element = querySelector('#${props.substrand.id()}');
+    element.removeEventListener('contextmenu', on_context_menu);
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu:
+              ContextMenu(items: props.context_menu_strand(props.strand).build(), position: event.page)));
+    }
+  }
 }
 
-tooltip_text(BoundSubstrand substrand) => '${substrand.forward? 'forward' : 'reverse'} substrand:\n'
+tooltip_text(BoundSubstrand substrand) => '${substrand.forward ? 'forward' : 'reverse'} substrand:\n'
     '    helix=${substrand.helix}\n'
     '    start=${substrand.start}\n'
     '    end=${substrand.end}';

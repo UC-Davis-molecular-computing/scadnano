@@ -1,11 +1,22 @@
+<<<<<<< HEAD
 # This is a browser-only package, so test on chrome by default.
 platforms: [chrome]
 
 filename: "reducer_test.dart"
+=======
+platforms:
+  - chrome
+concurrency: 4
+filename: "*_test.dart"
+>>>>>>> 5e632abdd7c055052a156c6596bd73098778a778
 
 presets:
   # Pass "-P debug" to enable debugging configuration
   debug:
     pause_after_load: true
     exclude_tags: undebuggable
+<<<<<<< HEAD
     reporter: expanded
+=======
+    reporter: expanded
+>>>>>>> 5e632abdd7c055052a156c6596bd73098778a778

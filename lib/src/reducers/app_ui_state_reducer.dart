@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/context_menu_reducer.dart';
+import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 
 import '../state/app_state.dart';
@@ -27,9 +28,10 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
   ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
   ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
-  ..show_dna = TypedReducer<bool, actions.SetShowDNA>(show_dna_reducer)(ui_state.show_dna, action)
+  ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
   ..show_mismatches =
-      TypedReducer<bool, actions.SetShowMismatches>(show_mismatches_reducer)(ui_state.show_mismatches, action)
+      TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
+  ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
@@ -43,6 +45,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+  ..example_dna_designs.replace(
+      TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
+          ui_state.example_dna_designs, action))
   ..assign_complement_to_bound_strands_default =
       TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
           ui_state.assign_complement_to_bound_strands_default, action)
@@ -70,11 +75,13 @@ bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart a
 
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
 
-bool show_dna_reducer(bool prev_show, actions.SetShowDNA action) => action.show;
+bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
-bool show_mismatches_reducer(bool prev_show, actions.SetShowMismatches action) => action.show;
+bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool show_editor_reducer(bool prev_show, actions.SetShowEditor action) => action.show;
+bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
+
+bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
 
 bool assign_complement_to_bound_strands_default_reducer(bool _, actions.AssignDNA action) =>
     action.assign_complements;
@@ -106,6 +113,10 @@ bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, ac
 Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
 ]);
+
+ExampleDNADesigns example_dna_designs_idx_set_reducer(
+        ExampleDNADesigns example_dna_designs, actions.ExampleDNADesignsLoad action) =>
+    example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers
@@ -154,3 +165,5 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
       mouseover_data_update_reducer),
 ]);
+
+

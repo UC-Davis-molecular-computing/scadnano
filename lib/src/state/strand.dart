@@ -26,7 +26,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   factory Strand(Iterable<Substrand> substrands,
       {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = false}) {
     if (color == null) {
-      color = util.color_cycler.next();
+      color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
     }
 
     var strand = Strand.from((b) => b
@@ -397,13 +397,19 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       return null;
     } else {
       int start_idx = get_seq_start_idx(substrand);
-      return dna_sequence.substring(start_idx, start_idx + substrand.dna_length());
+      int ss_dna_length = substrand.dna_length();
+      int end_idx = start_idx + ss_dna_length;
+      return dna_sequence.substring(start_idx, end_idx);
     }
   }
 
+  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
+
+  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
+
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
-  Tuple2<DNAEnd, DNAEnd> ligatable_ends(Strand other) {
+  Tuple2<DNAEnd, DNAEnd> ligatable_ends_with(Strand other) {
     if (this == other) {
       return null;
     } else if (_ligatable_3p_to_5p_of(other)) {
@@ -414,10 +420,6 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       return null;
     }
   }
-
-  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
-
-  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
 
   bool _ligatable_3p_to_5p_of(Strand other) {
     BoundSubstrand last_ss_this = last_bound_substrand();

@@ -7,16 +7,17 @@ import '../state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/undo_redo.dart';
-
+import '../constants.dart' as constants;
 
 var hline = '*' * 100;
 
 String _stack_trace_message(stack_trace) {
   return '\n'
-      '\n**************************************************************************************'
-      '\n* If you believe this is due to a bug in scadnano, please email the file that caused *'
-      '\n* this error to doty@ucdavis.edu. Include this entire message in the email.          *'
-      '\n**************************************************************************************'
+      '\n**********************************************************************************'
+      '\n* If you believe this is due to a bug in scadnano, please file a bug report at   *'
+      '\n*   ${constants.BUG_REPORT_URL}${' ' * (77 - constants.BUG_REPORT_URL.length)}*'
+      '\n* Include this entire message in the email.                                      *'
+      '\n**********************************************************************************'
       '\n\nstack trace:'
       '\n${stack_trace}';
 }
@@ -47,6 +48,10 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '${_stack_trace_message(stack_trace)}';
   }
 
+  if (error_message == null && dna_design_new == null) {
+    error_message = constants.NO_DNA_DESIGN_MESSAGE;
+  }
+
   AppState new_state;
   if (error_message != null) {
     new_state = state.rebuild((m) => m
@@ -58,8 +63,8 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
     // remove selected helices from
     BuiltSet<int> side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
     if (state.dna_design != null && dna_design_new.helices.length < state.dna_design.helices.length) {
-      side_selected_helix_idxs =
-          side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
+      side_selected_helix_idxs = side_selected_helix_idxs
+          .rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
     }
     var new_selectables_store = SelectablesStore();
 //    new_selectables_store = new_selectables_store.register_dna_design(dna_design_new);

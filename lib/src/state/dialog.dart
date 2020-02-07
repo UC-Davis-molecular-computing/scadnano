@@ -16,10 +16,22 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   static Serializer<Dialog> get serializer => _$dialogSerializer;
 
-  factory Dialog({String title, Iterable<DialogItem> items}) {
+  factory Dialog(
+      {String title,
+      Iterable<DialogItem> items,
+      Map<int, int> disable_when_on = null,
+      Map<int, int> disable_when_off = null}) {
+    if (disable_when_on == null) {
+      disable_when_on = {};
+    }
+    if (disable_when_off == null) {
+      disable_when_off = {};
+    }
     return Dialog.from((b) => b
       ..title = title
-      ..items.replace(items));
+      ..items.replace(items)
+      ..disable_when_on.replace(disable_when_on)
+      ..disable_when_off.replace(disable_when_off));
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -27,6 +39,10 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   String get title;
 
   BuiltList<DialogItem> get items;
+
+  BuiltMap<int, int> get disable_when_on;
+
+  BuiltMap<int, int> get disable_when_off;
 
   @nullable
   @BuiltValueField(serialize: false, compare: false)
@@ -42,13 +58,40 @@ abstract class DialogItem {
 abstract class DialogNumber
     with BuiltJsonSerializable
     implements DialogItem, Built<DialogNumber, DialogNumberBuilder> {
-  factory DialogNumber({String label, num value}) = _$DialogNumber._;
-
   factory DialogNumber.from([void Function(DialogNumberBuilder) updates]) = _$DialogNumber;
 
   DialogNumber._();
 
   static Serializer<DialogNumber> get serializer => _$dialogNumberSerializer;
+
+  factory DialogNumber({String label, num value}) {
+    return DialogNumber.from((b) => b
+      ..label = label
+      ..value = value);
+  }
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  String get label;
+
+  num get value;
+}
+
+abstract class DialogFloatingNumber
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogFloatingNumber, DialogFloatingNumberBuilder> {
+  factory DialogFloatingNumber.from([void Function(DialogFloatingNumberBuilder) updates]) =
+      _$DialogFloatingNumber;
+
+  DialogFloatingNumber._();
+
+  static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
+
+  factory DialogFloatingNumber({String label, num value}) {
+    return DialogFloatingNumber.from((b) => b
+      ..label = label
+      ..value = value);
+  }
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -92,11 +135,11 @@ abstract class DialogTextArea
 
   static Serializer<DialogTextArea> get serializer => _$dialogTextAreaSerializer;
 
-  factory DialogTextArea({String label, int height, int width, String value = ''}) {
+  factory DialogTextArea({String label, int cols, int rows, String value = ''}) {
     return DialogTextArea.from((b) => b
       ..label = label
-      ..height = height
-      ..width = width
+      ..cols = cols
+      ..rows = rows
       ..value = value);
   }
 
@@ -104,9 +147,9 @@ abstract class DialogTextArea
 
   String get label;
 
-  int get height;
+  int get cols;
 
-  int get width;
+  int get rows;
 
   String get value;
 }
@@ -131,4 +174,59 @@ abstract class DialogCheckbox
   String get label;
 
   bool get value;
+}
+
+abstract class DialogSelect
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogSelect, DialogSelectBuilder> {
+  factory DialogSelect.from([void Function(DialogSelectBuilder) updates]) = _$DialogSelect;
+
+  DialogSelect._();
+
+  static Serializer<DialogSelect> get serializer => _$dialogSelectSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  factory DialogSelect({String label, BuiltList<String> options, int selected_idx = 0, String value = null}) {
+    return DialogSelect.from((b) => b
+      ..options.replace(options)
+      ..selected_idx = selected_idx
+      ..label = label
+      ..value = value);
+  }
+
+  BuiltList<String> get options;
+
+  int get selected_idx;
+
+  String get label;
+
+  String get value;
+}
+
+abstract class DialogRadio
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogRadio, DialogRadioBuilder> {
+  factory DialogRadio.from([void Function(DialogRadioBuilder) updates]) = _$DialogRadio;
+
+  DialogRadio._();
+
+  static Serializer<DialogRadio> get serializer => _$dialogRadioSerializer;
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  factory DialogRadio({String label, BuiltList<String> options, int selected_idx = 0}) {
+    return DialogRadio.from((b) => b
+      ..options.replace(options)
+      ..selected_idx = selected_idx
+      ..label = label);
+  }
+
+  BuiltList<String> get options;
+
+  int get selected_idx;
+
+  String get label;
+
+  String get value => options[selected_idx];
 }

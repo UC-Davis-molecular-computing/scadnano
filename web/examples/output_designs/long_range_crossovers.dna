@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -20,168 +20,168 @@
   ],
   "strands": [
     {
-      "color": "#007200",
+      "color": "#888888",
       "substrands": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 15, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#32b86c",
       "substrands": [
         {"helix": 15, "forward": true, "start": 16, "end": 32},
         {"helix": 0, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#333333",
       "substrands": [
         {"helix": 0, "forward": false, "start": 32, "end": 48},
         {"helix": 15, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#320096",
       "substrands": [
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 14, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 14, "forward": true, "start": 16, "end": 32},
         {"helix": 1, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#888888",
+      "color": "#7300de",
       "substrands": [
         {"helix": 1, "forward": false, "start": 32, "end": 48},
         {"helix": 14, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 2, "forward": false, "start": 0, "end": 16},
         {"helix": 13, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#333333",
+      "color": "#b8056c",
       "substrands": [
         {"helix": 13, "forward": true, "start": 16, "end": 32},
         {"helix": 2, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#320096",
+      "color": "#007200",
       "substrands": [
         {"helix": 2, "forward": false, "start": 32, "end": 48},
         {"helix": 13, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#cc0000",
       "substrands": [
         {"helix": 3, "forward": false, "start": 0, "end": 16},
         {"helix": 12, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#f7931e",
       "substrands": [
         {"helix": 12, "forward": true, "start": 16, "end": 32},
         {"helix": 3, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#f74308",
       "substrands": [
         {"helix": 3, "forward": false, "start": 32, "end": 48},
         {"helix": 12, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#57bb00",
       "substrands": [
         {"helix": 4, "forward": false, "start": 0, "end": 16},
         {"helix": 11, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#007200",
+      "color": "#888888",
       "substrands": [
         {"helix": 11, "forward": true, "start": 16, "end": 32},
         {"helix": 4, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#32b86c",
       "substrands": [
         {"helix": 4, "forward": false, "start": 32, "end": 48},
         {"helix": 11, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#333333",
       "substrands": [
         {"helix": 5, "forward": false, "start": 0, "end": 16},
         {"helix": 10, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#320096",
       "substrands": [
         {"helix": 10, "forward": true, "start": 16, "end": 32},
         {"helix": 5, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#03b6a2",
       "substrands": [
         {"helix": 5, "forward": false, "start": 32, "end": 48},
         {"helix": 10, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#888888",
+      "color": "#7300de",
       "substrands": [
         {"helix": 6, "forward": false, "start": 0, "end": 16},
         {"helix": 9, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#aaaa00",
       "substrands": [
         {"helix": 9, "forward": true, "start": 16, "end": 32},
         {"helix": 6, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#333333",
+      "color": "#b8056c",
       "substrands": [
         {"helix": 6, "forward": false, "start": 32, "end": 48},
         {"helix": 9, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#320096",
+      "color": "#007200",
       "substrands": [
         {"helix": 7, "forward": false, "start": 0, "end": 16},
         {"helix": 8, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#cc0000",
       "substrands": [
         {"helix": 8, "forward": true, "start": 16, "end": 32},
         {"helix": 7, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#f7931e",
       "substrands": [
         {"helix": 7, "forward": false, "start": 32, "end": 48},
         {"helix": 8, "forward": true, "start": 32, "end": 48}

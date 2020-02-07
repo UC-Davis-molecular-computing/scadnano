@@ -4,6 +4,10 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
+const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded. Try loading an example from the list above,\n'
+    'or click "Choose file" to load a .dna file from your local drive.';
+
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
 const MIDDLE_CLICK_BUTTON = 1;
@@ -18,16 +22,19 @@ const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
 const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
-const String INITIAL_VERSION = "0.0.1";
+const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.0.1";
+const String CURRENT_VERSION = "0.2.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
 const int BASE_WIDTH_SVG = 10;
 const int BASE_HEIGHT_SVG = 10;
 
+const default_min_offset = 0;
 const default_max_offset = 256;
+
+const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:
@@ -37,7 +44,10 @@ const default_max_offset = 256;
 /// in a DNA origami or an other DNA nanostructure with many parallel DNA helices---e.g., single-stranded tile
 /// lattices---is larger than 2 nm.)
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
-final double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+const double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+
+// unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
+const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const SIDE_HELIX_RADIUS = 25.0;
 
@@ -52,6 +62,11 @@ const js_function_name_current_pan_main = 'current_pan_main';
 const js_function_name_current_pan_side = 'current_pan_side';
 const js_function_name_current_zoom_main = 'current_zoom_main';
 const js_function_name_current_zoom_side = 'current_zoom_side';
+const js_function_name_set_pan_side = 'set_pan_side';
+const js_function_name_set_pan_main = 'set_pan_main';
+const js_function_name_set_zoom_side = 'set_zoom_side';
+const js_function_name_set_zoom_main = 'set_zoom_main';
+const js_function_name_fit_and_center = 'fit_and_center';
 const js_function_name_compile = 'compile';
 
 const js_function_name_start_brython = 'start_brython';
@@ -83,14 +98,14 @@ const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 
 // Helix keys
-const idx_key = 'idx';
+const idx_on_helix_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
 const rotation_key = 'rotation';
 const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
-const position3d_key = 'position'; // support in the future
+const position3d_key = 'position';
 
 // Strand keys
 const color_key = 'color';

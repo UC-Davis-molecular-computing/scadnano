@@ -18,3 +18,13 @@
 #          compiler: dart2js
 #          dart2js_args:
 #            - --no-minify
+
+targets:
+  $default:
+    builders:
+      test_html_builder:
+        options:
+          templates:
+            "test/_templates/react_components_test_template.html":
+              - "test/components/*_test.dart"
+              

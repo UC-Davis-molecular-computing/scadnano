@@ -36,7 +36,7 @@ UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 @Props()
 class _$DesignMainStrandsProps extends UiProps {
   BuiltList<Strand> strands;
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
   SelectablesStore selectables_store;
   SelectModeState select_mode_state;

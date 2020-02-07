@@ -8,6 +8,9 @@ import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano/src/state/position3d.dart';
 
 import '../state/helix.dart';
 import '../app.dart';
@@ -26,6 +29,7 @@ class _$DesignMainHelixProps extends UiProps {
   Helix helix;
   int view_order;
   bool strand_create_enabled;
+  int design_major_tick_distance;
 }
 
 @Component2()
@@ -42,14 +46,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     num width = helix.svg_width();
     num height = helix.svg_height();
 
-    var vert_line_paths = _vert_line_paths(helix);
+    var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
 
     var x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
-//    String tooltip_helix_length_adjust = 'click to adjust helix length';
 
     return (Dom.g()
       ..className = 'helix-main-view'
@@ -144,6 +147,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
   }
 
+  helix_adjust_position() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_position);
+  }
+
+  helix_adjust_grid_position() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_grid_position);
+  }
+
   Future<void> dialog_helix_adjust_length() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
@@ -183,9 +194,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
       DialogText(
           label: 'varying major tick distances (space-separated)',
-          value: helix.major_ticks == null ? '' : helix.major_ticks.toList().join(' ')),
+          value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
       DialogCheckbox(label: 'apply to all', value: true),
-    ]);
+    ], disable_when_on: {
+      2: 0
+    }, disable_when_off: {
+      1: 0
+    });
+
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -217,15 +233,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         return;
       }
 
+      // TODO: avoid global variable here if possible (move this logic to middleware)
       if (apply_to_all) {
-        for (var other_helix in app.state.dna_design.helices) {
+        for (var other_helix in app.state.dna_design.helices.values) {
           t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
           if (t != null) {
             window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
             return;
           }
         }
-        for (var other_helix in app.state.dna_design.helices) {
+        for (var other_helix in app.state.dna_design.helices.values) {
           t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
           if (t != null) {
             window.alert('major tick ${t} is greater than maximum offset ${other_helix.max_offset}');
@@ -253,20 +270,87 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.dispatch(action);
   }
 
+  Future<void> dialog_helix_adjust_grid_position() async {
+    var grid_position = props.helix.grid_position ?? GridPosition(0, 0);
+
+    var dialog = Dialog(title: 'adjust helix grid position', items: [
+      DialogNumber(label: 'h', value: grid_position.h),
+      DialogNumber(label: 'v', value: grid_position.v),
+      DialogNumber(label: 'b', value: grid_position.b),
+    ]);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    num h = (results[0] as DialogNumber).value;
+    num v = (results[1] as DialogNumber).value;
+    num b = (results[2] as DialogNumber).value;
+
+    app.dispatch(actions.HelixGridPositionSet(helix: props.helix, grid_position: GridPosition(h, v, b)));
+  }
+
+  Future<void> dialog_helix_adjust_position() async {
+    var position = props.helix.position ?? Position3D();
+
+    var dialog = Dialog(title: 'adjust helix position', items: [
+      DialogFloatingNumber(label: 'x', value: position.x),
+      DialogFloatingNumber(label: 'y', value: position.y),
+      DialogFloatingNumber(label: 'z', value: position.z),
+      DialogFloatingNumber(label: 'pitch', value: position.pitch),
+      DialogFloatingNumber(label: 'roll', value: position.roll),
+      DialogFloatingNumber(label: 'yaw', value: position.yaw),
+    ]);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    num x = (results[0] as DialogFloatingNumber).value;
+    num y = (results[1] as DialogFloatingNumber).value;
+    num z = (results[2] as DialogFloatingNumber).value;
+    num pitch = (results[3] as DialogFloatingNumber).value;
+    num roll = (results[4] as DialogFloatingNumber).value;
+    num yaw = (results[5] as DialogFloatingNumber).value;
+
+    // TODO: (check validity)
+    app.dispatch(actions.HelixPositionSet(
+        helix: props.helix,
+        position: Position3D(
+          x: x,
+          y: y,
+          z: z,
+          pitch: pitch,
+          roll: roll,
+          yaw: yaw,
+        )));
+  }
+
   String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
 
-  List<ContextMenuItem> context_menu_helix(Helix helix) => [
-        ContextMenuItem(
-          title: 'adjust length',
-          on_click: helix_adjust_length,
-        ),
-        ContextMenuItem(
-          title: 'adjust tick marks',
-          on_click: helix_adjust_major_tick_marks,
-        ),
-      ];
+  List<ContextMenuItem> context_menu_helix(Helix helix) {
+    ContextMenuItem context_menu_item_adjust_position = (props.helix.grid == Grid.none)
+        ? ContextMenuItem(
+            title: 'adjust position',
+            on_click: helix_adjust_position,
+          )
+        : ContextMenuItem(
+            title: 'adjust grid position',
+            on_click: helix_adjust_grid_position,
+          );
+
+    return [
+      ContextMenuItem(
+        title: 'adjust length',
+        on_click: helix_adjust_length,
+      ),
+      ContextMenuItem(
+        title: 'adjust tick marks',
+        on_click: helix_adjust_major_tick_marks,
+      ),
+      context_menu_item_adjust_position,
+    ];
+  }
 }
 
 //static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
@@ -284,7 +368,7 @@ Point<num> helix_main_view_translation(Helix helix) {
 }
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
-Map<String, String> _vert_line_paths(Helix helix) {
+Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
   List<int> regularly_spaced_ticks(int distance, int start, int end) {
     if (distance == null || distance == 0) {
       return [];
@@ -296,7 +380,7 @@ Map<String, String> _vert_line_paths(Helix helix) {
   }
 
   var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : app.state.dna_design.major_tick_distance;
+      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
   Set<int> major_ticks = (helix.has_major_ticks()
           ? helix.major_ticks
           : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))

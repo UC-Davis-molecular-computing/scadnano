@@ -23,6 +23,7 @@ import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
+import 'design_main_error_boundary.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -206,7 +207,7 @@ class DesignViewComponent {
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
         var old_address = strands_move.current_address;
-        var address = util.get_closest_address(event, app.state.dna_design.helices);
+        var address = util.get_closest_address(event, app.state.dna_design.helices.values);
         if (address != old_address) {
           app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
         }
@@ -258,9 +259,13 @@ class DesignViewComponent {
         uninstall_draggable(false, DraggableComponent.side);
       }
 
-      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX &&
-          app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
-        app.dispatch(actions.MouseGridPositionSideClear());
+      if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
+        if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
+          app.dispatch(actions.MouseGridPositionSideClear());
+        }
+        if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+          app.dispatch(actions.MousePositionSideClear());
+        }
       }
     });
 
@@ -347,7 +352,7 @@ class DesignViewComponent {
       app.dispatch(actions.SelectAllSelectable());
     }
 
-    if (key == EditModeChoice.helix.key_code()) {
+    if (key == EditModeChoice.pencil.key_code()) {
       side_view_update_position(mouse_pos: side_view_mouse_position);
     }
   }
@@ -401,6 +406,9 @@ class DesignViewComponent {
   }
 
   drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
+    if (app.store_selection_box.state == null) {
+      return;
+    }
     var action_remove = actions.SelectionBoxRemove(is_main_view);
     bool toggle = app.store_selection_box.state.toggle;
     var action_adjust;
@@ -470,7 +478,7 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        ErrorBoundary()(
+        DesignMainErrorBoundary()(
           (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)((ReduxProvider()
@@ -569,12 +577,14 @@ class DesignViewComponent {
     if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
       app.dispatch(actions.MouseGridPositionSideClear());
     }
+    if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+      app.dispatch(actions.MousePositionSideClear());
+    }
   }
 
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
-//  if (app.keys_pressed.contains(constants.KEY_CODE_SHOW_POTENTIAL_HELIX)) {
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.helix)) {
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
       if (!app.state.dna_design.grid.is_none()) {
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
             mouse_pos: mouse_pos, event: event);
@@ -590,6 +600,9 @@ class DesignViewComponent {
     } else {
       if (app.state.ui_state.side_view_grid_position_mouse_cursor != null) {
         app.dispatch(actions.MouseGridPositionSideClear());
+      }
+      if (app.state.ui_state.side_view_position_mouse_cursor != null) {
+        app.dispatch(actions.MousePositionSideClear());
       }
     }
   }

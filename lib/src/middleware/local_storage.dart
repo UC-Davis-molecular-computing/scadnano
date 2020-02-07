@@ -56,7 +56,10 @@ save(Storable storable) {
     value_string = app.state.ui_state.select_mode_state.to_json();
   }
 
-  window.localStorage[storable_key] = value_string;
+  if (value_string != null)
+    window.localStorage[storable_key] = value_string;
+  else
+    window.localStorage.remove(storable_key);
 }
 
 String side_pane_width() {
@@ -91,11 +94,11 @@ _restore(Storable storable) {
       } else {
         filename = null;
       }
-      action = actions.LoadDNAFile(value, filename);
+      action = actions.LoadDNAFile(content: value, filename: filename);
     } else if (storable == Storable.show_dna) {
-      action = actions.SetShowDNA(value == 'true');
+      action = actions.ShowDNASet(value == 'true');
     } else if (storable == Storable.show_mismatches) {
-      action = actions.SetShowMismatches(value == 'true');
+      action = actions.ShowMismatchesSet(value == 'true');
     } else if (storable == Storable.show_editor) {
       action = actions.SetShowEditor(value == 'true');
     } else if (storable == Storable.editor_mode) {

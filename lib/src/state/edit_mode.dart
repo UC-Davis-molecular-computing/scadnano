@@ -18,9 +18,6 @@ class EditModeChoice extends EnumClass {
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice backbone = _$backbone;
-  static const EditModeChoice loopout = _$loopout;
-  static const EditModeChoice helix = _$helix;
-//  static const EditModeChoice assign_dna = _$assign_dna;
 
 //  static const EditModeChoice python = _$python;
 
@@ -36,9 +33,6 @@ class EditModeChoice extends EnumClass {
     KeyCode.I: insertion,
     KeyCode.D: deletion,
     KeyCode.B: backbone,
-    KeyCode.O: loopout,
-    KeyCode.H: helix,
-//    KeyCode.A: assign_dna,
   };
 
   int key_code() {
@@ -57,7 +51,7 @@ class EditModeChoice extends EnumClass {
   BuiltSet<EditModeChoice> get excluded_modes {
     switch (this) {
       case select:
-        return [pencil, loopout, backbone, nick, ligate, insertion, deletion].toBuiltSet();
+        return [pencil, backbone, nick, ligate, insertion, deletion].toBuiltSet();
       case pencil:
         return [select, ligate, backbone].toBuiltSet();
       case nick:
@@ -70,12 +64,6 @@ class EditModeChoice extends EnumClass {
         return [select, nick, ligate, insertion,  backbone].toBuiltSet();
       case backbone:
         return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
-      case loopout:
-        return [select].toBuiltSet();
-      case helix:
-        return <EditModeChoice>[].toBuiltSet();
-//      case assign_dna:
-//        return [select, pencil, nick, ligate, insertion, deletion, loopout, backbone].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
     }
@@ -102,12 +90,6 @@ class EditModeChoice extends EnumClass {
         return '(d)eletion';
       case backbone:
         return '(b)ackbone';
-      case loopout:
-        return 'l(o)opout';
-      case helix:
-        return '(h)elix';
-//      case assign_dna:
-//        return '(a)ssign DNA';
     }
     return super.toString();
   }

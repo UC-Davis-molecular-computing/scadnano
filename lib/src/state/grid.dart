@@ -4,6 +4,11 @@ import 'package:built_value/serializer.dart';
 
 part 'grid.g.dart';
 
+// see here for definitions of hex grid coordinate system: https://www.redblobgames.com/grids/hexagons/
+
+// honeycomb_cadnano coordinate system:
+//   https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
+
 class Grid extends EnumClass {
   const Grid._(String name) : super(name);
 

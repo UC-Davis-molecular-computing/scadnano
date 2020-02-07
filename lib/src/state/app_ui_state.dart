@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -8,6 +9,7 @@ import '../serializers.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'dna_design.dart';
+import 'example_dna_designs.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -15,6 +17,7 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import '../constants.dart' as constants;
 
 part 'app_ui_state.g.dart';
 
@@ -30,6 +33,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..show_dna = false
   ..show_editor = false
   ..show_mismatches = true
+  ..autofit = true
   ..drawing_potential_crossover = false
   ..moving_dna_ends = false
   ..changed_since_last_save = false
@@ -39,9 +43,25 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..context_menu = null
   ..dialog = null
   ..strand_creation = null
+  ..css_styles.replace(find_css_styles())
+  ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
   ..select_mode_state = DEFAULT_SelectModeStateBuilder;
+
+List<String> find_css_styles() {
+  var stylesheets = document.styleSheets;
+  CssStyleSheet stylesheet =
+      stylesheets.firstWhere((s) => s.href.contains(constants.scadnano_css_stylesheet_name_no_ext));
+  List<CssRule> rules = stylesheet.cssRules;
+  Set<String> styles = {};
+//  for (CssStyleRule rule in rules) {
+//    for (var key in rule.styleMap.keys) {
+//
+//    }
+//  }
+  return styles.toList();
+}
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -50,7 +70,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   factory AppUIState.from_dna_design(DNADesign design) {
     var selectables_store = SelectablesStore();
-//    selectables_store = selectables_store.register_dna_design(design);
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
 
@@ -67,6 +86,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// Special case for helices, which can always be selected, but only in the side view.
   BuiltSet<int> get side_selected_helix_idxs;
 
+  // list of names of styles (e.g., "width", "margin-bottom") applied to elements from external style sheet
+  BuiltList<String> get css_styles;
+
   String get loaded_filename;
 
   String get loaded_script_filename;
@@ -77,6 +99,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_dna;
 
   bool get show_mismatches;
+
+  bool get autofit;
 
   bool get show_editor;
 
@@ -93,6 +117,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   BuiltList<MouseoverData> get mouseover_datas;
+
+  ExampleDNADesigns get example_dna_designs;
 
   @nullable
   Dialog get dialog;

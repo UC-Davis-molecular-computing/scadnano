@@ -14,9 +14,12 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
 
 import 'app.dart';
+import 'json_serializable.dart';
 import 'state/crossover.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
@@ -34,7 +37,7 @@ import 'state/strand.dart';
 import 'actions/actions.dart' as actions;
 
 const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
-    'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
+    '  ${constants.BUG_REPORT_URL}';
 
 final ColorCycler color_cycler = ColorCycler();
 
@@ -69,6 +72,25 @@ class ColorCycler {
   static final Color scaffold_color = Color.rgb(0, 102, 204);
 }
 
+final scaffold_color = ColorCycler.scaffold_color;
+
+/// Given list of ints, return list of distances between them, with first equal to first, e.g.
+///   deltas([2,3,5,7,11]) == [2, 1, 2, 2, 4]
+List<int> deltas(Iterable<int> nums) {
+  if (nums.isEmpty) {
+    return [];
+  }
+
+  List<int> deltas = [nums.first];
+  int prev = nums.first;
+  for (int num in nums) {
+    int delta = num - prev;
+    deltas.add(delta);
+    prev = num;
+  }
+  return deltas;
+}
+
 make_dart_function_available_to_js(String js_function_name, Function dart_func) {
   setProperty(window, js_function_name, allowInterop(dart_func));
 }
@@ -84,11 +106,21 @@ Future<DNADesign> dna_design_from_url(String url) async {
   return dna_design;
 }
 
-Future<String> get_text_file_content(String url) async {
-  return await HttpRequest.getString(url).then((content) {
-    return content;
-  });
-}
+Future<String> get_text_file_content(String url) async =>
+    await HttpRequest.getString(url).then((content) => content);
+
+///// Go to url specifying a directory, and if directory listing is enabled, parse the names of the
+///// files ending in .dna. TODO: implement this, doesn't work now with local server
+//Future<List<String>> get_dna_files_in_directory(String url) async {
+//  String page = await HttpRequest.getString(url).then((content) => content);
+//  print('page=\n$page');
+//  var regex = RegExp(r'href="(.*\.dna)"');
+//  var matches = regex.allMatches(page);
+//  for (var match in matches) {
+//    print('match: $match');
+//  }
+//  return [];
+//}
 
 Future<ByteBuffer> get_binary_file_content(String url) async {
   return await HttpRequest.request(url, responseType: 'arraybuffer').then((request) {
@@ -104,9 +136,10 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
   }
   // https://api.dart.dev/stable/2.7.0/dart-async/Completer-class.html
   Completer<List<DialogItem>> completer = Completer<List<DialogItem>>();
-  dialog = dialog.rebuild((b) => b..on_submit = (List<DialogItem> items) {
-    completer.complete(items);
-  });
+  dialog = dialog.rebuild((b) => b
+    ..on_submit = (List<DialogItem> items) {
+      completer.complete(items);
+    });
   app.dispatch(actions.DialogShow(dialog: dialog));
   return completer.future;
 }
@@ -119,6 +152,142 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
   var grid_pos = side_view_svg_to_grid(grid, svg_pos);
   return grid_pos;
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// assign SVG coordinates to helices
+
+Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
+    [BuiltSet<int> selected_helix_idxs = null]) {
+  if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
+    selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
+  }
+
+  var selected_helices = [
+    for (var helix in helices.values) if (selected_helix_idxs.contains(helix.idx)) helix
+  ];
+
+  List<int> view_order = List<int>(selected_helices.length);
+  for (int i = 0; i < selected_helices.length; i++) {
+    view_order[i] = selected_helices[i].view_order;
+  }
+
+  List<Helix> new_helices_sorted_by_idx = List<Helix>.from(helices.values);
+  num prev_y = null;
+
+  new_helices_sorted_by_idx.sort((h1, h2) => h1.idx - h2.idx);
+
+  for (int i = 0; i < view_order.length; i++) {
+    int i_unsorted = view_order[i];
+    int idx_unsorted = new_helices_sorted_by_idx[i_unsorted].idx;
+    Helix helix = helices[idx_unsorted];
+    assert(helix != null);
+
+    num x = 0; //TODO: shift x by grid_position.b or position.z
+    num y = 0;
+    if (i > 0) {
+      int prev_i_unsorted = view_order[i - 1];
+      int prev_idx_unsorted = new_helices_sorted_by_idx[prev_i_unsorted].idx;
+      var prev_helix = helices[prev_idx_unsorted];
+      assert(prev_helix != null);
+
+      num delta_y;
+      if (grid.is_none()) {
+        var prev_pos = prev_helix.position_;
+        var pos = helix.position_;
+        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+      } else {
+        var prev_grid_position = prev_helix.grid_position;
+        var grid_position = helix.grid_position;
+        delta_y =
+            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_SVG;
+      }
+      y = prev_y + delta_y;
+    }
+    prev_y = y;
+    helix = helix.rebuild((b) => b..svg_position_ = Point<num>(x, y));
+
+    new_helices_sorted_by_idx[i_unsorted] = helix;
+  }
+
+  return helices_list_to_map(new_helices_sorted_by_idx);
+}
+
+Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
+
+/// If obj is a NoIndent, unwrap the object from it, otherwise return obj.
+dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// transforming of points
+
+/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
+Helix get_closest_helix(MouseEvent event, Iterable<Helix> helices) {
+  var svg_coord = round_point(svg_position_of_mouse_click(event));
+
+  num svg_y = svg_coord.y;
+  for (Helix helix in helices) {
+    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
+      return helix;
+    }
+  }
+
+  // didn't find a helix, so we'll find the closest one
+  Helix helix_closest = helices.first;
+  num min_dist = distance_y_coord_to_closest_helix(helix_closest, svg_y);
+  for (Helix helix in helices) {
+    if (distance_y_coord_to_closest_helix(helix, svg_y) < min_dist) {
+      helix_closest = helix;
+      min_dist = distance_y_coord_to_closest_helix(helix, svg_y);
+    }
+  }
+  return helix_closest;
+}
+
+num distance_y_coord_to_closest_helix(Helix helix, num y) =>
+    (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
+
+/// Return (closest) helix, offset and direction where click event occurred.
+Address get_closest_address(MouseEvent event, Iterable<Helix> helices) {
+  var svg_coord = round_point(svg_position_of_mouse_click(event));
+  Helix helix = get_closest_helix(event, helices);
+  int offset = helix.svg_x_to_offset(svg_coord.x);
+  bool forward = helix.svg_y_is_forward(svg_coord.y);
+  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
+}
+
+//XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
+// might be related to the fact that the mouse coordinates for the selection box are detected outside of React
+Point<num> svg_position_of_mouse_click(MouseEvent event) {
+  Point<num> offset_in_svg_elt;
+  if (browser.isFirefox) {
+    offset_in_svg_elt = get_svg_point(event);
+  } else {
+    offset_in_svg_elt = event.offset;
+  }
+  return transform_mouse_coord_to_svg_current_panzoom(offset_in_svg_elt, true);
+}
+
+Point<num> get_svg_point(MouseEvent event) {
+  if (browser.isFirefox) {
+    Element svg_elt = svg_ancestor(event.target);
+    var rect = svg_elt.getBoundingClientRect().topLeft;
+    var offset = event.client - rect;
+    return offset;
+  } else {
+    return event.client;
+  }
+}
+
+SvgSvgElement svg_ancestor(SvgElement elt) {
+  while (!(elt is SvgSvgElement)) {
+    elt = elt.parent;
+  }
+  return elt;
+}
+
+Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
+
+Point<int> round_point(Point<num> point) => Point<int>(point.x.round(), point.y.round());
 
 Point<num> transform_mouse_coord_to_svg_current_panzoom_correct_firefox(
     MouseEvent event, bool is_main_view, SvgSvgElement view_svg) {
@@ -142,19 +311,11 @@ Point<num> untransformed_svg_point(SvgSvgElement svg_elt,
   if (mouse_pos == null) {
     assert(event != null);
     mouse_pos = event.client;
-//    print('event.client: ${event.client}');
   }
-//  SvgElement target_svg = event.target as SvgElement;
-//  GraphicsElement target_graphics = target_svg as GraphicsElement;
-//  var bbox = target_svg.getBoundingClientRect();
   svg_point_SVG.x = mouse_pos.x;
   svg_point_SVG.y = mouse_pos.y;
-//  print('  target_graphics.runtimeType: ${target_graphics.runtimeType}');
   //TODO: consider using svg_elt.getCtm(): https://github.com/anvaka/panzoom/commit/49be4a1bd6361598b79f29fe99adc2c125d93678
   var svg_point_SVG_1 = svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse());
-//  print('svg_point_SVG.matrixTransform(svg_elt.getScreenCtm().inverse()):         ${svg_point_SVG_1.x}, ${svg_point_SVG_1.y}');
-//  var svg_point_SVG_2 = svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse());
-//  print('svg_point_SVG.matrixTransform(target_graphics.getScreenCtm().inverse()): ${svg_point_SVG_2.x}, ${svg_point_SVG_2.y}');
   Point<num> svg_point = Point<num>(svg_point_SVG_1.x, svg_point_SVG_1.y);
   return svg_point;
 }
@@ -225,18 +386,115 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
-  } else if (grid == Grid.hex || grid == Grid.honeycomb) {
-    num x = gp.h; // x offset from h
-    if (gp.v % 2 == 1) {
-      x += cos(2 * pi / 6); // x offset from v
-    }
-    num y = sin(2 * pi / 6) * gp.v; // y offset from v
-    point = Point<num>(x, y);
+  } else if (grid == Grid.hex) {
+    point = hex_grid_position_to_position2d_diameter_1_circles(gp);
+  } else if (grid == Grid.honeycomb) {
+    point = honeycomb_grid_position_to_position2d_diameter_1_circles(gp);
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   return point * 2 * radius;
+}
+
+/// see here for definitions: https://www.redblobgames.com/grids/hexagons/
+enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
+
+/// Converts from hex grid_position to absolute real-number position,
+/// assuming each grid circle has diameter 1,
+/// and the center of circle at grid_position (0,0) is the origin.
+Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+  num x, y;
+  if (coordinate_system == HexGridCoordinateSystem.odd_r) {
+    x = gp.h; // x offset from h
+    if (gp.v % 2 == 1) {
+      x += cos(2 * pi / 6); // x offset from v
+    }
+    y = sin(2 * pi / 6) * gp.v; // y offset from v
+  } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
+    y = gp.v;
+    if (gp.h % 2 == 1) {
+      y -= cos(2 * pi / 6);
+    }
+    x = sin(2 * pi / 6) * gp.h;
+  } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
+    y = gp.v;
+    if (gp.h % 2 == 1) {
+      y += cos(2 * pi / 6);
+    }
+    x = sin(2 * pi / 6) * gp.h;
+  } else {
+    throw UnsupportedError('coordinate system ${coordinate_system} not supported');
+  }
+  return Point<num>(x, y);
+}
+
+// Uses cadnano coordinate system:
+//   https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
+Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
+  num x, y;
+  y = 1.5 * gp.v;
+  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
+    y += 0.5;
+  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
+    y += cos(2 * pi / 6);
+  }
+  x = gp.h * sin(2 * pi / 6);
+  return Point<num>(x, y);
+}
+
+/// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+  num radius = constants.SIDE_HELIX_RADIUS;
+  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
+  int h, v;
+  int b = 0;
+  // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
+  if (grid == Grid.none) {
+    throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
+  } else if (grid == Grid.square) {
+    h = x.round();
+    v = y.round();
+  } else if (grid == Grid.honeycomb) {
+    h = (x / sin(2 * pi / 6)).round();
+    if (h % 2 == 0) {
+      int remainder_by_3 = y.floor() % 3;
+      if (remainder_by_3 == 2) {
+        y -= 0.5;
+      }
+    } else if (h % 2 == 1) {
+      int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
+      if (remainder_by_3 == 1) {
+        y -= cos(2 * pi / 6);
+      }
+    }
+    v = (y / 1.5).round();
+  } else if (grid == Grid.hex) {
+    if (coordinate_system == HexGridCoordinateSystem.odd_r) {
+      v = (y / sin(2 * pi / 6)).round();
+      if (v % 2 == 1) {
+        x -= cos(2 * pi / 6);
+      }
+      h = x.round();
+    } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
+      h = (x / sin(2 * pi / 6)).round();
+      if (h % 2 == 1) {
+        y += cos(2 * pi / 6);
+      }
+      v = y.round();
+    } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
+      h = (x / sin(2 * pi / 6)).round();
+      if (h % 2 == 1) {
+        y -= cos(2 * pi / 6);
+      }
+      v = y.round();
+    } else {
+      throw UnsupportedError('coordinate system ${coordinate_system} not supported');
+    }
+  }
+  return GridPosition(h, v, b);
 }
 
 GridPosition position3d_to_grid(Position3D position, Grid grid) {
@@ -253,27 +511,6 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
   return position3d;
 }
 
-/// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord) {
-  num radius = constants.SIDE_HELIX_RADIUS;
-  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
-  int h, v;
-  int b = 0;
-  if (grid.is_none()) {
-    throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
-  } else if (grid == Grid.square) {
-    h = x.round();
-    v = y.round();
-  } else if (grid == Grid.honeycomb || grid == Grid.hex) {
-    v = (y / sin(2 * pi / 6)).round();
-    if (v % 2 == 1) {
-      x -= cos(2 * pi / 6); // x offset from v
-    }
-    h = x.round();
-  }
-  return GridPosition(h, v, b);
-}
-
 Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
     (position.z / 0.34) * constants.BASE_WIDTH_SVG,
     (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
@@ -285,8 +522,6 @@ Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
 Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
     x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
     y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
-//  return Point<num>((position.z / 0.34) * constants.BASE_WIDTH_SVG,
-//      (position.x / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
@@ -334,13 +569,42 @@ external num current_zoom_main_js();
 external num current_zoom_side_js();
 
 @JS(constants.js_function_name_current_pan_main)
-external List<num> current_pan_main_js();
+external List<num> _current_pan_main_js();
 
 @JS(constants.js_function_name_current_pan_side)
-external List<num> current_pan_side_js();
+external List<num> _current_pan_side_js();
+
+@JS(constants.js_function_name_set_zoom_side)
+external set_zoom_side(num zoom);
+
+@JS(constants.js_function_name_set_zoom_main)
+external set_zoom_main(num zoom);
+
+@JS(constants.js_function_name_set_pan_side)
+external _set_pan_side_js(Pan pan);
+
+@JS(constants.js_function_name_set_pan_main)
+external _set_pan_main_js(Pan pan);
+
+@JS(constants.js_function_name_fit_and_center)
+external fit_and_center();
+
+@JS()
+@anonymous
+class Pan {
+  external num get x;
+
+  external num get y;
+
+  external factory Pan({num x, num y});
+}
+
+set_pan_side(Point<num> pos) => _set_pan_side_js(Pan(x: pos.x, y: pos.y));
+
+set_pan_main(Point<num> pos) => _set_pan_main_js(Pan(x: pos.x, y: pos.y));
 
 Point<num> current_pan(bool is_main) {
-  var ret = is_main ? current_pan_main_js() : current_pan_side_js();
+  var ret = is_main ? _current_pan_main_js() : _current_pan_side_js();
   return Point<num>(ret[0], ret[1]);
 }
 
@@ -437,7 +701,7 @@ num to_degrees(num radians) => radians * 360 / (2 * pi);
 
 num to_radians(num degrees) => degrees * 2 * pi / 360;
 
-num rotation_between_helices(BuiltList<Helix> helices, actions.HelixRotationSetAtOther action) {
+num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
   Helix helix = helices[action.helix_idx];
   Helix helix_other = helices[action.helix_other_idx];
 
@@ -458,45 +722,6 @@ Address get_address_on_helix(MouseEvent event, Helix helix) {
   bool forward = helix.svg_y_is_forward(svg_coord.y);
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
-
-/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
-Helix get_closest_helix(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord = svg_position_of_mouse_click(event);
-
-  num svg_y = svg_coord.y;
-  for (Helix helix in helices) {
-    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
-      return helix;
-    }
-  }
-
-  // didn't find a helix, so we'll find the closest one
-  Helix helix_closest = helices.first;
-  num min_dist = distance(helix_closest, svg_y);
-  for (Helix helix in helices) {
-    if (distance(helix, svg_y) < min_dist) {
-      helix_closest = helix;
-      min_dist = distance(helix, svg_y);
-    }
-  }
-  return helix_closest;
-}
-
-num distance(Helix helix, num y) => (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
-
-/// Return (closest) helix, offset and direction where click event occurred.
-Address get_closest_address(MouseEvent event, BuiltList<Helix> helices) {
-  var svg_coord = svg_position_of_mouse_click(event);
-  Helix helix = get_closest_helix(event, helices);
-  int offset = helix.svg_x_to_offset(svg_coord.x);
-  bool forward = helix.svg_y_is_forward(svg_coord.y);
-  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
-}
-
-//XXX: don't know why I need to correct for this here, but not when responding to a selection box mouse event
-// might be related to the fact that the mouse coordinates for the selection box are detected outside of React
-Point<num> svg_position_of_mouse_click(MouseEvent event) =>
-    browser.isFirefox ? event.offset : transform_mouse_coord_to_svg_current_panzoom(event.offset, true);
 
 String remove_whitespace_and_uppercase(String string) {
   var string_no_spaces = string.replaceAll(RegExp(r'\s+'), '');
@@ -685,7 +910,7 @@ List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
     generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
 
 // gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> enclosure_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
+List<E> enclosure_list<E>(Iterable<E> elts, List<Box> bboxes, Box select_box) =>
     generalized_intersection_list(elts, bboxes, select_box, interval_contained);
 
 // indicates if (l1,h1) intersect (l2,h2) \neq empty
@@ -699,15 +924,16 @@ bool interval_contained(num l1, num h1, num l2, num h2) {
 }
 
 List<E> generalized_intersection_list<E>(
-    List<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
+    Iterable<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
   if (elts.length != bboxes.length) {
     throw ArgumentError(
         'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
   }
   List<E> elts_intersecting = [];
-  for (int i = 0; i < elts.length; i++) {
-    Box elt_bbox = bboxes[i];
-    E elt = elts[i];
+//  for (int i = 0; i < elts.length; i++) {
+  int i = 0;
+  for (E elt in elts) {
+    Box elt_bbox = bboxes[i++];
     if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
       elts_intersecting.add(elt);
     }
@@ -756,4 +982,19 @@ bool bboxes_intersect_generalized(
   num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
   return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
       overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// unit testing utilities
+
+/// Returns the default state of the app.
+AppState default_state() {
+  var dna_design = DNADesign();
+  var ui_state = AppUIState.from_dna_design(dna_design);
+  var state = (DEFAULT_AppStateBuilder
+        ..dna_design.replace(dna_design)
+        ..ui_state.replace(ui_state)
+        ..editor_content = '')
+      .build();
+  return state;
 }

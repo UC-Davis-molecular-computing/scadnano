@@ -59,14 +59,15 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
       }
     } else {
 //      String key = String.fromCharCodes([constants.KEY_CODE_MOUSEOVER_HELIX_VIEW_INFO]);
-      String key = EditModeChoice.backbone.shortcut_key();
-      if (props.show_mouseover_rect) {
-        text = 'You can now view data about objects by placing the cursor over them, '
-            'but you will not be able to select them. To enable selecting them, press the $key key again.';
-      } else {
-        text = 'To see data about the helix and strands, '
-            'press the $key key and then place the cursor over the object you wish to inspect.';
-      }
+//      String key = EditModeChoice.backbone.shortcut_key();
+//      if (props.show_mouseover_rect) {
+//        text = 'You can now view data about objects by placing the cursor over them, '
+//            'but you will not be able to select them. To enable selecting them, press the $key key again.';
+//      } else {
+//        text = 'To see data about the helix and strands, '
+//            'press the $key key and then place the cursor over the object you wish to inspect.';
+//      }
+      text = '';
     }
     return (Dom.span()..className = 'footer-mouse-over-paragraph')(text);
   }

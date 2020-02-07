@@ -3,23 +3,21 @@ library app;
 
 import 'dart:html';
 
-//import 'package:built_collection/built_collection.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 
 import 'package:scadnano/src/middleware/throttle.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
-import 'state/dna_design.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
 import 'state/undo_redo.dart';
@@ -31,6 +29,7 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
+import 'constants.dart' as constants;
 
 //import 'test.dart';
 //import 'constants.dart' as constants;
@@ -38,8 +37,8 @@ import 'actions/actions.dart' as actions;
 // global variable for whole program
 App app = App();
 
-const USE_REDUX_DEV_TOOLS = false;
-//const USE_REDUX_DEV_TOOLS = true;
+//const USE_REDUX_DEV_TOOLS = false;
+const USE_REDUX_DEV_TOOLS = true;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;
@@ -48,11 +47,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-//  List<int> numbers = [1,2,3];
-//  Value value = Value(numbers: numbers);
-//  print(value);
-//  numbers[0] = 9;
-//  print(value);
+
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -70,7 +65,6 @@ class App {
   Store store_dna_ends_move;
   var context_dna_ends_move = createContext();
 
-
   // for optimization; don't want to dispatch Actions changing model on every keypress
   // This is updated in view/design.dart; consider moving it higher-level.
   final Set<int> keys_pressed = {};
@@ -85,77 +79,28 @@ class App {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
-//      Timer.periodic(new Duration(seconds: 1), (timer) {
-//        print('${document.hasFocus()}');
-//      });
-//      document.onVisibilityChange.listen((ev) => print('visibility changed: $ev'));
-
+      warn_wrong_browser();
       react.setClientConfiguration();
-
       await initialize_model();
-
       setup_undo_redo_keyboard_listeners();
-
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
       this.setup_warning_before_unload();
-
       make_dart_functions_available_to_js(state);
-
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
-
       this.view.render(state);
     }
   }
 
   initialize_model() async {
-    String filename_in_directory = '3_helix_deletions_insertions.dna';
-//    String filename_in_directory = '3_helix_scaf_only.dna';
-//    String filename_in_directory = '1_staple_1_helix_origami.dna';
-//    String filename_in_directory = '2_helix_2_strands_multiple_substrands_no_seq.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions_no_seq.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_insertions.dna';
-//    String filename_in_directory = '6_helix_origami_rectangle_helices_out_of_order.dna';
-//    String filename_in_directory = '6_helix_origami_rectangle.dna';
-//    String filename_in_directory = '16_helix_origami_rectangle.dna';
-//    String filename_in_directory = '16_helix_origami_barrel_from_algoSST_paper-rotator.dna';
-//    String filename_in_directory = '6_helix_bundle_honeycomb.dna';
-//    String filename_in_directory = 'loopouts_all_types.dna';
-//    String filename_in_directory = '2_staple_2_helix_origami_deletions_lots_of_insertions.dna';
-//    String filename_in_directory = '1_staple_1_helix_origami_mismatches.dna';
-
-    document.title = filename_in_directory;
-
-    String directory = 'examples/output_designs/';
-    String filename = directory + filename_in_directory;
-
-    DNADesign dna_design;
-    String error_message;
-    try {
-      dna_design = await util.dna_design_from_url(filename);
-    } on IllegalDNADesignError catch (error) {
-      error_message = error.cause;
-    }
-
-//    String initial_editor_content = await util.file_content(filename);
-    String initial_editor_content = "";
-
     AppState state;
+    String error_message = constants.NO_DNA_DESIGN_MESSAGE;
 
-    if (error_message == null) {
-      var ui_state = AppUIState.from_dna_design(dna_design);
-      state = (DEFAULT_AppStateBuilder
-            ..dna_design.replace(dna_design)
-            ..ui_state.replace(ui_state)
-            ..editor_content = initial_editor_content)
-          .build();
-    } else {
-      state = (DEFAULT_AppStateBuilder
-            ..error_message = error_message
-            ..editor_content = initial_editor_content)
-          .build();
-    }
+    state = (DEFAULT_AppStateBuilder
+          ..error_message = error_message
+          ..editor_content = '')
+        .build();
 
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];
@@ -218,6 +163,28 @@ class App {
   make_dart_functions_available_to_js(AppState state) {
     util.make_dart_function_available_to_js('dart_main_view_pointer_up', main_view_pointer_up);
   }
+}
+
+warn_wrong_browser() {
+  if (!(browser.isChrome || browser.isFirefox)) {
+    var msg = 'You appear to be using ${browser.name}. '
+        'scadnano does not currently support this browser. '
+        'Please use Chrome or Firefox instead.';
+    window.alert(msg);
+  }
+  print('current browser: ${browser.name}');
+}
+
+/// Return null if browser is fine.
+String error_message_wrong_browser() {
+  String error_message = null;
+  if (browser.isSafari) {
+    error_message = 'You appear to be using the Safari browser. '
+        'scadnano does not currently support Safari. '
+        'Please use Chrome or Firefox instead.';
+    print(error_message);
+  }
+  return error_message;
 }
 
 setup_undo_redo_keyboard_listeners() {

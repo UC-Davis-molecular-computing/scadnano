@@ -275,38 +275,38 @@ abstract class SelectModesSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show/hide DNA/mismatches/editor
 
-abstract class SetShowDNA
+abstract class ShowDNASet
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowDNA, SetShowDNABuilder> {
+    implements StorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.show_dna];
 
-  factory SetShowDNA(bool show) => SetShowDNA.from((b) => b..show = show);
+  factory ShowDNASet(bool show) => ShowDNASet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetShowDNA.from([void Function(SetShowDNABuilder) updates]) = _$SetShowDNA;
+  factory ShowDNASet.from([void Function(ShowDNASetBuilder) updates]) = _$ShowDNASet;
 
-  SetShowDNA._();
+  ShowDNASet._();
 
-  static Serializer<SetShowDNA> get serializer => _$setShowDNASerializer;
+  static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
 }
 
-abstract class SetShowMismatches
+abstract class ShowMismatchesSet
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowMismatches, SetShowMismatchesBuilder> {
+    implements StorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.show_mismatches];
 
-  factory SetShowMismatches(bool show) => SetShowMismatches.from((b) => b..show = show);
+  factory ShowMismatchesSet(bool show) => ShowMismatchesSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetShowMismatches.from([void Function(SetShowMismatchesBuilder) updates]) = _$SetShowMismatches;
+  factory ShowMismatchesSet.from([void Function(ShowMismatchesSetBuilder) updates]) = _$ShowMismatchesSet;
 
-  SetShowMismatches._();
+  ShowMismatchesSet._();
 
-  static Serializer<SetShowMismatches> get serializer => _$setShowMismatchesSerializer;
+  static Serializer<ShowMismatchesSet> get serializer => _$showMismatchesSetSerializer;
 }
 
 abstract class SetShowEditor
@@ -350,9 +350,7 @@ abstract class LoadDNAFile
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDNAFile(String content, String filename) => LoadDNAFile.from((b) => b
-    ..content = content
-    ..filename = filename);
+  factory LoadDNAFile({String content, String filename}) = _$LoadDNAFile._;
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
 
@@ -936,30 +934,21 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Export SVG
 
-abstract class ExportSvgMain
+enum ExportSvgType { main, side, both }
+
+abstract class ExportSvg
     with BuiltJsonSerializable
-    implements Action, Built<ExportSvgMain, ExportSvgMainBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ExportSvgMain() => ExportSvgMain.from((b) => b);
+    implements Action, Built<ExportSvg, ExportSvgBuilder> {
 
-  factory ExportSvgMain.from([void Function(ExportSvgMainBuilder) updates]) = _$ExportSvgMain;
+  factory ExportSvg.from([void Function(ExportSvgBuilder) updates]) = _$ExportSvg;
 
-  ExportSvgMain._();
+  ExportSvg._();
 
-  static Serializer<ExportSvgMain> get serializer => _$exportSvgMainSerializer;
-}
+  static Serializer<ExportSvg> get serializer => _$exportSvgSerializer;
+  /************************ end BuiltValue boilerplate ************************/
+  factory ExportSvg({ExportSvgType type}) = _$ExportSvg._;
 
-abstract class ExportSvgSide
-    with BuiltJsonSerializable
-    implements Action, Built<ExportSvgSide, ExportSvgSideBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ExportSvgSide() => ExportSvgSide.from((b) => b);
-
-  factory ExportSvgSide.from([void Function(ExportSvgSideBuilder) updates]) = _$ExportSvgSide;
-
-  ExportSvgSide._();
-
-  static Serializer<ExportSvgSide> get serializer => _$exportSvgSideSerializer;
+  ExportSvgType get type;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1345,7 +1334,7 @@ abstract class AssignDNA
 
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
-    implements Built<RemoveDNA, RemoveDNABuilder> {
+    implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {
   Strand get strand;
 
   bool get remove_complements;
@@ -1589,4 +1578,86 @@ abstract class StrandColorSet
   StrandColorSet._();
 
   static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// example DNA design
+
+abstract class ExampleDNADesignsLoad
+    with BuiltJsonSerializable
+    implements Action, Built<ExampleDNADesignsLoad, ExampleDNADesignsLoadBuilder> {
+  int get selected_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExampleDNADesignsLoad({int selected_idx}) = _$ExampleDNADesignsLoad._;
+
+  ExampleDNADesignsLoad._();
+
+  static Serializer<ExampleDNADesignsLoad> get serializer => _$exampleDNADesignsLoadSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change helix position
+
+abstract class HelixPositionSet
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixPositionSet, HelixPositionSetBuilder> {
+  Helix get helix;
+  Position3D get position;
+
+  int get helix_idx => helix.idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixPositionSet({Helix helix, Position3D position}) = _$HelixPositionSet._;
+
+  HelixPositionSet._();
+
+  static Serializer<HelixPositionSet> get serializer => _$helixPositionSetSerializer;
+}
+
+abstract class HelixGridPositionSet
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixGridPositionSet, HelixGridPositionSetBuilder> {
+  Helix get helix;
+  GridPosition get grid_position;
+
+  int get helix_idx => helix.idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGridPositionSet({Helix helix, GridPosition grid_position}) = _$HelixGridPositionSet._;
+
+  HelixGridPositionSet._();
+
+  static Serializer<HelixGridPositionSet> get serializer => _$helixGridPositionSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change helix position
+
+abstract class InlineInsertionsDeletions
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<InlineInsertionsDeletions, InlineInsertionsDeletionsBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InlineInsertionsDeletions() = _$InlineInsertionsDeletions;
+
+  InlineInsertionsDeletions._();
+
+  static Serializer<InlineInsertionsDeletions> get serializer => _$inlineInsertionsDeletionsSerializer;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// center on load
+
+abstract class AutofitSet
+    with BuiltJsonSerializable
+    implements Action, Built<AutofitSet, AutofitSetBuilder> {
+  bool get autofit;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AutofitSet({bool autofit}) = _$AutofitSet._;
+
+  AutofitSet._();
+
+  static Serializer<AutofitSet> get serializer => _$autofitSetSerializer;
 }

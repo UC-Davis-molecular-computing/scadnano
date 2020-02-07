@@ -15,7 +15,7 @@ UiFactory<DesignMainMouseoverRectHelicesProps> DesignMainMouseoverRectHelices =
 
 @Props()
 class _$DesignMainMouseoverRectHelicesProps extends UiProps { // FluxUiProps<HelicesStore, HelicesStore> {
-  BuiltList<Helix> helices;
+  BuiltMap<int, Helix> helices;
 }
 
 @Component2()
@@ -23,11 +23,10 @@ class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMou
 
   @override
   render() {
-    BuiltList<Helix> helices = this.props.helices;
     return (Dom.g()
       ..id = _ID
       ..className = _CLASS)([
-      for (Helix helix in helices)
+      for (Helix helix in props.helices.values)
 //        (DesignMainMouseoverRectHelix()
         (ConnectedDesignMainMouseoverRectHelix()
           ..helix_idx = helix.idx

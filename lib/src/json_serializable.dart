@@ -20,6 +20,9 @@ class NoIndent implements JSONSerializable {
 }
 
 String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
+  if (obj == null) {
+    return null;
+  }
   var encoder = _SuppressableIndentEncoder(_Replacer(), suppress: suppress_indent);
   var serializable = obj.to_json_serializable(suppress_indent: suppress_indent);
   var json_str = encoder.convert(serializable);
