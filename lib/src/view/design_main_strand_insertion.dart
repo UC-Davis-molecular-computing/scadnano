@@ -115,9 +115,10 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
     String key = 'num-insertion-H${substrand.helix}-${offset}';
     SvgProps text_path_props = Dom.textPath()
-      ..className = 'insertion-length'
       ..startOffset = '50%'
-      ..href = '#${util.id_insertion(substrand, offset)}';
+//      ..href = '#${util.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${util.id_insertion(substrand, offset)}'
+      ..className = 'insertion-length';
 
 //    return (Dom.text()
 //      ..onClick = ((_) => change_insertion_length())

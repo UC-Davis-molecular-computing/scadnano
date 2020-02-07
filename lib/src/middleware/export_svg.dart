@@ -38,7 +38,7 @@ _export_from_element(svg.SvgSvgElement svg_element, String filename_append) {
 //    }
 
   //add xml declaration
-  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
+//  source = '<?xml version="1.1" standalone="no"?>\r\n' + source;
 
   //convert svg source to URI data scheme.
 //  var url = "data:image/svg+xml;charset=utf-8," + Uri.encodeComponent(source);
