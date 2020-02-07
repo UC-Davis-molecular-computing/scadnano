@@ -195,13 +195,17 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return util.to_degrees(angle_radians);
   }
 
-  bool has_major_tick_distance() => this.major_tick_distance != null;
+  bool has_major_tick_distance() => major_tick_distance != null;
 
-  bool has_major_ticks() => this.major_ticks != null;
+  bool has_major_ticks() => major_ticks != null;
 
-  bool has_nondefault_rotation() => (this.rotation - constants.default_helix_rotation).abs() > 0.0001;
+  bool has_nondefault_rotation() => (rotation - constants.default_helix_rotation).abs() > 0.0001;
 
-  bool has_nondefault_rotation_anchor() => this.rotation_anchor != constants.default_helix_rotation_anchor;
+  bool has_nondefault_rotation_anchor() => rotation_anchor != constants.default_helix_rotation_anchor;
+
+  bool has_nondefault_major_tick_distance() => major_tick_distance != null;
+
+  bool has_nondefault_major_ticks() => major_ticks != null;
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
@@ -226,6 +230,14 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     if (has_nondefault_rotation_anchor()) {
       json_map[constants.rotation_anchor_key] = rotation_anchor;
+    }
+
+    if (has_nondefault_major_tick_distance()) {
+      json_map[constants.major_tick_distance_key] = major_tick_distance;
+    }
+
+    if (has_nondefault_major_ticks()) {
+      json_map[constants.major_ticks_key] = major_ticks.toList();
     }
 
     json_map[constants.idx_on_helix_key] = idx;

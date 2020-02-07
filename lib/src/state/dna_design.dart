@@ -406,10 +406,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
-    json_map[constants.strands_key] = [
-      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
-    ];
-
     var helix_jsons_map = {
       for (var helix in helices.values)
         helix.idx: helix.to_json_serializable(suppress_indent: suppress_indent)
@@ -432,6 +428,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     json_map[constants.helices_key] = helix_jsons_map.values.toList();
+
+    json_map[constants.strands_key] = [
+      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
+    ];
 
     return json_map;
   }
@@ -519,40 +519,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       int view_order = i;
       helix_builder.view_order = view_order;
     }
-
-//    num prev_y = null;
-//    for (int i = 0; i < helices_view_order.length; i++) {
-//      int i_unsorted = helices_view_order[i];
-//      var helix_builder = helix_builders[i_unsorted];
-//      int view_order = i;
-//      helix_builder.view_order = view_order;
-//      Map<String, dynamic> helix_json = deserialized_helices_list[i_unsorted];
-//      helix_builder.svg_position_explicit = helix_json.containsKey(constants.svg_position_key);
-//      if (!helix_builder.svg_position_explicit) {
-////        helix_builder.svg_position_ = DNADesign._default_svg_position(view_order);
-//        //Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-//        num x = 0; //TODO: shift x by grid_position.b or position.z
-//        num y = 0;
-//        if (i > 0) {
-//          int prev_i_unsorted = helices_view_order[i - 1];
-//          var prev_helix_builder = helix_builders[prev_i_unsorted];
-//          num delta_y;
-//          if (grid_is_none) {
-//            var prev_pos = prev_helix_builder.position_.build();
-//            var pos = helix_builder.position_.build();
-//            delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
-//          } else {
-//            var prev_grid_position = prev_helix_builder.grid_position.build();
-//            var grid_position = helix_builder.grid_position.build();
-//            delta_y = prev_grid_position.distance_lattice(grid_position, dna_design_builder.grid) *
-//                constants.DISTANCE_BETWEEN_HELICES_SVG;
-//          }
-//          y = prev_y + delta_y;
-//        }
-//        prev_y = y;
-//        helix_builder.svg_position_ = Point<num>(x, y);
-//      }
-//    }
 
     // strands
     List<Strand> strands = [];
