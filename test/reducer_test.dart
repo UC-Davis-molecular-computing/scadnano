@@ -78,6 +78,17 @@ void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> ex
   }
 }
 
+/// Checks that two lists of helices contain the same helix (and same order).
+void expect_helices_equal(BuiltMap<int, Helix> actual_helices, BuiltMap<int, Helix> expected_helices) {
+  // Check hashing for potential quick comparison.
+  if (actual_helices.hashCode != expected_helices.hashCode) {
+    expect(actual_helices.length, expected_helices.length);
+    for (int key in actual_helices.keys) {
+      expect(actual_helices[key], expected_helices[key]);
+    }
+  }
+}
+
 /// Asserts that the [actual] matches [matcher] DNADesign.
 ///
 /// This function makes debugging easier by splitting the giant assertion
@@ -86,7 +97,7 @@ void expect_dna_design_equal(DNADesign actual, DNADesign matcher) {
   expect(actual.version, matcher.version);
   expect(actual.grid, matcher.grid);
   expect(actual.major_tick_distance, matcher.major_tick_distance);
-  expect(actual.helices, matcher.helices);
+  expect_helices_equal(actual.helices, matcher.helices);
   expect_strands_equal(actual.strands, matcher.strands);
   expect(actual.is_origami, matcher.is_origami);
 }
@@ -1664,6 +1675,107 @@ main() {
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
     expect_app_state_equal(final_state, expected_state);
+  });
+
+  test('remove first helix from DNA design (see issue #184)', () {
+    AppState original_state = app_state_from_dna_design(two_helices_design);
+
+    AppState final_state = app_state_reducer(original_state, HelixRemove(0));
+
+    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design]));
+
+    Helix helix1 = two_helices_design.helices[1];
+    Helix new_helix1 = helix1.rebuild((b) => b
+      ..svg_position_ = Point(0, 0)
+      ..view_order = 0);
+    BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
+    DNADesign new_dna_design =
+        two_helices_design.rebuild((b) => b..helices.replace({1: new_helix1})..strands.replace(new_strands));
+
+    AppState expected_state = original_state.rebuild((b) => b
+      ..dna_design.replace(new_dna_design)
+      ..ui_state.changed_since_last_save = true
+      ..undo_redo.replace(expected_undo_redo));
+    expect_app_state_equal(final_state, expected_state);
+  });
+
+  //   0                  16
+  //
+  // 0 [------------------->
+  //   <-------------------]
+  //
+  // 4 [------------------->
+  //   <-------------------]
+  String two_helices_with_helix_idx_gap_json = r"""
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 4, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 4, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  """;
+  DNADesign two_helices_with_helix_idx_gap_design =
+      DNADesign.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+  test('add new helix be one higher than max id', () {
+    AppState state = app_state_from_dna_design(two_helices_with_helix_idx_gap_design);
+
+    GridPosition grid_position = GridPosition(0, 2);
+    state = app_state_reducer(state, HelixAdd(grid_position: grid_position));
+
+    UndoRedo expected_undo_redo =
+        UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_with_helix_idx_gap_design]));
+    String expected_json = r"""
+    {
+      "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
+      "strands": [
+        {
+          "substrands": [
+            {"helix": 0, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 0, "forward": false , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 4, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 4, "forward": false , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+    """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..undo_redo.replace(expected_undo_redo)
+      ..ui_state.changed_since_last_save = true);
+
+    expect_app_state_equal(state, expected_state);
   });
 
   //     0               16
