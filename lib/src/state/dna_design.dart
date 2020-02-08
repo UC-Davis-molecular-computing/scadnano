@@ -243,15 +243,15 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
 
-  @memoized
-  bool get helices_view_order_is_identity {
-    for (var helix in helices.values) {
-      if (helix.idx != helix.view_order) {
-        return false;
-      }
-    }
-    return true;
-  }
+//  @memoized
+//  bool get helices_view_order_is_identity {
+//    for (var helix in helices.values) {
+//      if (helix.idx != helix.view_order) {
+//        return false;
+//      }
+//    }
+//    return true;
+//  }
 
 //  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
 //  static _default_grid_position(int idx) => GridPosition(0, idx);
@@ -500,23 +500,24 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     // view order of helices
-    var identity_permutation = util.identity_permutation(num_helices);
+    var helix_indices = [for (var helix_builder in helix_builders) helix_builder.idx];
     List<int> helices_view_order = List<int>.from(
-        util.get_value_with_default(json_map, constants.helices_view_order_key, identity_permutation));
+        util.get_value_with_default(json_map, constants.helices_view_order_key, helix_indices));
     if (helices_view_order.length != num_helices) {
       throw IllegalDNADesignError('length of helices (${num_helices}) does not match '
           'length of helices_view_order (${helices_view_order.length})');
     }
     var helices_view_order_sorted = List<int>.from(helices_view_order);
+    helix_indices.sort();
     helices_view_order_sorted.sort();
-    if (!ListEquality().equals(helices_view_order_sorted, identity_permutation)) {
-      throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation');
+    if (!ListEquality().equals(helices_view_order_sorted, helix_indices)) {
+      throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation of '
+          'the indices of the helices, which are ${helix_indices}');
     }
 
-    for (int i = 0; i < helices_view_order.length; i++) {
-      int i_unsorted = helices_view_order[i];
-      var helix_builder = helix_builders[i_unsorted];
-      int view_order = i;
+    for (int view_order = 0; view_order < helices_view_order.length; view_order++) {
+      int idx = helices_view_order[view_order];
+      var helix_builder = helix_builders.firstWhere((h) => h.idx == idx);
       helix_builder.view_order = view_order;
     }
 
