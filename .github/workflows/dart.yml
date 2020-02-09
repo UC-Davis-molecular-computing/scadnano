@@ -18,7 +18,7 @@ jobs:
       run: pwd
     - name: Output list of directories
       run: ls
-    - name: Build
-      run: pub run build_runner build
+    - name: Output list of files in test/components
+      run: ls test/components
     - name: Run tests
       run: pub run build_runner test
