@@ -15,4 +15,8 @@ jobs:
     - name: Install dependencies
       run: pub get
     - name: Run tests
-      run: pub run build_runner test
+      run: echo "Working Directory is:"
+      run: pwd
+      run: echo "List of directories:"
+      run: ls
+      run: pub run build_runner test -- -p chrome test/reducer_test.dart
