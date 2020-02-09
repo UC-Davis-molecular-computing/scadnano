@@ -18,5 +18,7 @@ jobs:
       run: pwd
     - name: Output list of directories
       run: ls
+    - name: Build
+      run: pub run build_runner build
     - name: Run tests
-      run: pub run build_runner test -- -p chrome test/reducer_test.dart
+      run: pub run build_runner test
