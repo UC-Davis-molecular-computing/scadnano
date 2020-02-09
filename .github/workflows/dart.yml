@@ -14,9 +14,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: pub get
-    - name: Run tests
-      run: echo "Working Directory is:"
+    - name: Output working directory
       run: pwd
-      run: echo "List of directories:"
+    - name: Output list of directories
       run: ls
+    - name: Run tests
       run: pub run build_runner test -- -p chrome test/reducer_test.dart
