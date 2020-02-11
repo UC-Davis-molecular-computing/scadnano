@@ -1,0 +1,25 @@
+ {
+  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "strands": [
+    {
+      "substrands": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "substrands": [
+        {"helix": 1, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
