@@ -18,6 +18,10 @@ Currently only [Chrome](https://www.google.com/chrome/)
 or [Firefox](https://www.mozilla.org/en-US/firefox/)
 are supported.
 
+**NOTE:**
+[scadnano.org](http://scadnano.org) is experiencing a temporary problem that keeps some buttons and context menus from working.
+Please use https://web.cs.ucdavis.edu/~doty/scadnano/ instead.
+
 If you have never used scadnano before, you will see a screen similar to this:
 
 ![initial screenshot of scadnano web interface](images/initial.png)
