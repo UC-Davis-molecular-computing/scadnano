@@ -4,10 +4,6 @@ title: "scadnano help"
 
 <!--- # scadnano --->
 
-**NOTE:**
-[scadnano.org](http://scadnano.org) is experiencing a temporary problem that keeps some buttons and context menus from working.
-Please use https://web.cs.ucdavis.edu/~doty/scadnano/ instead.
-
 [scadnano](http://scadnano.org) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
