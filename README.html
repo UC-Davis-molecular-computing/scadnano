@@ -1,57 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>scadnano help</title>
-  <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+  <link rel="stylesheet" href="pandoc.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-<div id="header">
+<header id="title-block-header">
 <h1 class="title">scadnano help</h1>
-</div>
+</header>
 <!--- # scadnano --->
-<p><a href="http://scadnano.org">scadnano</a> (&quot;scriptable-cadnano&quot;, <a href="https://github.com/UC-Davis-molecular-computing/scadnano">source code repository here</a>) is a program for designing synthetic DNA structures such as DNA origami. Its design is based heavily on <a href="https://cadnano.org/">cadnano</a>, specifically <a href="https://github.com/douglaslab/cadnano2">version 2</a>, with two main differences:</p>
-<ol style="list-style-type: decimal">
+<p><a href="http://scadnano.org">scadnano</a> (“scriptable-cadnano”, <a href="https://github.com/UC-Davis-molecular-computing/scadnano">source code repository here</a>) is a program for designing synthetic DNA structures such as DNA origami. Its design is based heavily on <a href="https://cadnano.org/">cadnano</a>, specifically <a href="https://github.com/douglaslab/cadnano2">version 2</a>, with two main differences:</p>
+<ol type="1">
 <li><p>scadnano runs entirely in the browser, with no installation required. Currently only <a href="https://www.google.com/chrome/">Chrome</a> and <a href="https://www.mozilla.org/en-US/firefox/">Firefox</a> are supported, with support for <a href="https://www.apple.com/safari/">Safari</a> and <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">Edge</a> planned in the future.</p></li>
 <li><p>scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library (<a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package">download</a> / <a href="https://scadnano-python-package.readthedocs.io">documentation</a>), to help automate tedious tasks.</p></li>
 </ol>
@@ -59,113 +94,112 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>This document explains how to use the web interface for viewing and manually editing designs. The documentation for the Python scripting package is <a href="https://scadnano-python-package.readthedocs.io">here</a>. This document does not assume any familiarity with cadnano, although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.</p>
 <p>Please file bug reports and make feature requests as GitHub repository issues in the repositories for the <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues">web interface</a> or the <a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues">Python scripting library</a>.</p>
 <h2 id="tutorial">Tutorial</h2>
-<p>A <a href="tutorial/tutorial.md">tutorial</a> shows how to create a &quot;standard&quot; 24-helix DNA origami rectangle using the scadnano web interface.</p>
+<p>A <a href="tutorial/tutorial.md">tutorial</a> shows how to create a “standard” 24-helix DNA origami rectangle using the scadnano web interface.</p>
 <h2 id="warning-save-your-work"><strong>WARNING: Save your work</strong></h2>
-<p>It is strongly recommended that you frequently save your work by pressing the &quot;Save&quot; button to save your design to a <code>.dna</code> file on your computer.</p>
-<p>Despite being run in a browser, currently this application is not really a &quot;web app&quot;. Nothing is stored on a server; everything is running and being stored in your browser locally. In particular, your design is not automatically saved in an easily recoverable way. <em>For convenience only</em>, the application uses something called <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage</a> to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before.</p>
-<p><strong>However, relying on your browser's localStorage is not a safe or recommended method of saving your work.</strong> The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost. You should press the &quot;Save&quot; button to save your design to your local file system. Unfortunately, due to <a href="https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/">browser security restrictions on accessing the local file system</a>, it is not possible to save your file automatically without further interaction; after pressing &quot;Save&quot;, you will always be prompted to specify a filename to which to save.</p>
+<p>It is strongly recommended that you frequently save your work by pressing the “Save” button to save your design to a <code>.dna</code> file on your computer.</p>
+<p>Despite being run in a browser, currently this application is not really a “web app”. Nothing is stored on a server; everything is running and being stored in your browser locally. In particular, your design is not automatically saved in an easily recoverable way. <em>For convenience only</em>, the application uses something called <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage</a> to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before.</p>
+<p><strong>However, relying on your browser’s localStorage is not a safe or recommended method of saving your work.</strong> The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost. You should press the “Save” button to save your design to your local file system. Unfortunately, due to <a href="https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/">browser security restrictions on accessing the local file system</a>, it is not possible to save your file automatically without further interaction; after pressing “Save”, you will always be prompted to specify a filename to which to save.</p>
 <h2 id="terminology">Terminology</h2>
-<p>The main parts of the program are the <em>side view</em> on the left, and the <em>main view</em> in the center. The side view shows DNA helices &quot;head on&quot;, with the interpretation that as you move to the right in the main view, this is like moving &quot;into the screen&quot; in the side view.</p>
-<div class="figure">
-<img src="doc-images/screenshot-initial.png" alt="screenshot of scadnano web interface" />
-<p class="caption">screenshot of scadnano web interface</p>
-</div>
+<p>The main parts of the program are the <em>side view</em> on the left, and the <em>main view</em> in the center. The side view shows DNA helices “head on”, with the interpretation that as you move to the right in the main view, this is like moving “into the screen” in the side view.</p>
+<figure>
+<img src="doc-images/screenshot-initial.png" alt="" /><figcaption>screenshot of scadnano web interface</figcaption>
+</figure>
 <p>The screenshot above shows many of the terms used in scadnano. It is instructive to see how that example design is represented as a <code>.dna</code> file (which is itself something called <a href="https://en.wikipedia.org/wiki/JSON">JSON format</a>):</p>
-<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
-  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.0.1&quot;</span><span class="fu">,</span>
-  <span class="dt">&quot;helices&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">0</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]</span><span class="fu">}</span>
-  <span class="ot">]</span><span class="fu">,</span>
-  <span class="dt">&quot;strands&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-    <span class="fu">{</span>
-      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#0066cc&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;deletions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">20</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">14</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">],</span> <span class="ot">[</span><span class="dv">26</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">]]</span><span class="fu">}</span><span class="ot">,</span>
-        <span class="fu">{</span><span class="dt">&quot;loopout&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">}</span><span class="ot">,</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">}</span>
-      <span class="ot">]</span><span class="fu">,</span>
-      <span class="dt">&quot;is_scaffold&quot;</span><span class="fu">:</span> <span class="kw">true</span>
-    <span class="fu">}</span><span class="ot">,</span>
-    <span class="fu">{</span>
-      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#f74308&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;ACGTTACGTTACGTTTTACGTTACGTTACGTT&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;deletions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">20</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">14</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]]</span><span class="fu">}</span>
-      <span class="ot">]</span>
-    <span class="fu">}</span><span class="ot">,</span>
-    <span class="fu">{</span>
-      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#57bb00&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;ACGTTACGTTACGTTACGCGTTACGTTACGTTAC&quot;</span><span class="fu">,</span>
-      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">26</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">]]</span><span class="fu">}</span><span class="ot">,</span>
-        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">}</span>
-      <span class="ot">]</span>
-    <span class="fu">}</span>
-  <span class="ot">]</span>
-<span class="fu">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.0.1&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">&quot;helices&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">0</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]</span><span class="fu">}</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>  <span class="dt">&quot;strands&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="fu">{</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#0066cc&quot;</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG&quot;</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;deletions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">20</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">14</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">],</span> <span class="ot">[</span><span class="dv">26</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">]]</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>        <span class="fu">{</span><span class="dt">&quot;loopout&quot;</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">}</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>      <span class="dt">&quot;is_scaffold&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>    <span class="fu">{</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#f74308&quot;</span><span class="fu">,</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;ACGTTACGTTACGTTTTACGTTACGTTACGTT&quot;</span><span class="fu">,</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a>      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;deletions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">20</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">14</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]]</span><span class="fu">}</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>      <span class="ot">]</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>    <span class="fu">{</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a>      <span class="dt">&quot;color&quot;</span><span class="fu">:</span> <span class="st">&quot;#57bb00&quot;</span><span class="fu">,</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a>      <span class="dt">&quot;dna_sequence&quot;</span><span class="fu">:</span> <span class="st">&quot;ACGTTACGTTACGTTACGCGTTACGTTACGTTAC&quot;</span><span class="fu">,</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a>      <span class="dt">&quot;substrands&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">,</span> <span class="dt">&quot;insertions&quot;</span><span class="fu">:</span> <span class="ot">[[</span><span class="dv">26</span><span class="ot">,</span> <span class="dv">2</span><span class="ot">]]</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a>        <span class="fu">{</span><span class="dt">&quot;helix&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">&quot;forward&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">40</span><span class="fu">}</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a>      <span class="ot">]</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a>    <span class="fu">}</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a>  <span class="ot">]</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="fu">}</span></span></code></pre></div>
 <p>Here is Python code that would produce this design using the scripting library.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scadnano <span class="im">as</span> sc
-
-
-<span class="kw">def</span> main():
-    <span class="co"># helices</span>
-    helices <span class="op">=</span> [sc.Helix(max_offset<span class="op">=</span><span class="dv">48</span>), sc.Helix(max_offset<span class="op">=</span><span class="dv">48</span>)]
-
-    <span class="co"># left staple</span>
-    stap_left_ss1 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)
-    stap_left_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)
-    stap_left <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[stap_left_ss1, stap_left_ss0])
-
-    <span class="co"># right staple</span>
-    stap_right_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)
-    stap_right_ss1 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)
-    stap_right <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[stap_right_ss0, stap_right_ss1])
-
-    <span class="co"># scaffold</span>
-    scaf_ss1_left <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)
-    scaf_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">40</span>)
-    loopout <span class="op">=</span> sc.Loopout(length<span class="op">=</span><span class="dv">3</span>)
-    scaf_ss1_right <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)
-    scaf <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
-
-    <span class="co"># whole design</span>
-    design <span class="op">=</span> sc.DNAOrigamiDesign(helices<span class="op">=</span>helices, strands<span class="op">=</span>[scaf, stap_left, stap_right], grid<span class="op">=</span>sc.square, scaffold<span class="op">=</span>scaf)
-
-    <span class="co"># deletions and insertions added to design are added to both strands on a helix</span>
-    design.add_deletion(helix<span class="op">=</span><span class="dv">1</span>, offset<span class="op">=</span><span class="dv">20</span>)
-    design.add_insertion(helix<span class="op">=</span><span class="dv">0</span>, offset<span class="op">=</span><span class="dv">14</span>, length<span class="op">=</span><span class="dv">1</span>)
-    design.add_insertion(helix<span class="op">=</span><span class="dv">0</span>, offset<span class="op">=</span><span class="dv">26</span>, length<span class="op">=</span><span class="dv">2</span>)
-
-    <span class="co"># also assigns complement to strands other than scaf bound to it</span>
-    design.assign_dna(scaf, <span class="st">&#39;AACGT&#39;</span> <span class="op">*</span> <span class="dv">18</span>)
-
-    <span class="cf">return</span> design
-
-
-<span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:
-    design <span class="op">=</span> main()
-    design.write_scadnano_file(directory<span class="op">=</span><span class="st">&#39;output_designs&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> scadnano <span class="im">as</span> sc</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">def</span> main():</span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="co"># helices</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    helices <span class="op">=</span> [sc.Helix(max_offset<span class="op">=</span><span class="dv">48</span>), sc.Helix(max_offset<span class="op">=</span><span class="dv">48</span>)]</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>    <span class="co"># left staple</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>    stap_left_ss1 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)</span>
+<span id="cb2-10"><a href="#cb2-10"></a>    stap_left_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)</span>
+<span id="cb2-11"><a href="#cb2-11"></a>    stap_left <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[stap_left_ss1, stap_left_ss0])</span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="co"># right staple</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>    stap_right_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb2-15"><a href="#cb2-15"></a>    stap_right_ss1 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb2-16"><a href="#cb2-16"></a>    stap_right <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[stap_right_ss0, stap_right_ss1])</span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="co"># scaffold</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a>    scaf_ss1_left <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">24</span>)</span>
+<span id="cb2-20"><a href="#cb2-20"></a>    scaf_ss0 <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">0</span>, forward<span class="op">=</span><span class="va">True</span>, start<span class="op">=</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb2-21"><a href="#cb2-21"></a>    loopout <span class="op">=</span> sc.Loopout(length<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb2-22"><a href="#cb2-22"></a>    scaf_ss1_right <span class="op">=</span> sc.Substrand(helix<span class="op">=</span><span class="dv">1</span>, forward<span class="op">=</span><span class="va">False</span>, start<span class="op">=</span><span class="dv">24</span>, end<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb2-23"><a href="#cb2-23"></a>    scaf <span class="op">=</span> sc.Strand(substrands<span class="op">=</span>[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])</span>
+<span id="cb2-24"><a href="#cb2-24"></a></span>
+<span id="cb2-25"><a href="#cb2-25"></a>    <span class="co"># whole design</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a>    design <span class="op">=</span> sc.DNAOrigamiDesign(helices<span class="op">=</span>helices, strands<span class="op">=</span>[scaf, stap_left, stap_right], grid<span class="op">=</span>sc.square, scaffold<span class="op">=</span>scaf)</span>
+<span id="cb2-27"><a href="#cb2-27"></a></span>
+<span id="cb2-28"><a href="#cb2-28"></a>    <span class="co"># deletions and insertions added to design are added to both strands on a helix</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a>    design.add_deletion(helix<span class="op">=</span><span class="dv">1</span>, offset<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb2-30"><a href="#cb2-30"></a>    design.add_insertion(helix<span class="op">=</span><span class="dv">0</span>, offset<span class="op">=</span><span class="dv">14</span>, length<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-31"><a href="#cb2-31"></a>    design.add_insertion(helix<span class="op">=</span><span class="dv">0</span>, offset<span class="op">=</span><span class="dv">26</span>, length<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb2-32"><a href="#cb2-32"></a></span>
+<span id="cb2-33"><a href="#cb2-33"></a>    <span class="co"># also assigns complement to strands other than scaf bound to it</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a>    design.assign_dna(scaf, <span class="st">&#39;AACGT&#39;</span> <span class="op">*</span> <span class="dv">18</span>)</span>
+<span id="cb2-35"><a href="#cb2-35"></a></span>
+<span id="cb2-36"><a href="#cb2-36"></a>    <span class="cf">return</span> design</span>
+<span id="cb2-37"><a href="#cb2-37"></a></span>
+<span id="cb2-38"><a href="#cb2-38"></a></span>
+<span id="cb2-39"><a href="#cb2-39"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb2-40"><a href="#cb2-40"></a>    design <span class="op">=</span> main()</span>
+<span id="cb2-41"><a href="#cb2-41"></a>    design.write_scadnano_file(directory<span class="op">=</span><span class="st">&#39;output_designs&#39;</span>)</span></code></pre></div>
 <p>Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. This model is manipulated directly in the Python scripting library, and indirectly through the web interface. This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.</p>
-<p>A design consists of a <em>grid</em> type (a.k.a., <em>lattice</em>, one of the following types: square, hex, honeycomb, or none), a list of <em>helices</em>, and a list of <em>strands</em>. The order of the helices matters; if there are <em>h</em> helices, the helices are numbered 0 through <em>h</em>-1. This can be overridden by specifying a field called <code>idx</code> in each helix, but the default is to number them consecutively in order. (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.) Each helix defines a set of integer <em>offsets</em> with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown. Each offset is a position where a DNA base of a strand can go.</p>
+<p>A design consists of a <em>grid</em> type (a.k.a., <em>lattice</em>, one of the following types: square, hex, honeycomb, or none), a list of <em>helices</em>, and a list of <em>strands</em>. The order of the helices matters; if there are <em>h</em> helices, the helices are numbered 0 through <em>h</em>-1. This can be overridden by specifying a field called <code>idx</code> in each helix, but the default is to number them consecutively in order. (The strands also have an order, which generally doesn’t matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.) Each helix defines a set of integer <em>offsets</em> with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown. Each offset is a position where a DNA base of a strand can go.</p>
 <p>Helices in a grid have a two-integer <em>grid position</em> depicted in the side view. See the <a href="https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position">Python scripting documentation</a> for more detail about the meaning of these positions. Helices without a grid have a <em>position</em>, a six-real-number vector describing their <em>x</em>, <em>y</em>, <em>z</em> positions, as well as <em>pitch</em>, <em>roll</em>, and <em>yaw</em>, but this feature is currently <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/39">not well-supported</a>. The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. (Each grid position is essentially interpreted as a position with <em>pitch</em> = <em>roll</em> = <em>yaw</em> = 0.) They are listed from top to bottom in the order they appear in the sequence (unless the property <em>helices_view_order</em> is specified in the design to display them in a different order, though currently this can only be done in the scripting library).</p>
 <p>Each strand is defined primarily by an ordered list of <em>substrands</em>. Each substrand is either a single-stranded <em>loopout</em> not associated to any helix, or it is a <em>bound substrand</em>: a region of the strand that is contiguous on a single helix. The phrase is a bit misleading, since a bound substrand is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.</p>
-<p>Each bound substrand is specified by four mandatory properties: <em>helix</em>, direction (<em>forward</em> or reverse), <em>start</em> offset, and a larger <em>end</em> offset. As with common string/list indexing in programming languages, start is inclusive but end is exclusive. So for example, a bound substrand with <em>end</em>=8 is adjacent to one with <em>start</em>=8. In the main view, <em>forward</em> bound substrands are depicted on the top half of the helix, and <em>reverse</em> are on the bottom half. If a bound substrand is forward, then <em>start</em> is the offset of its 5' end, and <em>end</em>-1 is the offset of its 3' end, otherwise these roles are reversed. There is implicitly a crossover between adjacent bound substrands in a strand. Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) substrand in between two bound substrands. Currently, two loopouts cannot be consecutive (and this will remain a requirement), and a loopout cannot be the first or last substrand of a strand (this may be <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/34">relaxed in the future</a>).</p>
+<p>Each bound substrand is specified by four mandatory properties: <em>helix</em>, direction (<em>forward</em> or reverse), <em>start</em> offset, and a larger <em>end</em> offset. As with common string/list indexing in programming languages, start is inclusive but end is exclusive. So for example, a bound substrand with <em>end</em>=8 is adjacent to one with <em>start</em>=8. In the main view, <em>forward</em> bound substrands are depicted on the top half of the helix, and <em>reverse</em> are on the bottom half. If a bound substrand is forward, then <em>start</em> is the offset of its 5’ end, and <em>end</em>-1 is the offset of its 3’ end, otherwise these roles are reversed. There is implicitly a crossover between adjacent bound substrands in a strand. Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) substrand in between two bound substrands. Currently, two loopouts cannot be consecutive (and this will remain a requirement), and a loopout cannot be the first or last substrand of a strand (this may be <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/34">relaxed in the future</a>).</p>
 <p>Bound substrands may have optional fields, notably <em>deletions</em> (called <em>skips</em> in cadnano) and <em>insertions</em> (called <em>loops</em> in cadnano), explained below.</p>
 <p>Each strand also has a <em>color</em> and a Boolean field <em>is_scaffold</em>. DNA origami designs have at least one strand that is a scaffold (but can have more than one), and a non-DNA-origami design is simply one in which every strand has <em>is_scaffold</em> = false. Unlike cadnano, a scaffold strand can have either direction on any helix. When there is at least one scaffold, all non-scaffold strands are called <em>staples</em>. The general idea behind DNA origami is that every staple strand binds only to a scaffold, never to another staple. Neither does any scaffold bind to another scaffold or itself. However, neither of these conventions is enforced by scadnano, and there are legitimate reasons to want non-scaffold strands to bind to each other (e.g., for DNA <a href="https://www.ncbi.nlm.nih.gov/pubmed/20463734">walkers</a> or <a href="https://www.nature.com/articles/nnano.2017.127">circuits</a> on the surface of an origami). See the <a href="https://www.nature.com/articles/nature04586">original paper</a> for more detailed instructions for designing DNA origami.</p>
-<p>A strand can have an optional DNA sequence. Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands. However, it is often best to mostly finalize the design before assigning a DNA sequence, which is why the field is optional. Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it's not clear what to do. (e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)</p>
-<p>Each helix has a integer <em>rotation anchor</em> and a real number <em>rotation</em>, with the following interpretation. At the offset <em>rotation anchor</em>, the backbone of the forward strand on that helix has angle <em>rotation</em>, where we define 0 degrees to point to straight <em>up</em> in the side view. Rotation is <em>clockwise</em> as the rotation increases from 0 up to 360 degrees. The purpose of this feature is to help reduce strain by ensuring crossovers are &quot;locally consistent&quot;, without enforcing a global notion of absolute backbone rotation on all offsets in the system.</p>
+<p>A strand can have an optional DNA sequence. Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands. However, it is often best to mostly finalize the design before assigning a DNA sequence, which is why the field is optional. Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it’s not clear what to do. (e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)</p>
+<p>Each helix has a integer <em>rotation anchor</em> and a real number <em>rotation</em>, with the following interpretation. At the offset <em>rotation anchor</em>, the backbone of the forward strand on that helix has angle <em>rotation</em>, where we define 0 degrees to point to straight <em>up</em> in the side view. Rotation is <em>clockwise</em> as the rotation increases from 0 up to 360 degrees. The purpose of this feature is to help reduce strain by ensuring crossovers are “locally consistent”, without enforcing a global notion of absolute backbone rotation on all offsets in the system.</p>
 <h2 id="relation-of-grid_position-and-position-to-side-and-main-view-display">Relation of grid_position and position to side and main view display</h2>
-<p>The main view and side views are 2D projections of a 3D object. The views display helices in the following way. Each helix has a 3D <em>(x,y,z)</em> position (grid_position is simply a special type of position, and a position is calculated from the grid_position if it is not specified explicitly in the .dna file.) The <em>x</em> and <em>y</em> coordinates are shown in the side view, with x increasing to the right and y increasing to the bottom (so-called &quot;screen coordinates&quot;, which invert <em>y</em> compared to Cartesian coordinates).</p>
+<p>The main view and side views are 2D projections of a 3D object. The views display helices in the following way. Each helix has a 3D <em>(x,y,z)</em> position (grid_position is simply a special type of position, and a position is calculated from the grid_position if it is not specified explicitly in the .dna file.) The <em>x</em> and <em>y</em> coordinates are shown in the side view, with x increasing to the right and y increasing to the bottom (so-called “screen coordinates”, which invert <em>y</em> compared to Cartesian coordinates).</p>
 <p>In the main view, the horizontal direction is the <em>z</em> coordinate. The vertical direction, however, is not the <em>y</em> coordinate, since this would simply pile helices on top of each other if their <em>y</em> coordinates were close or equal (which is common in a 3D design). Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value <em>helices_view_order</em> in the DNA design, which can specify an alternate permutation). The vertical distance between adjacent helices is supposed to approximate the Euclidean <em>x-y</em> distance between the helices. If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same <em>x</em> coordinate, or they all have the same <em>y</em> coordinate), then this will display the entire design to scale, with each helix appearing the correct relative distance from all others. Otherwise, the distances between pairs of helices with <em>adjacent indices</em> will be to scale.</p>
 <p>[TODO: make some figures showing examples]</p>
 <h2 id="navigation-and-control">Navigation and control</h2>
 <p><strong>Navigation:</strong> The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/42">navigate entirely by keyboard</a> or to <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/91">navigate only by clicking</a>.</p>
 <p><strong>Undo/redo:</strong> Pressing Ctrl+Z will undo the last action that changed the design. Pressing Shift+Ctrl+Z will redo it.</p>
-<p><strong>Right-click:</strong> Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. (<strong>Note for cadnano users:</strong> Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand.)</p>
+<p><strong>Right-click:</strong> Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser’s normal right-click is disabled. To see the browser’s normal right-click menu on such items, press Shift + right-click. (<strong>Note for cadnano users:</strong> Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand.)</p>
 <p>Right-clicking on a crossover or loopout lets one toggle between a crossover or loopout or change the length of a loopout. Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.</p>
 <h2 id="menu">Menu</h2>
 <p>The menu layout is currently hacky and will <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/63">change to something more elegant in the future</a>.</p>
@@ -175,64 +209,58 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p><strong>Load:</strong> Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.</p></li>
 <li><p><strong>Export SVG:</strong></p></li>
 </ul>
-<p>Use the &quot;Export SVG side&quot; and &quot;Export SVG main&quot; buttons to export an SVG file suitable for making a figure of the DNA design.</p>
+<p>Use the “Export SVG side” and “Export SVG main” buttons to export an SVG file suitable for making a figure of the DNA design.</p>
 <p>SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with <a href="https://inkscape.org/">Inkscape</a>, a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.</p>
 <p>If you <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues">report a bug</a> with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.</p>
 <ul>
 <li><p><strong>show DNA:</strong> Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a &gt; 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/30">this feature request</a> will reduce the rendering time.</p></li>
 <li><p><strong>show mismatches:</strong> Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.</p></li>
-<li><p><strong>Inline insertions/deletions:</strong> The &quot;Inline I/D&quot; button &quot;inlines&quot; insertions and deletions in the following way. Insertions and deletions are removed, and their substrands have their lengths altered. Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.</p></li>
+<li><p><strong>Inline insertions/deletions:</strong> The “Inline I/D” button “inlines” insertions and deletions in the following way. Insertions and deletions are removed, and their substrands have their lengths altered. Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.</p>
+<p>We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.</p></li>
+<li><p><strong>grid:</strong> The grid type can be changed to square, hex, honeycomb, or none.</p>
+<p>[TODO explain more what this means]</p></li>
 </ul>
-<p>We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.</p>
-<ul>
-<li><strong>grid:</strong> The grid type can be changed to square, hex, honeycomb, or none.</li>
-</ul>
-<p>[TODO explain more what this means]</p>
 <h2 id="edit-modes">Edit modes</h2>
-<p>There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application's display.</p>
+<p>There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application’s display.</p>
 <ul>
-<li><strong>(s)elect:</strong> This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the &quot;Select Mode&quot;, shown below the Edit modes. Some of these are mutually exclusive as well.</li>
-</ul>
+<li><p><strong>(s)elect:</strong> This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the “Select Mode”, shown below the Edit modes. Some of these are mutually exclusive as well.</p>
 <p>A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.</p>
 <p>Unlike other drawing programs, clicking on the background will not unselect the objects. (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) To unselect all selected objects, press the Esc key.</p>
 <p>The following are the types of objects that can be selected in the main view.</p>
 <ul>
-<li><p><strong>5' end (strand), 3' end (strand):</strong> These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand.</p></li>
-<li><p><strong>5' end (other), 3' end (other):</strong> Each strand is composed of one or more <em>bound substrands</em>, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound substrand that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.</p></li>
-<li><p><strong>crossover, loopout:</strong> Two consecutive bound substrands on a strand can be joined by either a <em>crossover</em>, which consists of no DNA bases, or a <em>loopout</em>, which is a single-stranded portion of the strand with one or more DNA bases.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p></li>
+<li><p><strong>5’ end (strand), 3’ end (strand):</strong> These allow one to select the 5’ end (square) or 3’ end (triangle) of a whole strand.</p></li>
+<li><p><strong>5’ end (other), 3’ end (other):</strong> Each strand is composed of one or more <em>bound substrands</em>, defined to be a portion of a strand that exists on a single helix. A 5’/3’ end of a bound substrand that is not the 5’/3’ end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5’/3’ end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.</p></li>
+<li><p><strong>crossover, loopout:</strong> Two consecutive bound substrands on a strand can be joined by either a <em>crossover</em>, which consists of no DNA bases, or a <em>loopout</em>, which is a single-stranded portion of the strand with one or more DNA bases.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
 <li><p><strong>strand:</strong> The whole strand can be selected.</p></li>
-<li><p><strong>scaffold/staple:</strong> In the case of a DNA origami design---one in which at least one strand is marked as a <em>scaffold</em>---all non-scaffold strands are called <em>staples</em>. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.</p>
-<p>It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the &quot;helix&quot; edit mode and clicking on them.</p></li>
-<li><p><strong>(p)encil:</strong> This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single substrand) by clicking and dragging.</p></li>
+<li><p><strong>scaffold/staple:</strong> In the case of a DNA origami design—one in which at least one strand is marked as a <em>scaffold</em>—all non-scaffold strands are called <em>staples</em>. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.</p>
+<p>It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the “helix” edit mode and clicking on them.</p></li>
+</ul></li>
+<li><p><strong>(p)encil:</strong> This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single substrand) by clicking and dragging.</p>
+<p>It also allows one to merge two strands into one with a crossover. This is done by clicking on a 5’/3’ end of one strand and then clicking on another. (In between a line will be drawn showing the “potential” crossover being added; to delete this and reset, press the Esc key.) To undo these operations select the crossover/strand that was just created and press the Delete key. (Note that deleting a bound substrand that is the only one on a strand will delete the whole strand.)</p>
+<p>A faster alternative that works in most circumstances is this. In pencil mode, if two bound substrands on adjacent helices have their 5’/3’ ends at the <em>same horizontal offset</em>, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.</p>
+<p>In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.</p></li>
+<li><p><strong>(n)ick / (l)igate:</strong> Technically these operations are unnecessary, but they are faster than creating/moving/deleting substrands in some circumstances. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5’/3’ ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5’ end is on the left and its 3’ end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.</p></li>
+<li><p><strong>(i)nsertion / (d)eletion:</strong> These have the same meaning as in cadnano. They are a visual trick used to allow bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. Normally, each offset (small white square outlined in gray on a helix) represents a single base. Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. Clicking an existing insertion/deletion removes it. (Note that this requires clicking in the small square where the bound substrand is drawn; clicking on an insertion outside of that square allows one to change its length.) If a deletion appears at that position, then it does not correspond to any DNA base. If an insertion appears at that position, it has a <em>length</em>, which is a positive integer, and the number of bases represented by that position is actually <em>length</em>+1. In other words <em>length</em> is the number of <em>extra</em> bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases).</p>
+<p>Currently, if one offset on a helix has two bound substrands (going in opposite directions), then adding/removing an insertion/deletion at that offset adds/removes on both bound substrands. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/90">unsupported</a> in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)</p></li>
+<li><p><strong>(b)ackbone:</strong> This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. (It doesn’t actually enable any edits, but it <em>disables</em> other edits for technical reasons related detecting click events.) Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained. Most interesting crossovers will be between two helices that are tangent to each other in the side view. Ideally, the rotation of each helix is such that the backbones “point at each other”.</p>
+<p>This is not intended to be a predictive model based on molecular kinetics, nor is it even intended to be meaningful over the entirety of a helix. Rather, it is useful to set the rotation at one offset on a helix to be “perfect” (i.e., the backbones of the two helices at that offset point directly at each other) and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions.</p>
+<p>Each crossover has a right-click option “unstrain backbone here”. If this is selected, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. The Python scripting library can be used to set these more generally, but it is currently <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/99">unsupported</a> to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/13">change</a> in the future.</p></li>
 </ul>
-<p>It also allows one to merge two strands into one with a crossover. This is done by clicking on a 5'/3' end of one strand and then clicking on another. (In between a line will be drawn showing the &quot;potential&quot; crossover being added; to delete this and reset, press the Esc key.) To undo these operations select the crossover/strand that was just created and press the Delete key. (Note that deleting a bound substrand that is the only one on a strand will delete the whole strand.)</p>
-<p>A faster alternative that works in most circumstances is this. In pencil mode, if two bound substrands on adjacent helices have their 5'/3' ends at the <em>same horizontal offset</em>, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.</p>
-<p>In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.</p>
-<ul>
-<li><p><strong>(n)ick / (l)igate:</strong> Technically these operations are unnecessary, but they are faster than creating/moving/deleting substrands in some circumstances. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.</p></li>
-<li><p><strong>(i)nsertion / (d)eletion:</strong> These have the same meaning as in cadnano. They are a visual trick used to allow bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. Normally, each offset (small white square outlined in gray on a helix) represents a single base. Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. Clicking an existing insertion/deletion removes it. (Note that this requires clicking in the small square where the bound substrand is drawn; clicking on an insertion outside of that square allows one to change its length.) If a deletion appears at that position, then it does not correspond to any DNA base. If an insertion appears at that position, it has a <em>length</em>, which is a positive integer, and the number of bases represented by that position is actually <em>length</em>+1. In other words <em>length</em> is the number of <em>extra</em> bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases).</p></li>
-</ul>
-<p>Currently, if one offset on a helix has two bound substrands (going in opposite directions), then adding/removing an insertion/deletion at that offset adds/removes on both bound substrands. The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, but this is currently <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/90">unsupported</a> in the web interface to create such a solitary deletion/insertion directly. (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)</p>
-<ul>
-<li><strong>(b)ackbone:</strong> This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, or of two helices when the pointer is over a crossover joining those two helices. (It doesn't actually enable any edits, but it <em>disables</em> other edits for technical reasons related detecting click events.) Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained. Most interesting crossovers will be between two helices that are tangent to each other in the side view. Ideally, the rotation of each helix is such that the backbones &quot;point at each other&quot;.</li>
-</ul>
-<p>This is not intended to be a predictive model based on molecular kinetics, nor is it even intended to be meaningful over the entirety of a helix. Rather, it is useful to set the rotation at one offset on a helix to be &quot;perfect&quot; (i.e., the backbones of the two helices at that offset point directly at each other) and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions.</p>
-<p>Each crossover has a right-click option &quot;unstrain backbone here&quot;. If this is selected, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. The Python scripting library can be used to set these more generally, but it is currently <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/99">unsupported</a> to set them arbitrarily in the web interface. It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/13">change</a> in the future.</p>
 <h2 id="assigning-dna">Assigning DNA</h2>
 <p>Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. Disabling this allows one to create intential mismatches.</p>
-<p>It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. However, be careful in automatically assigning DNA complements to strands bound to this one. This is allowed, but only if the new sequence will not conflict with the old one, unless option &quot;warn if assigning different sequence to bound strand&quot; is disabled. If doing such an assignment would result in trying to write over a DNA base on a bound strand with a different base than it already has, this is not allowed. First, remove the DNA sequence from the strand and its bound strands, then assign a fresh DNA sequence. You can also disable the warning &quot;warn if assigning different sequence to bound strand&quot;, in which case the bound strands will be silently overwritten with the new complementary sequence.</p>
-<p>One reason to keep the warning enabled, but still assign DNA to a strand bound to another with DNA already assigned, is that complementary DNA can be built partially in stages. For example, if a strand <em>s1</em> is connected to two others <em>s2</em> and <em>s3</em>, then DNA can be assigned to <em>s2</em>, followed by <em>s3</em>. Any bases on <em>s1</em> not bound to <em>s2</em> (for instance, those bound to <em>s3</em>), after <em>s2</em> has a sequence assigned to it, will receive the wildcard symbol <code>?</code> as their &quot;DNA base&quot;. Upon subsequently assigning a DNA sequence to <em>s3</em>, the complementary portions of <em>s1</em> (which have a <code>?</code>) will be overwritten with the appropriate DNA sequence, even if the warning is enabled. Thus the warning only concerns a concrete DNA base, one of <code>A</code>, <code>C</code>, <code>G</code>, or <code>T</code>, if it already exists and is about to be overwritten with a different base.</p>
+<p>It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. However, be careful in automatically assigning DNA complements to strands bound to this one. This is allowed, but only if the new sequence will not conflict with the old one, unless option “warn if assigning different sequence to bound strand” is disabled. If doing such an assignment would result in trying to write over a DNA base on a bound strand with a different base than it already has, this is not allowed. First, remove the DNA sequence from the strand and its bound strands, then assign a fresh DNA sequence. You can also disable the warning “warn if assigning different sequence to bound strand”, in which case the bound strands will be silently overwritten with the new complementary sequence.</p>
+<p>One reason to keep the warning enabled, but still assign DNA to a strand bound to another with DNA already assigned, is that complementary DNA can be built partially in stages. For example, if a strand <em>s1</em> is connected to two others <em>s2</em> and <em>s3</em>, then DNA can be assigned to <em>s2</em>, followed by <em>s3</em>. Any bases on <em>s1</em> not bound to <em>s2</em> (for instance, those bound to <em>s3</em>), after <em>s2</em> has a sequence assigned to it, will receive the wildcard symbol <code>?</code> as their “DNA base”. Upon subsequently assigning a DNA sequence to <em>s3</em>, the complementary portions of <em>s1</em> (which have a <code>?</code>) will be overwritten with the appropriate DNA sequence, even if the warning is enabled. Thus the warning only concerns a concrete DNA base, one of <code>A</code>, <code>C</code>, <code>G</code>, or <code>T</code>, if it already exists and is about to be overwritten with a different base.</p>
 <p>[TODO: make a figure showing this]</p>
 <h2 id="how-to-design-structures-manually-using-scadnano">How to design structures manually using scadnano</h2>
 <p>A full DNA origami design using a standard 7249-base M13mp18 scaffold uses ~200 staples, which are tedious to create manually. cadnano provides <em>autostaple</em> and <em>autobreak</em> utilities for quickly creating a large number of staple strands. However, there are fewer than a dozen different <em>types</em> of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them. We have found that the autostaple and autobreak tools are largely unnecessary in scadnano, since scadnano allows one to copy and paste strands (unlike cadnano), encouraging a less opinionated method of creating large designs rapidly.</p>
-<p>Recursive copy/pasting speeds up this process even further. For instance, to create a vertical &quot;column&quot; of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste <em>those</em> to make 8, then 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.</p>
+<p>Recursive copy/pasting speeds up this process even further. For instance, to create a vertical “column” of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste <em>those</em> to make 8, then 16, and finally 32 staples. Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.</p>
 <p>A standard DNA origami rectangle, for instance, can be created in about 10 minutes. The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design. However, numerous example designs are provided to learn what good staple design looks like.</p>
 <p>See the <a href="tutorial/tutorial.md">tutorial</a> for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.</p>
-<div class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/34">unsupported</a> for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.<a href="#fnref1">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/34">unsupported</a> for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</div>
+</section>
 </body>
 </html>
