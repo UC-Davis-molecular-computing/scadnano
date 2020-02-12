@@ -26,6 +26,7 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.GridChange>(helix_grid_change_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixGridPositionSet>(helix_grid_position_set_reducer),
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
@@ -54,7 +55,6 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
   TypedReducer<Helix, actions.HelixPositionSet>(helix_position_set_reducer),
-  TypedReducer<Helix, actions.HelixGridPositionSet>(helix_grid_position_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,11 +272,26 @@ Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) =
   ..grid_position = null
   ..svg_position_ = null);
 
-Helix helix_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
+Helix helix_individual_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
     helix.rebuild((b) => b
       ..position_ = null
       ..grid_position.replace(action.grid_position)
       ..svg_position_ = null);
+
+BuiltMap<int, Helix> helix_grid_position_set_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixGridPositionSet action) {
+  Helix helix = helices[action.helix_idx];
+  var new_helix = helix_individual_grid_position_set_reducer(helix, action);
+  if (new_helix != helix) {
+    var helices_map = helices.toBuilder();
+    helices_map[action.helix_idx] = new_helix;
+    var new_helices = helices_map.build();
+    new_helices = _reassign_svg_positions(new_helices, null);
+    return new_helices;
+  } else {
+    return helices;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated

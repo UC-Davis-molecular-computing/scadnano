@@ -4682,13 +4682,16 @@ main() {
     GridPosition grid_position = GridPosition(5, -3);
     Helix expected_helix = helix.rebuild((b) => b
       ..grid_position.replace(grid_position)
-      ..svg_position_ = null);
+      ..svg_position_ = Point(0, 0));
 
     var expected_helices = two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
 
+    var built_expected_helices = expected_helices.build().toMap();
+    built_expected_helices = util.helices_assign_svg(built_expected_helices, Grid.square);
+
     AppState expected_state = state.rebuild((b) => b
-      ..dna_design.helices.replace(expected_helices.build())
+      ..dna_design.helices.replace(built_expected_helices)
       ..undo_redo.undo_stack.add(two_helices_design)
       ..ui_state.changed_since_last_save = true);
 
