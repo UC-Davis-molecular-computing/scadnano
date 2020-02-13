@@ -425,11 +425,21 @@ class DesignViewComponent {
 
   render(AppState state) {
     if (state.has_error()) {
-      if (!this.root_element.children.contains(this.error_message_pane)) {
+      if (!root_element.children.contains(this.error_message_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
+        this.root_element.children.add(this.dialog_form_container);
       }
       this.error_message_component.render(state.error_message);
+
+      react_dom.render(
+        ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedDesignDialogForm()(),
+          ),
+        ),
+        this.dialog_form_container,
+      );
     } else {
 //      var react_svg_pan_zoom_side = UncontrolledReactSVGPanZoom(
 //        {
@@ -464,6 +474,8 @@ class DesignViewComponent {
         this.root_element.children.add(this.design_above_footer_pane);
         this.root_element.children.add(this.footer_separator);
         this.root_element.children.add(this.footer_element);
+        this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.context_menu_container);
       }
 
       react_dom.render(
