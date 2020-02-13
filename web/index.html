@@ -292,7 +292,7 @@
             beforeZoom: before_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
-            fit: false,
+            fit: true,
         });
 
         main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
@@ -304,7 +304,7 @@
             beforeZoom: before_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
-            fit: false,
+            fit: true,
         });
 
         // main_view_svg_pan_zoom.onpointerup = function() {
@@ -346,12 +346,14 @@
     //XXX: doesn't work like I had hoped; not using it for now
     function fit_and_center() {
         if (typeof side_view_svg_pan_zoom !== 'undefined') {
-            side_view_svg_pan_zoom.contain();
+            side_view_svg_pan_zoom.updateBBox(); // not sure why, but this is needed: https://github.com/ariutta/svg-pan-zoom
             side_view_svg_pan_zoom.fit();
+            side_view_svg_pan_zoom.center();
         }
         if (typeof main_view_svg_pan_zoom !== 'undefined') {
-            main_view_svg_pan_zoom.contain();
+            main_view_svg_pan_zoom.updateBBox(); // not sure why, but this is needed: https://github.com/ariutta/svg-pan-zoom
             main_view_svg_pan_zoom.fit();
+            main_view_svg_pan_zoom.center();
         }
     }
 
