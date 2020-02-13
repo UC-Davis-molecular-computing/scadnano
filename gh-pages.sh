@@ -19,6 +19,7 @@ else
   echo "Using peanut.bat as dart peanut command"
 fi
 
+git pull --all # Fetch changes before committing
 $PUB get # might not be needed
 $PEANUT
 git push origin --set-upstream gh-pages

@@ -41,7 +41,7 @@ or the
 
 ## Tutorial
 
-A [tutorial](tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
+A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md) shows how to create a "standard" 24-helix DNA origami rectangle using the scadnano web interface.
 
 
 ## **WARNING: Save your work**

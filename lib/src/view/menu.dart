@@ -221,16 +221,16 @@ looking at before changing the script.'''
       ]),
       (Dom.a()
         ..className = 'docs-link menu-item'
-        ..href = 'README.html'
-        //TODO: when repository is public, make the github link the official documentation link
-//        ..href = 'https://github.com/UC-Davis-molecular-computing/scadnano'
+//        ..href = 'README.html'
+        ..href = 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md'
         ..target = '_blank'
         ..key = 'help-link')('Help'),
-      (Dom.a()
-        ..className = 'docs-link menu-item'
-        ..href = './docs/'
-        ..target = '_blank'
-        ..key = 'script-help-link')('Script Docs'),
+//      (Dom.a()
+//        ..className = 'docs-link menu-item'
+////        ..href = './docs/'
+//        ..href = 'https://scadnano-python-package.readthedocs.io'
+//        ..target = '_blank'
+//        ..key = 'script-help-link')('Script Docs'),
     ];
   }
 
