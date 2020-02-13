@@ -1,8 +1,8 @@
----
+<!-- ---
 title: "scadnano help"
----
+--- -->
 
-<!--- # scadnano --->
+# scadnano
 
 [scadnano](http://scadnano.org) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
