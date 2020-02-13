@@ -22,6 +22,6 @@ jobs:
       run: sudo apt-get -y install dart
     - uses: actions/checkout@v1
     - name: Install dependencies
-      run: pub get
+      run: PATH="$PATH:/usr/lib/dart/bin" pub get
     - name: Run tests
-      run: pub run build_runner test
+      run: PATH="$PATH:/usr/lib/dart/bin" pub run build_runner test
