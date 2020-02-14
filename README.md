@@ -78,7 +78,7 @@ It is instructive to see how that example design is represented as a `.dna` file
 
 ```json
 {
-  "version": "0.0.1",
+  "version": "0.2.0",
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
