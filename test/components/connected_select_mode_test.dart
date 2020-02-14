@@ -1,6 +1,7 @@
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
+import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/select_mode.dart';
@@ -31,15 +32,19 @@ main() {
   utils.initializeComponentTests();
 
   group('ConnectedSelectModes', () {
+    Ref<SelectModeComponent> selectModeRef;
     SelectModeComponent component;
 
     setUp(() {
       utils.initializeTestStore(initializeTestState());
-      var testJacket = mount((ReduxProvider()..store = app.store)(
-        (ConnectedSelectMode()..addTestId(SelectModeTestId))(),
+      selectModeRef = createRef();
+      mount((ReduxProvider()..store = app.store)(
+        (ConnectedSelectMode()
+          ..addTestId(SelectModeTestId)
+          ..ref = selectModeRef)(),
       ));
-
-      component = getComponentByTestId(testJacket.getInstance(), SelectModeTestId);
+      component = selectModeRef.current;
+      // component = getComponentByTestId(testJacket.getInstance(), SelectModeTestId);
       expect(component, isNotNull, reason: 'ConnectedSelectMode should be mounted');
     });
 

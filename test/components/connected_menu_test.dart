@@ -4,6 +4,7 @@ import 'dart:html';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
+import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/dna_design.dart';
@@ -55,19 +56,24 @@ main() {
   utils.initializeComponentTests();
 
   group('ConnectedSelectModes', () {
+    Ref<MenuComponent> menuRef;
     MenuComponent component;
 
     setUp(() {
       utils.initializeTestStore(initializeTestState());
-      var testJacket = mount((ReduxProvider()..store = app.store)(
-        (ConnectedMenu()..addTestId(MenuTestId))(),
+      menuRef = createRef();
+      mount((ReduxProvider()..store = app.store)(
+        (ConnectedMenu()
+          ..addTestId(MenuTestId)
+          ..ref = menuRef)(),
       ));
-
-      component = getComponentByTestId(testJacket.getInstance(), MenuTestId);
+      component = menuRef.current;
+      // component = getComponentByTestId(testJacket.getInstance(), MenuTestId);
       expect(component, isNotNull, reason: 'ConnectedMenu should be mounted');
     });
 
     tearDown(() {
+      menuRef = null;
       component = null;
     });
 
