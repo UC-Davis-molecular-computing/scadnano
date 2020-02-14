@@ -26688,6 +26688,7 @@ j=$.ee().$0()
 J.ib(j,$.L().b)
 j=i.$1(j.$1($.a6p().$0().$0()))
 $.i7().$2(j,h)
+self.fit_and_center()
 case 1:return P.bk(s,t)}})
 return P.bl($async$eP,t)},
 ln:function(){var u=0,t=P.bm(null),s=this,r,q,p
