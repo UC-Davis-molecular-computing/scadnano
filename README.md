@@ -22,7 +22,9 @@ and
 [Edge](https://www.microsoft.com/en-us/windows/microsoft-edge) 
 planned in the future.
 
-2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library ([download](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / [documentation](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
+2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library 
+([installation](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / 
+[documentation](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
 
 A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
 
@@ -76,7 +78,7 @@ It is instructive to see how that example design is represented as a `.dna` file
 
 ```json
 {
-  "version": "0.0.1",
+  "version": "0.2.0",
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
