@@ -292,7 +292,7 @@
             beforeZoom: before_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
-            fit: true,
+            fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
         });
 
         main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
@@ -304,7 +304,7 @@
             beforeZoom: before_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
-            fit: true,
+            fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
         });
 
         // main_view_svg_pan_zoom.onpointerup = function() {

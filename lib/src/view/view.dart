@@ -15,6 +15,7 @@ import 'select_mode.dart';
 import 'menu.dart';
 import 'editor.dart';
 import '../app.dart';
+import '../util.dart' as util;
 
 import '../constants.dart' as constants;
 
@@ -120,6 +121,8 @@ class View {
       ),
       this.select_mode_element,
     );
+
+    util.fit_and_center();
 
 //    react_dom.render(
 //        (SelectMode()..select_mode_state = app.state.select_mode_store)(), this.select_mode_element);
