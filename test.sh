@@ -12,6 +12,8 @@ if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   $PUB run build_runner test -- -P debug
 elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
   $PUB run build_runner test -- $2
+elif [ "$1" == "--td" ] || [ "$1" == "--dt" ]; then
+  $PUB run build_runner test -- $2 -P debug
 else
   $PUB run build_runner test
 fi
