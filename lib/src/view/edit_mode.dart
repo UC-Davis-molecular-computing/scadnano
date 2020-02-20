@@ -10,9 +10,13 @@ import '../actions/actions.dart' as actions;
 
 part 'edit_mode.over_react.g.dart';
 
-UiFactory<EditModeProps> ConnectedEditMode = connect<AppState, EditModeProps>(mapStateToProps: (state) {
-  return EditMode()..modes = state.ui_state.edit_modes;
-})(EditMode);
+UiFactory<EditModeProps> ConnectedEditMode = connect<AppState, EditModeProps>(
+  mapStateToProps: (state) {
+    return EditMode()..modes = state.ui_state.edit_modes;
+  },
+  // Used for component test.
+  forwardRef: true,
+)(EditMode);
 
 @Factory()
 UiFactory<EditModeProps> EditMode = _$EditMode;

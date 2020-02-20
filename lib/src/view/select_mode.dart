@@ -19,6 +19,8 @@ UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModePro
       ..select_mode_state = state.ui_state.select_mode_state
       ..is_origami = is_origami;
   },
+  // Used for component test.
+  forwardRef: true,
 )(SelectMode);
 
 @Factory()

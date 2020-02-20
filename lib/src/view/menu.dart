@@ -26,6 +26,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..grid = state.dna_design?.grid
     ..example_dna_designs = state.ui_state.example_dna_designs
     ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true),
+  // Used for component test.
+  forwardRef: true,
 )(Menu);
 
 @Factory()

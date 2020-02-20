@@ -193,12 +193,12 @@ DNADesign helix_remove_dna_design_global_reducer(
   Set<BoundSubstrand> substrands_on_helix = design.substrands_on_helix(action.helix_idx).toSet();
   var strands_with_substrands_removed =
       delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helix);
-  var strands_with_helix_indices_updated =
-      change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
+  // var strands_with_helix_indices_updated =
+  //     change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_bound_substrands(design.helices, action);
   var new_helices_list = util.helices_assign_svg(new_helices.toMap(), design.grid);
-  return design.rebuild(
-      (d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_helix_indices_updated));
+  return design
+      .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
 }
 
 /// Change (by amount `increment`) all helix_idx's of all BoundSubstrands with helix >= helix_idx.

@@ -3,6 +3,7 @@
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
+import 'package:react/react_client/react_interop.dart';
 // import 'package:react/react_client.dart';
 // import 'package:redux/redux.dart';
 import 'package:scadnano/src/app.dart';
@@ -31,19 +32,26 @@ void main() {
   utils.initializeComponentTests();
 
   group('ConnectedEditModes', () {
+    Ref<EditModeComponent> editModeRef;
     EditModeComponent component;
 
     setUp(() {
       utils.initializeTestStore(initializeTestState());
-      var testJacket = mount((ReduxProvider()..store = app.store)(
-        (ConnectedEditMode()..addTestId(EditModeComponentTestID))(),
+      editModeRef = createRef();
+      mount((ReduxProvider()..store = app.store)(
+        (ConnectedEditMode()
+          ..addTestId(EditModeComponentTestID)
+          ..ref = editModeRef)(),
       ));
+      // final editModeComponent = editModeRef.current;
+      // component = getComponentByTestId(editModeComponent, EditModeComponentTestID);
+      component = editModeRef.current;
 
-      component = getComponentByTestId(testJacket.getInstance(), EditModeComponentTestID);
       expect(component, isNotNull, reason: 'ConnectedEditMode should be mounted');
     });
 
     tearDown(() {
+      editModeRef = null;
       component = null;
     });
 
