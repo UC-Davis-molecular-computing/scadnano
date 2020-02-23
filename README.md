@@ -72,7 +72,9 @@ after pressing "Save", you will always be prompted to specify a filename to whic
 The main parts of the program are the *side view* on the left, and the *main view* in the center. 
 The side view shows DNA helices "head on", with the interpretation that as you move to the right in the main view, this is like moving "into the screen" in the side view.
 
-![screenshot of scadnano web interface](doc-images/screenshot-initial.png)
+screenshot of scadnano web interface:
+
+![](doc-images/screenshot-initial.png)
 
 The screenshot above shows many of the terms used in scadnano. 
 It is instructive to see how that example design is represented as a `.dna` file 
@@ -297,13 +299,21 @@ The menu layout is currently hacky and will [change to something more elegant in
   
   Examples of these coordinate systems are shown below.
 
-  ![square grid](doc-images/grid_square.svg)
+  square grid:
+  
+  ![](doc-images/grid_square.svg)
 
-  ![honeycomb grid](doc-images/grid_honeycomb.svg)
+  honeycomb grid:
 
-  ![hexagonal grid](doc-images/grid_hex.svg)
+  ![](doc-images/grid_honeycomb.svg)
 
-  ![none grid](doc-images/grid_none.svg)
+  hexagonal grid:
+
+  ![](doc-images/grid_hex.svg)
+
+  none grid:
+
+  ![](doc-images/grid_none.svg)
 
 
 ## Edit modes
