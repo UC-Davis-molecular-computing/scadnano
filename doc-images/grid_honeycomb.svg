@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0beta1 (fe3e306, 2019-09-17)"
+   inkscape:export-ydpi="360.22"
+   inkscape:export-xdpi="360.22"
+   inkscape:export-filename="C:\Dropbox\git\scadnano\doc-images\grid_honeycomb.png"
+   sodipodi:docname="grid_honeycomb.svg"
+   version="1.1"
+   style="overflow:hidden"
+   height="450"
+   width="266.50635"
+   id="side-view-svg">
+  <metadata
+     id="metadata300">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs298" />
+  <sodipodi:namedview
+     inkscape:current-layer="side-view-svg"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="244.68531"
+     inkscape:cx="113.67928"
+     inkscape:zoom="1.6404877"
+     fit-margin-bottom="0"
+     fit-margin-right="0"
+     fit-margin-left="0"
+     fit-margin-top="0"
+     showgrid="false"
+     id="namedview296"
+     inkscape:window-height="1027"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     inkscape:document-rotation="0"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <g
+     transform="translate(68.30127,100)"
+     class="svg-pan-zoom_viewport"
+     id="side-view-svg-viewport">
+    <g
+       id="g292"
+       class="side-view">
+      <g
+         id="g290"
+         class="helices-side-view">
+        <g
+           id="g8">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle4"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title2">0, 0</title>
+          </circle>
+          <text
+             id="text6"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,0</text>
+        </g>
+        <g
+           id="g16"
+           transform="translate(-43.30127,-75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle12"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title10">-1, -1</title>
+          </circle>
+          <text
+             id="text14"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,-1</text>
+        </g>
+        <g
+           id="g24"
+           transform="translate(0,-50)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle20"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title18">0, -1</title>
+          </circle>
+          <text
+             id="text22"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,-1</text>
+        </g>
+        <g
+           id="g32"
+           transform="translate(43.30127,-75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle28"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title26">1, -1</title>
+          </circle>
+          <text
+             id="text30"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,-1</text>
+        </g>
+        <g
+           id="g40"
+           transform="translate(43.30127,25)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle36"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title34">1, 0</title>
+          </circle>
+          <text
+             id="text38"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,0</text>
+        </g>
+        <g
+           id="g48"
+           transform="translate(86.60254)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle44"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title42">2, 0</title>
+          </circle>
+          <text
+             id="text46"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,0</text>
+        </g>
+        <g
+           id="g56"
+           transform="translate(86.60254,-50)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle52"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title50">2, -1</title>
+          </circle>
+          <text
+             id="text54"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,-1</text>
+        </g>
+        <g
+           id="g64"
+           transform="translate(86.60254,100)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle60"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title58">2, 1</title>
+          </circle>
+          <text
+             id="text62"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,1</text>
+        </g>
+        <g
+           id="g72"
+           transform="translate(43.30127,75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle68"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title66">1, 1</title>
+          </circle>
+          <text
+             id="text70"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,1</text>
+        </g>
+        <g
+           id="g80"
+           transform="translate(0,100)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle76"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title74">0, 1</title>
+          </circle>
+          <text
+             id="text78"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,1</text>
+        </g>
+        <g
+           id="g88"
+           transform="translate(-43.30127,25)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle84"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title82">-1, 0</title>
+          </circle>
+          <text
+             id="text86"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,0</text>
+        </g>
+        <g
+           id="g96"
+           transform="translate(-43.30127,75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle92"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title90">-1, 1</title>
+          </circle>
+          <text
+             id="text94"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,1</text>
+        </g>
+        <g
+           id="g104"
+           transform="translate(-43.30127,175)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle100"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title98">-1, 2</title>
+          </circle>
+          <text
+             id="text102"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,2</text>
+        </g>
+        <g
+           id="g112"
+           transform="translate(0,150)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle108"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title106">0, 2</title>
+          </circle>
+          <text
+             id="text110"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,2</text>
+        </g>
+        <g
+           id="g120"
+           transform="translate(43.30127,175)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle116"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title114">1, 2</title>
+          </circle>
+          <text
+             id="text118"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,2</text>
+        </g>
+        <g
+           id="g128"
+           transform="translate(86.60254,150)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle124"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title122">2, 2</title>
+          </circle>
+          <text
+             id="text126"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,2</text>
+        </g>
+        <g
+           id="g136"
+           transform="translate(129.90381,-75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle132"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title130">3, -1</title>
+          </circle>
+          <text
+             id="text134"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,-1</text>
+        </g>
+        <g
+           id="g144"
+           transform="translate(129.90381,25)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle140"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title138">3, 0</title>
+          </circle>
+          <text
+             id="text142"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,0</text>
+        </g>
+        <g
+           id="g152"
+           transform="translate(129.90381,75)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle148"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title146">3, 1</title>
+          </circle>
+          <text
+             id="text150"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,1</text>
+        </g>
+        <g
+           id="g160"
+           transform="translate(129.90381,175)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle156"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title154">3, 2</title>
+          </circle>
+          <text
+             id="text158"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,2</text>
+        </g>
+        <g
+           id="g168"
+           transform="translate(129.90381,225)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle164"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title162">3, 3</title>
+          </circle>
+          <text
+             id="text166"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,3</text>
+        </g>
+        <g
+           id="g176"
+           transform="translate(86.60254,250)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle172"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title170">2, 3</title>
+          </circle>
+          <text
+             id="text174"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,3</text>
+        </g>
+        <g
+           id="g184"
+           transform="translate(43.30127,225)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle180"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title178">1, 3</title>
+          </circle>
+          <text
+             id="text182"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,3</text>
+        </g>
+        <g
+           id="g192"
+           transform="translate(0,250)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle188"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title186">0, 3</title>
+          </circle>
+          <text
+             id="text190"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,3</text>
+        </g>
+        <g
+           id="g200"
+           transform="translate(-43.30127,225)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle196"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title194">-1, 3</title>
+          </circle>
+          <text
+             id="text198"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,3</text>
+        </g>
+        <g
+           id="g208"
+           transform="translate(-43.30127,325)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle204"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title202">-1, 4</title>
+          </circle>
+          <text
+             id="text206"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">-1,4</text>
+        </g>
+        <g
+           id="g216"
+           transform="translate(0,300)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle212"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title210">0, 4</title>
+          </circle>
+          <text
+             id="text214"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">0,4</text>
+        </g>
+        <g
+           id="g224"
+           transform="translate(43.30127,325)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle220"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title218">1, 4</title>
+          </circle>
+          <text
+             id="text222"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">1,4</text>
+        </g>
+        <g
+           id="g232"
+           transform="translate(86.60254,300)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle228"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title226">2, 4</title>
+          </circle>
+          <text
+             id="text230"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">2,4</text>
+        </g>
+        <g
+           id="g240"
+           transform="translate(129.90381,325)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle236"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title234">3, 4</title>
+          </circle>
+          <text
+             id="text238"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">3,4</text>
+        </g>
+        <g
+           id="g248"
+           transform="translate(173.20508,300)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle244"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title242">4, 4</title>
+          </circle>
+          <text
+             id="text246"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,4</text>
+        </g>
+        <g
+           id="g256"
+           transform="translate(173.20508,250)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle252"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title250">4, 3</title>
+          </circle>
+          <text
+             id="text254"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,3</text>
+        </g>
+        <g
+           id="g264"
+           transform="translate(173.20508,150)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle260"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title258">4, 2</title>
+          </circle>
+          <text
+             id="text262"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,2</text>
+        </g>
+        <g
+           id="g272"
+           transform="translate(173.20508,100)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle268"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title266">4, 1</title>
+          </circle>
+          <text
+             id="text270"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,1</text>
+        </g>
+        <g
+           id="g280"
+           transform="translate(173.20508)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle276"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title274">4, 0</title>
+          </circle>
+          <text
+             id="text278"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,0</text>
+        </g>
+        <g
+           id="g288"
+           transform="translate(173.20508,-50)">
+          <circle
+             cy="0"
+             cx="0"
+             id="circle284"
+             style="visibility:visible;fill:#daa520;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-opacity:1"
+             r="25"
+             class="side-view-helix-circle">
+            <title
+               id="title282">4, -1</title>
+          </circle>
+          <text
+             id="text286"
+             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             class="side-view-helix-text">4,-1</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

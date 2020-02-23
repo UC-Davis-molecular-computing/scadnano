@@ -290,10 +290,21 @@ The menu layout is currently hacky and will [change to something more elegant in
   We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
   e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
-* **grid:**
-  The grid type can be changed to square, hex, honeycomb, or none. 
+  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.
 
-  [TODO explain more what this means]
+* **grid:**
+  The grid type can be changed to square, honeycomb, hex, or none. Each of square, hex, and honeycomb is described by a 2D integer coordinate system, whereas none is describe by a 2D real number coordinate system, assuming the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.)
+  
+  Examples of these coordinate systems are shown below.
+
+  ![square grid](doc-images/grid_square.svg)
+
+  ![honeycomb grid](doc-images/grid_honeycomb.svg)
+
+  ![hexagonal grid](doc-images/grid_hex.svg)
+
+  ![none grid](doc-images/grid_none.svg)
+
 
 ## Edit modes
 

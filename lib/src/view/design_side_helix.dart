@@ -39,7 +39,6 @@ class _$DesignSideHelixProps extends UiProps {
 
 @Component2()
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
-
   @override
   render() {
 //    print('rendering side helix ${props.helix.idx}');
@@ -58,13 +57,16 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       classname_circle += ' deletable';
     }
 
+    var temp_text_for_help_doc_figure_making;
     String tooltip;
-    if (props.grid.is_none()){
+    if (props.grid.is_none()) {
       var pos = props.helix.position3d();
       tooltip = '${pos.x}, ${pos.y}';
+      temp_text_for_help_doc_figure_making = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
       var pos = props.helix.grid_position;
       tooltip = '${pos.h}, ${pos.v}';
+      temp_text_for_help_doc_figure_making = tooltip.replaceAll(' ', '');
     }
 
     var children = [
@@ -74,9 +76,13 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..onClick = ((e) => this._handle_click(e, helix))
         ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
+//        ..style = {'font-size': 12}
         ..className = '$SIDE_VIEW_PREFIX-helix-text'
         ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'text')(this.props.helix.idx.toString(), Dom.svgTitle()(tooltip)),
+        ..key = 'text')(
+//          temp_text_for_help_doc_figure_making
+          props.helix.idx.toString(), Dom.svgTitle()(tooltip)
+      ),
     ];
 
 //    print('checking mouseover data');
@@ -95,8 +101,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     Position3D pos3d = helix.position3d();
     Point<num> center = util.position3d_to_side_view_svg(pos3d);
 
-    return (Dom.g()
-      ..transform = 'translate(${center.x} ${center.y})')(children);
+    return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {
@@ -108,5 +113,4 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       app.dispatch(actions.HelixSelect(helix.idx, true));
     }
   }
-
 }
