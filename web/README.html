@@ -11,7 +11,6 @@
     span.underline{text-decoration: underline;}
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
     pre > code.sourceCode { white-space: pre; position: relative; }
     pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -85,10 +84,13 @@
 title: "scadnano help"
 --- -->
 <h1 id="scadnano">scadnano</h1>
+<figure>
+<img src="https://github.com/UC-Davis-molecular-computing/scadnano/workflows/Dart%20CI/badge.svg" alt="" /><figcaption>Dart CI</figcaption>
+</figure>
 <p><a href="http://scadnano.org">scadnano</a> (“scriptable-cadnano”, <a href="https://github.com/UC-Davis-molecular-computing/scadnano">source code repository here</a>) is a program for designing synthetic DNA structures such as DNA origami. Its design is based heavily on <a href="https://cadnano.org/">cadnano</a>, specifically <a href="https://github.com/douglaslab/cadnano2">version 2</a>, with two main differences:</p>
 <ol type="1">
 <li><p>scadnano runs entirely in the browser, with no installation required. Currently only <a href="https://www.google.com/chrome/">Chrome</a> and <a href="https://www.mozilla.org/en-US/firefox/">Firefox</a> are supported, with support for <a href="https://www.apple.com/safari/">Safari</a> and <a href="https://www.microsoft.com/en-us/windows/microsoft-edge">Edge</a> planned in the future.</p></li>
-<li><p>scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library (<a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package">download</a> / <a href="https://scadnano-python-package.readthedocs.io">documentation</a>), to help automate tedious tasks.</p></li>
+<li><p>scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library (<a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package">installation</a> / <a href="https://scadnano-python-package.readthedocs.io">documentation</a>), to help automate tedious tasks.</p></li>
 </ol>
 <p>A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.</p>
 <p>This document explains how to use the web interface for viewing and manually editing designs. The documentation for the Python scripting package is <a href="https://scadnano-python-package.readthedocs.io">here</a>. This document does not assume any familiarity with cadnano, although some parts explain slight differences between cadnano and scadnano for the benefit of those who have used cadnano.</p>
@@ -106,7 +108,7 @@ title: "scadnano help"
 </figure>
 <p>The screenshot above shows many of the terms used in scadnano. It is instructive to see how that example design is represented as a <code>.dna</code> file (which is itself something called <a href="https://en.wikipedia.org/wiki/JSON">JSON format</a>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">{</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.0.1&quot;</span><span class="fu">,</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>  <span class="dt">&quot;version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.2.0&quot;</span><span class="fu">,</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a>  <span class="dt">&quot;helices&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a>    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">0</span><span class="ot">]</span><span class="fu">}</span><span class="ot">,</span></span>
 <span id="cb1-5"><a href="#cb1-5"></a>    <span class="fu">{</span><span class="dt">&quot;max_offset&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span> <span class="dt">&quot;grid_position&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">0</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]</span><span class="fu">}</span></span>
@@ -207,18 +209,28 @@ title: "scadnano help"
 <li><p><strong>Export DNA:</strong> Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.</p></li>
 <li><p><strong>Save:</strong> Saves the current design in a .dna file. This is the same format output by (and readable by) the <a href="https://github.com/UC-Davis-molecular-computing/scadnano-python-package">Python scripting package</a>.</p></li>
 <li><p><strong>Load:</strong> Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.</p></li>
-<li><p><strong>Export SVG:</strong></p></li>
-</ul>
-<p>Use the “Export SVG side” and “Export SVG main” buttons to export an SVG file suitable for making a figure of the DNA design.</p>
+<li><p><strong>Export SVG:</strong> Use the “Export SVG side” and “Export SVG main” buttons to export an SVG file suitable for making a figure of the DNA design.</p>
 <p>SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with <a href="https://inkscape.org/">Inkscape</a>, a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.</p>
-<p>If you <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues">report a bug</a> with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.</p>
-<ul>
+<p>If you <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues">report a bug</a> with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.</p></li>
 <li><p><strong>show DNA:</strong> Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a &gt; 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing <a href="https://github.com/UC-Davis-molecular-computing/scadnano/issues/30">this feature request</a> will reduce the rendering time.</p></li>
-<li><p><strong>show mismatches:</strong> Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using the Python scripting library (and this will be supported in the future in the web interface) it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.</p></li>
+<li><p><strong>show mismatches:</strong> Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using either the web interface or the Python scripting library, it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.</p></li>
 <li><p><strong>Inline insertions/deletions:</strong> The “Inline I/D” button “inlines” insertions and deletions in the following way. Insertions and deletions are removed, and their substrands have their lengths altered. Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.</p>
-<p>We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.</p></li>
-<li><p><strong>grid:</strong> The grid type can be changed to square, hex, honeycomb, or none.</p>
-<p>[TODO explain more what this means]</p></li>
+<p>We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.</p>
+<p><em>Note for cadnano users:</em> From the user’s perspective, cadnano associates each deletion/insertion to an “address”, i.e., a helix and offset on that helix. For instance, it is possible to have a “deletion” where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.</p></li>
+<li><p><strong>grid:</strong> The grid type can be changed to square, honeycomb, hex, or none. Each of square, hex, and honeycomb is described by a 2D integer coordinate system, whereas none is describe by a 2D real number coordinate system, assuming the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.)</p>
+<p>Examples of these coordinate systems are shown below.</p>
+<figure>
+<img src="doc-images/grid_square.svg" alt="" /><figcaption>square grid</figcaption>
+</figure>
+<figure>
+<img src="doc-images/grid_honeycomb.svg" alt="" /><figcaption>honeycomb grid</figcaption>
+</figure>
+<figure>
+<img src="doc-images/grid_hex.svg" alt="" /><figcaption>hexagonal grid</figcaption>
+</figure>
+<figure>
+<img src="doc-images/grid_none.svg" alt="" /><figcaption>none grid</figcaption>
+</figure></li>
 </ul>
 <h2 id="edit-modes">Edit modes</h2>
 <p>There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application’s display.</p>
