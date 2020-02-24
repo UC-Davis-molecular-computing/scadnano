@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "grid": "none",
   "helices": [
     {"position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
@@ -9,7 +9,7 @@
   ],
   "strands": [
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "substrands": [
         {"helix": 0, "forward": true, "start": 0, "end": 10}
       ]

@@ -21,7 +21,7 @@ def main():
     scaf_ss0 = sc.Substrand(helix=0, forward=True, start=0, end=32)
     loopout = sc.Loopout(length=3)
     scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
-    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
+    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     ss_extra1 = sc.Substrand(helix=1, forward=True, start=32, end=48)
     ss_extra2 = sc.Substrand(helix=1, forward=True, start=48, end=64)
@@ -41,11 +41,10 @@ def main():
     s_extra3b = sc.Strand(substrands=[ss_extra3b])
 
     # whole design
-    design = sc.DNAOrigamiDesign(helices=helices,
-                                 strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3, s_extra4,
-                                          s_extra1b, s_extra2b, s_extra3b, s_extra5],
-                                 grid=sc.square,
-                                 scaffold=scaf)
+    design = sc.DNADesign(helices=helices,
+                          strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3, s_extra4,
+                                   s_extra1b, s_extra2b, s_extra3b, s_extra5],
+                          grid=sc.square)
 
     # deletions and insertions added to design so they can be added to both strands on a helix
     design.add_deletion(helix=0, offset=11)
@@ -61,8 +60,8 @@ def main():
 
     # DNA assigned to whole design so complement can be assigned to strands other than scaf
     design.assign_dna(scaf, 'AACT' * 18)
-    design.assign_dna(s_extra1, 'AACT'*4)
-    design.assign_dna(s_extra2, 'GGTA'*4)
+    design.assign_dna(s_extra1, 'AACT' * 4)
+    design.assign_dna(s_extra2, 'GGTA' * 4)
 
     return design
 

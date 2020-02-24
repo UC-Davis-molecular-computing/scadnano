@@ -7,7 +7,7 @@ def main():
     add_crossovers(design)
     scaffold = next(s for s in design.strands if
                     s.first_substrand().helix == 5 and not s.first_substrand().forward)
-    design.set_scaffold(scaffold)
+    scaffold.set_scaffold()
     design.assign_m13_to_scaffold()
     return design
 
@@ -66,7 +66,7 @@ def initial_design():
         sc.Strand([sc.Substrand(helix=5, forward=True, start=42, end=1246)]),
     ]
     strands = scafs + staps
-    return sc.DNAOrigamiDesign(helices=helices, strands=strands, grid=sc.honeycomb)
+    return sc.DNADesign(helices=helices, strands=strands, grid=sc.honeycomb)
 
 
 def add_nicks(design: sc.DNADesign):
