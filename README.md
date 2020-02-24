@@ -169,7 +169,7 @@ Although it is not necessary to deal directly with the above JSON data, it is wo
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
-A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none), a list of *helices*, and a list of *strands*. 
+A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none, explained below), a list of *helices*, and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
 This can be overridden by specifying a field called `idx` in each helix, but the default is to number them consecutively in order.
 (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
@@ -220,6 +220,32 @@ Many of the operations attempt to keep things consistent when modifying a design
 Each helix has a integer *rotation anchor* and a real number *rotation*, with the following interpretation. 
 At the offset *rotation anchor*, the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view. Rotation is *clockwise* as the rotation increases from 0 up to 360 degrees.
 The purpose of this feature is to help reduce strain by ensuring crossovers are "locally consistent", without enforcing a global notion of absolute backbone rotation on all offsets in the system.
+
+
+
+## Grid types
+
+Each is described by a 2D coordinate system. In all cases, the *x* (first) coordinate increases moving right and the *y* (second) coodinate increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* moving up)
+
+The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
+
+square grid:
+
+![](doc-images/grid_square.svg)
+
+honeycomb grid (this matches the coordinate system used by cadnano for the honeycomb grid):
+
+![](doc-images/grid_honeycomb.svg)
+
+hexagonal grid (note that although the honeycomb grid is a subset of the hex grid, they use a different coordinate system; e.g., note the differing relative positions of (-1,-1) and (0,-1) in each). This is called the "odd-q" coordinate system here: https://www.redblobgames.com/grids/hexagons/:
+
+![](doc-images/grid_hex.svg)
+
+In contrast, the "none" grid type uses *real* numbers (not integers). It assumes the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.) One can think of this as the most general coordinate system, and the other three are special cases that restrict which real-valued positions are allowed to be those on a certain grid. Below shows an example of converting the square grid helices above to the none grid, and then adding four more helices whose positions are not possible in any of the grid-based coordinate systems.
+
+none grid:
+
+![](doc-images/grid_none.svg)
 
 
 
@@ -295,25 +321,7 @@ The menu layout is currently hacky and will [change to something more elegant in
   *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.
 
 * **grid:**
-  The grid type can be changed to square, honeycomb, hex, or none. Each of square, hex, and honeycomb is described by a 2D integer coordinate system, whereas none is describe by a 2D real number coordinate system, assuming the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.)
-  
-  Examples of these coordinate systems are shown below.
-
-  square grid:
-  
-  ![](doc-images/grid_square.svg)
-
-  honeycomb grid:
-
-  ![](doc-images/grid_honeycomb.svg)
-
-  hexagonal grid:
-
-  ![](doc-images/grid_hex.svg)
-
-  none grid:
-
-  ![](doc-images/grid_none.svg)
+  The grid type can be changed to square, honeycomb, hex, or none. When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
 
 
 ## Edit modes
