@@ -246,7 +246,7 @@ hexagonal grid (note that although the honeycomb grid is a subset of the hex gri
 
 ![](doc-images/grid_hex.svg)
 
-In contrast, the "none" grid type uses *real* numbers (not integers). It assumes the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.) One can think of this as the most general coordinate system, and the other three are special cases that restrict which real-valued positions are allowed to be those on a certain grid. Below shows an example of converting the square grid helices above to the none grid, and then adding four more helices whose positions are not possible in any of the grid-based coordinate systems.
+In contrast, the "none" grid type uses *real* numbers (not integers). It assumes the diameter of a helix is 2.5 nanometers (nm). (Although a real DNA double helix is about 2 nm in diameter, AFM images of flat 2D DNA origami using the square grid show that helix centers are 2.5 nm apart on average due to spacing between the helices.) One can think of this as the most general coordinate system, where square, hex, and honeycomb are special cases restricting the allowed real-valued positions. Below shows an example of converting the square grid helices above to the none grid, and then adding four more helices whose positions are not possible in any of the grid-based coordinate systems.
 
 none grid:
 
