@@ -230,7 +230,7 @@ The purpose of this feature is to help reduce strain by ensuring crossovers are 
 
 ## Grid types
 
-Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* moving up)
+Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* increases moving up)
 
 The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
 
