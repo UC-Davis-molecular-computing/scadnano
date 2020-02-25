@@ -144,10 +144,10 @@ def main():
     scaf_ss0 = sc.Substrand(helix=0, forward=True, start=8, end=40)
     loopout = sc.Loopout(length=3)
     scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=24, end=40)
-    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
+    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     # whole design
-    design = sc.DNAOrigamiDesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
+    design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
 
     # deletions and insertions added to design are added to both strands on a helix
     design.add_deletion(helix=1, offset=20)
@@ -225,7 +225,7 @@ The purpose of this feature is to help reduce strain by ensuring crossovers are 
 
 ## Grid types
 
-Each is described by a 2D coordinate system. In all cases, the *x* (first) coordinate increases moving right and the *y* (second) coodinate increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* moving up)
+Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* moving up)
 
 The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
 

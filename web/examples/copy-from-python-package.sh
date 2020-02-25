@@ -3,7 +3,7 @@
 
 PYTHON_PACKAGE_ROOT=../../../scadnano-python-package/
 
-rm *.py
-rm output_designs/*.dna
+# rm *.py
+# rm output_designs/*.dna
 cp $PYTHON_PACKAGE_ROOT/examples/*.py .
 cp $PYTHON_PACKAGE_ROOT/examples/output_designs/*.dna output_designs/

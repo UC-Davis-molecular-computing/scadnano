@@ -1,7 +1,7 @@
 import scadnano as sc
 
 def main():
-    design = sc.DNADesign.from_file('24_helix_rectangle.dna')
+    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.dna')
     for helix in range(24):
         for offset in range(27, 294, 48):
             design.add_deletion(helix, offset)

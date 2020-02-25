@@ -19,10 +19,10 @@ def main():
     scaf_ss0 = sc.Substrand(helix=0, forward=True, start=0, end=32)
     loopout = sc.Loopout(length=3)
     scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
-    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right])
+    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     # whole design
-    design = sc.DNAOrigamiDesign(strands=[scaf, stap_left, stap_right], grid=sc.square, scaffold=scaf)
+    design = sc.DNADesign(strands=[scaf, stap_left, stap_right], grid=sc.square)
 
     # deletions and insertions added to design so they can be added to both strands on a helix
     design.add_deletion(helix=0, offset=11)
