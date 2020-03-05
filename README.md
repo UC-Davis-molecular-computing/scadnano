@@ -42,6 +42,11 @@ or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
 
+## Reporting issues
+
+Please report issues in the web interface at the [scadnano web interface GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano/issues), and report issues in the Python scripting library at the [scadnano Python package GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
+
+
 
 ## Tutorial
 
@@ -225,7 +230,7 @@ The purpose of this feature is to help reduce strain by ensuring crossovers are 
 
 ## Grid types
 
-Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* moving up)
+Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* increases moving up)
 
 The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
 
@@ -241,7 +246,7 @@ hexagonal grid (note that although the honeycomb grid is a subset of the hex gri
 
 ![](doc-images/grid_hex.svg)
 
-In contrast, the "none" grid type uses *real* numbers (not integers). It assumes the width of a helix is 2.5 nm. (Although the DNA double helix is about 2 nm, AFM images of flat 2D DNA origami show that helix centers are 2.5 nm apart on average.) One can think of this as the most general coordinate system, and the other three are special cases that restrict which real-valued positions are allowed to be those on a certain grid. Below shows an example of converting the square grid helices above to the none grid, and then adding four more helices whose positions are not possible in any of the grid-based coordinate systems.
+In contrast, the "none" grid type uses *real* numbers (not integers). It assumes the diameter of a helix is 2.5 nanometers (nm). (Although a real DNA double helix is about 2 nm in diameter, AFM images of flat 2D DNA origami using the square grid show that helix centers are 2.5 nm apart on average due to spacing between the helices.) One can think of this as the most general coordinate system, where square, hex, and honeycomb are special cases restricting the allowed real-valued positions. Below shows an example of converting the square grid helices above to the none grid, and then adding four more helices whose positions are not possible in any of the grid-based coordinate systems.
 
 none grid:
 

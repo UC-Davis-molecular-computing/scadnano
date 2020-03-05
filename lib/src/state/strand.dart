@@ -347,7 +347,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   }
 
   BoundSubstrand first_bound_substrand({int starting_at = 0}) {
-    for (int i = starting_at; i < this.substrands.length; i++) {
+    for (int i = starting_at; i < substrands.length; i++) {
       if (this.substrands[i] is BoundSubstrand) {
         return this.substrands[i] as BoundSubstrand;
       }
@@ -356,14 +356,12 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   }
 
   BoundSubstrand last_bound_substrand() {
-    if (this.substrands.last is BoundSubstrand) {
-      return (this.substrands.last as BoundSubstrand);
-    } else {
-      int len = this.substrands.length;
-      assert(len >= 2);
-      assert(this.substrands[len - 2] is BoundSubstrand);
-      return (this.substrands[len - 2] as BoundSubstrand);
+    for (int i = substrands.length - 1; i >= 0; i--) {
+      if (this.substrands[i] is BoundSubstrand) {
+        return this.substrands[i] as BoundSubstrand;
+      }
     }
+    throw AssertionError('should not be reachable');
   }
 
   /// Indicates whether `self` overlaps `other_strand`, meaning that the set of offsets occupied
