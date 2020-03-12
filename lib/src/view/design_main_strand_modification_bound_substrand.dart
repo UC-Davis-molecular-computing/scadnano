@@ -20,9 +20,11 @@ class _$DesignMainStrandModificationBoundSubstrandProps extends UiProps {
   Modification modification;
 }
 
+
 @Component2()
 class DesignMainStrandModificationBoundSubstrandComponent
     extends UiComponent2<DesignMainStrandModificationBoundSubstrandProps> {
+
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
@@ -74,8 +76,10 @@ class DesignMainStrandModificationBoundSubstrandComponent
 
   ReactElement _modification_svg(Point<num> pos, bool forward) {
     double y_del_small = (forward ? -1.1 * Y_DELTA_MOD : Y_DELTA_MOD).toDouble();
+    int font_size = props.modification.font_size ?? 8;
     return (Dom.text()
     ..className='modification-text'
+      ..fontSize = font_size
       ..x = pos.x
       ..y = pos.y + y_del_small
       ..dominantBaseline = forward ? 'baseline' : 'hanging'

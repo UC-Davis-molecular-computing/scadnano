@@ -16,10 +16,13 @@ abstract class Modification {
 
   String get idt_text;
 
+  int get font_size;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) => {
         constants.mod_display_text_key: mod.display_text,
+        constants.mod_font_size_key: mod.font_size,
         constants.mod_id_key: mod.id,
         if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
       };
@@ -41,7 +44,8 @@ abstract class Modification {
 abstract class Modification5Prime
     with BuiltJsonSerializable
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
-  factory Modification5Prime({String display_text, String id, String idt_text}) = _$Modification5Prime._;
+  factory Modification5Prime({String display_text, String id, String idt_text, int font_size}) =
+      _$Modification5Prime._;
 
   Modification5Prime._();
 
@@ -55,6 +59,9 @@ abstract class Modification5Prime
 
   String get idt_text;
 
+  @nullable
+  int get font_size;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
     ret[constants.mod_location_key] = "5'";
@@ -63,18 +70,20 @@ abstract class Modification5Prime
 
   static Modification5Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
+    int font_size = json_map[constants.mod_font_size_key];
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
     String idt_text = json_map[constants.mod_idt_text_key];
-    return Modification5Prime(display_text: display_text, id: id, idt_text: idt_text);
+    return Modification5Prime(display_text: display_text, id: id, idt_text: idt_text, font_size: font_size);
   }
 }
 
 abstract class Modification3Prime
     with BuiltJsonSerializable
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
-  factory Modification3Prime({String display_text, String id, String idt_text}) = _$Modification3Prime._;
+  factory Modification3Prime({String display_text, String id, String idt_text, int font_size}) =
+      _$Modification3Prime._;
 
   Modification3Prime._();
 
@@ -88,6 +97,9 @@ abstract class Modification3Prime
 
   String get idt_text;
 
+  @nullable
+  int get font_size;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
     ret[constants.mod_location_key] = "3'";
@@ -96,11 +108,12 @@ abstract class Modification3Prime
 
   static Modification3Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
+    int font_size = json_map[constants.mod_font_size_key];
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
     String idt_text = json_map[constants.mod_idt_text_key];
-    return Modification3Prime(display_text: display_text, id: id, idt_text: idt_text);
+    return Modification3Prime(display_text: display_text, id: id, idt_text: idt_text, font_size: font_size);
   }
 }
 
@@ -118,7 +131,8 @@ abstract class ModificationInternal
       {String display_text,
       String id,
       String idt_text,
-      BuiltSet<String> allowed_bases}) = _$ModificationInternal._;
+      BuiltSet<String> allowed_bases,
+      int font_size}) = _$ModificationInternal._;
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -127,6 +141,9 @@ abstract class ModificationInternal
   String get id;
 
   String get idt_text;
+
+  @nullable
+  int get font_size;
 
   @nullable
   BuiltSet<String> get allowed_bases;
@@ -143,14 +160,19 @@ abstract class ModificationInternal
 
   static ModificationInternal from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
+    int font_size = json_map[constants.mod_font_size_key];
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "internal");
     String idt_text = json_map[constants.mod_idt_text_key];
     var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
-    var allowed_bases = allowed_bases_json == null ? null : BuiltSet<String>(allowed_bases_json) ?? null;
+    var allowed_bases = allowed_bases_json == null ? null : BuiltSet<String>(allowed_bases_json);
     return ModificationInternal(
-        display_text: display_text, id: id, idt_text: idt_text, allowed_bases: allowed_bases);
+        display_text: display_text,
+        id: id,
+        idt_text: idt_text,
+        allowed_bases: allowed_bases,
+        font_size: font_size);
   }
 
   bool base_is_allowed(String base) => this.allowed_bases == null || this.allowed_bases.contains(base);

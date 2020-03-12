@@ -167,7 +167,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
       (Dom.span()
         ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
         ..className = 'show-modifications-span menu-item'
-        ..key = 'show-dna')(
+        ..key = 'show-modifications')(
         (Dom.label()..key = 'show-modifications-label')(
           (Dom.input()
             ..checked = props.show_modifications

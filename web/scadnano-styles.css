@@ -558,7 +558,6 @@ html, body {
 }
 
 .modification-text {
-    font-size: 8px;
     text-anchor: middle;
     text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
     0.7px -0.7px 0 #fff,
