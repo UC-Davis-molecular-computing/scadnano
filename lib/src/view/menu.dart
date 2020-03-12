@@ -21,6 +21,7 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (state) => (Menu()
     ..show_dna = state.ui_state.show_dna
+    ..show_modifications = state.ui_state.show_modifications
     ..show_mismatches = state.ui_state.show_mismatches
     ..autofit = state.ui_state.autofit
     ..grid = state.dna_design?.grid
@@ -36,6 +37,7 @@ UiFactory<MenuProps> Menu = _$Menu;
 @Props()
 class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool show_dna;
+  bool show_modifications;
   bool show_mismatches;
   bool autofit;
   Grid grid;
@@ -142,6 +144,9 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..onClick = ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
         ..className = 'inline-ins-del-button menu-item'
         ..key = 'inline-ins-del')('Inline I/D'),
+      (Dom.span()..key='show-title-span')(
+        'show:'
+      ),
       (Dom.span()
         ..title = '''Check to show DNA sequences that have been assigned to strands.
 In a large design, this can slow down the performance of panning and
@@ -156,7 +161,22 @@ zooming navigation, so uncheck it to speed up navigation.'''
             }
             ..addTestId('scadnano.MenuComponent.input.show_dna')
             ..type = 'checkbox')(),
-          'show DNA',
+          'DNA',
+        ),
+      ),
+      (Dom.span()
+        ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
+        ..className = 'show-modifications-span menu-item'
+        ..key = 'show-dna')(
+        (Dom.label()..key = 'show-modifications-label')(
+          (Dom.input()
+            ..checked = props.show_modifications
+            ..onChange = (_) {
+              props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
+            }
+            ..addTestId('scadnano.MenuComponent.input.show_modifications')
+            ..type = 'checkbox')(),
+          'mods',
         ),
       ),
       (Dom.span()
@@ -173,7 +193,7 @@ and the strand on the same helix with the opposite orientation.'''
             }
             ..addTestId('scadnano.MenuComponent.input.show_mismatches')
             ..type = 'checkbox')(),
-          'show mismatches',
+          'mismatches',
         ),
       ),
       (Dom.span()

@@ -17,6 +17,7 @@ import '../state/strand.dart';
 import '../state/bound_substrand.dart';
 import 'design_main_strand_deletion.dart';
 import 'design_main_strand_insertion.dart';
+import 'design_main_strand_modifications.dart';
 import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
@@ -54,6 +55,7 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   SelectModeState select_mode_state;
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
+  bool show_modifications;
   bool moving_dna_ends;
   bool currently_moving;
   bool origami_type_is_selectable;
@@ -105,10 +107,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..moving_dna_ends = props.moving_dna_ends)(),
       _insertions(strand, side_selected_helix_idxs, strand.color),
       _deletions(strand, side_selected_helix_idxs),
+      if (props.show_modifications)
+        (DesignMainStrandModifications()
+          ..strand = props.strand
+          ..helices = props.helices
+          ..key = 'modifications')()
     ]);
   }
-
-
 
   handle_click_down(react.SyntheticPointerEvent event_syn) {
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
@@ -257,11 +262,12 @@ ActionCreator remove_dna_strand_action_creator(bool remove_complements, bool rem
 ActionCreator color_set_strand_action_creator(String color_hex) =>
     ((Strand strand) => actions.StrandColorSet(strand: strand, color: Color.hex(color_hex)));
 
-String tooltip_text(Strand strand) => "Strand:\n" +
+String tooltip_text(Strand strand) =>
+    "Strand:\n" +
     "    length=${strand.dna_length()}\n" +
     "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}\n" +
-    (strand.idt == null? "": "    idt info=\n${strand.idt.tooltip()}");
+    (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 

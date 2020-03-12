@@ -44,8 +44,10 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '\n* error type:    ${error.runtimeType}'
         '\n* error message: ${error.toString()}'
         '\n$hline'
-        '\n\nThat file has this content:\n\n${action.content}'
-        '${_stack_trace_message(stack_trace)}';
+        '\n\nThat file\'s contents are printed below.'
+        '${_stack_trace_message(stack_trace)}'
+        '\n\nThe file ${action.filename} has this content:\n\n${action.content}'
+    ;
   }
 
   if (error_message == null && dna_design_new == null) {

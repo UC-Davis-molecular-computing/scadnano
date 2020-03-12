@@ -167,12 +167,14 @@ abstract class ThrottledActionFast
   num get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionFast(Action action, num interval_sec) => ThrottledActionFast.from((b) => b
-    ..action = action
-    ..interval_sec = interval_sec);
+  factory ThrottledActionFast(Action action, num interval_sec) =>
+      ThrottledActionFast.from((b) =>
+      b
+        ..action = action
+        ..interval_sec = interval_sec);
 
   factory ThrottledActionFast.from([void Function(ThrottledActionFastBuilder) updates]) =
-      _$ThrottledActionFast;
+  _$ThrottledActionFast;
 
   ThrottledActionFast._();
 
@@ -187,12 +189,14 @@ abstract class ThrottledActionNonFast
   num get interval_sec;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ThrottledActionNonFast(Action action, num interval_sec) => ThrottledActionNonFast.from((b) => b
-    ..action = action
-    ..interval_sec = interval_sec);
+  factory ThrottledActionNonFast(Action action, num interval_sec) =>
+      ThrottledActionNonFast.from((b) =>
+      b
+        ..action = action
+        ..interval_sec = interval_sec);
 
   factory ThrottledActionNonFast.from([void Function(ThrottledActionNonFastBuilder) updates]) =
-      _$ThrottledActionNonFast;
+  _$ThrottledActionNonFast;
 
   ThrottledActionNonFast._();
 
@@ -273,7 +277,7 @@ abstract class SelectModesSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Show/hide DNA/mismatches/editor
+// Show/hide DNA/modifications/mismatches/editor
 
 abstract class ShowDNASet
     with BuiltJsonSerializable
@@ -290,6 +294,24 @@ abstract class ShowDNASet
   ShowDNASet._();
 
   static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
+}
+
+abstract class ShowModificationsSet
+    with BuiltJsonSerializable
+    implements StorableAction, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
+  bool get show;
+
+  Iterable<Storable> storables() => [Storable.show_modifications];
+
+  factory ShowModificationsSet(bool show) => ShowModificationsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowModificationsSet.from(
+      [void Function(ShowModificationsSetBuilder) updates]) = _$ShowModificationsSet;
+
+  ShowModificationsSet._();
+
+  static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
 }
 
 abstract class ShowMismatchesSet
@@ -384,7 +406,7 @@ abstract class MouseoverDataUpdate
 
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverDataUpdate.from([void Function(MouseoverDataUpdateBuilder) updates]) =
-      _$MouseoverDataUpdate;
+  _$MouseoverDataUpdate;
 
   MouseoverDataUpdate._();
 
@@ -401,10 +423,12 @@ abstract class HelixRotationSet
   int get anchor;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixRotationSet(int helix_idx, double rotation, int anchor) => HelixRotationSet.from((b) => b
-    ..helix_idx = helix_idx
-    ..rotation = rotation
-    ..anchor = anchor);
+  factory HelixRotationSet(int helix_idx, double rotation, int anchor) =>
+      HelixRotationSet.from((b) =>
+      b
+        ..helix_idx = helix_idx
+        ..rotation = rotation
+        ..anchor = anchor);
 
   factory HelixRotationSet.from([void Function(HelixRotationSetBuilder) updates]) = _$HelixRotationSet;
 
@@ -427,14 +451,15 @@ abstract class HelixRotationSetAtOther
 
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixRotationSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
-      HelixRotationSetAtOther.from((b) => b
+      HelixRotationSetAtOther.from((b) =>
+      b
         ..helix_idx = helix_idx
         ..helix_other_idx = helix_other_idx
         ..forward = forward
         ..anchor = anchor);
 
   factory HelixRotationSetAtOther.from([void Function(HelixRotationSetAtOtherBuilder) updates]) =
-      _$HelixRotationSetAtOther;
+  _$HelixRotationSetAtOther;
 
   HelixRotationSetAtOther._();
 
@@ -473,10 +498,12 @@ abstract class SelectionBoxCreate
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxCreate(Point<num> point, bool toggle, bool is_main) => SelectionBoxCreate.from((b) => b
-    ..point = point
-    ..toggle = toggle
-    ..is_main = is_main);
+  factory SelectionBoxCreate(Point<num> point, bool toggle, bool is_main) =>
+      SelectionBoxCreate.from((b) =>
+      b
+        ..point = point
+        ..toggle = toggle
+        ..is_main = is_main);
 
   factory SelectionBoxCreate.from([void Function(SelectionBoxCreateBuilder) updates]) = _$SelectionBoxCreate;
 
@@ -493,12 +520,14 @@ abstract class SelectionBoxSizeChange
   bool get is_main;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionBoxSizeChange(Point<num> point, bool is_main) => SelectionBoxSizeChange.from((b) => b
-    ..point = point
-    ..is_main = is_main);
+  factory SelectionBoxSizeChange(Point<num> point, bool is_main) =>
+      SelectionBoxSizeChange.from((b) =>
+      b
+        ..point = point
+        ..is_main = is_main);
 
   factory SelectionBoxSizeChange.from([void Function(SelectionBoxSizeChangeBuilder) updates]) =
-      _$SelectionBoxSizeChange;
+  _$SelectionBoxSizeChange;
 
   SelectionBoxSizeChange._();
 
@@ -533,7 +562,7 @@ abstract class MouseGridPositionSideUpdate
       MouseGridPositionSideUpdate.from((b) => b..grid_position.replace(grid_position));
 
   factory MouseGridPositionSideUpdate.from([void Function(MouseGridPositionSideUpdateBuilder) updates]) =
-      _$MouseGridPositionSideUpdate;
+  _$MouseGridPositionSideUpdate;
 
   MouseGridPositionSideUpdate._();
 
@@ -547,7 +576,7 @@ abstract class MouseGridPositionSideClear
   factory MouseGridPositionSideClear() => MouseGridPositionSideClear.from((b) => b);
 
   factory MouseGridPositionSideClear.from([void Function(MouseGridPositionSideClearBuilder) updates]) =
-      _$MouseGridPositionSideClear;
+  _$MouseGridPositionSideClear;
 
   MouseGridPositionSideClear._();
 
@@ -591,10 +620,12 @@ abstract class Select with BuiltJsonSerializable implements Action, Built<Select
   bool get only;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory Select(Selectable selectable, {bool toggle, bool only = false}) => Select.from((b) => b
-    ..selectable = selectable
-    ..toggle = toggle
-    ..only = only);
+  factory Select(Selectable selectable, {bool toggle, bool only = false}) =>
+      Select.from((b) =>
+      b
+        ..selectable = selectable
+        ..toggle = toggle
+        ..only = only);
 
   factory Select.from([void Function(SelectBuilder) updates]) = _$Select;
 
@@ -692,7 +723,8 @@ abstract class HelixAdd
     if (grid_position == null && position == null) {
       throw AssertionError('cannot have both grid_position and position null in HelixAdd');
     }
-    return HelixAdd.from((b) => b
+    return HelixAdd.from((b) =>
+    b
       ..grid_position = grid_position?.toBuilder()
       ..position = position?.toBuilder());
   }
@@ -730,9 +762,11 @@ abstract class HelixSelect
   bool get toggle;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixSelect(int helix_idx, bool toggle) => HelixSelect.from((b) => b
-    ..helix_idx = helix_idx
-    ..toggle = toggle);
+  factory HelixSelect(int helix_idx, bool toggle) =>
+      HelixSelect.from((b) =>
+      b
+        ..helix_idx = helix_idx
+        ..toggle = toggle);
 
   factory HelixSelect.from([void Function(HelixSelectBuilder) updates]) = _$HelixSelect;
 
@@ -748,7 +782,7 @@ abstract class HelixSelectionsClear
   factory HelixSelectionsClear() => HelixSelectionsClear.from((b) => b);
 
   factory HelixSelectionsClear.from([void Function(HelixSelectionsClearBuilder) updates]) =
-      _$HelixSelectionsClear;
+  _$HelixSelectionsClear;
 
   HelixSelectionsClear._();
 
@@ -764,12 +798,13 @@ abstract class HelixSelectionsAdjust
 
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixSelectionsAdjust(bool toggle, SelectionBox selection_box) =>
-      HelixSelectionsAdjust.from((b) => b
+      HelixSelectionsAdjust.from((b) =>
+      b
         ..toggle = toggle
         ..selection_box.replace(selection_box));
 
   factory HelixSelectionsAdjust.from([void Function(HelixSelectionsAdjustBuilder) updates]) =
-      _$HelixSelectionsAdjust;
+  _$HelixSelectionsAdjust;
 
   HelixSelectionsAdjust._();
 
@@ -794,7 +829,7 @@ abstract class HelixMajorTickDistanceChange
 
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixMajorTickDistanceChange({int helix_idx, int major_tick_distance}) =
-      _$HelixMajorTickDistanceChange._;
+  _$HelixMajorTickDistanceChange._;
 
   HelixMajorTickDistanceChange._();
 
@@ -894,7 +929,7 @@ abstract class ShowMouseoverRectSet
   factory ShowMouseoverRectSet(bool show) => ShowMouseoverRectSet.from((b) => b..show = show);
 
   factory ShowMouseoverRectSet.from([void Function(ShowMouseoverRectSetBuilder) updates]) =
-      _$ShowMouseoverRectSet;
+  _$ShowMouseoverRectSet;
 
   ShowMouseoverRectSet._();
 
@@ -908,7 +943,7 @@ abstract class ShowMouseoverRectToggle
   factory ShowMouseoverRectToggle() => ShowMouseoverRectToggle.from((b) => b);
 
   factory ShowMouseoverRectToggle.from([void Function(ShowMouseoverRectToggleBuilder) updates]) =
-      _$ShowMouseoverRectToggle;
+  _$ShowMouseoverRectToggle;
 
   ShowMouseoverRectToggle._();
 
@@ -945,6 +980,7 @@ abstract class ExportSvg
   ExportSvg._();
 
   static Serializer<ExportSvg> get serializer => _$exportSvgSerializer;
+
   /************************ end BuiltValue boilerplate ************************/
   factory ExportSvg({ExportSvgType type}) = _$ExportSvg._;
 
@@ -971,12 +1007,14 @@ abstract class LoopoutLengthChange
   StrandPart get strand_part => loopout;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoopoutLengthChange(Loopout loopout, int length) => LoopoutLengthChange.from((b) => b
-    ..loopout.replace(loopout)
-    ..length = length);
+  factory LoopoutLengthChange(Loopout loopout, int length) =>
+      LoopoutLengthChange.from((b) =>
+      b
+        ..loopout.replace(loopout)
+        ..length = length);
 
   factory LoopoutLengthChange.from([void Function(LoopoutLengthChangeBuilder) updates]) =
-      _$LoopoutLengthChange;
+  _$LoopoutLengthChange;
 
   LoopoutLengthChange._();
 
@@ -994,12 +1032,13 @@ abstract class ConvertCrossoverToLoopout
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ConvertCrossoverToLoopout(Crossover crossover, int length) =>
-      ConvertCrossoverToLoopout.from((b) => b
+      ConvertCrossoverToLoopout.from((b) =>
+      b
         ..crossover.replace(crossover)
         ..length = length);
 
   factory ConvertCrossoverToLoopout.from([void Function(ConvertCrossoverToLoopoutBuilder) updates]) =
-      _$ConvertCrossoverToLoopout;
+  _$ConvertCrossoverToLoopout;
 
   ConvertCrossoverToLoopout._();
 
@@ -1042,7 +1081,7 @@ abstract class JoinStrandsByCrossover
 
   /************************ begin BuiltValue boilerplate ************************/
   factory JoinStrandsByCrossover({DNAEnd dna_end_first_click, DNAEnd dna_end_second_click}) =
-      _$JoinStrandsByCrossover._;
+  _$JoinStrandsByCrossover._;
 
   JoinStrandsByCrossover._();
 
@@ -1106,7 +1145,7 @@ abstract class StrandCreateCommit
 
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandCreateCommit({int helix_idx, bool forward, int start, int end, Color color}) =
-      _$StrandCreateCommit._;
+  _$StrandCreateCommit._;
 
   StrandCreateCommit._();
 
@@ -1261,11 +1300,10 @@ abstract class DNAEndsMoveSetSelectedEnds
   BuiltSet<Strand> get strands_affected;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DNAEndsMoveSetSelectedEnds(
-      {BuiltList<DNAEndMove> moves,
-      int original_offset,
-      Helix helix,
-      BuiltSet<Strand> strands_affected}) = _$DNAEndsMoveSetSelectedEnds._;
+  factory DNAEndsMoveSetSelectedEnds({BuiltList<DNAEndMove> moves,
+    int original_offset,
+    Helix helix,
+    BuiltSet<Strand> strands_affected}) = _$DNAEndsMoveSetSelectedEnds._;
 
   DNAEndsMoveSetSelectedEnds._();
 
@@ -1325,7 +1363,7 @@ abstract class AssignDNA
 
   /************************ begin BuiltValue boilerplate ************************/
   factory AssignDNA({Strand strand, String dna_sequence, bool assign_complements, bool warn_on_change}) =
-      _$AssignDNA._;
+  _$AssignDNA._;
 
   AssignDNA._();
 
@@ -1395,7 +1433,8 @@ abstract class InsertionLengthChange
 
   StrandPart get strand_part => substrand;
 
-  InsertionLengthChange clone_for_adjacent_substrand(BoundSubstrand other_substrand) => InsertionLengthChange(
+  InsertionLengthChange clone_for_adjacent_substrand(BoundSubstrand other_substrand) =>
+      InsertionLengthChange(
         substrand: other_substrand,
         insertion: other_substrand.insertions.firstWhere((i) => i.offset == offset),
         length: length,
@@ -1403,7 +1442,7 @@ abstract class InsertionLengthChange
 
   /************************ begin BuiltValue boilerplate ************************/
   factory InsertionLengthChange({BoundSubstrand substrand, Insertion insertion, int length}) =
-      _$InsertionLengthChange._;
+  _$InsertionLengthChange._;
 
   InsertionLengthChange._();
 
@@ -1441,7 +1480,8 @@ abstract class InsertionRemove
 
   StrandPart get strand_part => substrand;
 
-  InsertionRemove clone_for_adjacent_substrand(BoundSubstrand other_substrand) => InsertionRemove(
+  InsertionRemove clone_for_adjacent_substrand(BoundSubstrand other_substrand) =>
+      InsertionRemove(
         substrand: other_substrand,
         insertion: other_substrand.insertions.firstWhere((i) => i.offset == offset),
       );
@@ -1603,6 +1643,7 @@ abstract class HelixPositionSet
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixPositionSet, HelixPositionSetBuilder> {
   Helix get helix;
+
   Position3D get position;
 
   int get helix_idx => helix.idx;
@@ -1619,6 +1660,7 @@ abstract class HelixGridPositionSet
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixGridPositionSet, HelixGridPositionSetBuilder> {
   Helix get helix;
+
   GridPosition get grid_position;
 
   int get helix_idx => helix.idx;

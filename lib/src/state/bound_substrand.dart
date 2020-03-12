@@ -344,11 +344,10 @@ abstract class BoundSubstrand
       return '';
     }
 
-    bool five_p_on_left = this.forward;
-    int str_idx_low = offset_to_substrand_dna_idx(offset_low, five_p_on_left);
-    int str_idx_high = offset_to_substrand_dna_idx(offset_high, !five_p_on_left);
+    int str_idx_low = substrand_offset_to_substrand_dna_idx(offset_low, this.forward);
+    int str_idx_high = substrand_offset_to_substrand_dna_idx(offset_high, !this.forward);
     if (!this.forward) {
-      // these will be out of order if strand is reverse
+      // these will be out of order if substrand is reverse
       int swap = str_idx_low;
       str_idx_low = str_idx_high;
       str_idx_high = swap;
@@ -360,7 +359,7 @@ abstract class BoundSubstrand
 
   /// Net number of insertions from 5' end to offset_edge.
   /// Check is inclusive on the left and exclusive on the right (which is 5' depends on direction).
-  int net_ins_del_length_increase_from_5p_to(int offset_edge, bool offset_closer_to_5p) {
+  int net_ins_del_length_increase_from_5p_to(int offset_edge, bool forward) {
     int length_increase = 0;
     for (int deletion in this.deletions) {
       if (this._between_5p_and_offset(deletion, offset_edge)) {
@@ -375,7 +374,7 @@ abstract class BoundSubstrand
 
     // special case for when offset_edge is an endpoint closer to the 3' end,
     // we add its extra insertions also in this case
-    if (!offset_closer_to_5p) {
+    if (!forward) {
       var insertion_map = Map<int, int>.fromIterable(
         this.insertions,
         key: (insertion) => insertion.offset,
@@ -432,14 +431,15 @@ abstract class BoundSubstrand
     return false;
   }
 
-  /// Convert from offset on Substrand's Helix to string index on the parent Strand's DNA sequence.
-  int offset_to_substrand_dna_idx(int offset, bool offset_closer_to_5p) {
+  /// Convert from offset on [BoundSubstrand]'s [Helix] to string index on this
+  /// [BoundSubstrand]'s substring of the parent [Strand]'s DNA sequence.
+  int substrand_offset_to_substrand_dna_idx(int offset, bool forward) {
     if (this.deletions.contains(offset)) {
-      throw ArgumentError('offset {offset} illegally contains a deletion from {self.deletions}');
+      throw ArgumentError('offset ${offset} illegally contains a deletion from ${this.deletions}');
     }
 
     // length adjustment for insertions depends on whether this is a left or right offset
-    int len_adjust = this.net_ins_del_length_increase_from_5p_to(offset, offset_closer_to_5p);
+    int len_adjust = this.net_ins_del_length_increase_from_5p_to(offset, forward);
 
     // get string index assuming this Substrand is first on Strand
     int ss_str_idx = null;
@@ -453,8 +453,24 @@ abstract class BoundSubstrand
       ss_str_idx = this.end - 1 - offset;
     }
 
-    // correct for existence of previous Substrands on this Strand
-//    return ss_str_idx + get_seq_start_idx(substrand);
     return ss_str_idx;
+  }
+
+  /// Convert from string index on this [BoundSubstrand]'s substring of the parent [Strand]'s DNA sequence
+  /// to offset on [BoundSubstrand]'s [Helix].
+  int substrand_dna_idx_to_substrand_offset(int ss_str_idx, bool forward) {
+    int offset = this.offset_5p;
+    int dna_idx_cur = 0;
+    while (dna_idx_cur < ss_str_idx) {
+      if (!this.deletions.contains(offset)) {
+        dna_idx_cur++;
+      }
+      if (this.insertion_offset_to_length.containsKey(offset)) {
+        int insertion_length = this.insertion_offset_to_length[offset];
+        dna_idx_cur += insertion_length;
+      }
+      offset += this.forward ? 1 : -1;
+    }
+    return offset;
   }
 }

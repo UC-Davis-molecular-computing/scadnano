@@ -657,8 +657,8 @@ save_file(String default_filename, var content, {BlobType blob_type = BlobType.t
       document.body.children.add(link);
     }
     //TODO: this await is my attempt to block until the user has selected a file, but it doesn't work.
-    // The code keeps executing while they pick their file. Figure out how to detect if they picked a file or cancelled
-    // If they cancelled then we should act as though nothing happened (in particular the Controller should not
+    // The code keeps executing while they pick their file. Figure out how to detect if they picked a file
+    // or cancelled. If they cancelled then we should act as though nothing happened (in particular do not
     // send an Action indicating that the file was saved.
     // consider using one of these libraries if possible:
     //  https://github.com/jimmywarting/StreamSaver.js
@@ -868,7 +868,7 @@ String wc_base(String base) {
   return base;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // intersection geometry
 
 class Box {
@@ -992,7 +992,7 @@ bool bboxes_intersect_generalized(
       overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unit testing utilities
 
 /// Returns the default state of the app.
