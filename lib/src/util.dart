@@ -74,6 +74,19 @@ class ColorCycler {
 
 final scaffold_color = ColorCycler.scaffold_color;
 
+bool is_increasing<T extends Comparable>(Iterable<T> items) {
+  T prev = null;
+  for (T val in items) {
+    if (prev != null) {
+      if (prev.compareTo(val) >= 0) {
+        return false;
+      }
+    }
+    prev = val;
+  }
+  return true;
+}
+
 /// Given list of ints, return list of distances between them, with first equal to first, e.g.
 ///   deltas([2,3,5,7,11]) == [2, 1, 2, 2, 4]
 List<int> deltas(Iterable<int> nums) {

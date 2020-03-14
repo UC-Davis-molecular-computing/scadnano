@@ -122,6 +122,7 @@ const modifications_int_key = 'internal_modifications';
 const mod_location_key = 'location';
 const mod_display_text_key = 'display_text';
 const mod_font_size_key = 'font_size';
+const mod_display_connector_key = 'display_connector';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';

@@ -430,9 +430,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     json_map[constants.helices_key] = helix_jsons_map.values.toList();
 
-    json_map[constants.strands_key] = [
-      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
-    ];
+    if (!util.is_increasing(helices_view_order)) {
+      var order = helices_view_order.toList();
+      json_map[constants.helices_view_order_key] = suppress_indent? NoIndent(order) : order;
+    }
 
     // modifications
     var mods = this._all_modifications();
@@ -445,6 +446,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       }
       json_map[constants.design_modifications_key] = mods_map;
     }
+
+    json_map[constants.strands_key] = [
+      for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
+    ];
 
     return json_map;
   }
@@ -844,12 +849,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   @memoized
   BuiltList<int> get helices_view_order_inverse {
-    List<int> helices_view_order_inverse = List<int>(helices.length);
+    List<int> view_order_inverse = List<int>(helices.length);
     for (int i = 0; i < helices.length; i++) {
       int i_unsorted = helices[i].view_order;
-      helices_view_order_inverse[i_unsorted] = i;
+      view_order_inverse[i_unsorted] = i;
     }
-    return helices_view_order_inverse.toBuiltList();
+    return view_order_inverse.toBuiltList();
+  }
+
+  @memoized
+  BuiltList<int> get helices_view_order {
+    List<int> view_order = List<int>(helices.length);
+    for (int i = 0; i < helices.length; i++) {
+      int i_unsorted = helices[i].view_order;
+      view_order[i] = i_unsorted;
+    }
+    return view_order.toBuiltList();
   }
 
   bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
