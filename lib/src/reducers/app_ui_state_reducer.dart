@@ -29,6 +29,8 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
   ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
   ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
+  ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
+      ui_state.show_modifications, action)
   ..show_mismatches =
       TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
@@ -76,6 +78,8 @@ bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart a
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
 
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
+
+bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
@@ -165,5 +169,3 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
       mouseover_data_update_reducer),
 ]);
-
-

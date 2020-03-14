@@ -11,6 +11,7 @@ import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
+import 'modification.dart';
 import 'strand.dart';
 import 'bound_substrand.dart';
 import 'helix.dart';
@@ -429,11 +430,39 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     json_map[constants.helices_key] = helix_jsons_map.values.toList();
 
+    if (!util.is_increasing(helices_view_order)) {
+      var order = helices_view_order.toList();
+      json_map[constants.helices_view_order_key] = suppress_indent? NoIndent(order) : order;
+    }
+
+    // modifications
+    var mods = this._all_modifications();
+    if (mods.length > 0) {
+      Map<String, dynamic> mods_map = {};
+      for (var mod in mods) {
+        if (!mods_map.containsKey(mod.id)) {
+          mods_map[mod.id] = mod.to_json_serializable(suppress_indent: suppress_indent);
+        }
+      }
+      json_map[constants.design_modifications_key] = mods_map;
+    }
+
     json_map[constants.strands_key] = [
       for (var strand in strands) strand.to_json_serializable(suppress_indent: suppress_indent)
     ];
 
     return json_map;
+  }
+
+  // set of all modifications in this design
+  BuiltSet<Modification> _all_modifications() {
+    var mods_5p = BuiltSet<Modification>(
+        {for (var strand in strands) if (strand.modification_5p != null) strand.modification_5p});
+    var mods_3p = BuiltSet<Modification>(
+        {for (var strand in strands) if (strand.modification_3p != null) strand.modification_3p});
+    var mods_int = BuiltSet<Modification>(
+        {for (var strand in strands) for (var mod in strand.modifications_int.values) mod});
+    return mods_5p.union(mods_3p).union(mods_int);
   }
 
   bool has_nondefault_max_offset(Helix helix) {
@@ -523,8 +552,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // strands
     List<Strand> strands = [];
-    List<dynamic> deserialized_strand_list = json_map[constants.strands_key];
-    for (var strand_json in deserialized_strand_list) {
+    List strand_jsons = json_map[constants.strands_key];
+    for (var strand_json in strand_jsons) {
       Strand strand = Strand.from_json(strand_json);
       strands.add(strand);
     }
@@ -539,10 +568,52 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     helices = util.helices_assign_svg(helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
+    // modifications in whole design
+    if (json_map.containsKey(constants.design_modifications_key)) {
+      Map<String, dynamic> all_mods_json = json_map[constants.design_modifications_key];
+      Map<String, Modification> all_mods = {};
+      for (var mod_key in all_mods_json.keys) {
+        var mod_json = all_mods_json[mod_key];
+        all_mods[mod_key] = Modification.from_json(mod_json);
+      }
+      DNADesign.assign_modifications_to_strands(strands, strand_jsons, all_mods);
+      dna_design_builder.strands.replace(strands);
+    }
+
     var dna_design = dna_design_builder.build();
     dna_design._check_legal_design();
 
     return dna_design;
+  }
+
+  static assign_modifications_to_strands(
+      List<Strand> strands, List strand_jsons, Map<String, Modification> all_mods) {
+    for (int i = 0; i < strands.length; i++) {
+      var strand = strands[i];
+      var strand_json = strand_jsons[i];
+      if (strand_json.containsKey(constants.modification_5p_key)) {
+        var mod_name = strand_json[constants.modification_5p_key];
+        Modification5Prime mod = all_mods[mod_name];
+        strand = strand.rebuild((b) => b..modification_5p.replace(mod));
+      }
+      if (strand_json.containsKey(constants.modification_3p_key)) {
+        var mod_name = strand_json[constants.modification_3p_key];
+        Modification3Prime mod = all_mods[mod_name];
+        strand = strand.rebuild((b) => b..modification_3p.replace(mod));
+      }
+      if (strand_json.containsKey(constants.modifications_int_key)) {
+        Map<int, ModificationInternal> mods_by_idx = {};
+        var mod_names_by_idx_json = strand_json[constants.modifications_int_key];
+        for (var idx_str in mod_names_by_idx_json.keys) {
+          int offset = int.parse(idx_str);
+          String mod_name = mod_names_by_idx_json[idx_str];
+          ModificationInternal mod = all_mods[mod_name];
+          mods_by_idx[offset] = mod;
+        }
+        strand = strand.rebuild((b) => b..modifications_int.replace(mods_by_idx));
+      }
+      strands[i] = strand;
+    }
   }
 
   _check_legal_design() {
@@ -578,7 +649,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       // other_ss has a deletion (and substrand implicitly doesn't since we would have continue'd),
       if (other_ss.deletions.contains(offset)) {
         // This throws an error if substrand has a deletion at offset.
-        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
         int within_insertion = seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
@@ -589,7 +660,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       int length_insertion_other_ss = other_ss.insertion_offset_to_length[offset];
       if (length_insertion_substrand != length_insertion_other_ss) {
         // one has an insertion and the other doesn't, or they both have insertions of different lengths
-        int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward);
+        int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward);
         int within_insertion = seq.length == 1 ? -1 : 0;
         var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
         mismatches.add(mismatch);
@@ -602,7 +673,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
       for (int idx = 0, idx_other = seq.length - 1; idx < seq.length; idx++, idx_other--) {
         if (seq.codeUnitAt(idx) != _wc(other_seq.codeUnitAt(idx_other))) {
-          int dna_idx = substrand.offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
+          int dna_idx = substrand.substrand_offset_to_substrand_dna_idx(offset, substrand.forward) + idx;
           int within_insertion = seq.length == 1 ? -1 : idx;
           var mismatch = Mismatch(dna_idx, offset, within_insertion: within_insertion);
           mismatches.add(mismatch);
@@ -778,12 +849,22 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   @memoized
   BuiltList<int> get helices_view_order_inverse {
-    List<int> helices_view_order_inverse = List<int>(helices.length);
+    List<int> view_order_inverse = List<int>(helices.length);
     for (int i = 0; i < helices.length; i++) {
       int i_unsorted = helices[i].view_order;
-      helices_view_order_inverse[i_unsorted] = i;
+      view_order_inverse[i_unsorted] = i;
     }
-    return helices_view_order_inverse.toBuiltList();
+    return view_order_inverse.toBuiltList();
+  }
+
+  @memoized
+  BuiltList<int> get helices_view_order {
+    List<int> view_order = List<int>(helices.length);
+    for (int i = 0; i < helices.length; i++) {
+      int i_unsorted = helices[i].view_order;
+      view_order[i] = i_unsorted;
+    }
+    return view_order.toBuiltList();
   }
 
   bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
