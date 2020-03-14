@@ -31,6 +31,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..selectables_store = SelectablesStoreBuilder()
   ..side_selected_helix_idxs.replace([])
   ..show_dna = false
+  ..show_modifications = true
   ..show_editor = false
   ..show_mismatches = true
   ..autofit = true
@@ -79,6 +80,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   StrandsMove get strands_move;
 
   bool get show_dna;
+
+  bool get show_modifications;
 
   bool get show_mismatches;
 

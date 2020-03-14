@@ -4,8 +4,6 @@ title: "scadnano help"
 
 # scadnano
 
-![Dart CI](https://github.com/UC-Davis-molecular-computing/scadnano/workflows/Dart%20CI/badge.svg)
-
 [scadnano](http://scadnano.org) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
@@ -124,7 +122,8 @@ It is instructive to see how that example design is represented as a `.dna` file
 }
 ```
 
-Here is Python code that would produce this design using the scripting library.
+Here is Python code that would produce this design using the 
+[scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
 ```python
 import scadnano as sc

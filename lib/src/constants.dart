@@ -96,6 +96,7 @@ const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
+const design_modifications_key = 'modifications_in_design';
 
 // Helix keys
 const idx_on_helix_key = 'idx';
@@ -113,6 +114,19 @@ const dna_sequence_key = 'dna_sequence';
 const idt_key = 'idt';
 const is_scaffold_key = 'is_scaffold';
 const substrands_key = 'substrands';
+const modification_5p_key = '5prime_modification';
+const modification_3p_key = '3prime_modification';
+const modifications_int_key = 'internal_modifications';
+
+// Modification keys
+const mod_location_key = 'location';
+const mod_display_text_key = 'display_text';
+const mod_font_size_key = 'font_size';
+const mod_display_connector_key = 'display_connector';
+const mod_id_key = 'id';
+const mod_idt_text_key = 'idt_text';
+const mod_allowed_bases_key = 'allowed_bases';
+
 
 // IDTFields keys
 const idt_name_key = 'name';

@@ -2,8 +2,10 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
+import '../serializers.dart';
 import 'dna_end.dart';
 import 'idt_fields.dart';
 import 'select_mode.dart';
@@ -19,7 +21,7 @@ import 'substrand.dart';
 
 part 'strand.g.dart';
 
-abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, JSONSerializable {
+abstract class Strand with Selectable, BuiltJsonSerializable implements Built<Strand, StrandBuilder> {
   Strand._();
 
   //FIXME: this is not pure since it consults util.color_cycler
@@ -34,6 +36,7 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
       ..substrands.replace(substrands)
       ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
+      ..modifications_int.replace({})
       ..is_scaffold = is_scaffold);
 
     strand = strand.initialize();
@@ -117,6 +120,14 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
   IDTFields get idt;
 
   bool get is_scaffold;
+
+  @nullable
+  Modification5Prime get modification_5p;
+
+  @nullable
+  Modification3Prime get modification_3p;
+
+  BuiltMap<int, ModificationInternal> get modifications_int;
 
   // Since color assignment is somewhat nondeterministic, we don't want to use it to detect equality.
   // XXX: if we let the user specify a new Strand color in scadnano, the view will have to be explicitly
@@ -211,6 +222,21 @@ abstract class Strand with Selectable implements Built<Strand, StrandBuilder>, J
     json_map[constants.substrands_key] = [
       for (var ss in this.substrands) ss.to_json_serializable(suppress_indent: suppress_indent)
     ];
+
+    if (this.modification_5p != null) {
+      json_map[constants.modification_5p_key] = this.modification_5p.id;
+    }
+    if (this.modification_3p != null) {
+      json_map[constants.modification_3p_key] = this.modification_3p.id;
+    }
+    if (this.modifications_int.isNotEmpty) {
+      Map<String, dynamic> mods_map = {};
+      for (int offset in this.modifications_int.keys) {
+        var mod = this.modifications_int[offset];
+        mods_map['${offset}'] = mod.id;
+      }
+      json_map[constants.modifications_int_key] = suppress_indent ? NoIndent(mods_map) : mods_map;
+    }
 
     return json_map;
   }
