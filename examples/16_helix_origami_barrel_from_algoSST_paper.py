@@ -36,7 +36,7 @@ def set_helix_major_tickets(design):
         helix.major_ticks = list(major_ticks)
 
 
-def add_twist_correct_deletions(design: sc.DNAOrigamiDesign):
+def add_twist_correct_deletions(design: sc.DNADesign):
     # I choose between 3 and 4 offset arbitrarily for twist-correction deletions for some reason,
     # so they have to be hard-coded.
     for col, offset in zip(range(4, 29, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
@@ -44,7 +44,7 @@ def add_twist_correct_deletions(design: sc.DNAOrigamiDesign):
             design.add_deletion(helix, 16 * col + offset)
 
 
-def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNAOrigamiDesign):
+def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
     top_staples = design.strands_starting_on_helix(2)
     bot_staples = design.strands_starting_on_helix(17)
     bot_staples.remove(design.scaffold)
@@ -84,7 +84,7 @@ def add_substrands_for_barrel_seam(design):
         design.insert_substrand(top_5p, 0, ss_bot)
 
 
-def add_toeholds_for_seam_displacement(design: sc.DNAOrigamiDesign):
+def add_toeholds_for_seam_displacement(design: sc.DNADesign):
     for helix in [2, 17]:
         staples_5p = design.strands_starting_on_helix(helix)
 

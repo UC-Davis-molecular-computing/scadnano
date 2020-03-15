@@ -557,6 +557,15 @@ html, body {
     dominant-baseline: hanging;
 }
 
+.modification-text {
+    text-anchor: middle;
+    font-weight: bold;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+}
+
 .dna-seq {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     font-weight: bold;

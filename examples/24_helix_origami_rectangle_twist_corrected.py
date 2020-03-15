@@ -6,7 +6,7 @@ def main():
     add_scaffold_nicks(design)
     add_scaffold_crossovers(design)
     scaffold = design.strands[0]
-    design.set_scaffold(scaffold)
+    scaffold.set_scaffold()
     add_precursor_staples(design)
     add_staple_nicks(design)
     add_staple_crossovers(design)
@@ -16,20 +16,20 @@ def main():
     return design
 
 
-def export_idt_plate_file(design: sc.DNAOrigamiDesign):
+def export_idt_plate_file(design: sc.DNADesign):
     for strand in design.strands:
         if strand != design.scaffold:
             strand.set_default_idt(use_default_idt=True)
     design.write_idt_plate_excel_file(use_default_plates=True)
 
 
-def add_deletions(design: sc.DNAOrigamiDesign):
+def add_deletions(design: sc.DNADesign):
     for helix in range(24):
         for offset in range(27, 294, 48):
             design.add_deletion(helix, offset)
 
 
-def add_staple_crossovers(design: sc.DNAOrigamiDesign):
+def add_staple_crossovers(design: sc.DNADesign):
     for helix in range(23):
         start_offset = 24 if helix % 2 == 0 else 40
         for offset in range(start_offset, 296, 32):
@@ -38,33 +38,33 @@ def add_staple_crossovers(design: sc.DNAOrigamiDesign):
                                           forward1=helix % 2 == 1)
 
 
-def add_staple_nicks(design: sc.DNAOrigamiDesign):
+def add_staple_nicks(design: sc.DNADesign):
     for helix in range(24):
         start_offset = 32 if helix % 2 == 0 else 48
         for offset in range(start_offset, 280, 32):
             design.add_nick(helix, offset, forward=helix % 2 == 1)
 
 
-def add_precursor_staples(design: sc.DNAOrigamiDesign):
+def add_precursor_staples(design: sc.DNADesign):
     staples = [sc.Strand([sc.Substrand(helix=helix, forward=helix % 2 == 1, start=8, end=296)])
                for helix in range(24)]
     for staple in staples:
         design.add_strand(staple)
 
 
-def precursor_scaffolds() -> sc.DNAOrigamiDesign:
+def precursor_scaffolds() -> sc.DNADesign:
     helices = [sc.Helix(max_offset=304) for _ in range(24)]
     scaffolds = [sc.Strand([sc.Substrand(helix=helix, forward=helix % 2 == 0, start=8, end=296)])
                  for helix in range(24)]
-    return sc.DNAOrigamiDesign(helices=helices, strands=scaffolds, grid=sc.square)
+    return sc.DNADesign(helices=helices, strands=scaffolds, grid=sc.square)
 
 
-def add_scaffold_nicks(design: sc.DNAOrigamiDesign):
+def add_scaffold_nicks(design: sc.DNADesign):
     for helix in range(1, 24):
         design.add_nick(helix=helix, offset=152, forward=helix % 2 == 0)
 
 
-def add_scaffold_crossovers(design: sc.DNAOrigamiDesign):
+def add_scaffold_crossovers(design: sc.DNADesign):
     crossovers = []
 
     # scaffold interior
