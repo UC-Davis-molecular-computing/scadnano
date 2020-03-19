@@ -156,22 +156,10 @@
         return allow;
     }
 
-    // This is needed to prevent zooming unless Alt key is pressed
-    function before_zoom(oldZoom, newZoom) {
-        var allow = true;
-        if (document.body.classList.contains('dnd-drag-occurring')) {
-            allow = false;
-        }
-        if (!allow_zoom) {
-            allow = false;
-        }
-        return allow;
-    }
-
     var main_view_svg_pan_zoom;
     var side_view_svg_pan_zoom;
 
-    function setup_svg_panzoom() {
+    function setup_svg_panzoom(svg_cache_callback, dispatch_zoom_threshold_callback, zoom_threshold) {
         var eventsHandler;
 
         eventsHandler = {
@@ -282,6 +270,35 @@
             zoom_speed = 0.06;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // svg-png-caching
+
+        function on_zoom(newZoom) {
+            if (newZoom < 1 && svg_cache_callback) {
+                svg_cache_callback();
+            }
+        }
+
+        // This is needed to prevent zooming unless Alt key is pressed
+        function before_zoom(oldZoom, newZoom) {
+            var allow = true;
+            if (document.body.classList.contains('dnd-drag-occurring')) {
+                allow = false;
+            }
+            if (!allow_zoom) {
+                allow = false;
+            }
+
+            // Detects if zoom threshold will be crossed.
+            if (allow) {
+                if (oldZoom >= zoom_threshold && newZoom < zoom_threshold) {
+                    dispatch_zoom_threshold_callback(false);
+                } else if (oldZoom < zoom_threshold && newZoom >= zoom_threshold) {
+                    dispatch_zoom_threshold_callback(true);
+                }
+            }
+            return allow;
+        }
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
@@ -302,6 +319,7 @@
             maxZoom: 20,
             beforePan: before_pan,
             beforeZoom: before_zoom,
+            onZoom: on_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
             fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions

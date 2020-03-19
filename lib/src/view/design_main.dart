@@ -47,7 +47,9 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna
-        ..design_major_tick_distance = state.dna_design.major_tick_distance);
+        ..design_major_tick_distance = state.dna_design.major_tick_distance
+        ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
+        ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold);
     }
   },
 )(DesignMain);
@@ -69,6 +71,8 @@ class _$DesignMainProps extends EditModePropsAbstract {
   bool show_dna;
   int design_major_tick_distance;
   bool drawing_potential_crossover;
+  String dna_sequence_png_uri;
+  bool is_zoom_above_threshold;
 }
 
 @Component2()
@@ -110,6 +114,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..helices = props.helices
           ..strands = props.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..dna_sequence_png_uri = props.dna_sequence_png_uri
+          ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'

@@ -58,6 +58,7 @@ const List<String> text_styles = [
   'text-anchor',
   'dominant-baseline',
   'fill',
+  'letter-spacing',
 ];
 const List<String> text_path_only_styles = [];
 
@@ -80,8 +81,8 @@ final relevant_styles = {
   "textPath": text_styles + text_path_only_styles,
 };
 
-clone_and_apply_style(svg.SvgSvgElement svg_elt_orig) {
-  svg.SvgSvgElement svg_elt_styled = svg_elt_orig.clone(true);
+clone_and_apply_style(svg.SvgElement svg_elt_orig) {
+  svg.SvgElement svg_elt_styled = svg_elt_orig.clone(true);
   clone_and_apply_style_rec(svg_elt_styled, svg_elt_orig);
 
   // need to get from original since it has been rendered (styled hasn't been rendered so has 0 bounding box
@@ -89,6 +90,7 @@ clone_and_apply_style(svg.SvgSvgElement svg_elt_orig) {
   // transformation, but g element gives untransformed bounding box.
   var bbox_orig_g = (svg_elt_orig.children.firstWhere((e) => e is svg.GElement) as svg.GElement).getBBox();
 
+  // Adds boundary for elements located at negative svg
   svg_elt_styled.setAttribute('width', '${bbox_orig_g.width + 100}');
   svg_elt_styled.setAttribute('height', '${bbox_orig_g.height + 50}');
   return svg_elt_styled;

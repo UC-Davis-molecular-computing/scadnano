@@ -2,11 +2,11 @@
 library util;
 
 import 'dart:convert';
-import 'dart:html' hide ImageElement;
+import 'dart:html';
 import 'dart:js' as js;
 import 'dart:math';
 import 'dart:async';
-import 'dart:svg' hide Point;
+import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
 
 import 'package:built_collection/built_collection.dart';
@@ -14,6 +14,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/middleware/export_svg.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
@@ -648,7 +649,7 @@ String blob_type_to_string(BlobType blob_type) {
     case BlobType.binary:
       return 'application/octet-stream';
     case BlobType.image:
-      return 'data:image/svg+xml;charset=utf-8,';
+      return 'image/svg+xml;charset=utf-8,';
     case BlobType.excel:
       // https://stackoverflow.com/questions/974079/setting-mime-type-for-excel-document
 //      return 'application/vnd.ms-excel';
@@ -1018,4 +1019,74 @@ AppState default_state() {
         ..editor_content = '')
       .build();
   return state;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// svg caching
+
+String dna_sequence_classname = "dna-sequences-main-view";
+String dna_sequence_png_id = 'dna-sequences-main-view-png';
+String strands_classname = "strands-main-view";
+
+/// Callback to sent to JavaScript function `setup_svg_panzoom` so that
+/// the JavaScript code in index.html can dispatch `SetIzZoomAboveThreshold` actions.
+void dispatch_set_zoom_threshold(bool new_zoom_threshold) {
+  app.dispatch(actions.SetIsZoomAboveThreshold(new_zoom_threshold));
+}
+
+/// Callback to sent to JavaScript function `setup_svg_panzoom` so that
+/// the JavaScript code can dispatch `LoadDnaSequenceImageUri` actions.
+void svg_to_png_data() {
+  // Returns if png is already being used.
+  if (document.getElementById(dna_sequence_png_id) != null) {
+    return;
+  }
+
+  // Finds the dna sequences svg group element.
+  GraphicsElement dna_sequence_element = document.getElementsByClassName(dna_sequence_classname).first;
+  GraphicsElement strands_element = document.getElementsByClassName(strands_classname).first;
+
+  // Wraps dna_sequence_element in a SVG Element because required for Blob
+  SvgSvgElement svg = SvgSvgElement();
+  GraphicsElement dna_sequence_element_copy = clone_and_apply_style(dna_sequence_element);
+
+  GraphicsElement strands_element_copy = clone_and_apply_style(strands_element);
+  strands_element_copy.setAttribute('display', 'none');
+
+  // Translates dna_sequence_element_copy down so that it's Blob uri captures the topmost dna sequence
+  // inside of it's view box.
+  dna_sequence_element_copy.setAttribute(
+      'transform', 'translate(0, ${constants.DNA_SEQUENCE_VERTICAL_OFFSET})');
+
+  // Append copy to svg wrapper element.
+  svg.children.add(strands_element_copy);
+  svg.children.add(dna_sequence_element_copy);
+
+  // Serializes svg into a string containing XML.
+  String data = XmlSerializer().serializeToString(svg);
+
+  // Constructs a Blob that contains `data` as MIME type of svg.
+  Blob svg_blob = Blob([data], blob_type_to_string(BlobType.image));
+
+  // Creates a DOMString containing the URL representing the svg.
+  String url = Url.createObjectUrl(svg_blob);
+
+  CanvasElement canvas = document.createElement('canvas');
+  Rect bbox = dna_sequence_element.getBBox();
+  Rectangle<num> cbox = dna_sequence_element.getClientRects().first;
+
+  canvas.width = (bbox.width + bbox.x).toInt();
+  canvas.height = (bbox.height + bbox.y + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
+  canvas.setAttribute('style', 'width: ${canvas.width}px; height: ${canvas.height}px;');
+
+  CanvasRenderingContext2D ctx = canvas.context2D;
+  ctx.clearRect(0, 0, bbox.width, bbox.height);
+
+  ImageElement img = new ImageElement(src: url);
+  img.onLoad.listen((_) {
+    ctx.drawImage(img, 0, 0);
+    Url.revokeObjectUrl(url);
+    String img_uri = canvas.toDataUrl('image/png');
+    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri));
+  });
 }

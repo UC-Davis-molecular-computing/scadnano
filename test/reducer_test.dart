@@ -4698,4 +4698,25 @@ main() {
     state = app_state_reducer(state, HelixGridPositionSet(helix: helix, grid_position: grid_position));
     expect_app_state_equal(state, expected_state);
   });
+
+  group('Test png caching:', () {
+    test('LoadDnaSequenceImageUri loads new uri', () {
+      AppState old_state = app_state_from_dna_design(two_helices_design);
+      String uri = 'test_uri';
+
+      AppState new_state = app_state_reducer(old_state, LoadDnaSequenceImageUri(uri));
+      AppState exp_state = old_state.rebuild((b) => b..ui_state.dna_sequence_png_uri = uri);
+
+      expect_app_state_equal(new_state, exp_state);
+    });
+
+    test('SetIsZoomAboveThreshold sets field to true', () {
+      AppState old_state = app_state_from_dna_design(two_helices_design);
+
+      AppState new_state = app_state_reducer(old_state, SetIsZoomAboveThreshold(true));
+      AppState exp_state = old_state.rebuild((b) => b..ui_state.is_zoom_above_threshold = true);
+
+      expect_app_state_equal(new_state, exp_state);
+    });
+  });
 }
