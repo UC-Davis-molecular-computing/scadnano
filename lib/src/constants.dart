@@ -34,15 +34,6 @@ const int BASE_HEIGHT_SVG = 10;
 const default_min_offset = 0;
 const default_max_offset = 256;
 
-// Vertically shifts dna sequence used for caching the svg as png.
-// This is needed because dna sequences on the first helix gets
-// cut off at the top of the window, so they do not get rendered
-// in the svg data uri.
-const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
-
-// Zoom threshold used for caching the svg as png.
-const num ZOOM_THRESHOLD = 1;
-
 //const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
@@ -154,3 +145,20 @@ const insertions_key = 'insertions';
 
 // Loopout keys
 const loopout_key = 'loopout';
+
+////////////////////////////////////////////////////
+/// svg-png-caching constants
+
+// Vertically shifts dna sequence used for caching the svg as png.
+// This is needed because dna sequences on the first helix gets
+// cut off at the top of the window, so they do not get rendered
+// in the svg data uri.
+const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
+// Horizontally shifts dna sequence used for caching the svg as png.
+// This is needed because dna sequences on loopouts gets
+// cut off. In the future, there may need to be a dynamic method
+// for getting these offsets.
+const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
+
+// Zoom threshold used for caching the svg as png.
+const num ZOOM_THRESHOLD = 1;

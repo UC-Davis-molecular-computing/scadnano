@@ -1065,8 +1065,8 @@ void svg_to_png_data() {
 
   // Translates dna_sequence_element_copy down so that it's Blob uri captures the topmost dna sequence
   // inside of it's view box.
-  dna_sequence_element_copy.setAttribute(
-      'transform', 'translate(0, ${constants.DNA_SEQUENCE_VERTICAL_OFFSET})');
+  dna_sequence_element_copy.setAttribute('transform',
+      'translate(${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, ${constants.DNA_SEQUENCE_VERTICAL_OFFSET})');
 
   // Append copy to svg wrapper element.
   svg.children.add(strands_element_copy);
@@ -1085,7 +1085,7 @@ void svg_to_png_data() {
   Rect bbox = dna_sequence_element.getBBox();
   Rectangle<num> cbox = dna_sequence_element.getClientRects().first;
 
-  canvas.width = (bbox.width + bbox.x).toInt();
+  canvas.width = (bbox.width + bbox.x + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
   canvas.height = (bbox.height + bbox.y + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
   canvas.setAttribute('style', 'width: ${canvas.width}px; height: ${canvas.height}px;');
 

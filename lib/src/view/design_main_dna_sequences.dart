@@ -42,7 +42,8 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
       return (Dom.g()
         ..className = 'dna-sequences-main-view'
         ..pointerEvents = 'none'
-        ..transform = 'translate(0, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})')(
+        ..transform =
+            'translate(-${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})')(
         (Dom.image()
           ..xlinkHref = props.dna_sequence_png_uri
           ..id = 'dna-sequences-main-view-png')(),
