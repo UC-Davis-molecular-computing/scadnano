@@ -1037,14 +1037,24 @@ void dispatch_set_zoom_threshold(bool new_zoom_threshold) {
 /// Callback to sent to JavaScript function `setup_svg_panzoom` so that
 /// the JavaScript code can dispatch `LoadDnaSequenceImageUri` actions.
 void svg_to_png_data() {
-  // Returns if png is already being used.
-  if (document.getElementById(dna_sequence_png_id) != null) {
+  // Queries for essential dom elements.
+  List<Node> dna_sequence_element_list = document.getElementsByClassName(dna_sequence_classname);
+  List<Node> strands_element_list = document.getElementsByClassName(strands_classname);
+
+  // Returns if png is already being used
+  if (document.getElementById(dna_sequence_png_id) != null ||
+      // or if there is no dna_sequence due to Show DNA off
+      dna_sequence_element_list.isEmpty ||
+      // or if there is no strands
+      strands_element_list.isEmpty ||
+      // or if there is no dna sequence due to design
+      (dna_sequence_element_list.first as GraphicsElement).children.isEmpty) {
     return;
   }
 
-  // Finds the dna sequences svg group element.
-  GraphicsElement dna_sequence_element = document.getElementsByClassName(dna_sequence_classname).first;
-  GraphicsElement strands_element = document.getElementsByClassName(strands_classname).first;
+  // Assigns neccessary DOM elements (guaranteed by conditionals above).
+  GraphicsElement dna_sequence_element = dna_sequence_element_list.first;
+  GraphicsElement strands_element = strands_element_list.first;
 
   // Wraps dna_sequence_element in a SVG Element because required for Blob
   SvgSvgElement svg = SvgSvgElement();
