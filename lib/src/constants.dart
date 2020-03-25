@@ -145,3 +145,20 @@ const insertions_key = 'insertions';
 
 // Loopout keys
 const loopout_key = 'loopout';
+
+////////////////////////////////////////////////////
+/// svg-png-caching constants
+
+// Vertically shifts dna sequence used for caching the svg as png.
+// This is needed because dna sequences on the first helix gets
+// cut off at the top of the window, so they do not get rendered
+// in the svg data uri.
+const int DNA_SEQUENCE_VERTICAL_OFFSET = 50;
+// Horizontally shifts dna sequence used for caching the svg as png.
+// This is needed because dna sequences on loopouts gets
+// cut off. In the future, there may need to be a dynamic method
+// for getting these offsets.
+const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
+
+// Zoom threshold used for caching the svg as png.
+const num ZOOM_THRESHOLD = 1;

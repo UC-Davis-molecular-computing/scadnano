@@ -47,7 +47,9 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
-  ..select_mode_state = DEFAULT_SelectModeStateBuilder;
+  ..select_mode_state = DEFAULT_SelectModeStateBuilder
+  ..dna_sequence_png_uri = null
+  ..is_zoom_above_threshold = false;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -126,6 +128,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// Save button is enabled iff this is true
   bool get changed_since_last_save;
+
+  /// PNG image of dna sequence used for svg caching
+  @nullable
+  String get dna_sequence_png_uri;
+
+  /// PNG image should be used (if available) if false.
+  bool get is_zoom_above_threshold;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

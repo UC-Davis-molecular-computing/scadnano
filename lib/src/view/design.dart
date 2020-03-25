@@ -532,7 +532,8 @@ class DesignViewComponent {
       );
 
       if (!svg_panzoom_has_been_set_up) {
-        setup_svg_panzoom_js();
+        setup_svg_panzoom_js(
+            util.svg_to_png_data, util.dispatch_set_zoom_threshold, constants.ZOOM_THRESHOLD);
         svg_panzoom_has_been_set_up = true;
       }
     }

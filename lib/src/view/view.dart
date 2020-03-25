@@ -20,7 +20,8 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 
 @JS(constants.js_function_name_setup_svg_panzoom)
-external setup_svg_panzoom_js();
+external setup_svg_panzoom_js(void Function() svg_cache_callback,
+    void Function(bool) dispatch_zoom_threshold_callback, num zoom_threshold);
 
 @JS(constants.js_function_name_setup_splits)
 external setup_splits(bool show_editor);

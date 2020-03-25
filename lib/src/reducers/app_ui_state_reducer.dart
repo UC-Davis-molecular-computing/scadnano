@@ -56,7 +56,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..warn_on_change_strand_dna_assign_default =
       TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(
           ui_state.warn_on_change_strand_dna_assign_default, action)
-  ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action)));
+  ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
+  ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
+  ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
 
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
   TypedReducer<bool, actions.PotentialCrossoverCreate>(potential_crossover_create_app_ui_state_reducer),
@@ -121,6 +123,24 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
 ExampleDNADesigns example_dna_designs_idx_set_reducer(
         ExampleDNADesigns example_dna_designs, actions.ExampleDNADesignsLoad action) =>
     example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// svg-png-caching
+
+String load_dna_sequence_image_uri(String _, actions.LoadDnaSequenceImageUri action) {
+  return action.uri;
+}
+
+Reducer<String> dna_sequence_png_uri_reducer = combineReducers([
+  TypedReducer<String, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
+]);
+
+bool set_is_zoom_above_threshold(bool _, actions.SetIsZoomAboveThreshold action) {
+  return action.is_zoom_above_threshold;
+}
+
+Reducer<bool> is_zoom_above_threshold_reducer =
+    combineReducers([TypedReducer<bool, actions.SetIsZoomAboveThreshold>(set_is_zoom_above_threshold)]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers

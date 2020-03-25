@@ -1703,3 +1703,41 @@ abstract class AutofitSet
 
   static Serializer<AutofitSet> get serializer => _$autofitSetSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// load dna sequence png
+
+abstract class LoadDnaSequenceImageUri
+    with BuiltJsonSerializable
+    implements Action, Built<LoadDnaSequenceImageUri, LoadDnaSequenceImageUriBuilder> {
+
+  @nullable
+  String get uri;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoadDnaSequenceImageUri(String uri) => LoadDnaSequenceImageUri.from((b) => b..uri = uri);
+
+  factory LoadDnaSequenceImageUri.from([void Function(LoadDnaSequenceImageUriBuilder) updates]) =
+      _$LoadDnaSequenceImageUri;
+
+  LoadDnaSequenceImageUri._();
+
+  static Serializer<LoadDnaSequenceImageUri> get serializer => _$loadDnaSequenceImageUriSerializer;
+}
+
+abstract class SetIsZoomAboveThreshold
+    with BuiltJsonSerializable
+    implements Action, Built<SetIsZoomAboveThreshold, SetIsZoomAboveThresholdBuilder> {
+  bool get is_zoom_above_threshold;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetIsZoomAboveThreshold(bool is_zoom_above_threshold) =>
+      SetIsZoomAboveThreshold.from((b) => b..is_zoom_above_threshold = is_zoom_above_threshold);
+
+  factory SetIsZoomAboveThreshold.from([void Function(SetIsZoomAboveThresholdBuilder) updates]) =
+      _$SetIsZoomAboveThreshold;
+
+  SetIsZoomAboveThreshold._();
+
+  static Serializer<SetIsZoomAboveThreshold> get serializer => _$setIsZoomAboveThresholdSerializer;
+}

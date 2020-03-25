@@ -173,6 +173,8 @@ part 'serializers.g.dart';
   Modification5Prime,
   Modification3Prime,
   ModificationInternal,
+  LoadDnaSequenceImageUri,
+  SetIsZoomAboveThreshold,
 ])
 Serializers serializers = _$serializers;
 
