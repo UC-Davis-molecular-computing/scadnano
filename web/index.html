@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scadnano</title>
 
+    <link rel="stylesheet" href="bootstrap.min.css">
+
     <link href="packages/codemirror/codemirror.css" rel="stylesheet">
     <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
     <link rel="stylesheet" href="scadnano-styles.css">
@@ -490,6 +492,14 @@
 
 <!--<script type="text/python" src="compile_script.py"></script>-->
 
+<script src="external-libs/react-bootstrap.js"></script>
+
+<script>
+// Add components to global namespace.
+ReactBootstrap.DropdownToggle = ReactBootstrap.Dropdown.Toggle
+ReactBootstrap.NavLink = ReactBootstrap.Nav.Link
+ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
+</script>
 </body>
 
 </html>
