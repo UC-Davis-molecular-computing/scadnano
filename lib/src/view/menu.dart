@@ -83,7 +83,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
               app.disable_keyboard_shortcuts_while(load_example_dialog);
             },
           },
-          '📄 Example',
+          '📄 Load example',
         ),
         FormFile(
           {
@@ -182,7 +182,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_dna')
               ..type = 'checkbox')(),
-            'DNA',
+            'Show DNA sequences',
           ),
         ),
         (Dom.span()
@@ -199,7 +199,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_modifications')
               ..type = 'checkbox')(),
-            'mods',
+            'Show modifications',
           ),
         ),
         (Dom.span()
@@ -218,7 +218,7 @@ and the strand on the same helix with the opposite orientation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_mismatches')
               ..type = 'checkbox')(),
-            'mismatches',
+            'Show DNA base mismatches',
           ),
         ),
         (Dom.span()
@@ -245,7 +245,7 @@ looking at before changing the script.'''
               }
               ..addTestId('scadnano.MenuComponent.input.center_on_load')
               ..type = 'checkbox')(),
-            'auto-fit',
+            'auto-fit on loading new design',
           ),
         ),
         //XXX: let's keep this commented out until we need it
@@ -313,7 +313,7 @@ looking at before changing the script.'''
               props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
             },
           },
-          'Export SVG side',
+          'SVG side view',
         ),
         DropdownItem(
           {
@@ -321,7 +321,7 @@ looking at before changing the script.'''
               props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
             },
           },
-          'Export SVG main',
+          'SVG main view',
         ),
         DropdownItem(
           {
@@ -329,7 +329,7 @@ looking at before changing the script.'''
               app.disable_keyboard_shortcuts_while(export_dna);
             },
           },
-          'Export SVG DNA',
+          'SVG DNA',
         ),
       ),
       NavDropdown(
@@ -349,7 +349,7 @@ looking at before changing the script.'''
             'href': 'https://scadnano-python-package.readthedocs.io',
             'target': '_blank',
           },
-          'Script Documentation',
+          'Python scripting documentation',
         ),
       ),
       //XXX: I like to keep this button around to simulate random things that require user interaction
