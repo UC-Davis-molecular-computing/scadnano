@@ -666,11 +666,16 @@ html, body {
     color: rgba(0,0,0, 0.5);
 }
 
+/* View checkmarks appear on one line */
+#view-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
 
-
-/* Removes padding on Grid Nav Dropdown. */
-#grid-nav-dropdown + .dropdown-menu {
-    padding: 0%;
+/* Style dropdown item of selected grid as well as newly clicked on grid */
+#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #686868;
 }
 
 /* Hides input of Open (only display the label) */

@@ -267,40 +267,21 @@ looking at before changing the script.'''
         {
           'title': 'Grid',
           'id': 'grid-nav-dropdown',
-          // Style added in CSS to removing padding.
-          //
-          // Cannot styled desired div directly via Dart.
-          // Instead, style in CSS with code:
-          //
-          // #grid-nav-dropdown + .dropdown-menu {
-          //     padding: 0%;
-          // }
         },
-        Form(
-          {},
-          FormGroup(
-            {
-              'controlId': 'grid-form',
-              'style': {'marginBottom': '0'}
-            },
-            FormControl(
+        [
+          for (var grid in grid_options)
+            DropdownItem(
               {
-                'as': 'select',
-                'onChange': ((ev) {
-                  int idx = ev.currentTarget.selectedIndex;
-                  props.dispatch(actions.GridChange(grid: grid_options[idx]));
-                }),
-                'value': props.grid.toString(),
+                'active': grid == props.grid,
+                'disabled': grid == props.grid,
+                'key': grid.toString(),
+                'onClick': (ev) {
+                  props.dispatch(actions.GridChange(grid: grid));
+                },
               },
-              [
-                for (var grid in grid_options)
-                  (Dom.option()
-                    ..value = grid.toString()
-                    ..key = grid.toString())(grid.toString())
-              ],
-            ),
-          ),
-        ),
+              grid.toString(),
+            )
+        ],
       ),
       NavDropdown(
         {
