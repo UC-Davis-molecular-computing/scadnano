@@ -496,6 +496,14 @@
 
 <script>
 // Add components to global namespace.
+// React interop cannot access nested components (components that are fields of another React component)
+// Thus, any nested components needs to be added to the global namespace
+// by assigning it as a member to ReactBoostrap.
+// In general the line will look something like
+//
+// ```
+// ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
+// ```
 ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
 </script>
 </body>
