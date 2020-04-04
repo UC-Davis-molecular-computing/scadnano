@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
@@ -49,6 +50,7 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
         ..show_dna = state.ui_state.show_dna
         ..design_major_tick_distance = state.dna_design.major_tick_distance
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
+        ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold);
     }
   },
@@ -72,6 +74,7 @@ class _$DesignMainProps extends EditModePropsAbstract {
   int design_major_tick_distance;
   bool drawing_potential_crossover;
   String dna_sequence_png_uri;
+  Action disable_png_cache_until_action_completes;
   bool is_zoom_above_threshold;
 }
 
@@ -116,6 +119,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
+          ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'

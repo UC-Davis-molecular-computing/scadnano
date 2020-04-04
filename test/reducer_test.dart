@@ -4718,5 +4718,20 @@ main() {
 
       expect_app_state_equal(new_state, exp_state);
     });
+
+    test('SetDisablePngCacheUntilActionCompletes', () {
+      AppState old_state = app_state_from_dna_design(two_helices_design);
+
+      Action action = ExportSvg(type: ExportSvgType.main);
+
+      AppState new_state = app_state_reducer(old_state, SetDisablePngCacheUntilActionCompletes(action));
+      AppState exp_state =
+          old_state.rebuild((b) => b..ui_state.disable_png_cache_until_action_completes = action);
+
+      expect_app_state_equal(new_state, exp_state);
+
+      exp_state = app_state_reducer(exp_state, SetDisablePngCacheUntilActionCompletes(null));
+      expect_app_state_equal(old_state, exp_state);
+    });
   });
 }

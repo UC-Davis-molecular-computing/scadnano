@@ -1100,3 +1100,15 @@ void svg_to_png_data() {
     app.dispatch(actions.LoadDnaSequenceImageUri(img_uri));
   });
 }
+
+/// Returns `true` if png is used/should be used `false` otherwise.
+///
+/// PNG will be used if there is a png uri `dna_sequence_png_uri`,
+/// and the zoom is not above threshold `is_zoom_above_threshold`,
+/// and there is no pending action `disable_png_cache_until_action_completes`.
+bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
+    actions.Action disable_png_cache_until_action_completes) {
+  return dna_sequence_png_uri != null &&
+      !is_zoom_above_threshold &&
+      disable_png_cache_until_action_completes == null;
+}

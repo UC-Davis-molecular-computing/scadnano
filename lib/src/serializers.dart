@@ -174,6 +174,7 @@ part 'serializers.g.dart';
   Modification3Prime,
   ModificationInternal,
   LoadDnaSequenceImageUri,
+  SetDisablePngCacheUntilActionCompletes,
   SetIsZoomAboveThreshold,
 ])
 Serializers serializers = _$serializers;

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:scadnano/src/actions/actions.dart';
 
 import '../serializers.dart';
 import 'context_menu.dart';
@@ -49,6 +50,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..warn_on_change_strand_dna_assign_default = true
   ..select_mode_state = DEFAULT_SelectModeStateBuilder
   ..dna_sequence_png_uri = null
+  ..disable_png_cache_until_action_completes = null
   ..is_zoom_above_threshold = false;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
@@ -132,6 +134,12 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// PNG image of dna sequence used for svg caching
   @nullable
   String get dna_sequence_png_uri;
+
+  /// If this is `null`, png-caching runs normally.
+  /// Otherwise, disable png-caching (if a png would otherwise be used)
+  /// until action is dispatched.
+  @nullable
+  Action get disable_png_cache_until_action_completes;
 
   /// PNG image should be used (if available) if false.
   bool get is_zoom_above_threshold;
