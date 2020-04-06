@@ -1072,6 +1072,14 @@ void svg_to_png_data() {
   svg.children.add(strands_element_copy);
   svg.children.add(dna_sequence_element_copy);
 
+  // Firefox requires explicit size on svg to draw on canvas.
+  // https://stackoverflow.com/questions/34706891/canvas-draw-image-issue-on-firefox-works-well-in-chrome
+  Rect bbox = dna_sequence_element.getBBox();
+  var svg_width = (bbox.width + bbox.x + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
+  var svg_height = (bbox.height + bbox.y + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
+  svg.setAttribute('width', svg_width.toString());
+  svg.setAttribute('height', svg_height.toString());
+
   // Serializes svg into a string containing XML.
   String data = XmlSerializer().serializeToString(svg);
 
@@ -1081,18 +1089,31 @@ void svg_to_png_data() {
   // Creates a DOMString containing the URL representing the svg.
   String url = Url.createObjectUrl(svg_blob);
 
-  CanvasElement canvas = document.createElement('canvas');
-  Rect bbox = dna_sequence_element.getBBox();
-  Rectangle<num> cbox = dna_sequence_element.getClientRects().first;
+  // Debug: print content of svg blob
+  // HttpRequest.getString(url).then((String fileContents) {
+  //   print(fileContents);
+  // }).catchError((error) {
+  //   print(error.toString());
+  // });
 
-  canvas.width = (bbox.width + bbox.x + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
-  canvas.height = (bbox.height + bbox.y + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
+  // IF (DEBUGGING)
+  // CanvasElement canvas = document.getElementById('canvas-dev');
+  // ELSE
+  CanvasElement canvas = document.createElement('canvas');
+
+  canvas.width = svg_width;
+  canvas.height = svg_height;
   canvas.setAttribute('style', 'width: ${canvas.width}px; height: ${canvas.height}px;');
 
   CanvasRenderingContext2D ctx = canvas.context2D;
   ctx.clearRect(0, 0, bbox.width, bbox.height);
 
+  // IF (DEBUGGING)
+  // ImageElement img = document.getElementById('img-dev');
+  // img.src = url;
+  // ELSE
   ImageElement img = new ImageElement(src: url);
+
   img.onLoad.listen((_) {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
