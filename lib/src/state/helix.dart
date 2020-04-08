@@ -79,7 +79,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..rotation = rotation
       ..rotation_anchor = rotation_anchor
       ..min_offset = min_offset
-      ..max_offset = max_offset);
+      ..max_offset = max_offset
+      ..unused_fields = null);
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -123,6 +124,9 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   @nullable
   BuiltList<int> get major_ticks;
+
+  @nullable
+  BuiltMap<String, Object> get unused_fields;
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
@@ -240,6 +244,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       json_map[constants.major_ticks_key] = major_ticks.toList();
     }
 
+    if (unused_fields != null) {
+      json_map.addAll(unused_fields.toMap());
+    }
+
     json_map[constants.idx_on_helix_key] = idx;
 
     return suppress_indent ? NoIndent(json_map) : json_map;
@@ -294,13 +302,17 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   static HelixBuilder from_json(Map<String, dynamic> json_map) {
     var helix_builder = HelixBuilder();
 
+    var unused_fields = Map.from(json_map);
+
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       helix_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
+      unused_fields.remove(constants.major_tick_distance_key);
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
       helix_builder.major_ticks = ListBuilder<int>(List<int>.from(json_map[constants.major_ticks_key]));
 //      helix_builder.major_ticks = List<int>.from(json_map[constants.major_ticks_key]);
+      unused_fields.remove(constants.major_ticks_key);
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
@@ -310,10 +322,12 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
             "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
+      unused_fields.remove(constants.grid_position_key);
     }
 
     if (json_map.containsKey(constants.svg_position_key)) {
       List<dynamic> svg_position_list = json_map[constants.svg_position_key];
+      unused_fields.remove(constants.svg_position_key);
       if (svg_position_list.length != 2) {
         throw ArgumentError(
             "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
@@ -323,14 +337,29 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     if (json_map.containsKey(constants.max_offset_key)) {
       helix_builder.max_offset = json_map[constants.max_offset_key];
+      unused_fields.remove(constants.max_offset_key);
     }
 
     if (json_map.containsKey(constants.min_offset_key)) {
       helix_builder.min_offset = json_map[constants.min_offset_key];
+      unused_fields.remove(constants.min_offset_key);
     }
 
     if (json_map.containsKey(constants.idx_on_helix_key)) {
       helix_builder.idx = json_map[constants.idx_on_helix_key];
+      unused_fields.remove(constants.idx_on_helix_key);
+    }
+
+    if (json_map.containsKey(constants.rotation_key)) {
+      unused_fields.remove(constants.rotation_key);
+    }
+
+    if (json_map.containsKey(constants.position3d_key)) {
+      unused_fields.remove(constants.position3d_key);
+    }
+
+    if (unused_fields.isNotEmpty) {
+      helix_builder.unused_fields = MapBuilder<String, Object>(unused_fields);
     }
 
     helix_builder.rotation =
