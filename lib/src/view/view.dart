@@ -82,6 +82,12 @@ class View {
 
     this.design_view = DesignViewComponent(design_element);
 
+    // IF(DEBUGING-SVG-PNG-CACHING)
+    // var canvas = CanvasElement()..id = "canvas-dev";
+    // this.root_element.children.add(canvas);
+    // var img = ImageElement()..id = "img-dev";
+    // this.root_element.children.add(img);
+
 //    this.editor_view = EditorViewComponent(editor_element);
 
 //    setup_splits(app.state.show_editor);
