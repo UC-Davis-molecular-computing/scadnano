@@ -58,6 +58,8 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
           ui_state.warn_on_change_strand_dna_assign_default, action)
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
   ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
+  ..disable_png_cache_until_action_completes =
+      disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
   ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
 
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
@@ -134,6 +136,17 @@ String load_dna_sequence_image_uri(String _, actions.LoadDnaSequenceImageUri act
 Reducer<String> dna_sequence_png_uri_reducer = combineReducers([
   TypedReducer<String, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
 ]);
+
+actions.Action set_disable_png_cache_until_action_completes(
+    actions.Action _, actions.SetDisablePngCacheUntilActionCompletes action) {
+  return action.disable_png_cache_until_action_completes;
+}
+
+Reducer<actions.Action> disable_png_cache_until_action_completes = combineReducers(([
+  TypedReducer<actions.Action, actions.SetDisablePngCacheUntilActionCompletes>(
+    set_disable_png_cache_until_action_completes,
+  )
+]));
 
 bool set_is_zoom_above_threshold(bool _, actions.SetIsZoomAboveThreshold action) {
   return action.is_zoom_above_threshold;

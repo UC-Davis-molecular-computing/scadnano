@@ -1741,3 +1741,26 @@ abstract class SetIsZoomAboveThreshold
 
   static Serializer<SetIsZoomAboveThreshold> get serializer => _$setIsZoomAboveThresholdSerializer;
 }
+
+abstract class SetDisablePngCacheUntilActionCompletes
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<SetDisablePngCacheUntilActionCompletes, SetDisablePngCacheUntilActionCompletesBuilder> {
+  @nullable
+  Action get disable_png_cache_until_action_completes;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetDisablePngCacheUntilActionCompletes(Action disable_png_cache_until_action_completes) =>
+      SetDisablePngCacheUntilActionCompletes.from(
+          (b) => b..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes);
+
+  factory SetDisablePngCacheUntilActionCompletes.from(
+          [void Function(SetDisablePngCacheUntilActionCompletesBuilder) updates]) =
+      _$SetDisablePngCacheUntilActionCompletes;
+
+  SetDisablePngCacheUntilActionCompletes._();
+
+  static Serializer<SetDisablePngCacheUntilActionCompletes> get serializer =>
+      _$setDisablePngCacheUntilActionCompletesSerializer;
+}

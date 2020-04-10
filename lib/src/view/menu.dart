@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
+import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
@@ -26,7 +27,9 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..autofit = state.ui_state.autofit
     ..grid = state.dna_design?.grid
     ..example_dna_designs = state.ui_state.example_dna_designs
-    ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true),
+    ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true
+    ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
+    ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -43,6 +46,8 @@ class _$MenuProps extends UiProps with ConnectPropsMixin {
   Grid grid;
   ExampleDNADesigns example_dna_designs;
   bool design_has_insertions_or_deletions;
+  bool undo_stack_empty;
+  bool redo_stack_empty;
 }
 
 @Component2()
@@ -61,199 +66,284 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 
   @override
   render() {
-    String load_example_title = 'Load example';
-
-    return [
-      (Dom.label()
-        ..className = 'app-name menu-item'
-        ..key = 'title-label')('scadnano'),
-      //XXX: I like to keep this button around to simulate random things that require user interaction
-//      (Dom.button()
-//        ..onClick = (_) {
-////          util.set_allow_pan(false);
-//        }
-//        ..key = 'dummy'
-//        ..className = 'dummy-button menu-item')('Dummy'),
-      (Dom.button()
-        ..onClick = (_) {
-          app.disable_keyboard_shortcuts_while(load_example_dialog);
-        }
-        ..className = 'example-load'
-        ..key = 'example-load')('Example'),
-      (Dom.button()
-        ..className = 'menu-item'
-        ..onClick = (_) {
-          props.dispatch(actions.SaveDNAFile());
-        }
-        ..className = 'save-button-dna-file'
-        ..key = 'save')('Save'),
-      (Dom.label()
-        ..className = 'load-button-dna-file menu-item'
-        ..key = 'load')([
-        'Load:',
-        (Dom.input()
-          ..type = 'file'
-          ..accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",")
-          // If the user selects the same filename as last time they used the fileLoader,
-          // we still want to reload the file (it may have changed).
-          // But if we don't set (e.target).value to null, if the user selects the same filename,
-          // then the onChange event won't fire and we won't reload the file.
-          ..onClick = (e) {
-            (e.target).value = null;
-          }
-          ..onChange = (e) {
-            request_load_file_from_file_chooser(e.target);
-          }
-          ..key = 'load-input')()
-      ]),
-      //XXX: let's keep this commented out until we need it
-//        (Dom.span()
-//          ..key = 'show-editor menu-item'
-//          ..className = 'show-editor-span')(
-//          (Dom.label()..key = 'show-editor-label')(
-//            (Dom.input()
-//              ..checked = show_editor
-//              ..onChange = (_) {
-//                app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
-//              }
-//              ..type = 'checkbox')(),
-//            'show editor',
-//          ),
-//        ),
-      (Dom.button()
-        ..className = 'menu-item'
-        ..onClick = (_) {
-          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
-        }
-        ..className = 'export-svg'
-        ..key = 'export-svg-side')('Export SVG side'),
-      (Dom.button()
-        ..className = 'menu-item'
-        ..onClick = (_) {
-          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
-        }
-        ..className = 'export-svg'
-        ..key = 'export-svg-main')('Export SVG main'),
-      (Dom.button()
-        ..onClick = //((_) => export_dna())
-            ((_) => app.disable_keyboard_shortcuts_while(export_dna))
-        ..className = 'export-dna-sequences-button menu-item'
-        ..key = 'export-dna-sequences')('Export DNA'),
-      (Dom.button()
-        ..disabled = !props.design_has_insertions_or_deletions
-        ..onClick = ((_) => app.dispatch(actions.InlineInsertionsDeletions()))
-        ..className = 'inline-ins-del-button menu-item'
-        ..key = 'inline-ins-del')('Inline I/D'),
-      (Dom.span()..key='show-title-span')(
-        'show:'
+    return Navbar(
+      {
+        'bg': 'light',
+        'expand': 'lg',
+      },
+      NavbarBrand({}, 'scadnano'),
+      NavDropdown(
+        {
+          'title': 'File',
+          'id': 'file-nav-dropdown',
+        },
+        DropdownItem(
+          {
+            'onClick': (_) {
+              app.disable_keyboard_shortcuts_while(load_example_dialog);
+            },
+          },
+          '📄 Load example',
+        ),
+        FormFile(
+          {
+            'id': 'open-form-file',
+            'accept': ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(","),
+            // If the user selects the same filename as last time they used the fileLoader,
+            // we still want to reload the file (it may have changed).
+            // But if we don't set (e.target).value to null, if the user selects the same filename,
+            // then the onChange event won't fire and we won't reload the file.
+            'onClick': (e) {
+              (e.target).value = null;
+            },
+            'onChange': (e) {
+              request_load_file_from_file_chooser(e.target);
+            },
+            'label': '📂 Open...',
+            'custom': 'false',
+          },
+        ),
+        DropdownDivider({}),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              props.dispatch(actions.SaveDNAFile());
+            },
+          },
+          '💾 Save...',
+        ),
       ),
-      (Dom.span()
-        ..title = '''Check to show DNA sequences that have been assigned to strands.
+      NavDropdown(
+        {
+          'title': 'Edit',
+          'id': 'edit-nav-dropdown',
+        },
+        DropdownItem(
+          {
+            'disabled': props.undo_stack_empty,
+            'onClick': (_) {
+              props.dispatch(actions.Undo());
+            },
+          },
+          'Undo',
+          (Dom.span()
+            ..style = {
+              'marginLeft': '2em',
+              // 'opacity': '50%',
+            })(
+            'Ctrl+Z',
+          ),
+        ),
+        DropdownItem(
+          {
+            'disabled': props.redo_stack_empty,
+            'onClick': (_) {
+              props.dispatch(actions.Redo());
+            },
+          },
+          'Redo',
+          (Dom.span()
+            ..style = {
+              'marginLeft': '2em',
+              // 'opacity': '50%',
+            })(
+            'Ctrl+Shift+Z',
+          ),
+        ),
+        DropdownDivider({}),
+        DropdownItem(
+          {
+            'disabled': !props.design_has_insertions_or_deletions,
+            'onClick': (_) {
+              props.dispatch(actions.InlineInsertionsDeletions());
+            },
+          },
+          'Inline Insertions/Deletions',
+        ),
+      ),
+      NavDropdown(
+        {
+          'title': 'View',
+          'id': 'view-nav-dropdown',
+        },
+        (Dom.span()
+          ..title = '''Check to show DNA sequences that have been assigned to strands.
 In a large design, this can slow down the performance of panning and
 zooming navigation, so uncheck it to speed up navigation.'''
-        ..className = 'show-dna-span menu-item'
-        ..key = 'show-dna')(
-        (Dom.label()..key = 'show-dna-label')(
-          (Dom.input()
-            ..checked = props.show_dna
-            ..onChange = (_) {
-              props.dispatch(actions.ShowDNASet(!props.show_dna));
-            }
-            ..addTestId('scadnano.MenuComponent.input.show_dna')
-            ..type = 'checkbox')(),
-          'DNA',
+          ..className = 'show-dna-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'show-dna')(
+          (Dom.label()..key = 'show-dna-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.show_dna
+              ..onChange = (_) {
+                props.dispatch(actions.ShowDNASet(!props.show_dna));
+              }
+              ..addTestId('scadnano.MenuComponent.input.show_dna')
+              ..type = 'checkbox')(),
+            'Show DNA sequences',
+          ),
         ),
-      ),
-      (Dom.span()
-        ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
-        ..className = 'show-modifications-span menu-item'
-        ..key = 'show-modifications')(
-        (Dom.label()..key = 'show-modifications-label')(
-          (Dom.input()
-            ..checked = props.show_modifications
-            ..onChange = (_) {
-              props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
-            }
-            ..addTestId('scadnano.MenuComponent.input.show_modifications')
-            ..type = 'checkbox')(),
-          'mods',
+        (Dom.span()
+          ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
+          ..className = 'show-modifications-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'show-modifications')(
+          (Dom.label()..key = 'show-modifications-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.show_modifications
+              ..onChange = (_) {
+                props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
+              }
+              ..addTestId('scadnano.MenuComponent.input.show_modifications')
+              ..type = 'checkbox')(),
+            'Show modifications',
+          ),
         ),
-      ),
-      (Dom.span()
-        ..className = 'show-mismatches-span menu-item'
-        ..key = 'show-mismatches')(
-        (Dom.label()
-          ..title = '''Check to show mismatches between DNA assigned to one strand 
+        (Dom.span()
+          ..className = 'show-mismatches-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'show-mismatches')(
+          (Dom.label()
+            ..title = '''Check to show mismatches between DNA assigned to one strand
 and the strand on the same helix with the opposite orientation.'''
-          ..key = 'show-mismatches-label')(
-          (Dom.input()
-            ..checked = props.show_mismatches
-            ..onChange = (_) {
-              props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
-            }
-            ..addTestId('scadnano.MenuComponent.input.show_mismatches')
-            ..type = 'checkbox')(),
-          'mismatches',
+            ..key = 'show-mismatches-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.show_mismatches
+              ..onChange = (_) {
+                props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+              }
+              ..addTestId('scadnano.MenuComponent.input.show_mismatches')
+              ..type = 'checkbox')(),
+            'Show DNA base mismatches',
+          ),
         ),
-      ),
-      (Dom.span()
-        ..className = 'center-on-load-span menu-item'
-        ..key = 'center-on-load')(
-        (Dom.label()
-          ..title = '''Check this so that, when loading a new design, the side and main views will be 
-translated to show the lowest-index helix in the upper-left. Otherwise, after 
-loading the design, you may not be able to see it because it is translated off 
-the screen.              
+        (Dom.span()
+          ..className = 'center-on-load-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'center-on-load')(
+          (Dom.label()
+            ..title = '''Check this so that, when loading a new design, the side and main views will be
+translated to show the lowest-index helix in the upper-left. otherwise, after
+loading the design, you may not be able to see it because it is translated off
+the screen.
 
-You may want to uncheck this when working on a design with the scripting library. 
-In that case, when repeatedly re-running the script to modify the design and then 
-re-loading it, it is preferable to keep the design centered at the same location 
-you had before, in order to be able to see the same part of the design you were 
+You may want to uncheck this when working on a design with the scripting library.
+in that case, when repeatedly re-running the script to modify the design and then
+re-loading it, it is preferable to keep the design centered at the same location
+you had before, in order to be able to see the same part of the design you were
 looking at before changing the script.'''
-          ..key = 'center-on-load-label')(
-          (Dom.input()
-            ..checked = props.autofit
-            ..onChange = (_) {
-              props.dispatch(actions.AutofitSet(autofit: !props.autofit));
-            }
-            ..addTestId('scadnano.MenuComponent.input.center_on_load')
-            ..type = 'checkbox')(),
-          'auto-fit',
+            ..key = 'center-on-load-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.autofit
+              ..onChange = (_) {
+                props.dispatch(actions.AutofitSet(autofit: !props.autofit));
+              }
+              ..addTestId('scadnano.MenuComponent.input.center_on_load')
+              ..type = 'checkbox')(),
+            'auto-fit on loading new design',
+          ),
+        ),
+        //XXX: let's keep this commented out until we need it
+        // (Dom.span()
+        //   ..key = 'show-editor menu-item'
+        //   ..className = 'show-editor-span')(
+        //   (Dom.label()..key = 'show-editor-label')(
+        //     (Dom.input()
+        //       ..checked = show_editor
+        //       ..onChange = (_) {
+        //         app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
+        //       }
+        //       ..type = 'checkbox')(),
+        //     'show editor',
+        //   ),
+        // ),
+      ),
+      NavDropdown(
+        {
+          'title': 'Grid',
+          'id': 'grid-nav-dropdown',
+        },
+        [
+          for (var grid in grid_options)
+            DropdownItem(
+              {
+                'active': grid == props.grid,
+                'disabled': grid == props.grid,
+                'key': grid.toString(),
+                'onClick': (ev) {
+                  props.dispatch(actions.GridChange(grid: grid));
+                },
+              },
+              grid.toString(),
+            )
+        ],
+      ),
+      NavDropdown(
+        {
+          'title': 'Export',
+          'id': 'export-nav-dropdown',
+        },
+        DropdownItem(
+          {
+            'onClick': (_) {
+              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
+            },
+          },
+          'SVG side view',
+        ),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
+            },
+          },
+          'SVG main view',
+        ),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              app.disable_keyboard_shortcuts_while(export_dna);
+            },
+          },
+          'SVG DNA',
         ),
       ),
-      (Dom.select()
-        ..name = 'Grid'
-        ..onChange = ((ev) {
-          int idx = ev.currentTarget.selectedIndex - 1; // subtract 1 due to Grid title option
-          props.dispatch(actions.GridChange(grid: grid_options[idx]));
-        })
-        ..addTestId('scadnano.MenuComponent.select.grid')
-        ..value = props.grid.toString()
-        ..key = 'grid')([
-        (Dom.option()
-          ..value = 'Grid'
-          ..disabled = true
-          ..key = 'title')('Grid type'),
-        ...[
-          for (var grid in grid_options)
-            (Dom.option()
-              ..value = grid.toString()
-              ..key = grid.toString())(grid.toString())
-        ]
-      ]),
-      (Dom.a()
-        ..className = 'docs-link menu-item'
-//        ..href = 'README.html'
-        ..href = 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md'
-        ..target = '_blank'
-        ..key = 'help-link')('Help'),
-//      (Dom.a()
-//        ..className = 'docs-link menu-item'
-////        ..href = './docs/'
-//        ..href = 'https://scadnano-python-package.readthedocs.io'
-//        ..target = '_blank'
-//        ..key = 'script-help-link')('Script Docs'),
-    ];
+      NavDropdown(
+        {
+          'title': 'Help',
+          'id': 'help-nav-dropdown',
+        },
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
+            'target': '_blank',
+          },
+          'Guide',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://scadnano-python-package.readthedocs.io',
+            'target': '_blank',
+          },
+          'Python scripting documentation',
+        ),
+      ),
+      //XXX: I like to keep this button around to simulate random things that require user interaction
+      // Button(
+      //   {
+      //     'variant': 'light',
+      //     'onClick': (_) {
+      //       window.alert('Dummy!');
+      //     }
+      //   },
+      //   'Dummy',
+      // ),
+    );
   }
 
   final List<Grid> grid_options = [Grid.square, Grid.honeycomb, Grid.hex, Grid.none];

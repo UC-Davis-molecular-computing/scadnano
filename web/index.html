@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scadnano</title>
 
+    <link rel="stylesheet" href="bootstrap.min.css">
+
     <link href="packages/codemirror/codemirror.css" rel="stylesheet">
     <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
     <link rel="stylesheet" href="scadnano-styles.css">
@@ -490,6 +492,20 @@
 
 <!--<script type="text/python" src="compile_script.py"></script>-->
 
+<script src="external-libs/react-bootstrap.js"></script>
+
+<script>
+// Add components to global namespace.
+// React interop cannot access nested components (components that are fields of another React component)
+// Thus, any nested components needs to be added to the global namespace
+// by assigning it as a member to ReactBoostrap.
+// In general the line will look something like
+//
+// ```
+// ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
+// ```
+ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
+</script>
 </body>
 
 </html>
