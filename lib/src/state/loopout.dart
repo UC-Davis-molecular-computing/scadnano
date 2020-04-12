@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 
@@ -16,13 +17,11 @@ part 'loopout.g.dart';
 abstract class Loopout
     with Selectable, BuiltJsonSerializable
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
-  factory Loopout(
-          int loopout_length,
-          int prev_substrand_idx,
-          int next_substrand_idx) =>
-      Loopout.from((b) => b..loopout_length = loopout_length
-        ..prev_substrand_idx = prev_substrand_idx
-        ..next_substrand_idx = next_substrand_idx);
+  factory Loopout(int loopout_length, int prev_substrand_idx, int next_substrand_idx) => Loopout.from((b) => b
+    ..loopout_length = loopout_length
+    ..prev_substrand_idx = prev_substrand_idx
+    ..next_substrand_idx = next_substrand_idx
+    ..unused_fields = MapBuilder<String, Object>({}));
 
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
 
@@ -44,6 +43,8 @@ abstract class Loopout
   @nullable
   String get strand_id;
 
+  BuiltMap<String, Object> get unused_fields;
+
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 
   bool is_bound_substrand() => false;
@@ -59,14 +60,16 @@ abstract class Loopout
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Loopout';
     int loopout_length = util.get_value(json_map, constants.loopout_key, name);
-    return LoopoutBuilder()..loopout_length = loopout_length;
+    return LoopoutBuilder()
+      ..loopout_length = loopout_length
+      ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
   }
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
-    var json_map = {
+    Map<String, Object> json_map = {
       constants.loopout_key: this.loopout_length,
     };
+    json_map.addAll(unused_fields.toMap());
     return suppress_indent ? NoIndent(json_map) : json_map;
   }
-
 }

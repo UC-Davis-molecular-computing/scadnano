@@ -79,7 +79,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..rotation = rotation
       ..rotation_anchor = rotation_anchor
       ..min_offset = min_offset
-      ..max_offset = max_offset);
+      ..max_offset = max_offset
+      ..unused_fields = MapBuilder<String, Object>({}));
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -123,6 +124,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   @nullable
   BuiltList<int> get major_ticks;
+
+  BuiltMap<String, Object> get unused_fields;
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
@@ -240,6 +243,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       json_map[constants.major_ticks_key] = major_ticks.toList();
     }
 
+    json_map.addAll(unused_fields.toMap());
+
     json_map[constants.idx_on_helix_key] = idx;
 
     return suppress_indent ? NoIndent(json_map) : json_map;
@@ -293,6 +298,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   static HelixBuilder from_json(Map<String, dynamic> json_map) {
     var helix_builder = HelixBuilder();
+
+    helix_builder.unused_fields = util.unused_fields_map(json_map, constants.helix_keys);
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       helix_builder.major_tick_distance = json_map[constants.major_tick_distance_key];

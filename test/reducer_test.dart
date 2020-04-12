@@ -2901,6 +2901,121 @@ main() {
       expect(final_state.error_message != null, true);
       expect(final_state.dna_design == null, true);
     });
+
+    test('load and save design with unused fields', () {
+      var json_before = r"""
+      {
+        "version": "0.0.1",
+        "extra_dna_design_field": {
+          "foo_field": "foo",
+          "bar_field": "bar",
+          "foobar_field": 42,
+          "barfoo_field": [
+            11,
+            13,
+            12.4
+          ]
+        },
+        "helices": [
+          {"grid_position": [0, 0], "extra_string": "foobar", "extra_int": 12},
+          {"grid_position": [0, 1], "extra_double": 13.1213, "extra_object": {"foo": "field1", "bar": "field2", "foobar": "foo_foo"}, "extra_array": [4, 3, 2, "rand_string", {"object!": "object_field"}]}
+        ],
+        "strands": [
+          {
+            "extra_strand_field": {
+              "foo_strand_field": "foo_strand",
+              "bar_strand_field": "bar",
+              "foobar_strand_field": 42,
+              "barfoo_strand_field": [
+                11,
+                13,
+                12.4,
+                "strand_list_field"
+              ]
+            },
+            "color": "#ff0003",
+            "substrands": [
+              {"helix": 0, "forward": true, "start": 0, "end": 16}
+            ],
+            "idt": {
+              "name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
+              "unused_idt_field_foo": {
+                "foo_idt_field": "foo_idt",
+                "bar_idt_field": "bar",
+                "foobar_idt_field": 2,
+                "barfoo_idt_field": [
+                  12.4,
+                  "idt_list_field",
+                  "meow",
+                  3
+                ]
+              }
+            }
+          },
+          {
+            "color": "#000000",
+            "substrands": [
+              {"helix": 0, "forward": false, "start": 0, "end": 16}
+            ]
+          },
+          {
+            "color": "#000000",
+            "substrands": [
+              {"helix": 1, "forward": true, "start": 0, "end": 16},
+              {
+                "loopout": 3,
+                "unknown_field": "FOO"
+              },
+              {
+                "helix": 1, "forward": false, "start": 0, "end": 16,
+                "unused_bound_substrand_foo": {
+                  "foo_bound_substrand": "foo_bound_substrand_value",
+                  "bar_bound_substrand": "bar",
+                  "foobar_bound_substrand": 2,
+                  "barfoo_bound_substrand": [
+                    12.4,
+                    "bound_substrand_list_item",
+                    "meow",
+                    3
+                  ]
+                }
+              }
+            ],
+            "5prime_modification": "/5Biosg/"
+          }
+        ],
+        "modifications_in_design": {
+          "/5Biosg/": {
+            "display_text": "B",
+            "id": "/5Biosg/",
+            "idt_text": "/5Biosg/",
+            "font_size": 30,
+            "display_connector": true,
+            "location": "5'",
+            "extra_modification_field": {
+              "foo_modification_field": "foo_modification",
+              "bar_modification_field": "bar",
+              "foobar_modification_field": 42,
+              "barfoo_modification_field": [
+                11,
+                13,
+                12.4,
+                "modification_list_field"
+              ]
+            }
+          }
+        }
+      }
+      """;
+      AppState state = app_state_from_dna_design(two_helices_design);
+
+      String filename = 'two_helicies_with_unused_fields.dna';
+      AppState final_state = app_state_reducer(state, LoadDNAFile(content: json_before, filename: filename));
+      var json_map_before = json.decode(json_before);
+      var json_map_after = final_state.dna_design.to_json_serializable();
+
+      expect(json_map_before, json_map_after);
+    });
   });
 
   group('Mouseover Data tests: ', () {

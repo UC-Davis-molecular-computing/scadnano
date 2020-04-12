@@ -21,27 +21,37 @@ abstract class Modification {
 
   bool get display_connector;
 
+  BuiltMap<String, Object> unused_fields;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
-  static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) => {
-        constants.mod_display_text_key: mod.display_text,
-        constants.mod_font_size_key: mod.font_size,
-        constants.mod_display_connector_key: mod.display_connector,
-        constants.mod_id_key: mod.id,
-        if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
-      };
+  static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
+    var map = {
+      constants.mod_display_text_key: mod.display_text,
+      constants.mod_font_size_key: mod.font_size,
+      constants.mod_display_connector_key: mod.display_connector,
+      constants.mod_id_key: mod.id,
+      if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
+    };
+    map.addAll(mod.unused_fields.toMap());
+    return map;
+  }
 
   static Modification from_json(Map<String, dynamic> json_map) {
     String location = json_map[constants.mod_location_key];
+    Modification mod;
     if (location == "5'") {
-      return Modification5Prime.from_json(json_map);
+      mod = Modification5Prime.from_json(json_map);
     } else if (location == "3'") {
-      return Modification3Prime.from_json(json_map);
+      mod = Modification3Prime.from_json(json_map);
     } else if (location == "internal") {
-      return ModificationInternal.from_json(json_map);
+      mod = ModificationInternal.from_json(json_map);
     } else {
       throw IllegalDNADesignError('unknown Modification location "${location}"');
     }
+
+    mod.unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
+    return mod;
   }
 }
 
@@ -68,6 +78,8 @@ abstract class Modification5Prime
   String get idt_text;
 
   bool get display_connector;
+
+  BuiltMap<String, Object> unused_fields;
 
   @nullable
   int get font_size;
@@ -121,6 +133,8 @@ abstract class Modification3Prime
 
   @nullable
   int get font_size;
+
+  BuiltMap<String, Object> unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -178,6 +192,8 @@ abstract class ModificationInternal
 
   @nullable
   BuiltSet<String> get allowed_bases;
+
+  BuiltMap<String, Object> unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);

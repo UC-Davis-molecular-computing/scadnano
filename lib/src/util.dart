@@ -1133,3 +1133,16 @@ bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
       !is_zoom_above_threshold &&
       disable_png_cache_until_action_completes == null;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Saving unused fields
+
+/// Given a `map` and a list of `fields`, returns a `MapBuilder`
+/// with all of the fields from `fields` removed.
+MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<String> fields) {
+  var new_map = Map.from(map);
+  for (var field in fields) {
+    new_map.remove(field);
+  }
+  return MapBuilder<String, Object>(new_map);
+}

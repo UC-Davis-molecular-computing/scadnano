@@ -80,7 +80,8 @@ abstract class BoundSubstrand
       ..dna_sequence = dna_sequence
       ..strand_id = strand_id
       ..is_first = is_first
-      ..is_last = is_last);
+      ..is_last = is_last
+      ..unused_fields = MapBuilder<String, Object>({}));
   }
 
 //  static void _initializeBuilder(BoundSubstrandBuilder b) => b
@@ -121,6 +122,8 @@ abstract class BoundSubstrand
 
   @nullable
   String get strand_id;
+
+  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
@@ -177,6 +180,8 @@ abstract class BoundSubstrand
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
 
+    json_map.addAll(unused_fields.toMap());
+
     return suppress_indent ? NoIndent(json_map) : json_map;
   }
 
@@ -196,7 +201,8 @@ abstract class BoundSubstrand
       ..start = start
       ..end = end
       ..deletions = ListBuilder<int>(deletions)
-      ..insertions = ListBuilder<Insertion>(insertions);
+      ..insertions = ListBuilder<Insertion>(insertions)
+      ..unused_fields = util.unused_fields_map(json_map, constants.bound_substrand_keys);
   }
 
   static BuiltList<Insertion> parse_json_insertions(json_encoded_insertions) {
