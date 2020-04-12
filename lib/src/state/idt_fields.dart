@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 
 import '../constants.dart' as constants;
@@ -17,7 +18,8 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
         ..scale = scale
         ..purification = purification
         ..plate = plate
-        ..well = well);
+        ..well = well
+        ..unused_fields = MapBuilder<String, Object>({}));
 
   factory IDTFields.from([void Function(IDTFieldsBuilder) updates]) = _$IDTFields;
 
@@ -39,6 +41,8 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
   @nullable
   String get well;
 
+  BuiltMap<String, Object> get unused_fields;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {
       constants.idt_name_key: this.name,
@@ -51,6 +55,7 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
     if (this.well != null) {
       json_map[constants.idt_well_key] = this.well;
     }
+    json_map.addAll(unused_fields.toMap());
     return json_map;
   }
 
@@ -74,7 +79,10 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
       throw IllegalDNADesignError("cannot set IDTFields.plate to ${plate} when well is null\n"
           "this occurred when reading IDTFields entry:\n${json_map}");
     }
-    return new IDTFields(name, scale, purification, plate: plate, well: well);
+    var unused_fields = util.unused_fields_map(json_map, constants.idt_keys);
+
+    return new IDTFields(name, scale, purification, plate: plate, well: well)
+        .rebuild((b) => b.unused_fields = unused_fields);
   }
 
   tooltip() =>

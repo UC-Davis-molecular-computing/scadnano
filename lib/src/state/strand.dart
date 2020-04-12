@@ -37,7 +37,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
       ..modifications_int.replace({})
-      ..is_scaffold = is_scaffold);
+      ..is_scaffold = is_scaffold
+      ..unused_fields = MapBuilder<String, Object>({}));
 
     strand = strand.initialize();
     return strand;
@@ -137,6 +138,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
+  BuiltMap<String, Object> get unused_fields;
+
   @memoized
   BuiltMap<int, BuiltList<BoundSubstrand>> get substrands_on_helix {
     var substrands_map = Map<int, List<BoundSubstrand>>();
@@ -201,6 +204,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var json_map = Map<String, dynamic>();
+
+    json_map.addAll(unused_fields.toMap());
 
     if (this.color != null) {
       json_map[constants.color_key] = color.toHexColor().toCssString();
@@ -348,7 +353,10 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       is_scaffold = json_map[constants.is_scaffold_key];
     }
 
-    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold, dna_sequence: dna_sequence);
+    var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
+
+    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold, dna_sequence: dna_sequence)
+        .rebuild((b) => b.unused_fields = unused_fields);
 
     if (json_map.containsKey(constants.idt_key)) {
       try {

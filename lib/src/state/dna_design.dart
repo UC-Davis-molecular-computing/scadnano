@@ -32,7 +32,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
     ..helices.replace({})
-    ..strands.replace([]));
+    ..strands.replace([])
+    ..unused_fields = MapBuilder<String, Object>({}));
 
   /****************************** end built_value boilerplate ******************************/
 
@@ -46,6 +47,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
+
+  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   bool get is_origami {
@@ -399,6 +402,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {constants.version_key: this.version};
 
+    json_map.addAll(unused_fields.toMap());
+
     if (this.grid != constants.default_grid) {
 //      json_map[constants.grid_key] = grid_to_json(this.grid);
       json_map[constants.grid_key] = this.grid.to_json();
@@ -432,7 +437,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     if (!util.is_increasing(helices_view_order)) {
       var order = helices_view_order.toList();
-      json_map[constants.helices_view_order_key] = suppress_indent? NoIndent(order) : order;
+      json_map[constants.helices_view_order_key] = suppress_indent ? NoIndent(order) : order;
     }
 
     // modifications
@@ -494,6 +499,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
 
     bool grid_is_none = dna_design_builder.grid == Grid.none;
+
+    dna_design_builder.unused_fields = util.unused_fields_map(json_map, constants.dna_design_keys);
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];

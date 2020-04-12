@@ -97,6 +97,17 @@ const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 const design_modifications_key = 'modifications_in_design';
+const dna_design_keys = [
+  version_key,
+  grid_key,
+  major_tick_distance_key,
+  major_ticks_key,
+  helices_key,
+  helices_view_order_key,
+  potential_helices_key,
+  strands_key,
+  design_modifications_key,
+];
 
 // Helix keys
 const idx_on_helix_key = 'idx';
@@ -107,6 +118,16 @@ const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 const position3d_key = 'position';
+const helix_keys = [
+  idx_on_helix_key,
+  max_offset_key,
+  min_offset_key,
+  rotation_key,
+  rotation_anchor_key,
+  grid_position_key,
+  svg_position_key,
+  position3d_key,
+];
 
 // Strand keys
 const color_key = 'color';
@@ -117,6 +138,16 @@ const substrands_key = 'substrands';
 const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';
 const modifications_int_key = 'internal_modifications';
+const strand_keys = [
+  color_key,
+  dna_sequence_key,
+  idt_key,
+  is_scaffold_key,
+  substrands_key,
+  modification_5p_key,
+  modification_3p_key,
+  modifications_int_key,
+];
 
 // Modification keys
 const mod_location_key = 'location';
@@ -126,7 +157,15 @@ const mod_display_connector_key = 'display_connector';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';
-
+const modification_keys = [
+  mod_location_key,
+  mod_display_text_key,
+  mod_font_size_key,
+  mod_display_connector_key,
+  mod_id_key,
+  mod_idt_text_key,
+  mod_allowed_bases_key,
+];
 
 // IDTFields keys
 const idt_name_key = 'name';
@@ -134,17 +173,35 @@ const idt_scale_key = 'scale';
 const idt_purification_key = 'purification';
 const idt_plate_key = 'plate';
 const idt_well_key = 'well';
+const idt_keys = [
+  idt_name_key,
+  idt_scale_key,
+  idt_purification_key,
+  idt_plate_key,
+  idt_well_key,
+];
 
-// Substrand keys
+// Bound substrand keys
 const helix_idx_key = 'helix';
 const forward_key = 'forward';
 const start_key = 'start';
 const end_key = 'end';
 const deletions_key = 'deletions';
 const insertions_key = 'insertions';
+const bound_substrand_keys = [
+  helix_idx_key,
+  forward_key,
+  start_key,
+  end_key,
+  deletions_key,
+  insertions_key,
+];
 
 // Loopout keys
 const loopout_key = 'loopout';
+const loopout_keys = [
+  loopout_key,
+];
 
 ////////////////////////////////////////////////////
 /// svg-png-caching constants
