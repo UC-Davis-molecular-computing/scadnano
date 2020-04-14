@@ -635,3 +635,81 @@ html, body {
 /************************************************
 ** END SVG layout
 ************************************************/
+
+
+/************************************************
+** BEGIN Navbar
+************************************************/
+
+/* Thin the navbar */
+.navbar, .dropdown-menu, .form-control {
+    font-size: 0.8rem;
+}
+
+/* Thin the navbar */
+.navbar {
+    padding: 0rem 1rem;
+    line-height: 0.8rem;
+}
+
+/* Thicken the dropdown vertical spacing */
+.dropdown-item {
+    padding: .5rem 1.5rem;
+}
+
+/* Since the dropdowns are links, need to overwrite default colors */
+.nav-link:hover {
+    color: rgba(0,0,0);
+}
+
+.nav-link {
+    color: rgba(0,0,0, 0.5);
+}
+
+/* View checkmarks appear on one line */
+#view-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
+/* Style dropdown item of selected grid as well as newly clicked on grid */
+#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #686868;
+}
+
+/* Hides input of Open (only display the label) */
+#open-form-file {
+    display: none;
+}
+
+/* Styles the label like a DropdownItem */
+#open-form-file + .custom-file-label {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    margin-bottom: 0%; /* Removes label browser default */
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+/* Styles the label like a DropdownItem (on hover) */
+#open-form-file + .custom-file-label:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Hides the data-browse psuedo-element. */
+#open-form-file + .custom-file-label::after {
+    content: none;
+}
+
+/************************************************
+** END Navbar
+************************************************/

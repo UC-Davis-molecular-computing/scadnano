@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scadnano</title>
 
+    <link rel="stylesheet" href="bootstrap.min.css">
+
     <link href="packages/codemirror/codemirror.css" rel="stylesheet">
     <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
     <link rel="stylesheet" href="scadnano-styles.css">
@@ -156,22 +158,10 @@
         return allow;
     }
 
-    // This is needed to prevent zooming unless Alt key is pressed
-    function before_zoom(oldZoom, newZoom) {
-        var allow = true;
-        if (document.body.classList.contains('dnd-drag-occurring')) {
-            allow = false;
-        }
-        if (!allow_zoom) {
-            allow = false;
-        }
-        return allow;
-    }
-
     var main_view_svg_pan_zoom;
     var side_view_svg_pan_zoom;
 
-    function setup_svg_panzoom() {
+    function setup_svg_panzoom(svg_cache_callback, dispatch_zoom_threshold_callback, zoom_threshold) {
         var eventsHandler;
 
         eventsHandler = {
@@ -282,6 +272,35 @@
             zoom_speed = 0.06;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // svg-png-caching
+
+        function on_zoom(newZoom) {
+            if (newZoom < 1 && svg_cache_callback) {
+                svg_cache_callback();
+            }
+        }
+
+        // This is needed to prevent zooming unless Alt key is pressed
+        function before_zoom(oldZoom, newZoom) {
+            var allow = true;
+            if (document.body.classList.contains('dnd-drag-occurring')) {
+                allow = false;
+            }
+            if (!allow_zoom) {
+                allow = false;
+            }
+
+            // Detects if zoom threshold will be crossed.
+            if (allow) {
+                if (oldZoom >= zoom_threshold && newZoom < zoom_threshold) {
+                    dispatch_zoom_threshold_callback(false);
+                } else if (oldZoom < zoom_threshold && newZoom >= zoom_threshold) {
+                    dispatch_zoom_threshold_callback(true);
+                }
+            }
+            return allow;
+        }
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
@@ -302,6 +321,7 @@
             maxZoom: 20,
             beforePan: before_pan,
             beforeZoom: before_zoom,
+            onZoom: on_zoom,
             dblClickZoomEnabled: false,
             customEventsHandler: eventsHandler,
             fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
@@ -468,9 +488,24 @@
 
 </script>
 
-<script src="main.dart.js"></script>
-
 <!--<script type="text/python" src="compile_script.py"></script>-->
+
+<script src="external-libs/react-bootstrap.js"></script>
+
+<script>
+// Add components to global namespace.
+// React interop cannot access nested components (components that are fields of another React component)
+// Thus, any nested components needs to be added to the global namespace
+// by assigning it as a member to ReactBoostrap.
+// In general the line will look something like
+//
+// ```
+// ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
+// ```
+ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
+</script>
+
+<script src="main.dart.js"></script>
 
 </body>
 
