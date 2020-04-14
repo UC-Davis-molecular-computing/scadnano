@@ -532,8 +532,9 @@ class DesignViewComponent {
       );
 
       if (!svg_panzoom_has_been_set_up) {
-        setup_svg_panzoom_js(
-            util.svg_to_png_data, util.dispatch_set_zoom_threshold, constants.ZOOM_THRESHOLD);
+        // Need to wrap callbacks so that Dart functions can be called in JavaScript.
+        setup_svg_panzoom_js(allowInterop(util.svg_to_png_data),
+            allowInterop(util.dispatch_set_zoom_threshold), constants.ZOOM_THRESHOLD);
         svg_panzoom_has_been_set_up = true;
       }
     }
