@@ -288,44 +288,65 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
 ## Menu
 
-The menu layout is currently hacky and will [change to something more elegant in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/63).
+The menu layout is subject to change. Under various
 
-* **Export DNA:**
-  Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
+* File
+  * **Load example:** Some pre-made example designs can be loaded.
 
-* **Save:**
-  Saves the current design in a .dna file. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
+  * **Open:**
+  Loads a `.dna` file from your local computer. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
 
-* **Load:**
-  Loads a .dna file. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+  * **Save:**
+  Saves the current design in a `.dna` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-* **Export SVG:**
-  Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
+* Edit
+  * **Undo/Redo:** Undo or redo the last edit that was made to the design.
 
-  SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with [Inkscape](https://inkscape.org/), a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.
+  * **Inline insertions/deletions:**
+    The "Inline I/D" button "inlines" insertions and deletions in the following way.
+    Insertions and deletions are removed, and their substrands have their lengths altered. 
+    Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. 
+    For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, 
+    then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.
 
-  If you [report a bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues) with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.
+    We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
+    e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
-* **show DNA:**
-  Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
+    *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.
+  
+* View
 
-* **show mismatches:**
-  Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using either the web interface or the Python scripting library, it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
+  * **show DNA sequences:**
+    Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
 
-* **Inline insertions/deletions:**
-  The "Inline I/D" button "inlines" insertions and deletions in the following way.
-  Insertions and deletions are removed, and their substrands have their lengths altered. 
-  Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. 
-  For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, 
-  then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.
+  * **show DNA modifications:**
+    Shows any modifications to the DNA (e.g., biotin, fluorophore attachments). Currently only a string representation of the modification is shown, but in the future support is [planned](https://github.com/UC-Davis-molecular-computing/scadnano/issues/226) for showing images.
 
-  We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
-  e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
+  * **show DNA base mismatches:**
+    Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using either the web interface or the Python scripting library, it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
 
-  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.
+  * **auto-fit on loading new design:**
+    When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
 
-* **grid:**
+
+* Grid
   The grid type can be changed to square, honeycomb, hex, or none. When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
+
+
+* Export
+
+  * **DNA sequences:**
+    Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
+
+
+
+  * **Export SVG:**
+    Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
+
+    SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with [Inkscape](https://inkscape.org/), a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.
+
+    If you [report a bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues) with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.
+
 
 
 ## Edit modes
