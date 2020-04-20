@@ -10,6 +10,12 @@ The design will look like this when we are done:
 
 The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) readable by scadnano.
 
+
+## Note about interface
+
+The visual interface for scadnano is somewhat in flux. As a result, some of the screenshots in this tutorial, and some of the names of menu items, have changed since this tutorial was released. The functionality is all still there, but you may have to search around a bit in the menu to find it. Once the interface has stabilized a bit more, this tutorial will be updated to contain screenshots from the latest version of scadnano.
+
+
 ## Start
 
 Open scadnano in your browser:
