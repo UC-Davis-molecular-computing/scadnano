@@ -342,7 +342,7 @@ looking at before changing the script.'''
               app.disable_keyboard_shortcuts_while(export_dna);
             },
           },
-          'SVG DNA',
+          'DNA sequences',
         ),
       ),
       NavDropdown(
