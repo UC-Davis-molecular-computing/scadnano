@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/adjust_grid_position.dart';
+import 'package:scadnano/src/middleware/export_cadnano_file.dart';
 
 //import 'thunk.dart';
 import 'assign_dna.dart';
@@ -26,6 +27,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
+  export_cadnano_file_middleware,
   example_dna_design_selected_middleware,
   throttle_middleware,
   assign_dna_middleware,

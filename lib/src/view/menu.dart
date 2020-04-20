@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:html';
+import 'package:http/http.dart' as http;
 
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
@@ -9,6 +11,7 @@ import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:scadnano/src/view/react_bootstrap.dart';
+import 'package:scadnano/src/constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import '../app.dart';
@@ -88,6 +91,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         FormFile(
           {
             'id': 'open-form-file',
+            'className': 'form-file-dropdown',
             'accept': ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(","),
             // If the user selects the same filename as last time they used the fileLoader,
             // we still want to reload the file (it may have changed).
@@ -97,7 +101,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
               (e.target).value = null;
             },
             'onChange': (e) {
-              request_load_file_from_file_chooser(e.target);
+              request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
             },
             'label': '📂 Open...',
             'custom': 'false',
@@ -111,6 +115,34 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           '💾 Save...',
+        ),
+        DropdownDivider({}),
+        FormFile(
+          {
+            'id': 'import-cadnano-form-file',
+            'className': 'form-file-dropdown',
+            'accept': '.json',
+            // If the user selects the same filename as last time they used the fileLoader,
+            // we still want to reload the file (it may have changed).
+            // But if we don't set (e.target).value to null, if the user selects the same filename,
+            // then the onChange event won't fire and we won't reload the file.
+            'onClick': (e) {
+              (e.target).value = null;
+            },
+            'onChange': (e) {
+              request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
+            },
+            'label': 'Import cadnano v2',
+            'custom': 'false',
+          },
+        ),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              props.dispatch(actions.ExportCadnanoFile());
+            },
+          },
+          'Export cadnano v2',
         ),
       ),
       NavDropdown(
@@ -389,7 +421,8 @@ looking at before changing the script.'''
   }
 }
 
-request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
+request_load_file_from_file_chooser(
+    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
   File file = files[0];
@@ -400,14 +433,32 @@ request_load_file_from_file_chooser(FileUploadInputElement file_chooser) {
   FileReader file_reader = new FileReader();
   //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
   // and what is done in file_loaded should be another Action.
-  file_reader.onLoad.listen((_) => file_loaded(file_reader, basefilename));
+  file_reader.onLoad.listen((_) => onload_callback(file_reader, basefilename));
   var err_msg = "error reading file: ${file_reader.error.toString()}";
   //file_reader.onError.listen((e) => error_message.text = err_msg);
   file_reader.onError.listen((_) => window.alert(err_msg));
   file_reader.readAsText(file);
 }
 
-file_loaded(FileReader file_reader, String filename) {
+scadnano_file_loaded(FileReader file_reader, String filename) {
   var json_model_text = file_reader.result;
   app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+}
+
+cadnano_file_loaded(FileReader file_reader, String filename) async {
+  var json_cadnano_text = file_reader.result;
+  var response = await http.post(
+    constants.import_url,
+    body: json_cadnano_text,
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    var json_model_text = response.body;
+    filename = path.setExtension(filename, '.dna');
+    app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
+  } else {
+    Map response_body_json = jsonDecode(response.body);
+    window.alert('Error importing file: ${response_body_json['error']}');
+  }
 }

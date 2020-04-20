@@ -219,3 +219,8 @@ const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
 
 // Zoom threshold used for caching the svg as png.
 const num ZOOM_THRESHOLD = 1;
+
+/////////////////////////////////////////////////////////////
+// Backend
+const export_url = 'https://dna.hamilton.ie/scadnano-backend/scadnano_to_cadnano_v2';
+const import_url = 'https://dna.hamilton.ie/scadnano-backend/cadnano_v2_to_scadnano';
