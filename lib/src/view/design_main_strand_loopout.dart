@@ -41,7 +41,7 @@ part 'design_main_strand_loopout.over_react.g.dart';
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
 @Props()
-class _$DesignMainLoopoutProps extends EditModePropsAbstract {
+mixin DesignMainLoopoutPropsMixin on UiProps {
   Loopout loopout;
   Strand strand;
   Color color;
@@ -56,16 +56,16 @@ class _$DesignMainLoopoutProps extends EditModePropsAbstract {
   BuiltMap<int, Helix> helices;
 }
 
+class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, EditModePropsMixin;
+
 @State()
-class _$DesignMainStrandLoopoutState extends UiState {
+mixin DesignMainLoopoutState on UiState {
   // making this "local" state for the component (instead of storing in the global store)
   // skips wasteful actions and updating the state just to tell if the mouse is hovering over a loopout
   bool mouse_hover;
 }
 
-@Component2()
-class DesignMainLoopoutComponent
-    extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainStrandLoopoutState>
+class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
     with PureComponent, EditModeQueryable<DesignMainLoopoutProps> {
   @override
   Map get initialState => (newState()..mouse_hover = false);
@@ -205,8 +205,8 @@ class DesignMainLoopoutComponent
 
     int top_offset = top_ss_is_prev ? top_ss.offset_3p : top_ss.offset_5p;
     int bot_offset = top_ss_is_prev ? bot_ss.offset_5p : bot_ss.offset_3p;
-    int prev_offset = top_ss_is_prev? top_offset: bot_offset;
-    int next_offset = top_ss_is_prev? bot_offset: top_offset;
+    int prev_offset = top_ss_is_prev ? top_offset : bot_offset;
+    int next_offset = top_ss_is_prev ? bot_offset : top_offset;
 
 //    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
 //    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);

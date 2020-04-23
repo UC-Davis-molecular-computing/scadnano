@@ -9,16 +9,16 @@ part 'design_main_mouseover_rect_helices.over_react.g.dart';
 const _ID = 'mouseover-rectangle-main-view';
 const _CLASS = 'mouseover-rectangle-main-view';
 
-@Factory()
+
 UiFactory<DesignMainMouseoverRectHelicesProps> DesignMainMouseoverRectHelices =
     _$DesignMainMouseoverRectHelices;
 
-@Props()
-class _$DesignMainMouseoverRectHelicesProps extends UiProps { // FluxUiProps<HelicesStore, HelicesStore> {
+
+mixin DesignMainMouseoverRectHelicesProps on UiProps { // FluxUiProps<HelicesStore, HelicesStore> {
   BuiltMap<int, Helix> helices;
 }
 
-@Component2()
+
 class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMouseoverRectHelicesProps> { // FluxUiComponent<DesignMainMouseoverRectHelicesProps> {
 
   @override

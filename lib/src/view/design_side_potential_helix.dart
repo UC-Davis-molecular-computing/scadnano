@@ -12,17 +12,17 @@ import '../actions/actions.dart' as actions;
 
 part 'design_side_potential_helix.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignSidePotentialHelixProps> DesignSidePotentialHelix = _$DesignSidePotentialHelix;
 
-@Props()
-class _$DesignSidePotentialHelixProps extends UiProps {
+
+mixin DesignSidePotentialHelixProps on UiProps {
   Grid grid;
   GridPosition grid_position;
   Point<num> mouse_svg_pos;
 }
 
-@Component2()
+
 class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotentialHelixProps> {
   @override
   render() {

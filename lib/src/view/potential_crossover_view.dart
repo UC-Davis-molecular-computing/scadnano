@@ -15,16 +15,16 @@ UiFactory<PotentialCrossoverViewProps> ConnectedPotentialCrossoverView =
   context: app.context_potential_crossover,
 )(PotentialCrossoverView);
 
-@Factory()
+
 UiFactory<PotentialCrossoverViewProps> PotentialCrossoverView = _$PotentialCrossoverView;
 
-@Props()
-class _$PotentialCrossoverViewProps extends UiProps {
+
+mixin PotentialCrossoverViewProps on UiProps {
   PotentialCrossover potential_crossover;
   String id;
 }
 
-@Component2()
+
 class PotentialCrossoverViewComponent extends UiComponent2<PotentialCrossoverViewProps> {
   @override
   render() {

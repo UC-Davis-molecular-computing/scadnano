@@ -9,18 +9,18 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_modification_bound_substrand.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainStrandModificationBoundSubstrandProps> DesignMainStrandModificationBoundSubstrand =
     _$DesignMainStrandModificationBoundSubstrand;
 
-@Props()
-class _$DesignMainStrandModificationBoundSubstrandProps extends UiProps {
+
+mixin DesignMainStrandModificationBoundSubstrandProps on UiProps {
   Address address;
   Helix helix;
   Modification modification;
 }
 
-@Component2()
+
 class DesignMainStrandModificationBoundSubstrandComponent
     extends UiComponent2<DesignMainStrandModificationBoundSubstrandProps> {
   @override

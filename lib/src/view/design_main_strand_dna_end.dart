@@ -42,7 +42,7 @@ UiFactory<DesignMainDNAEndProps> ConnectedDesignMainDNAEnd = connect<AppState, D
 UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
-class _$DesignMainDNAEndProps extends EditModePropsAbstract {
+mixin DesignMainDNAEndPropsMixin on UiProps {
   BoundSubstrand substrand;
   Color color;
   bool is_5p;
@@ -54,6 +54,8 @@ class _$DesignMainDNAEndProps extends EditModePropsAbstract {
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
+
+class DesignMainDNAEndProps = UiProps with EditModePropsMixin, DesignMainDNAEndPropsMixin;
 
 @Component2()
 class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>

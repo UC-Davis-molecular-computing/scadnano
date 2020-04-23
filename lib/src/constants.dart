@@ -5,8 +5,10 @@ import 'package:platform_detect/platform_detect.dart';
 import 'state/grid.dart';
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded. Try loading an example from the list above,\n'
-    'or click "Choose file" to load a .dna file from your local drive.';
+const NO_DNA_DESIGN_MESSAGE =
+    'No DNA Design loaded.\n'
+    'Try loading an example by selecting File --> Load example,\n'
+    'or select File --> Open... to load a .dna file from your local drive.';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
@@ -219,3 +221,8 @@ const int DNA_SEQUENCE_HORIZONTAL_OFFSET = 50;
 
 // Zoom threshold used for caching the svg as png.
 const num ZOOM_THRESHOLD = 1;
+
+/////////////////////////////////////////////////////////////
+// Backend
+const export_url = 'https://dna.hamilton.ie/scadnano-backend/scadnano_to_cadnano_v2';
+const import_url = 'https://dna.hamilton.ie/scadnano-backend/cadnano_v2_to_scadnano';

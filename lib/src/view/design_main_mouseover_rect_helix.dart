@@ -35,18 +35,18 @@ UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHel
     ..mouseover_datas = mouseover_datas;
 })(DesignMainMouseoverRectHelix);
 
-@Factory()
+
 UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$DesignMainMouseoverRectHelix;
 
-@Props()
-class _$DesignMainMouseoverRectHelixProps extends UiProps {
+
+mixin DesignMainMouseoverRectHelixProps on UiProps {
   int helix_idx;
   Helix helix;
   bool show;
   BuiltList<MouseoverData> mouseover_datas;
 }
 
-@Component2()
+
 class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {

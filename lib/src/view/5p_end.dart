@@ -20,11 +20,11 @@ abstract class EndEitherPrimeProps implements UiProps {
   String id;
 }
 
-@Factory()
+
 UiFactory<End5PrimeProps> End5Prime = _$End5Prime;
 
-@Props()
-class _$End5PrimeProps extends UiProps implements EndEitherPrimeProps {
+
+mixin End5PrimeProps on UiProps implements EndEitherPrimeProps {
   PointerDownUpHandler on_pointer_down;
   PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
@@ -35,7 +35,7 @@ class _$End5PrimeProps extends UiProps implements EndEitherPrimeProps {
   String id;
 }
 
-@Component2()
+
 class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
   @override
   render() {

@@ -29,11 +29,11 @@ UiFactory<EndMovingProps> ConnectedEndMoving = connect<DNAEndsMove, EndMovingPro
   context: app.context_dna_ends_move,
 )(EndMoving);
 
-@Factory()
+
 UiFactory<EndMovingProps> EndMoving = _$EndMoving;
 
-@Props()
-class _$EndMovingProps extends UiProps {
+
+mixin EndMovingProps on UiProps {
   DNAEnd dna_end;
   Helix helix;
   Color color;
@@ -45,7 +45,7 @@ class _$EndMovingProps extends UiProps {
   bool render;
 }
 
-@Component2()
+
 class EndMovingComponent extends UiComponent2<EndMovingProps> {
   @override
   get defaultProps => (newProps()

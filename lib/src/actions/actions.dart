@@ -381,6 +381,17 @@ abstract class LoadDNAFile
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
 }
 
+abstract class ExportCadnanoFile
+    with BuiltJsonSerializable
+    implements Action, Built<ExportCadnanoFile, ExportCadnanoFileBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportCadnanoFile([void Function(ExportCadnanoFileBuilder) updates]) = _$ExportCadnanoFile;
+
+  ExportCadnanoFile._();
+
+  static Serializer<ExportCadnanoFile> get serializer => _$exportCadnanoFileSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouseover data (main view)
 

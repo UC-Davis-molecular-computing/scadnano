@@ -21,18 +21,18 @@ import 'pure_component.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
 
-@Props()
-class _$DesignMainHelixProps extends UiProps {
+
+mixin DesignMainHelixProps on UiProps {
   Helix helix;
   int view_order;
   bool strand_create_enabled;
   int design_major_tick_distance;
 }
 
-@Component2()
+
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
   render() {

@@ -17,17 +17,17 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
 })(DesignMainStrandsMoving);
 
-@Factory()
+
 UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainStrandsMoving;
 
-@Props()
-class _$DesignMainStrandsMovingProps extends UiProps {
+
+mixin DesignMainStrandsMovingProps on UiProps {
   StrandsMove strands_move;
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
 }
 
-@Component2()
+
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {
   @override
   render() {

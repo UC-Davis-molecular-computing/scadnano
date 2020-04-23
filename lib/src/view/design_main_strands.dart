@@ -32,11 +32,11 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default;
 })(DesignMainStrands);
 
-@Factory()
+
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 
-@Props()
-class _$DesignMainStrandsProps extends UiProps {
+
+mixin DesignMainStrandsProps on UiProps {
   BuiltList<Strand> strands;
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
@@ -52,7 +52,7 @@ class _$DesignMainStrandsProps extends UiProps {
   bool warn_on_change_strand_dna_assign_default;
 }
 
-@Component2()
+
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
   bool origami_type_is_selectable(Strand strand) {
     if (!props.is_origami) {

@@ -7,11 +7,11 @@ import '5p_end.dart';
 
 part '3p_end.over_react.g.dart';
 
-@Factory()
+
 UiFactory<End3PrimeProps> End3Prime = _$End3Prime;
 
-@Props()
-class _$End3PrimeProps extends UiProps implements EndEitherPrimeProps {
+
+mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   PointerDownUpHandler on_pointer_down;
   PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
@@ -22,7 +22,7 @@ class _$End3PrimeProps extends UiProps implements EndEitherPrimeProps {
   String id;
 }
 
-@Component2()
+
 class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
   @override
   render() {

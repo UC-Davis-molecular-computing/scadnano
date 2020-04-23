@@ -2,11 +2,11 @@ import 'package:over_react/over_react.dart';
 
 part 'svg_button.over_react.g.dart';
 
-@Factory()
+
 UiFactory<SvgButtonProps> SvgButton = _$SvgButton;
 
-@Props()
-class _$SvgButtonProps extends UiProps {
+
+mixin SvgButtonProps on UiProps {
   num x;
   num y;
   num width;
@@ -17,7 +17,7 @@ class _$SvgButtonProps extends UiProps {
   String id;
 }
 
-@Component2()
+
 class SvgButtonComponent extends UiComponent2<SvgButtonProps> {
   @override
   render() {

@@ -3,17 +3,17 @@ import 'package:over_react/over_react.dart';
 
 part 'design_side_rotation_arrow.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignSideRotationArrowProps> DesignSideRotationArrow = _$DesignSideRotationArrow;
 
-@Props()
-class _$DesignSideRotationArrowProps extends UiProps {
+
+mixin DesignSideRotationArrowProps on UiProps {
   double angle_degrees;
   double radius;
   String color;
 }
 
-@Component2()
+
 class DesignSideRotationArrowComponent extends UiComponent2<DesignSideRotationArrowProps> {
 
   @override

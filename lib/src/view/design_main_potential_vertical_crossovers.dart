@@ -7,17 +7,17 @@ import 'design_main_potential_vertical_crossover.dart';
 
 part 'design_main_potential_vertical_crossovers.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainPotentialVerticalCrossoversProps> DesignMainPotentialVerticalCrossovers =
     _$DesignMainPotentialVerticalCrossovers;
 
-@Props()
-class _$DesignMainPotentialVerticalCrossoversProps extends UiProps {
+
+mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltMap<int, Helix> helices;
 }
 
-@Component2()
+
 class DesignMainPotentialVerticalCrossoversComponent
     extends UiComponent2<DesignMainPotentialVerticalCrossoversProps> {
   @override

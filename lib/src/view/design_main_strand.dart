@@ -44,7 +44,7 @@ part 'design_main_strand.over_react.g.dart';
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
 @Props()
-class _$DesignMainStrandProps extends EditModePropsAbstract {
+mixin DesignMainStrandPropsMixin on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
 
@@ -62,6 +62,8 @@ class _$DesignMainStrandProps extends EditModePropsAbstract {
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
 }
+
+class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
 
 @Component2()
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>

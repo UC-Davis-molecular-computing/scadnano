@@ -9,11 +9,11 @@ import '5p_end.dart';
 
 part 'design_main_strand_creating.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainStrandCreatingProps> DesignMainStrandCreating = _$DesignMainStrandCreating;
 
-@Props()
-class _$DesignMainStrandCreatingProps extends UiProps {
+
+mixin DesignMainStrandCreatingProps on UiProps {
   Helix helix;
   bool forward;
   int start;
@@ -21,7 +21,7 @@ class _$DesignMainStrandCreatingProps extends UiProps {
   Color color;
 }
 
-@Component2()
+
 class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCreatingProps> {
   @override
   render() {

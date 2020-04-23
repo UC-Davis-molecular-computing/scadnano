@@ -27,14 +27,13 @@ dependencies:
   redux: ^3.0.0
   reselect: ^0.4.0
   react: ^5.1.0
-  over_react: ^3.1.0
+  over_react: ^3.5.0
 
 dev_dependencies:
   built_value_generator: ^7.0.0
   build_runner: ^1.6.2
   build_test: ^0.10.3
-  build_web_compilers: ^2.3.0
-  over_react_test: ^2.0.0
+  build_web_compilers: ^2.3.0  over_react_test: ^2.9.0
   test_html_builder: ^1.0.0
   redux_dev_tools: ^0.4.0
 
