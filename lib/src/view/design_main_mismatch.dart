@@ -7,16 +7,16 @@ import '../constants.dart' as constants;
 
 part 'design_main_mismatch.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainMismatchProps> DesignMainMismatch = _$DesignMainMismatch;
 
-@Props()
-class _$DesignMainMismatchProps extends UiProps {
+
+mixin DesignMainMismatchProps on UiProps {
   Point<num> base_svg_pos;
   bool forward;
 }
 
-@Component2()
+
 class DesignMainMismatchComponent extends UiComponent2<DesignMainMismatchProps> {
   @override
   render() {

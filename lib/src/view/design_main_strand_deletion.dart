@@ -17,12 +17,14 @@ part 'design_main_strand_deletion.over_react.g.dart';
 UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMainStrandDeletion;
 
 @Props()
-class _$DesignMainStrandDeletionProps extends EditModePropsAbstract {
+mixin DesignMainStrandDeletionPropsMixin on UiProps {
   BoundSubstrand substrand;
   int deletion;
   Helix helix;
   BuiltSet<EditModeChoice> edit_modes;
 }
+
+class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin, EditModePropsMixin;
 
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>

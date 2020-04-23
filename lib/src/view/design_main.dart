@@ -31,7 +31,7 @@ part 'design_main.over_react.g.dart';
 
 final USING_REACT_DND = false;
 
-UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMainProps>(
+UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainProps>(
   mapStateToProps: (state) {
     if (state.has_error()) {
       return (DesignMain()..has_error = true);
@@ -60,7 +60,7 @@ UiFactory<_$DesignMainProps> ConnectedDesignMain = connect<AppState, _$DesignMai
 UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
-class _$DesignMainProps extends EditModePropsAbstract {
+mixin DesignMainPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
@@ -78,8 +78,14 @@ class _$DesignMainProps extends EditModePropsAbstract {
   bool is_zoom_above_threshold;
 }
 
+@Props()
+class DesignMainProps = UiProps with EditModePropsMixin, DesignMainPropsMixin;
+
 @Component2()
 class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQueryable<DesignMainProps> {
+  @override
+  get consumedProps => propsMeta.forMixins({DesignMainPropsMixin});
+
   @override
   render() {
     if (props.has_error) {

@@ -8,18 +8,18 @@ import '../state/helix.dart';
 
 part 'design_main_helices.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
 
-@Props()
-class _$DesignMainHelicesProps extends UiProps {
+
+mixin DesignMainHelicesProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
   bool strand_create_enabled;
   int design_major_tick_distance;
 }
 
-@Component2()
+
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
   @override
   render() {

@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
-import 'package:over_react/over_react.dart';
-import 'package:over_react/src/component/error_boundary_mixins.dart';
+import 'package:over_react/over_react.dart' hide ErrorBoundaryState, ErrorBoundaryProps;
+import 'package:over_react/src/component/error_boundary.dart';
+import 'package:over_react/src/component/error_boundary_api.dart';
 import 'package:over_react/src/component/error_boundary_recoverable.dart';
 
 import '../constants.dart' as constants;
@@ -11,12 +12,14 @@ part 'design_main_error_boundary.over_react.g.dart';
 UiFactory<DesignMainErrorBoundaryProps> DesignMainErrorBoundary = _$DesignMainErrorBoundary;
 
 @Props()
-class _$DesignMainErrorBoundaryProps extends UiProps with ErrorBoundaryPropsMixin {}
+class DesignMainErrorBoundaryProps = UiProps with ErrorBoundaryProps;
 
-@State()
-class _$DesignMainErrorBoundaryState extends UiState with ErrorBoundaryStateMixin {
+mixin DesignMainErrorBoundaryStateMixin on UiState {
   dynamic error;
 }
+
+@State()
+class DesignMainErrorBoundaryState = UiState with ErrorBoundaryState, DesignMainErrorBoundaryStateMixin;
 
 @Component2(isWrapper: true, isErrorBoundary: true)
 class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
@@ -60,9 +63,9 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
           'Please file a bug report as a GitHub issue at\n'
           '  ${constants.BUG_REPORT_URL}\n'
           'and include the following information:\n\n'
-          '${error.toString()}\n\nstack trace:\n${error.stackTrace}'  //escaper.convert(
-    //  )
-    ;
+          '${error.toString()}\n\nstack trace:\n${error.stackTrace}' //escaper.convert(
+          //  )
+          ;
 
       return
 //        (Dom.div()
@@ -72,8 +75,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
             ..x = "0"
             ..y = "0"
             ..width = "100%"
-            ..height = "100%"
-          )(
+            ..height = "100%")(
         (Dom.div()..className = 'error-message')(
           (Dom.pre()..className = 'error-pre')(
             escaped_error_message,
@@ -99,7 +101,7 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
     }
   }
 
-  /// Resets the [ErrorBoundary] to a non-error state.
+  /// Resets the [ErrorBoundaryState] to a non-error state.
   ///
   /// This can be called manually on the component instance using a `ref` -
   /// or by passing in a new child instance after a child has thrown an error.

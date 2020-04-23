@@ -37,11 +37,11 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   forwardRef: true,
 )(Menu);
 
-@Factory()
+
 UiFactory<MenuProps> Menu = _$Menu;
 
-@Props()
-class _$MenuProps extends UiProps with ConnectPropsMixin {
+
+mixin MenuPropsMixin on UiProps  {
   bool show_dna;
   bool show_modifications;
   bool show_mismatches;
@@ -53,8 +53,14 @@ class _$MenuProps extends UiProps with ConnectPropsMixin {
   bool redo_stack_empty;
 }
 
-@Component2()
-class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
+
+class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
+
+
+class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {              
+              @override
+              get consumedProps => propsMeta.forMixins({MenuPropsMixin});
+            
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
   // If not, then the onChange event won't fire and we won't reload the file.

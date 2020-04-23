@@ -14,15 +14,15 @@ UiFactory<DesignContextMenuProps> ConnectedDesignContextMenu =
   return DesignContextMenu()..context_menu = state.ui_state.context_menu;
 })(DesignContextMenu);
 
-@Factory()
+
 UiFactory<DesignContextMenuProps> DesignContextMenu = _$DesignContextMenu;
 
-@Props()
-class _$DesignContextMenuProps extends UiProps {
+
+mixin DesignContextMenuProps on UiProps {
   ContextMenu context_menu;
 }
 
-@Component2()
+
 class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> with PureComponent {
   @override
   render() {

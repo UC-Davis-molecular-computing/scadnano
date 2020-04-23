@@ -36,13 +36,13 @@ part 'design_main_strand_paths.over_react.g.dart';
 //    ..moving_dna_ends = state.ui_state.moving_dna_ends),
 //)(DesignMainStrandPaths);
 
-@Factory()
+
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
 
 
 
-@Props()
-class _$DesignMainStrandPathsProps extends UiProps {
+
+mixin DesignMainStrandPathsProps on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
 
@@ -57,7 +57,7 @@ class _$DesignMainStrandPathsProps extends UiProps {
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
-@Component2()
+
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> with PureComponent {
   @override
   render() {

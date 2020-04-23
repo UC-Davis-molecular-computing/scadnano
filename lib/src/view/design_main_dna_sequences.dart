@@ -12,11 +12,11 @@ import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
 
-@Props()
-class _$DesignMainDNASequencesProps extends UiProps {
+
+mixin DesignMainDNASequencesProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
@@ -25,7 +25,7 @@ class _$DesignMainDNASequencesProps extends UiProps {
   actions.Action disable_png_cache_until_action_completes;
 }
 
-@Component2()
+
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
   /// This method is used to handle the `disable_png_cache_until_action_completes` prop.
   /// If this prop is not null, then it dispatches the prop action before disabling it.

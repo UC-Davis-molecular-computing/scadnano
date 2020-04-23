@@ -12,11 +12,11 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand_moving.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainStrandMovingProps> DesignMainStrandMoving = _$DesignMainStrandMoving;
 
-@Props()
-class _$DesignMainStrandMovingProps extends UiProps {
+
+mixin DesignMainStrandMovingProps on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltMap<int, Helix> helices;
@@ -26,7 +26,7 @@ class _$DesignMainStrandMovingProps extends UiProps {
   bool allowable;
 }
 
-@Component2()
+
 class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovingProps> {
   @override
   render() {

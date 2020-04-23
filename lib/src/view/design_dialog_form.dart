@@ -15,20 +15,17 @@ UiFactory<DesignDialogFormProps> ConnectedDesignDialogForm = connect<AppState, D
   },
 )(DesignDialogForm);
 
-@Factory()
 UiFactory<DesignDialogFormProps> DesignDialogForm = _$DesignDialogForm;
 
-@Props()
-class _$DesignDialogFormProps extends UiProps {
+mixin DesignDialogFormProps on UiProps {
   Dialog dialog; // these are INITIAL values only
 }
 
 @State()
-class _$DesignDialogFormState extends UiState {
+mixin DesignDialogFormState on UiState {
   BuiltList<DialogItem> responses; // these are UPDATED as user changes form inputs
 }
 
-@Component2()
 class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormProps, DesignDialogFormState> {
   @override
   Map getDerivedStateFromProps(Map nextPropsUntyped, Map prevStateUntyped) {
@@ -209,7 +206,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       int radio_idx = 0;
       List<ReactElement> components = [];
       for (var option in item.options) {
-        components.add((Dom.br()..key='br-$radio_idx')());
+        components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.input()
           ..type = 'radio'
           ..id = 'radio-example-filename-${radio_idx}'
@@ -228,7 +225,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         components.add((Dom.label()..key = 'label-$radio_idx')(option));
         radio_idx++;
       }
-      return (Dom.div()..className='radio-left')('${item.label}: ', components);
+      return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
     }
     return null;
   }

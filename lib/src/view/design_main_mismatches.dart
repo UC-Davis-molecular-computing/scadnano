@@ -9,16 +9,16 @@ import 'design_main_mismatch.dart';
 
 part 'design_main_mismatches.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainMismatchesProps> DesignMainMismatches = _$DesignMainMismatches;
 
-@Props()
-class _$DesignMainMismatchesProps extends UiProps {
+
+mixin DesignMainMismatchesProps on UiProps {
   bool show_mismatches;
   BuiltList<Strand> strands;
 }
 
-@Component2()
+
 class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> {
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {

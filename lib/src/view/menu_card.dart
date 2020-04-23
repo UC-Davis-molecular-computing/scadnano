@@ -5,20 +5,17 @@ part 'menu_card.over_react.g.dart';
 //TODO: come back to this, or just use an existing React implementation, e.g.,
 // https://react-bootstrap.github.io/components/dropdowns/
 
-@Factory()
 UiFactory<MenuCardProps> MenuCard = _$MenuCard;
 
-@Props()
-class _$MenuCardProps extends UiProps {
+mixin MenuCardProps on UiProps {
   List<MenuItem> items;
 }
 
 @State()
-class _$MenuCardState extends UiState {
+mixin MenuCardState on UiState {
   bool show;
 }
 
-@Component2()
 class MenuCardComponent extends UiStatefulComponent2<MenuCardProps, MenuCardState> {
   @override
   Map get defaultProps => (newProps()..items = []);

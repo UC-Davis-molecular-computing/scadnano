@@ -11,17 +11,17 @@ import '../constants.dart' as constants;
 
 part 'design_main_potential_vertical_crossover.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainPotentialVerticalCrossoverProps> DesignMainPotentialVerticalCrossover =
     _$DesignMainPotentialVerticalCrossover;
 
-@Props()
-class _$DesignMainPotentialVerticalCrossoverProps extends UiProps {
+
+mixin DesignMainPotentialVerticalCrossoverProps on UiProps {
   PotentialVerticalCrossover potential_vertical_crossover;
   BuiltMap<int, Helix> helices;
 }
 
-@Component2()
+
 class DesignMainPotentialVerticalCrossoverComponent
     extends UiComponent2<DesignMainPotentialVerticalCrossoverProps> {
   @override

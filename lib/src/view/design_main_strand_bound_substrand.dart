@@ -30,7 +30,7 @@ part 'design_main_strand_bound_substrand.over_react.g.dart';
 UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
 
 @Props()
-class _$DesignMainBoundSubstrandProps extends EditModePropsAbstract {
+mixin DesignMainBoundSubstrandPropsMixin on UiProps {
   BoundSubstrand substrand;
   Color color;
   String dna_sequence;
@@ -41,6 +41,8 @@ class _$DesignMainBoundSubstrandProps extends EditModePropsAbstract {
   Strand strand;
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
+
+class DesignMainBoundSubstrandProps = UiProps with EditModePropsMixin, DesignMainBoundSubstrandPropsMixin;
 
 @Component2()
 class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps>

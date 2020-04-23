@@ -10,7 +10,7 @@ import '../state/app_state.dart';
 
 part 'design_footer.over_react.g.dart';
 
-UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<AppState, _$DesignFooterProps>(
+UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFooterProps>(
   mapStateToPropsWithOwnProps: (state, props) {
     BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
     MouseoverData first_mouseover_data =
@@ -25,17 +25,14 @@ UiFactory<_$DesignFooterProps> ConnectedDesignFooter = connect<AppState, _$Desig
   },
 )(DesignFooter);
 
-@Factory()
 UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
-@Props()
-class _$DesignFooterProps extends UiProps {
+mixin DesignFooterProps on UiProps {
   BuiltList<MouseoverData> mouseover_datas;
   bool show_mouseover_rect;
   Strand strand_first_mouseover_data;
 }
 
-@Component2()
 class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
   @override
   render() {

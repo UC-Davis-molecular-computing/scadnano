@@ -11,16 +11,16 @@ import '../state/helix.dart';
 
 part 'design_main_strand_modifications.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignMainStrandModificationsProps> DesignMainStrandModifications = _$DesignMainStrandModifications;
 
-@Props()
-class _$DesignMainStrandModificationsProps extends UiProps {
+
+mixin DesignMainStrandModificationsProps on UiProps {
   Strand strand;
   BuiltMap<int, Helix> helices;
 }
 
-@Component2()
+
 class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStrandModificationsProps> {
   @override
   render() {

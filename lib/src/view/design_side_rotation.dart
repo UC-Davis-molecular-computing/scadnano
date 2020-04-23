@@ -8,17 +8,17 @@ import 'design_side_rotation_arrow.dart';
 
 part 'design_side_rotation.over_react.g.dart';
 
-@Factory()
+
 UiFactory<DesignSideRotationProps> DesignSideRotation = _$DesignSideRotation;
 
-@Props()
-class _$DesignSideRotationProps extends UiProps {
+
+mixin DesignSideRotationProps on UiProps {
   double radius;
   Helix helix;
   int offset;
 }
 
-@Component2()
+
 class DesignSideRotationComponent extends UiComponent2<DesignSideRotationProps> {
   @override
   bool shouldComponentUpdate(Map nextProps, Map nextState) {

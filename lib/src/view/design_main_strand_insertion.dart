@@ -26,7 +26,7 @@ typedef Tuple2<Insertion, BoundSubstrand> PairedInsertionFinder(
 UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMainStrandInsertion;
 
 @Props()
-class _$DesignMainStrandInsertionProps extends EditModePropsAbstract {
+mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Insertion insertion;
   BoundSubstrand substrand;
   Color color;
@@ -34,6 +34,8 @@ class _$DesignMainStrandInsertionProps extends EditModePropsAbstract {
   String id;
   BuiltSet<EditModeChoice> edit_modes;
 }
+
+class DesignMainStrandInsertionProps = UiProps with EditModePropsMixin, DesignMainStrandInsertionPropsMixin;
 
 @Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>

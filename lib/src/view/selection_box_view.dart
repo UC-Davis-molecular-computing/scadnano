@@ -13,18 +13,18 @@ UiFactory<SelectionBoxViewProps> ConnectedSelectionBoxView = connect<SelectionBo
   context: app.context_selection_box,
 )(SelectionBoxView);
 
-@Factory()
+
 UiFactory<SelectionBoxViewProps> SelectionBoxView = _$SelectionBoxView;
 
-@Props()
-class _$SelectionBoxViewProps extends UiProps {
+
+mixin SelectionBoxViewProps on UiProps {
   SelectionBox selection_box;
   num Function() stroke_width_getter;
   String id;
   bool is_main;
 }
 
-@Component2()
+
 class SelectionBoxViewComponent extends UiComponent2<SelectionBoxViewProps> {
   @override
   render() {

@@ -43,7 +43,7 @@ part 'design_main_strand_crossover.over_react.g.dart';
 UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMainStrandCrossover;
 
 @Props()
-class _$DesignMainStrandCrossoverProps extends EditModePropsAbstract {
+mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Crossover crossover;
   Strand strand;
 
@@ -55,14 +55,15 @@ class _$DesignMainStrandCrossoverProps extends EditModePropsAbstract {
   BuiltMap<int, Helix> helices;
 }
 
+class DesignMainStrandCrossoverProps = UiProps with DesignMainStrandCrossoverPropsMixin, EditModePropsMixin;
+
 @State()
-class _$DesignMainStrandCrossoverState extends UiState {
+mixin DesignMainStrandCrossoverState on UiState {
   // making this "local" state for the component (instead of storing in the global store)
   // skips wasteful actions and updating the state just to tell if the mouse is hovering over a crossover
   bool mouse_hover;
 }
 
-@Component2()
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
     with PureComponent, EditModeQueryable<DesignMainStrandCrossoverProps> {

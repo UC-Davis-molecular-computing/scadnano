@@ -24,11 +24,11 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 //  mapStateToProps: (state) => (DesignSideHelix()),
 //)(DesignSideHelix);
 
-@Factory()
+
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
-@Props()
-class _$DesignSideHelixProps extends UiProps {
+
+mixin DesignSideHelixProps on UiProps {
   Helix helix;
   bool selected;
   bool mouse_is_over;
@@ -37,7 +37,7 @@ class _$DesignSideHelixProps extends UiProps {
   Grid grid;
 }
 
-@Component2()
+
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
   @override
   render() {
