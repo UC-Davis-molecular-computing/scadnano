@@ -679,12 +679,12 @@ html, body {
 }
 
 /* Hides input of Open (only display the label) */
-#open-form-file {
+.form-file-dropdown .custom-file-input{
     display: none;
 }
 
 /* Styles the label like a DropdownItem */
-#open-form-file + .custom-file-label {
+.form-file-dropdown .custom-file-input + .custom-file-label {
     display: block;
     width: 100%;
     padding: .25rem 1.5rem;
@@ -699,14 +699,14 @@ html, body {
 }
 
 /* Styles the label like a DropdownItem (on hover) */
-#open-form-file + .custom-file-label:hover {
+.form-file-dropdown .custom-file-input + .custom-file-label:hover {
     color: #16181b;
     text-decoration: none;
     background-color: #f8f9fa;
 }
 
 /* Hides the data-browse psuedo-element. */
-#open-form-file + .custom-file-label::after {
+.form-file-dropdown .custom-file-input + .custom-file-label::after {
     content: none;
 }
 
