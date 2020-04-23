@@ -22,5 +22,5 @@ fi
 git pull --all # Fetch changes before committing
 pandoc -c pandoc.css -s README.md -o web/README.html # Compile README.md to README.html
 $PUB get # might not be needed
-$PEANUT
+$PEANUT # use -m flag to add descriptive commit message
 git push origin --set-upstream gh-pages
