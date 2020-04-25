@@ -6,6 +6,7 @@ import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
 import 'actions/actions.dart';
+import 'dna_sequence_constants.dart';
 import 'state/context_menu.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
@@ -177,6 +178,7 @@ part 'serializers.g.dart';
   LoadDnaSequenceImageUri,
   SetDisablePngCacheUntilActionCompletes,
   SetIsZoomAboveThreshold,
+  DNASequencePredefined,
 ])
 Serializers serializers = _$serializers;
 
