@@ -361,14 +361,35 @@ looking at before changing the script.'''
             'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
             'target': '_blank',
           },
-          'Guide',
+          'web interface help',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+            'target': '_blank',
+          },
+          'web interface tutorial',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
+            'target': '_blank',
+          },
+          'Python scripting help',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+            'target': '_blank',
+          },
+          'Python scripting tutorial',
         ),
         DropdownItem(
           {
             'href': 'https://scadnano-python-package.readthedocs.io',
             'target': '_blank',
           },
-          'Python scripting documentation',
+          'Python scripting API',
         ),
       ),
       //XXX: I like to keep this button around to simulate random things that require user interaction
