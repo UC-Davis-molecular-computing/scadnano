@@ -204,7 +204,7 @@ Point<num> control_point_for_crossover_bezier_curve(
   var to_helix = helices[to_ss.helix];
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward);
-  bool from_strand_below = from_ss.helix - to_ss.helix > 0;
+  bool from_strand_below = from_helix.svg_position.y > to_helix.svg_position.y;
   num midX = (start_pos.x + end_pos.x) / 2;
   num midY = (start_pos.y + end_pos.y) / 2;
   Point<num> mid = Point<num>(midX, midY);

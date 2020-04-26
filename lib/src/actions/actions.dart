@@ -1704,8 +1704,10 @@ abstract class InlineInsertionsDeletions
 
 abstract class AutofitSet
     with BuiltJsonSerializable
-    implements Action, Built<AutofitSet, AutofitSetBuilder> {
+    implements StorableAction, Built<AutofitSet, AutofitSetBuilder> {
   bool get autofit;
+
+  Iterable<Storable> storables() => [Storable.autofit];
 
   /************************ begin BuiltValue boilerplate ************************/
   factory AutofitSet({bool autofit}) = _$AutofitSet._;

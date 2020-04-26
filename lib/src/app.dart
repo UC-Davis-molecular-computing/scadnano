@@ -30,6 +30,7 @@ import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
 import 'constants.dart' as constants;
+import 'dna_sequence_constants.dart';
 
 //import 'test.dart';
 //import 'constants.dart' as constants;
@@ -46,7 +47,10 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
-test_stuff() async {}
+test_stuff() async {
+  print("m13p7249 unrotated: ${DNASequencePredefined.dna_sequence_by_name('M13p7249', 0)}");
+  print("m13p7249 rotated 5587: ${DNASequencePredefined.dna_sequence_by_name('M13p7249')}");
+}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {

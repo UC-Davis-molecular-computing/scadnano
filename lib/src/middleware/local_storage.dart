@@ -23,6 +23,7 @@ class Storable extends EnumClass {
   static const Storable show_dna = _$show_dna;
   static const Storable show_modifications = _$show_modifications;
   static const Storable show_mismatches = _$show_mismatches;
+  static const Storable autofit = _$autofit;
   static const Storable show_editor = _$show_editor;
   static const Storable edit_modes = _$edit_modes;
   static const Storable editor_mode = _$editor_mode;
@@ -50,6 +51,8 @@ save(Storable storable) {
     value_string = app.state.ui_state.show_modifications.toString();
   } else if (storable == Storable.show_mismatches) {
     value_string = app.state.ui_state.show_mismatches.toString();
+  } else if (storable == Storable.autofit) {
+    value_string = app.state.ui_state.autofit.toString();
   } else if (storable == Storable.edit_modes) {
     List<String> edit_modes_list = [for (var mode in app.state.ui_state.edit_modes) mode.name];
     value_string = jsonEncode(edit_modes_list);
@@ -104,6 +107,8 @@ _restore(Storable storable) {
       action = actions.ShowModificationsSet(value == 'true');
     } else if (storable == Storable.show_mismatches) {
       action = actions.ShowMismatchesSet(value == 'true');
+    } else if (storable == Storable.autofit) {
+      action = actions.AutofitSet(autofit: value == 'true');
     } else if (storable == Storable.show_editor) {
       action = actions.SetShowEditor(value == 'true');
     } else if (storable == Storable.editor_mode) {
