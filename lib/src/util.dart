@@ -454,16 +454,40 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
 
 // Uses cadnano coordinate system:
 //   https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
+// briefly,
+// They increase in these directions:   +---->row
+//                                      |
+//                                      |
+//                                      V
+//                                     col
+//
+//                When honeycomb lattice, a "row" is in fact a zigzag pattern:
+//                      .   .
+//                    .   .   .  or .   .   .
+//                                    .   .   .
+// The first is used when the row is even and the second when the row is odd.
 Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
   num x, y;
   y = 1.5 * gp.v;
   if (gp.h % 2 == 0 && gp.v % 2 == 1) {
-    y += 0.5;
+    y -= 0.5;
   } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
-    y += cos(2 * pi / 6);
+    y -= cos(2 * pi / 6);
   }
   x = gp.h * sin(2 * pi / 6);
   return Point<num>(x, y);
+  // below inverts the rows, i.e., implements the convention
+  //   "The first is used when the row is odd and the second when the row is even."
+  // in the documentation above.
+//  num x, y;
+//  y = 1.5 * gp.v;
+//  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
+//    y += 0.5;
+//  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
+//    y += cos(2 * pi / 6);
+//  }
+//  x = gp.h * sin(2 * pi / 6);
+//  return Point<num>(x, y);
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
