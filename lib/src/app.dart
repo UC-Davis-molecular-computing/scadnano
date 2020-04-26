@@ -46,9 +46,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const DEBUG_SELECT = true;
 const DEBUG_SELECT = false;
 
-test_stuff() async {
-
-}
+test_stuff() async {}
 
 /// One instance of this class contains the global variables needed by all parts of the app.
 class App {
@@ -83,6 +81,7 @@ class App {
       react.setClientConfiguration();
       await initialize_model();
       setup_undo_redo_keyboard_listeners();
+      setup_save_open_dna_file_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
       this.setup_warning_before_unload();
@@ -212,6 +211,23 @@ setup_undo_redo_keyboard_listeners() {
       if (app.state.undo_redo.redo_stack.isNotEmpty) {
         app.dispatch(actions.Redo());
       }
+    }
+  });
+}
+
+setup_save_open_dna_file_keyboard_listeners() {
+  document.body.onKeyDown.listen((KeyboardEvent event) {
+    int key = event.which;
+    // ctrl+S to save
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.S && !event.altKey) {
+      event.preventDefault();
+      app.dispatch(actions.SaveDNAFile());
+    }
+    // ctrl+O to load
+    if ((event.ctrlKey || event.metaKey) && !event.shiftKey && key == KeyCode.O && !event.altKey) {
+      event.preventDefault();
+      // TODO(benlee12): maybe this is slightly hacky.
+      document.getElementById('open-form-file').click();
     }
   });
 }
