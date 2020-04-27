@@ -37,11 +37,9 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   forwardRef: true,
 )(Menu);
 
-
 UiFactory<MenuProps> Menu = _$Menu;
 
-
-mixin MenuPropsMixin on UiProps  {
+mixin MenuPropsMixin on UiProps {
   bool show_dna;
   bool show_modifications;
   bool show_mismatches;
@@ -53,14 +51,12 @@ mixin MenuPropsMixin on UiProps  {
   bool redo_stack_empty;
 }
 
-
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
 
+class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
+  @override
+  get consumedProps => propsMeta.forMixins({MenuPropsMixin});
 
-class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {              
-              @override
-              get consumedProps => propsMeta.forMixins({MenuPropsMixin});
-            
   /*
   // this is needed in case the user selects the same filename, to reload the file in case it has changed.
   // If not, then the onChange event won't fire and we won't reload the file.
@@ -109,7 +105,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             'onChange': (e) {
               request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
             },
-            'label': '📂 Open...',
+            'label': '📂 Open... \u00A0 \u00A0\u00A0\u00A0 Ctrl+O',
             'custom': 'false',
           },
         ),
@@ -121,6 +117,12 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           '💾 Save...',
+          (Dom.span()
+            ..style = {
+              'marginLeft': '2em',
+            })(
+            'Ctrl+S',
+          ),
         ),
         DropdownDivider({}),
         FormFile(
@@ -183,7 +185,6 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           (Dom.span()
             ..style = {
               'marginLeft': '2em',
-              // 'opacity': '50%',
             })(
             'Ctrl+Shift+Z',
           ),
@@ -361,14 +362,35 @@ looking at before changing the script.'''
             'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
             'target': '_blank',
           },
-          'Guide',
+          'web interface help',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+            'target': '_blank',
+          },
+          'web interface tutorial',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
+            'target': '_blank',
+          },
+          'Python scripting help',
+        ),
+        DropdownItem(
+          {
+            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+            'target': '_blank',
+          },
+          'Python scripting tutorial',
         ),
         DropdownItem(
           {
             'href': 'https://scadnano-python-package.readthedocs.io',
             'target': '_blank',
           },
-          'Python scripting documentation',
+          'Python scripting API',
         ),
       ),
       //XXX: I like to keep this button around to simulate random things that require user interaction

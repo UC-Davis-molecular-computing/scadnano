@@ -210,6 +210,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         components.add((Dom.input()
           ..type = 'radio'
           ..id = 'radio-example-filename-${radio_idx}'
+          ..disabled = disabled
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
           ..value = option

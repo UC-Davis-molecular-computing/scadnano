@@ -11,6 +11,7 @@ import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import '../dna_sequence_constants.dart';
 import '../state/context_menu.dart';
 import '../app.dart';
 import '../state/strand.dart';
@@ -293,19 +294,36 @@ class DNARemoveOptions {
 Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
-//    DialogText(label: 'sequence', value: strand.dna_sequence ?? ''),
-    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 20, cols: 80),
+    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
+    DialogCheckbox(label: 'use predefined DNA sequence'),
+    DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.names),
+    DialogNumber(label: 'rotation of predefined DNA sequence', value: 5587),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
         label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
-  ]);
+  ], disable_when_on: {
+    0: 1
+  }, disable_when_off: {
+    2: 1,
+    3: 1
+  });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
-  String dna_sequence = (results[0] as DialogTextArea).value;
-  bool assign_complements = (results[1] as DialogCheckbox).value;
-  bool warn_on_change = (results[2] as DialogCheckbox).value;
+  String dna_sequence;
+
+  bool use_predefined_dna_sequence = (results[1] as DialogCheckbox).value;
+  if (use_predefined_dna_sequence) {
+    String predefined_sequence_name = (results[2] as DialogRadio).value;
+    int rotation = (results[3] as DialogNumber).value;
+    dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_name, rotation);
+  } else {
+    dna_sequence = (results[0] as DialogTextArea).value;
+  }
+
+  bool assign_complements = (results[4] as DialogCheckbox).value;
+  bool warn_on_change = (results[5] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);

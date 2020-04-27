@@ -40,8 +40,14 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   BuiltList<DialogItem> get items;
 
+  // if disable_when_on[i] = j, then
+  // when DialogCheckbox at index j (starting at 0 in items) is checked,
+  // the DialogItem at index i should be disabled
   BuiltMap<int, int> get disable_when_on;
 
+  // if disable_when_on[i] = j, then
+  // when DialogCheckbox at index j (starting at 0 in items) is unchecked,
+  // the DialogItem at index i should be disabled
   BuiltMap<int, int> get disable_when_off;
 
   @nullable
