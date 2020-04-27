@@ -508,12 +508,12 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-        y -= 0.5;
+        y += 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-        y -= cos(2 * pi / 6);
+        y += cos(2 * pi / 6);
       }
     }
     v = (y / 1.5).round();
