@@ -24,9 +24,7 @@ const String SIDE_VIEW_PREFIX = 'side-view';
 //  mapStateToProps: (state) => (DesignSideHelix()),
 //)(DesignSideHelix);
 
-
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
-
 
 mixin DesignSideHelixProps on UiProps {
   Helix helix;
@@ -36,7 +34,6 @@ mixin DesignSideHelixProps on UiProps {
   BuiltSet<EditModeChoice> edit_modes;
   Grid grid;
 }
-
 
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
   @override
@@ -57,7 +54,12 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       classname_circle += ' deletable';
     }
 
+    // set SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX to true to print helix coordinates in side view instead
+    // of idx, which is useful for making figures in the documentation showing how the grids work
+//    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
+    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
     var temp_text_for_help_doc_figure_making;
+
     String tooltip;
     if (props.grid.is_none()) {
       var pos = props.helix.position3d();
@@ -76,13 +78,14 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..onClick = ((e) => this._handle_click(e, helix))
         ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
-//        ..style = {'font-size': 12}
-        ..className = '$SIDE_VIEW_PREFIX-helix-text'
-        ..onClick = ((e) => this._handle_click(e, helix))
-        ..key = 'text')(
-//          temp_text_for_help_doc_figure_making
-          props.helix.idx.toString(), Dom.svgTitle()(tooltip)
-      ),
+            ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'font-size': 20} : {}
+            ..className = '$SIDE_VIEW_PREFIX-helix-text'
+            ..onClick = ((e) => this._handle_click(e, helix))
+            ..key = 'text')(
+          SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
+              ? temp_text_for_help_doc_figure_making
+              : props.helix.idx.toString(),
+          Dom.svgTitle()(tooltip)),
     ];
 
 //    print('checking mouseover data');
