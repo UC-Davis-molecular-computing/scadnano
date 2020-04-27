@@ -288,8 +288,6 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
 ## Menu
 
-The menu layout is subject to change. Under various
-
 * File
   * **Load example:** Some pre-made example designs can be loaded.
 
