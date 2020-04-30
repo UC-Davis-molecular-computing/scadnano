@@ -1072,7 +1072,9 @@ void svg_to_png_data() {
       // or if there is no strands
       strands_element_list.isEmpty ||
       // or if there is no dna sequence due to design
-      (dna_sequence_element_list.first as GraphicsElement).children.isEmpty) {
+      (dna_sequence_element_list.first as GraphicsElement).children.isEmpty ||
+      // or if cache already exists
+      app.state.ui_state.dna_sequence_png_uri != null) {
     return;
   }
 
