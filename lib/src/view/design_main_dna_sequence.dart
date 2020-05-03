@@ -25,19 +25,18 @@ part 'design_main_dna_sequence.over_react.g.dart';
 //      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
 //)(DesignMainDNASequence);
 
-
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
-
 
 mixin DesignMainDNASequenceProps on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltMap<int, Helix> helices;
+  bool only_display_selected_helices;
 }
 
-bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
-    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
-
+bool should_draw_bound_ss(
+        BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
@@ -48,7 +47,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_bound_substrand()) {
-        if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
+        if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
           var bound_ss = substrand as BoundSubstrand;
           dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
           for (var insertion in bound_ss.insertions) {
@@ -63,8 +62,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         var loopout = substrand as Loopout;
         BoundSubstrand prev_ss = this.props.strand.substrands[i - 1];
         BoundSubstrand next_ss = this.props.strand.substrands[i + 1];
-        if (should_draw_bound_ss(prev_ss, side_selected_helix_idxs) &&
-            should_draw_bound_ss(next_ss, side_selected_helix_idxs)) {
+        if (should_draw_bound_ss(prev_ss, side_selected_helix_idxs, props.only_display_selected_helices) &&
+            should_draw_bound_ss(next_ss, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
         }
       }

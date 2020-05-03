@@ -28,6 +28,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_modifications = state.ui_state.show_modifications
     ..show_mismatches = state.ui_state.show_mismatches
     ..autofit = state.ui_state.autofit
+    ..only_display_selected_helices = state.ui_state.only_display_selected_helices
     ..grid = state.dna_design?.grid
     ..example_dna_designs = state.ui_state.example_dna_designs
     ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true
@@ -44,6 +45,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_modifications;
   bool show_mismatches;
   bool autofit;
+  bool only_display_selected_helices;
   Grid grid;
   ExampleDNADesigns example_dna_designs;
   bool design_has_insertions_or_deletions;
@@ -221,7 +223,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_dna')
               ..type = 'checkbox')(),
-            'Show DNA sequences',
+            'Show DNA Sequences',
           ),
         ),
         (Dom.span()
@@ -238,7 +240,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_modifications')
               ..type = 'checkbox')(),
-            'Show modifications',
+            'Show Modifications',
           ),
         ),
         (Dom.span()
@@ -257,7 +259,7 @@ and the strand on the same helix with the opposite orientation.'''
               }
               ..addTestId('scadnano.MenuComponent.input.show_mismatches')
               ..type = 'checkbox')(),
-            'Show DNA base mismatches',
+            'Show DNA Base Mismatches',
           ),
         ),
         (Dom.span()
@@ -284,7 +286,27 @@ looking at before changing the script.'''
               }
               ..addTestId('scadnano.MenuComponent.input.center_on_load')
               ..type = 'checkbox')(),
-            'auto-fit on loading new design',
+            'Auto-fit On Loading New Design',
+          ),
+        ),
+        (Dom.span()
+          ..className = 'display-only-selected-helices-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'display-only-selected-helices')(
+          (Dom.label()
+            ..title =
+                '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+            ..key = 'display-only-selected-helices-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.only_display_selected_helices
+              ..onChange = (_) {
+                props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
+              }
+              // TODO(benlee12): rewrite these test ids for component tests
+              // ..addTestId('scadnano.MenuComponent.input.center_on_load')
+              ..type = 'checkbox')(),
+            'Only Display Selected Helices',
           ),
         ),
         //XXX: let's keep this commented out until we need it
@@ -333,7 +355,7 @@ looking at before changing the script.'''
               props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
             },
           },
-          'SVG side view',
+          'SVG Side View',
         ),
         DropdownItem(
           {
@@ -341,7 +363,7 @@ looking at before changing the script.'''
               props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
             },
           },
-          'SVG main view',
+          'SVG Main View',
         ),
         DropdownItem(
           {
@@ -349,7 +371,7 @@ looking at before changing the script.'''
               app.disable_keyboard_shortcuts_while(export_dna);
             },
           },
-          'DNA sequences',
+          'DNA Sequences',
         ),
       ),
       NavDropdown(
@@ -362,35 +384,38 @@ looking at before changing the script.'''
             'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
             'target': '_blank',
           },
-          'web interface help',
+          'Web Interface Help',
         ),
         DropdownItem(
           {
-            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+            'href':
+                'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
             'target': '_blank',
           },
-          'web interface tutorial',
+          'Web Interface Tutorial',
         ),
         DropdownItem(
           {
-            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
+            'href':
+                'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
             'target': '_blank',
           },
-          'Python scripting help',
+          'Python Scripting Help',
         ),
         DropdownItem(
           {
-            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+            'href':
+                'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
             'target': '_blank',
           },
-          'Python scripting tutorial',
+          'Python Scripting Tutorial',
         ),
         DropdownItem(
           {
             'href': 'https://scadnano-python-package.readthedocs.io',
             'target': '_blank',
           },
-          'Python scripting API',
+          'Python Scripting API',
         ),
       ),
       //XXX: I like to keep this button around to simulate random things that require user interaction

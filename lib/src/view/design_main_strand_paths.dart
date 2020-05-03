@@ -36,11 +36,7 @@ part 'design_main_strand_paths.over_react.g.dart';
 //    ..moving_dna_ends = state.ui_state.moving_dna_ends),
 //)(DesignMainStrandPaths);
 
-
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
-
-
-
 
 mixin DesignMainStrandPathsProps on UiProps {
   Strand strand;
@@ -54,9 +50,9 @@ mixin DesignMainStrandPathsProps on UiProps {
   bool moving_dna_ends;
   bool origami_type_is_selectable;
   String strand_tooltip;
+  bool only_display_selected_helices;
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
-
 
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> with PureComponent {
   @override
@@ -64,8 +60,9 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
     return (Dom.g()..className = 'strand-paths')(_strand_paths());
   }
 
-  bool should_draw_bound_ss(int helix_idx, BuiltSet<int> side_selected_helix_idxs) =>
-      side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(helix_idx);
+  bool should_draw_bound_ss(
+          int helix_idx, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+      !only_display_selected_helices || side_selected_helix_idxs.contains(helix_idx);
 
   List<ReactElement> _strand_paths() {
     Strand strand = props.strand;
@@ -86,7 +83,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
       if (substrand is BoundSubstrand) {
         Helix helix = props.helices[substrand.helix];
-        bool draw_cur_ss = should_draw_bound_ss(substrand.helix, props.side_selected_helix_idxs);
+        bool draw_cur_ss = should_draw_bound_ss(
+            substrand.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         draw_prev_ss = draw_cur_ss;
         if (draw_cur_ss) {
 //          paths.add((ConnectedDesignMainBoundSubstrand()
@@ -129,7 +127,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         BoundSubstrand prev_ss = strand.substrands[i - 1];
         Helix prev_helix = props.helices[prev_ss.helix];
         Helix next_helix = props.helices[next_ss.helix];
-        bool draw_next_ss = should_draw_bound_ss(next_ss.helix, props.side_selected_helix_idxs);
+        bool draw_next_ss = should_draw_bound_ss(
+            next_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_prev_ss && draw_next_ss) {
 //          paths.add((ConnectedDesignMainLoopout()
           paths.add((DesignMainLoopout()
@@ -155,8 +154,10 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
     for (var crossover in strand.crossovers) {
       BoundSubstrand prev_ss = strand.substrands[crossover.prev_substrand_idx];
       BoundSubstrand next_ss = strand.substrands[crossover.next_substrand_idx];
-      bool draw_prev_ss = should_draw_bound_ss(prev_ss.helix, props.side_selected_helix_idxs);
-      bool draw_next_ss = should_draw_bound_ss(next_ss.helix, props.side_selected_helix_idxs);
+      bool draw_prev_ss = should_draw_bound_ss(
+          prev_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
+      bool draw_next_ss = should_draw_bound_ss(
+          next_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
       if (draw_prev_ss && draw_next_ss) {
         var crossover = strand.crossovers[idx_crossover++];
 

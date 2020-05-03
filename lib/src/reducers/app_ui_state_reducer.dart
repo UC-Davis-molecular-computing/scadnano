@@ -35,6 +35,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
+  ..only_display_selected_helices =
+      TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(
+          ui_state.only_display_selected_helices, action)
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
@@ -90,6 +93,9 @@ bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action
 bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
 
 bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
+
+bool only_display_selected_helices_reducer(bool _, actions.SetOnlyDisplaySelectedHelices action) =>
+    action.show;
 
 bool assign_complement_to_bound_strands_default_reducer(bool _, actions.AssignDNA action) =>
     action.assign_complements;

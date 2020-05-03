@@ -28,6 +28,7 @@ class Storable extends EnumClass {
   static const Storable edit_modes = _$edit_modes;
   static const Storable editor_mode = _$editor_mode;
   static const Storable select_modes = _$select_modes;
+  static const Storable only_display_selected_helices = _$only_display_selected_helices;
 
   static BuiltSet<Storable> get values => _$values;
 
@@ -60,6 +61,8 @@ save(Storable storable) {
     value_string = app.state.ui_state.show_editor.toString();
   } else if (storable == Storable.select_modes) {
     value_string = app.state.ui_state.select_mode_state.to_json();
+  } else if (storable == Storable.only_display_selected_helices) {
+    value_string = app.state.ui_state.only_display_selected_helices.toString();
   }
 
   if (value_string != null)
@@ -123,6 +126,8 @@ _restore(Storable storable) {
       List<dynamic> mode_names = jsonDecode(value);
       List<SelectModeChoice> modes = mode_names.map((name) => SelectModeChoice.from_json(name)).toList();
       action = actions.SelectModesSet(modes);
+    } else if (storable == Storable.only_display_selected_helices) {
+      action = actions.SetOnlyDisplaySelectedHelices(value == 'true');
     }
 
     if (action != null) {

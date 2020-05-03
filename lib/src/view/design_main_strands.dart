@@ -29,12 +29,11 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
     ..moving_dna_ends = state.ui_state.moving_dna_ends
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
-    ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default;
+    ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
+    ..only_display_selected_helices = state.ui_state.only_display_selected_helices;
 })(DesignMainStrands);
 
-
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
-
 
 mixin DesignMainStrandsProps on UiProps {
   BuiltList<Strand> strands;
@@ -50,8 +49,8 @@ mixin DesignMainStrandsProps on UiProps {
   bool currently_moving;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
+  bool only_display_selected_helices;
 }
-
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
   bool origami_type_is_selectable(Strand strand) {
@@ -98,6 +97,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
         ..moving_dna_ends = props.moving_dna_ends
         ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default
         ..warn_on_change_strand_dna_assign_default = props.warn_on_change_strand_dna_assign_default
+        ..only_display_selected_helices = props.only_display_selected_helices
         ..key = strand.toString())());
     }
 

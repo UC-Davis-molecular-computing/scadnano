@@ -2792,7 +2792,7 @@ main() {
     });
   });
 
-  group('Show/hide DNA/mismatches/editor tests:', () {
+  group('View Menu options tests:', () {
     test('Test SetShowDNA', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
@@ -2818,6 +2818,28 @@ main() {
       expect(final_state.ui_state.show_editor, true);
       final_state = app_state_reducer(final_state, SetShowEditor(false));
       expect(final_state.ui_state.show_editor, false);
+    });
+
+    test('Test SetOnlyDisplaySelectedHelices', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design)
+          .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+
+      // Because it is selected, it will appear at the top now.
+      Helix new_selected_helix = two_helices_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0));
+
+      AppState expected_state_after_set_true = initial_state.rebuild((b) => b
+        ..ui_state.only_display_selected_helices = true
+        ..dna_design.helices.updateValue(1, (_) => new_selected_helix));
+
+      AppState final_state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
+      expect(final_state.ui_state.only_display_selected_helices, true);
+      expect_app_state_equal(final_state, expected_state_after_set_true);
+
+      // Setting back to false should reset state back to initial state.
+      final_state = app_state_reducer(final_state, SetOnlyDisplaySelectedHelices(false));
+      expect(final_state.ui_state.only_display_selected_helices, false);
+
+      expect_app_state_equal(final_state, initial_state);
     });
   });
 
@@ -3647,9 +3669,40 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
     });
 
+    test('HelixSelect (only display selected helices)', () {
+      AppState state = app_state_from_dna_design(simple_strand_dna_design);
+      state = app_state_reducer(state, HelixSelect(1, true));
+      state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
+      expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
+      AppState expected_state = state.rebuild((b) => b
+        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
+        ..dna_design.helices[1] =
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0)));
+      expect_app_state_equal(state, expected_state);
+    });
+
     test('HelixSelectionClear', () {
       state = app_state_reducer(state, HelixSelectionsClear());
       expect(state.ui_state.side_selected_helix_idxs, BuiltList<int>());
+    });
+
+    test('HelixSelectionClear (only display selected helices)', () {
+      // setup
+      AppState initial_state = app_state_from_dna_design(simple_strand_dna_design);
+      AppState state = app_state_reducer(initial_state, HelixSelect(1, true));
+      state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
+      expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
+      AppState expected_state = state.rebuild((b) => b
+        ..ui_state.only_display_selected_helices = true
+        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
+        ..dna_design.helices[1] =
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0)));
+      expect_app_state_equal(state, expected_state);
+
+      // clear should reset helix positions (but keep only display selected helices true).
+      state = app_state_reducer(state, HelixSelectionsClear());
+      expect_app_state_equal(
+          state, initial_state.rebuild((b) => b.ui_state.only_display_selected_helices = true));
     });
 
     // Distance from selection box to enclosing helix.
@@ -3670,6 +3723,35 @@ main() {
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
+    });
+
+    test('HelixSelectionAdjust with toggle on (only display selected helices)', () {
+      // setup (set only display selected helices to true and select just 0)
+      AppState initial_state = app_state_from_dna_design(simple_strand_dna_design);
+      AppState state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
+      state = app_state_reducer(state, HelixSelect(0, true));
+
+      // Unselct 0 and select 1 and 2
+      var x = SIDE_HELIX_RADIUS + MARGIN;
+      var y = 2 * SIDE_HELIX_RADIUS * 3 + MARGIN;
+      SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
+      state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
+      expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
+
+      // Should readjust svg position of helices 1 and 2.
+      AppState expected_state = state.rebuild((b) => b
+        ..ui_state.only_display_selected_helices = true
+        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2])
+        ..dna_design.helices[1] =
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0))
+        ..dna_design.helices[2] = simple_strand_dna_design.helices[2].rebuild((b) => b
+          ..svg_position_ = Point(
+            0,
+            simple_strand_dna_design.helices[1].grid_position.distance_nm(
+                    simple_strand_dna_design.helices[2].grid_position, simple_strand_dna_design.grid) *
+                NM_TO_MAIN_VIEW_SVG_PIXELS,
+          )));
+      expect_app_state_equal(state, expected_state);
     });
   });
 

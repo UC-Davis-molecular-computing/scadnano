@@ -62,6 +62,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool origami_type_is_selectable;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
+  bool only_display_selected_helices;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
@@ -107,7 +108,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..strand_tooltip = tooltip_text(props.strand)
         ..origami_type_is_selectable = props.origami_type_is_selectable
         ..drawing_potential_crossover = props.drawing_potential_crossover
-        ..moving_dna_ends = props.moving_dna_ends)(),
+        ..moving_dna_ends = props.moving_dna_ends
+        ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(strand, side_selected_helix_idxs, strand.color),
       _deletions(strand, side_selected_helix_idxs),
       if (props.show_modifications)
@@ -158,7 +160,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     List<ReactElement> paths = [];
     for (BoundSubstrand substrand in strand.bound_substrands()) {
       Helix helix = props.helices[substrand.helix];
-      if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
+      if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var insertion in substrand.insertions) {
           String id = util.id_insertion(substrand, insertion.offset);
           paths.add((DesignMainStrandInsertion()
@@ -181,7 +183,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     List<ReactElement> deletions = [];
     for (BoundSubstrand substrand in strand.bound_substrands()) {
       Helix helix = props.helices[substrand.helix];
-      if (should_draw_bound_ss(substrand, side_selected_helix_idxs)) {
+      if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var deletion in substrand.deletions) {
           String id = util.id_deletion(substrand, deletion);
           deletions.add((DesignMainStrandDeletion()
@@ -274,8 +276,9 @@ String tooltip_text(Strand strand) =>
 
 String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
-bool should_draw_bound_ss(BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs) =>
-    side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(ss.helix);
+bool should_draw_bound_ss(
+        BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+    !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DNAAssignOptions {
   String dna_sequence; // sequence to assign to this strand
