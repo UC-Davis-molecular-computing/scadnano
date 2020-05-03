@@ -12,9 +12,7 @@ import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';
 
-
 UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
-
 
 mixin DesignMainDNASequencesProps on UiProps {
   BuiltMap<int, Helix> helices;
@@ -23,8 +21,8 @@ mixin DesignMainDNASequencesProps on UiProps {
   String dna_sequence_png_uri;
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
+  bool only_display_selected_helices;
 }
-
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
   /// This method is used to handle the `disable_png_cache_until_action_completes` prop.
@@ -68,6 +66,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
               ..strand = strand
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
+              ..only_display_selected_helices = props.only_display_selected_helices
               ..className = 'strand-dna-sequence-elts')()
       ]);
     }

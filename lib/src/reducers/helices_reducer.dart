@@ -35,6 +35,9 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
       helix_selections_adjust_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelectionsClear>(
       helix_selections_clear_helices_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetOnlyDisplaySelectedHelices>(
+    set_only_display_selected_helices_reducer,
+  ),
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
@@ -310,17 +313,39 @@ BuiltMap<int, Helix> _reassign_svg_positions(
 BuiltMap<int, Helix> helix_select_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelect action) {
   var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
-  return _reassign_svg_positions(helices, selected_helix_idxs);
+  if (state.ui_state.only_display_selected_helices) {
+    return _reassign_svg_positions(helices, selected_helix_idxs);
+  } else {
+    return helices;
+  }
 }
 
 BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsAdjust action) {
   var selected_helix_idxs =
       helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
-  var new_helices = _reassign_svg_positions(helices, selected_helix_idxs);
-  return new_helices;
+  if (state.ui_state.only_display_selected_helices) {
+    return _reassign_svg_positions(helices, selected_helix_idxs);
+  } else {
+    return helices;
+  }
 }
 
 BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
-        BuiltMap<int, Helix> helices, AppState _, actions.HelixSelectionsClear action) =>
-    _reassign_svg_positions(helices, BuiltSet<int>());
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsClear action) {
+  if (state.ui_state.only_display_selected_helices) {
+    return _reassign_svg_positions(helices, BuiltSet<int>());
+  } else {
+    return helices;
+  }
+}
+
+BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.SetOnlyDisplaySelectedHelices action) {
+  if (action.show) {
+    return _reassign_svg_positions(helices, state.ui_state.side_selected_helix_idxs);
+  } else {
+    var all_helix_idxs = BuiltSet<int>(state.dna_design.helices.keys);
+    return _reassign_svg_positions(helices, all_helix_idxs);
+  }
+}

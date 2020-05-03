@@ -51,7 +51,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..design_major_tick_distance = state.dna_design.major_tick_distance
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
-        ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold);
+        ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
+        ..only_display_selected_helices = state.ui_state.only_display_selected_helices);
     }
   },
 )(DesignMain);
@@ -76,6 +77,7 @@ mixin DesignMainPropsMixin on UiProps {
   String dna_sequence_png_uri;
   Action disable_png_cache_until_action_completes;
   bool is_zoom_above_threshold;
+  bool only_display_selected_helices;
 }
 
 @Props()
@@ -98,6 +100,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance
+        ..only_display_selected_helices = props.only_display_selected_helices
         ..key = 'helices')(),
       (DesignMainMismatches()
         ..show_mismatches = props.show_mismatches
@@ -126,6 +129,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
+          ..only_display_selected_helices = props.only_display_selected_helices
           ..key = 'dna')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'

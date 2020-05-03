@@ -17,6 +17,7 @@ mixin DesignMainHelicesProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool strand_create_enabled;
   int design_major_tick_distance;
+  bool only_display_selected_helices;
 }
 
 
@@ -24,10 +25,11 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
+    bool only_display_selected_helices = props.only_display_selected_helices;
 
     var children = [];
     for (Helix helix in props.helices.values) {
-      if (side_selected_helix_idxs.isEmpty || side_selected_helix_idxs.contains(helix.idx)) {
+      if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) || !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
           ..strand_create_enabled = props.strand_create_enabled
