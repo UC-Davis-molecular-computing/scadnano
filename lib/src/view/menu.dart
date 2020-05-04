@@ -199,11 +199,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ),
         DropdownItem(
           {
-            'disabled': !props.enable_copy,
             'onClick': (_) {
-              if (props.enable_copy) {
-                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
-              }
+              window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
             },
           },
           'Paste',
