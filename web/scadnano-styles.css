@@ -710,6 +710,12 @@ html, body {
     content: none;
 }
 
+.dropdown-item-keyboard-shortcut-span {
+    float:right;
+    width: 33%;
+    position:relative;
+}
+
 /************************************************
 ** END Navbar
 ************************************************/

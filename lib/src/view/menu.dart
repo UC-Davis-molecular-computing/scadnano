@@ -6,9 +6,11 @@ import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/dialog.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:scadnano/src/constants.dart' as constants;
@@ -33,7 +35,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..example_dna_designs = state.ui_state.example_dna_designs
     ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true
     ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
-    ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty),
+    ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
+    ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+        app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+        app.state.ui_state.selectables_store.selected_items.isNotEmpty)),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -51,6 +56,7 @@ mixin MenuPropsMixin on UiProps {
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
+  bool enable_copy;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -107,7 +113,10 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             'onChange': (e) {
               request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
             },
-            'label': '📂 Open... \u00A0 \u00A0\u00A0\u00A0 Ctrl+O',
+            'label': Dom.div()(
+              '📂 Open...',
+              (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+O'),
+            ),
             'custom': 'false',
           },
         ),
@@ -119,12 +128,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           '💾 Save...',
-          (Dom.span()
-            ..style = {
-              'marginLeft': '2em',
-            })(
-            'Ctrl+S',
-          ),
+          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+S'),
         ),
         DropdownDivider({}),
         FormFile(
@@ -168,13 +172,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           'Undo',
-          (Dom.span()
-            ..style = {
-              'marginLeft': '2em',
-              // 'opacity': '50%',
-            })(
-            'Ctrl+Z',
-          ),
+          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Z'),
         ),
         DropdownItem(
           {
@@ -184,12 +182,29 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           'Redo',
-          (Dom.span()
-            ..style = {
-              'marginLeft': '2em',
-            })(
-            'Ctrl+Shift+Z',
-          ),
+          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Shift+Z'),
+        ),
+        DropdownDivider({}),
+        DropdownItem(
+          {
+            'disabled': !props.enable_copy,
+            'onClick': (_) {
+              if (props.enable_copy) {
+                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+              }
+            },
+          },
+          'Copy',
+          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+C'),
+        ),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
+            },
+          },
+          'Paste',
+          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
         ),
         DropdownDivider({}),
         DropdownItem(
