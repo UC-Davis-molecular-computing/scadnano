@@ -321,7 +321,7 @@ looking at before changing the script.'''
               // TODO(benlee12): rewrite these test ids for component tests
               // ..addTestId('scadnano.MenuComponent.input.center_on_load')
               ..type = 'checkbox')(),
-            'Only Display Selected Helices',
+            'Display only selected helices',
           ),
         ),
         //XXX: let's keep this commented out until we need it
