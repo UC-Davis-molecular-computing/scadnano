@@ -4410,6 +4410,88 @@ main() {
       // Should unselect the strands
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
     });
+
+    String two_helices_with_empty_offsets_non_sequential_idx_json = r"""
+    {
+      "version": "0.0.1", "helices": [
+        {"grid_position": [0, 0], "max_offset": 32, "idx": 3},
+        {"grid_position": [0, 1], "max_offset": 32, "idx": 4}
+      ],
+      "strands": [
+        {
+          "substrands": [
+            {"helix": 3, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 3, "forward": false , "start": 0, "end": 16},
+            {"helix": 4, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 4, "forward": false , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+    """;
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240)', () {
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0
+      //   --------------------]   strand1
+      //  /
+      //  |
+      //  \
+      // 4 -------------------->
+      //   <-------------------]   strand2
+      DNADesign design =
+          DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
+      AppState state = app_state_from_dna_design(design);
+
+      Strand strand0 = design.strands[0];
+      BuiltList<Selectable> selectables = [strand0].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          copy: false);
+
+      expect(state.ui_state.strands_move, expected_strands_move);
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1
+      //  /
+      //  |
+      //  \
+      // 4 -------------------->
+      //   <-------------------]   strand2
+      offset = 1;
+      helix_idx = 3;
+      forward = true;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
   });
 
   String simple_helix_json = r"""
