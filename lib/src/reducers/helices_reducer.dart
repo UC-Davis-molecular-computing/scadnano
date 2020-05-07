@@ -204,6 +204,20 @@ DNADesign helix_remove_dna_design_global_reducer(
       .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
 }
 
+DNADesign helix_remove_all_selected_dna_design_global_reducer(
+    DNADesign design, AppState state, actions.HelixRemoveAllSelected action) {
+  var helix_idxs = state.ui_state.side_selected_helix_idxs;
+  Set<BoundSubstrand> substrands_on_helices = design.substrands_on_helices(helix_idxs).toSet();
+
+  var strands_with_substrands_removed =
+      delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helices);
+
+  var new_helices = remove_helices_assuming_no_bound_substrands(design.helices, helix_idxs);
+  var new_helices_list = util.helices_assign_svg(new_helices.toMap(), design.grid);
+  return design
+      .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
+}
+
 /// Change (by amount `increment`) all helix_idx's of all BoundSubstrands with helix >= helix_idx.
 List<Strand> change_all_bound_substrand_helix_idxs(BuiltList<Strand> strands, int helix_idx, int increment) {
   List<Strand> new_strands = strands.toList();
@@ -242,6 +256,33 @@ BuiltMap<int, Helix> remove_helix_assuming_no_bound_substrands(
     helices_builder[i] = helix_builder.build();
   }
   return helices_builder.build();
+}
+
+BuiltMap<int, Helix> remove_helices_assuming_no_bound_substrands(
+    BuiltMap<int, Helix> helices, Iterable<int> helix_idxs) {
+  Map<int, Helix> helices_builder = helices.toMap();
+  BuiltList<int> removed_view_orders =
+      BuiltList<int>([for (var helix_idx in helix_idxs) helices[helix_idx].view_order]);
+  helices_builder.removeWhere((helix_idx, _) => helix_idxs.contains(helix_idx));
+
+  for (int i in helices_builder.keys) {
+    HelixBuilder helix_builder = helices_builder[i].toBuilder();
+    // The view order decrements by the number of removed view orders that was less than it.
+    helix_builder.view_order -= _count_less_than(removed_view_orders, helix_builder.view_order);
+    helices_builder[i] = helix_builder.build();
+  }
+  return helices_builder.build();
+}
+
+/// Returns the number of values in list that are less than x.
+_count_less_than(Iterable<int> list, int x) {
+  int count = 0;
+  for (var ele in list) {
+    if (ele < x) {
+      count++;
+    }
+  }
+  return count;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

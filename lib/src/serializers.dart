@@ -103,6 +103,7 @@ part 'serializers.g.dart';
   EditModesSet,
   HelixAdd,
   HelixRemove,
+  HelixRemoveAllSelected,
   HelixOffsetChange,
   HelixOffsetChangeAll,
   HelixMajorTickDistanceChange,

@@ -1699,6 +1699,130 @@ main() {
     expect_app_state_equal(final_state, expected_state);
   });
 
+  test('remove helices from DNA design', () {
+    // Remove helix 0 and 2 from this design.
+    //
+    // Before:
+    //
+    //     0            16
+    //    AGTCAGTCAGTCAGTC
+    // 0  [-----------------
+    //   ----------------]  \
+    //  | TCAGTCAGTCAGTCAG   |
+    //  |                    |
+    //  |  0             16  |
+    //  \ AATTCCGGAATTCCGG   |
+    // 1 --------------------/ ---
+    //  ---------------------     \
+    // /  TTAAGGCCTTAAGGCC        |
+    // |                          |
+    // |                          |
+    // |   0             16       |
+    // \  AAAATTTTCCCCGGGG        |
+    //  ----------------->        /
+    // 2  <----------------------
+    //    TTTTAAAAGGGGCCCC
+    //
+    // After:
+    //    AATTCCGGAATTCCGG
+    // 1  [-------------->
+    //    <--------------]
+    //    TTAAGGCCTTAAGGCC
+    String expected_json = r"""
+    {
+      "version": "0.0.1", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
+      "strands": [
+        {
+          "dna_sequence": "CCGGAATTCCGGAATT",
+          "substrands": [
+            {"helix": 1, "forward": false, "start": 0, "end": 16}
+          ]
+        },
+        {
+          "dna_sequence": "AATTCCGGAATTCCGG",
+          "substrands": [
+            {"helix": 1, "forward": true , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+  """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..undo_redo.undo_stack.add(simple_strand_dna_design)
+      ..ui_state.changed_since_last_save = true);
+    ;
+
+    AppState original_state = app_state_from_dna_design(simple_strand_dna_design)
+        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 2]));
+
+    AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
+
+    expect_app_state_equal(final_state, expected_state);
+  });
+
+  test('remove helices from DNA design should adjust svg position of helices with higher view position', () {
+    // Remove helix 0 and 2 from this design.
+    //
+    // Before:
+    //
+    //     0            16
+    //    AGTCAGTCAGTCAGTC
+    // 0  [-----------------
+    //   ----------------]  \
+    //  | TCAGTCAGTCAGTCAG   |
+    //  |                    |
+    //  |  0             16  |
+    //  \ AATTCCGGAATTCCGG   |
+    // 1 --------------------/ ---
+    //  ---------------------     \
+    // /  TTAAGGCCTTAAGGCC        |
+    // |                          |
+    // |                          |
+    // |   0             16       |
+    // \  AAAATTTTCCCCGGGG        |
+    //  ----------------->        /
+    // 2  <----------------------
+    //    TTTTAAAAGGGGCCCC
+    //
+    // After:
+    //    AAAATTTTCCCCGGGG
+    //    [-------------->
+    // 2  <--------------]
+    //    TTTTAAAAGGGGCCCC
+    String expected_json = r"""
+    {
+      "version": "0.0.1", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
+      "strands": [
+        {
+          "dna_sequence": "CCCCGGGGAAAATTTT",
+          "substrands": [
+            {"helix": 2, "forward": false, "start": 0, "end": 16}
+          ]
+        },
+        {
+          "dna_sequence": "AAAATTTTCCCCGGGG",
+          "substrands": [
+            {"helix": 2, "forward": true , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+  """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..undo_redo.undo_stack.add(simple_strand_dna_design)
+      ..ui_state.changed_since_last_save = true);
+    ;
+
+    AppState original_state = app_state_from_dna_design(simple_strand_dna_design)
+        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
+
+    AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
+
+    expect_app_state_equal(final_state, expected_state);
+  });
+
   //   0                  16
   //
   // 0 [------------------->
@@ -5011,6 +5135,32 @@ main() {
 
       exp_state = app_state_reducer(exp_state, SetDisablePngCacheUntilActionCompletes(null));
       expect_app_state_equal(old_state, exp_state);
+    });
+  });
+
+  group('Test DNADesign view order functions: (see issue #240)', () {
+    String out_of_order_json = r"""
+    {
+      "version": "0.3.0",
+      "helices": [
+        {"grid_position": [0, 0], "idx": 12},
+        {"grid_position": [0, 0], "idx": 13},
+        {"grid_position": [0, 0], "idx": 15},
+        {"grid_position": [0, 0], "idx": 17}
+      ],
+      "helices_view_order": [12, 15, 17, 13],
+      "strands": []
+    }
+    """;
+    DNADesign out_of_order_design = DNADesign.from_json(json.decode(out_of_order_json));
+    test('helices_view_order', () {
+      BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
+      expect(out_of_order_design.helices_view_order, expected_helices_view_order);
+    });
+    test('helices_view_order', () {
+      BuiltMap<int, int> expected_helices_view_order_inverse =
+          BuiltMap<int, int>({12: 0, 13: 3, 15: 1, 17: 2});
+      expect(out_of_order_design.helices_view_order_inverse, expected_helices_view_order_inverse);
     });
   });
 }

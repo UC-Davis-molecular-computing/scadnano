@@ -781,6 +781,20 @@ abstract class HelixRemove
   static Serializer<HelixRemove> get serializer => _$helixRemoveSerializer;
 }
 
+abstract class HelixRemoveAllSelected
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixRemoveAllSelected, HelixRemoveAllSelectedBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixRemoveAllSelected() => HelixRemoveAllSelected.from();
+
+  factory HelixRemoveAllSelected.from([void Function(HelixRemoveAllSelectedBuilder) updates]) =
+      _$HelixRemoveAllSelected;
+
+  HelixRemoveAllSelected._();
+
+  static Serializer<HelixRemoveAllSelected> get serializer => _$helixRemoveAllSelectedSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helix select (side view)
 
