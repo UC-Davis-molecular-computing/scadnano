@@ -27,6 +27,8 @@ StrandsMove strands_move_start_reducer(
       all_strands: state.dna_design.strands,
       original_address: action.address,
       helices: state.dna_design.helices,
+      helices_view_order: state.dna_design.helices_view_order,
+      helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
       copy: action.copy);
 }
 
@@ -39,6 +41,8 @@ StrandsMove strands_move_start_selected_strands_reducer(
       all_strands: state.dna_design.strands,
       original_address: action.address,
       helices: state.dna_design.helices,
+      helices_view_order: state.dna_design.helices_view_order,
+      helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
       copy: action.copy);
 }
 
@@ -58,21 +62,22 @@ StrandsMove strands_adjust_address_reducer(
 // if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
 // where the strands would go if it were allowable.
 bool in_bounds(StrandsMove strands_move) {
-  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
 
   // look for helix out of bounds
-  int min_helix_moving = strands_move.helices_moving.reduce(min);
-  int max_helix_moving = strands_move.helices_moving.reduce(max);
-  if (min_helix_moving + delta_helix_idx < 0) return false;
-  if (max_helix_moving + delta_helix_idx >= strands_move.helices.length) return false;
+  int min_view_order_moving = strands_move.view_order_moving.reduce(min);
+  int max_view_order_moving = strands_move.view_order_moving.reduce(max);
+  if (min_view_order_moving + delta_view_order < 0) return false;
+  if (max_view_order_moving + delta_view_order >= strands_move.helices.length) return false;
 
   // look for offset out of bounds
-  for (int original_helix_idx = 0; original_helix_idx < strands_move.num_helices; original_helix_idx++) {
+  for (int original_helix_idx in strands_move.helices.keys) {
     var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
     if (substrands_moving.isEmpty) continue;
 
-    int new_helix_idx = original_helix_idx + delta_helix_idx;
+    int new_helix_idx = strands_move
+        .helices_view_order[strands_move.helices[original_helix_idx].view_order + delta_view_order];
     Helix helix = strands_move.helices[new_helix_idx];
     for (var ss in substrands_moving) {
       if (ss.start + delta_offset < helix.min_offset) return false;
@@ -85,19 +90,21 @@ bool in_bounds(StrandsMove strands_move) {
 
 // XXX: assumes in_bounds check has already passed
 bool is_allowable(StrandsMove strands_move) {
-  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
   bool delta_forward = strands_move.delta_forward;
 
   int num_helices = strands_move.helix_idx_to_substrands_moving.length;
-  for (int original_helix_idx = 0; original_helix_idx < num_helices; original_helix_idx++) {
+  for (int original_helix_idx in strands_move.helices.keys) {
     var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
     if (substrands_moving.isEmpty) continue;
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
     // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
-    int new_helix_idx = original_helix_idx + delta_helix_idx;
-    assert(0 <= new_helix_idx && new_helix_idx < num_helices);
+    int new_helix_idx = strands_move
+        .helices_view_order[strands_move.helices[original_helix_idx].view_order + delta_view_order];
+    // This assertion no longer holds because helix idx no longer need to be consecutive.
+    // assert(0 <= new_helix_idx && new_helix_idx < num_helices);
 
     Helix new_helix = strands_move.helices[new_helix_idx];
     var substrands_fixed = strands_move.helix_idx_to_substrands_fixed[new_helix_idx];

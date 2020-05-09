@@ -23,6 +23,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       Address original_address,
       int original_helix_idx,
       BuiltMap<int, Helix> helices,
+      BuiltList<int> helices_view_order,
+      BuiltMap<int, int> helices_view_order_inverse,
       bool copy = false}) {
     var strands_fixed =
         copy ? all_strands : [for (var strand in all_strands) if (!strands_moving.contains(strand)) strand];
@@ -30,6 +32,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
+      ..helices_view_order.replace(helices_view_order)
+      ..helices_view_order_inverse.replace(helices_view_order_inverse)
       ..original_address.replace(original_address)
       ..current_address.replace(original_address)
       ..copy = copy
@@ -56,11 +60,15 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   BuiltMap<int, Helix> get helices;
 
+  BuiltList<int> get helices_view_order;
+
+  BuiltMap<int, int> get helices_view_order_inverse;
+
   int get num_helices => helices.length;
 
   int get delta_offset => current_address.offset - original_address.offset;
 
-  int get delta_helix_idx => current_address.helix_idx - original_address.helix_idx;
+  int get delta_view_order => current_helix.view_order - original_helix.view_order;
 
   bool get delta_forward => current_address.forward != original_address.forward;
 
@@ -75,11 +83,11 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       construct_helix_idx_to_substrands_map(strands_fixed, helices.keys);
 
   @memoized
-  BuiltList<int> get helices_moving {
+  BuiltList<int> get view_order_moving {
     Set<int> ret = {};
     for (var strand in strands_moving) {
       for (var ss in strand.bound_substrands()) {
-        ret.add(ss.helix);
+        ret.add(helices_view_order_inverse[ss.helix]);
       }
     }
     return ret.toBuiltList();

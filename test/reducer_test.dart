@@ -4326,6 +4326,8 @@ main() {
           original_address: address,
           original_helix_idx: helix0.idx,
           helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4464,6 +4466,8 @@ main() {
           original_address: address,
           original_helix_idx: helix1.idx,
           helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4561,6 +4565,10 @@ main() {
       ]
     }
     """;
+    DNADesign two_helices_with_empty_offsets_non_sequential_idx_design =
+        DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
+    AppState two_helicies_with_empty_offset_non_sequential_idx_state =
+        app_state_from_dna_design(two_helices_with_empty_offsets_non_sequential_idx_design);
     test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240)', () {
       //   0                  16                       32
       //
@@ -4571,29 +4579,29 @@ main() {
       //  \
       // 4 -------------------->
       //   <-------------------]   strand2
-      DNADesign design =
-          DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
-      AppState state = app_state_from_dna_design(design);
 
-      Strand strand0 = design.strands[0];
+      // Setup
+      Strand strand0 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[0];
       BuiltList<Selectable> selectables = [strand0].toBuiltList();
       int offset = 0;
       int helix_idx = 3;
       bool forward = true;
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
-      state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
-
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
+      // Expect move start to create correct strands_move object.
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.dna_design.strands,
           original_address: address,
           original_helix_idx: helix0.idx,
           helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
           copy: false);
-
       expect(state.ui_state.strands_move, expected_strands_move);
 
       //   0                  16                       32
@@ -4611,9 +4619,186 @@ main() {
       address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
 
+      // Check address after adjusting:
       expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
         ..allowable = true
         ..current_address.replace(address));
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) move to new helix', () {
+      // select helix 0
+      Strand strand0 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[0];
+      BuiltList<Selectable> selectables = [strand0].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   drag this strand to here
+      //   --------------------]   |
+      //  /                        |
+      //  |                        |
+      //  \                        |
+      // 4 -------------------->   v
+      //   <-------------------]   [------------------->   moving strand (not placed yet)
+      offset = 16;
+      helix_idx = 4;
+      forward = true;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting:
+      var expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) exceed vertical boundary', () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1   drag this left end
+      //  /                                       |
+      //  |                                       |
+      //  \                                       v
+      // 4 -------------------->                  to this level, so strand2 goes out of bound
+      //   <-------------------]   strand2
+      offset = 0;
+      helix_idx = 4;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) exceed horizontal boundary',
+        () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1
+      //  /                                       ^
+      //  |                                       |
+      //  \                                       |
+      // 4 -------------------->                  drag strand1, strand2 all the way here
+      //   <-------------------]   strand2
+      offset = 19;
+      helix_idx = 3;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) multiple adjust', () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0:
+      //                         --------------------]   strand1
+      //                        /
+      //                        |
+      //                        \
+      // 4                       -------------------->
+      //                         <-------------------]   strand2
+      offset = 16;
+      helix_idx = 3;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
       expect(state.ui_state.strands_move, expected_strands_move);
     });
   });
