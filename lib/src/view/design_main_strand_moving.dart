@@ -12,20 +12,19 @@ import 'design_main_strand_paths.dart';
 
 part 'design_main_strand_moving.over_react.g.dart';
 
-
 UiFactory<DesignMainStrandMovingProps> DesignMainStrandMoving = _$DesignMainStrandMoving;
-
 
 mixin DesignMainStrandMovingProps on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltMap<int, Helix> helices;
-  int delta_helix_idx;
+  BuiltList<int> helices_view_order;
+  BuiltMap<int, int> helices_view_order_inverse;
+  int delta_view_order;
   int delta_offset;
   bool delta_forward;
   bool allowable;
 }
-
 
 class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovingProps> {
   @override
@@ -43,7 +42,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
 //        (ConnectedDesignMainStrandPaths()
       _draw_strand_lines_single_path(),
       (EndMoving()
-        ..helix = props.helices[first_ss.helix + props.delta_helix_idx]
+        ..helix = props.helices[
+            props.helices_view_order[props.helices[first_ss.helix].view_order + props.delta_view_order]]
         ..dna_end = end_5p
         ..color = props.strand.color
         ..forward = first_ss.forward != props.delta_forward
@@ -52,7 +52,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         ..current_offset = end_5p.offset_inclusive + props.delta_offset
         ..key = 'end-5p')(),
       (EndMoving()
-        ..helix = props.helices[last_ss.helix + props.delta_helix_idx]
+        ..helix = props.helices[
+            props.helices_view_order[props.helices[last_ss.helix].view_order + props.delta_view_order]]
         ..dna_end = end_3p
         ..color = props.strand.color
         ..forward = props.delta_forward != last_ss.forward
@@ -65,9 +66,11 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
 
   ReactElement _draw_strand_lines_single_path() {
     Strand strand_moved = moved_strand(props.strand,
-        delta_helix_idx: props.delta_helix_idx,
+        delta_view_order: props.delta_view_order,
         delta_offset: props.delta_offset,
-        delta_forward: props.delta_forward);
+        delta_forward: props.delta_forward,
+        helices_view_order: props.helices_view_order,
+        helices_view_order_inverse: props.helices_view_order_inverse);
 
     List<BoundSubstrand> bound_substrands = strand_moved.bound_substrands();
     BoundSubstrand substrand = bound_substrands.first;

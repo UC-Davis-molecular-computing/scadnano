@@ -17,12 +17,16 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
 
     List<Address> addresses = [];
     StrandsMove strands_move = action.strands_move;
+    BuiltList<int> helices_view_order = store.state.dna_design.helices_view_order;
+    BuiltMap<int, int> helices_view_order_inverse = store.state.dna_design.helices_view_order_inverse;
 
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (Strand strand in strands_move.strands_moving) {
       BoundSubstrand old_substrand = strand.first_bound_substrand();
       DNAEnd old_5p_end = old_substrand.dnaend_5p;
-      int new_helix_idx = old_substrand.helix + strands_move.delta_helix_idx;
+      int old_helix_view_order = helices_view_order_inverse[old_substrand.helix];
+      int new_helix_view_order = old_helix_view_order + strands_move.delta_view_order;
+      int new_helix_idx = helices_view_order[new_helix_view_order];
       int new_offset = old_5p_end.offset_inclusive + strands_move.delta_offset;
       var new_forward = strands_move.delta_forward != old_substrand.forward;
       var address = Address(helix_idx: new_helix_idx, offset: new_offset, forward: new_forward);

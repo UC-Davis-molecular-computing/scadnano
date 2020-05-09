@@ -1699,6 +1699,130 @@ main() {
     expect_app_state_equal(final_state, expected_state);
   });
 
+  test('remove helices from DNA design', () {
+    // Remove helix 0 and 2 from this design.
+    //
+    // Before:
+    //
+    //     0            16
+    //    AGTCAGTCAGTCAGTC
+    // 0  [-----------------
+    //   ----------------]  \
+    //  | TCAGTCAGTCAGTCAG   |
+    //  |                    |
+    //  |  0             16  |
+    //  \ AATTCCGGAATTCCGG   |
+    // 1 --------------------/ ---
+    //  ---------------------     \
+    // /  TTAAGGCCTTAAGGCC        |
+    // |                          |
+    // |                          |
+    // |   0             16       |
+    // \  AAAATTTTCCCCGGGG        |
+    //  ----------------->        /
+    // 2  <----------------------
+    //    TTTTAAAAGGGGCCCC
+    //
+    // After:
+    //    AATTCCGGAATTCCGG
+    // 1  [-------------->
+    //    <--------------]
+    //    TTAAGGCCTTAAGGCC
+    String expected_json = r"""
+    {
+      "version": "0.0.1", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
+      "strands": [
+        {
+          "dna_sequence": "CCGGAATTCCGGAATT",
+          "substrands": [
+            {"helix": 1, "forward": false, "start": 0, "end": 16}
+          ]
+        },
+        {
+          "dna_sequence": "AATTCCGGAATTCCGG",
+          "substrands": [
+            {"helix": 1, "forward": true , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+  """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..undo_redo.undo_stack.add(simple_strand_dna_design)
+      ..ui_state.changed_since_last_save = true);
+    ;
+
+    AppState original_state = app_state_from_dna_design(simple_strand_dna_design)
+        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 2]));
+
+    AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
+
+    expect_app_state_equal(final_state, expected_state);
+  });
+
+  test('remove helices from DNA design should adjust svg position of helices with higher view position', () {
+    // Remove helix 0 and 2 from this design.
+    //
+    // Before:
+    //
+    //     0            16
+    //    AGTCAGTCAGTCAGTC
+    // 0  [-----------------
+    //   ----------------]  \
+    //  | TCAGTCAGTCAGTCAG   |
+    //  |                    |
+    //  |  0             16  |
+    //  \ AATTCCGGAATTCCGG   |
+    // 1 --------------------/ ---
+    //  ---------------------     \
+    // /  TTAAGGCCTTAAGGCC        |
+    // |                          |
+    // |                          |
+    // |   0             16       |
+    // \  AAAATTTTCCCCGGGG        |
+    //  ----------------->        /
+    // 2  <----------------------
+    //    TTTTAAAAGGGGCCCC
+    //
+    // After:
+    //    AAAATTTTCCCCGGGG
+    //    [-------------->
+    // 2  <--------------]
+    //    TTTTAAAAGGGGCCCC
+    String expected_json = r"""
+    {
+      "version": "0.0.1", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
+      "strands": [
+        {
+          "dna_sequence": "CCCCGGGGAAAATTTT",
+          "substrands": [
+            {"helix": 2, "forward": false, "start": 0, "end": 16}
+          ]
+        },
+        {
+          "dna_sequence": "AAAATTTTCCCCGGGG",
+          "substrands": [
+            {"helix": 2, "forward": true , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+  """;
+    DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
+    AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
+      ..undo_redo.undo_stack.add(simple_strand_dna_design)
+      ..ui_state.changed_since_last_save = true);
+    ;
+
+    AppState original_state = app_state_from_dna_design(simple_strand_dna_design)
+        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
+
+    AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
+
+    expect_app_state_equal(final_state, expected_state);
+  });
+
   //   0                  16
   //
   // 0 [------------------->
@@ -4202,6 +4326,8 @@ main() {
           original_address: address,
           original_helix_idx: helix0.idx,
           helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4340,6 +4466,8 @@ main() {
           original_address: address,
           original_helix_idx: helix1.idx,
           helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4409,6 +4537,269 @@ main() {
 
       // Should unselect the strands
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
+    });
+
+    String two_helices_with_empty_offsets_non_sequential_idx_json = r"""
+    {
+      "version": "0.0.1", "helices": [
+        {"grid_position": [0, 0], "max_offset": 32, "idx": 3},
+        {"grid_position": [0, 1], "max_offset": 32, "idx": 4}
+      ],
+      "strands": [
+        {
+          "substrands": [
+            {"helix": 3, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 3, "forward": false , "start": 0, "end": 16},
+            {"helix": 4, "forward": true , "start": 0, "end": 16}
+          ]
+        },
+        {
+          "substrands": [
+            {"helix": 4, "forward": false , "start": 0, "end": 16}
+          ]
+        }
+      ]
+    }
+    """;
+    DNADesign two_helices_with_empty_offsets_non_sequential_idx_design =
+        DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
+    AppState two_helicies_with_empty_offset_non_sequential_idx_state =
+        app_state_from_dna_design(two_helices_with_empty_offsets_non_sequential_idx_design);
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240)', () {
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0
+      //   --------------------]   strand1
+      //  /
+      //  |
+      //  \
+      // 4 -------------------->
+      //   <-------------------]   strand2
+
+      // Setup
+      Strand strand0 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[0];
+      BuiltList<Selectable> selectables = [strand0].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      // Expect move start to create correct strands_move object.
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+      expect(state.ui_state.strands_move, expected_strands_move);
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1
+      //  /
+      //  |
+      //  \
+      // 4 -------------------->
+      //   <-------------------]   strand2
+      offset = 1;
+      helix_idx = 3;
+      forward = true;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting:
+      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) move to new helix', () {
+      // select helix 0
+      Strand strand0 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[0];
+      BuiltList<Selectable> selectables = [strand0].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = true;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   drag this strand to here
+      //   --------------------]   |
+      //  /                        |
+      //  |                        |
+      //  \                        |
+      // 4 -------------------->   v
+      //   <-------------------]   [------------------->   moving strand (not placed yet)
+      offset = 16;
+      helix_idx = 4;
+      forward = true;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting:
+      var expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) exceed vertical boundary', () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1   drag this left end
+      //  /                                       |
+      //  |                                       |
+      //  \                                       v
+      // 4 -------------------->                  to this level, so strand2 goes out of bound
+      //   <-------------------]   strand2
+      offset = 0;
+      helix_idx = 4;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) exceed horizontal boundary',
+        () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0: move one offset to the right
+      //   --------------------]   strand1
+      //  /                                       ^
+      //  |                                       |
+      //  \                                       |
+      // 4 -------------------->                  drag strand1, strand2 all the way here
+      //   <-------------------]   strand2
+      offset = 19;
+      helix_idx = 3;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
+      expect(state.ui_state.strands_move, expected_strands_move);
+    });
+
+    test('StrandsMoveAdjustOffset on out of sequence helices (see issue #240) multiple adjust', () {
+      // select strand1 and strand2
+      Strand strand1 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[1];
+      Strand strand2 = two_helices_with_empty_offsets_non_sequential_idx_design.strands[2];
+      BuiltList<Selectable> selectables = [strand1, strand2].toBuiltList();
+      int offset = 0;
+      int helix_idx = 3;
+      bool forward = false;
+      Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      AppState state = app_state_reducer(two_helicies_with_empty_offset_non_sequential_idx_state,
+          SelectAll(selectables: selectables, only: true));
+      expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
+
+      StrandsMove expected_strands_move = StrandsMove(
+          strands_moving: selectables,
+          all_strands: state.dna_design.strands,
+          original_address: address,
+          original_helix_idx: helix0.idx,
+          helices: state.dna_design.helices,
+          helices_view_order: state.dna_design.helices_view_order,
+          helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+          copy: false);
+
+      // start move
+      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+
+      //   0                  16                       32
+      //
+      // 3 [------------------->   strand0:
+      //                         --------------------]   strand1
+      //                        /
+      //                        |
+      //                        \
+      // 4                       -------------------->
+      //                         <-------------------]   strand2
+      offset = 16;
+      helix_idx = 3;
+      forward = false;
+      address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
+      state = app_state_reducer(state, StrandsMoveAdjustAddress(address: address));
+      expected_strands_move = state.ui_state.strands_move.rebuild((b) => b
+        ..allowable = true
+        ..current_address.replace(address));
+
+      // Check address after adjusting (should be same as before since new one would not be valid):
+      expect(state.ui_state.strands_move, expected_strands_move);
     });
   });
 
@@ -4929,6 +5320,32 @@ main() {
 
       exp_state = app_state_reducer(exp_state, SetDisablePngCacheUntilActionCompletes(null));
       expect_app_state_equal(old_state, exp_state);
+    });
+  });
+
+  group('Test DNADesign view order functions: (see issue #240)', () {
+    String out_of_order_json = r"""
+    {
+      "version": "0.3.0",
+      "helices": [
+        {"grid_position": [0, 0], "idx": 12},
+        {"grid_position": [0, 0], "idx": 13},
+        {"grid_position": [0, 0], "idx": 15},
+        {"grid_position": [0, 0], "idx": 17}
+      ],
+      "helices_view_order": [12, 15, 17, 13],
+      "strands": []
+    }
+    """;
+    DNADesign out_of_order_design = DNADesign.from_json(json.decode(out_of_order_json));
+    test('helices_view_order', () {
+      BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
+      expect(out_of_order_design.helices_view_order, expected_helices_view_order);
+    });
+    test('helices_view_order', () {
+      BuiltMap<int, int> expected_helices_view_order_inverse =
+          BuiltMap<int, int>({12: 0, 13: 3, 15: 1, 17: 2});
+      expect(out_of_order_design.helices_view_order_inverse, expected_helices_view_order_inverse);
     });
   });
 }

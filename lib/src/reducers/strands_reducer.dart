@@ -93,12 +93,16 @@ BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions
 }
 
 Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move) {
-  int delta_helix_idx = strands_move.delta_helix_idx;
+  int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
   bool delta_forward = strands_move.delta_forward;
 
   strand = moved_strand(strand,
-      delta_helix_idx: delta_helix_idx, delta_offset: delta_offset, delta_forward: delta_forward);
+      delta_view_order: delta_view_order,
+      delta_offset: delta_offset,
+      delta_forward: delta_forward,
+      helices_view_order: strands_move.helices_view_order,
+      helices_view_order_inverse: strands_move.helices_view_order_inverse);
   if (strands_move.copy && !strand.is_scaffold) {
     //FIXME: this makes the reducer not pure
     strand = strand.rebuild((b) => b..color = util.color_cycler.next());
@@ -106,7 +110,12 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
   return strand;
 }
 
-Strand moved_strand(Strand strand, {int delta_helix_idx, int delta_offset, bool delta_forward}) {
+Strand moved_strand(Strand strand,
+    {int delta_view_order,
+    int delta_offset,
+    bool delta_forward,
+    BuiltList<int> helices_view_order,
+    BuiltMap<int, int> helices_view_order_inverse}) {
   List<Substrand> substrands = strand.substrands.toList();
   if (delta_forward) {
     substrands = substrands.reversed.toList();
@@ -119,7 +128,7 @@ Strand moved_strand(Strand strand, {int delta_helix_idx, int delta_offset, bool 
         (b) => b
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
-          ..helix = substrand.helix + delta_helix_idx
+          ..helix = helices_view_order[helices_view_order_inverse[substrand.helix] + delta_view_order]
           ..forward = (delta_forward != substrand.forward)
           ..start = substrand.start + delta_offset
           ..end = substrand.end + delta_offset

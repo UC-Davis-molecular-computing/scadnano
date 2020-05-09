@@ -734,6 +734,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Return set of substrands on the Helix with the given index.
   BuiltList<BoundSubstrand> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
 
+  /// Return set of substrands on the helices with the given helix_idxs.
+  BuiltList<BoundSubstrand> substrands_on_helices(Iterable<int> helix_idxs) {
+    ListBuilder<BoundSubstrand> list_builder = ListBuilder<BoundSubstrand>();
+
+    for (var helix_idx in helix_idxs) {
+      list_builder.addAll(substrands_on_helix(helix_idx));
+    }
+    return list_builder.build();
+  }
+
 //  Set<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
   /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
@@ -854,24 +864,26 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   bool helix_has_substrands(Helix helix) => this.helix_idx_to_substrands[helix.idx].isNotEmpty;
 
+  /// Returns a map mapping helix indices to their view order.
   @memoized
-  BuiltList<int> get helices_view_order_inverse {
-    List<int> view_order_inverse = List<int>(helices.length);
-    for (int i = 0; i < helices.length; i++) {
-      int i_unsorted = helices[i].view_order;
-      view_order_inverse[i_unsorted] = i;
+  BuiltMap<int, int> get helices_view_order_inverse {
+    Map<int, int> view_order_inverse = Map<int, int>();
+    for (var idx in helices.keys) {
+      int view_order = helices[idx].view_order;
+      view_order_inverse[idx] = view_order;
     }
-    return view_order_inverse.toBuiltList();
+    return view_order_inverse.build();
   }
 
+  /// Returns a map mapping view_order to helix_idx.
   @memoized
   BuiltList<int> get helices_view_order {
-    List<int> view_order = List<int>(helices.length);
-    for (int i = 0; i < helices.length; i++) {
-      int i_unsorted = helices[i].view_order;
-      view_order[i] = i_unsorted;
+    List<int> view_orders = List<int>(helices.length);
+    for (var idx in helices.keys) {
+      int view_order = helices[idx].view_order;
+      view_orders[view_order] = idx;
     }
-    return view_order.toBuiltList();
+    return view_orders.toBuiltList();
   }
 
   bool is_occupied(Address address) => substrand_on_helix_at(address) != null;

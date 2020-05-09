@@ -328,7 +328,11 @@ class DesignViewComponent {
         EditModeChoice.key_code_to_mode.keys.contains(key)) {
       app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
     } else if (key == KeyCode.DELETE) {
-      app.dispatch(actions.DeleteAllSelected());
+      if (app.state.ui_state.selectables_store.isNotEmpty) {
+        app.dispatch(actions.DeleteAllSelected());
+      } else if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
+        app.dispatch(actions.HelixRemoveAllSelected());
+      }
     }
 
     // Ctrl+C/Ctrl+V for copy/paste

@@ -44,7 +44,6 @@ DNADesign dna_design_composed_local_reducer(DNADesign dna_design, action) => dna
   ..helices.replace(helices_local_reducer(dna_design.helices, action))
   ..strands.replace(strands_local_reducer(dna_design.strands, action)));
 
-
 Grid grid_local_reducer(Grid grid, actions.GridChange action) => action.grid;
 
 // composed: operate on slices of the DNADesign
@@ -65,4 +64,6 @@ Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
 // global: need the whole AppState
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<DNADesign, AppState, actions.HelixRemove>(helix_remove_dna_design_global_reducer),
+  TypedGlobalReducer<DNADesign, AppState, actions.HelixRemoveAllSelected>(
+      helix_remove_all_selected_dna_design_global_reducer),
 ]);

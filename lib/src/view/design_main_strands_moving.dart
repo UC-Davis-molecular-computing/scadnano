@@ -14,19 +14,20 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
   return DesignMainStrandsMoving()
     ..strands_move = state.ui_state.strands_move
     ..helices = state.dna_design.helices
+    ..helices_view_order = state.dna_design.helices_view_order
+    ..helices_view_order_inverse = state.dna_design.helices_view_order_inverse
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
 })(DesignMainStrandsMoving);
 
-
 UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainStrandsMoving;
-
 
 mixin DesignMainStrandsMovingProps on UiProps {
   StrandsMove strands_move;
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
+  BuiltList<int> helices_view_order;
+  BuiltMap<int, int> helices_view_order_inverse;
 }
-
 
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {
   @override
@@ -39,7 +40,9 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
       for (var strand in props.strands_move.strands_moving)
         (DesignMainStrandMoving()
           ..strand = strand
-          ..delta_helix_idx = props.strands_move.delta_helix_idx
+          ..delta_view_order = props.strands_move.delta_view_order
+          ..helices_view_order = props.helices_view_order
+          ..helices_view_order_inverse = props.helices_view_order_inverse
           ..delta_offset = props.strands_move.delta_offset
           ..delta_forward = props.strands_move.delta_forward
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
