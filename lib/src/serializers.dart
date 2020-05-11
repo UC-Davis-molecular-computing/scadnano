@@ -180,6 +180,7 @@ part 'serializers.g.dart';
   SetDisablePngCacheUntilActionCompletes,
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
+  SetOnlyDisplaySelectedHelices,
 ])
 Serializers serializers = _$serializers;
 
