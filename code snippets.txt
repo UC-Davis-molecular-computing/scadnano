@@ -28,19 +28,18 @@ import 'package:over_react/over_react.dart';
 
 part '$FileName$.over_react.g.dart';
 
-@Factory()
-UiFactory<$MyComponent$Props> $MyComponent$ = _$$$MyComponent$;
+UiFactory<$MyComponent$Props> $MyComponent$ = $$$MyComponent$;
 
-@Props()
-class _$$$MyComponent$Props extends UiProps {}
+mixin $MyComponent$Props on UiProps {}
 
-@Component2()
 class $MyComponent$Component extends UiComponent2<$MyComponent$Props> {
   @override
   Map get defaultProps => (newProps());
 
   @override
-  render() {}
+  render() {
+    
+  }
 }
 
 
@@ -52,16 +51,12 @@ import 'package:over_react/over_react.dart';
 
 part '$FileName$.over_react.g.dart';
 
-@Factory()
-UiFactory<$MyComponent$Props> $MyComponent$ = _$$$MyComponent$;
+UiFactory<$MyComponent$Props> $MyComponent$ = $$$MyComponent$;
 
-@Props()
-class _$$$MyComponent$Props extends UiProps {}
+mixin $MyComponent$Props on UiProps {}
 
-@State()
-class _$$$MyComponent$State extends UiState {}
+mixin $MyComponent$State on UiState {}
 
-@Component2()
 class $MyComponent$Component extends UiStatefulComponent2<$MyComponent$Props, $MyComponent$State> {
   @override
   Map get defaultProps => (newProps());
@@ -70,7 +65,9 @@ class $MyComponent$Component extends UiStatefulComponent2<$MyComponent$Props, $M
   Map get initialState => (newState());
 
   @override
-  render() {}
+  render() {
+    
+  }
 }
 
 
