@@ -28,7 +28,7 @@ import 'package:over_react/over_react.dart';
 
 part '$FileName$.over_react.g.dart';
 
-UiFactory<$MyComponent$Props> $MyComponent$ = $$$MyComponent$;
+UiFactory<$MyComponent$Props> $MyComponent$ = _$$$MyComponent$;
 
 mixin $MyComponent$Props on UiProps {}
 
@@ -51,7 +51,7 @@ import 'package:over_react/over_react.dart';
 
 part '$FileName$.over_react.g.dart';
 
-UiFactory<$MyComponent$Props> $MyComponent$ = $$$MyComponent$;
+UiFactory<$MyComponent$Props> $MyComponent$ = _$$$MyComponent$;
 
 mixin $MyComponent$Props on UiProps {}
 
