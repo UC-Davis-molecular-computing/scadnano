@@ -32,6 +32,8 @@ class DNASequencePredefined extends EnumClass {
       return _m13_p7560;
     } else if (this == M13p8064) {
       return _m13_p8064;
+    } else {
+      throw AssertionError('should be unreachable');
     }
   }
 
