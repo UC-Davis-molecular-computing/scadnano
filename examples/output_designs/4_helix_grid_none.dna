@@ -1,6 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "grid": "none",
+  "major_tick_distance": 8,
   "helices": [
     {"position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
     {"max_offset": 10, "position": {"x": 3, "y": 3, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
@@ -9,14 +10,14 @@
   ],
   "strands": [
     {
-      "color": "#cc0000",
-      "substrands": [
+      "color": "#f74308",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 10}
       ]
     },
     {
       "color": "#0066cc",
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 10}
       ]
     }

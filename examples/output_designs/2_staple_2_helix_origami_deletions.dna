@@ -1,30 +1,31 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]}
   ],
   "strands": [
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
-      "substrands": [
+      "color": "#007200",
+      "sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
+      "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12]},
         {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12]}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
-      "substrands": [
+      "color": "#cc0000",
+      "sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24]},
         {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24]}
       ]
     },
     {
       "color": "#0066cc",
-      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAAC",
-      "substrands": [
+      "sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAAC",
+      "domains": [
         {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12]},
         {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24]},
         {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24]}

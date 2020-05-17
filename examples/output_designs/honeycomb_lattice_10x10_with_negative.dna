@@ -1,6 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "grid": "honeycomb",
+  "major_tick_distance": 7,
   "helices": [
     {"max_offset": 16, "grid_position": [-4, -4]},
     {"max_offset": 16, "grid_position": [-3, -4]},

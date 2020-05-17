@@ -1,5 +1,6 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]}
@@ -7,7 +8,7 @@
   "strands": [
     {
       "color": "#333333",
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 4},
         {"helix": 1, "forward": true, "start": 0, "end": 8},
         {"helix": 0, "forward": false, "start": 4, "end": 8}
@@ -15,7 +16,7 @@
     },
     {
       "color": "#320096",
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     }

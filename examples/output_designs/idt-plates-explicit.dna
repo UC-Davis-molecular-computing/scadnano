@@ -1,1886 +1,1887 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]}
   ],
   "strands": [
     {
-      "color": "#cc0000",
-      "dna_sequence": "TATTATAGTCTTACCCTGAC",
+      "color": "#f74308",
+      "sequence": "CTATTATAGTTTTACCCTGA",
       "idt": {"name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 10},
         {"helix": 1, "forward": false, "start": 0, "end": 10}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "AGAAGCAAAGAATCAGGTCT",
+      "color": "#57bb00",
+      "sequence": "CAGAAGCAAAAAATCAGGTC",
       "idt": {"name": "staple2", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 10, "end": 20},
         {"helix": 1, "forward": false, "start": 10, "end": 20}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "CGGATTGCATATAAATCAAA",
+      "color": "#888888",
+      "sequence": "GCGGATTGCACATAAATCAA",
       "idt": {"name": "staple3", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 20, "end": 30},
         {"helix": 1, "forward": false, "start": 20, "end": 30}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "CAAAAAGATTGAGAATGACC",
+      "color": "#32b86c",
+      "sequence": "TCAAAAAGATCGAGAATGAC",
       "idt": {"name": "staple4", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 30, "end": 40},
         {"helix": 1, "forward": false, "start": 30, "end": 40}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "AAGAGGAAGCTTCAGAAAAC",
+      "color": "#333333",
+      "sequence": "TAAGAGGAAGGTTCAGAAAA",
       "idt": {"name": "staple5", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 40, "end": 50},
         {"helix": 1, "forward": false, "start": 40, "end": 50}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "CCGAAAGACTCTTTAAACAG",
+      "color": "#320096",
+      "sequence": "CCCGAAAGACGCTTTAAACA",
       "idt": {"name": "staple6", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 50, "end": 60},
         {"helix": 1, "forward": false, "start": 50, "end": 60}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "TCAAATATCGCCCTCAAATG",
+      "color": "#03b6a2",
+      "sequence": "TTCAAATATCCCCCTCAAAT",
       "idt": {"name": "staple7", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 60, "end": 70},
         {"helix": 1, "forward": false, "start": 60, "end": 70}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "CGTTTTAATTCATTGAATCC",
+      "color": "#7300de",
+      "sequence": "GCGTTTTAATTCATTGAATC",
       "idt": {"name": "staple8", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 70, "end": 80},
         {"helix": 1, "forward": false, "start": 70, "end": 80}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "CGAGCTTCAACATAAATATT",
+      "color": "#aaaa00",
+      "sequence": "TCGAGCTTCATCATAAATAT",
       "idt": {"name": "staple9", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 80, "end": 90},
         {"helix": 1, "forward": false, "start": 80, "end": 90}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "AGCGAACCAGGCGGAATCGT",
+      "color": "#b8056c",
+      "sequence": "AAGCGAACCATGCGGAATCG",
       "idt": {"name": "staple10", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 90, "end": 100},
         {"helix": 1, "forward": false, "start": 90, "end": 100}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "ACCGGAAGCAGTCCAATACT",
+      "color": "#007200",
+      "sequence": "GACCGGAAGCCGTCCAATAC",
       "idt": {"name": "staple11", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 100, "end": 110},
         {"helix": 1, "forward": false, "start": 100, "end": 110}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AACTCCAACAACTGGATAGC",
+      "color": "#cc0000",
+      "sequence": "AAACTCCAACGACTGGATAG",
       "idt": {"name": "staple12", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 110, "end": 120},
         {"helix": 1, "forward": false, "start": 110, "end": 120}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GGTCAGGATTAAATGTTTAG",
+      "color": "#f7931e",
+      "sequence": "AGGTCAGGATAAAATGTTTA",
       "idt": {"name": "staple13", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 120, "end": 130},
         {"helix": 1, "forward": false, "start": 120, "end": 130}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "AGAGAGTACCGGTAATAGTA",
+      "color": "#f74308",
+      "sequence": "TAGAGAGTACGGGTAATAGT",
       "idt": {"name": "staple14", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 130, "end": 140},
         {"helix": 1, "forward": false, "start": 130, "end": 140}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "TTTAATTGCTTGCCAGAGGG",
+      "color": "#57bb00",
+      "sequence": "CTTTAATTGCTTGCCAGAGG",
       "idt": {"name": "staple15", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 140, "end": 150},
         {"helix": 1, "forward": false, "start": 140, "end": 150}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "CCTTTTGATAAAAGAAGTTT",
+      "color": "#888888",
+      "sequence": "TCCTTTTGATAAAAGAAGTT",
       "idt": {"name": "staple16", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 150, "end": 160},
         {"helix": 1, "forward": false, "start": 150, "end": 160}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "AGAGGTCATTGGCTTTTGCA",
+      "color": "#32b86c",
+      "sequence": "AAGAGGTCATAGGCTTTTGC",
       "idt": {"name": "staple17", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 160, "end": 170},
         {"helix": 1, "forward": false, "start": 160, "end": 170}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "TTTGCGGATGAATAGCGAGA",
+      "color": "#333333",
+      "sequence": "TTTTGCGGATAAATAGCGAG",
       "idt": {"name": "staple18", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 170, "end": 180},
         {"helix": 1, "forward": false, "start": 170, "end": 180}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GCTTAGAGCTTAAAAACCAA",
+      "color": "#320096",
+      "sequence": "GGCTTAGAGCATAAAAACCA",
       "idt": {"name": "staple19", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 180, "end": 190},
         {"helix": 1, "forward": false, "start": 180, "end": 190}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "TAATTGCTGACAGACGACGA",
+      "color": "#03b6a2",
+      "sequence": "TTAATTGCTGCCAGACGACG",
       "idt": {"name": "staple20", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 190, "end": 200},
         {"helix": 1, "forward": false, "start": 190, "end": 200}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "ATATAATGCTCCTCGTTTAC",
+      "color": "#7300de",
+      "sequence": "AATATAATGCCCCTCGTTTA",
       "idt": {"name": "staple21", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 200, "end": 210},
         {"helix": 1, "forward": false, "start": 200, "end": 210}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "GTAGCTCAACCTATCATAAC",
+      "color": "#aaaa00",
+      "sequence": "TGTAGCTCAAACTATCATAA",
       "idt": {"name": "staple22", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 210, "end": 220},
         {"helix": 1, "forward": false, "start": 210, "end": 220}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "ATGTTTTAAAAAGAGCAACA",
+      "color": "#b8056c",
+      "sequence": "CATGTTTTAATAAGAGCAAC",
       "idt": {"name": "staple23", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 220, "end": 230},
         {"helix": 1, "forward": false, "start": 220, "end": 230}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TATGCAACTAGAGGCATAGT",
+      "color": "#007200",
+      "sequence": "ATATGCAACTCGAGGCATAG",
       "idt": {"name": "staple24", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 230, "end": 240},
         {"helix": 1, "forward": false, "start": 230, "end": 240}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AAGTACGGTGAAGGAATTAC",
+      "color": "#cc0000",
+      "sequence": "AAAGTACGGTAAAGGAATTA",
       "idt": {"name": "staple25", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 240, "end": 250},
         {"helix": 1, "forward": false, "start": 240, "end": 250}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "TCTGGAAGTTATAACGCCAA",
+      "color": "#f7931e",
+      "sequence": "GTCTGGAAGTCATAACGCCA",
       "idt": {"name": "staple26", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 250, "end": 260},
         {"helix": 1, "forward": false, "start": 250, "end": 260}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "TCATTCCATAATGCAGATAC",
+      "color": "#f74308",
+      "sequence": "TTCATTCCATAATGCAGATA",
       "idt": {"name": "staple27", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 260, "end": 270},
         {"helix": 1, "forward": false, "start": 260, "end": 270}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "TAACAGTTGACATTCAACTA",
+      "color": "#57bb00",
+      "sequence": "ATAACAGTTGACATTCAACT",
       "idt": {"name": "staple28", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 270, "end": 280},
         {"helix": 1, "forward": false, "start": 270, "end": 280}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "TTCCCAATTCAGGAATACCA",
+      "color": "#888888",
+      "sequence": "ATTCCCAATTTAGGAATACC",
       "idt": {"name": "staple29", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 280, "end": 290},
         {"helix": 1, "forward": false, "start": 280, "end": 290}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "TGCGAACGAGGTTGAGATTT",
+      "color": "#32b86c",
+      "sequence": "CTGCGAACGAAGTTGAGATT",
       "idt": {"name": "staple30", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 290, "end": 300},
         {"helix": 1, "forward": false, "start": 290, "end": 300}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "TAGATTTAGTAGATTCATCA",
+      "color": "#333333",
+      "sequence": "GTAGATTTAGAAGATTCATC",
       "idt": {"name": "staple31", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 300, "end": 310},
         {"helix": 1, "forward": false, "start": 300, "end": 310}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "TTGACCATTAACAGGTAGAA",
+      "color": "#320096",
+      "sequence": "TTTGACCATTTACAGGTAGA",
       "idt": {"name": "staple32", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 310, "end": 320},
         {"helix": 1, "forward": false, "start": 310, "end": 320}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "GATACATTTCCAACATTATT",
+      "color": "#03b6a2",
+      "sequence": "AGATACATTTACAACATTAT",
       "idt": {"name": "staple33", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 320, "end": 330},
         {"helix": 1, "forward": false, "start": 320, "end": 330}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "GCAAATGGTCACTAACGGAA",
+      "color": "#7300de",
+      "sequence": "CGCAAATGGTAACTAACGGA",
       "idt": {"name": "staple34", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 330, "end": 340},
         {"helix": 1, "forward": false, "start": 330, "end": 340}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "AATAACCTGTAATAAAACGA",
+      "color": "#aaaa00",
+      "sequence": "CAATAACCTGTAATAAAACG",
       "idt": {"name": "staple35", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 340, "end": 350},
         {"helix": 1, "forward": false, "start": 340, "end": 350}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "TTAGCTATATAATCTACGTT",
+      "color": "#b8056c",
+      "sequence": "TTTAGCTATAAAATCTACGT",
       "idt": {"name": "staple36", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 350, "end": 360},
         {"helix": 1, "forward": false, "start": 350, "end": 360}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TTTCATTTGGTGGGAAGAAA",
+      "color": "#007200",
+      "sequence": "TTTTCATTTGTTGGGAAGAA",
       "idt": {"name": "staple37", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 360, "end": 370},
         {"helix": 1, "forward": false, "start": 360, "end": 370}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GGCGCGAGCTGTCAGGACGT",
+      "color": "#cc0000",
+      "sequence": "GGGCGCGAGCAGTCAGGACG",
       "idt": {"name": "staple38", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 370, "end": 380},
         {"helix": 1, "forward": false, "start": 370, "end": 380}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GAAAAGGTGGCATTATACCA",
+      "color": "#f7931e",
+      "sequence": "TGAAAAGGTGTCATTATACC",
       "idt": {"name": "staple39", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 380, "end": 390},
         {"helix": 1, "forward": false, "start": 380, "end": 390}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "CATCAATTCTAGAACTGGCT",
+      "color": "#f74308",
+      "sequence": "GCATCAATTCAAGAACTGGC",
       "idt": {"name": "staple40", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 390, "end": 400},
         {"helix": 1, "forward": false, "start": 390, "end": 400}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "ACTAATAGTATGCGATTTTA",
+      "color": "#57bb00",
+      "sequence": "TACTAATAGTATGCGATTTT",
       "idt": {"name": "staple41", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 400, "end": 410},
         {"helix": 1, "forward": false, "start": 400, "end": 410}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "GTAGCATTAAAATTACCTTA",
+      "color": "#888888",
+      "sequence": "AGTAGCATTAGAATTACCTT",
       "idt": {"name": "staple42", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 410, "end": 420},
         {"helix": 1, "forward": false, "start": 410, "end": 420}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "CATCCAATAAAATCATTGTG",
+      "color": "#32b86c",
+      "sequence": "ACATCCAATATAATCATTGT",
       "idt": {"name": "staple43", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 420, "end": 430},
         {"helix": 1, "forward": false, "start": 420, "end": 430}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "ATCATACAGGTTTCAACTTT",
+      "color": "#333333",
+      "sequence": "AATCATACAGATTTCAACTT",
       "idt": {"name": "staple44", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 430, "end": 440},
         {"helix": 1, "forward": false, "start": 430, "end": 440}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "CAAGGCAAAGGATGGTTTAA",
+      "color": "#320096",
+      "sequence": "GCAAGGCAAAAGATGGTTTA",
       "idt": {"name": "staple45", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 440, "end": 450},
         {"helix": 1, "forward": false, "start": 440, "end": 450}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "AATTAGCAAATTGGGCTTGA",
+      "color": "#03b6a2",
+      "sequence": "GAATTAGCAAATTGGGCTTG",
       "idt": {"name": "staple46", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 450, "end": 460},
         {"helix": 1, "forward": false, "start": 450, "end": 460}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "ATTAAGCAATGAGTAGTAAA",
+      "color": "#7300de",
+      "sequence": "AATTAAGCAACGAGTAGTAA",
       "idt": {"name": "staple47", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 460, "end": 470},
         {"helix": 1, "forward": false, "start": 460, "end": 470}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "AAAGCCTCAGACACCAGAAC",
+      "color": "#aaaa00",
+      "sequence": "TAAAGCCTCAAACACCAGAA",
       "idt": {"name": "staple48", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 470, "end": 480},
         {"helix": 1, "forward": false, "start": 470, "end": 480}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "AGCATAAAGCCTGACGAGAA",
+      "color": "#b8056c",
+      "sequence": "GAGCATAAAGCCTGACGAGA",
       "idt": {"name": "staple49", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 480, "end": 490},
         {"helix": 1, "forward": false, "start": 480, "end": 490}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TAAATCGGTTAAGGCTTGCC",
+      "color": "#007200",
+      "sequence": "CTAAATCGGTTAAGGCTTGC",
       "idt": {"name": "staple50", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 490, "end": 500},
         {"helix": 1, "forward": false, "start": 490, "end": 500}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GTACCAAAAATTCAGTGAAT",
+      "color": "#cc0000",
+      "sequence": "TGTACCAAAAATTCAGTGAA",
       "idt": {"name": "staple51", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 500, "end": 510},
         {"helix": 1, "forward": false, "start": 500, "end": 510}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "CATTATGACCAAGCTGCTCA",
+      "color": "#f7931e",
+      "sequence": "ACATTATGACAAAGCTGCTC",
       "idt": {"name": "staple52", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 510, "end": 520},
         {"helix": 1, "forward": false, "start": 510, "end": 520}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "CTGTAATACTCAACGTAACA",
+      "color": "#f74308",
+      "sequence": "CCTGTAATACTCAACGTAAC",
       "idt": {"name": "staple53", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 520, "end": 530},
         {"helix": 1, "forward": false, "start": 520, "end": 530}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "TTTGCGGGAGTTACCCAAAT",
+      "color": "#57bb00",
+      "sequence": "TTTTGCGGGAATTACCCAAA",
       "idt": {"name": "staple54", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 530, "end": 540},
         {"helix": 1, "forward": false, "start": 530, "end": 540}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "AAGCCTTTATCGGATATTCA",
+      "color": "#888888",
+      "sequence": "GAAGCCTTTACCGGATATTC",
       "idt": {"name": "staple55", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 540, "end": 550},
         {"helix": 1, "forward": false, "start": 540, "end": 550}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "TTCAACGCAATGACAAGAAC",
+      "color": "#32b86c",
+      "sequence": "TTTCAACGCATTGACAAGAA",
       "idt": {"name": "staple56", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 550, "end": 560},
         {"helix": 1, "forward": false, "start": 550, "end": 560}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "GGATAAAAATAGAGTAATCT",
+      "color": "#333333",
+      "sequence": "AGGATAAAAAAAGAGTAATC",
       "idt": {"name": "staple57", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 560, "end": 570},
         {"helix": 1, "forward": false, "start": 560, "end": 570}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "TTTTAGAACCACCTTCATCA",
+      "color": "#320096",
+      "sequence": "TTTTTAGAACGACCTTCATC",
       "idt": {"name": "staple58", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 570, "end": 580},
         {"helix": 1, "forward": false, "start": 570, "end": 580}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "CTCATATATTAGGCTGGCTG",
+      "color": "#03b6a2",
+      "sequence": "CCTCATATATTAGGCTGGCT",
       "idt": {"name": "staple59", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 580, "end": 590},
         {"helix": 1, "forward": false, "start": 580, "end": 590}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "TTAAATGCAACCAGGCGCAT",
+      "color": "#7300de",
+      "sequence": "TTTAAATGCAACCAGGCGCA",
       "idt": {"name": "staple60", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 590, "end": 600},
         {"helix": 1, "forward": false, "start": 590, "end": 600}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "TGCCTGAGTAGGTGTACAGA",
+      "color": "#aaaa00",
+      "sequence": "ATGCCTGAGTCGGTGTACAG",
       "idt": {"name": "staple61", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 600, "end": 610},
         {"helix": 1, "forward": false, "start": 600, "end": 610}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "ATGTGTAGGTACAGATGAAC",
+      "color": "#b8056c",
+      "sequence": "AATGTGTAGGGACAGATGAA",
       "idt": {"name": "staple62", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 610, "end": 620},
         {"helix": 1, "forward": false, "start": 610, "end": 620}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "AAAGATTCAATTGAAAGAGG",
+      "color": "#007200",
+      "sequence": "TAAAGATTCATTTGAAAGAG",
       "idt": {"name": "staple63", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 620, "end": 630},
         {"helix": 1, "forward": false, "start": 620, "end": 630}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AAGGGTGAGACTGACCAACT",
+      "color": "#cc0000",
+      "sequence": "AAAGGGTGAGACTGACCAAC",
       "idt": {"name": "staple64", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 630, "end": 640},
         {"helix": 1, "forward": false, "start": 630, "end": 640}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "AAGGCCGGAGGGGAACCGAA",
+      "color": "#f7931e",
+      "sequence": "AAAGGCCGGAAGGGAACCGA",
       "idt": {"name": "staple65", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 640, "end": 650},
         {"helix": 1, "forward": false, "start": 640, "end": 650}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "ACAGTCAAATTCAATCATAA",
+      "color": "#f74308",
+      "sequence": "GACAGTCAAAGTCAATCATA",
       "idt": {"name": "staple66", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 650, "end": 660},
         {"helix": 1, "forward": false, "start": 650, "end": 660}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "CACCATCAATGCGCAGACGG",
+      "color": "#57bb00",
+      "sequence": "TCACCATCAAGGCGCAGACG",
       "idt": {"name": "staple67", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 660, "end": 670},
         {"helix": 1, "forward": false, "start": 660, "end": 670}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "ATGATATTCACCGGAACGAG",
+      "color": "#888888",
+      "sequence": "TATGATATTCGCCGGAACGA",
       "idt": {"name": "staple68", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 670, "end": 680},
         {"helix": 1, "forward": false, "start": 670, "end": 680}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "ACCGTTCTAGTGTTACTTAG",
+      "color": "#32b86c",
+      "sequence": "AACCGTTCTAATGTTACTTA",
       "idt": {"name": "staple69", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 680, "end": 690},
         {"helix": 1, "forward": false, "start": 680, "end": 690}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CTGATAAATTACCTGCTCCA",
+      "color": "#333333",
+      "sequence": "GCTGATAAATGACCTGCTCC",
       "idt": {"name": "staple70", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 690, "end": 700},
         {"helix": 1, "forward": false, "start": 690, "end": 700}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "AATGCCGGAGGAAATCCGCG",
+      "color": "#320096",
+      "sequence": "TAATGCCGGACGAAATCCGC",
       "idt": {"name": "staple71", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 700, "end": 710},
         {"helix": 1, "forward": false, "start": 700, "end": 710}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "AGGGTAGCTAAAATTGTGTC",
+      "color": "#03b6a2",
+      "sequence": "GAGGGTAGCTTAAATTGTGT",
       "idt": {"name": "staple72", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 710, "end": 720},
         {"helix": 1, "forward": false, "start": 710, "end": 720}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "TTTTTGAGAGATCGCCTGAT",
+      "color": "#7300de",
+      "sequence": "ATTTTTGAGACATCGCCTGA",
       "idt": {"name": "staple73", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 720, "end": 730},
         {"helix": 1, "forward": false, "start": 720, "end": 730}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "ATCTACAAAGGATTTGTATC",
+      "color": "#aaaa00",
+      "sequence": "GATCTACAAAAGATTTGTAT",
       "idt": {"name": "staple74", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 730, "end": 740},
         {"helix": 1, "forward": false, "start": 730, "end": 740}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "GCTATCAGGTGTACAACGGA",
+      "color": "#b8056c",
+      "sequence": "GGCTATCAGGAGTACAACGG",
       "idt": {"name": "staple75", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 740, "end": 750},
         {"helix": 1, "forward": false, "start": 740, "end": 750}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "CATTGCCTGAGCGAAACAAA",
+      "color": "#007200",
+      "sequence": "TCATTGCCTGCGCGAAACAA",
       "idt": {"name": "staple76", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 750, "end": 760},
         {"helix": 1, "forward": false, "start": 750, "end": 760}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GAGTCTGGAGTATACCAAGC",
+      "color": "#cc0000",
+      "sequence": "AGAGTCTGGATTATACCAAG",
       "idt": {"name": "staple77", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 760, "end": 770},
         {"helix": 1, "forward": false, "start": 760, "end": 770}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "CAAACAAGAGCCCCAGCGAT",
+      "color": "#f7931e",
+      "sequence": "GCAAACAAGACCCCCAGCGA",
       "idt": {"name": "staple78", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 770, "end": 780},
         {"helix": 1, "forward": false, "start": 770, "end": 780}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "AATCGATGAACATCTTTGAC",
+      "color": "#f74308",
+      "sequence": "GAATCGATGATCATCTTTGA",
       "idt": {"name": "staple79", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 780, "end": 790},
         {"helix": 1, "forward": false, "start": 780, "end": 790}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "CGGTAATCGTCTAAAACACT",
+      "color": "#57bb00",
+      "sequence": "ACGGTAATCGACTAAAACAC",
       "idt": {"name": "staple80", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 790, "end": 800},
         {"helix": 1, "forward": false, "start": 790, "end": 800}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "AAAACTAGCAAAAGAATACA",
+      "color": "#888888",
+      "sequence": "TAAAACTAGCAAAAGAATAC",
       "idt": {"name": "staple81", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 800, "end": 810},
         {"helix": 1, "forward": false, "start": 800, "end": 810}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "TGTCAATCATGAAAGAGGCA",
+      "color": "#32b86c",
+      "sequence": "ATGTCAATCACGAAAGAGGC",
       "idt": {"name": "staple82", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 810, "end": 820},
         {"helix": 1, "forward": false, "start": 810, "end": 820}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "ATGTACCCCGAACCTAAAAC",
+      "color": "#333333",
+      "sequence": "TATGTACCCCCAACCTAAAA",
       "idt": {"name": "staple83", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 820, "end": 830},
         {"helix": 1, "forward": false, "start": 820, "end": 830}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GTTGATAATCCGAAGGCACC",
+      "color": "#320096",
+      "sequence": "GGTTGATAATACGAAGGCAC",
       "idt": {"name": "staple84", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 830, "end": 840},
         {"helix": 1, "forward": false, "start": 830, "end": 840}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "AGAAAAGCCCAATGCCACTA",
+      "color": "#03b6a2",
+      "sequence": "CAGAAAAGCCTAATGCCACT",
       "idt": {"name": "staple85", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 840, "end": 850},
         {"helix": 1, "forward": false, "start": 840, "end": 850}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "CAAAAACAGGTAAAATACGT",
+      "color": "#7300de",
+      "sequence": "CCAAAAACAGGTAAAATACG",
       "idt": {"name": "staple86", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 850, "end": 860},
         {"helix": 1, "forward": false, "start": 850, "end": 860}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "AAGATTGTATATTAAACGGG",
+      "color": "#aaaa00",
+      "sequence": "GAAGATTGTACATTAAACGG",
       "idt": {"name": "staple87", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 860, "end": 870},
         {"helix": 1, "forward": false, "start": 860, "end": 870}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "AAGCAAATATGGAAGTTTCC",
+      "color": "#b8056c",
+      "sequence": "TAAGCAAATAAGGAAGTTTC",
       "idt": {"name": "staple88", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 870, "end": 880},
         {"helix": 1, "forward": false, "start": 870, "end": 880}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TTAAATTGTATTTTTCATGA",
+      "color": "#007200",
+      "sequence": "TTTAAATTGTCTTTTTCATG",
       "idt": {"name": "staple89", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 880, "end": 890},
         {"helix": 1, "forward": false, "start": 880, "end": 890}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AACGTTAATAGACTAAAGAC",
+      "color": "#cc0000",
+      "sequence": "AAACGTTAATGGACTAAAGA",
       "idt": {"name": "staple90", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 890, "end": 900},
         {"helix": 1, "forward": false, "start": 890, "end": 900}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "TTTTGTTAAAAGGCTTTGAG",
+      "color": "#f7931e",
+      "sequence": "ATTTTGTTAAGAGGCTTTGA",
       "idt": {"name": "staple91", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 900, "end": 910},
         {"helix": 1, "forward": false, "start": 900, "end": 910}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "ATTCGCATTAACGGCTACAG",
+      "color": "#f74308",
+      "sequence": "AATTCGCATTAACGGCTACA",
       "idt": {"name": "staple92", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 910, "end": 920},
         {"helix": 1, "forward": false, "start": 910, "end": 920}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "AATTTTTGTTGAGGGTAGCA",
+      "color": "#57bb00",
+      "sequence": "AAATTTTTGTCGAGGGTAGC",
       "idt": {"name": "staple93", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 920, "end": 930},
         {"helix": 1, "forward": false, "start": 920, "end": 930}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "AAATCAGCTCGCATCGGAAC",
+      "color": "#888888",
+      "sequence": "TAAATCAGCTAGCATCGGAA",
       "idt": {"name": "staple94", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 930, "end": 940},
         {"helix": 1, "forward": false, "start": 930, "end": 940}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "ATTTTTTAACGCGAAAGACA",
+      "color": "#32b86c",
+      "sequence": "CATTTTTTAAAGCGAAAGAC",
       "idt": {"name": "staple95", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 940, "end": 950},
         {"helix": 1, "forward": false, "start": 940, "end": 950}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CAATAGGAACACCCTCAGCA",
+      "color": "#333333",
+      "sequence": "CCAATAGGAACACCCTCAGC",
       "idt": {"name": "staple96", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 950, "end": 960},
         {"helix": 1, "forward": false, "start": 950, "end": 960}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GCCATCAAAACGGGATCGTC",
+      "color": "#320096",
+      "sequence": "CGCCATCAAAGCGGGATCGT",
       "idt": {"name": "staple97", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 960, "end": 970},
         {"helix": 1, "forward": false, "start": 960, "end": 970}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "ATAATTCGCGGCCGCTTTTG",
+      "color": "#03b6a2",
+      "sequence": "AATAATTCGCGGCCGCTTTT",
       "idt": {"name": "staple98", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 970, "end": 980},
         {"helix": 1, "forward": false, "start": 970, "end": 980}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "TCTGGCCTTCGGAGTTAAAG",
+      "color": "#7300de",
+      "sequence": "GTCTGGCCTTGGGAGTTAAA",
       "idt": {"name": "staple99", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 980, "end": 990},
         {"helix": 1, "forward": false, "start": 980, "end": 990}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "CTGTAGCCAGAGGCTTGCAG",
+      "color": "#aaaa00",
+      "sequence": "CCTGTAGCCAGAGGCTTGCA",
       "idt": {"name": "staple100", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 990, "end": 1000},
         {"helix": 1, "forward": false, "start": 990, "end": 1000}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "CTTTCATCAATCGGTCGCTG",
+      "color": "#b8056c",
+      "sequence": "GCTTTCATCATTCGGTCGCT",
       "idt": {"name": "staple101", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1000, "end": 1010},
         {"helix": 1, "forward": false, "start": 1000, "end": 1010}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "CATTAAATGTACCGATATAT",
+      "color": "#007200",
+      "sequence": "ACATTAAATGAACCGATATA",
       "idt": {"name": "staple102", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1010, "end": 1020},
         {"helix": 1, "forward": false, "start": 1010, "end": 1020}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GAGCGAGTAACCCACGCATA",
+      "color": "#cc0000",
+      "sequence": "TGAGCGAGTAGCCCACGCAT",
       "idt": {"name": "staple103", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1020, "end": 1030},
         {"helix": 1, "forward": false, "start": 1020, "end": 1030}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "CAACCCGTCGACAACCATCG",
+      "color": "#f7931e",
+      "sequence": "ACAACCCGTCAACAACCATC",
       "idt": {"name": "staple104", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1030, "end": 1040},
         {"helix": 1, "forward": false, "start": 1030, "end": 1040}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "GATTCTCCGTGACAATGACA",
+      "color": "#f74308",
+      "sequence": "GGATTCTCCGCGACAATGAC",
       "idt": {"name": "staple105", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1040, "end": 1050},
         {"helix": 1, "forward": false, "start": 1040, "end": 1050}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "GGGAACAAACTAGTTGCGCC",
+      "color": "#57bb00",
+      "sequence": "TGGGAACAAAATAGTTGCGC",
       "idt": {"name": "staple106", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1050, "end": 1060},
         {"helix": 1, "forward": false, "start": 1050, "end": 1060}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "GGCGGATTGATTGATACCGA",
+      "color": "#888888",
+      "sequence": "CGGCGGATTGCTTGATACCG",
       "idt": {"name": "staple107", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1060, "end": 1070},
         {"helix": 1, "forward": false, "start": 1060, "end": 1070}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "CCGTAATGGGCTTAAACAGC",
+      "color": "#32b86c",
+      "sequence": "ACCGTAATGGTCTTAAACAG",
       "idt": {"name": "staple108", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1070, "end": 1080},
         {"helix": 1, "forward": false, "start": 1070, "end": 1080}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "ATAGGTCACGAGGTGAATTT",
+      "color": "#333333",
+      "sequence": "GATAGGTCACGAGGTGAATT",
       "idt": {"name": "staple109", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1080, "end": 1090},
         {"helix": 1, "forward": false, "start": 1080, "end": 1090}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "TTGGTGTAGACTTGCTTTCG",
+      "color": "#320096",
+      "sequence": "GTTGGTGTAGGCTTGCTTTC",
       "idt": {"name": "staple110", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1090, "end": 1100},
         {"helix": 1, "forward": false, "start": 1090, "end": 1100}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "TGGGCGCATCGGTTTATCAG",
+      "color": "#03b6a2",
+      "sequence": "ATGGGCGCATCGGTTTATCA",
       "idt": {"name": "staple111", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1100, "end": 1110},
         {"helix": 1, "forward": false, "start": 1100, "end": 1110}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "GTAACCGTGCTAATTGTATC",
+      "color": "#7300de",
+      "sequence": "CGTAACCGTGTTAATTGTAT",
       "idt": {"name": "staple112", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1110, "end": 1120},
         {"helix": 1, "forward": false, "start": 1110, "end": 1120}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "ATCTGCCAGTAAGGAGCCTT",
+      "color": "#aaaa00",
+      "sequence": "CATCTGCCAGAAAGGAGCCT",
       "idt": {"name": "staple113", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1120, "end": 1130},
         {"helix": 1, "forward": false, "start": 1120, "end": 1130}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "TTGAGGGGACAAGGCTCCAA",
+      "color": "#b8056c",
+      "sequence": "TTTGAGGGGAAAAGGCTCCA",
       "idt": {"name": "staple114", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1130, "end": 1140},
         {"helix": 1, "forward": false, "start": 1130, "end": 1140}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GACGACAGTACTCCAAAAAA",
+      "color": "#007200",
+      "sequence": "CGACGACAGTTCTCCAAAAA",
       "idt": {"name": "staple115", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1140, "end": 1150},
         {"helix": 1, "forward": false, "start": 1140, "end": 1150}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "TCGGCCTCAGCGTTGAAAAT",
+      "color": "#cc0000",
+      "sequence": "ATCGGCCTCAACGTTGAAAA",
       "idt": {"name": "staple116", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1150, "end": 1160},
         {"helix": 1, "forward": false, "start": 1150, "end": 1160}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GAAGATCGCAAATTTTTTCA",
+      "color": "#f7931e",
+      "sequence": "GGAAGATCGCTAATTTTTTC",
       "idt": {"name": "staple117", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1160, "end": 1170},
         {"helix": 1, "forward": false, "start": 1160, "end": 1170}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "CTCCAGCCAGTGCGAATAAT",
+      "color": "#f74308",
+      "sequence": "ACTCCAGCCATTGCGAATAA",
       "idt": {"name": "staple118", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1170, "end": 1180},
         {"helix": 1, "forward": false, "start": 1170, "end": 1180}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "CTTTCCGGCACTAAAGGAAT",
+      "color": "#57bb00",
+      "sequence": "GCTTTCCGGCACTAAAGGAA",
       "idt": {"name": "staple119", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1180, "end": 1190},
         {"helix": 1, "forward": false, "start": 1180, "end": 1190}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "CCGCTTCTGGAAAGGAACAA",
+      "color": "#888888",
+      "sequence": "ACCGCTTCTGGAAAGGAACA",
       "idt": {"name": "staple120", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H3"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1190, "end": 1200},
         {"helix": 1, "forward": false, "start": 1190, "end": 1200}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "TGCCGGAAACGTGAGAATAG",
+      "color": "#32b86c",
+      "sequence": "GTGCCGGAAAAGTGAGAATA",
       "idt": {"name": "staple121", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1200, "end": 1210},
         {"helix": 1, "forward": false, "start": 1200, "end": 1210}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CAGGCAAAGCTTTCAGCGGA",
+      "color": "#333333",
+      "sequence": "CCAGGCAAAGGTTTCAGCGG",
       "idt": {"name": "staple122", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1210, "end": 1220},
         {"helix": 1, "forward": false, "start": 1210, "end": 1220}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GCCATTCGCCCTTTCAACAG",
+      "color": "#320096",
+      "sequence": "CGCCATTCGCACTTTCAACA",
       "idt": {"name": "staple123", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1220, "end": 1230},
         {"helix": 1, "forward": false, "start": 1220, "end": 1230}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "ATTCAGGCTGTGCTAAACAA",
+      "color": "#03b6a2",
+      "sequence": "CATTCAGGCTTTGCTAAACA",
       "idt": {"name": "staple124", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1230, "end": 1240},
         {"helix": 1, "forward": false, "start": 1230, "end": 1240}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "CGCAACTGTTTATGGGATTT",
+      "color": "#7300de",
+      "sequence": "GCGCAACTGTGTATGGGATT",
       "idt": {"name": "staple125", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1240, "end": 1250},
         {"helix": 1, "forward": false, "start": 1240, "end": 1250}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "GGGAAGGGCGGAATTTTCTG",
+      "color": "#aaaa00",
+      "sequence": "TGGGAAGGGCTGAATTTTCT",
       "idt": {"name": "staple126", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1250, "end": 1260},
         {"helix": 1, "forward": false, "start": 1250, "end": 1260}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "ATCGGTGCGGGTTAGTAAAT",
+      "color": "#b8056c",
+      "sequence": "GATCGGTGCGCGTTAGTAAA",
       "idt": {"name": "staple127", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1260, "end": 1270},
         {"helix": 1, "forward": false, "start": 1260, "end": 1270}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GCCTCTTCGCCTTTCCAGAC",
+      "color": "#007200",
+      "sequence": "GGCCTCTTCGTCTTTCCAGA",
       "idt": {"name": "staple128", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H4"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1270, "end": 1280},
         {"helix": 1, "forward": false, "start": 1270, "end": 1280}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "TATTACGCCAGTTTTGTCGT",
+      "color": "#cc0000",
+      "sequence": "CTATTACGCCAGTTTTGTCG",
       "idt": {"name": "staple129", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1280, "end": 1290},
         {"helix": 1, "forward": false, "start": 1280, "end": 1290}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GCTGGCGAAAACGATCTAAA",
+      "color": "#f7931e",
+      "sequence": "AGCTGGCGAAAACGATCTAA",
       "idt": {"name": "staple130", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1290, "end": 1300},
         {"helix": 1, "forward": false, "start": 1290, "end": 1300}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "GGGGGATGTGAGTTAGCGTA",
+      "color": "#f74308",
+      "sequence": "AGGGGGATGTTAGTTAGCGT",
       "idt": {"name": "staple131", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1300, "end": 1310},
         {"helix": 1, "forward": false, "start": 1300, "end": 1310}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "CTGCAAGGCGCAGCCCTCAT",
+      "color": "#57bb00",
+      "sequence": "GCTGCAAGGCACAGCCCTCA",
       "idt": {"name": "staple132", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1310, "end": 1320},
         {"helix": 1, "forward": false, "start": 1310, "end": 1320}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "ATTAAGTTGGATTCCACAGA",
+      "color": "#888888",
+      "sequence": "GATTAAGTTGCATTCCACAG",
       "idt": {"name": "staple133", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1320, "end": 1330},
         {"helix": 1, "forward": false, "start": 1320, "end": 1330}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "GTAACGCCAGCGCCTGTAGC",
+      "color": "#32b86c",
+      "sequence": "GGTAACGCCAACGCCTGTAG",
       "idt": {"name": "staple134", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1330, "end": 1340},
         {"helix": 1, "forward": false, "start": 1330, "end": 1340}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "GGTTTTCCCACAAACTACAA",
+      "color": "#333333",
+      "sequence": "GGGTTTTCCCACAAACTACA",
       "idt": {"name": "staple135", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1340, "end": 1350},
         {"helix": 1, "forward": false, "start": 1340, "end": 1350}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GTCACGACGTGTCACCAGTA",
+      "color": "#320096",
+      "sequence": "AGTCACGACGCGTCACCAGT",
       "idt": {"name": "staple136", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H5"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1350, "end": 1360},
         {"helix": 1, "forward": false, "start": 1350, "end": 1360}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "TGTAAAACGAACTGAGTTTC",
+      "color": "#03b6a2",
+      "sequence": "TTGTAAAACGCACTGAGTTT",
       "idt": {"name": "staple137", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1360, "end": 1370},
         {"helix": 1, "forward": false, "start": 1360, "end": 1370}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "CGGCCAGTGCGTACCGTAAC",
+      "color": "#7300de",
+      "sequence": "ACGGCCAGTGTGTACCGTAA",
       "idt": {"name": "staple138", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1370, "end": 1380},
         {"helix": 1, "forward": false, "start": 1370, "end": 1380}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "CAAGCTTGCAAGGAACCCAT",
+      "color": "#aaaa00",
+      "sequence": "CCAAGCTTGCTAGGAACCCA",
       "idt": {"name": "staple139", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1380, "end": 1390},
         {"helix": 1, "forward": false, "start": 1380, "end": 1390}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "TGCCTGCAGGCAAGCCCAAT",
+      "color": "#b8056c",
+      "sequence": "ATGCCTGCAGGCAAGCCCAA",
       "idt": {"name": "staple140", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1390, "end": 1400},
         {"helix": 1, "forward": false, "start": 1390, "end": 1400}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TCGACTCTAGTCAGGGATAG",
+      "color": "#007200",
+      "sequence": "GTCGACTCTATTCAGGGATA",
       "idt": {"name": "staple141", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1400, "end": 1410},
         {"helix": 1, "forward": false, "start": 1400, "end": 1410}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "AGGATCCCCGACCCTCATTT",
+      "color": "#cc0000",
+      "sequence": "GAGGATCCCCCACCCTCATT",
       "idt": {"name": "staple142", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1410, "end": 1420},
         {"helix": 1, "forward": false, "start": 1410, "end": 1420}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GGTACCGAGCCAGAGCCACC",
+      "color": "#f7931e",
+      "sequence": "GGGTACCGAGTCAGAGCCAC",
       "idt": {"name": "staple143", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1420, "end": 1430},
         {"helix": 1, "forward": false, "start": 1420, "end": 1430}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "TCGAATTCGTCCGCCACCCT",
+      "color": "#f74308",
+      "sequence": "CTCGAATTCGACCGCCACCC",
       "idt": {"name": "staple144", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H6"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1430, "end": 1440},
         {"helix": 1, "forward": false, "start": 1430, "end": 1440}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "AATCATGGTCACCCTCAGAA",
+      "color": "#57bb00",
+      "sequence": "TAATCATGGTCACCCTCAGA",
       "idt": {"name": "staple145", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1440, "end": 1450},
         {"helix": 1, "forward": false, "start": 1440, "end": 1450}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "ATAGCTGTTTCAGAACCGCC",
+      "color": "#888888",
+      "sequence": "CATAGCTGTTTCAGAACCGC",
       "idt": {"name": "staple146", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1450, "end": 1460},
         {"helix": 1, "forward": false, "start": 1450, "end": 1460}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "CCTGTGTGAACCGCCACCCT",
+      "color": "#32b86c",
+      "sequence": "TCCTGTGTGAACCGCCACCC",
       "idt": {"name": "staple147", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1460, "end": 1470},
         {"helix": 1, "forward": false, "start": 1460, "end": 1470}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "ATTGTTATCCAGGTTTAGTA",
+      "color": "#333333",
+      "sequence": "AATTGTTATCGAGGTTTAGT",
       "idt": {"name": "staple148", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1470, "end": 1480},
         {"helix": 1, "forward": false, "start": 1470, "end": 1480}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GCTCACAATTCGTACTCAGG",
+      "color": "#320096",
+      "sequence": "CGCTCACAATCCGTACTCAG",
       "idt": {"name": "staple149", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1480, "end": 1490},
         {"helix": 1, "forward": false, "start": 1480, "end": 1490}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "CCACACAACAGGTGTATCAC",
+      "color": "#03b6a2",
+      "sequence": "TCCACACAACAGGTGTATCA",
       "idt": {"name": "staple150", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1490, "end": 1500},
         {"helix": 1, "forward": false, "start": 1490, "end": 1500}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "TACGAGCCGGGCCCGGAATA",
+      "color": "#7300de",
+      "sequence": "ATACGAGCCGAGCCCGGAAT",
       "idt": {"name": "staple151", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1500, "end": 1510},
         {"helix": 1, "forward": false, "start": 1500, "end": 1510}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "AAGCATAAAGTATAAGTATA",
+      "color": "#aaaa00",
+      "sequence": "GAAGCATAAAATATAAGTAT",
       "idt": {"name": "staple152", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H7"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1510, "end": 1520},
         {"helix": 1, "forward": false, "start": 1510, "end": 1520}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "TGTAAAGCCTAGAGGGTTGA",
+      "color": "#b8056c",
+      "sequence": "GTGTAAAGCCGAGAGGGTTG",
       "idt": {"name": "staple153", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1520, "end": 1530},
         {"helix": 1, "forward": false, "start": 1520, "end": 1530}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GGGGTGCCTAAGTGCCGTCG",
+      "color": "#007200",
+      "sequence": "TGGGGTGCCTAAGTGCCGTC",
       "idt": {"name": "staple154", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1530, "end": 1540},
         {"helix": 1, "forward": false, "start": 1530, "end": 1540}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "ATGAGTGAGCCAGGCGGATA",
+      "color": "#cc0000",
+      "sequence": "AATGAGTGAGCCAGGCGGAT",
       "idt": {"name": "staple155", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1540, "end": 1550},
         {"helix": 1, "forward": false, "start": 1540, "end": 1550}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "TAACTCACATTGCTCAGTAC",
+      "color": "#f7931e",
+      "sequence": "CTAACTCACATTGCTCAGTA",
       "idt": {"name": "staple156", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1550, "end": 1560},
         {"helix": 1, "forward": false, "start": 1550, "end": 1560}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "TAATTGCGTTAGCGGGGTTT",
+      "color": "#f74308",
+      "sequence": "TTAATTGCGTTAGCGGGGTT",
       "idt": {"name": "staple157", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1560, "end": 1570},
         {"helix": 1, "forward": false, "start": 1560, "end": 1570}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "GCGCTCACTGGATTAGGATT",
+      "color": "#57bb00",
+      "sequence": "TGCGCTCACTGGATTAGGAT",
       "idt": {"name": "staple158", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1570, "end": 1580},
         {"helix": 1, "forward": false, "start": 1570, "end": 1580}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "CCCGCTTTCCTCAAGAGAAG",
+      "color": "#888888",
+      "sequence": "GCCCGCTTTCCTCAAGAGAA",
       "idt": {"name": "staple159", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1580, "end": 1590},
         {"helix": 1, "forward": false, "start": 1580, "end": 1590}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "AGTCGGGAAACTGAGACTCC",
+      "color": "#32b86c",
+      "sequence": "CAGTCGGGAAGCTGAGACTC",
       "idt": {"name": "staple160", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H8"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1590, "end": 1600},
         {"helix": 1, "forward": false, "start": 1590, "end": 1600}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CCTGTCGTGCTATTAAGAGG",
+      "color": "#333333",
+      "sequence": "ACCTGTCGTGGTATTAAGAG",
       "idt": {"name": "staple161", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1600, "end": 1610},
         {"helix": 1, "forward": false, "start": 1600, "end": 1610}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "CAGCTGCATTAACATGAAAG",
+      "color": "#320096",
+      "sequence": "CCAGCTGCATAAACATGAAA",
       "idt": {"name": "staple162", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1610, "end": 1620},
         {"helix": 1, "forward": false, "start": 1610, "end": 1620}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "AATGAATCGGATTATTCTGA",
+      "color": "#03b6a2",
+      "sequence": "TAATGAATCGTATTATTCTG",
       "idt": {"name": "staple163", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1620, "end": 1630},
         {"helix": 1, "forward": false, "start": 1620, "end": 1630}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "CCAACGCGCGTTCGGAACCT",
+      "color": "#7300de",
+      "sequence": "GCCAACGCGCTTTCGGAACC",
       "idt": {"name": "staple164", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1630, "end": 1640},
         {"helix": 1, "forward": false, "start": 1630, "end": 1640}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "GGGAGAGGCGCCCTGCCTAT",
+      "color": "#aaaa00",
+      "sequence": "GGGGAGAGGCCCCCTGCCTA",
       "idt": {"name": "staple165", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1640, "end": 1650},
         {"helix": 1, "forward": false, "start": 1640, "end": 1650}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "GTTTGCGTATAGTTAATGCC",
+      "color": "#b8056c",
+      "sequence": "GGTTTGCGTACAGTTAATGC",
       "idt": {"name": "staple166", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1650, "end": 1660},
         {"helix": 1, "forward": false, "start": 1650, "end": 1660}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "TGGGCGCCAGCCGTATAAAC",
+      "color": "#007200",
+      "sequence": "TTGGGCGCCACCCGTATAAA",
       "idt": {"name": "staple167", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1660, "end": 1670},
         {"helix": 1, "forward": false, "start": 1660, "end": 1670}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GGTGGTTTTTGTAACAGTGC",
+      "color": "#cc0000",
+      "sequence": "GGGTGGTTTTAGTAACAGTG",
       "idt": {"name": "staple168", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H9"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1670, "end": 1680},
         {"helix": 1, "forward": false, "start": 1670, "end": 1680}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "CTTTTCACCAAGTGCCTTGA",
+      "color": "#f7931e",
+      "sequence": "TCTTTTCACCCAGTGCCTTG",
       "idt": {"name": "staple169", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1680, "end": 1690},
         {"helix": 1, "forward": false, "start": 1680, "end": 1690}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "GTGAGACGGGTAACGGGGTC",
+      "color": "#f74308",
+      "sequence": "AGTGAGACGGTTAACGGGGT",
       "idt": {"name": "staple170", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1690, "end": 1700},
         {"helix": 1, "forward": false, "start": 1690, "end": 1700}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "CAACAGCTGATAATAAGTTT",
+      "color": "#57bb00",
+      "sequence": "GCAACAGCTGGTAATAAGTT",
       "idt": {"name": "staple171", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1700, "end": 1710},
         {"helix": 1, "forward": false, "start": 1700, "end": 1710}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "TTGCCCTTCAAGTGTACTGG",
+      "color": "#888888",
+      "sequence": "ATTGCCCTTCGAGTGTACTG",
       "idt": {"name": "staple172", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1710, "end": 1720},
         {"helix": 1, "forward": false, "start": 1710, "end": 1720}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "CCGCCTGGCCATGATACAGG",
+      "color": "#32b86c",
+      "sequence": "ACCGCCTGGCGATGATACAG",
       "idt": {"name": "staple173", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1720, "end": 1730},
         {"helix": 1, "forward": false, "start": 1720, "end": 1730}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CTGAGAGAGTATGGCTTTTG",
+      "color": "#333333",
+      "sequence": "CCTGAGAGAGCATGGCTTTT",
       "idt": {"name": "staple174", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1730, "end": 1740},
         {"helix": 1, "forward": false, "start": 1730, "end": 1740}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "TGCAGCAAGCAGCGTCATAC",
+      "color": "#320096",
+      "sequence": "TTGCAGCAAGAAGCGTCATA",
       "idt": {"name": "staple175", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1740, "end": 1750},
         {"helix": 1, "forward": false, "start": 1740, "end": 1750}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "GGTCCACGCTCGTTCCAGTA",
+      "color": "#03b6a2",
+      "sequence": "CGGTCCACGCCCGTTCCAGT",
       "idt": {"name": "staple176", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H10"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1750, "end": 1760},
         {"helix": 1, "forward": false, "start": 1750, "end": 1760}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "GGTTTGCCCCCTGAATTTAC",
+      "color": "#7300de",
+      "sequence": "TGGTTTGCCCTCTGAATTTA",
       "idt": {"name": "staple177", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1760, "end": 1770},
         {"helix": 1, "forward": false, "start": 1760, "end": 1770}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "AGCAGGCGAAAGCGCAGTCT",
+      "color": "#aaaa00",
+      "sequence": "CAGCAGGCGAAAGCGCAGTC",
       "idt": {"name": "staple178", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1770, "end": 1780},
         {"helix": 1, "forward": false, "start": 1770, "end": 1780}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "AATCCTGTTTCAGAATGGAA",
+      "color": "#b8056c",
+      "sequence": "AAATCCTGTTCCAGAATGGA",
       "idt": {"name": "staple179", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1780, "end": 1790},
         {"helix": 1, "forward": false, "start": 1780, "end": 1790}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GATGGTGGTTTCATTAAAGC",
+      "color": "#007200",
+      "sequence": "TGATGGTGGTCTCATTAAAG",
       "idt": {"name": "staple180", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1790, "end": 1800},
         {"helix": 1, "forward": false, "start": 1790, "end": 1800}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "CCGAAATCGGAAATAAATCC",
+      "color": "#cc0000",
+      "sequence": "TCCGAAATCGCAAATAAATC",
       "idt": {"name": "staple181", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1800, "end": 1810},
         {"helix": 1, "forward": false, "start": 1800, "end": 1810}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "CAAAATCCCTATTCACAAAC",
+      "color": "#f7931e",
+      "sequence": "GCAAAATCCCTATTCACAAA",
       "idt": {"name": "staple182", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1810, "end": 1820},
         {"helix": 1, "forward": false, "start": 1810, "end": 1820}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "TATAAATCAATGGCCTTGAT",
+      "color": "#f74308",
+      "sequence": "TTATAAATCATTGGCCTTGA",
       "idt": {"name": "staple183", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1820, "end": 1830},
         {"helix": 1, "forward": false, "start": 1820, "end": 1830}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "AAGAATAGCCGTCAGACGAT",
+      "color": "#57bb00",
+      "sequence": "AAAGAATAGCGGTCAGACGA",
       "idt": {"name": "staple184", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H11"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1830, "end": 1840},
         {"helix": 1, "forward": false, "start": 1830, "end": 1840}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "CGAGATAGGGGTTGAGGCAG",
+      "color": "#888888",
+      "sequence": "CCGAGATAGGGGTTGAGGCA",
       "idt": {"name": "staple185", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1840, "end": 1850},
         {"helix": 1, "forward": false, "start": 1840, "end": 1850}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "TTGAGTGTTGTTGACAGGAG",
+      "color": "#32b86c",
+      "sequence": "GTTGAGTGTTATTGACAGGA",
       "idt": {"name": "staple186", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1850, "end": 1860},
         {"helix": 1, "forward": false, "start": 1850, "end": 1860}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "TTCCAGTTTGGCCGCCAGCA",
+      "color": "#333333",
+      "sequence": "GTTCCAGTTTCGCCGCCAGC",
       "idt": {"name": "staple187", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1860, "end": 1870},
         {"helix": 1, "forward": false, "start": 1860, "end": 1870}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "GAACAAGAGTCACCAGAGCC",
+      "color": "#320096",
+      "sequence": "GGAACAAGAGCCACCAGAGC",
       "idt": {"name": "staple188", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1870, "end": 1880},
         {"helix": 1, "forward": false, "start": 1870, "end": 1880}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "CCACTATTAACCAGAACCAC",
+      "color": "#03b6a2",
+      "sequence": "TCCACTATTAACCAGAACCA",
       "idt": {"name": "staple189", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1880, "end": 1890},
         {"helix": 1, "forward": false, "start": 1880, "end": 1890}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "AGAACGTGGAAGAGCCGCCA",
+      "color": "#7300de",
+      "sequence": "AAGAACGTGGCAGAGCCGCC",
       "idt": {"name": "staple190", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1890, "end": 1900},
         {"helix": 1, "forward": false, "start": 1890, "end": 1900}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "CTCCAACGTCCACCACCCTC",
+      "color": "#aaaa00",
+      "sequence": "ACTCCAACGTCCACCACCCT",
       "idt": {"name": "staple191", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1900, "end": 1910},
         {"helix": 1, "forward": false, "start": 1900, "end": 1910}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "AAAGGGCGAACCCTCAGAGC",
+      "color": "#b8056c",
+      "sequence": "CAAAGGGCGAACCCTCAGAG",
       "idt": {"name": "staple192", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H12"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1910, "end": 1920},
         {"helix": 1, "forward": false, "start": 1910, "end": 1920}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "AAACCGTCTAAGAACCGCCA",
+      "color": "#007200",
+      "sequence": "AAAACCGTCTCAGAACCGCC",
       "idt": {"name": "staple193", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1920, "end": 1930},
         {"helix": 1, "forward": false, "start": 1920, "end": 1930}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "TCAGGGCGATCGCCACCCTC",
+      "color": "#cc0000",
+      "sequence": "ATCAGGGCGACCGCCACCCT",
       "idt": {"name": "staple194", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1930, "end": 1940},
         {"helix": 1, "forward": false, "start": 1930, "end": 1940}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "GGCCCACTACCCCTCAGAGC",
+      "color": "#f7931e",
+      "sequence": "TGGCCCACTATCCCTCAGAG",
       "idt": {"name": "staple195", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1940, "end": 1950},
         {"helix": 1, "forward": false, "start": 1940, "end": 1950}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "GTGAACCATCGGAACCGCCT",
+      "color": "#f74308",
+      "sequence": "CGTGAACCATCGGAACCGCC",
       "idt": {"name": "staple196", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1950, "end": 1960},
         {"helix": 1, "forward": false, "start": 1950, "end": 1960}
       ]
     },
     {
-      "color": "#f7931e",
-      "dna_sequence": "ACCCAAATCAAGCCACCACC",
+      "color": "#57bb00",
+      "sequence": "CACCCAAATCGAGCCACCAC",
       "idt": {"name": "staple197", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1960, "end": 1970},
         {"helix": 1, "forward": false, "start": 1960, "end": 1970}
       ]
     },
     {
-      "color": "#f74308",
-      "dna_sequence": "AGTTTTTTGGCCGGAACCAG",
+      "color": "#888888",
+      "sequence": "AAGTTTTTTGACCGGAACCA",
       "idt": {"name": "staple198", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1970, "end": 1980},
         {"helix": 1, "forward": false, "start": 1970, "end": 1980}
       ]
     },
     {
-      "color": "#57bb00",
-      "dna_sequence": "GGTCGAGGTGATCAAAATCA",
+      "color": "#32b86c",
+      "sequence": "GGGTCGAGGTAATCAAAATC",
       "idt": {"name": "staple199", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1980, "end": 1990},
         {"helix": 1, "forward": false, "start": 1980, "end": 1990}
       ]
     },
     {
-      "color": "#888888",
-      "dna_sequence": "CCGTAAAGCATCTTTTCATA",
+      "color": "#333333",
+      "sequence": "GCCGTAAAGCATCTTTTCAT",
       "idt": {"name": "staple200", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H1"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 1990, "end": 2000},
         {"helix": 1, "forward": false, "start": 1990, "end": 2000}
       ]
     },
     {
-      "color": "#32b86c",
-      "dna_sequence": "CTAAATCGGAGCGTTTGCCA",
+      "color": "#320096",
+      "sequence": "ACTAAATCGGAGCGTTTGCC",
       "idt": {"name": "staple201", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2000, "end": 2010},
         {"helix": 1, "forward": false, "start": 2000, "end": 2010}
       ]
     },
     {
-      "color": "#333333",
-      "dna_sequence": "ACCCTAAAGGCCCCTTATTA",
+      "color": "#03b6a2",
+      "sequence": "AACCCTAAAGCCCCCTTATT",
       "idt": {"name": "staple202", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2010, "end": 2020},
         {"helix": 1, "forward": false, "start": 2010, "end": 2020}
       ]
     },
     {
-      "color": "#320096",
-      "dna_sequence": "GAGCCCCCGACGGTCATAGC",
+      "color": "#7300de",
+      "sequence": "GGAGCCCCCGTCGGTCATAG",
       "idt": {"name": "staple203", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2020, "end": 2030},
         {"helix": 1, "forward": false, "start": 2020, "end": 2030}
       ]
     },
     {
-      "color": "#03b6a2",
-      "dna_sequence": "TTTAGAGCTTTCGGCATTTT",
+      "color": "#aaaa00",
+      "sequence": "ATTTAGAGCTATCGGCATTT",
       "idt": {"name": "staple204", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2030, "end": 2040},
         {"helix": 1, "forward": false, "start": 2030, "end": 2040}
       ]
     },
     {
-      "color": "#7300de",
-      "dna_sequence": "GACGGGGAAACGCGTTTTCA",
+      "color": "#b8056c",
+      "sequence": "TGACGGGGAAGCGCGTTTTC",
       "idt": {"name": "staple205", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2040, "end": 2050},
         {"helix": 1, "forward": false, "start": 2040, "end": 2050}
       ]
     },
     {
-      "color": "#aaaa00",
-      "dna_sequence": "GCCGGCGAACCAGACTGTAG",
+      "color": "#007200",
+      "sequence": "AGCCGGCGAATCAGACTGTA",
       "idt": {"name": "staple206", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2050, "end": 2060},
         {"helix": 1, "forward": false, "start": 2050, "end": 2060}
       ]
     },
     {
-      "color": "#b8056c",
-      "dna_sequence": "GTGGCGAGAACCTTTAGCGT",
+      "color": "#cc0000",
+      "sequence": "CGTGGCGAGAGCCTTTAGCG",
       "idt": {"name": "staple207", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2060, "end": 2070},
         {"helix": 1, "forward": false, "start": 2060, "end": 2070}
       ]
     },
     {
-      "color": "#007200",
-      "dna_sequence": "AGGAAGGGAAATCAAGTTTG",
+      "color": "#f7931e",
+      "sequence": "AAGGAAGGGAAATCAAGTTT",
       "idt": {"name": "staple208", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H2"},
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 2070, "end": 2080},
         {"helix": 1, "forward": false, "start": 2070, "end": 2080}
       ]
     },
     {
       "color": "#0066cc",
-      "dna_sequence": "TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGAT",
-      "substrands": [
+      "sequence": "TCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 2080},
         {"helix": 1, "forward": true, "start": 0, "end": 2080}
       ],
