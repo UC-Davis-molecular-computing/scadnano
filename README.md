@@ -93,8 +93,8 @@ It is instructive to see how that example design is represented as a `.dna` file
   "strands": [
     {
       "color": "#0066cc",
-      "dna_sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
-      "substrands": [
+      "sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
+      "domains": [
         {"helix": 1, "forward": false, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": true, "start": 8, "end": 40, "insertions": [[14, 1], [26, 2]]},
         {"loopout": 3},
@@ -104,16 +104,16 @@ It is instructive to see how that example design is represented as a `.dna` file
     },
     {
       "color": "#f74308",
-      "dna_sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
-      "substrands": [
+      "sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
+      "domains": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[14, 1]]}
       ]
     },
     {
       "color": "#57bb00",
-      "dna_sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
-      "substrands": [
+      "sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
+      "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
       ]

@@ -2,9 +2,9 @@ import scadnano as sc
 
 
 def main():
-    ss_f = sc.Substrand(helix=0, forward=True, start=0, end=10)
+    ss_f = sc.Domain(helix=0, forward=True, start=0, end=10)
     loop = sc.Loopout(length=5)
-    ss_r = sc.Substrand(helix=0, forward=False, start=0, end=10)
+    ss_r = sc.Domain(helix=0, forward=False, start=0, end=10)
     hairpin = sc.Strand([ss_f, loop, ss_r])
     design = sc.DNADesign(strands=[hairpin], grid=sc.square)
 

@@ -5,21 +5,21 @@ import scadnano as sc
 # It will be displayed in the browser by scadnano.
 def main():
     # left staple
-    stap_left_ss1 = sc.Substrand(helix=1, forward=True, start=0, end=16)
-    stap_left_ss0 = sc.Substrand(helix=0, forward=False, start=0, end=16)
-    stap_left = sc.Strand(substrands=[stap_left_ss1, stap_left_ss0])
+    stap_left_ss1 = sc.Domain(helix=1, forward=True, start=0, end=16)
+    stap_left_ss0 = sc.Domain(helix=0, forward=False, start=0, end=16)
+    stap_left = sc.Strand(domains=[stap_left_ss1, stap_left_ss0])
 
     # right staple
-    stap_right_ss0 = sc.Substrand(helix=0, forward=False, start=16, end=32)
-    stap_right_ss1 = sc.Substrand(helix=1, forward=True, start=16, end=32)
-    stap_right = sc.Strand(substrands=[stap_right_ss0, stap_right_ss1])
+    stap_right_ss0 = sc.Domain(helix=0, forward=False, start=16, end=32)
+    stap_right_ss1 = sc.Domain(helix=1, forward=True, start=16, end=32)
+    stap_right = sc.Strand(domains=[stap_right_ss0, stap_right_ss1])
 
     # scaffold
-    scaf_ss1_left = sc.Substrand(helix=1, forward=False, start=0, end=16)
-    scaf_ss0 = sc.Substrand(helix=0, forward=True, start=0, end=32)
+    scaf_ss1_left = sc.Domain(helix=1, forward=False, start=0, end=16)
+    scaf_ss0 = sc.Domain(helix=0, forward=True, start=0, end=32)
     loopout = sc.Loopout(length=3)
-    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=16, end=32)
-    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
+    scaf_ss1_right = sc.Domain(helix=1, forward=False, start=16, end=32)
+    scaf = sc.Strand(domains=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     # whole design
     design = sc.DNADesign(strands=[scaf, stap_left, stap_right], grid=sc.square)

@@ -10,7 +10,7 @@ def main():
     add_nicks(design)
     add_crossovers(design)
     scaffold = next(s for s in design.strands if
-                    s.first_substrand().helix == 5 and not s.first_substrand().forward)
+                    s.first_domain().helix == 5 and not s.first_domain().forward)
     scaffold.set_scaffold()
     design.assign_m13_to_scaffold(rotation=m13_rotation, variant=m13_variant)
     return design
@@ -54,20 +54,20 @@ def initial_design():
         # sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
     ]
     scafs = [
-        sc.Strand([sc.Substrand(helix=0, forward=True, start=16, end=1276)]),
-        sc.Strand([sc.Substrand(helix=1, forward=False, start=16, end=1276)]),
-        sc.Strand([sc.Substrand(helix=2, forward=True, start=12, end=1272)]),
-        sc.Strand([sc.Substrand(helix=3, forward=False, start=12, end=1272)]),
-        sc.Strand([sc.Substrand(helix=4, forward=True, start=19, end=1279)]),
-        sc.Strand([sc.Substrand(helix=5, forward=False, start=19, end=1279)]),
+        sc.Strand([sc.Domain(helix=0, forward=True, start=16, end=1276)]),
+        sc.Strand([sc.Domain(helix=1, forward=False, start=16, end=1276)]),
+        sc.Strand([sc.Domain(helix=2, forward=True, start=12, end=1272)]),
+        sc.Strand([sc.Domain(helix=3, forward=False, start=12, end=1272)]),
+        sc.Strand([sc.Domain(helix=4, forward=True, start=19, end=1279)]),
+        sc.Strand([sc.Domain(helix=5, forward=False, start=19, end=1279)]),
     ]
     staps = [
-        sc.Strand([sc.Substrand(helix=0, forward=False, start=42, end=1246)]),
-        sc.Strand([sc.Substrand(helix=1, forward=True, start=42, end=1246)]),
-        sc.Strand([sc.Substrand(helix=2, forward=False, start=42, end=1246)]),
-        sc.Strand([sc.Substrand(helix=3, forward=True, start=42, end=1246)]),
-        sc.Strand([sc.Substrand(helix=4, forward=False, start=42, end=1246)]),
-        sc.Strand([sc.Substrand(helix=5, forward=True, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=0, forward=False, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=1, forward=True, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=2, forward=False, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=3, forward=True, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=4, forward=False, start=42, end=1246)]),
+        sc.Strand([sc.Domain(helix=5, forward=True, start=42, end=1246)]),
     ]
     strands = scafs + staps
     return sc.DNADesign(helices=helices, strands=strands, grid=sc.honeycomb)

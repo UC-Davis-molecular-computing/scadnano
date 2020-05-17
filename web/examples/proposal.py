@@ -12,7 +12,7 @@ def main() -> sc.DNADesign:
     design.set_major_tick_distance(8)
     adjust_helix_grid_and_positions(design)
     move_top_and_bottom_staples_within_column_boundaries(design)
-    add_substrands_for_barrel_seam(design)
+    add_domains_for_barrel_seam(design)
     add_twist_correct_deletions(design)
     add_angle_inducing_insertions_deletions(design)
     design.set_helices_view_order(list(reversed(range(16))))
@@ -56,25 +56,25 @@ def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
     bot_staples.remove(design.scaffold)
 
     for top_staple in top_staples:
-        current_end = top_staple.substrands[0].end
-        design.set_end(top_staple.substrands[0], current_end - 8)
+        current_end = top_staple.domains[0].end
+        design.set_end(top_staple.domains[0], current_end - 8)
 
     for bot_staple in bot_staples:
-        current_start = bot_staple.substrands[0].start
-        design.set_start(bot_staple.substrands[0], current_start + 8)
+        current_start = bot_staple.domains[0].start
+        design.set_start(bot_staple.domains[0], current_start + 8)
 
 
-def add_substrands_for_barrel_seam(design: sc.DNADesign):
+def add_domains_for_barrel_seam(design: sc.DNADesign):
     top_staples_5p = design.strands_starting_on_helix(0)
     top_staples_3p = design.strands_ending_on_helix(0)
     bot_staples_5p = design.strands_starting_on_helix(15)
     bot_staples_3p = design.strands_ending_on_helix(15)
 
     # remove scaffold
-    top_staples_5p = [st for st in top_staples_5p if len(st.substrands) <= 3]
-    top_staples_3p = [st for st in top_staples_3p if len(st.substrands) <= 3]
-    bot_staples_5p = [st for st in bot_staples_5p if len(st.substrands) <= 3]
-    bot_staples_3p = [st for st in bot_staples_3p if len(st.substrands) <= 3]
+    top_staples_5p = [st for st in top_staples_5p if len(st.domains) <= 3]
+    top_staples_3p = [st for st in top_staples_3p if len(st.domains) <= 3]
+    bot_staples_5p = [st for st in bot_staples_5p if len(st.domains) <= 3]
+    bot_staples_3p = [st for st in bot_staples_3p if len(st.domains) <= 3]
 
     top_staples_5p.sort(key=lambda stap: stap.offset_5p())
     top_staples_3p.sort(key=lambda stap: stap.offset_3p())
@@ -82,12 +82,12 @@ def add_substrands_for_barrel_seam(design: sc.DNADesign):
     bot_staples_3p.sort(key=lambda stap: stap.offset_3p())
 
     for top_5p, top_3p, bot_5p, bot_3p in zip(top_staples_5p, top_staples_3p, bot_staples_5p, bot_staples_3p):
-        ss_top = sc.Substrand(helix=0, forward=False,
-                              start=top_5p.first_substrand().end, end=top_3p.last_substrand().start)
-        ss_bot = sc.Substrand(helix=15, forward=True,
-                              start=bot_3p.last_substrand().end, end=bot_5p.first_substrand().start)
-        design.insert_substrand(bot_5p, 0, ss_top)
-        design.insert_substrand(top_5p, 0, ss_bot)
+        ss_top = sc.Domain(helix=0, forward=False,
+                           start=top_5p.first_domain().end, end=top_3p.last_domain().start)
+        ss_bot = sc.Domain(helix=15, forward=True,
+                           start=bot_3p.last_domain().end, end=bot_5p.first_domain().start)
+        design.insert_domain(bot_5p, 0, ss_top)
+        design.insert_domain(top_5p, 0, ss_bot)
 
 
 def add_angle_inducing_insertions_deletions(design: sc.DNADesign):
@@ -231,7 +231,7 @@ def add_biotins(design: sc.DNADesign, word: str):
                                         display_connector=False)
     for staple in design.strands:
         if staple.is_scaffold: continue
-        first_ss = staple.first_bound_substrand()
+        first_ss = staple.first_bound_domain()
         end_5p = first_ss.offset_5p()
         helix = first_ss.helix
         if (end_5p, helix) in coords:

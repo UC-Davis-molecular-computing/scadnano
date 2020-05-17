@@ -6,6 +6,31 @@
     {"grid_position": [0, 1]}
   ],
   "modifications_in_design": {
+    "/iCy3/": {
+      "display_text": "Cy3",
+      "id": "/iCy3/",
+      "idt_text": "/iCy3/",
+      "location": "internal"
+    },
+    "/5Cy5/": {
+      "display_text": "Cy5",
+      "id": "/5Cy5/",
+      "idt_text": "/5Cy5/",
+      "location": "5'"
+    },
+    "/iCy5/": {
+      "display_text": "Cy5",
+      "id": "/iCy5/",
+      "idt_text": "/iCy5/",
+      "location": "internal"
+    },
+    "/iBiodT/": {
+      "display_text": "B",
+      "id": "/iBiodT/",
+      "idt_text": "/iBiodT/",
+      "location": "internal",
+      "allowed_bases": ["T"]
+    },
     "/5Biosg/": {
       "display_text": "B",
       "id": "/5Biosg/",
@@ -18,36 +43,11 @@
       "idt_text": "/3Bio/",
       "location": "3'"
     },
-    "/iCy5/": {
-      "display_text": "Cy5",
-      "id": "/iCy5/",
-      "idt_text": "/iCy5/",
-      "location": "internal"
-    },
-    "/5Cy5/": {
-      "display_text": "Cy5",
-      "id": "/5Cy5/",
-      "idt_text": "/5Cy5/",
-      "location": "5'"
-    },
     "/3Cy3Sp/": {
       "display_text": "Cy3",
       "id": "/3Cy3Sp/",
       "idt_text": "/3Cy3Sp/",
       "location": "3'"
-    },
-    "/iCy3/": {
-      "display_text": "Cy3",
-      "id": "/iCy3/",
-      "idt_text": "/iCy3/",
-      "location": "internal"
-    },
-    "/iBiodT/": {
-      "display_text": "B",
-      "id": "/iBiodT/",
-      "idt_text": "/iBiodT/",
-      "location": "internal",
-      "allowed_bases": ["T"]
     }
   },
   "strands": [

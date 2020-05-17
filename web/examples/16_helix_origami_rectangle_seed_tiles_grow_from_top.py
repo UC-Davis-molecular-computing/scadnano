@@ -55,12 +55,12 @@ def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
     bot_staples.remove(design.scaffold)
 
     for top_staple in top_staples:
-        current_end = top_staple.substrands[0].end
-        design.set_end(top_staple.substrands[0], current_end - 8)
+        current_end = top_staple.domains[0].end
+        design.set_end(top_staple.domains[0], current_end - 8)
 
     for bot_staple in bot_staples:
-        current_start = bot_staple.substrands[0].start
-        design.set_start(bot_staple.substrands[0], current_start + 8)
+        current_start = bot_staple.domains[0].start
+        design.set_start(bot_staple.domains[0], current_start + 8)
 
 
 def add_adapters(design):
@@ -69,13 +69,13 @@ def add_adapters(design):
     left_outside_seed = left_inside_seed - 26
     for bot_helix in range(2, 18, 2):
         top_helix = bot_helix - 1 if bot_helix != 2 else 17
-        ss_top = sc.Substrand(helix=top_helix, forward=True,
-                              start=left_outside_seed, end=left_inside_seed)
-        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
-                              start=left_outside_seed, end=left_inside_seed)
+        ss_top = sc.Domain(helix=top_helix, forward=True,
+                           start=left_outside_seed, end=left_inside_seed)
+        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+                           start=left_outside_seed, end=left_inside_seed)
         idt = sc.IDTFields(name=f'adap-left-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
-        adapter = sc.Strand(substrands=[ss_bot, ss_top], idt=idt)
+        adapter = sc.Strand(domains=[ss_bot, ss_top], idt=idt)
         design.add_strand(adapter)
 
     # right adapters
@@ -83,13 +83,13 @@ def add_adapters(design):
     right_outside_seed = right_inside_seed + 26
     for bot_helix in range(2, 18, 2):
         top_helix = bot_helix - 1 if bot_helix != 2 else 17
-        ss_top = sc.Substrand(helix=top_helix, forward=True,
-                              start=right_inside_seed, end=right_outside_seed)
-        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
-                              start=right_inside_seed, end=right_outside_seed)
+        ss_top = sc.Domain(helix=top_helix, forward=True,
+                           start=right_inside_seed, end=right_outside_seed)
+        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+                           start=right_inside_seed, end=right_outside_seed)
         idt = sc.IDTFields(name=f'adap-right-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
-        adapter = sc.Strand(substrands=[ss_top, ss_bot], idt=idt)
+        adapter = sc.Strand(domains=[ss_top, ss_bot], idt=idt)
         design.add_strand(adapter)
 
 
@@ -122,11 +122,11 @@ def add_tiles_and_assign_dna(design):
     left_right = 32
     for col, seq in zip(range(2, 18, 2), tile_dna_seqs):
         bot_helix = top_helix + 1
-        ss_top = sc.Substrand(helix=top_helix, forward=True,
-                              start=left_left, end=left_right)
-        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
-                              start=left_left, end=left_right)
-        tile = sc.Strand(substrands=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
+        ss_top = sc.Domain(helix=top_helix, forward=True,
+                           start=left_left, end=left_right)
+        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+                           start=left_left, end=left_right)
+        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
         design.add_strand(tile)
         design.assign_dna(tile, seq)
 
@@ -135,11 +135,11 @@ def add_tiles_and_assign_dna(design):
     right_right = 501
     for top_helix, seq in zip(range(2, 18, 2), tile_dna_seqs):
         bot_helix = top_helix + 1
-        ss_top = sc.Substrand(helix=top_helix, forward=True,
-                              start=right_left, end=right_right)
-        ss_bot = sc.Substrand(helix=bot_helix, forward=False,
-                              start=right_left, end=right_right)
-        tile = sc.Strand(substrands=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
+        ss_top = sc.Domain(helix=top_helix, forward=True,
+                           start=right_left, end=right_right)
+        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+                           start=right_left, end=right_right)
+        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
         design.add_strand(tile)
         design.assign_dna(tile, seq)
 
