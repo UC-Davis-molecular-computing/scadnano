@@ -2,6 +2,7 @@ import origami_rectangle as rect
 import scadnano as sc
 
 
+
 def main():
     design = rect.create(num_helices=16, num_cols=28, seam_left_column=12, assign_seq=False,
                          num_flanking_columns=2,
@@ -243,7 +244,10 @@ def assign_dna_to_unzipper_toeholds(design):
         design.assign_dna(strand, seq)
 
 
+
+
 if not sc.in_browser() and __name__ == '__main__':
     the_design = main()
     the_design.write_scadnano_file(directory='output_designs')
     the_design.write_idt_bulk_input_file(directory='idt')
+    # the_design.write_idt_plate_excel_file(directory='idt', export_non_modified_strand_version=True)

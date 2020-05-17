@@ -2,13 +2,17 @@ import scadnano as sc
 
 
 def main():
+    m13_rotation = 6702
+    m13_variant = sc.M13Variant.p7560
+    print(sc.m13(m13_rotation, m13_variant))
+
     design = initial_design()
     add_nicks(design)
     add_crossovers(design)
     scaffold = next(s for s in design.strands if
                     s.first_substrand().helix == 5 and not s.first_substrand().forward)
     scaffold.set_scaffold()
-    design.assign_m13_to_scaffold()
+    design.assign_m13_to_scaffold(rotation=m13_rotation, variant=m13_variant)
     return design
 
 
@@ -18,12 +22,12 @@ def initial_design():
 
         # below uses cadnano honeycomb coordinates
         # https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
+        sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
         sc.Helix(grid_position=(0, 0, 0), max_offset=max_offset),
-        sc.Helix(grid_position=(-1, 0, 0), max_offset=max_offset),
-        sc.Helix(grid_position=(-1, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(0, 1, 0), max_offset=max_offset),
         sc.Helix(grid_position=(1, 1, 0), max_offset=max_offset),
-        sc.Helix(grid_position=(1, 0, 0), max_offset=max_offset),
+        sc.Helix(grid_position=(2, 1, 0), max_offset=max_offset),
+        sc.Helix(grid_position=(2, 0, 0), max_offset=max_offset),
 
         # # below uses odd-q coordinates:
         # sc.Helix(grid_position=(1, -1, 0), max_offset=max_offset),

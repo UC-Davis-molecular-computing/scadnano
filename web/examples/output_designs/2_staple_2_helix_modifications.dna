@@ -1,0 +1,88 @@
+{
+  "version": "0.3.0",
+  "major_tick_distance": 8,
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]}
+  ],
+  "strands": [
+    {
+      "color": "#0066cc",
+      "dna_sequence": "AACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTAACTA",
+      "substrands": [
+        {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[2, 1]]},
+        {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [11, 12, 24], "insertions": [[29, 1]]},
+        {"helix": 1, "forward": false, "start": 16, "end": 32, "deletions": [24]}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "dna_sequence": "AGTTAGTTAGTTAGTTTTAGTTAGTTAGTT",
+      "substrands": [
+        {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[2, 1]]},
+        {"helix": 0, "forward": false, "start": 0, "end": 16, "deletions": [11, 12]}
+      ],
+      "5prime_modification": "/5Biosg/",
+      "3prime_modification": "/3Cy3Sp/",
+      "internal_modifications": {"9": "/iCy3/", "10": "/iBiodT/", "11": "/iCy3/", "12": "/iCy5/", "4": "/iCy3/", "26": "/iCy5/"}
+    },
+    {
+      "color": "#57bb00",
+      "dna_sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAG",
+      "substrands": [
+        {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[29, 1]]},
+        {"helix": 1, "forward": true, "start": 16, "end": 32, "deletions": [24]}
+      ],
+      "5prime_modification": "/5Cy5/",
+      "3prime_modification": "/3Bio/",
+      "internal_modifications": {"5": "/iCy3/"}
+    }
+  ],
+  "modifications_in_design": {
+    "/5Biosg/": {
+      "display_text": "B",
+      "id": "/5Biosg/",
+      "idt_text": "/5Biosg/",
+      "font_size": 30,
+      "location": "5'"
+    },
+    "/iCy3/": {
+      "display_text": "Cy3",
+      "id": "/iCy3/",
+      "idt_text": "/iCy3/",
+      "location": "internal"
+    },
+    "/iBiodT/": {
+      "display_text": "B",
+      "id": "/iBiodT/",
+      "idt_text": "/iBiodT/",
+      "location": "internal",
+      "allowed_bases": ["T"]
+    },
+    "/3Bio/": {
+      "display_text": "B",
+      "id": "/3Bio/",
+      "idt_text": "/3Bio/",
+      "location": "3'"
+    },
+    "/iCy5/": {
+      "display_text": "Cy5",
+      "id": "/iCy5/",
+      "idt_text": "/iCy5/",
+      "location": "internal"
+    },
+    "/3Cy3Sp/": {
+      "display_text": "Cy3",
+      "id": "/3Cy3Sp/",
+      "idt_text": "/3Cy3Sp/",
+      "font_size": 30,
+      "location": "3'"
+    },
+    "/5Cy5/": {
+      "display_text": "Cy5",
+      "id": "/5Cy5/",
+      "idt_text": "/5Cy5/",
+      "location": "5'"
+    }
+  }
+}

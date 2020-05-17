@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "grid": "none",
   "helices": [
     {"position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
