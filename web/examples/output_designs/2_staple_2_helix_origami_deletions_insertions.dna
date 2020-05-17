@@ -1,5 +1,6 @@
 {
   "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
@@ -7,8 +8,8 @@
   "strands": [
     {
       "color": "#0066cc",
-      "dna_sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
-      "substrands": [
+      "sequence": "AACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACGTAACG",
+      "domains": [
         {"helix": 1, "forward": false, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": true, "start": 8, "end": 40, "insertions": [[14, 1], [26, 2]]},
         {"loopout": 3},
@@ -17,17 +18,17 @@
       "is_scaffold": true
     },
     {
-      "color": "#007200",
-      "dna_sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
-      "substrands": [
+      "color": "#f7931e",
+      "sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
+      "domains": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[14, 1]]}
       ]
     },
     {
-      "color": "#cc0000",
-      "dna_sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
-      "substrands": [
+      "color": "#f74308",
+      "sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
+      "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
       ]

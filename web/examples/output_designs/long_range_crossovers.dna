@@ -1,5 +1,6 @@
 {
   "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -20,169 +21,169 @@
   ],
   "strands": [
     {
-      "color": "#cc0000",
-      "substrands": [
+      "color": "#f74308",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 15, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#f7931e",
-      "substrands": [
+      "color": "#57bb00",
+      "domains": [
         {"helix": 15, "forward": true, "start": 16, "end": 32},
         {"helix": 0, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#f74308",
-      "substrands": [
+      "color": "#888888",
+      "domains": [
         {"helix": 0, "forward": false, "start": 32, "end": 48},
         {"helix": 15, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#57bb00",
-      "substrands": [
+      "color": "#32b86c",
+      "domains": [
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 14, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#888888",
-      "substrands": [
+      "color": "#333333",
+      "domains": [
         {"helix": 14, "forward": true, "start": 16, "end": 32},
         {"helix": 1, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#32b86c",
-      "substrands": [
+      "color": "#320096",
+      "domains": [
         {"helix": 1, "forward": false, "start": 32, "end": 48},
         {"helix": 14, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#333333",
-      "substrands": [
+      "color": "#03b6a2",
+      "domains": [
         {"helix": 2, "forward": false, "start": 0, "end": 16},
         {"helix": 13, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#320096",
-      "substrands": [
+      "color": "#7300de",
+      "domains": [
         {"helix": 13, "forward": true, "start": 16, "end": 32},
         {"helix": 2, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#03b6a2",
-      "substrands": [
+      "color": "#aaaa00",
+      "domains": [
         {"helix": 2, "forward": false, "start": 32, "end": 48},
         {"helix": 13, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#7300de",
-      "substrands": [
+      "color": "#b8056c",
+      "domains": [
         {"helix": 3, "forward": false, "start": 0, "end": 16},
         {"helix": 12, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#aaaa00",
-      "substrands": [
+      "color": "#007200",
+      "domains": [
         {"helix": 12, "forward": true, "start": 16, "end": 32},
         {"helix": 3, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#b8056c",
-      "substrands": [
+      "color": "#cc0000",
+      "domains": [
         {"helix": 3, "forward": false, "start": 32, "end": 48},
         {"helix": 12, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#007200",
-      "substrands": [
+      "color": "#f7931e",
+      "domains": [
         {"helix": 4, "forward": false, "start": 0, "end": 16},
         {"helix": 11, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#cc0000",
-      "substrands": [
+      "color": "#f74308",
+      "domains": [
         {"helix": 11, "forward": true, "start": 16, "end": 32},
         {"helix": 4, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#f7931e",
-      "substrands": [
+      "color": "#57bb00",
+      "domains": [
         {"helix": 4, "forward": false, "start": 32, "end": 48},
         {"helix": 11, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#f74308",
-      "substrands": [
+      "color": "#888888",
+      "domains": [
         {"helix": 5, "forward": false, "start": 0, "end": 16},
         {"helix": 10, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#57bb00",
-      "substrands": [
+      "color": "#32b86c",
+      "domains": [
         {"helix": 10, "forward": true, "start": 16, "end": 32},
         {"helix": 5, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#888888",
-      "substrands": [
+      "color": "#333333",
+      "domains": [
         {"helix": 5, "forward": false, "start": 32, "end": 48},
         {"helix": 10, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#32b86c",
-      "substrands": [
+      "color": "#320096",
+      "domains": [
         {"helix": 6, "forward": false, "start": 0, "end": 16},
         {"helix": 9, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#333333",
-      "substrands": [
+      "color": "#03b6a2",
+      "domains": [
         {"helix": 9, "forward": true, "start": 16, "end": 32},
         {"helix": 6, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#320096",
-      "substrands": [
+      "color": "#7300de",
+      "domains": [
         {"helix": 6, "forward": false, "start": 32, "end": 48},
         {"helix": 9, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#03b6a2",
-      "substrands": [
+      "color": "#aaaa00",
+      "domains": [
         {"helix": 7, "forward": false, "start": 0, "end": 16},
         {"helix": 8, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "color": "#7300de",
-      "substrands": [
+      "color": "#b8056c",
+      "domains": [
         {"helix": 8, "forward": true, "start": 16, "end": 32},
         {"helix": 7, "forward": false, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#aaaa00",
-      "substrands": [
+      "color": "#007200",
+      "domains": [
         {"helix": 7, "forward": false, "start": 32, "end": 48},
         {"helix": 8, "forward": true, "start": 32, "end": 48}
       ]

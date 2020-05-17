@@ -1,13 +1,14 @@
 {
   "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]}
   ],
   "strands": [
     {
-      "color": "#007200",
-      "dna_sequence": "AAAAACCCCCTGCATGGGGGTTTTT",
-      "substrands": [
+      "color": "#f7931e",
+      "sequence": "AAAAACCCCCTGCATGGGGGTTTTT",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 10},
         {"loopout": 5},
         {"helix": 0, "forward": false, "start": 0, "end": 10}

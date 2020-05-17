@@ -1,5 +1,6 @@
 {
   "version": "0.3.0",
+  "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -7,9 +8,9 @@
   ],
   "strands": [
     {
-      "color": "#b8056c",
-      "dna_sequence": "ACGACGACTTTACGTCGTCGTTTTACGACGACGATTTACTTACGCACGACGATTTTTTTTTTACGTTGCAGGTCGTCGTGACGACGACTGTCGTCGT",
-      "substrands": [
+      "color": "#cc0000",
+      "sequence": "ACGACGACTTTACGTCGTCGTTTTACGACGACGATTTACTTACGCACGACGATTTTTTTTTTACGTTGCAGGTCGTCGTGACGACGACTGTCGTCGT",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8},
         {"loopout": 5},
         {"helix": 0, "forward": false, "start": 0, "end": 8},

@@ -187,7 +187,8 @@ abstract class BoundSubstrand
 
   static BoundSubstrandBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Substrand';
-    var forward = util.get_value(json_map, constants.forward_key, name);
+    var forward =
+        util.get_value(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
     var helix = util.get_value(json_map, constants.helix_idx_key, name);
     var start = util.get_value(json_map, constants.start_key, name);
     var end = util.get_value(json_map, constants.end_key, name);
