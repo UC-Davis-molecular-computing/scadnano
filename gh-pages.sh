@@ -20,7 +20,30 @@ else
 fi
 
 git pull --all # Fetch changes before committing
-pandoc -c pandoc.css -s README.md -o web/README.html # Compile README.md to README.html
+# pandoc -c pandoc.css -s README.md -o web/README.html # Compile README.md to README.html
 $PUB get # might not be needed
 $PEANUT # use -m flag to add descriptive commit message
 git push origin --set-upstream gh-pages
+
+# Possible Issues:
+#
+# Error Message:
+#
+# Username for 'https://github.com': unhumbleben
+# Password for 'https://unhumbleben@github.com':
+# To https://github.com/UC-Davis-molecular-computing/scadnano.git
+#  ! [rejected]        gh-pages -> gh-pages (non-fast-forward)
+# error: failed to push some refs to 'https://github.com/UC-Davis-molecular-computing/scadnano.git'
+# hint: Updates were rejected because a pushed branch tip is behind its remote
+# hint: counterpart. Check out this branch and integrate the remote changes
+# hint: (e.g. 'git pull ...') before pushing again.
+# hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+#
+#
+# Fix:
+# git branch -D gh-pages
+# git checkout gh-pages
+# -----now proceed as normal------
+# git checkout master
+# peanut -m 'message'
+# git push origin --set-upstream gh-pages
