@@ -16,12 +16,12 @@ def main():
             forward = row % 2 == 0
             if forward:
                 offset = col * 20
-                ss1 = sc.Substrand(helix, forward, offset, offset + 20)
-                ss2 = sc.Substrand(helix + 1, forward, offset + 20, offset + 40)
+                ss1 = sc.Domain(helix, forward, offset, offset + 20)
+                ss2 = sc.Domain(helix + 1, forward, offset + 20, offset + 40)
             else:
                 offset = col * 20
-                ss1 = sc.Substrand(helix, forward, offset + 30, offset + 50)
-                ss2 = sc.Substrand(helix + 1, forward, offset + 10, offset + 30)
+                ss1 = sc.Domain(helix, forward, offset + 30, offset + 50)
+                ss2 = sc.Domain(helix + 1, forward, offset + 10, offset + 30)
             if forward:
                 color = blue if col % 2 == 0 else black
             else:

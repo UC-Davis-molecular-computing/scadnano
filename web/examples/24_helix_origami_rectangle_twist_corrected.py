@@ -46,7 +46,7 @@ def add_staple_nicks(design: sc.DNADesign):
 
 
 def add_precursor_staples(design: sc.DNADesign):
-    staples = [sc.Strand([sc.Substrand(helix=helix, forward=helix % 2 == 1, start=8, end=296)])
+    staples = [sc.Strand([sc.Domain(helix=helix, forward=helix % 2 == 1, start=8, end=296)])
                for helix in range(24)]
     for staple in staples:
         design.add_strand(staple)
@@ -54,7 +54,7 @@ def add_precursor_staples(design: sc.DNADesign):
 
 def precursor_scaffolds() -> sc.DNADesign:
     helices = [sc.Helix(max_offset=304) for _ in range(24)]
-    scaffolds = [sc.Strand([sc.Substrand(helix=helix, forward=helix % 2 == 0, start=8, end=296)])
+    scaffolds = [sc.Strand([sc.Domain(helix=helix, forward=helix % 2 == 0, start=8, end=296)])
                  for helix in range(24)]
     return sc.DNADesign(helices=helices, strands=scaffolds, grid=sc.square)
 

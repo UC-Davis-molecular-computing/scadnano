@@ -166,7 +166,7 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 24}
       ]
     }
@@ -191,12 +191,12 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 24}
       ]
     }
@@ -228,17 +228,17 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 16, "end": 24}
       ]
     }
@@ -268,14 +268,14 @@ main() {
   ],
   "strands": [
     {
-      "dna_sequence": "ACGTACGAAACCGGTA",
-      "substrands": [
+      "sequence": "ACGTACGAAACCGGTA",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GGCCCAAACCGGGTTT",
-      "substrands": [
+      "sequence": "GGCCCAAACCGGGTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16}
       ]
     }
@@ -297,20 +297,20 @@ main() {
   ],
   "strands": [
     {
-      "dna_sequence": "ACGTACGA",
-      "substrands": [
+      "sequence": "ACGTACGA",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "dna_sequence": "AACCGGTA",
-      "substrands": [
+      "sequence": "AACCGGTA",
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GGCCCAAACCGGGTTT",
-      "substrands": [
+      "sequence": "GGCCCAAACCGGGTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16}
       ]
     }
@@ -341,20 +341,20 @@ main() {
   ],
   "strands": [
     {
-      "dna_sequence": "ACGTACGAAACCGGTA",
-      "substrands": [
+      "sequence": "ACGTACGAAACCGGTA",
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "CCGGGTTT",
-      "substrands": [
+      "sequence": "CCGGGTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 8}
       ]
     },
     {
-      "dna_sequence": "GGCCCAAA",
-      "substrands": [
+      "sequence": "GGCCCAAA",
+      "domains": [
         {"helix": 0, "forward": false, "start": 8, "end": 16}
       ]
     }
@@ -402,62 +402,62 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": false, "start": 0, "end": 96}
       ]
     }
@@ -504,12 +504,12 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": false, "start": 48, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": false, "start": 0, "end": 48}
       ]
     }
@@ -531,12 +531,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 40, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 40}
       ]
     }
@@ -557,12 +557,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 72, "end": 96}
       ]
     }
@@ -582,12 +582,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 0, "end": 40}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 40, "end": 96}
       ]
     }
@@ -607,12 +607,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 72, "end": 96}
       ]
     }
@@ -632,12 +632,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 0, "end": 40}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 40, "end": 96}
       ]
     }
@@ -657,12 +657,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 72, "end": 96}
       ]
     }
@@ -682,12 +682,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 24, "end": 96}
       ]
     }
@@ -707,12 +707,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 56, "end": 96}
       ]
     }
@@ -732,12 +732,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 24, "end": 96}
       ]
     }
@@ -757,12 +757,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 56, "end": 96}
       ]
     }
@@ -782,12 +782,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 24, "end": 96}
       ]
     }
@@ -807,12 +807,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 56, "end": 96}
       ]
     }
@@ -838,127 +838,127 @@ main() {
   ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 40}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 72, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true, "start": 56, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 0, "end": 40}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 2, "forward": false, "start": 72, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": true, "start": 56, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 3, "forward": false, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": true, "start": 0, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 0, "end": 40}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false, "start": 72, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 0, "end": 24}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": true, "start": 56, "end": 96}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": false, "start": 0, "end": 48}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 5, "forward": false, "start": 48, "end": 96}
       ]
     }
@@ -980,12 +980,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 32, "deletions": [16]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 32, "deletions": [16]}
       ]
     }
@@ -1009,22 +1009,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 32, "deletions": [16]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 8, "end": 32, "deletions": [16]}
       ]
     }
@@ -1045,32 +1045,32 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 24, "deletions": [16]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 24, "end": 32}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 8, "end": 24, "deletions": [16]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 32}
       ]
     }
@@ -1091,12 +1091,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 32, "insertions": [[16, 3]]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
       ]
     }
@@ -1120,22 +1120,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 32, "insertions": [[16, 3]]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 8, "end": 32, "insertions": [[16, 3]]}
       ]
     }
@@ -1156,32 +1156,32 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 8, "end": 24, "insertions": [[16, 3]]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 24, "end": 32}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 8}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[16, 3]]}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 32}
       ]
     }
@@ -1216,16 +1216,16 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 2, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 16},
         {"helix": 2, "forward": false, "start": 0, "end": 16}
@@ -1267,29 +1267,29 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCCCGGAATT",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCCCGGAATT",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"helix": 1, "forward": false, "start": 8, "end": 16}
       ]
     },
     {
-      "dna_sequence": "CCGGAATTAAAATTTTCCCCGGGG",
-      "substrands": [
+      "sequence": "CCGGAATTAAAATTTTCCCCGGGG",
+      "domains": [
         {"helix": 1, "forward": false, "start": 0, "end": 8},
         {"helix": 2, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACTAATTCCGG",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACTAATTCCGG",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 8}
       ]
     },
     {
-      "dna_sequence": "AATTCCGGCCCCGGGGAAAATTTT",
-      "substrands": [
+      "sequence": "AATTCCGGCCCCGGGGAAAATTTT",
+      "domains": [
         {"helix": 1, "forward": true , "start": 8, "end": 16},
         {"helix": 2, "forward": false, "start": 0, "end": 16}
       ]
@@ -1309,14 +1309,14 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTC",
-      "substrands": [
+      "sequence": "AGTCAGTC",
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 8}
       ]
     },
     {
-      "dna_sequence": "AATTCCGG",
-      "substrands": [
+      "sequence": "AATTCCGG",
+      "domains": [
         {"helix": 0, "forward": true , "start": 8, "end": 16}
       ]
     }
@@ -1333,8 +1333,8 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAATTCCGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAATTCCGG",
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     }
@@ -1367,14 +1367,14 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AATTCCGG",
-      "substrands": [
+      "sequence": "AATTCCGG",
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 8}
       ]
     },
     {
-      "dna_sequence": "AGTCAGTC",
-      "substrands": [
+      "sequence": "AGTCAGTC",
+      "domains": [
         {"helix": 0, "forward": false , "start": 8, "end": 16}
       ]
     }
@@ -1391,8 +1391,8 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAATTCCGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAATTCCGG",
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -1429,22 +1429,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -1547,18 +1547,18 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -1631,22 +1631,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -1733,14 +1733,14 @@ main() {
       "version": "0.0.1", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
       "strands": [
         {
-          "dna_sequence": "CCGGAATTCCGGAATT",
-          "substrands": [
+          "sequence": "CCGGAATTCCGGAATT",
+          "domains": [
             {"helix": 1, "forward": false, "start": 0, "end": 16}
           ]
         },
         {
-          "dna_sequence": "AATTCCGGAATTCCGG",
-          "substrands": [
+          "sequence": "AATTCCGGAATTCCGG",
+          "domains": [
             {"helix": 1, "forward": true , "start": 0, "end": 16}
           ]
         }
@@ -1795,14 +1795,14 @@ main() {
       "version": "0.0.1", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
       "strands": [
         {
-          "dna_sequence": "CCCCGGGGAAAATTTT",
-          "substrands": [
+          "sequence": "CCCCGGGGAAAATTTT",
+          "domains": [
             {"helix": 2, "forward": false, "start": 0, "end": 16}
           ]
         },
         {
-          "dna_sequence": "AAAATTTTCCCCGGGG",
-          "substrands": [
+          "sequence": "AAAATTTTCCCCGGGG",
+          "domains": [
             {"helix": 2, "forward": true , "start": 0, "end": 16}
           ]
         }
@@ -1835,22 +1835,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 4, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -1872,22 +1872,22 @@ main() {
       "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
       "strands": [
         {
-          "substrands": [
+          "domains": [
             {"helix": 0, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 0, "forward": false , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 4, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 4, "forward": false , "start": 0, "end": 16}
           ]
         }
@@ -1910,12 +1910,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 0, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 16}
     ]
   }
@@ -1973,12 +1973,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 3, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 16}
     ]
   }
@@ -2024,12 +2024,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 0, "end": 4}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 16}
     ]
   }
@@ -2075,12 +2075,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 0, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 4}
     ]
   }
@@ -2126,12 +2126,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 0, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 3, "end": 16}
     ]
   }
@@ -2186,12 +2186,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 3, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 3, "end": 16}
     ]
   }
@@ -2257,12 +2257,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 3, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 5}
     ]
   }
@@ -2329,12 +2329,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 3, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 5}
     ]
   }
@@ -2430,12 +2430,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 3, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 0, "end": 5}
     ]
   }
@@ -2480,12 +2480,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 4, "end": 11}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 4, "end": 11}
     ]
   }
@@ -2523,12 +2523,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 0, "end": 11}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 4, "end": 11}
     ]
   }
@@ -2578,12 +2578,12 @@ main() {
 "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": true , "start": 4, "end": 16}
     ]
   },
   {
-    "substrands": [
+    "domains": [
       {"helix": 0, "forward": false , "start": 4, "end": 11}
     ]
   }
@@ -2698,12 +2698,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 16, "end": 32 }
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 32}
       ]
     }
@@ -2751,12 +2751,12 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true, "start": 16, "end": 32}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 32}
       ]
     }
@@ -2993,22 +2993,22 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -3080,7 +3080,7 @@ main() {
               ]
             },
             "color": "#ff0003",
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": true, "start": 0, "end": 16}
             ],
             "idt": {
@@ -3100,13 +3100,13 @@ main() {
           },
           {
             "color": "#000000",
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": false, "start": 0, "end": 16}
             ]
           },
           {
             "color": "#000000",
-            "substrands": [
+            "domains": [
               {"helix": 1, "forward": true, "start": 0, "end": 16},
               {
                 "loopout": 3,
@@ -3305,18 +3305,18 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": true , "start": 0, "end": 16},
         {"helix": 0, "forward": false , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -3544,8 +3544,8 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"loopout": 4},
         {"helix": 0, "forward": false,  "start": 0, "end": 16}
@@ -3683,23 +3683,23 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 2, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGG",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGG",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "CCCCGGGGAAAATTTT",
-      "substrands": [
+      "sequence": "CCCCGGGGAAAATTTT",
+      "domains": [
         {"helix": 2, "forward": false, "start": 0, "end": 16}
       ]
     }
@@ -3740,14 +3740,14 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTC",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTC",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACT",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACT",
+      "domains": [
         {"helix": 0, "forward": false,  "start": 0, "end": 16}
       ]
     }
@@ -3916,16 +3916,16 @@ main() {
   ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 2, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 16},
         {"helix": 2, "forward": false, "start": 0, "end": 16}
@@ -3952,16 +3952,16 @@ main() {
   ],
   "strands": [
     {
-      "dna_sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
-      "substrands": [
+      "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
+      "domains": [
         {"helix": 0, "forward": true,  "start": 0, "end": 16},
         {"helix": 1, "forward": false, "start": 0, "end": 16},
         {"helix": 2, "forward": true,  "start": 0, "end": 16}
       ]
     },
     {
-      "dna_sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
-      "substrands": [
+      "sequence": "GACTGACTGACTGACTAATTCCGGAATTCCGGCCCCGGGGAAAATTTT",
+      "domains": [
         {"helix": 0, "forward": false, "start": 0, "end": 16},
         {"helix": 1, "forward": true , "start": 0, "end": 16},
         {"helix": 2, "forward": false, "start": 0, "end": 16}
@@ -3993,8 +3993,8 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "dna_sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
-            "substrands": [
+            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 5},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}
@@ -4014,8 +4014,8 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "dna_sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
-            "substrands": [
+            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"loopout": 3},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}
@@ -4046,8 +4046,8 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
-            "dna_sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
-            "substrands": [
+            "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
+            "domains": [
               {"helix": 0, "forward": true,  "start": 0, "end": 16},
               {"helix": 0, "forward": false,  "start": 0, "end": 16}
             ]
@@ -4080,19 +4080,19 @@ main() {
   "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 0, "forward": false , "start": 0, "end": 16},
         {"loopout": 4},
         {"helix": 1, "forward": true , "start": 0, "end": 16}
       ]
     },
     {
-      "substrands": [
+      "domains": [
         {"helix": 1, "forward": false , "start": 0, "end": 16}
       ]
     }
@@ -4270,18 +4270,18 @@ main() {
       ],
       "strands": [
         {
-          "substrands": [
+          "domains": [
             {"helix": 0, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 0, "forward": false , "start": 0, "end": 16},
             {"helix": 1, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 1, "forward": false , "start": 0, "end": 16}
           ]
         }
@@ -4410,18 +4410,18 @@ main() {
         ],
         "strands": [
           {
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": true , "start": 0, "end": 16}
             ]
           },
           {
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": false , "start": 16, "end": 32},
               {"helix": 1, "forward": true  , "start": 16, "end": 32}
             ]
           },
           {
-            "substrands": [
+            "domains": [
               {"helix": 1, "forward": false , "start": 16, "end": 32}
             ]
           }
@@ -4508,23 +4508,23 @@ main() {
         ],
         "strands": [
           {
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": true , "start": 0, "end": 16}
             ]
           },
           {
-            "substrands": [
+            "domains": [
               {"helix": 0, "forward": false , "start": 16, "end": 32},
               {"helix": 1, "forward": true  , "start": 16, "end": 32}
             ]
           },
           {
-            "substrands": [
+            "domains": [
               {"helix": 1, "forward": false , "start": 16, "end": 32}
             ]
           },
           {
-            "substrands": [
+            "domains": [
               {"helix": 1, "forward": false , "start": 0, "end": 16}
             ]
           }
@@ -4547,18 +4547,18 @@ main() {
       ],
       "strands": [
         {
-          "substrands": [
+          "domains": [
             {"helix": 3, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 3, "forward": false , "start": 0, "end": 16},
             {"helix": 4, "forward": true , "start": 0, "end": 16}
           ]
         },
         {
-          "substrands": [
+          "domains": [
             {"helix": 4, "forward": false , "start": 0, "end": 16}
           ]
         }
@@ -4808,14 +4808,14 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
-            "dna_sequence": "AACGTACGATGCATCC",
-            "substrands": [
+            "sequence": "AACGTACGATGCATCC",
+            "domains": [
               {"helix": 0, "forward": true , "start": 0, "end": 16}
             ]
           },
           {
-            "dna_sequence": "GGATGCATCGTACGTT",
-            "substrands": [
+            "sequence": "GGATGCATCGTACGTT",
+            "domains": [
               {"helix": 0, "forward": false , "start": 0, "end": 16}
             ]
           }
@@ -4872,14 +4872,14 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
-            "dna_sequence": "AACGTACGATGCATCC",
-            "substrands": [
+            "sequence": "AACGTACGATGCATCC",
+            "domains": [
               {"helix": 0, "forward": true , "start": 0, "end": 16}
             ]
           },
           {
-            "dna_sequence": "ATCCAACAGCCCCTCG",
-            "substrands": [
+            "sequence": "ATCCAACAGCCCCTCG",
+            "domains": [
               {"helix": 0, "forward": false , "start": 0, "end": 16}
             ]
           }
@@ -4926,12 +4926,12 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
-            "substrands": [
+            "domains": [
               { "helix": 0, "forward": true , "start": 0, "end": 16, "insertions": [[8, 1]] }
             ]
           },
           {
-            "substrands": [
+            "domains": [
               { "helix": 0, "forward": false , "start": 0, "end": 16, "insertions": [[8, 1]] }
             ]
           }
@@ -4968,12 +4968,12 @@ main() {
           "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": true, "start": 0, "end": 32, "insertions": [[16, 5]]}
               ]
             },
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
               ]
             }
@@ -5006,12 +5006,12 @@ main() {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
-            "substrands": [
+            "domains": [
               { "helix": 0, "forward": true , "start": 0, "end": 16, "deletions": [8] }
             ]
           },
           {
-            "substrands": [
+            "domains": [
               { "helix": 0, "forward": false , "start": 0, "end": 16, "deletions": [8] }
             ]
           }
@@ -5049,12 +5049,12 @@ main() {
           "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": true, "start": 0, "end": 32 }
               ]
             },
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": false, "start": 0, "end": 32, "insertions": [[16, 3]]}
               ]
             }
@@ -5089,12 +5089,12 @@ main() {
           "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": true, "start": 0, "end": 32 }
               ]
             },
             {
-              "substrands": [
+              "domains": [
                 {"helix": 0, "forward": false, "start": 0, "end": 32, "deletions": [16]}
               ]
             }
@@ -5127,22 +5127,22 @@ main() {
             ],
             "strands": [
               {
-                "substrands": [
+                "domains": [
                   {"helix": 0, "forward": true , "start": 0, "end": 16}
                 ]
               },
               {
-                "substrands": [
+                "domains": [
                   {"helix": 0, "forward": false , "start": 0, "end": 16}
                 ]
               },
               {
-                "substrands": [
+                "domains": [
                   {"helix": 1, "forward": true , "start": 0, "end": 16}
                 ]
               },
               {
-                "substrands": [
+                "domains": [
                   {"helix": 1, "forward": false , "start": 0, "end": 16}
                 ]
               }

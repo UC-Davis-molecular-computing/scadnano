@@ -290,7 +290,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   }
 
   static Strand from_json(Map<String, dynamic> json_map) {
-    var substrand_jsons = util.get_value(json_map, constants.substrands_key, 'Strand');
+    var substrand_jsons = util.get_value(json_map, constants.substrands_key, 'Strand',
+        legacy_keys: constants.legacy_substrands_keys);
 
     // need to parse all BoundSubstrands before Loopouts,
     // because prev and next BoundSubstrands need to be referenced by Loopouts
@@ -341,8 +342,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
     // Now that all Substrand dna_lengths are known, we can assign DNA sequences to them
     //XXX: important to do this check after setting substrands so dna_length() is well-defined
-    var dna_sequence =
-        json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
+    var dna_sequence = util.get_value_with_null_default(json_map, constants.dna_sequence_key,
+        legacy_keys: constants.legacy_dna_sequence_keys);
+//    var dna_sequence = json_map.containsKey(constants.dna_sequence_key) ? json_map[constants.dna_sequence_key] : null;
 
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])

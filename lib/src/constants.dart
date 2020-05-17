@@ -26,7 +26,7 @@ const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.3.0";
+const String CURRENT_VERSION = "0.4.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
@@ -133,10 +133,12 @@ const helix_keys = [
 
 // Strand keys
 const color_key = 'color';
-const dna_sequence_key = 'dna_sequence';
+const dna_sequence_key = 'sequence';
+const legacy_dna_sequence_keys = ['dna_sequence'];
 const idt_key = 'idt';
 const is_scaffold_key = 'is_scaffold';
-const substrands_key = 'substrands';
+const substrands_key = 'domains';
+const legacy_substrands_keys = ['substrands'];
 const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';
 const modifications_int_key = 'internal_modifications';
@@ -186,6 +188,7 @@ const idt_keys = [
 // Bound substrand keys
 const helix_idx_key = 'helix';
 const forward_key = 'forward';
+const legacy_forward_keys = ['right'];
 const start_key = 'start';
 const end_key = 'end';
 const deletions_key = 'deletions';

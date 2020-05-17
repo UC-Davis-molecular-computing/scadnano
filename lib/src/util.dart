@@ -578,20 +578,60 @@ save_editor_content_to_js_context(String new_content) {
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
 /// Since this is only used for [DNADesign]s, it throws an [IllegalDNADesignError].
-dynamic get_value(Map<String, dynamic> map, String key, String name) {
+/// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
+dynamic get_value(Map<String, dynamic> map, String key, String name, {List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
-    throw IllegalDNADesignError('key "${key}" is missing from the description of a ${name}:\n  ${map}');
+    for (var legacy_key in legacy_keys) {
+      if (map.containsKey(legacy_key)) {
+        return map[legacy_key];
+      }
+    }
+    var msg = 'key "${key}" is missing from the description of a ${name}:\n  ${map}';
+    if (legacy_keys.isNotEmpty) {
+      msg += '\nThese legacy keys are also supported, but were not found either: ${legacy_keys.join(", ")}';
+    }
+    throw IllegalDNADesignError(msg);
   } else {
     return map[key];
   }
 }
 
 /// Tries to get value in map associated to [key], returning [default_value] if [key] is not present.
-/// If transformer is given and the key is found in the map, apply transformer to the associated value and return it.
+/// If transformer is given and the key is found in the map, apply transformer to the associated value
+/// and return it.
 T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_value,
-    {T Function(U) transformer = null}) {
+    {T Function(U) transformer = null, List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
+    for (var legacy_key in legacy_keys) {
+      if (map.containsKey(legacy_key)) {
+        return map[legacy_key];
+      }
+    }
     return default_value;
+  } else {
+    if (transformer == null) {
+      return map[key];
+    } else {
+      return transformer(map[key]);
+    }
+  }
+}
+
+/// Tries to get value in map associated to [key], returning null if [key] is not present.
+/// If transformer is given and the key is found in the map, apply transformer to the associated value
+/// and return it.
+/// This function is needed because calling [get_value_with_default] with default_value = null will result
+/// in a type error, since Dart generics type inference will think the return type should be Null
+/// instead of whatever is the type of the value in the map.
+T get_value_with_null_default<T, U>(Map<String, dynamic> map, String key,
+    {T Function(U) transformer = null, List<String> legacy_keys = const []}) {
+  if (!map.containsKey(key)) {
+    for (var legacy_key in legacy_keys) {
+      if (map.containsKey(legacy_key)) {
+        return map[legacy_key];
+      }
+    }
+    return null;
   } else {
     if (transformer == null) {
       return map[key];
