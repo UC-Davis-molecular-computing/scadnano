@@ -19,7 +19,7 @@ The visual interface for scadnano is somewhat in flux. As a result, some of the 
 ## Start
 
 Open scadnano in your browser:
-http://scadnano.org.
+https://scadnano.org.
 Currently only [Chrome](https://www.google.com/chrome/) 
 or [Firefox](https://www.mozilla.org/en-US/firefox/)
 are supported.
@@ -80,7 +80,7 @@ Each helix has two "rows" of offsets. The top row always contains the strand who
 
 For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D [projections](https://en.wikipedia.org/wiki/3D_projection) of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a [linear projection](https://en.wikipedia.org/wiki/Projection_(linear_algebra)). See the [documentation](../README.md) for an explanation of how scadnano chooses helix positions in the main view.
 
-Each helix has given an integer *index*, starting at 0 in the order you create them. The helix indices can be any integers, but they must be unique to a helix. By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
+Each helix has given an integer *index*, starting at 0 in the order you create them. (When creating helices with the scripting library or manually editing a scadnano `.dna` file, the helix indices can be any integers, but they must be unique to a helix.) By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
 
 For now, we just have to be careful to add helices in the order we want them to appear in the main view. In both the main view and side view, we'd like them to appear 0,1,...,23 in order from top to bottom, so zoom out in the side view, and click in the side view to create 23 more helices below the first. If you mess up and click somewhere incorrectly, you can press Ctrl+Z to undo the last action (and Ctrl+Shift+Z to redo):
 
@@ -105,7 +105,7 @@ Click OK and the helix lengths should increase:
 
 
 
-## Create first substrand of scaffold
+## Create first domain of scaffold
 
 Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign a DNA sequence to any strand. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
 
@@ -117,7 +117,7 @@ To do this, select pencil mode and click on helix 0, offset 8, on top, and drag 
 
 ![](images/draw_one_strand.png)
 
-This is a strand consisting of a single *substrand*, which is a portion of a strand contiguous on a single helix. Later we will add *crossovers* to connect multiple substrands on different helices into a single strand, but for now we simply draw the substrands.
+This is a strand consisting of a single *domain*, which is a portion of a strand contiguous on a single helix. Later we will add *crossovers* to connect multiple domains on different helices into a single strand, but for now we simply draw the domains.
 
 By default, strands are not scaffolds, meaning they are part of a design that doesn't represent DNA origami, or they are a DNA origami staple. To make this strand a scaffold, right click the strand and select "set as scaffold"
 
@@ -157,7 +157,7 @@ Note that we stop a bit short on each side (leaving 8 unoccupied offsets on each
 
 
 
-## Add other substrands of scaffold
+## Add other domains of scaffold
 
 First, we copy and paste the strand we just made. To do this, remain in select edit mode, but choose "strand" under "Select":
 
@@ -171,13 +171,13 @@ Pressing Ctrl+V and moving the cursor gives you options where to paste the copy.
 
 ![](images/scaffold_substrand_first_copy.png)
 
-Observing the final design and noticing that these two so-called *substrands* are connected by a crossover, at this point you might think we want to add those crossovers. Unfortunately, scadnano does not yet support *circular strands*, but adding those crossovers now would create a circular strand.
+Observing the final design and noticing that these two so-called *domains* are connected by a crossover, at this point you might think we want to add those crossovers. Unfortunately, scadnano does not yet support *circular strands*, but adding those crossovers now would create a circular strand.
 
-In this case, the substrand we just drew should not span the entire length of the helix, but instead we want two substrands that are adjacent in the middle. To split this substrand into two, select the "nick" edit mode:
+In this case, the domain we just drew should not span the entire length of the helix, but instead we want two domains that are adjacent in the middle. To split this domain into two, select the "nick" edit mode:
 
 ![](images/nick_edit_mode.png)
 
-and click somewhere around the middle of the substrand (if this doesn't get exactly to the middle; you can edit the exact offsets of the 5'/3' ends later by selecting and dragging them):
+and click somewhere around the middle of the domain (if this doesn't get exactly to the middle; you can edit the exact offsets of the 5'/3' ends later by selecting and dragging them):
 
 ![](images/nick_second_substrand.png)
 
@@ -185,7 +185,7 @@ It's a bit harder to see, but here it is zoomed out:
 
 ![](images/nick_second_substrand_zoomed_out.png)
 
-Now, every other substrand of the scaffold looks just like this, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy the two reverse strands on helix 1 and paste them in the forward direction on helix 2 (when many strands are selected, the mouse cursor for the paste is assumed to be where the rightmost strand on the topmost helix is, so to paste you will want to go to the left side of the main view near the start of the helix):
+Now, every other domain of the scaffold looks just like this, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy the two reverse strands on helix 1 and paste them in the forward direction on helix 2 (when many strands are selected, the mouse cursor for the paste is assumed to be where the rightmost strand on the topmost helix is, so to paste you will want to go to the left side of the main view near the start of the helix):
 
 ![](images/helix_2_scaffold_substrands.png)
 
@@ -194,7 +194,7 @@ Now, every other substrand of the scaffold looks just like this, so we can copy/
 
 
 
-## Link substrands into one long scaffold strand
+## Link domains into one long scaffold strand
 
 We will want the strands on helices 1 and 2 to be joined by crossovers in the middle, so let's add those now.
 
@@ -218,7 +218,7 @@ When this is done, the design should look like this:
 
 
 
-## Recursive copy/paste to complete the substrands of the scaffold
+## Recursive copy/paste to complete the domains of the scaffold
 
 We also want to connect the strands on helix 0 and 1 by crossovers near the edge of the helix, but not yet, because we aren't done copying the existing shorter strands.
 
@@ -228,15 +228,15 @@ Switch back to *select* edit mode. At this point it might be simpler to select s
 
 ![](images/shift_drag_select_4_scaffold_substrands.png)
 
-Select all four substrands on helices, and copy/paste them to helices 3 and 4, respectively, ensuring that the top substrands on helix 3 go in the reverse direction.
+Select all four domains on helices, and copy/paste them to helices 3 and 4, respectively, ensuring that the top domains on helix 3 go in the reverse direction.
 
 ![](images/paste_scaffold_substrands_to_helices_3_4.png)
 
-Switch to pencil mode, and connect substrands on helices 2 and 3 by crossovers near the outer edges of the helices:
+Switch to pencil mode, and connect domains on helices 2 and 3 by crossovers near the outer edges of the helices:
 
 ![](images/scaffold_substrands_helices_0_4_out_crossovers.png)
 
-Now, recursively copy/paste: select all the substrands on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the substrands except the topmost substrand, one fast way is to press Ctrl+A to select all strands:
+Now, recursively copy/paste: select all the domains on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the domains except the topmost domai, one fast way is to press Ctrl+A to select all strands:
 
 ![](images/all_substrands_selected.png)
 
@@ -256,7 +256,7 @@ In select mode, copy paste strands from helices 1-8 to helices 9-16, and in penc
 
 ![](images/scaffold_substrands_helices_0_16.png)
 
-Now, we have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So we will copy the substrands on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
+Now, we have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So we will copy the domains on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
 
 To do this, first temporarily disconnect the inner crossovers between helices 7 and 8 by changing to select edit, then pick "crossover" under "select":
 
@@ -278,7 +278,7 @@ Finally, in pencil mode add the final remaining crossovers (outer crossovers bet
 
 ![](images/full_scaffold.png)
 
-The above steps could have been simplified somewhat by waiting until the substrands were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable. It's your preference how much to try to plan ahead so that the copied substructures are more complete.
+The above steps could have been simplified somewhat by waiting until the domains were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable. It's your preference how much to try to plan ahead so that the copied substructures are more complete.
 
 
 
@@ -290,7 +290,7 @@ The above steps could have been simplified somewhat by waiting until the substra
 
 There aren't too many "shapes" of staples in a standard DNA origami rectangle. We follow the same strategy above of manually drawing one shape of staple and copy/pasting it to get the rest.
 
-First, we add an edge staple by drawing a reverse substrand on helix 0 and a forward substrand on helix 1, both in the upper-left of the scaffold:
+First, we add an edge staple by drawing a reverse domain on helix 0 and a forward domain on helix 1, both in the upper-left of the scaffold:
 
 ![](images/top_left_edge_staple_no_crossover.png)
 

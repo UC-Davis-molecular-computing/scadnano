@@ -134,21 +134,21 @@ def main():
     helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
 
     # left staple
-    stap_left_ss1 = sc.Substrand(helix=1, forward=True, start=8, end=24)
-    stap_left_ss0 = sc.Substrand(helix=0, forward=False, start=8, end=24)
-    stap_left = sc.Strand(substrands=[stap_left_ss1, stap_left_ss0])
+    stap_left_ss1 = sc.Domain(helix=1, forward=True, start=8, end=24)
+    stap_left_ss0 = sc.Domain(helix=0, forward=False, start=8, end=24)
+    stap_left = sc.Strand(domains=[stap_left_ss1, stap_left_ss0])
 
     # right staple
-    stap_right_ss0 = sc.Substrand(helix=0, forward=False, start=24, end=40)
-    stap_right_ss1 = sc.Substrand(helix=1, forward=True, start=24, end=40)
-    stap_right = sc.Strand(substrands=[stap_right_ss0, stap_right_ss1])
+    stap_right_ss0 = sc.Domain(helix=0, forward=False, start=24, end=40)
+    stap_right_ss1 = sc.Domain(helix=1, forward=True, start=24, end=40)
+    stap_right = sc.Strand(domains=[stap_right_ss0, stap_right_ss1])
 
     # scaffold
-    scaf_ss1_left = sc.Substrand(helix=1, forward=False, start=8, end=24)
-    scaf_ss0 = sc.Substrand(helix=0, forward=True, start=8, end=40)
+    scaf_ss1_left = sc.Domain(helix=1, forward=False, start=8, end=24)
+    scaf_ss0 = sc.Domain(helix=0, forward=True, start=8, end=40)
     loopout = sc.Loopout(length=3)
-    scaf_ss1_right = sc.Substrand(helix=1, forward=False, start=24, end=40)
-    scaf = sc.Strand(substrands=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
+    scaf_ss1_right = sc.Domain(helix=1, forward=False, start=24, end=40)
+    scaf = sc.Strand(domains=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     # whole design
     design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
@@ -188,23 +188,23 @@ The position of helices in the main view depends on the grid position if a grid 
 (Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
 They are listed from top to bottom in the order they appear in the sequence (unless the property *helices_view_order* is specified in the design to display them in a different order, though currently this can only be done in the scripting library).
 
-Each strand is defined primarily by an ordered list of *substrands*.
-Each substrand is either a single-stranded *loopout* not associated to any helix, or it is a *bound substrand*: a region of the strand that is contiguous on a single helix.
-The phrase is a bit misleading, since a bound substrand is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.
+Each strand is defined primarily by an ordered list of *domains*.
+Each domain is either a single-stranded *loopout* not associated to any helix, or it is a *bound domain*: a region of the strand that is contiguous on a single helix.
+The phrase is a bit misleading, since a bound domain is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.
 
-Each bound substrand is specified by four mandatory properties:
+Each bound domain is specified by four mandatory properties:
 *helix*, direction (*forward* or reverse), *start* offset, and a larger *end* offset.
 As with common string/list indexing in programming languages, start is inclusive but end is exclusive.
-So for example, a bound substrand with *end*=8 is adjacent to one with *start*=8.
-In the main view, *forward* bound substrands are depicted on the top half of the helix, and *reverse* are on the bottom half.
-If a bound substrand is forward, then *start* is the offset of its 5' end, and *end*-1 is the offset of its 3' end, 
+So for example, a bound domain with *end*=8 is adjacent to one with *start*=8.
+In the main view, *forward* bound domains are depicted on the top half of the helix, and *reverse* are on the bottom half.
+If a bound domain is forward, then *start* is the offset of its 5' end, and *end*-1 is the offset of its 3' end, 
 otherwise these roles are reversed.
-There is implicitly a crossover between adjacent bound substrands in a strand.
-Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) substrand in between two bound substrands.
+There is implicitly a crossover between adjacent bound domains in a strand.
+Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) domain in between two bound domains.
 Currently, two loopouts cannot be consecutive (and this will remain a requirement),
-and a loopout cannot be the first or last substrand of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
+and a loopout cannot be the first or last domain of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
 
-Bound substrands may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions* (called *loops* in cadnano), explained below.
+Bound domains may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions* (called *loops* in cadnano), explained below.
 
 Each strand also has a *color* and a Boolean field *is_scaffold*.
 DNA origami designs have at least one strand that is a scaffold (but can have more than one), and a non-DNA-origami design is simply one in which every strand has *is_scaffold* = false.
@@ -302,15 +302,15 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
   * **Inline insertions/deletions:**
     The "Inline I/D" button "inlines" insertions and deletions in the following way.
-    Insertions and deletions are removed, and their substrands have their lengths altered. 
+    Insertions and deletions are removed, and their domains have their lengths altered. 
     Also, major tick marks on the helices will be shifted to preserve their adjacency to bases already present. 
     For example, if there are major tick marks at 0, 8, 18, 24, and a deletion between 0 and 8, 
-    then the substrand is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.
+    then the domain is shorted by 1, and the tick marks become 0, 7, 15, 23, and the helix’s maximum offset is shrunk by 1.
 
     We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
     e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
-    *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound substrand. If the whole strand moves or is copied, the insertions/deletions move along with it.
+    *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
   
 * View
 
@@ -366,10 +366,10 @@ There are different edit modes available, shown on the right side of the screen.
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
 
   - **5' end (other), 3' end (other):**
-    Each strand is composed of one or more *bound substrands*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound substrand that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound substrands cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound substrand deletes the whole bound substrand. To move the whole bound substrand, simply select both of its ends and move them.
+    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
 
   - **crossover, loopout:**
-    Two consecutive bound substrands on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
+    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
 
   - **strand:**
     The whole strand can be selected.
@@ -381,41 +381,41 @@ There are different edit modes available, shown on the right side of the screen.
 
   
 * **(p)encil:**
-  This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single substrand) by clicking and dragging. 
+  This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 
   
-  It also allows one to merge two strands into one with a crossover. This is done by clicking on a 5'/3' end of one strand and then clicking on another. (In between a line will be drawn showing the "potential" crossover being added; to delete this and reset, press the Esc key.) To undo these operations select the crossover/strand that was just created and press the Delete key. (Note that deleting a bound substrand that is the only one on a strand will delete the whole strand.)
+  It also allows one to merge two strands into one with a crossover. This is done by clicking on a 5'/3' end of one strand and then clicking on another. (In between a line will be drawn showing the "potential" crossover being added; to delete this and reset, press the Esc key.) To undo these operations select the crossover/strand that was just created and press the Delete key. (Note that deleting a bound domain that is the only one on a strand will delete the whole strand.)
 
-  A faster alternative that works in most circumstances is this. In pencil mode, if two bound substrands on adjacent helices have their 5'/3' ends at the *same horizontal offset*, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.
+  A faster alternative that works in most circumstances is this. In pencil mode, if two bound domains on adjacent helices have their 5'/3' ends at the *same horizontal offset*, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.
 
   In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
 * **(n)ick / (l)igate:**
-  Technically these operations are unnecessary, but they are faster than creating/moving/deleting substrands in some circumstances. In nick mode, clicking on a bound substrand will split it into two at that position. Ligate mode does the reverse operation: if two bound substrands point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
+  Technically these operations are unnecessary, but they are faster than creating/moving/deleting domains in some circumstances. In nick mode, clicking on a bound domain will split it into two at that position. Ligate mode does the reverse operation: if two bound domains point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
 
 * **(i)nsertion / (d)eletion:**
   These have the same meaning as in cadnano. 
-  They are a visual trick used to allow bound substrands to appear to be one length in the main view of scadnano, while actually having a different length. 
+  They are a visual trick used to allow bound domains to appear to be one length in the main view of scadnano, while actually having a different length. 
   Normally, each offset (small white square outlined in gray on a helix) represents a single base. 
-  Clicking on a bound substrand in insertion/deletion mode adds an insertion/deletion at that offset. 
+  Clicking on a bound domain in insertion/deletion mode adds an insertion/deletion at that offset. 
   Clicking an existing insertion/deletion removes it. 
-  (Note that this requires clicking in the small square where the bound substrand is drawn; 
+  (Note that this requires clicking in the small square where the bound domain is drawn; 
   clicking on an insertion outside of that square allows one to change its length.) 
   If a deletion appears at that position, then it does not correspond to any DNA base. 
   If an insertion appears at that position, it has a *length*, which is a positive integer, 
   and the number of bases represented by that position is actually *length*+1. 
   In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
-  Currently, if one offset on a helix has two bound substrands (going in opposite directions), 
-  then adding/removing an insertion/deletion at that offset adds/removes on both bound substrands.
-  The Python scripting library lets one specify insertions/deletions on one bound substrand but not the other, 
+  Currently, if one offset on a helix has two bound domains (going in opposite directions), 
+  then adding/removing an insertion/deletion at that offset adds/removes on both bound domains.
+  The Python scripting library lets one specify insertions/deletions on one bound domain but not the other, 
   but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
-  (If necessary, one hack is to move one substrand out of the way, add the deletion/insertion to the other, and then move the first back.)
+  (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
   This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, 
   or of two helices when the pointer is over a crossover joining those two helices. 
   (It doesn't actually enable any edits, but it *disables* other edits for technical reasons related detecting click events.)
-  Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound substrands are pointing. 
+  Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound domains are pointing. 
   The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
   Most interesting crossovers will be between two helices that are tangent to each other in the side view.
   Ideally, the rotation of each helix is such that the backbones "point at each other".
@@ -429,11 +429,11 @@ There are different edit modes available, shown on the right side of the screen.
   Each crossover has a right-click option "unstrain backbone here".
   If this is selected, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
   The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. 
-  It is also the case that some simple information about strands and substrands under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
+  It is also the case that some simple information about strands and domains under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 
 
-[^1]: Technically bound substrands do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound substrands will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound substrands are currently necessary to support single-stranded extensions on the end of a strand.
+[^1]: Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.
 
 
 
