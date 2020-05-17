@@ -21,7 +21,7 @@ abstract class Modification {
 
   bool get display_connector;
 
-  BuiltMap<String, Object> unused_fields;
+  BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
@@ -50,7 +50,6 @@ abstract class Modification {
       throw IllegalDNADesignError('unknown Modification location "${location}"');
     }
 
-    mod.unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
     return mod;
   }
 }
@@ -63,7 +62,8 @@ abstract class Modification5Prime
       String id,
       String idt_text,
       bool display_connector,
-      int font_size}) = _$Modification5Prime._;
+      int font_size,
+      BuiltMap<String, Object> unused_fields}) = _$Modification5Prime._;
 
   Modification5Prime._();
 
@@ -79,7 +79,7 @@ abstract class Modification5Prime
 
   bool get display_connector;
 
-  BuiltMap<String, Object> unused_fields;
+  BuiltMap<String, Object> get unused_fields;
 
   @nullable
   int get font_size;
@@ -98,12 +98,15 @@ abstract class Modification5Prime
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
     String idt_text = json_map[constants.mod_idt_text_key];
+    var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
+
     return Modification5Prime(
         display_text: display_text,
         id: id,
         idt_text: idt_text,
         font_size: font_size,
-        display_connector: display_connector);
+        display_connector: display_connector,
+        unused_fields: unused_fields);
   }
 }
 
@@ -115,7 +118,8 @@ abstract class Modification3Prime
       String id,
       String idt_text,
       bool display_connector,
-      int font_size}) = _$Modification3Prime._;
+      int font_size,
+      BuiltMap<String, Object> unused_fields}) = _$Modification3Prime._;
 
   Modification3Prime._();
 
@@ -134,7 +138,7 @@ abstract class Modification3Prime
   @nullable
   int get font_size;
 
-  BuiltMap<String, Object> unused_fields;
+  BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -150,12 +154,15 @@ abstract class Modification3Prime
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
     String idt_text = json_map[constants.mod_idt_text_key];
+    var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
+
     return Modification3Prime(
         display_text: display_text,
         id: id,
         idt_text: idt_text,
         font_size: font_size,
-        display_connector: display_connector);
+        display_connector: display_connector,
+        unused_fields: unused_fields);
   }
 }
 
@@ -175,7 +182,8 @@ abstract class ModificationInternal
       String idt_text,
       bool display_connector,
       BuiltSet<String> allowed_bases,
-      int font_size}) = _$ModificationInternal._;
+      int font_size,
+      BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -193,7 +201,7 @@ abstract class ModificationInternal
   @nullable
   BuiltSet<String> get allowed_bases;
 
-  BuiltMap<String, Object> unused_fields;
+  BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -215,13 +223,16 @@ abstract class ModificationInternal
     String idt_text = json_map[constants.mod_idt_text_key];
     var allowed_bases_json = json_map[constants.mod_allowed_bases_key];
     var allowed_bases = allowed_bases_json == null ? null : BuiltSet<String>(allowed_bases_json);
+    var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
+
     return ModificationInternal(
         display_text: display_text,
         id: id,
         idt_text: idt_text,
         allowed_bases: allowed_bases,
         font_size: font_size,
-        display_connector: display_connector);
+        display_connector: display_connector,
+        unused_fields: unused_fields);
   }
 
   bool base_is_allowed(String base) => this.allowed_bases == null || this.allowed_bases.contains(base);
