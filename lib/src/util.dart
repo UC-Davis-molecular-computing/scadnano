@@ -455,24 +455,25 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
 // Uses cadnano coordinate system:
 //   https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/misc/cadnano-format-specs/v2.txt
 // briefly,
-// They increase in these directions:   +---->row
+// They increase in these directions:   +----> row
 //                                      |
 //                                      |
 //                                      V
 //                                     col
 //
-//                When honeycomb lattice, a "row" is in fact a zigzag pattern:
-//                      .   .
-//                    .   .   .  or .   .   .
-//                                    .   .   .
+// When honeycomb lattice, a "row" is in fact a zigzag pattern:
+//
+//            .   .   .             .   .
+//              .   .   .   or    .   .   .
+//
 // The first is used when the row is even and the second when the row is odd.
 Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
   num x, y;
   y = 1.5 * gp.v;
   if (gp.h % 2 == 0 && gp.v % 2 == 1) {
-    y -= 0.5;
+    y += 0.5;
   } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
-    y -= cos(2 * pi / 6);
+    y += cos(2 * pi / 6);
   }
   x = gp.h * sin(2 * pi / 6);
   return Point<num>(x, y);
@@ -482,9 +483,9 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 //  num x, y;
 //  y = 1.5 * gp.v;
 //  if (gp.h % 2 == 0 && gp.v % 2 == 1) {
-//    y += 0.5;
+//    y -= 0.5;
 //  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
-//    y += cos(2 * pi / 6);
+//    y -= cos(2 * pi / 6);
 //  }
 //  x = gp.h * sin(2 * pi / 6);
 //  return Point<num>(x, y);
@@ -508,12 +509,14 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-        y += 0.5;
+//        y += 0.5;
+        y -= 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-        y += cos(2 * pi / 6);
+//        y += cos(2 * pi / 6);
+        y -= cos(2 * pi / 6);
       }
     }
     v = (y / 1.5).round();
