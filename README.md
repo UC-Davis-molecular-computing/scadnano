@@ -60,11 +60,13 @@ In particular, your design is not automatically saved in an easily recoverable w
 
 **However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
-You should press the "Save" button to save your design to your local file system.
+You should press the "Save" button (or Ctrl+S keyboard shortcut) to save your design to your local file system.
 Unfortunately, due to 
 [browser security restrictions on accessing the local file system](https://gbksoft.com/blog/how-does-web-apps-work-with-local-files-through-the-browser/),
 it is not possible to save your file automatically without further interaction;
 after pressing "Save", you will always be prompted to specify a filename to which to save.
+
+Annoyingly, Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory. To disable this so that it uses the same filename every time you save, you can install the extension [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
 
 
@@ -85,7 +87,7 @@ It is instructive to see how that example design is represented as a `.dna` file
 
 ```json
 {
-  "version": "0.2.0",
+  "version": "0.4.0",
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
@@ -297,6 +299,9 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **Save:**
   Saves the current design in a `.dna` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
+  * **Import/Export cadnano v2:**
+  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+
 * Edit
   * **Undo/Redo:** Undo or redo the last edit that was made to the design.
 
@@ -327,16 +332,15 @@ Setting length to a positive integer converts to a loopout and setting a length 
     When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
 
 
+  * **display only selected helices:**
+    This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "streching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
+
+
 * Grid
   The grid type can be changed to square, honeycomb, hex, or none. When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
 
 
 * Export
-
-  * **DNA sequences:**
-    Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
-
-
 
   * **Export SVG:**
     Use the "Export SVG side" and "Export SVG main" buttons to export an SVG file suitable for making a figure of the DNA design.
@@ -344,6 +348,9 @@ Setting length to a positive integer converts to a loopout and setting a length 
     SVG viewers/editors (like browsers) are notoriously inconsistent in implementing the SVG standard, so we cannot guarantee that the exported SVG will render properly in all such programs. We have primarily tested the export functionality by viewing with [Inkscape](https://inkscape.org/), a popular, free, open-source SVG editor. The SVG files should also be viewable using the browsers supported by scadnano.
 
     If you [report a bug](https://github.com/UC-Davis-molecular-computing/scadnano/issues) with the SVG export feature, please first ensure that the exported SVG displays improperly in either Inkscape or in a supported browser.
+
+  * **DNA sequences:**
+    Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
 
 
@@ -436,7 +443,6 @@ There are different edit modes available, shown on the right side of the screen.
 [^1]: Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.
 
 
-
 ## Assigning DNA
 Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
 By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. 
@@ -458,6 +464,11 @@ Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`
 [TODO: make a figure showing this]
 
 
+
+## cadnano file format versus scadnano
+Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported from scadnano, in both the Python scripting library and the web interface. However, since the cadnano format is more limited, some scadnano features may be lost upon export.
+
+TODO: discuss these.
 
 
 ## How to design structures manually using scadnano
