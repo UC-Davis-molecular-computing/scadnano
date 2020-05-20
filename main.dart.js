@@ -7549,8 +7549,8 @@ t=1.5*q
 s=a.a
 if(typeof s!=="number")return s.bm()
 r=C.d.bm(s,2)
-if(r===0&&C.d.bm(q,2)===1)t-=0.5
-else if(r===1&&C.d.bm(q,2)===0)t-=Math.cos(1.0471975511965976)
+if(r===0&&C.d.bm(q,2)===1)t+=0.5
+else if(r===1&&C.d.bm(q,2)===0)t+=Math.cos(1.0471975511965976)
 return new P.ap(s*Math.sin(1.0471975511965976),t,u.H)},
 ab2:function(a,b){var t,s,r,q,p=b.a
 if(typeof p!=="number")return p.dc()
@@ -7562,7 +7562,7 @@ if(a===C.A)throw H.b(P.a_("cannot output grid coordinates for grid = Grid.none")
 else if(a===C.a4){r=C.N.aE(t)
 q=C.N.aE(s)}else if(a===C.Y){r=C.N.aE(t/Math.sin(1.0471975511965976))
 p=C.d.bm(r,2)
-if(p===0){if(C.d.bm(C.N.mR(s),3)===2)s+=0.5}else if(p===1)if(C.d.bm(C.N.mR(s-Math.cos(1.0471975511965976)),3)===1)s+=Math.cos(1.0471975511965976)
+if(p===0){if(C.d.bm(C.N.mR(s),3)===2)s-=0.5}else if(p===1)if(C.d.bm(C.N.mR(s-Math.cos(1.0471975511965976)),3)===1)s-=Math.cos(1.0471975511965976)
 q=C.N.aE(s/1.5)}else if(a===C.a3){r=C.N.aE(t/Math.sin(1.0471975511965976))
 q=C.N.aE(C.d.bm(r,2)===1?s-Math.cos(1.0471975511965976):s)}else{r=null
 q=null}return D.Pz(r,q,0)},
