@@ -92,6 +92,14 @@ It is instructive to see how that example design is represented as a `.dna` file
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
   ],
+  "modifications_in_design": {
+    "/5Biosg/": {
+      "display_text": "B",
+      "id": "/5Biosg/",
+      "idt_text": "/5Biosg/",
+      "location": "5'"
+    }
+  },
   "strands": [
     {
       "color": "#0066cc",
@@ -118,7 +126,8 @@ It is instructive to see how that example design is represented as a `.dna` file
       "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
-      ]
+      ],
+      "5prime_modification": "/5Biosg/"
     }
   ]
 }
