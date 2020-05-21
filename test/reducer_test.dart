@@ -3133,7 +3133,6 @@ main() {
         "modifications_in_design": {
           "/5Biosg/": {
             "display_text": "B",
-            "id": "/5Biosg/",
             "idt_text": "/5Biosg/",
             "font_size": 30,
             "display_connector": true,
