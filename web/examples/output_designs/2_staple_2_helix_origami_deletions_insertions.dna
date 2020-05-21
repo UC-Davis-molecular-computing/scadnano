@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
@@ -18,7 +18,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "ACGTTACGTTACGTTTTACGTTACGTTACGTT",
       "domains": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "ACGTTACGTTACGTTACGCGTTACGTTACGTTAC",
       "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},

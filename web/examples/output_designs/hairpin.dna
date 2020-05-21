@@ -1,12 +1,12 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]}
   ],
   "strands": [
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "AAAAACCCCCTGCATGGGGGTTTTT",
       "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 10},

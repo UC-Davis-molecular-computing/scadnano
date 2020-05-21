@@ -25,13 +25,14 @@ abstract class Modification {
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
+  Modification set_id(String id);
+
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
     var map = {
       constants.mod_display_text_key: mod.display_text,
-      constants.mod_font_size_key: mod.font_size,
       constants.mod_display_connector_key: mod.display_connector,
-      constants.mod_id_key: mod.id,
       if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
+      if (mod.font_size != null) constants.mod_font_size_key: mod.font_size,
     };
     map.addAll(mod.unused_fields.toMap());
     return map;
@@ -73,6 +74,9 @@ abstract class Modification5Prime
 
   String get display_text;
 
+  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
+  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
+  @nullable
   String get id;
 
   String get idt_text;
@@ -83,6 +87,8 @@ abstract class Modification5Prime
 
   @nullable
   int get font_size;
+
+  Modification set_id(String id) => rebuild((b) => b..id = id);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -129,6 +135,9 @@ abstract class Modification3Prime
 
   String get display_text;
 
+  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
+  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
+  @nullable
   String get id;
 
   String get idt_text;
@@ -139,6 +148,8 @@ abstract class Modification3Prime
   int get font_size;
 
   BuiltMap<String, Object> get unused_fields;
+
+  Modification set_id(String id) => rebuild((b) => b..id = id);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);
@@ -189,6 +200,9 @@ abstract class ModificationInternal
 
   String get display_text;
 
+  // need to delay assigning id until modification is read, since Modification.from_json doesn't know
+  // the key in the map that maps the id to this modification. Call set_id after creating to set this.
+  @nullable
   String get id;
 
   String get idt_text;
@@ -202,6 +216,8 @@ abstract class ModificationInternal
   BuiltSet<String> get allowed_bases;
 
   BuiltMap<String, Object> get unused_fields;
+
+  Modification set_id(String id) => rebuild((b) => b..id = id);
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var ret = Modification.mod_to_json_serializable(this, suppress_indent);

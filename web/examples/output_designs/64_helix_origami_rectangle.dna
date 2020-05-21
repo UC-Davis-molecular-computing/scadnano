@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"max_offset": 128, "grid_position": [0, 0]},
@@ -203,7 +203,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "GACAGCATCGGAACGAACCCTCAGCAGCGAAA",
       "domains": [
         {"helix": 1, "forward": true, "start": 16, "end": 32},
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "TGCCACTACGAAGGCACGGGTAAAATACGTAA",
       "domains": [
         {"helix": 3, "forward": true, "start": 16, "end": 32},
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "AAGTACAACGGAGATTTACCAAGCGCGAAACA",
       "domains": [
         {"helix": 5, "forward": true, "start": 16, "end": 32},
@@ -227,7 +227,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "TCATAAGGGAACCGAAAGGCGCAGACGGTCAA",
       "domains": [
         {"helix": 7, "forward": true, "start": 16, "end": 32},
@@ -235,7 +235,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "TGACAAGAACCGGATATCATCAAGAGTAATCT",
       "domains": [
         {"helix": 9, "forward": true, "start": 16, "end": 32},
@@ -243,7 +243,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "TAAATTGGGCTTGAGAACACCAGAACGAGTAG",
       "domains": [
         {"helix": 11, "forward": true, "start": 16, "end": 32},
@@ -251,7 +251,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "GGAAGAAAAATCTACGACCAGTCAGGACGTTG",
       "domains": [
         {"helix": 13, "forward": true, "start": 16, "end": 32},
@@ -259,7 +259,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TAATGCAGATACATAAGAATACCACATTCAAC",
       "domains": [
         {"helix": 15, "forward": true, "start": 16, "end": 32},
@@ -267,7 +267,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "GCGAGAGGCTTTTGCAGATAAAAACCAAAATA",
       "domains": [
         {"helix": 17, "forward": true, "start": 16, "end": 32},
@@ -275,7 +275,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CATTGAATCCCCCTCAAATCGTCATAAATATT",
       "domains": [
         {"helix": 19, "forward": true, "start": 16, "end": 32},
@@ -283,7 +283,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "AAAGCGGATTGCATCATATTATAGTCAGAAGC",
       "domains": [
         {"helix": 21, "forward": true, "start": 16, "end": 32},
@@ -291,7 +291,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "CTCCAACAGGTCAGGACCAGACCGGAAGCAAA",
       "domains": [
         {"helix": 23, "forward": true, "start": 16, "end": 32},
@@ -299,7 +299,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "CTGTAGCTCAACATGTATTGCTGAATATAATG",
       "domains": [
         {"helix": 25, "forward": true, "start": 16, "end": 32},
@@ -307,7 +307,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TTTAGTTTGACCATTATCTGCGAACGAGTAGA",
       "domains": [
         {"helix": 27, "forward": true, "start": 16, "end": 32},
@@ -315,7 +315,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "ACTAATAGTAGTAGCAAGGTGGCATCAATTCT",
       "domains": [
         {"helix": 29, "forward": true, "start": 16, "end": 32},
@@ -323,7 +323,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "GGTTGTACCAAAAACAAGCATAAAGCTAAATC",
       "domains": [
         {"helix": 31, "forward": true, "start": 16, "end": 32},
@@ -331,7 +331,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "AAATGCAATGCCTGAGAACCCTCATATATTTT",
       "domains": [
         {"helix": 33, "forward": true, "start": 16, "end": 32},
@@ -339,7 +339,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AGCTGATAAATTAATGGATATTCAACCGTTCT",
       "domains": [
         {"helix": 35, "forward": true, "start": 16, "end": 32},
@@ -347,7 +347,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "GATGAACGGTAATCGTAGCAAACAAGAGAATC",
       "domains": [
         {"helix": 37, "forward": true, "start": 16, "end": 32},
@@ -355,7 +355,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "TTAAATTGTAAACGTTTTGTATAAGCAAATAT",
       "domains": [
         {"helix": 39, "forward": true, "start": 16, "end": 32},
@@ -363,7 +363,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "CGCGTCTGGCCTTCCTGCCATCAAAAATAATT",
       "domains": [
         {"helix": 41, "forward": true, "start": 16, "end": 32},
@@ -371,7 +371,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "GTAATGGGATAGGTCAAAACGGCGGATTGACC",
       "domains": [
         {"helix": 43, "forward": true, "start": 16, "end": 32},
@@ -379,7 +379,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CACTCCAGCCAGCTTTGGCCTCAGGAAGATCG",
       "domains": [
         {"helix": 45, "forward": true, "start": 16, "end": 32},
@@ -387,7 +387,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "GTGCGGGCCTCTTCGCTTGGGAAGGGCGATCG",
       "domains": [
         {"helix": 47, "forward": true, "start": 16, "end": 32},
@@ -395,7 +395,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TGTAAAACGACGGCCATTCCCAGTCACGACGT",
       "domains": [
         {"helix": 49, "forward": true, "start": 16, "end": 32},
@@ -403,7 +403,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "GTTTCCTGTGTGAAATAATCATGGTCATAGCT",
       "domains": [
         {"helix": 51, "forward": true, "start": 16, "end": 32},
@@ -411,7 +411,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "ACTCACATTAATTGCGCCTAATGAGTGAGCTA",
       "domains": [
         {"helix": 53, "forward": true, "start": 16, "end": 32},
@@ -419,7 +419,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CGGTTTGCGTATTGGGAACGCGCGGGGAGAGG",
       "domains": [
         {"helix": 55, "forward": true, "start": 16, "end": 32},
@@ -427,7 +427,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "GCAAGCGGTCCACGCTCCCTGAGAGAGTTGCA",
       "domains": [
         {"helix": 57, "forward": true, "start": 16, "end": 32},
@@ -435,7 +435,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "CGAGATAGGGTTGAGTAATCAAAAGAATAGCC",
       "domains": [
         {"helix": 59, "forward": true, "start": 16, "end": 32},
@@ -443,7 +443,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "CGATGGCCCACTACGTAAACCGTCTATCAGGG",
       "domains": [
         {"helix": 61, "forward": true, "start": 16, "end": 32},
@@ -451,7 +451,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "TAGAGCTTGACGGGGAAAGGGAGCCCCCGATT",
       "domains": [
         {"helix": 63, "forward": true, "start": 16, "end": 32},
@@ -459,7 +459,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "ACAACCATCGCCCACGTGCGCCGACAATGACA",
       "domains": [
         {"helix": 0, "forward": false, "start": 96, "end": 112},
@@ -467,7 +467,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "CTCCAAAAGGAGCCTTATCTCCAAAAAAAAGG",
       "domains": [
         {"helix": 2, "forward": false, "start": 96, "end": 112},
@@ -475,7 +475,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "AACTTTCAACAGTTTCTGGGATTTTGCTAAAC",
       "domains": [
         {"helix": 4, "forward": false, "start": 96, "end": 112},
@@ -483,7 +483,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "TCCACAGACAGCCCTCACAACGCCTGTAGCAT",
       "domains": [
         {"helix": 6, "forward": false, "start": 96, "end": 112},
@@ -491,7 +491,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CACCACCCTCATTTTCCCGCCACCCTCAGAGC",
       "domains": [
         {"helix": 8, "forward": false, "start": 96, "end": 112},
@@ -499,7 +499,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TATAAGTATAGCCCGGCCGTCGAGAGGGTTGA",
       "domains": [
         {"helix": 10, "forward": false, "start": 96, "end": 112},
@@ -507,7 +507,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TGAAAGTATTAAGAGGCTATTATTCTGAAACA",
       "domains": [
         {"helix": 12, "forward": false, "start": 96, "end": 112},
@@ -515,7 +515,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "GGTAATAAGTTTTAACGATACAGGAGTGTACT",
       "domains": [
         {"helix": 14, "forward": false, "start": 96, "end": 112},
@@ -523,7 +523,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "ATAAATCCTCATTAAATGATATTCACAAACAA",
       "domains": [
         {"helix": 16, "forward": false, "start": 96, "end": 112},
@@ -531,7 +531,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "CCTCAGAGCCGCCACCCCCTCAGAGCCACCAC",
       "domains": [
         {"helix": 18, "forward": false, "start": 96, "end": 112},
@@ -539,7 +539,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "TCTTTTCATAATCAAATTATTAGCGTTTGCCA",
       "domains": [
         {"helix": 20, "forward": false, "start": 96, "end": 112},
@@ -547,7 +547,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AATCAGTAGCGACAGATCGATAGCAGCACCGT",
       "domains": [
         {"helix": 22, "forward": false, "start": 96, "end": 112},
@@ -555,7 +555,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "CCATTTGGGAATTAGACCGTCACCGACTTGAG",
       "domains": [
         {"helix": 24, "forward": false, "start": 96, "end": 112},
@@ -563,7 +563,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "AGACAAAAGGGCGACAGGTTTACCAGCGCCAA",
       "domains": [
         {"helix": 26, "forward": false, "start": 96, "end": 112},
@@ -571,7 +571,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TAAAGGTGGCAACATAGTAGAAAATACATACA",
       "domains": [
         {"helix": 28, "forward": false, "start": 96, "end": 112},
@@ -579,7 +579,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CCGAGGAAACGCAATAAGTTACCAGAAGGAAA",
       "domains": [
         {"helix": 30, "forward": false, "start": 96, "end": 112},
@@ -587,7 +587,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "ATAAGAGCAAGAAACATGAGTTAAGCCCAATA",
       "domains": [
         {"helix": 32, "forward": false, "start": 96, "end": 112},
@@ -595,7 +595,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "GACGGGAGAATTAACTACAGGGAAGCGCATTA",
       "domains": [
         {"helix": 34, "forward": false, "start": 96, "end": 112},
@@ -603,7 +603,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TCCCAATCCAAATAAGACAGCCATATTATTTA",
       "domains": [
         {"helix": 36, "forward": false, "start": 96, "end": 112},
@@ -611,7 +611,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "ACCCAGCTACAATTTTTTAGTTGCTATTTTGC",
       "domains": [
         {"helix": 38, "forward": false, "start": 96, "end": 112},
@@ -619,7 +619,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "GCTTATCCGGTATTCTAAATCAGATATAGAAG",
       "domains": [
         {"helix": 40, "forward": false, "start": 96, "end": 112},
@@ -627,7 +627,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "ACCAAGTACCGCACTCCAAGAACGGGTATTAA",
       "domains": [
         {"helix": 42, "forward": false, "start": 96, "end": 112},
@@ -635,7 +635,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "GAACAAGAAAAATAATACAATAGATAAGTCCT",
       "domains": [
         {"helix": 44, "forward": false, "start": 96, "end": 112},
@@ -643,7 +643,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "CGACAAAAGGTAAAGTAGAGAATATAAAGTAC",
       "domains": [
         {"helix": 46, "forward": false, "start": 96, "end": 112},
@@ -651,7 +651,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "CAGTAGGGCTTAATTGTAAAGCCAACGCTCAA",
       "domains": [
         {"helix": 48, "forward": false, "start": 96, "end": 112},
@@ -659,7 +659,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "AATAAGAATAAACACCGATAAATAAGGCGTTA",
       "domains": [
         {"helix": 50, "forward": false, "start": 96, "end": 112},
@@ -667,7 +667,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "CGCGAGAAAACTTTTTATCGCAAGACAAAGAA",
       "domains": [
         {"helix": 52, "forward": false, "start": 96, "end": 112},
@@ -675,7 +675,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "CATAGGTCTGAGAGACGTGAATTTATCAAAAT",
       "domains": [
         {"helix": 54, "forward": false, "start": 96, "end": 112},
@@ -683,7 +683,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CGTCGCTATTAATTAACCTTGCTTCTGTAAAT",
       "domains": [
         {"helix": 56, "forward": false, "start": 96, "end": 112},
@@ -691,7 +691,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "ATTAATTACATTTAACACATCAAGAAAACAAA",
       "domains": [
         {"helix": 58, "forward": false, "start": 96, "end": 112},
@@ -699,7 +699,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CTTTGAATACCAAGTTCGGATTCGCCTGATTG",
       "domains": [
         {"helix": 60, "forward": false, "start": 96, "end": 112},
@@ -707,7 +707,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "AAAGAAATTGCGTAGACACGTAAAACAGAAAT",
       "domains": [
         {"helix": 62, "forward": false, "start": 96, "end": 112},
@@ -715,14 +715,14 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "ATATATTCGGTCGCTGAGGCTTGCAGGGAGTT",
       "domains": [
         {"helix": 0, "forward": false, "start": 56, "end": 88}
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TTTCATGAAGAGGCTTTGAGGACTGTGAATTT",
       "domains": [
         {"helix": 2, "forward": false, "start": 48, "end": 56},
@@ -730,7 +730,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "CTTAAACATCAGCTTGCTTTCGAGAAAGACTT",
       "domains": [
         {"helix": 1, "forward": true, "start": 72, "end": 80},
@@ -738,7 +738,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CTCATCTTGAGGCAAAAGAATACAGAATTGCG",
       "domains": [
         {"helix": 4, "forward": false, "start": 48, "end": 56},
@@ -746,7 +746,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "AATAATAAAAAGGAACAACTAAAGCTAAAACA",
       "domains": [
         {"helix": 3, "forward": true, "start": 72, "end": 80},
@@ -754,7 +754,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "GCTCCATGAAATTGTGTCGAAATCCTTTCCAG",
       "domains": [
         {"helix": 6, "forward": false, "start": 48, "end": 56},
@@ -762,7 +762,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "ACGTTAGTTCTAAAGTTTTGTCGTCGCGACCT",
       "domains": [
         {"helix": 5, "forward": true, "start": 72, "end": 80},
@@ -770,7 +770,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "CCAGGCGCGAGGACAGATGAACGGCGTAACAC",
       "domains": [
         {"helix": 8, "forward": false, "start": 48, "end": 56},
@@ -778,7 +778,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "TGAGTTTCATAGGAACCCATGTACTGTACAGA",
       "domains": [
         {"helix": 7, "forward": true, "start": 72, "end": 80},
@@ -786,7 +786,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "GAATAAGGACGTAACAAAGCTGCTTACCGCCA",
       "domains": [
         {"helix": 10, "forward": false, "start": 48, "end": 56},
@@ -794,7 +794,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CCCTCAGATACTCAGGAGGTTTAGCATTCAGT",
       "domains": [
         {"helix": 9, "forward": true, "start": 72, "end": 80},
@@ -802,7 +802,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CGATTTTATTAATCATTGTGAATTCGGGGTTT",
       "domains": [
         {"helix": 12, "forward": false, "start": 48, "end": 56},
@@ -810,7 +810,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "TGCTCAGTGAAGGATTAGGATTAGACCTTATG",
       "domains": [
         {"helix": 11, "forward": true, "start": 72, "end": 80},
@@ -818,7 +818,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "AAAGATTCACGGAACAACATTATTAAACAGTT",
       "domains": [
         {"helix": 14, "forward": false, "start": 48, "end": 56},
@@ -826,7 +826,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "AATGCCCCGTAACAGTGCCCGTATACAGGTAG",
       "domains": [
         {"helix": 13, "forward": true, "start": 72, "end": 80},
@@ -834,7 +834,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "CATAACCCGAGGCATAGTAAGAGCCGTTCCAG",
       "domains": [
         {"helix": 16, "forward": false, "start": 48, "end": 56},
@@ -842,7 +842,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "TAAGCGTCCAGTCTCTGAATTTACAACACTAT",
       "domains": [
         {"helix": 15, "forward": true, "start": 72, "end": 80},
@@ -850,7 +850,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "ACTGGATAAGGGGGTAATAGTAAACAGGAGGT",
       "domains": [
         {"helix": 18, "forward": false, "start": 48, "end": 56},
@@ -858,7 +858,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "TGAGGCAGCCGCCGCCAGCATTGAATGTTTAG",
       "domains": [
         {"helix": 17, "forward": true, "start": 72, "end": 80},
@@ -866,7 +866,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "CAAAAATCCAGAAAACGAGAATGACTCCCTCA",
       "domains": [
         {"helix": 20, "forward": false, "start": 48, "end": 56},
@@ -874,7 +874,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "GAGCCGCCCCACCACCGGAACCGCCCATAAAT",
       "domains": [
         {"helix": 19, "forward": true, "start": 72, "end": 80},
@@ -882,7 +882,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "TTTTAATTGCCCGAAAGACTTCAACGTTTTCA",
       "domains": [
         {"helix": 22, "forward": false, "start": 48, "end": 56},
@@ -890,7 +890,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TCGGCATTGCGTCAGACTGTAGCGATATCGCG",
       "domains": [
         {"helix": 21, "forward": true, "start": 72, "end": 80},
@@ -898,7 +898,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "TTTTTGCGATTGCTCCTTTTGATATAGCAAGG",
       "domains": [
         {"helix": 24, "forward": false, "start": 48, "end": 56},
@@ -906,7 +906,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CCGGAAACGTAGCACCATTACCATAGAGGTCA",
       "domains": [
         {"helix": 23, "forward": true, "start": 72, "end": 80},
@@ -914,7 +914,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "TCCATATAAAGTACGGTGTCTGGAGACGGAAA",
       "domains": [
         {"helix": 26, "forward": false, "start": 48, "end": 56},
@@ -922,7 +922,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TTATTCATAGGGAAGGTAAATATTAGTTTCAT",
       "domains": [
         {"helix": 25, "forward": true, "start": 72, "end": 80},
@@ -930,7 +930,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TTTCATTTGGTCAATAACCTGTTTTTATTTTG",
       "domains": [
         {"helix": 28, "forward": false, "start": 48, "end": 56},
@@ -938,7 +938,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TCACAATCACACCACGGAATAAGTAGCTATAT",
       "domains": [
         {"helix": 27, "forward": true, "start": 72, "end": 80},
@@ -946,7 +946,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CAAAATTACATACAGGCAAGGCAAAAGACTCC",
       "domains": [
         {"helix": 30, "forward": false, "start": 48, "end": 56},
@@ -954,7 +954,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "TTATTACGAAGAACTGGCATGATTAGAATTAG",
       "domains": [
         {"helix": 29, "forward": true, "start": 72, "end": 80},
@@ -962,7 +962,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "CAACGCAACTTTTGCGGGAGAAGCTTTTTAAG",
       "domains": [
         {"helix": 32, "forward": false, "start": 48, "end": 56},
@@ -970,7 +970,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AAAAGTAATATCTTACCGAAGCCCCTTTATTT",
       "domains": [
         {"helix": 31, "forward": true, "start": 72, "end": 80},
@@ -978,7 +978,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "AGACAGTCATTCAAAAGGGTGAGAGCGCTAAT",
       "domains": [
         {"helix": 34, "forward": false, "start": 48, "end": 56},
@@ -986,7 +986,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "ATCAGAGAGTCAGAGGGTAATTGAAAGGCCGG",
       "domains": [
         {"helix": 33, "forward": true, "start": 72, "end": 80},
@@ -994,7 +994,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TCAGGTCATTTTTGAGAGATCTACATAGCAGC",
       "domains": [
         {"helix": 36, "forward": false, "start": 48, "end": 56},
@@ -1002,7 +1002,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CTTTACAGAACGTCAAAAATGAAAAAAGGCTA",
       "domains": [
         {"helix": 35, "forward": true, "start": 72, "end": 80},
@@ -1010,7 +1010,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "AGAAAAGCTCATATGTACCCCGGTTTCCAGAG",
       "domains": [
         {"helix": 38, "forward": false, "start": 48, "end": 56},
@@ -1018,7 +1018,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CCTAATTTACGCTAACGAGCGTCTTGATAATC",
       "domains": [
         {"helix": 37, "forward": true, "start": 72, "end": 80},
@@ -1026,7 +1026,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "GCTCATTTTCGCATTAAATTTTTGCTTGCGGG",
       "domains": [
         {"helix": 40, "forward": false, "start": 48, "end": 56},
@@ -1034,7 +1034,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "AGGTTTTGTTAGCGAACCTCCCGATTAAATCA",
       "domains": [
         {"helix": 39, "forward": true, "start": 72, "end": 80},
@@ -1042,7 +1042,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "ACCCGTCGAACATTAAATGTGAGCCGTAGGAA",
       "domains": [
         {"helix": 42, "forward": false, "start": 48, "end": 56},
@@ -1050,7 +1050,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "TCATTACCCCGTTTTTATTTTCATGAGTAACA",
       "domains": [
         {"helix": 41, "forward": true, "start": 72, "end": 80},
@@ -1058,7 +1058,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "GTTTGAGGCGCATCGTAACCGTGCAATCAATA",
       "domains": [
         {"helix": 44, "forward": false, "start": 48, "end": 56},
@@ -1066,7 +1066,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "ATCGGCTGCGAGCATGTAGAAACCATCTGCCA",
       "domains": [
         {"helix": 43, "forward": true, "start": 72, "end": 80},
@@ -1074,7 +1074,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "TTCGCCATTGCCGGAAACCAGGCAGTTCAGCT",
       "domains": [
         {"helix": 46, "forward": false, "start": 48, "end": 56},
@@ -1082,7 +1082,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "AATGCAGACGACAATAAACAACATAAGCGCCA",
       "domains": [
         {"helix": 45, "forward": true, "start": 72, "end": 80},
@@ -1090,7 +1090,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "ATTAAGTTGAAAGGGGGATGTGCTATTTAGGC",
       "domains": [
         {"helix": 48, "forward": false, "start": 48, "end": 56},
@@ -1098,7 +1098,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "AGAGGCATACAACGCCAACATGTAGCAAGGCG",
       "domains": [
         {"helix": 47, "forward": true, "start": 72, "end": 80},
@@ -1106,7 +1106,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CCCGGGTACCTGCAGGTCGACTCTTATCATAT",
       "domains": [
         {"helix": 50, "forward": false, "start": 48, "end": 56},
@@ -1114,7 +1114,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "GCGTTATAGAAAAAGCCTGTTTAGAGAGGATC",
       "domains": [
         {"helix": 49, "forward": true, "start": 72, "end": 80},
@@ -1122,7 +1122,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "GCATAAAGTTCCACACAACATACGCTAAATTT",
       "domains": [
         {"helix": 52, "forward": false, "start": 48, "end": 56},
@@ -1130,7 +1130,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "AATGGTTTAATTTCATCTTCTGACAGCCGGAA",
       "domains": [
         {"helix": 51, "forward": true, "start": 72, "end": 80},
@@ -1138,7 +1138,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "GCCAGCTGCTTTCCAGTCGGGAAATATAACTA",
       "domains": [
         {"helix": 54, "forward": false, "start": 48, "end": 56},
@@ -1146,7 +1146,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TATGTAAAGGCTTAGGTTGGGTTACCTGTCGT",
       "domains": [
         {"helix": 53, "forward": true, "start": 72, "end": 80},
@@ -1154,7 +1154,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "AGCTGATTCTTTTCACCAGTGAGAAGCTTAGA",
       "domains": [
         {"helix": 56, "forward": false, "start": 48, "end": 56},
@@ -1162,7 +1162,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "TTAAGACGTTGAAAACATAGCGATCGGGCAAC",
       "domains": [
         {"helix": 55, "forward": true, "start": 72, "end": 80},
@@ -1170,7 +1170,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "CCGAAATCCGAAAATCCTGTTTGACAGTACAT",
       "domains": [
         {"helix": 58, "forward": false, "start": 48, "end": 56},
@@ -1178,7 +1178,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AAATCAATCCTTTTTTAATGGAAATGGTGGTT",
       "domains": [
         {"helix": 57, "forward": true, "start": 72, "end": 80},
@@ -1186,7 +1186,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "TGGACTCCACAAGAGTCCACTATTAATTACCT",
       "domains": [
         {"helix": 60, "forward": false, "start": 48, "end": 56},
@@ -1194,7 +1194,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "GAGCAAAAGCGAATTATTCATTTCAAAGAACG",
       "domains": [
         {"helix": 59, "forward": true, "start": 72, "end": 80},
@@ -1202,7 +1202,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "GTAAAGCACAAGTTTTTTGGGGTCAACAGTAC",
       "domains": [
         {"helix": 62, "forward": false, "start": 48, "end": 56},
@@ -1210,7 +1210,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CTTTTACACAGATGAATATACAGTGAGGTGCC",
       "domains": [
         {"helix": 61, "forward": true, "start": 72, "end": 80},
@@ -1218,14 +1218,14 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "GAACGTGGCGAGAAAGGAAGGGAAAGGGTTAG",
       "domains": [
         {"helix": 63, "forward": true, "start": 40, "end": 72}
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "AAAGGCCGCTTTTGCGGGATCGTCGGGTAGCA",
       "domains": [
         {"helix": 0, "forward": false, "start": 32, "end": 56},
@@ -1233,7 +1233,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "ACGGCTACGGAAGTTTCCATTAAACCAACCTA",
       "domains": [
         {"helix": 1, "forward": true, "start": 40, "end": 48},
@@ -1242,7 +1242,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "AAACGAAATGACCCCCAGCGATTATGTATCAT",
       "domains": [
         {"helix": 3, "forward": true, "start": 40, "end": 48},
@@ -1251,7 +1251,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CGCCTGATTTACTTAGCCGGAACGCTGACCAA",
       "domains": [
         {"helix": 5, "forward": true, "start": 40, "end": 48},
@@ -1260,7 +1260,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "CTTTGAAAATAGGCTGGCTGACCTTTCATTAC",
       "domains": [
         {"helix": 7, "forward": true, "start": 40, "end": 48},
@@ -1269,7 +1269,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "CCAAATCACTTGCCCTGACGAGAATGGTTTAA",
       "domains": [
         {"helix": 9, "forward": true, "start": 40, "end": 48},
@@ -1278,7 +1278,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "TTTCAACTAGAACTGGCTCATTATTTAATAAA",
       "domains": [
         {"helix": 11, "forward": true, "start": 40, "end": 48},
@@ -1287,7 +1287,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "ACGAACTAATCAGTTGAGATTTAGCGCCAAAA",
       "domains": [
         {"helix": 13, "forward": true, "start": 40, "end": 48},
@@ -1296,7 +1296,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "GGAATTACTCGTTTACCAGACGACAAAGAAGT",
       "domains": [
         {"helix": 15, "forward": true, "start": 40, "end": 48},
@@ -1305,7 +1305,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TTTGCCAGGCGTCCAATACTGCGGAATGCTTT",
       "domains": [
         {"helix": 17, "forward": true, "start": 40, "end": 48},
@@ -1314,7 +1314,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "AAACAGTTAGGTCTTTACCCTGACAAAAGATT",
       "domains": [
         {"helix": 19, "forward": true, "start": 40, "end": 48},
@@ -1323,7 +1323,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "AAGAGGAACGAGCTTCAAAGCGAATTAGAGAG",
       "domains": [
         {"helix": 21, "forward": true, "start": 40, "end": 48},
@@ -1332,7 +1332,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "TACCTTTAGATGGCTTAGAGCTTATTTAAATA",
       "domains": [
         {"helix": 23, "forward": true, "start": 40, "end": 48},
@@ -1341,7 +1341,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TGCAACTAACAGTTGATTCCCAATGATACATT",
       "domains": [
         {"helix": 25, "forward": true, "start": 40, "end": 48},
@@ -1350,7 +1350,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TCGCAAATGGGGCGCGAGCTGAAATTAACATC",
       "domains": [
         {"helix": 27, "forward": true, "start": 40, "end": 48},
@@ -1359,7 +1359,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "CAATAAATAGCAATAAAGCCTCAGTTATGACC",
       "domains": [
         {"helix": 29, "forward": true, "start": 40, "end": 48},
@@ -1368,7 +1368,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CTGTAATAGGATAAAAATTTTTAGTAATGTGT",
       "domains": [
         {"helix": 31, "forward": true, "start": 40, "end": 48},
@@ -1377,7 +1377,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "AGGTAAAGAAATCACCATCAATATCCGGAGAG",
       "domains": [
         {"helix": 33, "forward": true, "start": 40, "end": 48},
@@ -1386,7 +1386,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "GGTAGCTATTGCCTGAGAGTCTGGAAAACTAG",
       "domains": [
         {"helix": 35, "forward": true, "start": 40, "end": 48},
@@ -1395,7 +1395,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "CATGTCAACCCAAAAACAGGAAGAAATATTTT",
       "domains": [
         {"helix": 37, "forward": true, "start": 40, "end": 48},
@@ -1404,7 +1404,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "GTTAAAATTTTAACCAATAGGAACGTAGCCAG",
       "domains": [
         {"helix": 39, "forward": true, "start": 40, "end": 48},
@@ -1413,7 +1413,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "CTTTCATCGATTCTCCGTGGGAACCGTTGGTG",
       "domains": [
         {"helix": 41, "forward": true, "start": 40, "end": 48},
@@ -1422,7 +1422,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TAGATGGGGGACGACGACAGTATCCCGGCACC",
       "domains": [
         {"helix": 43, "forward": true, "start": 40, "end": 48},
@@ -1431,7 +1431,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "GCTTCTGGTCAGGCTGCGCAACTGTATTACGC",
       "domains": [
         {"helix": 45, "forward": true, "start": 40, "end": 48},
@@ -1440,7 +1440,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CAGCTGGCGGGTAACGCCAGGGTTGTGCCAAG",
       "domains": [
         {"helix": 47, "forward": true, "start": 40, "end": 48},
@@ -1449,7 +1449,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CTTGCATGCCGAGCTCGAATTCGTTGTTATCC",
       "domains": [
         {"helix": 49, "forward": true, "start": 40, "end": 48},
@@ -1458,7 +1458,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "GCTCACAATGTAAAGCCTGGGGTGTTGCGCTC",
       "domains": [
         {"helix": 51, "forward": true, "start": 40, "end": 48},
@@ -1467,7 +1467,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "ACTGCCCGCATTAATGAATCGGCCCGCCAGGG",
       "domains": [
         {"helix": 53, "forward": true, "start": 40, "end": 48},
@@ -1476,7 +1476,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TGGTTTTTGCCCTTCACCGCCTGGGGTTTGCC",
       "domains": [
         {"helix": 55, "forward": true, "start": 40, "end": 48},
@@ -1485,7 +1485,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CCAGCAGGGGCAAAATCCCTTATAGTTGTTCC",
       "domains": [
         {"helix": 57, "forward": true, "start": 40, "end": 48},
@@ -1494,7 +1494,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "AGTTTGGAAACGTCAAAGGGCGAAGAACCATC",
       "domains": [
         {"helix": 59, "forward": true, "start": 40, "end": 48},
@@ -1503,7 +1503,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "ACCCAAATCTAAATCGGAACCCTAAAGCCGGC",
       "domains": [
         {"helix": 61, "forward": true, "start": 40, "end": 48},
@@ -1512,7 +1512,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AACCTACCATATCAAAATTATTTGTTTTCAGG",
       "domains": [
         {"helix": 63, "forward": true, "start": 72, "end": 96},
@@ -1520,7 +1520,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "TCGGTTTAGCTTGATACCGATAGTCATAACCG",
       "domains": [
         {"helix": 2, "forward": false, "start": 80, "end": 88},
@@ -1529,7 +1529,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "GAGAATAGTTTTTTCACGTTGAAATAATTGTA",
       "domains": [
         {"helix": 4, "forward": false, "start": 80, "end": 88},
@@ -1538,7 +1538,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "CGTAACGAAAATGAATTTTCTGTAAGCGGAGT",
       "domains": [
         {"helix": 6, "forward": false, "start": 80, "end": 88},
@@ -1547,7 +1547,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "CAAGCCCAGTCACCAGTACAAACTATAGTTAG",
       "domains": [
         {"helix": 8, "forward": false, "start": 80, "end": 88},
@@ -1556,7 +1556,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "TATCACCGACCGCCACCCTCAGAAAGGGATAG",
       "domains": [
         {"helix": 10, "forward": false, "start": 80, "end": 88},
@@ -1565,7 +1565,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CCTCAAGAACCAGGCGGATAAGTGAATAGGTG",
       "domains": [
         {"helix": 12, "forward": false, "start": 80, "end": 88},
@@ -1574,7 +1574,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "TGCCTTGACTGCCTATTTCGGAACCTGAGACT",
       "domains": [
         {"helix": 14, "forward": false, "start": 80, "end": 88},
@@ -1583,7 +1583,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "GGAAAGCGATACATGGCTTTTGATGGGGTCAG",
       "domains": [
         {"helix": 16, "forward": false, "start": 80, "end": 88},
@@ -1592,7 +1592,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "CACCAGAGGTCAGACGATTGGCCTGCCAGAAT",
       "domains": [
         {"helix": 18, "forward": false, "start": 80, "end": 88},
@@ -1601,7 +1601,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "AACCAGAGACCCTCAGAACCGCCAAGAACCAC",
       "domains": [
         {"helix": 20, "forward": false, "start": 80, "end": 88},
@@ -1610,7 +1610,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "TGCCTTTATTCGGTCATAGCCCCCATCACCGG",
       "domains": [
         {"helix": 22, "forward": false, "start": 80, "end": 88},
@@ -1619,7 +1619,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "AATCACCAGTCACCAATGAAACCAATCAAGTT",
       "domains": [
         {"helix": 24, "forward": false, "start": 80, "end": 88},
@@ -1628,7 +1628,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "ATTGAGGGTAAAGGTGAATTATCAGCCAGCAA",
       "domains": [
         {"helix": 26, "forward": false, "start": 80, "end": 88},
@@ -1637,7 +1637,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "ACGCAAAGAATAGAAAATTCATATTTCAACCG",
       "domains": [
         {"helix": 28, "forward": false, "start": 80, "end": 88},
@@ -1646,7 +1646,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "ATACCCAACAGTATGTTAGCAAACTAAAAGAA",
       "domains": [
         {"helix": 30, "forward": false, "start": 80, "end": 88},
@@ -1655,7 +1655,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "GCAATAGCGCAGATAGCCGAACAAATAACGGA",
       "domains": [
         {"helix": 32, "forward": false, "start": 80, "end": 88},
@@ -1664,7 +1664,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "TGAACAAAGATAACCCACAAGAATATGAAATA",
       "domains": [
         {"helix": 34, "forward": false, "start": 80, "end": 88},
@@ -1673,7 +1673,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "TTTTGTTTAGAGAATAACATAAAAGAACACCC",
       "domains": [
         {"helix": 36, "forward": false, "start": 80, "end": 88},
@@ -1682,7 +1682,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "TCTTACCAGCCAGTTACAAAATAAAAACGATT",
       "domains": [
         {"helix": 38, "forward": false, "start": 80, "end": 88},
@@ -1691,7 +1691,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "GAGGCGTTAAGCCTTAAATCAAGAATCCTGAA",
       "domains": [
         {"helix": 40, "forward": false, "start": 80, "end": 88},
@@ -1700,7 +1700,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "CAAGCAAGGCGCCCAATAGCAAGCAAGAACGC",
       "domains": [
         {"helix": 42, "forward": false, "start": 80, "end": 88},
@@ -1709,7 +1709,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "CTAATTTATCTTTCCTTATCATTCATCGAGAA",
       "domains": [
         {"helix": 44, "forward": false, "start": 80, "end": 88},
@@ -1718,7 +1718,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CCAGACGAACGCGCCTGTTTATCAATCCCATC",
       "domains": [
         {"helix": 46, "forward": false, "start": 80, "end": 88},
@@ -1727,7 +1727,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "CATATTTATTTCGAGCCAGTAATAAATTCTGT",
       "domains": [
         {"helix": 48, "forward": false, "start": 80, "end": 88},
@@ -1736,7 +1736,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "AATTACTACAAATTCTTACCAGTAAGAATCGC",
       "domains": [
         {"helix": 50, "forward": false, "start": 80, "end": 88},
@@ -1745,7 +1745,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "TTTTAGTTGAAATACCGACCGTGTGGAATCAT",
       "domains": [
         {"helix": 52, "forward": false, "start": 80, "end": 88},
@@ -1754,7 +1754,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "TAACCTCCTGCTGATGCAAATCCACAAATATA",
       "domains": [
         {"helix": 54, "forward": false, "start": 80, "end": 88},
@@ -1763,7 +1763,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "TAGAATCCCTGAGAAGAGTCAATATACCTTTT",
       "domains": [
         {"helix": 56, "forward": false, "start": 80, "end": 88},
@@ -1772,7 +1772,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TTGAATTAATATGTGAGTGAATAATTTTCCCT",
       "domains": [
         {"helix": 58, "forward": false, "start": 80, "end": 88},
@@ -1781,7 +1781,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "GCGCAGAGGAAGATGATGAAACAAAATTTCAT",
       "domains": [
         {"helix": 60, "forward": false, "start": 80, "end": 88},
@@ -1790,7 +1790,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "TTTAACGTTCGGGAGAAACAATAAACAAAATC",
       "domains": [
         {"helix": 62, "forward": false, "start": 80, "end": 88},

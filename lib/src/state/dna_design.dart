@@ -581,7 +581,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       Map<String, Modification> all_mods = {};
       for (var mod_key in all_mods_json.keys) {
         var mod_json = all_mods_json[mod_key];
-        all_mods[mod_key] = Modification.from_json(mod_json);
+        var mod = Modification.from_json(mod_json);
+        mod = mod.set_id(mod_key);
+        all_mods[mod_key] = mod;
       }
       DNADesign.assign_modifications_to_strands(strands, strand_jsons, all_mods);
       dna_design_builder.strands.replace(strands);
