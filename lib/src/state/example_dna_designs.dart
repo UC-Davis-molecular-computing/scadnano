@@ -11,7 +11,7 @@ final DEFAULT_example_dna_designs = ExampleDNADesigns(
   selected_idx: -1,
   filenames: [
     'empty',
-    '2_staple_2_helix_origami_deletions_insertions',
+    '2_staple_2_helix_origami_deletions_insertions_mods',
     '6_helix_origami_rectangle',
     '6_helix_bundle_honeycomb',
     '16_helix_origami_rectangle_no_twist',
