@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
@@ -7,7 +7,7 @@
   ],
   "strands": [
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "TTTG",
       "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 3, "deletions": [1]},
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "GAAC",
       "domains": [
         {"helix": 0, "forward": false, "start": 3, "end": 6, "deletions": [4]},

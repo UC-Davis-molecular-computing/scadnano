@@ -75,7 +75,7 @@ class DesignMainStrandModificationBoundSubstrandComponent
 
   ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
     double y_del_small = (forward ? -1.1 * Y_DELTA_MOD : Y_DELTA_MOD).toDouble();
-    int font_size = props.modification.font_size ?? 8;
+    int font_size = props.modification.font_size ?? 12;
     String baseline = forward ? 'baseline' : 'hanging';
     if (!display_connector) {
       baseline = 'middle';
