@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"max_offset": 64, "grid_position": [0, 0]},
@@ -19,7 +19,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TTAGTTAGTTAGTTAGTTTAGTTAGTTAGTTAG",
       "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12], "insertions": [[6, 3]]},
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TTAGTTAGTTAGTTAGTAGTTAGTTAGTTAGTTAGT",
       "domains": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24], "insertions": [[18, 2]]},
@@ -35,53 +35,53 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "AACTAACTAACTAACT",
       "domains": [
         {"helix": 1, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "GGTAGGTAGGTAGGTA",
       "domains": [
         {"helix": 1, "forward": true, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "domains": [
         {"helix": 2, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "domains": [
         {"helix": 2, "forward": true, "start": 16, "end": 32}
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "AGTTAGTTAGTTAGTT",
       "domains": [
         {"helix": 1, "forward": false, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "TACCTACCTACCTACC",
       "domains": [
         {"helix": 1, "forward": false, "start": 48, "end": 64}
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "domains": [
         {"helix": 2, "forward": true, "start": 32, "end": 48}
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "domains": [
         {"helix": 2, "forward": true, "start": 0, "end": 16}
       ]

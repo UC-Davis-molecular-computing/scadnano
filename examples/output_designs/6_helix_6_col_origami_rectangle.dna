@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "major_tick_distance": 8,
   "helices": [
     {"grid_position": [0, 0]},
@@ -29,7 +29,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "CGAGATAGGGTTGAGTAATCAAAAGAATAGCC",
       "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 16},
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "CGATGGCCCACTACGTAAACCGTCTATCAGGG",
       "domains": [
         {"helix": 3, "forward": true, "start": 0, "end": 16},
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "TAGAGCTTGACGGGGAAAGGGAGCCCCCGATT",
       "domains": [
         {"helix": 5, "forward": true, "start": 0, "end": 16},
@@ -53,7 +53,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "GCAAGCGGTCCACGCTCCCTGAGAGAGTTGCA",
       "domains": [
         {"helix": 0, "forward": false, "start": 80, "end": 96},
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "CGGTTTGCGTATTGGGAACGCGCGGGGAGAGG",
       "domains": [
         {"helix": 2, "forward": false, "start": 80, "end": 96},
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#b8056c",
       "sequence": "ACTCACATTAATTGCGCCTAATGAGTGAGCTA",
       "domains": [
         {"helix": 4, "forward": false, "start": 80, "end": 96},
@@ -77,14 +77,14 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#57bb00",
       "sequence": "CCAGCAGGCGAAAATCCTGTTTGATGGTGGTT",
       "domains": [
         {"helix": 0, "forward": false, "start": 40, "end": 72}
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#007200",
       "sequence": "TGGACTCCACAAGAGTCCACTATTCGGGCAAC",
       "domains": [
         {"helix": 2, "forward": false, "start": 32, "end": 40},
@@ -92,7 +92,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#cc0000",
       "sequence": "AGCTGATTCTTTTCACCAGTGAGAAAAGAACG",
       "domains": [
         {"helix": 1, "forward": true, "start": 56, "end": 64},
@@ -100,7 +100,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#f7931e",
       "sequence": "GTAAAGCACAAGTTTTTTGGGGTCCCTGTCGT",
       "domains": [
         {"helix": 4, "forward": false, "start": 32, "end": 40},
@@ -108,7 +108,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "GCCAGCTGCTTTCCAGTCGGGAAAGAGGTGCC",
       "domains": [
         {"helix": 3, "forward": true, "start": 56, "end": 64},
@@ -116,14 +116,14 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#888888",
       "sequence": "GAACGTGGCGAGAAAGGAAGGGAAAGCCGGAA",
       "domains": [
         {"helix": 5, "forward": true, "start": 24, "end": 56}
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#32b86c",
       "sequence": "CCGAAATCGGCAAAATCCCTTATAGTTGTTCC",
       "domains": [
         {"helix": 0, "forward": false, "start": 16, "end": 40},
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#333333",
       "sequence": "AGTTTGGAAACGTCAAAGGGCGAAGAACCATC",
       "domains": [
         {"helix": 1, "forward": true, "start": 24, "end": 32},
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#320096",
       "sequence": "ACCCAAATCTAAATCGGAACCCTAAAGCCGGC",
       "domains": [
         {"helix": 3, "forward": true, "start": 24, "end": 32},
@@ -149,7 +149,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#03b6a2",
       "sequence": "GCATAAAGTGTAAAGCCTGGGGTGTTGCGCTC",
       "domains": [
         {"helix": 5, "forward": true, "start": 56, "end": 80},
@@ -157,7 +157,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#7300de",
       "sequence": "TGGTTTTTGCCCTTCACCGCCTGGGGTTTGCC",
       "domains": [
         {"helix": 2, "forward": false, "start": 64, "end": 72},
@@ -166,7 +166,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#aaaa00",
       "sequence": "ACTGCCCGCATTAATGAATCGGCCCGCCAGGG",
       "domains": [
         {"helix": 4, "forward": false, "start": 64, "end": 72},
