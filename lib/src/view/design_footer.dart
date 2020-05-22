@@ -18,10 +18,12 @@ UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFoo
     Strand strand_first_mouseover_data = mouseover_datas.isNotEmpty
         ? state.dna_design.substrand_to_strand[first_mouseover_data.substrand]
         : null;
+    String loaded_filename = state.ui_state.loaded_filename;
     return (DesignFooter()
       ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
       ..mouseover_datas = state.ui_state.mouseover_datas
-      ..strand_first_mouseover_data = strand_first_mouseover_data);
+      ..strand_first_mouseover_data = strand_first_mouseover_data
+    ..loaded_filename = loaded_filename);
   },
 )(DesignFooter);
 
@@ -31,6 +33,7 @@ mixin DesignFooterProps on UiProps {
   BuiltList<MouseoverData> mouseover_datas;
   bool show_mouseover_rect;
   Strand strand_first_mouseover_data;
+  String loaded_filename;
 }
 
 class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
@@ -64,8 +67,8 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
 //        text = 'To see data about the helix and strands, '
 //            'press the $key key and then place the cursor over the object you wish to inspect.';
 //      }
-      text = '';
+      text = props.loaded_filename;
     }
-    return (Dom.span()..className = 'footer-mouse-over-paragraph')(text);
+    return (Dom.span()..className = 'design-footer-mouse-over-paragraph')(text);
   }
 }

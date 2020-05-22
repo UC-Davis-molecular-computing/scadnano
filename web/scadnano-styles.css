@@ -92,7 +92,7 @@ html, body {
     flex-grow: 0;
 }
 
-#design-footer-mouse-over-paragraph {
+.design-footer-mouse-over-paragraph {
     padding: 5px;
     text-align: left;
 }
