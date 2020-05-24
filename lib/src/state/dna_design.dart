@@ -36,6 +36,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     ..unused_fields = MapBuilder<String, Object>({}));
 
   /****************************** end built_value boilerplate ******************************/
+  @memoized
+  int get hashCode;
 
   String get version;
 

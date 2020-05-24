@@ -44,6 +44,9 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
   @override
   String toString() => '(${this.h},${this.v}' + (this.b == 0 ? ')' : ', ${this.b})');
 
+  @memoized
+  int get hashCode;
+
   /// Indicates if given hex position is in the honeycomb lattice.
   bool in_honeycomb_lattice() => !(h % 2 == 1 && v % 2 == 1); // even-q system
   //!(((v % 2 == 0) && (h % 3 == 0)) || ((v % 2 == 1) && (h % 3 == 1))); // odd-r system

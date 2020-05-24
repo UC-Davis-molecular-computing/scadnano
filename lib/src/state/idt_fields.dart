@@ -41,6 +41,9 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
   @nullable
   String get well;
 
+  @memoized
+  int get hashCode;
+
   BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {

@@ -41,4 +41,7 @@ abstract class PotentialCrossover
   Point<num> get start_point;
 
   Point<num> get current_point;
+  
+  @memoized
+  int get hashCode;
 }

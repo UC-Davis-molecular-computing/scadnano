@@ -70,6 +70,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   /// For selected objects in main view
   SelectablesStore get selectables_store;

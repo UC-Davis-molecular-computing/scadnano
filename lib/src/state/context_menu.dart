@@ -44,6 +44,9 @@ abstract class ContextMenuItem
 
   String get title;
 
+  @memoized
+  int get hashCode;
+
   @BuiltValueField(serialize: false, compare: false)
   Callback get on_click;
 }

@@ -23,6 +23,9 @@ abstract class Modification {
 
   BuiltMap<String, Object> get unused_fields;
 
+  @memoized
+  int get hashCode;
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
   Modification set_id(String id);
@@ -41,12 +44,13 @@ abstract class Modification {
   static Modification from_json(Map<String, dynamic> json_map) {
     String location = json_map[constants.mod_location_key];
     Modification mod;
+    var unused_fields = util.unused_fields_map(json_map, constants.modification_keys);
     if (location == "5'") {
-      mod = Modification5Prime.from_json(json_map);
+      mod = Modification5Prime.from_json(json_map).rebuild((b) => b.unused_fields = unused_fields);
     } else if (location == "3'") {
-      mod = Modification3Prime.from_json(json_map);
+      mod = Modification3Prime.from_json(json_map).rebuild((b) => b.unused_fields = unused_fields);
     } else if (location == "internal") {
-      mod = ModificationInternal.from_json(json_map);
+      mod = ModificationInternal.from_json(json_map).rebuild((b) => b.unused_fields = unused_fields);
     } else {
       throw IllegalDNADesignError('unknown Modification location "${location}"');
     }
@@ -87,6 +91,9 @@ abstract class Modification5Prime
 
   @nullable
   int get font_size;
+
+  @memoized
+  int get hashCode;
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 
@@ -148,6 +155,9 @@ abstract class Modification3Prime
   int get font_size;
 
   BuiltMap<String, Object> get unused_fields;
+
+  @memoized
+  int get hashCode;
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 

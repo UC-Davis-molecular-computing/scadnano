@@ -31,6 +31,8 @@ abstract class PotentialVerticalCrossover
   }) = _$PotentialVerticalCrossover._;
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   int get helix_idx_top;
 

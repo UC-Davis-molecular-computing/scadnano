@@ -30,6 +30,8 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
   static Serializer<DNAEnd> get serializer => _$dNAEndSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   int get offset;
 

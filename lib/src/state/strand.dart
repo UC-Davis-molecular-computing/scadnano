@@ -117,6 +117,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   @nullable
   String get dna_sequence;
 
+  @memoized
+  int get hashCode;
+
   @nullable
   IDTFields get idt;
 

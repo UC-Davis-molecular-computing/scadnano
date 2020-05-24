@@ -56,6 +56,9 @@ abstract class Loopout
   String id() => 'loopout-${prev_substrand_idx + 1}-${strand_id}';
 
   int dna_length() => this.loopout_length;
+  
+  @memoized
+  int get hashCode;
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Loopout';

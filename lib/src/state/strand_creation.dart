@@ -25,6 +25,8 @@ abstract class StrandCreation
   static Serializer<StrandCreation> get serializer => _$strandCreationSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   Helix get helix;
 

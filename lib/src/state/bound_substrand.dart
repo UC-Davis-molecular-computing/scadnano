@@ -126,6 +126,9 @@ abstract class BoundSubstrand
   BuiltMap<String, Object> get unused_fields;
 
   @memoized
+  int get hashCode;
+
+  @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
       BuiltMap<int, int>({for (var insertion in insertions) insertion.offset: insertion.length});
 

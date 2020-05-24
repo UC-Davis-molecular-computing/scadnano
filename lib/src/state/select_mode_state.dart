@@ -54,6 +54,9 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
     return SelectModeState((s) => s..modes = SetBuilder<SelectModeChoice>(modes));
   }
 
+  @memoized
+  int get hashCode;
+
   //XXX: on the CSS selectors, this is doing a side-effect end-run around the Model-View-Update cycle.
   // ThIs is for efficiency; otherwise we'd need to wastefully re-render all strands
   // just because we want to make 5' ends selectable
