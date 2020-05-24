@@ -47,7 +47,9 @@ UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 @Props()
 mixin DesignMainStrandPropsMixin on UiProps {
   Strand strand;
+
   BuiltSet<int> side_selected_helix_idxs;
+  bool only_display_selected_helices;
 
   bool selected;
   bool selectable;
@@ -62,7 +64,6 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool origami_type_is_selectable;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
-  bool only_display_selected_helices;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
@@ -116,6 +117,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         (DesignMainStrandModifications()
           ..strand = props.strand
           ..helices = props.helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..only_display_selected_helices = props.only_display_selected_helices
           ..key = 'modifications')()
     ]);
   }
