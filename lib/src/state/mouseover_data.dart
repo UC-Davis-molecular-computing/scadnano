@@ -18,6 +18,9 @@ abstract class MouseoverParams
 
   bool get forward;
 
+  @memoized
+  int get hashCode;
+
   /************************ begin BuiltValue boilerplate ************************/
   factory MouseoverParams(int helix_idx, int offset, bool forward) => MouseoverParams.from((b) => b
     ..helix_idx = helix_idx
@@ -40,6 +43,9 @@ abstract class MouseoverData
 
   @nullable
   BoundSubstrand get substrand;
+
+  @memoized
+  int get hashCode;
 
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
   static List<MouseoverData> from_params(DNADesign dna_design, Iterable<MouseoverParams> params) {

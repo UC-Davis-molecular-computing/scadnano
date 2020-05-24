@@ -16,6 +16,9 @@ abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, Un
   BuiltList<DNADesign> get undo_stack;
 
   BuiltList<DNADesign> get redo_stack;
+  
+  @memoized
+  int get hashCode;
 
   /************************ begin BuiltValue boilerplate ************************/
 

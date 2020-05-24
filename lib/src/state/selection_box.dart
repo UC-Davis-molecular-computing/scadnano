@@ -42,6 +42,9 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
   num get width => (start.x - current.x).abs();
 
   num get height => (start.y - current.y).abs();
+  
+  @memoized
+  int get hashCode;
 
   static const DECIMAL_PLACES = 1;
 

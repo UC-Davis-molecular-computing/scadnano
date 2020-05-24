@@ -97,6 +97,9 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   @nullable
   GridPosition get grid_position;
 
+  @memoized
+  int get hashCode;
+
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that

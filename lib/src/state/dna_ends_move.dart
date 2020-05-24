@@ -24,6 +24,8 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   static Serializer<DNAEndsMove> get serializer => _$dNAEndsMoveSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   BuiltList<DNAEndMove> get moves;
 

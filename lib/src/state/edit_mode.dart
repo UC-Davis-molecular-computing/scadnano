@@ -55,13 +55,13 @@ class EditModeChoice extends EnumClass {
       case pencil:
         return [select, ligate, backbone].toBuiltSet();
       case nick:
-        return [select, ligate, insertion, deletion,  backbone].toBuiltSet();
+        return [select, ligate, insertion, deletion, backbone].toBuiltSet();
       case ligate:
-        return [select, pencil, nick, insertion, deletion,  backbone].toBuiltSet();
+        return [select, pencil, nick, insertion, deletion, backbone].toBuiltSet();
       case insertion:
-        return [select, nick, ligate, deletion,  backbone].toBuiltSet();
+        return [select, nick, ligate, deletion, backbone].toBuiltSet();
       case deletion:
-        return [select, nick, ligate, insertion,  backbone].toBuiltSet();
+        return [select, nick, ligate, insertion, backbone].toBuiltSet();
       case backbone:
         return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
       default:
@@ -96,6 +96,9 @@ class EditModeChoice extends EnumClass {
 
   @override
   String toString() => display_name();
+
+  @memoized
+  int get hashCode;
 
   static EditModeChoice from_json(String the_name) {
     for (var val in values) {

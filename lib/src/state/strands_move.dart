@@ -41,6 +41,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   }
 
   /************************ end BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
 
   BuiltList<Strand> get strands_moving;
 

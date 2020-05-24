@@ -13,8 +13,7 @@ import 'strand.dart';
 
 part 'selectable.g.dart';
 
-final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()
-  ..selected_items.replace([]);
+final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()..selected_items.replace([]);
 
 abstract class SelectablesStore
     with BuiltJsonSerializable
@@ -41,6 +40,9 @@ abstract class SelectablesStore
 
   bool selected(Selectable selectable) => selected_items.contains(selectable);
 
+  @memoized
+  int get hashCode;
+
   /// adds [selectable] to selected items. If only=true, deselects all other items.
   SelectablesStore select(Selectable selectable, {bool only = false}) {
     var selected_items_builder = selected_items.toBuilder();
@@ -64,7 +66,7 @@ abstract class SelectablesStore
   }
 
   // methods below here defined in terms of select and unselect
-  SelectablesStore select_all(Iterable<Selectable> selectables, {bool only=false}) {
+  SelectablesStore select_all(Iterable<Selectable> selectables, {bool only = false}) {
     var selected_items_builder = selected_items.toBuilder();
     if (only) {
       selected_items_builder.clear();
