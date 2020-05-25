@@ -61,10 +61,10 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
     for (int i = 0; i < builder.substrands.length; i++) {
       var substrand = builder.substrands[i];
       if (substrand is Loopout) {
-        if (substrand.prev_substrand_idx != i - 1 || substrand.next_substrand_idx != i + 1) {
+        if (substrand.prev_domain_idx != i - 1 || substrand.next_domain_idx != i + 1) {
           var loopout = substrand.rebuild((b) => b
-            ..prev_substrand_idx = i - 1
-            ..next_substrand_idx = i + 1);
+            ..prev_domain_idx = i - 1
+            ..next_domain_idx = i + 1);
           builder.substrands[i] = loopout;
         }
       }
@@ -94,8 +94,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       if (ss is Loopout) {
         var loopout = ss.rebuild((l) => l
           ..strand_id = id
-          ..prev_substrand_idx = idx - 1
-          ..next_substrand_idx = idx + 1);
+          ..prev_domain_idx = idx - 1
+          ..next_domain_idx = idx + 1);
         substrands_new[idx] = loopout;
         updated = true;
       } else if (ss is Domain) {
@@ -326,8 +326,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       var substrand_json = substrand_jsons[i];
       if (substrand_json.containsKey(constants.loopout_key)) {
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
-        lb.prev_substrand_idx = i - 1;
-        lb.next_substrand_idx = i + 1;
+        lb.prev_domain_idx = i - 1;
+        lb.next_domain_idx = i + 1;
         loopouts[i] = lb.build();
       }
     }

@@ -152,8 +152,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
     int idx_crossover = 0;
     for (var crossover in strand.crossovers) {
-      Domain prev_ss = strand.substrands[crossover.prev_substrand_idx];
-      Domain next_ss = strand.substrands[crossover.next_substrand_idx];
+      Domain prev_ss = strand.substrands[crossover.prev_domain_idx];
+      Domain next_ss = strand.substrands[crossover.next_domain_idx];
       bool draw_prev_ss = should_draw_domain(
           prev_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
       bool draw_next_ss = should_draw_domain(

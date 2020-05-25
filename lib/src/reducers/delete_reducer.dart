@@ -79,7 +79,7 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
 List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   // partition substrands of Strand that are separated by a linker
   // This logic is a bit complex because Loopouts are themselves Substrands, but Crossovers are not.
-  linkers.sort((l1, l2) => l1.prev_substrand_idx.compareTo(l2.prev_substrand_idx));
+  linkers.sort((l1, l2) => l1.prev_domain_idx.compareTo(l2.prev_domain_idx));
   int linker_idx = 0;
   List<List<Substrand>> substrands_list = [[]];
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
@@ -87,7 +87,7 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
     substrands_list[linker_idx].add(substrand);
     if (linker_idx < linkers.length) {
       Linker linker = linkers[linker_idx];
-      if (ss_idx == linker.prev_substrand_idx) {
+      if (ss_idx == linker.prev_domain_idx) {
         linker_idx++;
         substrands_list.add([]);
         if (linker is Loopout) {
@@ -134,8 +134,8 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
       var substrand = substrands[i];
       if (substrand is Loopout) {
         substrands[i] = substrand.rebuild((loopout) => loopout
-          ..prev_substrand_idx = i - 1
-          ..next_substrand_idx = i + 1);
+          ..prev_domain_idx = i - 1
+          ..next_domain_idx = i + 1);
       }
     }
   }

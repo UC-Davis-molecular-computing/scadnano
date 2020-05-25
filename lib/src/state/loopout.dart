@@ -17,10 +17,10 @@ part 'loopout.g.dart';
 abstract class Loopout
     with Selectable, BuiltJsonSerializable
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
-  factory Loopout(int loopout_length, int prev_substrand_idx, int next_substrand_idx) => Loopout.from((b) => b
+  factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx) => Loopout.from((b) => b
     ..loopout_length = loopout_length
-    ..prev_substrand_idx = prev_substrand_idx
-    ..next_substrand_idx = next_substrand_idx
+    ..prev_domain_idx = prev_domain_idx
+    ..next_domain_idx = next_domain_idx
     ..unused_fields = MapBuilder<String, Object>({}));
 
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
@@ -33,9 +33,9 @@ abstract class Loopout
 
   int get loopout_length;
 
-  int get prev_substrand_idx;
+  int get prev_domain_idx;
 
-  int get next_substrand_idx;
+  int get next_domain_idx;
 
   @nullable
   String get dna_sequence;
@@ -53,7 +53,7 @@ abstract class Loopout
 
   SelectModeChoice select_mode() => SelectModeChoice.loopout;
 
-  String id() => 'loopout-${prev_substrand_idx + 1}-${strand_id}';
+  String id() => 'loopout-${prev_domain_idx + 1}-${strand_id}';
 
   int dna_length() => this.loopout_length;
   
