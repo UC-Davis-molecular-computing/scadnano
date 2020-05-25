@@ -5,7 +5,7 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionAction action) {
-  Domain substrand = action.substrand;
+  Domain substrand = action.domain;
   int ss_idx = strand.substrands.indexOf(substrand);
   List<Substrand> substrands = strand.substrands.toList();
   substrands[ss_idx] = insertion_deletion_substrand_reducer(substrand, action);

@@ -10,7 +10,7 @@ import '../constants.dart' as constants;
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove Domain where nick will be, and remember where it was attached
-  Domain substrand_to_remove = action.bound_substrand;
+  Domain substrand_to_remove = action.domain;
   var strand = state.dna_design.substrand_to_strand[substrand_to_remove];
 
   // create new Domains

@@ -158,7 +158,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..height = background_height
       ..onClick = ((_) {
         if (insertion_mode) {
-          app.dispatch(actions.InsertionRemove(substrand: props.substrand, insertion: props.insertion));
+          app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion));
         }
       })
       ..key = key_background)();
@@ -171,6 +171,6 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       return;
     }
     app.dispatch(actions.InsertionLengthChange(
-        substrand: props.substrand, insertion: props.insertion, length: new_length));
+        domain: props.substrand, insertion: props.insertion, length: new_length));
   }
 }

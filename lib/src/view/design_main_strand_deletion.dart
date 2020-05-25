@@ -59,7 +59,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..height = background_height
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
 //            remove_deletion();
           }
         })
@@ -70,7 +70,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..d = path_cmds
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
 //            remove_deletion();
           }
         })

@@ -82,11 +82,11 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
         if (offset <= substrand.start + 1 || offset >= substrand.end - 1) {
           return; // need remaining substrands to be length at least 2
         }
-        app.dispatch(actions.Nick(bound_substrand: substrand, offset: offset));
+        app.dispatch(actions.Nick(domain: substrand, offset: offset));
       } else if (insertion_mode) {
-        app.dispatch(actions.InsertionAdd(substrand: substrand, offset: offset));
+        app.dispatch(actions.InsertionAdd(domain: substrand, offset: offset));
       } else if (deletion_mode) {
-        app.dispatch(actions.DeletionAdd(substrand: substrand, offset: offset));
+        app.dispatch(actions.DeletionAdd(domain: substrand, offset: offset));
       }
     }
   }

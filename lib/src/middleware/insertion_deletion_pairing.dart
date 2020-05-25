@@ -9,7 +9,7 @@ import '../state/app_state.dart';
 insertion_deletion_pairing_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.InsertionOrDeletionAction) {
     Domain paired_substrand =
-        find_paired_substrand(store.state.dna_design, action.substrand, action.offset);
+        find_paired_substrand(store.state.dna_design, action.domain, action.offset);
     if (paired_substrand == null) {
       next(action);
     } else {
