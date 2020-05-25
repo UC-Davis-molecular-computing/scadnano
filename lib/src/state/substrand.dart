@@ -6,7 +6,7 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   bool is_loopout();
 
-  bool is_bound_substrand() => !this.is_loopout();
+  bool is_domain() => !this.is_loopout();
 
   String get dna_sequence;
 

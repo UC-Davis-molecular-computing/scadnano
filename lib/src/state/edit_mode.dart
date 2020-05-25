@@ -12,9 +12,9 @@ class EditModeChoice extends EnumClass {
   static Serializer<EditModeChoice> get serializer => _$editModeChoiceSerializer;
 
   static const EditModeChoice select = _$select;
-  static const EditModeChoice pencil = _$pencil; // used to join two BoundSubstrands with Crossover
+  static const EditModeChoice pencil = _$pencil; // used to join two Domains with Crossover
   static const EditModeChoice nick = _$nick;
-  static const EditModeChoice ligate = _$ligate; // means join two BoundSubstrands on same Helix
+  static const EditModeChoice ligate = _$ligate; // means join two Domains on same Helix
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice backbone = _$backbone;

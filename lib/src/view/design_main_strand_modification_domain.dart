@@ -7,22 +7,22 @@ import '../state/strand.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
 
-part 'design_main_strand_modification_bound_substrand.over_react.g.dart';
+part 'design_main_strand_modification_domain.over_react.g.dart';
 
 
-UiFactory<DesignMainStrandModificationBoundSubstrandProps> DesignMainStrandModificationBoundSubstrand =
-    _$DesignMainStrandModificationBoundSubstrand;
+UiFactory<DesignMainStrandModificationDomainProps> DesignMainStrandModificationDomain =
+    _$DesignMainStrandModificationDomain;
 
 
-mixin DesignMainStrandModificationBoundSubstrandProps on UiProps {
+mixin DesignMainStrandModificationDomainProps on UiProps {
   Address address;
   Helix helix;
   Modification modification;
 }
 
 
-class DesignMainStrandModificationBoundSubstrandComponent
-    extends UiComponent2<DesignMainStrandModificationBoundSubstrandProps> {
+class DesignMainStrandModificationDomainComponent
+    extends UiComponent2<DesignMainStrandModificationDomainProps> {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);

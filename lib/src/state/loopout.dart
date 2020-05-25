@@ -47,7 +47,7 @@ abstract class Loopout
 
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 
-  bool is_bound_substrand() => false;
+  bool is_domain() => false;
 
   bool is_loopout() => true;
 

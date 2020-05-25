@@ -13,7 +13,7 @@ import 'grid_position.dart';
 import '../json_serializable.dart';
 import 'modification.dart';
 import 'strand.dart';
-import 'bound_substrand.dart';
+import 'domain.dart';
 import 'helix.dart';
 import 'grid.dart';
 import '../util.dart' as util;
@@ -72,10 +72,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
-  BuiltMap<String, BoundSubstrand> get bound_substrands_by_id {
-    var builder = MapBuilder<String, BoundSubstrand>();
+  BuiltMap<String, Domain> get bound_substrands_by_id {
+    var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.bound_substrands()) {
+      for (var bound_substrand in strand.domains()) {
         builder[bound_substrand.id()] = bound_substrand;
       }
     }
@@ -108,7 +108,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.bound_substrands()) {
+      for (var bound_substrand in strand.domains()) {
         builder[bound_substrand.dnaend_start.id()] = bound_substrand.dnaend_start;
         builder[bound_substrand.dnaend_end.id()] = bound_substrand.dnaend_end;
       }
@@ -140,7 +140,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.bound_substrands()) {
+      for (var bound_substrand in strand.domains()) {
         var end = bound_substrand.dnaend_5p;
         if (!bound_substrand.is_first) {
           builder[end.id()] = end;
@@ -154,7 +154,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.bound_substrands()) {
+      for (var bound_substrand in strand.domains()) {
         var end = bound_substrand.dnaend_3p;
         if (!bound_substrand.is_last) {
           builder[end.id()] = end;
@@ -177,16 +177,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
-  BuiltMap<BoundSubstrand, BuiltList<Mismatch>> get substrand_mismatches_map {
-    var substrand_mismatches_map_builder = MapBuilder<BoundSubstrand, ListBuilder<Mismatch>>();
+  BuiltMap<Domain, BuiltList<Mismatch>> get substrand_mismatches_map {
+    var substrand_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
-        for (BoundSubstrand bound_ss in strand.bound_substrands()) {
+        for (Domain bound_ss in strand.domains()) {
           substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
         }
       }
     }
-    var substrand_mismatches_builtmap_builder = MapBuilder<BoundSubstrand, BuiltList<Mismatch>>();
+    var substrand_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
     substrand_mismatches_map_builder.build().forEach((bound_ss, mismatches) {
       substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
     });
@@ -194,10 +194,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
-  BuiltMap<DNAEnd, BoundSubstrand> get end_to_substrand {
-    var end_to_substrand_builder = MapBuilder<DNAEnd, BoundSubstrand>();
+  BuiltMap<DNAEnd, Domain> get end_to_substrand {
+    var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
-      for (var substrand in strand.bound_substrands()) {
+      for (var substrand in strand.domains()) {
         end_to_substrand_builder[substrand.dnaend_3p] = substrand;
         end_to_substrand_builder[substrand.dnaend_5p] = substrand;
       }
@@ -245,7 +245,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
 
   @memoized
-  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands {
+  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands {
     return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
 
@@ -277,7 +277,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<Address, DNAEnd> get address_to_end {
     var map = Map<Address, DNAEnd>();
     for (var strand in strands) {
-      for (var ss in strand.bound_substrands()) {
+      for (var ss in strand.domains()) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
           var key = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
           map[key] = end;
@@ -293,7 +293,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<Address, Strand> get address_5p_to_strand {
     var map = Map<Address, Strand>();
     for (var strand in strands) {
-      var ss = strand.first_bound_substrand();
+      var ss = strand.first_domain();
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_5p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
@@ -319,7 +319,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltList<PotentialVerticalCrossover> get potential_vertical_crossovers {
     List<PotentialVerticalCrossover> crossovers = [];
     for (var strand_5p in strands) {
-      var ss = strand_5p.first_bound_substrand();
+      var ss = strand_5p.first_domain();
       int helix_idx = ss.helix;
       int offset = ss.dnaend_5p.offset_inclusive;
       bool forward = ss.forward;
@@ -332,8 +332,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         int helix_idx_bot;
         var address_top;
         bool forward_top;
-        BoundSubstrand substrand_top;
-        BoundSubstrand substrand_bot;
+        Domain substrand_top;
+        Domain substrand_bot;
         DNAEnd dna_end_top;
         DNAEnd dna_end_bot;
         if (address_3p_to_strand.keys.contains(address_3p)) {
@@ -636,7 +636,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   helices=$helices, 
   strands=$strands)""";
 
-  ListBuilder<Mismatch> _find_mismatches_on_substrand(BoundSubstrand substrand) {
+  ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
 
     for (int offset = substrand.start; offset < substrand.end; offset++) {
@@ -695,8 +695,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return other substrand at `offset` on `substrand.helix_idx`, or null if there isn't one.
-  BoundSubstrand other_substrand_at_offset(BoundSubstrand substrand, int offset) {
-    List<BoundSubstrand> other_substrands = this._other_substrands_overlapping(substrand);
+  Domain other_substrand_at_offset(Domain substrand, int offset) {
+    List<Domain> other_substrands = this._other_substrands_overlapping(substrand);
     for (var other_ss in other_substrands) {
       if (other_ss.contains_offset(offset)) {
         assert(substrand.forward != other_ss.forward);
@@ -707,7 +707,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
 //  void _ensure_other_substrand_same_deletion_or_insertion(
-//      BoundSubstrand substrand, BoundSubstrand other_ss, int offset) {
+//      Domain substrand, Domain other_ss, int offset) {
 //    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
 //      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
 //          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
@@ -727,7 +727,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
   /// If a mismatch occurs outside an insertion, within_insertion = -1).
   /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
-  BuiltList<Mismatch> mismatches_on_substrand(BoundSubstrand substrand) {
+  BuiltList<Mismatch> mismatches_on_substrand(Domain substrand) {
     var ret = this.substrand_mismatches_map[substrand];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
@@ -736,11 +736,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return set of substrands on the Helix with the given index.
-  BuiltList<BoundSubstrand> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
+  BuiltList<Domain> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
 
   /// Return set of substrands on the helices with the given helix_idxs.
-  BuiltList<BoundSubstrand> substrands_on_helices(Iterable<int> helix_idxs) {
-    ListBuilder<BoundSubstrand> list_builder = ListBuilder<BoundSubstrand>();
+  BuiltList<Domain> substrands_on_helices(Iterable<int> helix_idxs) {
+    ListBuilder<Domain> list_builder = ListBuilder<Domain>();
 
     for (var helix_idx in helix_idxs) {
       list_builder.addAll(substrands_on_helix(helix_idx));
@@ -748,11 +748,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return list_builder.build();
   }
 
-//  Set<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
+//  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
   /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
-  BuiltSet<BoundSubstrand> substrands_on_helix_at(int helix_idx, int offset) {
-    var substrands_at_offset = SetBuilder<BoundSubstrand>({
+  BuiltSet<Domain> substrands_on_helix_at(int helix_idx, int offset) {
+    var substrands_at_offset = SetBuilder<Domain>({
       for (var substrand in this.helix_idx_to_substrands[helix_idx])
         if (substrand.contains_offset(offset)) substrand
     });
@@ -760,7 +760,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return [Substrand] at [address], INCLUSIVE, or null if there is none.
-  BoundSubstrand substrand_on_helix_at(Address address) {
+  Domain substrand_on_helix_at(Address address) {
     for (var substrand in this.helix_idx_to_substrands[address.helix_idx]) {
       if (substrand.contains_offset(address.offset) && substrand.forward == address.forward) {
         return substrand;
@@ -770,8 +770,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return list of Substrands overlapping `substrand`.
-  List<BoundSubstrand> _other_substrands_overlapping(BoundSubstrand substrand) {
-    List<BoundSubstrand> ret = [];
+  List<Domain> _other_substrands_overlapping(Domain substrand) {
+    List<Domain> ret = [];
     var helix = this.helices[substrand.helix];
     for (var other_ss in helix_idx_to_substrands[helix.idx]) {
       if (substrand.overlaps(other_ss)) {
@@ -782,8 +782,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Number of bases between start and end offsets, inclusive, on the given [Helix].
-  /// Accounts for substrands with insertions and deletions on [BoundSubstrand]s on this Helix, but not if they
-  /// are inconsistent (on one [BoundSubstrand] but not the other).
+  /// Accounts for substrands with insertions and deletions on [Domain]s on this Helix, but not if they
+  /// are inconsistent (on one [Domain] but not the other).
   int helix_num_bases_between(Helix helix, int start, int end) {
     if (start > end) {
       int swap = start;
@@ -791,7 +791,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       end = swap;
     }
 
-    List<BoundSubstrand> substrands_intersecting = [];
+    List<Domain> substrands_intersecting = [];
     for (var ss in this.helix_idx_to_substrands[helix.idx]) {
       if (start < ss.end && ss.start <= end) {
         substrands_intersecting.add(ss);
@@ -917,7 +917,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   @memoized
   bool get has_insertions_or_deletions {
     for (var strand in strands) {
-      for (var substrand in strand.bound_substrands()) {
+      for (var substrand in strand.domains()) {
         if (substrand.deletions.isNotEmpty || substrand.insertions.isNotEmpty) {
           return true;
         }
@@ -944,9 +944,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 }
 
-BuiltMap<int, BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
+BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
     [Iterable<int> helix_idxs = null]) {
-  var helix_idx_to_substrands = Map<int, List<BoundSubstrand>>();
+  var helix_idx_to_substrands = Map<int, List<Domain>>();
 
   if (helix_idxs != null) {
     for (int helix_idx in helix_idxs) {
@@ -956,8 +956,8 @@ BuiltMap<int, BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(I
 
   for (Strand strand in strands) {
     for (Substrand substrand in strand.substrands) {
-      if (substrand.is_bound_substrand()) {
-        var bound_ss = substrand as BoundSubstrand;
+      if (substrand.is_domain()) {
+        var bound_ss = substrand as Domain;
         if (helix_idx_to_substrands.containsKey(bound_ss.helix)) {
           helix_idx_to_substrands[bound_ss.helix].add(bound_ss);
         } else {
@@ -967,7 +967,7 @@ BuiltMap<int, BuiltList<BoundSubstrand>> construct_helix_idx_to_substrands_map(I
     }
   }
 
-  var helix_idx_to_substrands_builtset_builder = Map<int, BuiltList<BoundSubstrand>>();
+  var helix_idx_to_substrands_builtset_builder = Map<int, BuiltList<Domain>>();
   for (var helix_idx in helix_idx_to_substrands.keys) {
     // sort by start offset; since the intervals are disjoint, this sorts them by end as well
     var substrands = helix_idx_to_substrands[helix_idx];
@@ -1048,7 +1048,7 @@ class IllegalDNADesignError implements Exception {
 
 class StrandError extends IllegalDNADesignError {
   StrandError(Strand strand, String the_cause) : super(the_cause) {
-    var first_substrand = strand.first_bound_substrand();
+    var first_substrand = strand.first_domain();
     var last_substrand = strand.last_bound_substrand();
 
     var msg = '\n'

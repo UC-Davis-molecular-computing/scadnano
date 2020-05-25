@@ -4,7 +4,7 @@ import 'package:built_value/serializer.dart';
 import 'package:scadnano/src/state/strand.dart';
 
 import '../serializers.dart';
-import 'bound_substrand.dart';
+import 'domain.dart';
 import 'dna_design.dart';
 import 'helix.dart';
 
@@ -77,18 +77,18 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   bool get is_nontrivial => original_address != current_address;
 
   @memoized
-  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands_moving =>
+  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands_moving =>
       construct_helix_idx_to_substrands_map(strands_moving, helices.keys);
 
   @memoized
-  BuiltMap<int, BuiltList<BoundSubstrand>> get helix_idx_to_substrands_fixed =>
+  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands_fixed =>
       construct_helix_idx_to_substrands_map(strands_fixed, helices.keys);
 
   @memoized
   BuiltList<int> get view_order_moving {
     Set<int> ret = {};
     for (var strand in strands_moving) {
-      for (var ss in strand.bound_substrands()) {
+      for (var ss in strand.domains()) {
         ret.add(helices_view_order_inverse[ss.helix]);
       }
     }

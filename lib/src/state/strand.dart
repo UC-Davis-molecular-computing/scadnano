@@ -15,7 +15,7 @@ import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'dna_design.dart';
-import 'bound_substrand.dart';
+import 'domain.dart';
 import 'loopout.dart';
 import 'substrand.dart';
 
@@ -53,9 +53,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   //FIXME: remove prev_ and next_ from Loopout so they don't need to be recalculated
 
   static void _finalizeBuilder(StrandBuilder builder) {
-    BoundSubstrand first_ss = builder.substrands.first;
+    Domain first_ss = builder.substrands.first;
     String id = id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
-    // ensure Loopouts have appropriate prev and next indices for adjacent BoundSubstrands
+    // ensure Loopouts have appropriate prev and next indices for adjacent Domains
     // (not necessary for Crossovers since they are lazily evaluated,
     // but Loopout objects are created prior to creating the Strand)
     for (int i = 0; i < builder.substrands.length; i++) {
@@ -69,7 +69,7 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
         }
       }
       // set strand_id on all substrands
-      if (substrand is BoundSubstrand) {
+      if (substrand is Domain) {
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
       } else if (substrand is Loopout) {
         builder.substrands[i] = substrand.rebuild((b) => b..strand_id = id);
@@ -98,9 +98,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
           ..next_substrand_idx = idx + 1);
         substrands_new[idx] = loopout;
         updated = true;
-      } else if (ss is BoundSubstrand) {
-        var bound_ss = ss.rebuild((l) => l..strand_id = id);
-        substrands_new[idx] = bound_ss;
+      } else if (ss is Domain) {
+        var domain = ss.rebuild((l) => l..strand_id = id);
+        substrands_new[idx] = domain;
         updated = true;
       }
       idx++;
@@ -144,27 +144,27 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   BuiltMap<String, Object> get unused_fields;
 
   @memoized
-  BuiltMap<int, BuiltList<BoundSubstrand>> get substrands_on_helix {
-    var substrands_map = Map<int, List<BoundSubstrand>>();
-    for (var substrand in bound_substrands()) {
-      if (substrands_map.containsKey(substrand.helix)) {
-        substrands_map[substrand.helix].add(substrand);
+  BuiltMap<int, BuiltList<Domain>> get domains_on_helix {
+    var domains_map = Map<int, List<Domain>>();
+    for (var substrand in domains()) {
+      if (domains_map.containsKey(substrand.helix)) {
+        domains_map[substrand.helix].add(substrand);
       } else {
-        substrands_map[substrand.helix] = [substrand];
+        domains_map[substrand.helix] = [substrand];
       }
     }
-    var substrands_partially_built_map = Map<int, BuiltList<BoundSubstrand>>();
-    for (var helix in substrands_map.keys) {
-      substrands_partially_built_map[helix] = substrands_map[helix].build();
+    var domains_partially_built_map = Map<int, BuiltList<Domain>>();
+    for (var helix in domains_map.keys) {
+      domains_partially_built_map[helix] = domains_map[helix].build();
     }
-    return substrands_partially_built_map.build();
+    return domains_partially_built_map.build();
   }
 
   @memoized
   BuiltList<Crossover> get crossovers {
     Set<Crossover> ret = {};
     for (int i = 0; i < substrands.length - 1; i++) {
-      if (substrands[i] is BoundSubstrand && substrands[i + 1] is BoundSubstrand) {
+      if (substrands[i] is Domain && substrands[i + 1] is Domain) {
         ret.add(Crossover(i, i + 1, id()));
       }
     }
@@ -175,7 +175,7 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   SelectModeChoice select_mode() => SelectModeChoice.strand;
 
   String id() {
-    var first_ss = this.first_bound_substrand();
+    var first_ss = this.first_domain();
     return id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
   }
 
@@ -183,19 +183,19 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
   String toString() {
-    var first_ss = this.first_bound_substrand();
+    var first_ss = this.first_domain();
     return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
   }
 
-  List<BoundSubstrand> bound_substrands() =>
-      [for (var ss in this.substrands) if (ss.is_bound_substrand()) ss as BoundSubstrand];
+  List<Domain> domains() =>
+      [for (var ss in this.substrands) if (ss.is_domain()) ss as Domain];
 
   List<Loopout> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
 
-  List<DNAEnd> ends_5p_not_first() => [for (var ss in bound_substrands().sublist(1)) ss.dnaend_5p];
+  List<DNAEnd> ends_5p_not_first() => [for (var ss in domains().sublist(1)) ss.dnaend_5p];
 
   List<DNAEnd> ends_3p_not_last() =>
-      [for (var ss in bound_substrands().sublist(0, bound_substrands().length - 1)) ss.dnaend_3p];
+      [for (var ss in domains().sublist(0, domains().length - 1)) ss.dnaend_3p];
 
   int dna_length() {
     int num = 0;
@@ -296,20 +296,20 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
     var substrand_jsons = util.get_value(json_map, constants.substrands_key, 'Strand',
         legacy_keys: constants.legacy_substrands_keys);
 
-    // need to parse all BoundSubstrands before Loopouts,
-    // because prev and next BoundSubstrands need to be referenced by Loopouts
+    // need to parse all Domains before Loopouts,
+    // because prev and next Domains need to be referenced by Loopouts
     // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated before assigning.
-    Map<int, BoundSubstrand> bound_substrands = {};
+    Map<int, Domain> bound_substrands = {};
     int start_idx_ss = 0;
     for (int i = 0; i < substrand_jsons.length; i++) {
       var substrand_json = substrand_jsons[i];
 
       int end_idx_ss;
       if (!substrand_json.containsKey(constants.loopout_key)) {
-        BoundSubstrandBuilder ssb = BoundSubstrand.from_json(substrand_json);
+        DomainBuilder ssb = Domain.from_json(substrand_json);
         ssb.is_first = (i == 0);
         ssb.is_last = (i == substrand_jsons.length - 1);
-        int num_insertions = BoundSubstrand.num_insertions_in_list(ssb.insertions.build());
+        int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
         end_idx_ss = start_idx_ss + dna_length;
         bound_substrands[i] = ssb.build();
@@ -320,7 +320,7 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       start_idx_ss = end_idx_ss;
     }
 
-    // parse Loopouts now that we have all the BoundSubstrands
+    // parse Loopouts now that we have all the Domains
     Map<int, Loopout> loopouts = {};
     for (int i = 0; i < substrand_jsons.length; i++) {
       var substrand_json = substrand_jsons[i];
@@ -385,19 +385,19 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
     return strand;
   }
 
-  BoundSubstrand first_bound_substrand({int starting_at = 0}) {
+  Domain first_domain({int starting_at = 0}) {
     for (int i = starting_at; i < substrands.length; i++) {
-      if (this.substrands[i] is BoundSubstrand) {
-        return this.substrands[i] as BoundSubstrand;
+      if (this.substrands[i] is Domain) {
+        return this.substrands[i] as Domain;
       }
     }
     throw AssertionError('should not be reachable');
   }
 
-  BoundSubstrand last_bound_substrand() {
+  Domain last_bound_substrand() {
     for (int i = substrands.length - 1; i >= 0; i--) {
-      if (this.substrands[i] is BoundSubstrand) {
-        return this.substrands[i] as BoundSubstrand;
+      if (this.substrands[i] is Domain) {
+        return this.substrands[i] as Domain;
       }
     }
     throw AssertionError('should not be reachable');
@@ -406,8 +406,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   /// Indicates whether `self` overlaps `other_strand`, meaning that the set of offsets occupied
   /// by `self` has nonempty intersection with those occupied by `other_strand`.
   bool overlaps(Strand other) {
-    for (var substrand_self in bound_substrands()) {
-      for (var substrand_other in other.bound_substrands()) {
+    for (var substrand_self in domains()) {
+      for (var substrand_other in other.domains()) {
         if (substrand_self.overlaps(substrand_other)) {
           return true;
         }
@@ -442,7 +442,7 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
 
-  DNAEnd get dnaend_5p => first_bound_substrand().dnaend_5p;
+  DNAEnd get dnaend_5p => first_domain().dnaend_5p;
 
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
@@ -459,8 +459,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   }
 
   bool _ligatable_3p_to_5p_of(Strand other) {
-    BoundSubstrand last_ss_this = last_bound_substrand();
-    BoundSubstrand first_ss_other = other.first_bound_substrand();
+    Domain last_ss_this = last_bound_substrand();
+    Domain first_ss_other = other.first_domain();
 
     return last_ss_this.forward == first_ss_other.forward &&
         last_ss_this.helix == first_ss_other.helix &&
@@ -468,8 +468,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   }
 
   bool _ligatable_5p_to_3p_of(Strand other) {
-    BoundSubstrand first_ss_this = first_bound_substrand();
-    BoundSubstrand last_ss_other = other.last_bound_substrand();
+    Domain first_ss_this = first_domain();
+    Domain last_ss_other = other.last_bound_substrand();
 
     return first_ss_this.forward == last_ss_other.forward &&
         first_ss_this.helix == last_ss_other.helix &&
@@ -478,8 +478,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   /// Name to use when exporting this Strand.
   String export_name() {
-    BoundSubstrand first_ss = first_bound_substrand();
-    BoundSubstrand last_ss = last_bound_substrand();
+    Domain first_ss = first_domain();
+    Domain last_ss = last_bound_substrand();
     String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
   }

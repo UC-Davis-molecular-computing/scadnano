@@ -13,7 +13,7 @@ part 'crossover.g.dart';
 abstract class Crossover
     with Selectable, BuiltJsonSerializable
     implements Built<Crossover, CrossoverBuilder>, Linker, StrandPart {
-//  factory Crossover(BoundSubstrand prev_substrand, BoundSubstrand next_substrand) =>
+//  factory Crossover(Domain prev_substrand, Domain next_substrand) =>
 //      Crossover.from((b) => b..prev_substrand.replace(prev_substrand)..next_substrand.replace(next_substrand));
   factory Crossover(int prev_substrand_idx, int next_substrand_idx, String strand_id) =>
       Crossover.from((b) => b

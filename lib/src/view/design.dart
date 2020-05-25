@@ -10,7 +10,7 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -563,7 +563,7 @@ class DesignViewComponent {
     int min_offset;
     bool min_forward;
     for (Strand strand in strands) {
-      for (BoundSubstrand substrand in strand.bound_substrands()) {
+      for (Domain substrand in strand.domains()) {
         if (min_helix_idx == null || min_helix_idx > substrand.helix) {
           min_helix_idx = substrand.helix;
           min_offset = substrand.start; // reset this absolutely since helix got smaller

@@ -5,7 +5,7 @@ import 'package:color/color.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/insertion_deletion_pairing.dart';
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
@@ -123,8 +123,8 @@ Strand moved_strand(Strand strand,
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
-    if (substrand is BoundSubstrand) {
-      BoundSubstrand bound_ss_moved = substrand.rebuild(
+    if (substrand is Domain) {
+      Domain bound_ss_moved = substrand.rebuild(
         (b) => b
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
@@ -178,8 +178,8 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     int ss_idx = record.substrand_idx;
     Strand strand = strands_builder[strand_idx];
     StrandBuilder strand_builder = strand.toBuilder();
-    BoundSubstrand substrand = strand.bound_substrands()[ss_idx];
-    BoundSubstrandBuilder substrand_builder = substrand.toBuilder();
+    Domain substrand = strand.domains()[ss_idx];
+    DomainBuilder substrand_builder = substrand.toBuilder();
     if (substrand.deletions.contains(offset)) {
       substrand_builder.deletions.remove(offset);
     } else {
@@ -211,8 +211,8 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
   for (int i = 0; i < substrands.length; i++) {
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
-    if (substrand is BoundSubstrand) {
-      BoundSubstrand bound_ss = substrand;
+    if (substrand is Domain) {
+      Domain bound_ss = substrand;
       for (var dnaend in [substrand.dnaend_start, substrand.dnaend_end]) {
         DNAEndMove move = find_move(all_move.moves, dnaend);
         if (move != null) {
@@ -229,7 +229,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
               .map((i) => i.offset)
               .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
-            BoundSubstrand other_ss = find_paired_substrand(design, bound_ss, offset);
+            Domain other_ss = find_paired_substrand(design, bound_ss, offset);
             if (other_ss != null) {
               Strand other_strand = design.substrand_to_strand[other_ss];
               int other_ss_idx = other_strand.substrands.indexOf(other_ss);
@@ -253,12 +253,12 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
       strand.rebuild((b) => b..substrands.replace(substrands)), records);
 }
 
-List<int> get_remaining_deletions(BoundSubstrand substrand, int new_offset, DNAEnd dnaend) =>
+List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.deletions
         .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
         .toList();
 
-List<Insertion> get_remaining_insertions(BoundSubstrand substrand, int new_offset, DNAEnd dnaend) =>
+List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.insertions
         .where((i) => (substrand.dnaend_start == dnaend ? new_offset < i.offset : new_offset > i.offset))
         .toList();
@@ -302,7 +302,7 @@ BuiltList<Strand> strand_create(
     }
   }
 
-  BoundSubstrand substrand = BoundSubstrand(
+  Domain substrand = Domain(
       helix: helix_idx, forward: forward, start: start, end: end, is_first: true, is_last: true);
   Strand strand = Strand([substrand], color: action.color);
   var new_strands = strands.rebuild((s) => s..add(strand));

@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
@@ -9,24 +9,24 @@ import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
-  // remove BoundSubstrand where nick will be, and remember where it was attached
-  BoundSubstrand substrand_to_remove = action.bound_substrand;
+  // remove Domain where nick will be, and remember where it was attached
+  Domain substrand_to_remove = action.bound_substrand;
   var strand = state.dna_design.substrand_to_strand[substrand_to_remove];
 
-  // create new BoundSubstrands
+  // create new Domains
   int nick_offset = action.offset;
   int helix = substrand_to_remove.helix;
   var forward = substrand_to_remove.forward;
   var start = substrand_to_remove.start;
   var end = substrand_to_remove.end;
-  BoundSubstrand substrand_left = BoundSubstrand(
+  Domain substrand_left = Domain(
       helix: helix,
       forward: forward,
       start: start,
       end: nick_offset,
       deletions: substrand_to_remove.deletions.where((d) => d < nick_offset),
       insertions: substrand_to_remove.insertions.where((i) => i.offset < nick_offset));
-  BoundSubstrand substrand_right = BoundSubstrand(
+  Domain substrand_right = Domain(
       helix: helix,
       forward: forward,
       start: nick_offset,
@@ -34,12 +34,12 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
       deletions: substrand_to_remove.deletions.where((d) => d >= nick_offset),
       insertions: substrand_to_remove.insertions.where((i) => i.offset >= nick_offset));
 
-  // join new BoundSubstrands to existing strands
+  // join new Domains to existing strands
   int index_removed = strand.substrands.indexOf(substrand_to_remove);
   List<Substrand> substrands_5p = strand.substrands.sublist(0, index_removed).toList();
   List<Substrand> substrands_3p = strand.substrands.sublist(index_removed + 1).toList();
-  BoundSubstrand substrand_5p = substrand_left;
-  BoundSubstrand substrand_3p = substrand_right;
+  Domain substrand_5p = substrand_left;
+  Domain substrand_3p = substrand_right;
   if (!forward) {
     substrand_5p = substrand_right;
     substrand_3p = substrand_left;
@@ -73,16 +73,16 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
   DNAEnd dna_end_clicked = action.dna_end;
-  BoundSubstrand substrand = state.dna_design.end_to_substrand[dna_end_clicked];
+  Domain substrand = state.dna_design.end_to_substrand[dna_end_clicked];
   Strand strand = state.dna_design.substrand_to_strand[substrand];
   int helix = substrand.helix;
   bool forward = substrand.forward;
   int offset = dna_end_clicked.offset;
 
   // Look at adjacent locations for a substrand not equal to current substrand,
-  // Need strange logic with offset because BoundSubstrand.end is exclusive.
-  BoundSubstrand other_substrand;
-  BuiltSet<BoundSubstrand> substrands_adjacent;
+  // Need strange logic with offset because Domain.end is exclusive.
+  Domain other_substrand;
+  BuiltSet<Domain> substrands_adjacent;
   DNAEnd strand_end;
   if (dna_end_clicked.is_start)
     substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset - 1);
@@ -104,7 +104,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 
   // normalize left/right distinction
   bool other_is_right = !strand_end.is_start;
-  BoundSubstrand ss_left, ss_right;
+  Domain ss_left, ss_right;
   if (other_is_right) {
     ss_left = substrand;
     ss_right = other_substrand;
@@ -117,7 +117,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
 
   // normalize 5'/3' distinction; below refers to which Strand has the 5'/3' end that will be ligated
   // So strand_5p is the one whose 3' end will be the 3' end of the whole new Strand
-  BoundSubstrand ss_5p, ss_3p;
+  Domain ss_5p, ss_3p;
   Strand strand_5p, strand_3p;
   if (!forward) {
     ss_5p = ss_left;
@@ -131,7 +131,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     strand_3p = strand_left;
   }
 
-  BoundSubstrand new_substrand = BoundSubstrand(
+  Domain new_substrand = Domain(
       helix: helix,
       forward: forward,
       start: ss_left.start,
@@ -214,8 +214,8 @@ BuiltList<Strand> _join(
 
   // change substrand data
   int last_idx_from = substrands_from.length - 1;
-  BoundSubstrand last_ss_from = substrands_from[last_idx_from];
-  BoundSubstrand first_ss_to = substrands_to[0];
+  Domain last_ss_from = substrands_from[last_idx_from];
+  Domain first_ss_to = substrands_to[0];
   last_ss_from = last_ss_from.rebuild((b) => b..is_last = false);
   first_ss_to = first_ss_to.rebuild((b) => b
     ..is_first = false

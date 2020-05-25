@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
@@ -51,14 +51,14 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 /// moved to. This depends on what is the closest end that is not selected, and how many selected ends
 /// are in between this end and that one.
 int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
-  BoundSubstrand substrand = dna_design.end_to_substrand[end];
+  Domain substrand = dna_design.end_to_substrand[end];
   int helix_idx = substrand.helix;
   Set<int> selected_offsets = selected_ends.map((e) => e.offset_inclusive).toSet();
 
   // offsets of (selected) ends to right (if highest==true) or left (if highest==false) of end.offset
   List<int> unselected_end_offsets_to_one_side = [];
   List<int> selected_end_offsets_to_one_side = [];
-  List<BoundSubstrand> other_substrands_same_dir_same_helix =
+  List<Domain> other_substrands_same_dir_same_helix =
       dna_design.substrands_on_helix(helix_idx).where((ss) => ss.forward == substrand.forward).toList();
   for (var ss in other_substrands_same_dir_same_helix) {
     for (int other_offset in [ss.start, ss.end - 1]) {

@@ -12,7 +12,7 @@ import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import '../state/app_state.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
@@ -43,7 +43,7 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
-  BoundSubstrand substrand;
+  Domain substrand;
   Color color;
   bool is_5p;
 
@@ -82,7 +82,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
     //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
     // which it is when Shift or Ctrl (or Meta) keys are pressed
     // see here: https://github.com/marcojakob/dart-dnd/issues/27
-    BoundSubstrand substrand = this.props.substrand;
+    Domain substrand = this.props.substrand;
     DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
     var helix = app.state.dna_design.helices[substrand.helix];
     var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;

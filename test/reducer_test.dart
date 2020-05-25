@@ -12,7 +12,7 @@ import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
 import 'package:scadnano/src/reducers/selection_reducer.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
@@ -205,7 +205,7 @@ main() {
   """;
     var state = app_state_from_dna_design(dna_design_simple_strand);
 
-    BoundSubstrand substrand = dna_design_simple_strand.strands[0].substrands[0] as BoundSubstrand;
+    Domain substrand = dna_design_simple_strand.strands[0].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(bound_substrand: substrand, offset: 8));
 
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
@@ -247,9 +247,9 @@ main() {
   """;
     AppState state = app_state_from_dna_design(dna_design_simple_strand);
 
-    BoundSubstrand nicked_substrand1 = dna_design_simple_strand.strands[0].substrands[0] as BoundSubstrand;
+    Domain nicked_substrand1 = dna_design_simple_strand.strands[0].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(bound_substrand: nicked_substrand1, offset: 8));
-    BoundSubstrand nicked_substrand2 = state.dna_design.strands[1].substrands[0] as BoundSubstrand;
+    Domain nicked_substrand2 = state.dna_design.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(bound_substrand: nicked_substrand2, offset: 16));
 
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
@@ -320,7 +320,7 @@ main() {
 
     AppState state = app_state_from_dna_design(small_design_h0);
 
-    BoundSubstrand nicked_substrand = small_design_h0.strands[0].substrands[0] as BoundSubstrand;
+    Domain nicked_substrand = small_design_h0.strands[0].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(bound_substrand: nicked_substrand, offset: 8));
 
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
@@ -363,7 +363,7 @@ main() {
     """;
     AppState state = app_state_from_dna_design(small_design_h0);
 
-    BoundSubstrand nicked_substrand = small_design_h0.strands[1].substrands[0] as BoundSubstrand;
+    Domain nicked_substrand = small_design_h0.strands[1].substrands[0] as Domain;
     state = app_state_reducer(state, Nick(bound_substrand: nicked_substrand, offset: 8));
 
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
@@ -488,7 +488,7 @@ main() {
     AppState state = app_state_from_dna_design(six_helix_rectangle);
 
     // design.add_nick(helix=5, offset=48, forward=False)
-    BoundSubstrand h5_reverse = six_helix_rectangle.strands[11].substrands[0];
+    Domain h5_reverse = six_helix_rectangle.strands[11].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h5_reverse, offset: 48));
 
     String h5_after_nick_json = r"""
@@ -524,7 +524,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h5_48_reverse), true);
 
     // design.add_nick(helix=0, offset=40, forward=False)
-    BoundSubstrand h0_reverse = six_helix_rectangle.strands[1].substrands[0];
+    Domain h0_reverse = six_helix_rectangle.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h0_reverse, offset: 40));
     String h0_after_nick_json = r"""
  {
@@ -550,7 +550,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h0_40_reverse), true);
 
     // design.add_nick(helix=0, offset=72, forward=False)
-    BoundSubstrand h0_reverse_for_nick3 = h0_96_reverse.substrands[0];
+    Domain h0_reverse_for_nick3 = h0_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h0_reverse_for_nick3, offset: 72));
     String h0_after_nick3_json = r"""
  {
@@ -575,7 +575,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h0_40_72_reverse), true);
     expect(recolor_strands(state.dna_design.strands).contains(h0_72_96_reverse), true);
     // design.add_nick(helix=2, offset=40, forward=False)
-    BoundSubstrand h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0];
+    Domain h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h2_reverse_for_nick4, offset: 40));
     String h2_after_nick4_json = r"""
  {
@@ -600,7 +600,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h2_00_40_reverse), true);
     expect(recolor_strands(state.dna_design.strands).contains(h2_40_96_reverse), true);
     // design.add_nick(helix=2, offset=72, forward=False)
-    BoundSubstrand h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0];
+    Domain h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h2_reverse_for_nick5, offset: 72));
     String h2_after_nick5_json = r"""
  {
@@ -625,7 +625,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h2_40_72_reverse), true);
     expect(recolor_strands(state.dna_design.strands).contains(h2_72_96_reverse), true);
     // design.add_nick(helix=4, offset=40, forward=False)
-    BoundSubstrand h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0];
+    Domain h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h4_reverse_for_nick6, offset: 40));
     String h4_after_nick6_json = r"""
  {
@@ -650,7 +650,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h4_00_40_reverse), true);
     expect(recolor_strands(state.dna_design.strands).contains(h4_40_96_reverse), true);
     // design.add_nick(helix=4, offset=72, forward=False)
-    BoundSubstrand h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0];
+    Domain h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h4_reverse_for_nick7, offset: 72));
     String h4_after_nick7_json = r"""
  {
@@ -675,7 +675,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h4_40_72_reverse), true);
     expect(recolor_strands(state.dna_design.strands).contains(h4_72_96_reverse), true);
     // design.add_nick(helix=1, offset=24, forward=True)
-    BoundSubstrand h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0];
+    Domain h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h1_forward_for_nick8, offset: 24));
     String h1_after_nick8_json = r"""
  {
@@ -700,7 +700,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h1_00_24_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h1_24_96_forward), true);
     // design.add_nick(helix=1, offset=56, forward=True)
-    BoundSubstrand h1_forward_for_nick9 = h1_24_96_forward.substrands[0];
+    Domain h1_forward_for_nick9 = h1_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h1_forward_for_nick9, offset: 56));
     String h1_after_nick9_json = r"""
  {
@@ -725,7 +725,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h1_24_56_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h1_56_96_forward), true);
     // design.add_nick(helix=3, offset=24, forward=True)
-    BoundSubstrand h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0];
+    Domain h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h3_forward_for_nick10, offset: 24));
     String h3_after_nick10_json = r"""
  {
@@ -750,7 +750,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h3_00_24_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h3_24_96_forward), true);
     // design.add_nick(helix=3, offset=56, forward=True)
-    BoundSubstrand h3_forward_for_nick11 = h3_24_96_forward.substrands[0];
+    Domain h3_forward_for_nick11 = h3_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h3_forward_for_nick11, offset: 56));
     String h3_after_nick11_json = r"""
  {
@@ -775,7 +775,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h3_24_56_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h3_56_96_forward), true);
     // design.add_nick(helix=5, offset=24, forward=True)
-    BoundSubstrand h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0];
+    Domain h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h5_forward_for_nick12, offset: 24));
     String h5_after_nick12_json = r"""
  {
@@ -800,7 +800,7 @@ main() {
     expect(recolor_strands(state.dna_design.strands).contains(h5_00_24_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h5_24_96_forward), true);
     // design.add_nick(helix=5, offset=56, forward=True)
-    BoundSubstrand h5_forward_for_nick13 = h5_24_96_forward.substrands[0];
+    Domain h5_forward_for_nick13 = h5_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: h5_forward_for_nick13, offset: 56));
     String h5_after_nick13_json = r"""
  {
@@ -1000,8 +1000,8 @@ main() {
   test("two nicks on strand with deletions", () {
     AppState state = app_state_from_dna_design(simple_helix_with_deletion_design);
 
-    BoundSubstrand strand_to_nick_1 = simple_helix_with_deletion_design.strands[0].substrands[0];
-    BoundSubstrand strand_to_nick_2 = simple_helix_with_deletion_design.strands[1].substrands[0];
+    Domain strand_to_nick_1 = simple_helix_with_deletion_design.strands[0].substrands[0];
+    Domain strand_to_nick_2 = simple_helix_with_deletion_design.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick_2, offset: 8));
     String content_after = r"""
@@ -1034,8 +1034,8 @@ main() {
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
 
-    BoundSubstrand strand_to_nick3 = expected_dna_design.strands[1].substrands[0];
-    BoundSubstrand strand_to_nick4 = expected_dna_design.strands[3].substrands[0];
+    Domain strand_to_nick3 = expected_dna_design.strands[1].substrands[0];
+    Domain strand_to_nick4 = expected_dna_design.strands[3].substrands[0];
 
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick4, offset: 24));
@@ -1111,8 +1111,8 @@ main() {
   test("two nicks on strand with insertions", () {
     AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-    BoundSubstrand strand_to_nick_1 = simple_helix_with_insertion_design.strands[0].substrands[0];
-    BoundSubstrand strand_to_nick_2 = simple_helix_with_insertion_design.strands[1].substrands[0];
+    Domain strand_to_nick_1 = simple_helix_with_insertion_design.strands[0].substrands[0];
+    Domain strand_to_nick_2 = simple_helix_with_insertion_design.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick_2, offset: 8));
     String content_after = r"""
@@ -1145,8 +1145,8 @@ main() {
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
 
-    BoundSubstrand strand_to_nick3 = expected_dna_design.strands[1].substrands[0];
-    BoundSubstrand strand_to_nick4 = expected_dna_design.strands[3].substrands[0];
+    Domain strand_to_nick3 = expected_dna_design.strands[1].substrands[0];
+    Domain strand_to_nick4 = expected_dna_design.strands[3].substrands[0];
 
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(bound_substrand: strand_to_nick4, offset: 24));
@@ -1257,8 +1257,8 @@ main() {
   test("add nick to a list of substrands", () {
     AppState state = app_state_from_dna_design(simple_strand_dna_design);
 
-    BoundSubstrand nick1_target = simple_strand_dna_design.strands[0].substrands[1];
-    BoundSubstrand nick2_target = simple_strand_dna_design.strands[1].substrands[1];
+    Domain nick1_target = simple_strand_dna_design.strands[0].substrands[1];
+    Domain nick2_target = simple_strand_dna_design.strands[1].substrands[1];
     state = app_state_reducer(state, Nick(bound_substrand: nick1_target, offset: 8));
     state = app_state_reducer(state, Nick(bound_substrand: nick2_target, offset: 8));
 
@@ -1953,7 +1953,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    Domain forward_substrand = forward_strand.substrands.first as Domain;
     DNAEnd dna_end = forward_substrand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2004,7 +2004,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    Domain forward_substrand = forward_strand.substrands.first as Domain;
     DNAEnd dna_end = forward_substrand.dnaend_3p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2055,7 +2055,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand reverse_substrand = reverse_strand.substrands.first as BoundSubstrand;
+    Domain reverse_substrand = reverse_strand.substrands.first as Domain;
     DNAEnd dna_end = reverse_substrand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2106,7 +2106,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    BoundSubstrand reverse_substrand = reverse_strand.substrands.first as BoundSubstrand;
+    Domain reverse_substrand = reverse_strand.substrands.first as Domain;
     DNAEnd dna_end = reverse_substrand.dnaend_3p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2504,7 +2504,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    // BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    // Domain forward_substrand = forward_strand.substrands.first as Domain;
     DNAEnd dna_end = forward_strand.dnaend_5p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 0, highest_offset: 9);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -2558,7 +2558,7 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
     // Commits DNA Ends move.
-    // BoundSubstrand forward_substrand = forward_strand.substrands.first as BoundSubstrand;
+    // Domain forward_substrand = forward_strand.substrands.first as Domain;
     DNAEnd dna_end = forward_strand.dnaend_3p;
     DNAEndMove dna_end_move = DNAEndMove(dna_end: dna_end, lowest_offset: 5, highest_offset: 15);
     DNAEndsMove dna_ends_move = DNAEndsMove(
@@ -3184,8 +3184,8 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      BoundSubstrand boundSubstrand = two_helices_design.strands[2].bound_substrands()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, boundSubstrand);
+      Domain domain = two_helices_design.strands[2].domains()[0];
+      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
 
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
     });
@@ -3210,8 +3210,8 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      BoundSubstrand boundSubstrand = two_helices_design.strands[2].bound_substrands()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, boundSubstrand);
+      Domain domain = two_helices_design.strands[2].domains()[0];
+      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
 
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
@@ -3219,7 +3219,7 @@ main() {
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      mouseoverData = MouseoverData(helix, 13, boundSubstrand);
+      mouseoverData = MouseoverData(helix, 13, domain);
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
     });
 
@@ -3248,8 +3248,8 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      BoundSubstrand boundSubstrand = two_helices_design.strands[2].bound_substrands()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, boundSubstrand);
+      Domain domain = two_helices_design.strands[2].domains()[0];
+      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
 
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
@@ -3257,8 +3257,8 @@ main() {
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      boundSubstrand = two_helices_design.strands[3].bound_substrands()[0];
-      mouseoverData = MouseoverData(helix, offset, boundSubstrand);
+      domain = two_helices_design.strands[3].domains()[0];
+      mouseoverData = MouseoverData(helix, offset, domain);
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
     });
 
@@ -3282,8 +3282,8 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      BoundSubstrand boundSubstrand = two_helices_design.strands[2].bound_substrands()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, boundSubstrand);
+      Domain domain = two_helices_design.strands[2].domains()[0];
+      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
 
       expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
@@ -4135,7 +4135,7 @@ main() {
         color: Color.rgb(0, 0, 0),
       ),
     );
-    BoundSubstrand boundSubstrand = BoundSubstrand(
+    Domain domain = Domain(
       helix: helix_idx,
       forward: true,
       start: start,
@@ -4146,7 +4146,7 @@ main() {
       is_first: true,
       is_last: true,
     );
-    Strand strand = Strand([boundSubstrand].toBuiltList());
+    Strand strand = Strand([domain].toBuiltList());
     DNADesign expected = one_empty_helix_design.rebuild((b) => b.strands.replace([strand]));
     expect_dna_design_equal(state.dna_design, expected);
 
@@ -4916,10 +4916,10 @@ main() {
       AppState state = app_state_from_dna_design(simple_helix_no_seq_design);
 
       int offset = 8;
-      BoundSubstrand substrand0 = simple_helix_no_seq_design.strands.first.bound_substrands().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: substrand0));
-      BoundSubstrand substrand1 = simple_helix_no_seq_design.strands.last.bound_substrands().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: substrand1));
+      Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
+      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: domain0));
+      Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
+      state = app_state_reducer(state, InsertionAdd(offset: offset, substrand: domain1));
       String expected_json = r"""
       {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
@@ -4949,14 +4949,14 @@ main() {
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-      BoundSubstrand boundSubstrand =
-          simple_helix_with_insertion_design.strands.first.bound_substrands().first;
-      Insertion insertion = boundSubstrand.insertions.first;
+      Domain domain =
+          simple_helix_with_insertion_design.strands.first.domains().first;
+      Insertion insertion = domain.insertions.first;
       int length = 5;
       state = app_state_reducer(
         state,
         InsertionLengthChange(
-          substrand: boundSubstrand,
+          substrand: domain,
           insertion: insertion,
           length: length,
         ),
@@ -4996,10 +4996,10 @@ main() {
       AppState state = app_state_from_dna_design(simple_helix_no_seq_design);
 
       int offset = 8;
-      BoundSubstrand substrand0 = simple_helix_no_seq_design.strands.first.bound_substrands().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: substrand0));
-      BoundSubstrand substrand1 = simple_helix_no_seq_design.strands.last.bound_substrands().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: substrand1));
+      Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
+      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: domain0));
+      Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
+      state = app_state_reducer(state, DeletionAdd(offset: offset, substrand: domain1));
       String expected_json = r"""
       {
         "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
@@ -5028,9 +5028,9 @@ main() {
       // 0  [-------------I: 3--------------->
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
-      BoundSubstrand boundSubstrand =
-          simple_helix_with_insertion_design.strands.first.bound_substrands().first;
-      Insertion insertion = boundSubstrand.insertions.first;
+      Domain domain =
+          simple_helix_with_insertion_design.strands.first.domains().first;
+      Insertion insertion = domain.insertions.first;
       //   simple_helix_with_insertion_design
       //
       //     0            16               32
@@ -5039,7 +5039,7 @@ main() {
       state = app_state_reducer(
         state,
         InsertionRemove(
-          substrand: boundSubstrand,
+          substrand: domain,
           insertion: insertion,
         ),
       );
@@ -5070,8 +5070,8 @@ main() {
       // 0  [-------------X--------------->
       //    <-------------X----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_deletion_design);
-      BoundSubstrand boundSubstrand =
-          simple_helix_with_deletion_design.strands.first.bound_substrands().first;
+      Domain domain =
+          simple_helix_with_deletion_design.strands.first.domains().first;
       //   simple_helix_with_insertion_design
       //     0            16               32
       // 0  [----------------------------->
@@ -5079,7 +5079,7 @@ main() {
       state = app_state_reducer(
         state,
         DeletionRemove(
-          substrand: boundSubstrand,
+          substrand: domain,
           offset: 16,
         ),
       );

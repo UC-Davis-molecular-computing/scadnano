@@ -11,7 +11,7 @@ import 'package:scadnano/src/view/pure_component.dart';
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
@@ -47,8 +47,8 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Crossover crossover;
   Strand strand;
 
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
+  Domain prev_substrand;
+  Domain next_substrand;
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
@@ -74,8 +74,8 @@ class DesignMainStrandCrossoverComponent
   render() {
     Strand strand = props.strand;
     Crossover crossover = props.crossover;
-    BoundSubstrand prev_substrand = props.prev_substrand;
-    BoundSubstrand next_substrand = props.next_substrand;
+    Domain prev_substrand = props.prev_substrand;
+    Domain next_substrand = props.next_substrand;
 
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
@@ -164,8 +164,8 @@ class DesignMainStrandCrossoverComponent
       ];
 
   handle_crossover_click() {
-    BoundSubstrand prev_substrand = props.prev_substrand;
-    BoundSubstrand next_substrand = props.next_substrand;
+    Domain prev_substrand = props.prev_substrand;
+    Domain next_substrand = props.next_substrand;
     List<actions.UndoableAction> rotation_actions = [];
     for (var ss in [prev_substrand, next_substrand]) {
       var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
@@ -178,8 +178,8 @@ class DesignMainStrandCrossoverComponent
   }
 
   update_mouseover_crossover() {
-    BoundSubstrand prev_substrand = props.prev_substrand;
-    BoundSubstrand next_substrand = props.next_substrand;
+    Domain prev_substrand = props.prev_substrand;
+    Domain next_substrand = props.next_substrand;
     List<MouseoverParams> param_list = [];
     for (var ss in [prev_substrand, next_substrand]) {
       int helix_idx = ss == prev_substrand ? prev_substrand.helix : next_substrand.helix;

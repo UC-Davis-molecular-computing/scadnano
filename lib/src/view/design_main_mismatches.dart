@@ -4,7 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import '../state/dna_design.dart';
 import '../app.dart';
 import '../state/strand.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import 'design_main_mismatch.dart';
 
 part 'design_main_mismatches.over_react.g.dart';
@@ -48,7 +48,7 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
     List<ReactElement> mismatch_components = [];
     Set<String> keys = {};
     for (Strand strand in strands) {
-      for (BoundSubstrand substrand in strand.bound_substrands()) {
+      for (Domain substrand in strand.domains()) {
         BuiltList<Mismatch> mismatches = app.state.dna_design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
           //FIXME: don't access global variable; make this a connected component and used a memoized selector

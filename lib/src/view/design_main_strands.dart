@@ -77,7 +77,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
     List<ReactElement> elts = [];
     for (var strand in props.strands) {
       Map<int, Helix> helices_used_in_strand_mutable = {};
-      for (var ss in strand.bound_substrands()) {
+      for (var ss in strand.domains()) {
         helices_used_in_strand_mutable[ss.helix] = props.helices[ss.helix];
       }
       var helices_used_in_strand = BuiltMap<int, Helix>(helices_used_in_strand_mutable);

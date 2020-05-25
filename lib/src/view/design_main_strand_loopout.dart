@@ -11,7 +11,7 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../state/loopout.dart';
 import '../app.dart';
 import '../util.dart' as util;
@@ -46,8 +46,8 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Strand strand;
   Color color;
 
-  BoundSubstrand prev_substrand;
-  BoundSubstrand next_substrand;
+  Domain prev_domain;
+  Domain next_domain;
   Helix prev_helix;
   Helix next_helix;
   bool selected;
@@ -72,11 +72,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   @override
   render() {
-    Loopout loopout = this.props.loopout;
     Color color = props.color;
-
-    var prev_ss = props.prev_substrand;
-    var next_ss = props.next_substrand;
 
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
@@ -187,31 +183,31 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   ReactElement _hairpin_arc(String classname, Color color, String tooltip) {
     Helix top_helix = props.prev_helix;
     Helix bot_helix = props.next_helix;
-    BoundSubstrand top_ss = props.prev_substrand;
-    BoundSubstrand bot_ss = props.next_substrand;
+    Domain top_dom = props.prev_domain;
+    Domain bot_dom = props.next_domain;
     if (top_helix.idx == bot_helix.idx) {
       top_helix = bot_helix = props.next_helix;
-      if (!props.prev_substrand.forward) {
-        top_ss = props.next_substrand;
-        bot_ss = props.prev_substrand;
+      if (!props.prev_domain.forward) {
+        top_dom = props.next_domain;
+        bot_dom = props.prev_domain;
       }
     } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
       top_helix = props.next_helix;
       bot_helix = props.prev_helix;
-      top_ss = props.next_substrand;
-      bot_ss = props.prev_substrand;
+      top_dom = props.next_domain;
+      bot_dom = props.prev_domain;
     }
-    bool top_ss_is_prev = top_ss == props.prev_substrand;
+    bool top_dom_is_prev = top_dom == props.prev_domain;
 
-    int top_offset = top_ss_is_prev ? top_ss.offset_3p : top_ss.offset_5p;
-    int bot_offset = top_ss_is_prev ? bot_ss.offset_5p : bot_ss.offset_3p;
-    int prev_offset = top_ss_is_prev ? top_offset : bot_offset;
-    int next_offset = top_ss_is_prev ? bot_offset : top_offset;
+    int top_offset = top_dom_is_prev ? top_dom.offset_3p : top_dom.offset_5p;
+    int bot_offset = top_dom_is_prev ? bot_dom.offset_5p : bot_dom.offset_3p;
+    int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
+    int next_offset = top_dom_is_prev ? bot_offset : top_offset;
 
 //    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
 //    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
-    var prev_svg = props.prev_helix.svg_base_pos(prev_offset, props.prev_substrand.forward);
-    var next_svg = props.next_helix.svg_base_pos(next_offset, props.next_substrand.forward);
+    var prev_svg = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward);
+    var next_svg = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward);
 
     var w, h;
 
@@ -228,14 +224,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     y_offset2 = next_svg.y;
     x_offset1 = prev_svg.x;
     x_offset2 = next_svg.x;
-    if (top_offset == top_ss.end - 1) {
+    if (top_offset == top_dom.end - 1) {
       x_offset1 += w;
       x_offset2 += w;
     } else {
       x_offset1 -= w;
       x_offset2 -= w;
     }
-    if (top_ss_is_prev) {
+    if (top_dom_is_prev) {
       y_offset1 -= h;
       y_offset2 += h;
     } else {

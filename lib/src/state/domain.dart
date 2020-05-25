@@ -13,7 +13,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 
-part 'bound_substrand.g.dart';
+part 'domain.g.dart';
 
 abstract class Insertion
     with BuiltJsonSerializable
@@ -41,19 +41,19 @@ abstract class Insertion
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
-/// BoundSubstrand that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
+/// Domain that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
-abstract class BoundSubstrand
+abstract class Domain
     with BuiltJsonSerializable
-    implements Built<BoundSubstrand, BoundSubstrandBuilder>, Substrand {
-  BoundSubstrand._();
+    implements Built<Domain, DomainBuilder>, Substrand {
+  Domain._();
 
-  static Serializer<BoundSubstrand> get serializer => _$boundSubstrandSerializer;
+  static Serializer<Domain> get serializer => _$domainSerializer;
 
-  factory BoundSubstrand.from([void Function(BoundSubstrandBuilder) updates]) = _$BoundSubstrand;
+  factory Domain.from([void Function(DomainBuilder) updates]) = _$Domain;
 
   // named argument constructor
-  factory BoundSubstrand(
+  factory Domain(
       {int helix,
       bool forward,
       int start,
@@ -70,7 +70,7 @@ abstract class BoundSubstrand
     if (insertions == null) {
       insertions = BuiltList<Insertion>();
     }
-    return BoundSubstrand.from((b) => b
+    return Domain.from((b) => b
       ..helix = helix
       ..forward = forward
       ..start = start
@@ -84,17 +84,17 @@ abstract class BoundSubstrand
       ..unused_fields = MapBuilder<String, Object>({}));
   }
 
-//  static void _initializeBuilder(BoundSubstrandBuilder b) => b
+//  static void _initializeBuilder(DomainBuilder b) => b
 //    ..deletions.replace([])
 //    ..insertions.replace([])
 //    ..is_first = false
 //    ..is_last = false;
 
-//  static void _finalizeBuilder(void Function(BoundSubstrandBuilder builder)) {
-//  static void _finalizeBuilder(BoundSubstrandBuilder builder) {
-////    BoundSubstrand bss = builder.build();
-////    BoundSubstrand bss_interned = intern(bss);
-//    BoundSubstrand bss_interned = build_interned(builder);
+//  static void _finalizeBuilder(void Function(DomainBuilder builder)) {
+//  static void _finalizeBuilder(DomainBuilder builder) {
+////    Domain bss = builder.build();
+////    Domain bss_interned = intern(bss);
+//    Domain bss_interned = build_interned(builder);
 //    builder.replace(bss_interned);
 //  }
 
@@ -150,13 +150,13 @@ abstract class BoundSubstrand
       substrand_is_last: is_last,
       substrand_id: id());
 
-  BoundSubstrand set_start(int start_new) => rebuild((ss) => ss..start = start_new);
+  Domain set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
-  BoundSubstrand set_end(int end_new) => rebuild((ss) => ss..end = end_new);
+  Domain set_end(int end_new) => rebuild((ss) => ss..end = end_new);
 
-  BoundSubstrand set_dna_sequence(String seq) => rebuild((ss) => ss..dna_sequence = seq);
+  Domain set_dna_sequence(String seq) => rebuild((ss) => ss..dna_sequence = seq);
 
-  bool is_bound_substrand() => true;
+  bool is_domain() => true;
 
   bool is_loopout() => false;
 
@@ -188,7 +188,7 @@ abstract class BoundSubstrand
     return suppress_indent ? NoIndent(json_map) : json_map;
   }
 
-  static BoundSubstrandBuilder from_json(Map<String, dynamic> json_map) {
+  static DomainBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Substrand';
     var forward =
         util.get_value(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
@@ -199,7 +199,7 @@ abstract class BoundSubstrand
     var insertions =
         parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
-    return BoundSubstrandBuilder()
+    return DomainBuilder()
       ..forward = forward
       ..helix = helix
       ..start = start
@@ -222,7 +222,7 @@ abstract class BoundSubstrand
 
   int dna_length() => (this.end - this.start) - this.deletions.length + this.num_insertions();
 
-  /// Number of bases in this [BoundSubstrand] between [left] and [right] offsets (INCLUSIVE).
+  /// Number of bases in this [Domain] between [left] and [right] offsets (INCLUSIVE).
   int dna_length_in(int left, int right) {
     if (!(left <= right + 1)) {
       throw ArgumentError('left = ${left} and right = ${right} but we should have left <= right + 1');
@@ -241,7 +241,7 @@ abstract class BoundSubstrand
   int get visual_length => (this.end - this.start);
 
 //  String toString() =>
-//      'BoundSubstrand(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
+//      'Domain(helix=${this.helix}, forward=${this.forward}, start=${this.start}, end=${this.end})';
 
   /// Indicates if `offset` is the offset of a base on this substrand. (The end index should be false.)
   /// Note that offsets refer to visual portions of the displayed grid for the Helix.
@@ -416,13 +416,13 @@ abstract class BoundSubstrand
     return num;
   }
 
-  bool overlaps(BoundSubstrand other) {
+  bool overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
         this.compute_overlap(other).item1 >= 0);
   }
 
-  Tuple2<int, int> compute_overlap(BoundSubstrand other) {
+  Tuple2<int, int> compute_overlap(Domain other) {
     int overlap_start = max(this.start, other.start);
     int overlap_end = min(this.end, other.end);
     if (overlap_start >= overlap_end) {
@@ -441,8 +441,8 @@ abstract class BoundSubstrand
     return false;
   }
 
-  /// Convert from offset on [BoundSubstrand]'s [Helix] to string index on this
-  /// [BoundSubstrand]'s substring of the parent [Strand]'s DNA sequence.
+  /// Convert from offset on [Domain]'s [Helix] to string index on this
+  /// [Domain]'s substring of the parent [Strand]'s DNA sequence.
   int substrand_offset_to_substrand_dna_idx(int offset, bool forward) {
     if (this.deletions.contains(offset)) {
       throw ArgumentError('offset ${offset} illegally contains a deletion from ${this.deletions}');
@@ -466,8 +466,8 @@ abstract class BoundSubstrand
     return ss_str_idx;
   }
 
-  /// Convert from string index on this [BoundSubstrand]'s substring of the parent [Strand]'s DNA sequence
-  /// to offset on [BoundSubstrand]'s [Helix].
+  /// Convert from string index on this [Domain]'s substring of the parent [Strand]'s DNA sequence
+  /// to offset on [Domain]'s [Helix].
   int substrand_dna_idx_to_substrand_offset(int ss_str_idx, bool forward) {
     int offset = this.offset_5p;
     int dna_idx_cur = 0;

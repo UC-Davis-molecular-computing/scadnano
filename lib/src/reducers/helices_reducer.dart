@@ -5,7 +5,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/reducers/util_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -193,7 +193,7 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
 
 DNADesign helix_remove_dna_design_global_reducer(
     DNADesign design, AppState state, actions.HelixRemove action) {
-  Set<BoundSubstrand> substrands_on_helix = design.substrands_on_helix(action.helix_idx).toSet();
+  Set<Domain> substrands_on_helix = design.substrands_on_helix(action.helix_idx).toSet();
   var strands_with_substrands_removed =
       delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helix);
   // var strands_with_helix_indices_updated =
@@ -207,7 +207,7 @@ DNADesign helix_remove_dna_design_global_reducer(
 DNADesign helix_remove_all_selected_dna_design_global_reducer(
     DNADesign design, AppState state, actions.HelixRemoveAllSelected action) {
   var helix_idxs = state.ui_state.side_selected_helix_idxs;
-  Set<BoundSubstrand> substrands_on_helices = design.substrands_on_helices(helix_idxs).toSet();
+  Set<Domain> substrands_on_helices = design.substrands_on_helices(helix_idxs).toSet();
 
   var strands_with_substrands_removed =
       delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helices);
@@ -218,17 +218,17 @@ DNADesign helix_remove_all_selected_dna_design_global_reducer(
       .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
 }
 
-/// Change (by amount `increment`) all helix_idx's of all BoundSubstrands with helix >= helix_idx.
+/// Change (by amount `increment`) all helix_idx's of all Domains with helix >= helix_idx.
 List<Strand> change_all_bound_substrand_helix_idxs(BuiltList<Strand> strands, int helix_idx, int increment) {
   List<Strand> new_strands = strands.toList();
   for (int i = 0; i < strands.length; i++) {
     Strand strand = strands[i];
     StrandBuilder strand_builder = strand.toBuilder();
     for (int j = 0; j < strand.substrands.length; j++) {
-      if (strand.substrands[j] is BoundSubstrand) {
-        BoundSubstrand bound_substrand = strand.substrands[j];
+      if (strand.substrands[j] is Domain) {
+        Domain bound_substrand = strand.substrands[j];
         if (bound_substrand.helix >= helix_idx) {
-          BoundSubstrandBuilder bound_substrand_builder = bound_substrand.toBuilder();
+          DomainBuilder bound_substrand_builder = bound_substrand.toBuilder();
           bound_substrand_builder.helix += increment;
           strand_builder.substrands[j] = bound_substrand_builder.build();
         }
@@ -239,7 +239,7 @@ List<Strand> change_all_bound_substrand_helix_idxs(BuiltList<Strand> strands, in
   return new_strands;
 }
 
-/// Remove helix from list, assuming no BoundSubstrands are on it.
+/// Remove helix from list, assuming no Domains are on it.
 BuiltMap<int, Helix> remove_helix_assuming_no_bound_substrands(
     BuiltMap<int, Helix> helices, actions.HelixRemove action) {
   Map<int, Helix> helices_builder = helices.toMap();

@@ -5,11 +5,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
+import '../state/edit_mode.dart';
+import '../state/strand.dart';
 import '../app.dart';
 import '../state/helix.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
@@ -17,21 +17,21 @@ import 'pure_component.dart';
 import '../state/context_menu.dart';
 import 'design_main_strand.dart';
 
-part 'design_main_strand_bound_substrand.over_react.g.dart';
+part 'design_main_strand_domain.over_react.g.dart';
 
-//UiFactory<DesignMainBoundSubstrandProps> ConnectedDesignMainBoundSubstrand =
-//    connect<AppState, DesignMainBoundSubstrandProps>(mapStateToPropsWithOwnProps: (state, props) {
-//  return DesignMainBoundSubstrand()
+//UiFactory<DesignMainDomainProps> ConnectedDesignMainDomain =
+//    connect<AppState, DesignMainDomainProps>(mapStateToPropsWithOwnProps: (state, props) {
+//  return DesignMainDomain()
 //    ..helix = state.dna_design.helices[props.substrand.helix]
 //    ..edit_modes = state.ui_state.edit_modes;
-//})(DesignMainBoundSubstrand);
+//})(DesignMainDomain);
 
 @Factory()
-UiFactory<DesignMainBoundSubstrandProps> DesignMainBoundSubstrand = _$DesignMainBoundSubstrand;
+UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 
 @Props()
-mixin DesignMainBoundSubstrandPropsMixin on UiProps {
-  BoundSubstrand substrand;
+mixin DesignMainDomainPropsMixin on UiProps {
+  Domain domain;
   Color color;
   String dna_sequence;
 
@@ -42,18 +42,18 @@ mixin DesignMainBoundSubstrandPropsMixin on UiProps {
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
-class DesignMainBoundSubstrandProps = UiProps with EditModePropsMixin, DesignMainBoundSubstrandPropsMixin;
+class DesignMainDomainProps = UiProps with EditModePropsMixin, DesignMainDomainPropsMixin;
 
 @Component2()
-class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubstrandProps>
-    with PureComponent, EditModeQueryable<DesignMainBoundSubstrandProps> {
+class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
+    with PureComponent, EditModeQueryable<DesignMainDomainProps> {
   @override
   render() {
-    BoundSubstrand substrand = props.substrand;
-    String id = substrand.id();
+    Domain domain = props.domain;
+    String id = domain.id();
 
-    Point<num> start_svg = props.helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-    Point<num> end_svg = props.helix.svg_base_pos(substrand.offset_3p, substrand.forward);
+    Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
+    Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
 
     return (Dom.line()
       ..onClick = _handle_click
@@ -64,12 +64,12 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
       ..y2 = '${end_svg.y}'
       ..key = id
       ..id = id
-      ..className = 'substrand-line')(Dom.svgTitle()(tooltip_text(substrand) + '\n' + props.strand_tooltip));
+      ..className = 'domain-line')(Dom.svgTitle()(tooltip_text(domain) + '\n' + props.strand_tooltip));
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
     if (nick_mode || insertion_mode || deletion_mode) {
-      var substrand = props.substrand;
+      var substrand = props.domain;
       MouseEvent event = event_syn.nativeEvent;
       var address = util.get_address_on_helix(event, props.helix);
       int offset = address.offset;
@@ -95,13 +95,13 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    var element = querySelector('#${props.substrand.id()}');
+    var element = querySelector('#${props.domain.id()}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.substrand.id()}');
+    var element = querySelector('#${props.domain.id()}');
     element.removeEventListener('contextmenu', on_context_menu);
   }
 
@@ -117,7 +117,7 @@ class DesignMainBoundSubstrandComponent extends UiComponent2<DesignMainBoundSubs
   }
 }
 
-tooltip_text(BoundSubstrand substrand) => '${substrand.forward ? 'forward' : 'reverse'} substrand:\n'
+tooltip_text(Domain substrand) => '${substrand.forward ? 'forward' : 'reverse'} substrand:\n'
     '    helix=${substrand.helix}\n'
     '    start=${substrand.start}\n'
     '    end=${substrand.end}';
