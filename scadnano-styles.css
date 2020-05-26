@@ -473,7 +473,7 @@ html, body {
 .selected .crossover-curve,
 .selected .loopout-line,
 .selected .insertion-line,
-.selected .substrand-line {
+.selected .domain-line {
     stroke: hotpink;
 }
 
