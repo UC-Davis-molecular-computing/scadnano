@@ -151,28 +151,38 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   BuiltMap<String, Object> get unused_fields;
 
-//  @memoized
-//  BuiltMap<Substrand, BuiltList<Modification>> get modifications_on_substrand {
-//    var mods = Map<Substrand, List<Modification>>();
-//    for (var ss in substrands) {
-//      mods[ss] = [];
-//    }
-//    if (modification_5p != null) {
-//      mods[substrands[0]] = [modification_5p];
-//    }
-//    if (modification_3p != null) {
-//      mods[substrands[substrands.length - 1]] = [modification_3p];
-//    }
-//    for (var mod_pos in modifications_int.keys) {
-//      var mod = modifications_int[mod_pos];
-//      var ss = _substrand_of_dna_idx(mod_pos);
-//      mods[ss].add(mod);
-//    }
-//
-//    Map<Substrand, BuiltList<Modification>> mods_built = {for (var ss in mods.keys) ss: mods[ss].build()};
-//
-//    return mods_built.build();
-//  }
+  /// Returns list of same length as substrands, indicating for each substrand,
+  /// the internal modifications on that substrand.
+  /// The modifications are represented as a map mapping an *absolute* DNA index
+  /// (i.e., index on the whole strand) to the modification.
+  @memoized
+  BuiltList<BuiltMap<int, ModificationInternal>> get internal_modifications_on_substrand_absolute_idx {
+    var mods = List<Map<int, ModificationInternal>>(substrands.length);
+    for (int i = 0; i < substrands.length; i++) {
+      mods[i] = Map<int, ModificationInternal>();
+    }
+
+    for (var mod_idx in modifications_int.keys) {
+      var mod = modifications_int[mod_idx];
+      var ss_and_idx = _substrand_of_dna_idx(mod_idx);
+      Substrand ss = ss_and_idx.item1;
+      int ss_idx = index_of_substrand(ss);
+      mods[ss_idx][mod_idx] = mod;
+    }
+
+    List<BuiltMap<int, ModificationInternal>> mods_built = [for (var mod in mods) mod.build()];
+
+    return mods_built.build();
+  }
+
+  int index_of_substrand(Substrand ss) {
+    for (int i = 0; i < substrands.length; i++) {
+      if (ss == substrands[i]) {
+        return i;
+      }
+    }
+    throw AssertionError('ss = ${ss} is not a substrand on this strand: ${this}');
+  }
 
   /// Returns map mapping substrands to internal modifications on that substrand.
   /// The modifications are represented as a map mapping a DNA index *within* the substrand to the
@@ -185,9 +195,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       mods[ss] = Map<int, ModificationInternal>();
     }
 
-    for (var mod_pos in modifications_int.keys) {
-      var mod = modifications_int[mod_pos];
-      var ss_and_idx = _substrand_of_dna_idx(mod_pos);
+    for (var mod_idx in modifications_int.keys) {
+      var mod = modifications_int[mod_idx];
+      var ss_and_idx = _substrand_of_dna_idx(mod_idx);
       Substrand ss = ss_and_idx.item1;
       int idx_within_ss = ss_and_idx.item2;
       mods[ss][idx_within_ss] = mod;

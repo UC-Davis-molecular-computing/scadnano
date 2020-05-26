@@ -3,6 +3,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import '../actions/actions.dart' as actions;
@@ -10,48 +11,48 @@ import '../constants.dart' as constants;
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove Domain where nick will be, and remember where it was attached
-  Domain substrand_to_remove = action.domain;
-  var strand = state.dna_design.substrand_to_strand[substrand_to_remove];
+  Domain domain_to_remove = action.domain;
+  var strand = state.dna_design.substrand_to_strand[domain_to_remove];
 
   // create new Domains
   int nick_offset = action.offset;
-  int helix = substrand_to_remove.helix;
-  var forward = substrand_to_remove.forward;
-  var start = substrand_to_remove.start;
-  var end = substrand_to_remove.end;
-  Domain substrand_left = Domain(
+  int helix = domain_to_remove.helix;
+  var forward = domain_to_remove.forward;
+  var start = domain_to_remove.start;
+  var end = domain_to_remove.end;
+  Domain domain_left = Domain(
       helix: helix,
       forward: forward,
       start: start,
       end: nick_offset,
-      deletions: substrand_to_remove.deletions.where((d) => d < nick_offset),
-      insertions: substrand_to_remove.insertions.where((i) => i.offset < nick_offset));
-  Domain substrand_right = Domain(
+      deletions: domain_to_remove.deletions.where((d) => d < nick_offset),
+      insertions: domain_to_remove.insertions.where((i) => i.offset < nick_offset));
+  Domain domain_right = Domain(
       helix: helix,
       forward: forward,
       start: nick_offset,
       end: end,
-      deletions: substrand_to_remove.deletions.where((d) => d >= nick_offset),
-      insertions: substrand_to_remove.insertions.where((i) => i.offset >= nick_offset));
+      deletions: domain_to_remove.deletions.where((d) => d >= nick_offset),
+      insertions: domain_to_remove.insertions.where((i) => i.offset >= nick_offset));
 
   // join new Domains to existing strands
-  int index_removed = strand.substrands.indexOf(substrand_to_remove);
+  int index_removed = strand.substrands.indexOf(domain_to_remove);
   List<Substrand> substrands_5p = strand.substrands.sublist(0, index_removed).toList();
   List<Substrand> substrands_3p = strand.substrands.sublist(index_removed + 1).toList();
-  Domain substrand_5p = substrand_left;
-  Domain substrand_3p = substrand_right;
+  Domain domain_5p = domain_left;
+  Domain domain_3p = domain_right;
   if (!forward) {
-    substrand_5p = substrand_right;
-    substrand_3p = substrand_left;
+    domain_5p = domain_right;
+    domain_3p = domain_left;
   }
-  substrand_5p = substrand_5p.rebuild((b) => b
+  domain_5p = domain_5p.rebuild((b) => b
     ..is_last = true
     ..is_first = substrands_5p.isEmpty);
-  substrand_3p = substrand_3p.rebuild((b) => b
+  domain_3p = domain_3p.rebuild((b) => b
     ..is_first = true
     ..is_last = substrands_3p.isEmpty);
-  substrands_5p.add(substrand_5p);
-  substrands_3p.insert(0, substrand_3p);
+  substrands_5p.add(domain_5p);
+  substrands_3p.insert(0, domain_3p);
 
   String dna_5p = null;
   String dna_3p = null;
@@ -61,12 +62,47 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     dna_3p = strand.dna_sequence.substring(dna_length_5p);
   }
 
+  int dna_length_strand_5p = [for (var ss in substrands_5p) ss.dna_length()].reduce((a, b) => a + b);
+
+  // move modifications onto strand_5p from strand
+  Map<int, ModificationInternal> modifications_int_strand_5p = {};
+  for (int i = 0; i < substrands_5p.length; i++) {
+    var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
+    mods_on_ss.forEach((idx, mod) {
+      if (i < substrands_5p.length - 1 || idx < dna_length_strand_5p) {
+        modifications_int_strand_5p[idx] = mod;
+      }
+    });
+  }
+
   Strand strand_5p = Strand(substrands_5p,
-      color: strand.color, dna_sequence: dna_5p, idt: strand.idt, is_scaffold: strand.is_scaffold);
+      color: strand.color,
+      dna_sequence: dna_5p,
+      idt: strand.idt,
+      is_scaffold: strand.is_scaffold,
+      modification_5p: strand.modification_5p,
+      modification_3p: null,
+      modifications_int: modifications_int_strand_5p);
+
+  // move modifications onto strand_3p from strand
+  Map<int, ModificationInternal> modifications_int_strand_3p = {};
+  for (int i = substrands_5p.length - 1; i < strand.substrands.length; i++) {
+    var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
+    mods_on_ss.forEach((idx, mod) {
+      if (i > substrands_5p.length || idx >= dna_length_strand_5p) {
+        int new_idx = idx - dna_length_strand_5p;
+        modifications_int_strand_3p[new_idx] = mod;
+      }
+    });
+  }
+
   Strand strand_3p = Strand(substrands_3p,
       color: strand.is_scaffold == true ? strand.color : null,
       dna_sequence: dna_3p,
-      is_scaffold: strand.is_scaffold);
+      is_scaffold: strand.is_scaffold,
+      modification_5p: null,
+      modification_3p: strand.modification_3p,
+      modifications_int: modifications_int_strand_3p);
 
   return swap_strands(strands, [strand], [strand_5p, strand_3p]);
 }
