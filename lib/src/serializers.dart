@@ -35,12 +35,10 @@ import 'state/selection_box.dart';
 import 'state/select_mode_state.dart';
 import 'state/strand.dart';
 import 'state/crossover.dart';
-import 'test.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor([
-  Value,
   SelectModeToggle,
   SelectModesSet,
   SelectionBox,

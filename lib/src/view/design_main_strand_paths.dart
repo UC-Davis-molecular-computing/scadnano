@@ -251,7 +251,7 @@ Point<num> control_point_for_crossover_bezier_curve(
 //    var path = svg.PathElement();
 //    path.attributes = {
 //      'id': substrand_line_id(substrand),
-//      'class': 'substrand-line',
+//      'class': 'domain-line',
 //      'stroke': strand.color.toHexColor().toCssString(),
 //      'fill': 'none',
 //      'd': path_cmds.join(' '),

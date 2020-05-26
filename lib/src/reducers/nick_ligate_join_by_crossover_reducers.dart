@@ -3,6 +3,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import '../actions/actions.dart' as actions;
@@ -10,48 +11,48 @@ import '../constants.dart' as constants;
 
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove Domain where nick will be, and remember where it was attached
-  Domain substrand_to_remove = action.domain;
-  var strand = state.dna_design.substrand_to_strand[substrand_to_remove];
+  Domain domain_to_remove = action.domain;
+  var strand = state.dna_design.substrand_to_strand[domain_to_remove];
 
   // create new Domains
   int nick_offset = action.offset;
-  int helix = substrand_to_remove.helix;
-  var forward = substrand_to_remove.forward;
-  var start = substrand_to_remove.start;
-  var end = substrand_to_remove.end;
-  Domain substrand_left = Domain(
+  int helix = domain_to_remove.helix;
+  var forward = domain_to_remove.forward;
+  var start = domain_to_remove.start;
+  var end = domain_to_remove.end;
+  Domain domain_left = Domain(
       helix: helix,
       forward: forward,
       start: start,
       end: nick_offset,
-      deletions: substrand_to_remove.deletions.where((d) => d < nick_offset),
-      insertions: substrand_to_remove.insertions.where((i) => i.offset < nick_offset));
-  Domain substrand_right = Domain(
+      deletions: domain_to_remove.deletions.where((d) => d < nick_offset),
+      insertions: domain_to_remove.insertions.where((i) => i.offset < nick_offset));
+  Domain domain_right = Domain(
       helix: helix,
       forward: forward,
       start: nick_offset,
       end: end,
-      deletions: substrand_to_remove.deletions.where((d) => d >= nick_offset),
-      insertions: substrand_to_remove.insertions.where((i) => i.offset >= nick_offset));
+      deletions: domain_to_remove.deletions.where((d) => d >= nick_offset),
+      insertions: domain_to_remove.insertions.where((i) => i.offset >= nick_offset));
 
   // join new Domains to existing strands
-  int index_removed = strand.substrands.indexOf(substrand_to_remove);
+  int index_removed = strand.substrands.indexOf(domain_to_remove);
   List<Substrand> substrands_5p = strand.substrands.sublist(0, index_removed).toList();
   List<Substrand> substrands_3p = strand.substrands.sublist(index_removed + 1).toList();
-  Domain substrand_5p = substrand_left;
-  Domain substrand_3p = substrand_right;
+  Domain domain_5p = domain_left;
+  Domain domain_3p = domain_right;
   if (!forward) {
-    substrand_5p = substrand_right;
-    substrand_3p = substrand_left;
+    domain_5p = domain_right;
+    domain_3p = domain_left;
   }
-  substrand_5p = substrand_5p.rebuild((b) => b
+  domain_5p = domain_5p.rebuild((b) => b
     ..is_last = true
     ..is_first = substrands_5p.isEmpty);
-  substrand_3p = substrand_3p.rebuild((b) => b
+  domain_3p = domain_3p.rebuild((b) => b
     ..is_first = true
     ..is_last = substrands_3p.isEmpty);
-  substrands_5p.add(substrand_5p);
-  substrands_3p.insert(0, substrand_3p);
+  substrands_5p.add(domain_5p);
+  substrands_3p.insert(0, domain_3p);
 
   String dna_5p = null;
   String dna_3p = null;
@@ -61,14 +62,49 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
     dna_3p = strand.dna_sequence.substring(dna_length_5p);
   }
 
+  int dna_length_strand_5p = [for (var ss in substrands_5p) ss.dna_length()].reduce((a, b) => a + b);
+
+  // move modifications onto strand_5p from strand
+  Map<int, ModificationInternal> modifications_int_strand_5p = {};
+  for (int i = 0; i < substrands_5p.length; i++) {
+    var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
+    mods_on_ss.forEach((idx, mod) {
+      if (i < substrands_5p.length - 1 || idx < dna_length_strand_5p) {
+        modifications_int_strand_5p[idx] = mod;
+      }
+    });
+  }
+
   Strand strand_5p = Strand(substrands_5p,
-      color: strand.color, dna_sequence: dna_5p, idt: strand.idt, is_scaffold: strand.is_scaffold);
+      color: strand.color,
+      dna_sequence: dna_5p,
+      idt: strand.idt,
+      is_scaffold: strand.is_scaffold,
+      modification_5p: strand.modification_5p,
+      modification_3p: null,
+      modifications_int: modifications_int_strand_5p);
+
+  // move modifications onto strand_3p from strand
+  Map<int, ModificationInternal> modifications_int_strand_3p = {};
+  for (int i = substrands_5p.length - 1; i < strand.substrands.length; i++) {
+    var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
+    mods_on_ss.forEach((idx, mod) {
+      if (i > substrands_5p.length || idx >= dna_length_strand_5p) {
+        int new_idx = idx - dna_length_strand_5p;
+        modifications_int_strand_3p[new_idx] = mod;
+      }
+    });
+  }
+
   Strand strand_3p = Strand(substrands_3p,
       color: strand.is_scaffold == true ? strand.color : null,
       dna_sequence: dna_3p,
-      is_scaffold: strand.is_scaffold);
+      is_scaffold: strand.is_scaffold,
+      modification_5p: null,
+      modification_3p: strand.modification_3p,
+      modifications_int: modifications_int_strand_3p);
 
-  return swap_strands(strands, [strand], [strand_5p, strand_3p]);
+  return swap_old_strands_for_new(strands, [strand], [strand_5p, strand_3p]);
 }
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
@@ -147,42 +183,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   var substrands_new = substrands_3p_new + [new_substrand] + substrands_5p_new;
   Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new);
 
-  return swap_strands(strands, [strand_left, strand_right], [new_strand]);
-}
-
-/// Joins two Strands using specified list of Substrands. Used to merge properties in a consistent way.
-/// Defaults to using strand1 for properties, but lets is_scaffold property override.
-/// Note that it *ignores* the substrands in strand1 and strand2.
-/// Set dna_in_order_1_2=false to reverse the order of DNA concatenation.
-Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Substrand> substrands_new,
-    {bool dna_in_order_1_2 = true}) {
-  var color = strand1.color;
-  var idt = strand1.idt;
-  if (strand2.is_scaffold == true) {
-    color = strand2.color;
-    idt = strand2.idt;
-  }
-
-  var dna = null;
-  var strand_first_dna = strand1;
-  var strand_second_dna = strand2;
-  if (!dna_in_order_1_2) {
-    strand_first_dna = strand2;
-    strand_second_dna = strand1;
-  }
-  if (strand_first_dna.dna_sequence == null && strand_second_dna.dna_sequence == null) {
-    dna = null;
-  } else if (strand_first_dna.dna_sequence != null && strand_second_dna.dna_sequence != null) {
-    dna = strand_first_dna.dna_sequence + strand_second_dna.dna_sequence;
-  } else if (strand_first_dna.dna_sequence == null) {
-    dna = constants.DNA_BASE_WILDCARD * strand_first_dna.dna_length() + strand_second_dna.dna_sequence;
-  } else if (strand_second_dna.dna_sequence == null) {
-    dna = strand_first_dna.dna_sequence + constants.DNA_BASE_WILDCARD * strand_second_dna.dna_length();
-  }
-
-  Strand new_strand = Strand(substrands_new,
-      color: color, dna_sequence: dna, idt: idt, is_scaffold: strand1.is_scaffold || strand2.is_scaffold);
-  return new_strand;
+  return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
 }
 
 BuiltList<Strand> join_strands_by_crossover_reducer(
@@ -191,12 +192,6 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   DNAEnd dna_end_first_click = action.dna_end_first_click;
   DNAEnd dna_end_second_click = action.dna_end_second_click;
 
-  // should be going from 3p end of one to 5p end of other
-  return _join(strands, dna_end_first_click, dna_end_second_click, state);
-}
-
-BuiltList<Strand> _join(
-    BuiltList<Strand> strands, DNAEnd dna_end_first_click, DNAEnd dna_end_second_click, AppState state) {
   bool first_clicked_is_from = !dna_end_first_click.is_5p;
   DNAEnd dna_end_from = first_clicked_is_from ? dna_end_first_click : dna_end_second_click;
   DNAEnd dna_end_to = first_clicked_is_from ? dna_end_second_click : dna_end_first_click;
@@ -214,43 +209,83 @@ BuiltList<Strand> _join(
 
   // change substrand data
   int last_idx_from = substrands_from.length - 1;
-  Domain last_ss_from = substrands_from[last_idx_from];
-  Domain first_ss_to = substrands_to[0];
-  last_ss_from = last_ss_from.rebuild((b) => b..is_last = false);
-  first_ss_to = first_ss_to.rebuild((b) => b
+  Domain last_domain_from = substrands_from[last_idx_from];
+  Domain first_domain_to = substrands_to[0];
+  last_domain_from = last_domain_from.rebuild((b) => b..is_last = false);
+  first_domain_to = first_domain_to.rebuild((b) => b
     ..is_first = false
     ..strand_id = strand_to.id());
 
   // put back into Substrand lists
-  substrands_from[last_idx_from] = last_ss_from;
-  substrands_to[0] = first_ss_to;
+  substrands_from[last_idx_from] = last_domain_from;
+  substrands_to[0] = first_domain_to;
 
   List<Substrand> substrands_new = substrands_from.build().toList() + substrands_to.build().toList();
 
   // create new Strand
-//  Color new_color = strand_first_clicked.color;
-//  if (strand_second_clicked.is_scaffold == true) {
-//    new_color = strand_second_clicked.color;
-//  }
-//  var dna_sequence = strand_from.dna_sequence != null && strand_to.dna_sequence != null
-//      ? strand_from.dna_sequence + strand_to.dna_sequence
-//      : null;
-//  Strand new_strand = Strand(substrands_from.build() + substrands_to.build(),
-//      color: new_color,
-//      dna_sequence: dna_sequence,
-//      idt: strand_first_clicked.idt,
-//      is_scaffold: strand_from.is_scaffold == true || strand_to.is_scaffold == true);
-
   Strand new_strand = join_two_strands_with_substrands(
       strand_first_clicked, strand_second_clicked, substrands_new,
       dna_in_order_1_2: first_clicked_is_from);
 
-  return swap_strands(strands, [strand_from, strand_to], [new_strand]);
+  return swap_old_strands_for_new(strands, [strand_from, strand_to], [new_strand]);
 }
 
-// put strand in list of strands and remove old
-BuiltList<Strand> swap_strands(
-    BuiltList<Strand> strands, Iterable<Strand> strands_to_remove, List<Strand> strands_to_add) {
+/// Joins two Strands using specified list of Substrands. Used to merge properties in a consistent way.
+/// Defaults to using strand1 for properties, but lets is_scaffold property override.
+/// Note that it *ignores* the substrands in strand1 and strand2.
+/// Set dna_in_order_1_2=false to reverse the order of DNA concatenation.
+Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Substrand> substrands_new,
+    {bool dna_in_order_1_2 = true}) {
+  var color = strand1.color;
+  var idt = strand1.idt;
+  if (strand2.is_scaffold == true) {
+    color = strand2.color;
+    idt = strand2.idt;
+  }
+
+  var dna = null;
+  var strand_5p = strand1;
+  var strand_3p = strand2;
+  if (!dna_in_order_1_2) {
+    strand_5p = strand2;
+    strand_3p = strand1;
+  }
+  if (strand_5p.dna_sequence == null && strand_3p.dna_sequence == null) {
+    dna = null;
+  } else if (strand_5p.dna_sequence != null && strand_3p.dna_sequence != null) {
+    dna = strand_5p.dna_sequence + strand_3p.dna_sequence;
+  } else if (strand_5p.dna_sequence == null) {
+    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length() + strand_3p.dna_sequence;
+  } else if (strand_3p.dna_sequence == null) {
+    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length();
+  }
+
+  // include 5'p' mod from 5' strand and 3' mod from 3' strand.
+  var mod_5p = strand_5p.modification_5p;
+  var mod_3p = strand_3p.modification_3p;
+
+  // put internal mods from both on new strand
+  var mods_int = strand_5p.modifications_int.toMap();
+  for (int idx in strand_3p.modifications_int.keys) {
+    var mod_3p = strand_3p.modifications_int[idx];
+    int new_idx = strand_5p.dna_length() + idx;
+    mods_int[new_idx] = mod_3p;
+  }
+
+  Strand new_strand = Strand(substrands_new,
+      color: color,
+      dna_sequence: dna,
+      idt: idt,
+      is_scaffold: strand1.is_scaffold || strand2.is_scaffold,
+      modification_5p: mod_5p,
+      modification_3p: mod_3p,
+      modifications_int: mods_int);
+  return new_strand;
+}
+
+// Take strands_to_remove out of strands and put strands_to_add in
+BuiltList<Strand> swap_old_strands_for_new(
+    BuiltList<Strand> strands, Iterable<Strand> strands_to_remove, Iterable<Strand> strands_to_add) {
   List<Strand> new_strands = strands.toList();
   for (var strand in strands_to_remove) {
     new_strands.remove(strand);

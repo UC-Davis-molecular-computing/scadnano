@@ -69,24 +69,24 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
 
   _handle_click(SyntheticMouseEvent event_syn) {
     if (nick_mode || insertion_mode || deletion_mode) {
-      var substrand = props.domain;
+      var domain = props.domain;
       MouseEvent event = event_syn.nativeEvent;
       var address = util.get_address_on_helix(event, props.helix);
       int offset = address.offset;
 
-      if (offset <= substrand.start || offset >= substrand.end) {
+      if (offset <= domain.start || offset >= domain.end) {
         return; // cannot have nick/insertion/deletion on end
       }
 
       if (nick_mode) {
-        if (offset <= substrand.start + 1 || offset >= substrand.end - 1) {
+        if (offset <= domain.start + 1 || offset >= domain.end - 1) {
           return; // need remaining substrands to be length at least 2
         }
-        app.dispatch(actions.Nick(domain: substrand, offset: offset));
+        app.dispatch(actions.Nick(domain: domain, offset: offset));
       } else if (insertion_mode) {
-        app.dispatch(actions.InsertionAdd(domain: substrand, offset: offset));
+        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
       } else if (deletion_mode) {
-        app.dispatch(actions.DeletionAdd(domain: substrand, offset: offset));
+        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
       }
     }
   }
@@ -117,7 +117,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   }
 }
 
-tooltip_text(Domain substrand) => '${substrand.forward ? 'forward' : 'reverse'} substrand:\n'
-    '    helix=${substrand.helix}\n'
-    '    start=${substrand.start}\n'
-    '    end=${substrand.end}';
+tooltip_text(Domain domain) => '${domain.forward ? 'forward' : 'reverse'} domain:\n'
+    '    helix=${domain.helix}\n'
+    '    start=${domain.start}\n'
+    '    end=${domain.end}';

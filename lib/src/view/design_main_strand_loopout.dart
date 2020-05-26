@@ -77,7 +77,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
-    var classname = 'substrand-line loopout-line';
+    var classname = 'domain-line loopout-line';
     if (props.selected) {
       classname += ' selected';
     }
