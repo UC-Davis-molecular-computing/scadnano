@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/reducers/strands_reducer.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 
 import 'package:scadnano/src/state/helix.dart';
@@ -33,8 +33,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       return null;
     }
 
-    BoundSubstrand first_ss = props.strand.first_bound_substrand();
-    BoundSubstrand last_ss = props.strand.last_bound_substrand();
+    Domain first_ss = props.strand.first_domain();
+    Domain last_ss = props.strand.last_bound_substrand();
     DNAEnd end_5p = first_ss.dnaend_5p;
     DNAEnd end_3p = last_ss.dnaend_3p;
     //XXX: need to switch 3' and 5' if delta_forward is true
@@ -72,8 +72,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         helices_view_order: props.helices_view_order,
         helices_view_order_inverse: props.helices_view_order_inverse);
 
-    List<BoundSubstrand> bound_substrands = strand_moved.bound_substrands();
-    BoundSubstrand substrand = bound_substrands.first;
+    List<Domain> bound_substrands = strand_moved.domains();
+    Domain substrand = bound_substrands.first;
 
     var helix = props.helices[substrand.helix];
     var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);

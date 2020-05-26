@@ -30,7 +30,7 @@ import 'state/helix.dart';
 import 'state/loopout.dart';
 import 'state/dna_design.dart';
 import 'constants.dart' as constants;
-import 'state/bound_substrand.dart';
+import 'state/domain.dart';
 import 'state/position3d.dart';
 import 'state/selectable.dart';
 import 'state/selection_box.dart';
@@ -700,7 +700,7 @@ Point<num> current_pan(bool is_main) {
 num current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoom_side_js();
 
 /// Indicates if loopout between two given strands is a hairpin.
-bool is_hairpin(BoundSubstrand prev_ss, BoundSubstrand next_ss) {
+bool is_hairpin(Domain prev_ss, Domain next_ss) {
   bool is_hairpin = prev_ss.helix == next_ss.helix &&
       prev_ss.forward != next_ss.forward &&
       (prev_ss.offset_3p - next_ss.offset_5p).abs() < 3;
@@ -772,10 +772,10 @@ pprint(Map map) {
   print('}');
 }
 
-String id_insertion(BoundSubstrand substrand, int offset) =>
+String id_insertion(Domain substrand, int offset) =>
     'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
-String id_deletion(BoundSubstrand substrand, int offset) =>
+String id_deletion(Domain substrand, int offset) =>
     'deletion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {

@@ -3,7 +3,7 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -28,8 +28,8 @@ class DesignMainPotentialVerticalCrossoverComponent
   render() {
     PotentialVerticalCrossover crossover = props.potential_vertical_crossover;
 
-    BoundSubstrand prev_substrand = crossover.substrand_top;
-    BoundSubstrand next_substrand = crossover.substrand_bot;
+    Domain prev_substrand = crossover.substrand_top;
+    Domain next_substrand = crossover.substrand_bot;
     if (crossover.dna_end_top.is_5p) {
       prev_substrand = crossover.substrand_bot;
       next_substrand = crossover.substrand_top;

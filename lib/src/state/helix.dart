@@ -381,8 +381,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   }
 
 //  /// Number of bases between start and end offsets, inclusive, on this [Helix].
-//  /// Accounts for substrands with insertions and deletions on [BoundSubstrand]s on this Helix, but not if they
-//  /// are inconsistent (on one [BoundSubstrand] but not the other).
+//  /// Accounts for substrands with insertions and deletions on [Domain]s on this Helix, but not if they
+//  /// are inconsistent (on one [Domain] but not the other).
 //  int num_bases_between(int start, int end) {
 //    if (start > end) {
 //      int swap = start;
@@ -390,7 +390,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 //      end = swap;
 //    }
 //
-//    List<BoundSubstrand> substrands_intersecting = [];
+//    List<Domain> substrands_intersecting = [];
 //    for (var ss in this._substrands) {
 //      if (start < ss.end && ss.start <= end) {
 //        substrands_intersecting.add(ss);

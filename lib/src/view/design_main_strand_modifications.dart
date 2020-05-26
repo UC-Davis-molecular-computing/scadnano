@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/view/design_main_strand_modification_bound_substrand.dart';
+import 'package:scadnano/src/view/design_main_strand_modification_domain.dart';
 
 import '../state/strand.dart';
 import '../state/helix.dart';
@@ -26,10 +26,10 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     List<ReactElement> modifications = [];
 
     if (props.strand.modification_5p != null) {
-      var ss = props.strand.first_bound_substrand();
+      var ss = props.strand.first_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(ss.helix)) {
         Helix helix_5p = props.helices[ss.helix];
-        modifications.add((DesignMainStrandModificationBoundSubstrand()
+        modifications.add((DesignMainStrandModificationDomain()
           ..address = Address(helix_idx: helix_5p.idx, offset: ss.offset_5p, forward: ss.forward)
           ..helix = helix_5p
           ..modification = props.strand.modification_5p
@@ -41,7 +41,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var ss = props.strand.last_bound_substrand();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(ss.helix)) {
         Helix helix_3p = props.helices[ss.helix];
-        modifications.add((DesignMainStrandModificationBoundSubstrand()
+        modifications.add((DesignMainStrandModificationDomain()
           ..address = Address(helix_idx: helix_3p.idx, offset: ss.offset_3p, forward: ss.forward)
           ..helix = helix_3p
           ..modification = props.strand.modification_3p
@@ -62,13 +62,13 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
         dna_index_5p_end_of_ss_with_mod += ss_dna_length;
       }
 
-      if (ss_with_mod is BoundSubstrand) {
+      if (ss_with_mod is Domain) {
         if (!props.only_display_selected_helices ||
             props.side_selected_helix_idxs.contains(ss_with_mod.helix)) {
           int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
           int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
           Helix helix = props.helices[ss_with_mod.helix];
-          modifications.add((DesignMainStrandModificationBoundSubstrand()
+          modifications.add((DesignMainStrandModificationDomain()
             ..address = Address(helix_idx: helix.idx, offset: offset, forward: ss_with_mod.forward)
             ..helix = helix
             ..modification = props.strand.modifications_int[dna_idx_mod]

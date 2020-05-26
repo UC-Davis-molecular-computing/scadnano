@@ -13,11 +13,11 @@ import 'package:scadnano/src/state/selectable.dart';
 // import '../app.dart';
 import '../state/dna_design.dart';
 import '../state/strand.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import 'design_main_strand_dna_end.dart';
-import 'design_main_strand_bound_substrand.dart';
+import 'design_main_strand_domain.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
 import 'pure_component.dart';
@@ -60,7 +60,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
     return (Dom.g()..className = 'strand-paths')(_strand_paths());
   }
 
-  bool should_draw_bound_ss(
+  bool should_draw_domain(
           int helix_idx, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
       !only_display_selected_helices || side_selected_helix_idxs.contains(helix_idx);
 
@@ -77,19 +77,19 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
     List<ReactElement> ends = []; // add after so clicking on ends takes priority
     var substrand = strand.substrands.first;
 
-    bool draw_prev_ss = false;
+    bool draw_prev_dom = false;
     for (int i = 0; i < strand.substrands.length; i++) {
       substrand = strand.substrands[i];
 
-      if (substrand is BoundSubstrand) {
+      if (substrand is Domain) {
         Helix helix = props.helices[substrand.helix];
-        bool draw_cur_ss = should_draw_bound_ss(
+        bool draw_domain = should_draw_domain(
             substrand.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
-        draw_prev_ss = draw_cur_ss;
-        if (draw_cur_ss) {
-//          paths.add((ConnectedDesignMainBoundSubstrand()
-          paths.add((DesignMainBoundSubstrand()
-            ..substrand = substrand
+        draw_prev_dom = draw_domain;
+        if (draw_domain) {
+//          paths.add((ConnectedDesignMainDomain()
+          paths.add((DesignMainDomain()
+            ..domain = substrand
             ..strand = props.strand
             ..context_menu_strand = props.context_menu_strand
             ..color = strand.color
@@ -123,13 +123,13 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           }
         }
       } else if (substrand is Loopout) {
-        BoundSubstrand next_ss = strand.substrands[i + 1];
-        BoundSubstrand prev_ss = strand.substrands[i - 1];
-        Helix prev_helix = props.helices[prev_ss.helix];
-        Helix next_helix = props.helices[next_ss.helix];
-        bool draw_next_ss = should_draw_bound_ss(
-            next_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
-        if (draw_prev_ss && draw_next_ss) {
+        Domain next_dom = strand.substrands[i + 1];
+        Domain prev_dom = strand.substrands[i - 1];
+        Helix prev_helix = props.helices[prev_dom.helix];
+        Helix next_helix = props.helices[next_dom.helix];
+        bool draw_next_dom = should_draw_domain(
+            next_dom.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
+        if (draw_prev_dom && draw_next_dom) {
 //          paths.add((ConnectedDesignMainLoopout()
           paths.add((DesignMainLoopout()
             ..loopout = substrand
@@ -141,8 +141,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 props.edit_modes.contains(EditModeChoice.select) &&
                 props.origami_type_is_selectable
             ..edit_modes = props.edit_modes
-            ..prev_substrand = prev_ss
-            ..next_substrand = next_ss
+            ..prev_domain = prev_dom
+            ..next_domain = next_dom
             ..prev_helix = prev_helix
             ..next_helix = next_helix
             ..key = "loopout-$i")());
@@ -152,11 +152,11 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
     int idx_crossover = 0;
     for (var crossover in strand.crossovers) {
-      BoundSubstrand prev_ss = strand.substrands[crossover.prev_substrand_idx];
-      BoundSubstrand next_ss = strand.substrands[crossover.next_substrand_idx];
-      bool draw_prev_ss = should_draw_bound_ss(
+      Domain prev_ss = strand.substrands[crossover.prev_domain_idx];
+      Domain next_ss = strand.substrands[crossover.next_domain_idx];
+      bool draw_prev_ss = should_draw_domain(
           prev_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
-      bool draw_next_ss = should_draw_bound_ss(
+      bool draw_next_ss = should_draw_domain(
           next_ss.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
       if (draw_prev_ss && draw_next_ss) {
         var crossover = strand.crossovers[idx_crossover++];
@@ -182,8 +182,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 }
 
 String crossover_path_description(
-  BoundSubstrand prev_substrand,
-  BoundSubstrand next_substrand,
+  Domain prev_substrand,
+  Domain next_substrand,
   BuiltMap<int, Helix> helices,
 ) {
   var prev_helix = helices[prev_substrand.helix];
@@ -198,7 +198,7 @@ String crossover_path_description(
 }
 
 Point<num> control_point_for_crossover_bezier_curve(
-    BoundSubstrand from_ss, BoundSubstrand to_ss, BuiltMap<int, Helix> helices,
+    Domain from_ss, Domain to_ss, BuiltMap<int, Helix> helices,
     {int delta = 0}) {
   var helix_distance = (from_ss.helix - to_ss.helix).abs();
   var from_helix = helices[from_ss.helix];

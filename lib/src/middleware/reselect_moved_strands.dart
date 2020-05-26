@@ -3,7 +3,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/helix.dart';
 
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
@@ -22,7 +22,7 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
 
     // first collect addresses while dna_design.end_to_substrand is still valid
     for (Strand strand in strands_move.strands_moving) {
-      BoundSubstrand old_substrand = strand.first_bound_substrand();
+      Domain old_substrand = strand.first_domain();
       DNAEnd old_5p_end = old_substrand.dnaend_5p;
       int old_helix_view_order = helices_view_order_inverse[old_substrand.helix];
       int new_helix_view_order = old_helix_view_order + strands_move.delta_view_order;

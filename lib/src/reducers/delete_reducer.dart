@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/linker.dart';
@@ -28,7 +28,7 @@ BuiltList<Strand> delete_all_reducer(
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
-    var substrands = Set<BoundSubstrand>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
+    var substrands = Set<Domain>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
     strands = remove_bound_substrands(strands, state, substrands);
   }
 
@@ -79,7 +79,7 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
 List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   // partition substrands of Strand that are separated by a linker
   // This logic is a bit complex because Loopouts are themselves Substrands, but Crossovers are not.
-  linkers.sort((l1, l2) => l1.prev_substrand_idx.compareTo(l2.prev_substrand_idx));
+  linkers.sort((l1, l2) => l1.prev_domain_idx.compareTo(l2.prev_domain_idx));
   int linker_idx = 0;
   List<List<Substrand>> substrands_list = [[]];
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
@@ -87,7 +87,7 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
     substrands_list[linker_idx].add(substrand);
     if (linker_idx < linkers.length) {
       Linker linker = linkers[linker_idx];
-      if (ss_idx == linker.prev_substrand_idx) {
+      if (ss_idx == linker.prev_domain_idx) {
         linker_idx++;
         substrands_list.add([]);
         if (linker is Loopout) {
@@ -118,15 +118,15 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
       ? [for (var _ in substrands_list) null]
       : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
-  // adjust is_first and is_last Booleans on BoundSubstrands
+  // adjust is_first and is_last Booleans on Domains
   for (var substrands in substrands_list) {
-    var first_bound_ss = substrands[0] as BoundSubstrand;
+    var first_bound_ss = substrands[0] as Domain;
     int last = substrands.length - 1;
     substrands[0] = first_bound_ss.rebuild((s) => s..is_first = true);
     //XXX: important to get variable from substrands[last] AFTER above assignment to substrands[0],
     // in case List is length 1 and the first object is the last object.
     // This ensures both fields are set to true.
-    var last_bound_ss = substrands[last] as BoundSubstrand;
+    var last_bound_ss = substrands[last] as Domain;
     substrands[last] = last_bound_ss.rebuild((s) => s..is_last = true);
 
     // replace Loopout (prev/next)_substrand_idx's, which are now stale
@@ -134,8 +134,8 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
       var substrand = substrands[i];
       if (substrand is Loopout) {
         substrands[i] = substrand.rebuild((loopout) => loopout
-          ..prev_substrand_idx = i - 1
-          ..next_substrand_idx = i + 1);
+          ..prev_domain_idx = i - 1
+          ..next_domain_idx = i + 1);
       }
     }
   }
@@ -156,12 +156,12 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
 }
 
 BuiltList<Strand> remove_bound_substrands(
-    BuiltList<Strand> strands, AppState state, Set<BoundSubstrand> substrands) {
+    BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
-  // collect all BoundSubstrands for one strand because we need special case to remove multiple from one strand
-  Map<Strand, Set<BoundSubstrand>> strand_to_substrands = {};
+  // collect all Domains for one strand because we need special case to remove multiple from one strand
+  Map<Strand, Set<Domain>> strand_to_substrands = {};
   for (var substrand in substrands) {
     var strand = state.dna_design.substrand_to_strand[substrand];
     if (strand_to_substrands[strand] == null) {
@@ -185,9 +185,9 @@ BuiltList<Strand> remove_bound_substrands(
   return new_strands.build();
 }
 
-// Splits one strand into many by removing BoundSubstrands
-List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<BoundSubstrand> substrands_to_remove) {
-  // partition substrands of Strand that are separated by a BoundSubstrand
+// Splits one strand into many by removing Domains
+List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<Domain> substrands_to_remove) {
+  // partition substrands of Strand that are separated by a Domain
   List<Substrand> substrands = [];
   List<List<Substrand>> substrands_list = [substrands];
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {

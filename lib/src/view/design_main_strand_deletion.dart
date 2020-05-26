@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import '../app.dart';
@@ -18,7 +18,7 @@ UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMain
 
 @Props()
 mixin DesignMainStrandDeletionPropsMixin on UiProps {
-  BoundSubstrand substrand;
+  Domain substrand;
   int deletion;
   Helix helix;
   BuiltSet<EditModeChoice> edit_modes;
@@ -31,7 +31,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     with PureComponent, EditModeQueryable<DesignMainStrandDeletionProps> {
   @override
   render() {
-    BoundSubstrand substrand = props.substrand;
+    Domain substrand = props.substrand;
     int deletion_offset = props.deletion;
 
     Point<num> pos = props.helix.svg_base_pos(deletion_offset, substrand.forward);
@@ -59,7 +59,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..height = background_height
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
 //            remove_deletion();
           }
         })
@@ -70,7 +70,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..d = path_cmds
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
 //            remove_deletion();
           }
         })

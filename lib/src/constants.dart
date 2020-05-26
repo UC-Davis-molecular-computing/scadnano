@@ -80,8 +80,9 @@ const editor_content_js_key = 'editor_content';
 
 const compile_button_id = 'compile';
 
-//const default_helix_rotation = -pi / 2.0;
-const default_helix_rotation = -90.0;
+// NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
+// and rotation is clockwise
+const default_helix_rotation = 0.0;
 const default_helix_rotation_anchor = 0;
 
 const default_side_pane_width = '8%';

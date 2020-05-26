@@ -15,7 +15,7 @@ import '../dna_sequence_constants.dart';
 import '../state/context_menu.dart';
 import '../app.dart';
 import '../state/strand.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import 'design_main_strand_deletion.dart';
 import 'design_main_strand_insertion.dart';
 import 'design_main_strand_modifications.dart';
@@ -161,7 +161,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
     List<ReactElement> paths = [];
-    for (BoundSubstrand substrand in strand.bound_substrands()) {
+    for (Domain substrand in strand.domains()) {
       Helix helix = props.helices[substrand.helix];
       if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var insertion in substrand.insertions) {
@@ -184,7 +184,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _deletions(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
     List<ReactElement> deletions = [];
-    for (BoundSubstrand substrand in strand.bound_substrands()) {
+    for (Domain substrand in strand.domains()) {
       Helix helix = props.helices[substrand.helix];
       if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var deletion in substrand.deletions) {
@@ -273,14 +273,14 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
     "    length=${strand.dna_length()}\n" +
-    "    5' end=${tooltip_end(strand.first_bound_substrand(), strand.dnaend_5p)}\n" +
+    "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_bound_substrand(), strand.dnaend_3p)}\n" +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
-String tooltip_end(BoundSubstrand ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
+String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
 bool should_draw_bound_ss(
-        BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DNAAssignOptions {

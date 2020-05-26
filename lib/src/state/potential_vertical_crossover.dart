@@ -2,7 +2,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
-import 'bound_substrand.dart';
+import 'domain.dart';
 import 'dna_end.dart';
 
 part 'potential_vertical_crossover.g.dart';
@@ -24,8 +24,8 @@ abstract class PotentialVerticalCrossover
     int offset,
     bool forward_top,
     String color,
-    BoundSubstrand substrand_top,
-    BoundSubstrand substrand_bot,
+    Domain substrand_top,
+    Domain substrand_bot,
     DNAEnd dna_end_top,
     DNAEnd dna_end_bot,
   }) = _$PotentialVerticalCrossover._;
@@ -44,9 +44,9 @@ abstract class PotentialVerticalCrossover
 
   String get color;
 
-  BoundSubstrand get substrand_top;
+  Domain get substrand_top;
 
-  BoundSubstrand get substrand_bot;
+  Domain get substrand_bot;
 
   DNAEnd get dna_end_top;
 

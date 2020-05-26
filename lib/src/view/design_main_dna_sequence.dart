@@ -11,7 +11,7 @@ import 'package:tuple/tuple.dart';
 // import '../state/app_state.dart';
 // import '../app.dart';
 import '../state/strand.dart';
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -35,7 +35,7 @@ mixin DesignMainDNASequenceProps on UiProps {
 }
 
 bool should_draw_bound_ss(
-        BoundSubstrand ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
@@ -46,9 +46,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     List<ReactElement> dna_sequence_elts = [];
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
-      if (substrand.is_bound_substrand()) {
+      if (substrand.is_domain()) {
         if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          var bound_ss = substrand as BoundSubstrand;
+          var bound_ss = substrand as Domain;
           dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
           for (var insertion in bound_ss.insertions) {
             int offset = insertion.offset;
@@ -60,8 +60,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         assert(0 < i);
         assert(i < this.props.strand.substrands.length - 1);
         var loopout = substrand as Loopout;
-        BoundSubstrand prev_ss = this.props.strand.substrands[i - 1];
-        BoundSubstrand next_ss = this.props.strand.substrands[i + 1];
+        Domain prev_ss = this.props.strand.substrands[i - 1];
+        Domain next_ss = this.props.strand.substrands[i + 1];
         if (should_draw_bound_ss(prev_ss, side_selected_helix_idxs, props.only_display_selected_helices) &&
             should_draw_bound_ss(next_ss, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
@@ -73,7 +73,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
   static const classname_dna_sequence = 'dna-seq';
 
-  ReactElement _dna_sequence_on_bound_substrand(BoundSubstrand substrand) {
+  ReactElement _dna_sequence_on_bound_substrand(Domain substrand) {
     var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
 
     var rotate_degrees = 0;
@@ -106,7 +106,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..dy = '$dy')(seq_to_draw);
   }
 
-  ReactElement _dna_sequence_on_insertion(BoundSubstrand substrand, int offset, int length) {
+  ReactElement _dna_sequence_on_insertion(Domain substrand, int offset, int length) {
     var subseq = substrand.dna_sequence_in(offset, offset);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
@@ -139,7 +139,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..dy = dy)(text_path_props(subseq));
   }
 
-  ReactElement _dna_sequence_on_loopout(Loopout loopout, BoundSubstrand prev_ss, BoundSubstrand next_ss) {
+  ReactElement _dna_sequence_on_loopout(Loopout loopout, Domain prev_ss, Domain next_ss) {
     var subseq = loopout.dna_sequence;
     var length = subseq.length;
 

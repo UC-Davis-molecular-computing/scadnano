@@ -4,7 +4,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import 'dna_design.dart';
 import 'helix.dart';
-import 'bound_substrand.dart';
+import 'domain.dart';
 import 'substrand.dart';
 
 part 'mouseover_data.g.dart';
@@ -42,22 +42,22 @@ abstract class MouseoverData
   int get offset;
 
   @nullable
-  BoundSubstrand get substrand;
+  Domain get substrand;
 
   @memoized
   int get hashCode;
 
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
   static List<MouseoverData> from_params(DNADesign dna_design, Iterable<MouseoverParams> params) {
-    BoundSubstrand substrand = null;
+    Domain substrand = null;
     var mouseover_datas_builder = List<MouseoverData>();
     for (var param in params) {
       int helix_idx = param.helix_idx;
       int offset = param.offset;
       bool forward = param.forward;
       for (Substrand ss in dna_design.substrands_on_helix(helix_idx)) {
-        if (ss.is_bound_substrand()) {
-          var bound_ss = ss as BoundSubstrand;
+        if (ss.is_domain()) {
+          var bound_ss = ss as Domain;
           if (bound_ss.contains_offset(offset) && bound_ss.forward == forward) {
             substrand = bound_ss;
             break;
@@ -71,7 +71,7 @@ abstract class MouseoverData
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory MouseoverData(Helix helix, int offset, BoundSubstrand substrand) => MouseoverData.from((b) => b
+  factory MouseoverData(Helix helix, int offset, Domain substrand) => MouseoverData.from((b) => b
     ..helix.replace(helix)
 //    ..substrand.replace(substrand)
     ..substrand = substrand?.toBuilder()

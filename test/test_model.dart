@@ -31,7 +31,7 @@ main() {
     design.helices = [h00, h01];
     design.potential_helices = [h10, h11, h20, h21];
 
-    BoundSubstrand ss00 = BoundSubstrand()
+    Domain ss00 = Domain()
       ..helix = 0
       ..forward = false
       ..start = 2
@@ -40,7 +40,7 @@ main() {
       ..insertions = [Tuple2<int, int>(4, 1), Tuple2<int, int>(6, 2)];
 //      ..dna_sequence = 'GGGGGGCT';
 
-    BoundSubstrand ss01 = BoundSubstrand()
+    Domain ss01 = Domain()
       ..helix = 1
       ..forward = true
       ..start = 1
@@ -54,7 +54,7 @@ main() {
       ..color = RgbColor.name('red')
       ..dna_sequence = 'GGGGGGCTTAAAC';
 
-    BoundSubstrand ss10 = BoundSubstrand()
+    Domain ss10 = Domain()
       ..helix = 1
       ..forward = true
       ..start = 11
@@ -63,7 +63,7 @@ main() {
       ..insertions = [];
 //      ..dna_sequence = 'TTTG';
 
-    BoundSubstrand ss11 = BoundSubstrand()
+    Domain ss11 = Domain()
       ..helix = 0
       ..forward = false
       ..start = 13
@@ -110,7 +110,7 @@ main() {
     expect(parsed_strand0.dna_length, equals(13));
     expect(parsed_strand0.dna_sequence, equals('GGGGGGCTTAAAC'));
 
-    BoundSubstrand parsed_substrand00 = parsed_strand0.substrands[0];
+    Domain parsed_substrand00 = parsed_strand0.substrands[0];
     expect(parsed_substrand00.helix, equals(0));
     expect(parsed_substrand00.forward, equals(false));
     expect(parsed_substrand00.start, equals(2));
@@ -123,7 +123,7 @@ main() {
     expect(parsed_substrand00.dna_sequence(), equals('GGGGGGCT'));
     expect(parsed_substrand00.dna_length, equals(8));
 
-    BoundSubstrand parsed_substrand01 = parsed_strand0.substrands[1];
+    Domain parsed_substrand01 = parsed_strand0.substrands[1];
     expect(parsed_substrand01.helix, equals(1));
     expect(parsed_substrand01.forward, equals(true));
     expect(parsed_substrand01.start, equals(1));
@@ -139,7 +139,7 @@ main() {
     expect(parsed_strand1.dna_length, equals(7));
     expect(parsed_strand1.dna_sequence, equals('TTTGCCA'));
 
-    BoundSubstrand parsed_substrand10 = parsed_strand1.substrands[0];
+    Domain parsed_substrand10 = parsed_strand1.substrands[0];
     expect(parsed_substrand10.helix, equals(1));
     expect(parsed_substrand10.forward, equals(true));
     expect(parsed_substrand10.start, equals(11));
@@ -149,7 +149,7 @@ main() {
     expect(parsed_substrand10.dna_sequence(), equals('TTTG'));
     expect(parsed_substrand10.dna_length, equals(4));
 
-    BoundSubstrand parsed_substrand11 = parsed_strand1.substrands[1];
+    Domain parsed_substrand11 = parsed_strand1.substrands[1];
     expect(parsed_substrand11.helix, equals(0));
     expect(parsed_substrand11.forward, equals(false));
     expect(parsed_substrand11.start, equals(13));
@@ -163,7 +163,7 @@ main() {
 
   /*
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_no_insertions", () {
-    var ss = BoundSubstrand()
+    var ss = Domain()
       ..helix = 0
       ..forward = true
       ..start = 0
@@ -176,7 +176,7 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_no_insertions", () {
-    var ss = BoundSubstrand()
+    var ss = Domain()
       ..helix = 0
       ..forward = true
       ..start = 0
@@ -191,7 +191,7 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__no_deletions_with_insertions", () {
-    var ss = BoundSubstrand()
+    var ss = Domain()
       ..helix = 0
       ..forward = true
       ..start = 0
@@ -207,7 +207,7 @@ main() {
   });
 
   test("dna_sequence_deletions_insertions_to_spaces__with_deletions_with_insertions", () {
-    var ss = BoundSubstrand()
+    var ss = Domain()
       ..helix = 0
       ..forward = true
       ..start = 0
@@ -226,7 +226,7 @@ main() {
 
   test("dna_sequence_deletions_insertions_to_spaces__going_left__with_deletions_with_insertions", () {
 //    print("starting test");
-    var ss = BoundSubstrand()
+    var ss = Domain()
       ..helix = 0
       ..forward = false
       ..start = 0

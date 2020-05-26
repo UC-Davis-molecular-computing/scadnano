@@ -421,7 +421,7 @@ html, body {
     visibility: visible;
 }
 
-.substrand-line {
+.domain-line {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;

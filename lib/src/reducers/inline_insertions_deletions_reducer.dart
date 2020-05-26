@@ -1,4 +1,4 @@
-import '../state/bound_substrand.dart';
+import '../state/domain.dart';
 import '../state/helix.dart';
 import '../state/strand.dart';
 import '../state/dna_design.dart';
@@ -108,7 +108,7 @@ _inline_deletions_insertions_on_helix(
       int new_start = substrand.start + delta_acc;
       delta_acc += substrand.dna_length() - substrand.visual_length;
       int new_end = substrand.end + delta_acc;
-      BoundSubstrand new_substrand = substrand.rebuild((b) => b
+      Domain new_substrand = substrand.rebuild((b) => b
         ..start = new_start
         ..end = new_end
         ..insertions.replace([])
@@ -118,7 +118,7 @@ _inline_deletions_insertions_on_helix(
       Strand strand = design.substrand_to_strand[substrand];
       int strand_idx = design.strand_to_index[strand];
       for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
-        if (strand.substrands[ss_idx] is BoundSubstrand && strand.substrands[ss_idx] == substrand) {
+        if (strand.substrands[ss_idx] is Domain && strand.substrands[ss_idx] == substrand) {
           strands_new[strand_idx].substrands[ss_idx] = new_substrand;
           break;
         }

@@ -29,7 +29,7 @@ import 'state/loopout.dart';
 import 'state/mouseover_data.dart';
 import 'state/position3d.dart';
 import 'state/select_mode.dart';
-import 'state/bound_substrand.dart';
+import 'state/domain.dart';
 import 'state/grid_position.dart';
 import 'state/selection_box.dart';
 import 'state/select_mode_state.dart';
@@ -58,7 +58,7 @@ part 'serializers.g.dart';
   SelectionBoxRemove,
   MouseoverParams,
   Helix,
-  BoundSubstrand,
+  Domain,
   Strand,
   Crossover,
   DNAEnd,

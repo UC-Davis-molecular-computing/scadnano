@@ -5,9 +5,9 @@ import '../actions/actions.dart' as actions;
 
 Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {
   Loopout loopout_new =
-      Loopout(action.length, action.crossover.prev_substrand_idx, action.crossover.next_substrand_idx + 1);
+      Loopout(action.length, action.crossover.prev_domain_idx, action.crossover.next_domain_idx + 1);
   var substrands_builder = strand.substrands.toBuilder();
-  substrands_builder.insert(action.crossover.next_substrand_idx, loopout_new);
+  substrands_builder.insert(action.crossover.next_domain_idx, loopout_new);
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
   return strand;
 }

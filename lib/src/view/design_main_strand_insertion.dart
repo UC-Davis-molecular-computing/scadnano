@@ -9,7 +9,7 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
 import '../app.dart';
-import 'package:scadnano/src/state/bound_substrand.dart';
+import 'package:scadnano/src/state/domain.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
@@ -19,8 +19,8 @@ import 'pure_component.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
-typedef Tuple2<Insertion, BoundSubstrand> PairedInsertionFinder(
-    Insertion insertion, BoundSubstrand substrand);
+typedef Tuple2<Insertion, Domain> PairedInsertionFinder(
+    Insertion insertion, Domain substrand);
 
 @Factory()
 UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMainStrandInsertion;
@@ -28,7 +28,7 @@ UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMa
 @Props()
 mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Insertion insertion;
-  BoundSubstrand substrand;
+  Domain substrand;
   Color color;
   Helix helix;
   String id;
@@ -50,7 +50,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _insertion_path() {
-    BoundSubstrand substrand = props.substrand;
+    Domain substrand = props.substrand;
     int offset = props.insertion.offset;
     Color color = props.color;
 
@@ -93,7 +93,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
   ReactElement _text_number_of_insertions(Point<num> pos) {
     int offset = props.insertion.offset;
-    BoundSubstrand substrand = props.substrand;
+    Domain substrand = props.substrand;
     Insertion insertion = props.insertion;
 
     // write number of insertions inside insertion loop
@@ -158,7 +158,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..height = background_height
       ..onClick = ((_) {
         if (insertion_mode) {
-          app.dispatch(actions.InsertionRemove(substrand: props.substrand, insertion: props.insertion));
+          app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion));
         }
       })
       ..key = key_background)();
@@ -171,6 +171,6 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       return;
     }
     app.dispatch(actions.InsertionLengthChange(
-        substrand: props.substrand, insertion: props.insertion, length: new_length));
+        domain: props.substrand, insertion: props.insertion, length: new_length));
   }
 }
