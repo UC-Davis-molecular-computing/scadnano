@@ -1,6 +1,9 @@
 // import 'dart:convert';
 // import 'dart:io';
 
+import 'package:scadnano/src/serializers.dart';
+import 'package:test/test.dart';
+
 import 'dart:convert';
 import 'dart:html';
 
@@ -32,7 +35,6 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:scadnano/src/util.dart';
-import 'package:test/test.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/util.dart' as util;
@@ -1754,11 +1756,11 @@ main() {
     ;
 
     AppState original_state = app_state_from_dna_design(simple_strand_dna_design)
-        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 2]));
+        .rebuild((b) => b..ui_state.side_selected_helix_idxs.replace([0, 2]));
 
-    AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
+    AppState actual_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
-    expect_app_state_equal(final_state, expected_state);
+    expect_app_state_equal(actual_state, expected_state);
   });
 
   test('remove helices from DNA design should adjust svg position of helices with higher view position', () {
@@ -4949,8 +4951,7 @@ main() {
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
 
-      Domain domain =
-          simple_helix_with_insertion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_insertion_design.strands.first.domains().first;
       Insertion insertion = domain.insertions.first;
       int length = 5;
       state = app_state_reducer(
@@ -5028,8 +5029,7 @@ main() {
       // 0  [-------------I: 3--------------->
       //    <-------------I: 3----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_insertion_design);
-      Domain domain =
-          simple_helix_with_insertion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_insertion_design.strands.first.domains().first;
       Insertion insertion = domain.insertions.first;
       //   simple_helix_with_insertion_design
       //
@@ -5070,8 +5070,7 @@ main() {
       // 0  [-------------X--------------->
       //    <-------------X----------------]
       AppState state = app_state_from_dna_design(simple_helix_with_deletion_design);
-      Domain domain =
-          simple_helix_with_deletion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_deletion_design.strands.first.domains().first;
       //   simple_helix_with_insertion_design
       //     0            16               32
       // 0  [----------------------------->
