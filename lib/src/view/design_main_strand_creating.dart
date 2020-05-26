@@ -39,7 +39,7 @@ class DesignMainStrandCreatingComponent extends UiComponent2<DesignMainStrandCre
         ..x2 = '${end_svg.x}'
         ..y2 = '${end_svg.y}'
         ..key = 'line'
-        ..className = 'substrand-line')(),
+        ..className = 'domain-line')(),
       (End5Prime()
         ..classname = classname_5p
         ..pos = props.forward ? start_svg : end_svg

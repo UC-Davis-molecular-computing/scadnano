@@ -26,7 +26,13 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   //FIXME: this is not pure since it consults util.color_cycler
   factory Strand(Iterable<Substrand> substrands,
-      {Color color = null, String dna_sequence = null, IDTFields idt = null, bool is_scaffold = false}) {
+      {Color color = null,
+      String dna_sequence = null,
+      IDTFields idt = null,
+      bool is_scaffold = false,
+      Modification5Prime modification_5p = null,
+      Modification3Prime modification_3p = null,
+      Map<int, ModificationInternal> modifications_int = const {}}) {
     if (color == null) {
       color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
     }
@@ -36,7 +42,9 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
       ..substrands.replace(substrands)
       ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
-      ..modifications_int.replace({})
+      ..modification_5p = modification_5p?.toBuilder()
+      ..modification_3p = modification_3p?.toBuilder()
+      ..modifications_int.replace(modifications_int)
       ..is_scaffold = is_scaffold
       ..unused_fields = MapBuilder<String, Object>({}));
 
@@ -143,6 +151,74 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   BuiltMap<String, Object> get unused_fields;
 
+//  @memoized
+//  BuiltMap<Substrand, BuiltList<Modification>> get modifications_on_substrand {
+//    var mods = Map<Substrand, List<Modification>>();
+//    for (var ss in substrands) {
+//      mods[ss] = [];
+//    }
+//    if (modification_5p != null) {
+//      mods[substrands[0]] = [modification_5p];
+//    }
+//    if (modification_3p != null) {
+//      mods[substrands[substrands.length - 1]] = [modification_3p];
+//    }
+//    for (var mod_pos in modifications_int.keys) {
+//      var mod = modifications_int[mod_pos];
+//      var ss = _substrand_of_dna_idx(mod_pos);
+//      mods[ss].add(mod);
+//    }
+//
+//    Map<Substrand, BuiltList<Modification>> mods_built = {for (var ss in mods.keys) ss: mods[ss].build()};
+//
+//    return mods_built.build();
+//  }
+
+  /// Returns map mapping substrands to internal modifications on that substrand.
+  /// The modifications are represented as a map mapping a DNA index *within* the substrand to the
+  /// modification (instead of the DNA index within the whole Strand, which is how they are represented
+  /// in this.modifications_int).
+  @memoized
+  BuiltMap<Substrand, BuiltMap<int, ModificationInternal>> get internal_modifications_on_substrand {
+    var mods = Map<Substrand, Map<int, ModificationInternal>>();
+    for (var ss in substrands) {
+      mods[ss] = Map<int, ModificationInternal>();
+    }
+
+    for (var mod_pos in modifications_int.keys) {
+      var mod = modifications_int[mod_pos];
+      var ss_and_idx = _substrand_of_dna_idx(mod_pos);
+      Substrand ss = ss_and_idx.item1;
+      int idx_within_ss = ss_and_idx.item2;
+      mods[ss][idx_within_ss] = mod;
+    }
+
+    Map<Substrand, BuiltMap<int, ModificationInternal>> mods_built = {
+      for (var ss in mods.keys) ss: mods[ss].build()
+    };
+
+    return mods_built.build();
+  }
+
+  Tuple2<Substrand, int> _substrand_of_dna_idx(int dna_idx) {
+    if (dna_idx < 0) {
+      throw ArgumentError('dna_idx cannot be negative but is ${dna_idx}');
+    }
+    if (dna_idx >= dna_length()) {
+      throw ArgumentError('dna_idx cannot be greater than dna_length() but dna_idx = ${dna_idx} '
+          'and dna_length() = ${dna_length()}');
+    }
+    int dna_idx_cur_ss_start = 0;
+    for (var ss in substrands) {
+      int dna_idx_cur_ss_end = dna_idx_cur_ss_start + ss.dna_length();
+      if (dna_idx_cur_ss_start <= dna_idx && dna_idx < dna_idx_cur_ss_end) {
+        return Tuple2<Substrand, int>(ss, dna_idx - dna_idx_cur_ss_start);
+      }
+      dna_idx_cur_ss_start = dna_idx_cur_ss_end;
+    }
+    throw AssertionError("should be unreachable");
+  }
+
   @memoized
   BuiltMap<int, BuiltList<Domain>> get domains_on_helix {
     var domains_map = Map<int, List<Domain>>();
@@ -175,8 +251,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   SelectModeChoice select_mode() => SelectModeChoice.strand;
 
   String id() {
-    var first_ss = this.first_domain();
-    return id_from_data(first_ss.helix, first_ss.offset_5p, first_ss.forward);
+    var first_dom = this.first_domain();
+    return id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
   }
 
   static String id_from_data(int helix, int offset, bool forward) =>
@@ -187,8 +263,7 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
     return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
   }
 
-  List<Domain> domains() =>
-      [for (var ss in this.substrands) if (ss.is_domain()) ss as Domain];
+  List<Domain> domains() => [for (var ss in this.substrands) if (ss.is_domain()) ss as Domain];
 
   List<Loopout> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
 

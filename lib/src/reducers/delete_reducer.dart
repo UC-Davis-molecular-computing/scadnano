@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/linker.dart';
 import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/substrand.dart';
@@ -118,26 +119,46 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
       ? [for (var _ in substrands_list) null]
       : [for (var substrands in substrands_list) _dna_seq(substrands, strand)];
 
+  Modification5Prime mod_5p = null;
+  Modification3Prime mod_3p = null;
+  if (substrands_list.first.first == strand.substrands.first) {
+    mod_5p = strand.modification_5p;
+  }
+  if (substrands_list.last.last == strand.substrands.last) {
+    mod_3p = strand.modification_3p;
+  }
+
+  var ss_to_mods = strand.internal_modifications_on_substrand;
+  List<Map<int, ModificationInternal>> internal_mods_to_keep = [];
+
   // adjust is_first and is_last Booleans on Domains
   for (var substrands in substrands_list) {
-    var first_bound_ss = substrands[0] as Domain;
-    int last = substrands.length - 1;
-    substrands[0] = first_bound_ss.rebuild((s) => s..is_first = true);
-    //XXX: important to get variable from substrands[last] AFTER above assignment to substrands[0],
-    // in case List is length 1 and the first object is the last object.
-    // This ensures both fields are set to true.
-    var last_bound_ss = substrands[last] as Domain;
-    substrands[last] = last_bound_ss.rebuild((s) => s..is_last = true);
+    Map<int, ModificationInternal> internal_mods_on_these_substrands = {};
 
+    int dna_length_cur_substrands = 0;
     // replace Loopout (prev/next)_substrand_idx's, which are now stale
     for (int i = 0; i < substrands.length; i++) {
       var substrand = substrands[i];
+      BuiltMap<int, ModificationInternal> mods_this_ss = ss_to_mods[substrand];
+      for (int idx_within_ss in mods_this_ss.keys) {
+        ModificationInternal mod = mods_this_ss[idx_within_ss];
+        internal_mods_on_these_substrands[dna_length_cur_substrands + idx_within_ss] = mod;
+      }
       if (substrand is Loopout) {
         substrands[i] = substrand.rebuild((loopout) => loopout
           ..prev_domain_idx = i - 1
           ..next_domain_idx = i + 1);
       }
+      if (i == 0 && (substrand is Domain)) {
+        substrands[i] = substrand.rebuild((s) => s..is_first = true);
+      }
+      if (i == substrands.length - 1 && (substrand is Domain)) {
+        substrands[i] = substrand.rebuild((s) => s..is_last = true);
+      }
+      dna_length_cur_substrands += substrand.dna_length();
     }
+
+    internal_mods_to_keep.add(internal_mods_on_these_substrands);
   }
 
   List<Strand> new_strands = [];
@@ -147,16 +168,25 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     // assign old properties to first new strand and find new/default properties for remaining
     var idt = i == 0 ? strand.idt : null;
     var is_scaffold = strand.is_scaffold; //i == 0 ? strand.is_scaffold : false;
-    var new_strand =
-        Strand(substrands, dna_sequence: dna_sequence, idt: idt, is_scaffold: is_scaffold);
+
+    Map<int, ModificationInternal> mods_int = internal_mods_to_keep[i];
+    var mod_5p_cur = i == 0 ? mod_5p : null;
+    var mod_3p_cur = i == substrands_list.length - 1 ? mod_3p : null;
+
+    var new_strand = Strand(substrands,
+        dna_sequence: dna_sequence,
+        idt: idt,
+        is_scaffold: is_scaffold,
+        modification_5p: mod_5p_cur,
+        modification_3p: mod_3p_cur,
+        modifications_int: mods_int);
     new_strand = new_strand.initialize();
     new_strands.add(new_strand);
   }
   return new_strands;
 }
 
-BuiltList<Strand> remove_bound_substrands(
-    BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
+BuiltList<Strand> remove_bound_substrands(BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 

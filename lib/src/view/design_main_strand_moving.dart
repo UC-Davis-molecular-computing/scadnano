@@ -98,7 +98,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     int key = 0;
     var path = (Dom.path()
 //      ..id= substrand_line_id(substrand),
-      ..className = 'substrand-line' + (props.allowable ? '' : ' disallowed')
+      ..className = 'domain-line' + (props.allowable ? '' : ' disallowed')
       ..stroke = props.strand.color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = path_cmds.join(' ')
