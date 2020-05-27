@@ -407,10 +407,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     json_map.addAll(unused_fields.toMap());
 
     if (this.grid != constants.default_grid) {
-//      json_map[constants.grid_key] = grid_to_json(this.grid);
       json_map[constants.grid_key] = this.grid.to_json();
     }
-    if (this.major_tick_distance != grid.default_major_tick_distance()) {
+    if (this.major_tick_distance != null && this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
