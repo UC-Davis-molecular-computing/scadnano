@@ -138,6 +138,27 @@ void expect_app_state_equal(AppState actual, AppState matcher) {
 }
 
 main() {
+  test('read in color specified as decimal', () {
+    // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
+    // 0066cc hex is 26316 decimal
+    String json_str = r"""
+    { 
+      "helices": [{"grid_position": [0,0]}],
+      "strands": [ 
+        { 
+          "color": 26316, 
+          "substrands": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        } 
+      ] 
+    }
+    """;
+    DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
+    Strand strand = dna_design.strands.first;
+    Color color = strand.color;
+    String color_str = color.toHexColor().toCssString();
+    expect(color_str, "#0066cc");
+  });
+
   test('should add a helix in response to HelixAdd', () {
     var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
