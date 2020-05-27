@@ -491,7 +491,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
-    if (json_map == null) return null;
+    if (json_map == null)
+      return null;
 
     var dna_design_builder = DNADesignBuilder();
 
