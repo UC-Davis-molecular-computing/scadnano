@@ -143,6 +143,7 @@ main() {
     // 0066cc hex is 26316 decimal
     String json_str = r"""
     { 
+      "grid": "square",
       "helices": [{"grid_position": [0,0]}],
       "strands": [ 
         { 
@@ -320,6 +321,7 @@ main() {
   String simple_strand = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -345,6 +347,7 @@ main() {
     String content_after = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -382,6 +385,7 @@ main() {
     String content_after = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -422,6 +426,7 @@ main() {
   String smaller_design_h0_json = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -451,6 +456,7 @@ main() {
     String content_after = """
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -495,6 +501,7 @@ main() {
     String content_after = """
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
   ],
@@ -551,6 +558,7 @@ main() {
   String six_helix_rectangle_json = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -653,6 +661,7 @@ main() {
     String h5_after_nick_json = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -687,7 +696,16 @@ main() {
     state = app_state_reducer(state, Nick(domain: h0_reverse, offset: 40));
     String h0_after_nick_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1",
+  "grid": "square", 
+  "helices": [ 
+    {"grid_position": [0, 0]}, 
+    {"grid_position": [0, 1]}, 
+    {"grid_position": [0, 2]}, 
+    {"grid_position": [0, 3]}, 
+    {"grid_position": [0, 4]}, 
+    {"grid_position": [0, 5]} 
+  ],
   "strands": [
     {
       "domains": [
@@ -713,7 +731,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h0_reverse_for_nick3, offset: 72));
     String h0_after_nick3_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -738,7 +758,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick4, offset: 40));
     String h2_after_nick4_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -763,7 +785,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick5, offset: 72));
     String h2_after_nick5_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -788,7 +812,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick6, offset: 40));
     String h4_after_nick6_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -813,7 +839,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick7, offset: 72));
     String h4_after_nick7_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -838,7 +866,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick8, offset: 24));
     String h1_after_nick8_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -863,7 +893,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick9, offset: 56));
     String h1_after_nick9_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -888,7 +920,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick10, offset: 24));
     String h3_after_nick10_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -913,7 +947,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick11, offset: 56));
     String h3_after_nick11_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -938,7 +974,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick12, offset: 24));
     String h5_after_nick12_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -963,7 +1001,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick13, offset: 56));
     String h5_after_nick13_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
     {
       "domains": [
@@ -987,6 +1027,7 @@ main() {
     String content_after = r"""
  {
   "version": "0.0.1",
+  "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
     {"grid_position": [0, 1]},
@@ -1136,7 +1177,9 @@ main() {
   //    <-------------X----------------]
   String simple_helix_with_deletion_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1165,7 +1208,8 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", 
+  "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1201,7 +1245,9 @@ main() {
 
     content_after = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", 
+  "grid": "square",
+  "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1247,7 +1293,7 @@ main() {
   //    <-------------I----------------]
   String simple_helix_with_insertion_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1276,7 +1322,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1312,7 +1358,7 @@ main() {
 
     content_after = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1372,7 +1418,7 @@ main() {
   //    TTTTAAAAGGGGCCCC
   String simple_strand_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -1423,7 +1469,7 @@ main() {
 
     String content_after = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATT",
@@ -1465,7 +1511,7 @@ main() {
   //   AGTCAGTC AATTCCGG
   String two_strands_forward_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTC",
@@ -1489,7 +1535,7 @@ main() {
   //   AGTCAGTCAATTCCGG
   String ligate_two_strands_forward_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1523,7 +1569,7 @@ main() {
   //   GGCCTTAA CTGACTGA
   String two_strands_reverse_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AATTCCGG",
@@ -1547,7 +1593,7 @@ main() {
   //   GGCCTTAACTGACTGA
   String ligate_two_strands_reverse_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1585,7 +1631,9 @@ main() {
   //   <-------------------]
   String two_helices_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.0.1", 
+  "grid": "square", 
+  "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -1703,7 +1751,7 @@ main() {
   //   <-------------------]
   String two_helices_join_inner_strands_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -1787,7 +1835,7 @@ main() {
 
     String two_helices_helix_add_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
       "domains": [
@@ -1889,7 +1937,7 @@ main() {
     //    TTAAGGCCTTAAGGCC
     String expected_json = r"""
     {
-      "version": "0.0.1", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
+      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
       "strands": [
         {
           "sequence": "CCGGAATTCCGGAATT",
@@ -1951,7 +1999,7 @@ main() {
     //    TTTTAAAAGGGGCCCC
     String expected_json = r"""
     {
-      "version": "0.0.1", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
+      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
       "strands": [
         {
           "sequence": "CCCCGGGGAAAATTTT",
@@ -1991,7 +2039,7 @@ main() {
   //   <-------------------]
   String two_helices_with_helix_idx_gap_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
   "strands": [
     {
       "domains": [
@@ -2028,7 +2076,7 @@ main() {
         UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_with_helix_idx_gap_design]));
     String expected_json = r"""
     {
-      "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
+      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
       "strands": [
         {
           "domains": [
@@ -2066,7 +2114,7 @@ main() {
   //     <---------------]
   String simple_helix_no_seq_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2129,7 +2177,7 @@ main() {
     //     <---------------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2180,7 +2228,7 @@ main() {
     //     <---------------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2231,7 +2279,7 @@ main() {
     //     <--]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2282,7 +2330,7 @@ main() {
     //         <-----------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2342,7 +2390,7 @@ main() {
     //         <-----------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2413,7 +2461,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2485,7 +2533,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2586,7 +2634,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2636,7 +2684,7 @@ main() {
   //          <------]
   String simple_helix_no_seq_smaller_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2679,7 +2727,7 @@ main() {
     //          <------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2734,7 +2782,7 @@ main() {
     //          <------]
     String expected_json = r"""
 {
-"version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2854,7 +2902,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -2907,7 +2955,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -3171,7 +3219,7 @@ main() {
 
       String two_helices_helix_add_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
       "domains": [
@@ -3232,7 +3280,7 @@ main() {
     test('load and save design with unused fields', () {
       var json_before = r"""
       {
-        "version": "0.0.1",
+        "version": "0.0.1", "grid": "square",
         "extra_dna_design_field": {
           "foo_field": "foo",
           "bar_field": "bar",
@@ -3482,7 +3530,7 @@ main() {
     //   <-------------------]
     String two_helices_crossover_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -3721,7 +3769,7 @@ main() {
   //   TCAGTCAGTCAGTCAG  \_/  T
   String simple_loopout_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -3860,7 +3908,7 @@ main() {
       //    TTTTAAAAGGGGCCCC
       String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -3917,7 +3965,7 @@ main() {
       //   TCAGTCAGTCAGTCAG
       String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTC",
@@ -4089,7 +4137,7 @@ main() {
 
       String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ 
+  "version": "0.0.1", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 60},
     {"grid_position": [0, 1], "max_offset": 70},
     {"grid_position": [0, 2] }
@@ -4125,7 +4173,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ 
+  "version": "0.0.1", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 50},
     {"grid_position": [0, 1], "max_offset": 50},
     {"grid_position": [0, 2], "max_offset": 50 }
@@ -4170,7 +4218,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 5));
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4191,7 +4239,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 3));
       expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4223,7 +4271,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 0));
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4257,7 +4305,7 @@ main() {
 
       String expected_json = r"""
  {
-  "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -4291,7 +4339,7 @@ main() {
     //
     String one_empty_helix_json = r"""
     {
-      "version": "0.0.1", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
+      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
       "strands": []
     }
     """;
@@ -4444,7 +4492,7 @@ main() {
     //   <-------------------]   strand2
     String two_helices_with_empty_offsets_json = r"""
     {
-      "version": "0.0.1", "helices": [
+      "version": "0.0.1", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32},
         {"grid_position": [0, 1], "max_offset": 32}
       ],
@@ -4584,7 +4632,7 @@ main() {
 
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [
+        "version": "0.0.1", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4682,7 +4730,7 @@ main() {
 
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [
+        "version": "0.0.1", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4721,7 +4769,7 @@ main() {
 
     String two_helices_with_empty_offsets_non_sequential_idx_json = r"""
     {
-      "version": "0.0.1", "helices": [
+      "version": "0.0.1", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32, "idx": 3},
         {"grid_position": [0, 1], "max_offset": 32, "idx": 4}
       ],
@@ -4985,7 +5033,7 @@ main() {
 
   String simple_helix_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -5049,7 +5097,7 @@ main() {
       //     GCTCCCCGACAACCTA
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -5103,7 +5151,7 @@ main() {
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1));
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5144,7 +5192,7 @@ main() {
 
       String expected_json = r"""
         {
-          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5182,7 +5230,7 @@ main() {
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1));
       String expected_json = r"""
       {
-        "version": "0.0.1", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5224,7 +5272,7 @@ main() {
       );
       String expected_json = r"""
         {
-          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5263,7 +5311,7 @@ main() {
       );
       String expected_json = r"""
         {
-          "version": "0.0.1", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5504,6 +5552,7 @@ main() {
     String out_of_order_json = r"""
     {
       "version": "0.3.0",
+      "grid": "square",
       "helices": [
         {"grid_position": [0, 0], "idx": 12},
         {"grid_position": [0, 0], "idx": 13},
