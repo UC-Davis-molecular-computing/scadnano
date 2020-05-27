@@ -53,7 +53,7 @@ const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const SIDE_HELIX_RADIUS = 25.0;
 
-const Grid default_grid = Grid.square;
+const Grid default_grid = Grid.none;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';

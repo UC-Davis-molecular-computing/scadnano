@@ -1,5 +1,6 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.8",
+  "grid": "square",
   "major_tick_distance": 10,
   "helices": [
     {"grid_position": [0, 0]},

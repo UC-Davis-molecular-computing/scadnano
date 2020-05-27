@@ -497,8 +497,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     dna_design_builder.version =
         util.get_value_with_default(json_map, constants.version_key, constants.INITIAL_VERSION);
-    dna_design_builder.grid =
-        util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
+    dna_design_builder.grid = util.get_value_with_default(
+        json_map, constants.grid_key, constants.default_grid,
+        transformer: Grid.valueOf);
 
     bool grid_is_none = dna_design_builder.grid == Grid.none;
 
