@@ -159,6 +159,142 @@ main() {
     expect(color_str, "#0066cc");
   });
 
+  test('position_specified_with_origin_keyword', () {
+    // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
+    // 0066cc hex is 26316 decimal
+    String json_str = r"""
+    { 
+      "grid": "none",
+      "helices": [{
+        "position": { 
+          "origin": { "x": 1, "y": 2, "z": 3}, 
+          "pitch": 4, 
+          "roll": 5, 
+          "yaw": 6
+        } 
+      }],
+      "strands": [ 
+        { 
+          "color": "#0066cc", 
+          "substrands": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        } 
+      ] 
+    }
+    """;
+    /*
+    d = sc.DNADesign.from_scadnano_json_str(json_str)
+    expected_position = sc.Position3D(1,2,3,4,5,6)
+    actual_position = d.helices[0].position3d
+    self.assertEqual(expected_position, actual_position)
+     */
+    DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
+    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var actual_position = dna_design.helices[0].position3d();
+    expect(actual_position, expected_position);
+  });
+
+  test('position specified no origin keyword', () {
+    // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
+    // 0066cc hex is 26316 decimal
+    String json_str = r"""
+    { 
+      "grid": "none",
+      "helices": [{
+        "position": { 
+          "x": 1, 
+          "y": 2, 
+          "z": 3, 
+          "pitch": 4, 
+          "roll": 5, 
+          "yaw": 6
+        } 
+      }],
+      "strands": [ 
+        { 
+          "color": "#0066cc", 
+          "substrands": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        } 
+      ] 
+    }
+    """;
+    /*
+    d = sc.DNADesign.from_scadnano_json_str(json_str)
+    expected_position = sc.Position3D(1,2,3,4,5,6)
+    actual_position = d.helices[0].position3d
+    self.assertEqual(expected_position, actual_position)
+     */
+    DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
+    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var actual_position = dna_design.helices[0].position3d();
+    expect(actual_position, expected_position);
+  });
+
+  test('position specified with origin keyword directly in Helix', () {
+    // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
+    // 0066cc hex is 26316 decimal
+    String json_str = r"""
+    { 
+      "grid": "none",
+      "helices": [{ 
+          "origin": { "x": 1, "y": 2, "z": 3}, 
+          "pitch": 4, 
+          "roll": 5, 
+          "yaw": 6 
+      }],
+      "strands": [ 
+        { 
+          "color": "#0066cc", 
+          "substrands": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        } 
+      ] 
+    }
+    """;
+    /*
+    d = sc.DNADesign.from_scadnano_json_str(json_str)
+    expected_position = sc.Position3D(1,2,3,4,5,6)
+    actual_position = d.helices[0].position3d
+    self.assertEqual(expected_position, actual_position)
+     */
+    DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
+    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var actual_position = dna_design.helices[0].position3d();
+    expect(actual_position, expected_position);
+  });
+
+  test('position specified without origin keyword directly in Helix', () {
+    // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
+    // 0066cc hex is 26316 decimal
+    String json_str = r"""
+    { 
+      "grid": "none",
+      "helices": [{ 
+          "x": 1, 
+          "y": 2, 
+          "z": 3, 
+          "pitch": 4, 
+          "roll": 5, 
+          "yaw": 6 
+      }],
+      "strands": [ 
+        { 
+          "color": "#0066cc", 
+          "substrands": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        } 
+      ] 
+    }
+    """;
+    /*
+    d = sc.DNADesign.from_scadnano_json_str(json_str)
+    expected_position = sc.Position3D(1,2,3,4,5,6)
+    actual_position = d.helices[0].position3d
+    self.assertEqual(expected_position, actual_position)
+     */
+    DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
+    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var actual_position = dna_design.helices[0].position3d();
+    expect(actual_position, expected_position);
+  });
+
   test('should add a helix in response to HelixAdd', () {
     var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
