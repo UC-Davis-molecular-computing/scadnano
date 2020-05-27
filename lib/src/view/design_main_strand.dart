@@ -64,6 +64,8 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool origami_type_is_selectable;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
+  bool modification_display_connector;
+  int modification_font_size;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
@@ -119,6 +121,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..helices = props.helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..font_size = props.modification_font_size
+          ..display_connector = props.modification_display_connector
           ..key = 'modifications')()
     ]);
   }

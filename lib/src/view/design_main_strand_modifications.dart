@@ -18,6 +18,8 @@ mixin DesignMainStrandModificationsProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
+  bool display_connector;
+  int font_size;
 }
 
 class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStrandModificationsProps> {
@@ -33,6 +35,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..address = Address(helix_idx: helix_5p.idx, offset: ss.offset_5p, forward: ss.forward)
           ..helix = helix_5p
           ..modification = props.strand.modification_5p
+          ..font_size = props.font_size
+          ..display_connector = props.display_connector
           ..key = "5'")());
       }
     }
@@ -45,6 +49,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..address = Address(helix_idx: helix_3p.idx, offset: ss.offset_3p, forward: ss.forward)
           ..helix = helix_3p
           ..modification = props.strand.modification_3p
+          ..font_size = props.font_size
+          ..display_connector = props.display_connector
           ..key = "3'")());
       }
     }
@@ -72,6 +78,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..address = Address(helix_idx: helix.idx, offset: offset, forward: ss_with_mod.forward)
             ..helix = helix
             ..modification = props.strand.modifications_int[dna_idx_mod]
+            ..font_size = props.font_size
+            ..display_connector = props.display_connector
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {

@@ -179,6 +179,8 @@ part 'serializers.g.dart';
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
+  SetModificationDisplayConnector,
+  SetModificationFontSize,
 ])
 Serializers serializers = _$serializers;
 

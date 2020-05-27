@@ -18,6 +18,8 @@ mixin DesignMainStrandModificationDomainProps on UiProps {
   Address address;
   Helix helix;
   Modification modification;
+  bool display_connector;
+  int font_size;
 }
 
 
@@ -26,7 +28,7 @@ class DesignMainStrandModificationDomainComponent
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
-    bool display_connector = props.modification.display_connector;
+    bool display_connector = props.display_connector;
     if (props.modification is Modification5Prime) {
       return (Dom.g()..className = "'modification-5'")([
         if (display_connector) _end_connector(pos, props.address.forward),
@@ -75,7 +77,7 @@ class DesignMainStrandModificationDomainComponent
 
   ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
     double y_del_small = (forward ? -1.1 * Y_DELTA_MOD : Y_DELTA_MOD).toDouble();
-    int font_size = props.modification.font_size ?? 12;
+    int font_size = props.font_size;
     String baseline = forward ? 'baseline' : 'hanging';
     if (!display_connector) {
       baseline = 'middle';

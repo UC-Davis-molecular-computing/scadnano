@@ -2928,6 +2928,28 @@ main() {
       expect(final_state.ui_state.show_dna, false);
     });
 
+    test('Test ShowModificationsSet', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, ShowModificationsSet(true));
+      expect(final_state.ui_state.show_modifications, true);
+      final_state = app_state_reducer(final_state, ShowModificationsSet(false));
+      expect(final_state.ui_state.show_modifications, false);
+    });
+
+    test('Test SetModificationDisplayConnector', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetModificationDisplayConnector(true));
+      expect(final_state.ui_state.modification_display_connector, true);
+      final_state = app_state_reducer(final_state, SetModificationDisplayConnector(false));
+      expect(final_state.ui_state.modification_display_connector, false);
+    });
+
+    test('Test SetModificationFontSize', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetModificationFontSize(45));
+      expect(final_state.ui_state.modification_font_size, 45);
+    });
+
     test('Test SetShowMismatches', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 

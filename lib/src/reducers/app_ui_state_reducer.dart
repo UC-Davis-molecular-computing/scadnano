@@ -31,6 +31,10 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
   ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
       ui_state.show_modifications, action)
+  ..modification_display_connector = TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
+      ui_state.modification_display_connector, action)
+  ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(modification_font_size_reducer)(
+      ui_state.modification_font_size, action)
   ..show_mismatches =
       TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
@@ -87,6 +91,10 @@ bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop act
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
 bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
+
+bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) => action.show;
+
+int modification_font_size_reducer(int _, actions.SetModificationFontSize action) => action.font;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 

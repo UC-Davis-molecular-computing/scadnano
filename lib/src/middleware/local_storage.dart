@@ -22,6 +22,8 @@ class Storable extends EnumClass {
   static const Storable dna_design = _$dna_design;
   static const Storable show_dna = _$show_dna;
   static const Storable show_modifications = _$show_modifications;
+  static const Storable modification_display_connector = _$modification_display_connector;
+  static const Storable modification_font_size = _$modification_font_size;
   static const Storable show_mismatches = _$show_mismatches;
   static const Storable autofit = _$autofit;
   static const Storable show_editor = _$show_editor;
@@ -50,6 +52,10 @@ save(Storable storable) {
     value_string = app.state.ui_state.show_dna.toString();
   } else if (storable == Storable.show_modifications) {
     value_string = app.state.ui_state.show_modifications.toString();
+  } else if (storable == Storable.modification_display_connector) {
+    value_string = app.state.ui_state.modification_display_connector.toString();
+  } else if (storable == Storable.modification_font_size) {
+    value_string = app.state.ui_state.modification_font_size.toString();
   } else if (storable == Storable.show_mismatches) {
     value_string = app.state.ui_state.show_mismatches.toString();
   } else if (storable == Storable.autofit) {
@@ -108,6 +114,10 @@ _restore(Storable storable) {
       action = actions.ShowDNASet(value == 'true');
     } else if (storable == Storable.show_modifications) {
       action = actions.ShowModificationsSet(value == 'true');
+    } else if (storable == Storable.modification_display_connector) {
+      action = actions.SetModificationDisplayConnector(value == 'true');
+    } else if (storable == Storable.modification_font_size) {
+      action = actions.SetModificationFontSize(int.parse(value));
     } else if (storable == Storable.show_mismatches) {
       action = actions.ShowMismatchesSet(value == 'true');
     } else if (storable == Storable.autofit) {
