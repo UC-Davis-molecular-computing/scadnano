@@ -321,6 +321,42 @@ abstract class ShowModificationsSet
   static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
 }
 
+abstract class SetModificationFontSize
+    with BuiltJsonSerializable
+    implements StorableAction, Built<SetModificationFontSize, SetModificationFontSizeBuilder> {
+  int get font;
+
+  Iterable<Storable> storables() => [Storable.modification_font_size];
+
+  factory SetModificationFontSize(int font) => SetModificationFontSize.from((b) => b..font = font);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetModificationFontSize.from([void Function(SetModificationFontSizeBuilder) updates]) =
+      _$SetModificationFontSize;
+
+  SetModificationFontSize._();
+
+  static Serializer<SetModificationFontSize> get serializer => _$setModificationFontSizeSerializer;
+}
+
+abstract class SetModificationDisplayConnector
+    with BuiltJsonSerializable
+    implements StorableAction, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
+  bool get show;
+
+  Iterable<Storable> storables() => [Storable.modification_display_connector];
+
+  factory SetModificationDisplayConnector(bool show) => SetModificationDisplayConnector.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetModificationDisplayConnector.from([void Function(SetModificationDisplayConnectorBuilder) updates]) =
+      _$SetModificationDisplayConnector;
+
+  SetModificationDisplayConnector._();
+
+  static Serializer<SetModificationDisplayConnector> get serializer => _$setModificationDisplayConnectorSerializer;
+}
+
 abstract class ShowMismatchesSet
     with BuiltJsonSerializable
     implements StorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {

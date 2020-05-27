@@ -17,10 +17,6 @@ abstract class Modification {
 
   String get idt_text;
 
-  int get font_size;
-
-  bool get display_connector;
-
   BuiltMap<String, Object> get unused_fields;
 
   @memoized
@@ -31,11 +27,9 @@ abstract class Modification {
   Modification set_id(String id);
 
   static Map<String, dynamic> mod_to_json_serializable(Modification mod, bool suppress_indent) {
-    var map = {
+    Map<String, dynamic> map = {
       constants.mod_display_text_key: mod.display_text,
-      constants.mod_display_connector_key: mod.display_connector,
       if (mod.idt_text != null) constants.mod_idt_text_key: mod.idt_text,
-      if (mod.font_size != null) constants.mod_font_size_key: mod.font_size,
     };
     map.addAll(mod.unused_fields.toMap());
     return map;
@@ -66,8 +60,6 @@ abstract class Modification5Prime
       {String display_text,
       String id,
       String idt_text,
-      bool display_connector,
-      int font_size,
       BuiltMap<String, Object> unused_fields}) = _$Modification5Prime._;
 
   Modification5Prime._();
@@ -85,12 +77,7 @@ abstract class Modification5Prime
 
   String get idt_text;
 
-  bool get display_connector;
-
   BuiltMap<String, Object> get unused_fields;
-
-  @nullable
-  int get font_size;
 
   @memoized
   int get hashCode;
@@ -105,8 +92,6 @@ abstract class Modification5Prime
 
   static Modification5Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    int font_size = json_map[constants.mod_font_size_key];
-    bool display_connector = util.get_value_with_default(json_map, constants.mod_display_connector_key, true);
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "5'");
@@ -117,8 +102,6 @@ abstract class Modification5Prime
         display_text: display_text,
         id: id,
         idt_text: idt_text,
-        font_size: font_size,
-        display_connector: display_connector,
         unused_fields: unused_fields);
   }
 }
@@ -130,8 +113,6 @@ abstract class Modification3Prime
       {String display_text,
       String id,
       String idt_text,
-      bool display_connector,
-      int font_size,
       BuiltMap<String, Object> unused_fields}) = _$Modification3Prime._;
 
   Modification3Prime._();
@@ -149,11 +130,6 @@ abstract class Modification3Prime
 
   String get idt_text;
 
-  bool get display_connector;
-
-  @nullable
-  int get font_size;
-
   BuiltMap<String, Object> get unused_fields;
 
   @memoized
@@ -169,8 +145,6 @@ abstract class Modification3Prime
 
   static Modification3Prime from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    int font_size = json_map[constants.mod_font_size_key];
-    bool display_connector = util.get_value_with_default(json_map, constants.mod_display_connector_key, true);
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "3'");
@@ -181,8 +155,6 @@ abstract class Modification3Prime
         display_text: display_text,
         id: id,
         idt_text: idt_text,
-        font_size: font_size,
-        display_connector: display_connector,
         unused_fields: unused_fields);
   }
 }
@@ -201,9 +173,7 @@ abstract class ModificationInternal
       {String display_text,
       String id,
       String idt_text,
-      bool display_connector,
       BuiltSet<String> allowed_bases,
-      int font_size,
       BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
 
   /************************ end BuiltValue boilerplate ************************/
@@ -216,11 +186,6 @@ abstract class ModificationInternal
   String get id;
 
   String get idt_text;
-
-  bool get display_connector;
-
-  @nullable
-  int get font_size;
 
   @nullable
   BuiltSet<String> get allowed_bases;
@@ -241,8 +206,6 @@ abstract class ModificationInternal
 
   static ModificationInternal from_json(Map<String, dynamic> json_map) {
     String display_text = json_map[constants.mod_display_text_key];
-    int font_size = json_map[constants.mod_font_size_key];
-    bool display_connector = util.get_value_with_default(json_map, constants.mod_display_connector_key, true);
     String id = json_map[constants.mod_id_key];
     String location = json_map[constants.mod_location_key];
     assert(location == "internal");
@@ -256,8 +219,6 @@ abstract class ModificationInternal
         id: id,
         idt_text: idt_text,
         allowed_bases: allowed_bases,
-        font_size: font_size,
-        display_connector: display_connector,
         unused_fields: unused_fields);
   }
 

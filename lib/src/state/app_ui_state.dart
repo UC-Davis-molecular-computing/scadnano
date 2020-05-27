@@ -52,7 +52,9 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..dna_sequence_png_uri = null
   ..disable_png_cache_until_action_completes = null
   ..is_zoom_above_threshold = false
-  ..only_display_selected_helices = false;
+  ..only_display_selected_helices = false
+  ..modification_font_size = 12
+  ..modification_display_connector = true;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -150,6 +152,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// True if only selected helices in the side view should be displayed in the
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
+
+  int  get modification_font_size;
+  bool get modification_display_connector;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

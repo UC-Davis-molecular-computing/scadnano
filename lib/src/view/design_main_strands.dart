@@ -30,7 +30,9 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..moving_dna_ends = state.ui_state.moving_dna_ends
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
     ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
-    ..only_display_selected_helices = state.ui_state.only_display_selected_helices;
+    ..only_display_selected_helices = state.ui_state.only_display_selected_helices
+    ..modification_font_size = state.ui_state.modification_font_size
+    ..modification_display_connector = state.ui_state.modification_display_connector;
 })(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
@@ -50,6 +52,8 @@ mixin DesignMainStrandsProps on UiProps {
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool only_display_selected_helices;
+  bool modification_display_connector;
+  int modification_font_size;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
@@ -98,6 +102,8 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
         ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default
         ..warn_on_change_strand_dna_assign_default = props.warn_on_change_strand_dna_assign_default
         ..only_display_selected_helices = props.only_display_selected_helices
+        ..modification_font_size = props.modification_font_size
+        ..modification_display_connector = props.modification_display_connector
         ..key = strand.toString())());
     }
 

@@ -26,7 +26,7 @@ const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.6.7";
+const String CURRENT_VERSION = "0.7.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
@@ -53,7 +53,7 @@ const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const SIDE_HELIX_RADIUS = 25.0;
 
-const Grid default_grid = Grid.square;
+const Grid default_grid = Grid.none;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';
@@ -157,16 +157,12 @@ const strand_keys = [
 // Modification keys
 const mod_location_key = 'location';
 const mod_display_text_key = 'display_text';
-const mod_font_size_key = 'font_size';
-const mod_display_connector_key = 'display_connector';
 const mod_id_key = 'id';
 const mod_idt_text_key = 'idt_text';
 const mod_allowed_bases_key = 'allowed_bases';
 const modification_keys = [
   mod_location_key,
   mod_display_text_key,
-  mod_font_size_key,
-  mod_display_connector_key,
   mod_id_key,
   mod_idt_text_key,
   mod_allowed_bases_key,

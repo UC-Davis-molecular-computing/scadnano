@@ -348,8 +348,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     helix_builder.rotation_anchor = util.get_value_with_default(
         json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
 
-    Position3D position = util.get_value_with_default(json_map, constants.position3d_key, null,
-        transformer: (map) => Position3D.from_json(map));
+    Position3D position = Position3D.get_position_from_helix_json_map(json_map);
     helix_builder.position_ = position?.toBuilder();
 
     return helix_builder;

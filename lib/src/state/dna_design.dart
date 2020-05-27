@@ -491,14 +491,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
-    if (json_map == null) return null;
+    if (json_map == null)
+      return null;
 
     var dna_design_builder = DNADesignBuilder();
 
     dna_design_builder.version =
         util.get_value_with_default(json_map, constants.version_key, constants.INITIAL_VERSION);
-    dna_design_builder.grid =
-        util.get_value_with_default(json_map, constants.grid_key, Grid.square, transformer: Grid.valueOf);
+    dna_design_builder.grid = util.get_value_with_default(
+        json_map, constants.grid_key, constants.default_grid,
+        transformer: Grid.valueOf);
 
     bool grid_is_none = dna_design_builder.grid == Grid.none;
 

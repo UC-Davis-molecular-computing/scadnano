@@ -38,7 +38,9 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
     ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
         app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-        app.state.ui_state.selectables_store.selected_items.isNotEmpty)),
+        app.state.ui_state.selectables_store.selected_items.isNotEmpty)
+    ..modification_font_size = state.ui_state.modification_font_size
+    ..modification_display_connector = state.ui_state.modification_display_connector),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -48,6 +50,8 @@ UiFactory<MenuProps> Menu = _$Menu;
 mixin MenuPropsMixin on UiProps {
   bool show_dna;
   bool show_modifications;
+  int modification_font_size;
+  bool modification_display_connector;
   bool show_mismatches;
   bool autofit;
   bool only_display_selected_helices;
@@ -241,6 +245,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
             'Show DNA Sequences',
           ),
         ),
+        DropdownDivider({}),
         (Dom.span()
           ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
           ..className = 'show-modifications-span menu-item'
@@ -258,6 +263,47 @@ zooming navigation, so uncheck it to speed up navigation.'''
             'Show Modifications',
           ),
         ),
+        (Dom.span()
+          ..title = '''Check to display DNA modification connectors.'''
+          ..className = 'modifications-display-connector-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'modifications-display-connector')(
+          (Dom.label()..key = 'modifications-display-connector-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.modification_display_connector
+              ..onChange = (_) {
+                props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
+              }
+              ..addTestId('scadnano.MenuComponent.input.show_modifications')
+              ..type = 'checkbox')(),
+            'Display Modification Connector',
+          ),
+        ),
+        (Dom.span()
+          ..title = '''Adjust modification font size.'''
+          ..className = 'modifications-font-size-span menu-item'
+          ..style = {'display': 'block'}
+          ..key = 'modifications-font-size')(
+          (Dom.label()..key = 'show-modifications-font-size-label')(
+            (Dom.input()
+              ..style = {'marginRight': '1em', 'width': '4em'}
+              ..type = 'number'
+              ..min = '1'
+              ..id = 'modifications-font-size-number-input'
+              ..defaultValue = props.modification_font_size)(),
+            (Dom.input()
+              ..type = 'submit'
+              ..onClick = (_) {
+                InputElement inputElement = document.getElementById('modifications-font-size-number-input');
+                int font = int.parse(inputElement.value);
+                props.dispatch(actions.SetModificationFontSize(font));
+              }
+              ..value = 'Set Modification Font'
+            )(),
+          ),
+        ),
+        DropdownDivider({}),
         (Dom.span()
           ..className = 'show-mismatches-span menu-item'
           ..style = {'display': 'block'}
