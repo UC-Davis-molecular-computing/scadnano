@@ -1,7 +1,5 @@
 {
-  "version": "0.5.0",
-  "grid": "none",
-  "major_tick_distance": 8,
+  "version": "0.6.8",
   "helices": [
     {"max_offset": 512, "position": {"x": 0, "y": 0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
     {"max_offset": 512, "position": {"x": 2.5, "y": 0.0, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}},
@@ -61,7 +59,7 @@
       "is_scaffold": true
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "AACAATATTACCGATAGTTGCGCCGACAATGA",
       "idt": {"name": "ST15[248]0[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -70,7 +68,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "ACTTTGAAATCATAAGGGAACCGTATAAGTA",
       "idt": {"name": "ST2[231]1[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -79,7 +77,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "TAGCCCGGACGTCGAGAGGGTTGAAACTGACCA",
       "idt": {"name": "ST1[248]2[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -88,7 +86,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CAACACTAAAGGAATTACGAGGCAATCAAAAT",
       "idt": {"name": "ST4[231]3[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -97,7 +95,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "CACCGGAATGCCATCTTTTCATATAGTAAGAG",
       "idt": {"name": "ST3[248]4[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -106,7 +104,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "TTAGAGCTAAGAGGTCATTTTTGCGGAATAC",
       "idt": {"name": "ST6[231]5[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -115,7 +113,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "CCAAAAGAAGGAAACGCAATAATAACGGATGGC",
       "idt": {"name": "ST5[248]6[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -124,7 +122,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "TAAATGCAAATTTTTAGAACCCTTTTTAGCG",
       "idt": {"name": "ST8[231]7[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -133,7 +131,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "AACCTCCCGTAAGAACGCGAGGCGCATATATTT",
       "idt": {"name": "ST7[248]8[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -142,7 +140,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "GCTTTCATTTCGCGTCTGGCCTTCCTGTTTAG",
       "idt": {"name": "ST10[231]9[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -151,7 +149,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "TATCATATATTACTAGAAAAAGCCTGTAGCCA",
       "idt": {"name": "ST9[248]10[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -160,7 +158,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "CTAGAGGAGCTTGCATGCCTGCATTACCTGA",
       "idt": {"name": "ST12[231]11[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -169,7 +167,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "GCAAAAGAAGAATTATTCATTTCAAGGTCGACT",
       "idt": {"name": "ST11[248]12[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -178,7 +176,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "TCCCTTATATGGTGGTTCCGAAAAATATCTT",
       "idt": {"name": "ST14[231]13[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -187,7 +185,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "TAGGAGCACAGGAAGGTTATCTAATCGGCAAAA",
       "idt": {"name": "ST13[248]14[232]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -196,7 +194,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CAACAACCATCGGCCTTGCTGGTAATATCCAG",
       "idt": {"name": "ST0[231]15[247]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -205,7 +203,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "GAGCTTGAAAGTTTCCATTAAACGAACCTAAA",
       "idt": {"name": "ST15[56]1[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -215,7 +213,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "ACGAAAGAGAGTAGTAAATTGGGCTGAATTAC",
       "idt": {"name": "ST1[56]3[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -225,7 +223,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "CTTATGCGGCTTTAAACAGTTCAGTCTTTAC",
       "idt": {"name": "ST3[56]5[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -235,7 +233,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "CCTGACTATCTGTTTAGCTATATTTAATTCTAC",
       "idt": {"name": "ST5[56]7[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -245,7 +243,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "TAATAGTAGCCTGAGAGTCTGGAGAACTAGCA",
       "idt": {"name": "ST7[56]9[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -255,7 +253,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "TGTCAATCGATCGCACTCCAGCCCAGGCAAA",
       "idt": {"name": "ST9[56]11[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -265,7 +263,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GCGCCATTCGCGCTCACTGCCCGCTTTAATGAA",
       "idt": {"name": "ST11[56]13[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -275,7 +273,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TCGGCCAACGGGTCGAGGTGCCGTCCGATTTA",
       "idt": {"name": "ST13[56]15[55]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -285,7 +283,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "CATGAGGCGGGGAAAGCCGGCGCAAATCAAG",
       "idt": {"name": "ST0[71]14[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -295,7 +293,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "CAGAACGGCAAAAGAATACACGACTTTTT",
       "idt": {"name": "ST2[71]0[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -305,7 +303,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "CTCAAATATTTTAAGAACTGGCGAGAAACAC",
       "idt": {"name": "ST4[71]2[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -315,7 +313,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "CAATAACTATAGTCAGAAGCATGAATCCCC",
       "idt": {"name": "ST6[71]4[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -325,7 +323,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "GTCATTGTAGCATTAACATCCCAAATGGT",
       "idt": {"name": "ST8[71]6[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -335,7 +333,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "TCAGGAAATATGTACCCCGGTTGGCTATCAG",
       "idt": {"name": "ST10[71]8[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -345,7 +343,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "TTGCGTTGCCATTCAGGCTGCGTATCGGCC",
       "idt": {"name": "ST12[71]10[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -355,7 +353,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "TTTTTTGGCGCGGGGAGAGGCCACATTAA",
       "idt": {"name": "ST14[71]12[72]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -365,7 +363,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "GAGAAAGGGGCTTTGAGGACTAAATAAAACAC",
       "idt": {"name": "ST15[88]1[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -375,7 +373,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "TCATCTTTGAAGGCTTGCCCTGACTCATTATA",
       "idt": {"name": "ST1[88]3[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -385,7 +383,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "CCAGTCAGGTCATAAATATTCATAAGCGGAT",
       "idt": {"name": "ST3[88]5[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -395,7 +393,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "TGCATCAAACATTAGATACATTTCGAATAAATC",
       "idt": {"name": "ST5[88]7[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -405,7 +403,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "ATACAGGCATGAGAGATCTACAAAGATAATCA",
       "idt": {"name": "ST7[88]9[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -415,7 +413,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "GAAAAGCCGAGGGGACGACGACAGCAACTGT",
       "idt": {"name": "ST9[88]11[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -425,7 +423,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "TGGGAAGGGAATGAGTGAGCTAACTGGTTTGCG",
       "idt": {"name": "ST11[88]13[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -435,7 +433,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "TATTGGGCGACGTGAACCATCACCAACGTGGC",
       "idt": {"name": "ST13[88]15[87]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -445,7 +443,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GCTACAGAAAGGGATTTTTATAATCAGGGCGAT",
       "idt": {"name": "ST0[103]14[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -455,7 +453,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CAGTGAATACCCCCAGCGATTATTAGCAACG",
       "idt": {"name": "ST2[103]0[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -465,7 +463,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "GCGGAATCGACGTTGGGAAGAAAACTGCTCATT",
       "idt": {"name": "ST4[103]2[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -475,7 +473,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "AGTTTGACAAGATTAAGAGGAAGTCCAATACT",
       "idt": {"name": "ST6[103]4[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -485,7 +483,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "GCTATTTTAGGCAAAGAATTAGCGTAGATTT",
       "idt": {"name": "ST8[103]6[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -495,7 +493,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "GCCAGTTTCCAAAAACAGGAAGATGAGAGGGTA",
       "idt": {"name": "ST10[103]8[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -505,7 +503,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "GGGTGCCTCGATCGGTGCGGGCCCGTGCATCT",
       "idt": {"name": "ST12[103]10[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -515,7 +513,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "GGCCCACTCCAGGGTGGTTTTTCAAAGCCTG",
       "idt": {"name": "ST14[103]12[104]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -525,7 +523,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GCCACCGAGCATCGGAACGAGGGACCAAGC",
       "idt": {"name": "ST15[120]1[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -535,7 +533,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "GCGAAACAATCAACGTAACAAAGATCTACG",
       "idt": {"name": "ST1[120]3[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -545,7 +543,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "TTAATAAATAGACTGGATAGCGCCCGAAA",
       "idt": {"name": "ST3[120]5[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -555,7 +553,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "GACTTCAAACAATTCTGCGAACGAAAAATTA",
       "idt": {"name": "ST5[120]7[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -565,7 +563,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "AGCAATAAAATAAATTAATGCCGTGTATAA",
       "idt": {"name": "ST7[120]9[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -575,7 +573,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GCAAATATGGGCGCATCGTAACTCTTCGC",
       "idt": {"name": "ST9[120]11[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -585,7 +583,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "TATTACGCCGGAAGCATAAAGTGTTTTTCAC",
       "idt": {"name": "ST11[120]13[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -595,7 +593,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "CAGTGAGACGAAAAACCGTCTATCAGTGAG",
       "idt": {"name": "ST13[120]15[119]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -605,7 +603,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GAAAGACAGTAAAAGAGTCTGTCCCTCCAACGT",
       "idt": {"name": "ST0[135]14[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -615,7 +613,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "TACCCAAAAGTACAACGGAGATTTCAGCAGC",
       "idt": {"name": "ST2[135]0[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -625,7 +623,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "AAAATGTTACGAACTAACGGAACAGATATTCAT",
       "idt": {"name": "ST4[135]2[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -635,7 +633,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "TTGATTCCTATCGCGTTTTAATTGGTAATAGT",
       "idt": {"name": "ST6[135]4[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -645,7 +643,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "TCTAGCTGGCCTCAGAGCATAAATATAACAG",
       "idt": {"name": "ST8[135]6[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -655,7 +653,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GTGTAGATTTAAATTGTAAACGTTTTCAACCGT",
       "idt": {"name": "ST10[135]8[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -665,7 +663,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TACGAGCCAGCTGGCGAAAGGGGGTCACGTTG",
       "idt": {"name": "ST12[135]10[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -675,7 +673,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "CAAAGGGCGGGCAACAGCTGATTACACAACA",
       "idt": {"name": "ST14[135]12[136]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -685,7 +683,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "AATTAACCTGCGGGATCGTCACCCTGTATCAT",
       "idt": {"name": "ST15[152]1[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -695,7 +693,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "CGCCTGATATCTTGACAAGAACCGACATTATT",
       "idt": {"name": "ST1[152]3[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -705,7 +703,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "ACAGGTAGAGTTTTGCCAGAGGGCGAGCTTC",
       "idt": {"name": "ST3[152]5[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -715,7 +713,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "AAAGCGAACTGGAAGTTTCATTCCAGCTAAATC",
       "idt": {"name": "ST5[152]7[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -725,7 +723,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "GGTTGTACCACCATCAATATGATAAATATTTT",
       "idt": {"name": "ST7[152]9[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -735,7 +733,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GTTAAAATACCGTAATGGGATAGGATGTGCT",
       "idt": {"name": "ST9[152]11[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -745,7 +743,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "GCAAGGCGAATCCGCTCACAATTCCGCCCTTCA",
       "idt": {"name": "ST11[152]13[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -755,7 +753,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "CCGCCTGGCATTAAAGAACGTGGAATCACGCA",
       "idt": {"name": "ST13[152]15[151]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -765,7 +763,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "CCGCTTTGTTGTAGCAATACTTGGAACAAGA",
       "idt": {"name": "ST0[167]14[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -775,7 +773,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "AGAGTAAAATTGTGTCGAAATGTTAAAGG",
       "idt": {"name": "ST2[167]0[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -785,7 +783,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "CAAAAGAAAAGATTCATCAGTTCCTTCATCA",
       "idt": {"name": "ST4[167]2[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -795,7 +793,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "CGGTGTCCAGACCGGAAGCAAAGGCTTTTG",
       "idt": {"name": "ST6[167]4[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -805,7 +803,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "TCAAATCAAAAACATTATGACCTAAAGTA",
       "idt": {"name": "ST8[167]6[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -815,7 +813,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "CGGATTGTCGCATTAAATTTTTCGGAGACAG",
       "idt": {"name": "ST10[167]8[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -825,7 +823,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "AATTGTTTTAAGTTGGGTAACAACAAACGG",
       "idt": {"name": "ST12[167]10[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -835,7 +833,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GTCCACTCCTGAGAGAGTTGCCTGTGTGA",
       "idt": {"name": "ST14[167]12[168]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -845,7 +843,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "AGTAATAACTGAGGCTTGCAGGGACCGCGACC",
       "idt": {"name": "ST15[184]1[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -855,7 +853,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "TGCTCCATGGCATAGGCTGGCTGAGAGATTTA",
       "idt": {"name": "ST1[184]3[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -865,7 +863,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GGAATACCAACCAAAATAGCGAGACTCCAAC",
       "idt": {"name": "ST3[184]5[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -875,7 +873,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "AGGTCAGGATGTTTTAAATATGCAACCTGTAAT",
       "idt": {"name": "ST5[184]7[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -885,7 +883,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "ACTTTTGCGAAGGGTGAGAAAGGCGTTAAATC",
       "idt": {"name": "ST7[184]9[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -895,7 +893,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "AGCTCATTCGGATTCTCCGTGGGGCCAGGGT",
       "idt": {"name": "ST9[184]11[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -905,7 +903,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "TTTCCCAGTTGGTCATAGCTGTTTCAGCAAGCG",
       "idt": {"name": "ST11[184]13[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -915,7 +913,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GTCCACGCTGTGTTGTTCCAGTTTCTTTGATT",
       "idt": {"name": "ST13[184]15[183]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -925,7 +923,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TTCGGTCGCATCACTTGCCTGAGTGCCCGAGAT",
       "idt": {"name": "ST0[199]14[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -935,7 +933,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "GACCAGGCTTACTTAGCCGGAACCCGATATA",
       "idt": {"name": "ST2[199]0[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -945,7 +943,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "ACGATAAAACATTCAACTAATGCACGGTGTACA",
       "idt": {"name": "ST4[199]2[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -955,7 +953,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "GCTCAACATTAGAGAGTACCTTTTACCAGACG",
       "idt": {"name": "ST6[199]4[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -965,7 +963,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "AGATTCAAGGAGAAGCCTTTATTATGCTGTA",
       "idt": {"name": "ST8[199]6[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -975,7 +973,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CAACCCGTTTTTAACCAATAGGAATGTAGGTAA",
       "idt": {"name": "ST10[199]8[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -985,7 +983,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "CGTAATCACACGACGTTGTAAAAAGCGAGTAA",
       "idt": {"name": "ST12[199]10[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -995,7 +993,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "AGGGTTGAGGTTTGCCCCAGCAGCTCGAATT",
       "idt": {"name": "ST14[199]12[200]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1005,7 +1003,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "CTCAAACTATCGCCCACGCATAAGAGGCGC",
       "idt": {"name": "ST15[216]1[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1015,7 +1013,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "AGACGGTCAAGAGGACAGATGAAGATACAT",
       "idt": {"name": "ST1[216]3[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1025,7 +1023,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "AACGCCAATCATAACCCTCGTTAATTGCT",
       "idt": {"name": "ST3[216]5[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1035,7 +1033,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "CCTTTTGATTAATTGCTGAATATATCAACGC",
       "idt": {"name": "ST5[216]7[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1045,7 +1043,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "AAGGATAAAATGCCTGAGTAATGCGCCATC",
       "idt": {"name": "ST7[216]9[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1055,7 +1053,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "AAAAATAACAACATTAAATGTGCGACGGC",
       "idt": {"name": "ST9[216]11[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1065,7 +1063,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "CAGTGCCAATCCCCGGGTACCGAGGCGAAAA",
       "idt": {"name": "ST11[216]13[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1075,7 +1073,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "TCCTGTTTGAAATCAAAAGAATAAGAAGAA",
       "idt": {"name": "ST13[216]15[215]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1085,7 +1083,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "AGCTTGATACCGCCAGCCATTGCAGTTGAAA",
       "idt": {"name": "ST0[263]14[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1095,7 +1093,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "TAAGTGCATAGGTGTATCACCTCTTAAAC",
       "idt": {"name": "ST2[263]0[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1105,7 +1103,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "TAGCGTTCCAGAGCCACCACCGCCAGGCGGA",
       "idt": {"name": "ST4[263]2[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1115,7 +1113,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "AAACCGACTGGCATGATTAAGCCCCCTTAT",
       "idt": {"name": "ST6[263]4[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1125,7 +1123,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GGTATTCACTTGCGGGAGGTTCCAGAAGG",
       "idt": {"name": "ST8[263]6[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1135,7 +1133,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "AATCATAGCGTTATACAAATTCGGCTTATCC",
       "idt": {"name": "ST10[263]8[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1145,7 +1143,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "CAGAGGCGATGATGAAACAAAAAACACCGG",
       "idt": {"name": "ST12[263]10[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1155,7 +1153,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "GGAATTGTAACAACTAATAGAAAATCGCG",
       "idt": {"name": "ST14[263]12[264]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1165,7 +1163,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "AAAACGCTGCTTTCGAGGTGAATTGTACTCAG",
       "idt": {"name": "ST15[280]1[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1175,7 +1173,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GAGGTTTAGGGGTTTTGCTCAGTAGAACCGCC",
       "idt": {"name": "ST1[280]3[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1185,7 +1183,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TCCCTCAGCATTTTCGGTCATAGACTCCTTA",
       "idt": {"name": "ST3[280]5[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1195,7 +1193,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "TTACGCAGTTAGCCGAACAAAGTTATTGAAGCC",
       "idt": {"name": "ST5[280]7[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1205,7 +1203,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "TTAAATCAAAAATCAGATATAGAATTACCAGT",
       "idt": {"name": "ST7[280]9[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1215,7 +1213,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "ATAAAGCCGCGTTAAATAAGAATCATCAAGA",
       "idt": {"name": "ST9[280]11[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1225,7 +1223,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "AAACAAAATTGAATACCAAGTTACATTAGAGCC",
       "idt": {"name": "ST11[280]13[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1235,7 +1233,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "GTCAATAGACAGTTGGCAAATCAACAACAGGA",
       "idt": {"name": "ST13[280]15[279]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1245,7 +1243,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "ATCAGCTTCATGGAAATACCTACACTCAATCAA",
       "idt": {"name": "ST0[295]14[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1255,7 +1253,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GATTAGCGTACCGCCACCCTCAGATCGGTTT",
       "idt": {"name": "ST2[295]0[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1265,7 +1263,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "TTCATCGGAGCCGCCACCCTCAGAAAGGATTAG",
       "idt": {"name": "ST4[295]2[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1275,7 +1273,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "TAAGCAGAATGTTAGCAAACGTATAGCGCGTT",
       "idt": {"name": "ST6[295]4[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1285,7 +1283,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "TAGCAAGCGATTAGTTGCTATTTAAGAAAAG",
       "idt": {"name": "ST8[295]6[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1295,7 +1293,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "TAAATAAGAACGCTCAACAGTAGGCGCGCCCAA",
       "idt": {"name": "ST10[295]8[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1305,7 +1303,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GATTGCTTTAATTACATTTAACAACCGTGTGA",
       "idt": {"name": "ST12[295]10[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1315,7 +1313,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TATCTGGTTAATACATTTGAGGAATTCGCCT",
       "idt": {"name": "ST14[295]12[296]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1325,7 +1323,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "GCTCAATCGGAGCCTTTAATTGTAACCGCC",
       "idt": {"name": "ST15[312]1[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1335,7 +1333,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "ACCCTCAGAAGACTCCTCAAGAGACCGCCA",
       "idt": {"name": "ST1[312]3[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1345,7 +1343,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "CCCTCAGATTAGCGTCAGACTGGAAAATA",
       "idt": {"name": "ST3[312]5[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1355,7 +1353,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "CATACATAAACCGAAGCCCTTTTTTGCACCC",
       "idt": {"name": "ST5[312]7[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1365,7 +1363,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "AGCTACAATGTAGGAATCATTACGCTTAAT",
       "idt": {"name": "ST7[312]9[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1375,7 +1373,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "TGAGAATCGGTTTGAAATACCGATTTCAT",
       "idt": {"name": "ST9[312]11[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1385,7 +1383,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "TTGAATTACGAGAAACAATAACGGTTTAGAA",
       "idt": {"name": "ST11[312]13[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1395,7 +1393,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "GTATTAGACTCAAATATCAAACCTTTTGAC",
       "idt": {"name": "ST13[312]15[311]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1405,7 +1403,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "CTCCAAAAGTCTGAAATGGATTATCATCACCTT",
       "idt": {"name": "ST0[327]14[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1415,7 +1413,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "AGAGGCTGACCGCCACCCTCAGAAAAAAAGG",
       "idt": {"name": "ST2[327]0[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1425,7 +1423,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "GTTTGCCTGCCACCACCCTCAGAGAAAGTATTA",
       "idt": {"name": "ST4[327]2[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1435,7 +1433,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GCTATCTTAGGTGGCAACATATACAGAATCAA",
       "idt": {"name": "ST6[327]4[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1445,7 +1443,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TTTTCATCTTTATCCTGAATCTTTAGCAATA",
       "idt": {"name": "ST8[327]6[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1455,7 +1453,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "AATTTAATGCCATATTTAACAACGCCGTTTTTA",
       "idt": {"name": "ST10[327]8[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1465,7 +1463,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "TACATCGGCTTTTTTAATGGAAATCTGACCTA",
       "idt": {"name": "ST12[327]10[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1475,7 +1473,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "GCTGAACCTTTACAAACAATTCGGTACCTTT",
       "idt": {"name": "ST14[327]12[328]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1485,7 +1483,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GCAGATTCCGTTGAAAATCTCCAAGCCACCAC",
       "idt": {"name": "ST15[344]1[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1495,7 +1493,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CCTCATTTTTTATTCTGAAACATGCCGCCACC",
       "idt": {"name": "ST1[344]3[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1505,7 +1503,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "AGAACCACCGTAATCAGTAGCGAAAAGAAAC",
       "idt": {"name": "ST3[344]5[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1515,7 +1513,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "GCAAAGACAGCAAGAAACAATGAAAACCAACGC",
       "idt": {"name": "ST5[344]7[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1525,7 +1523,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "TAACGAGCGTCGAGAACAAGCAAGCCAACATG",
       "idt": {"name": "ST7[344]9[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1535,7 +1533,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "TAATTTAGTAGTTAATTTCATCTCAGTACAT",
       "idt": {"name": "ST9[344]11[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1545,7 +1543,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "AAATCAATATGAATATACAGTAACAACAACTCG",
       "idt": {"name": "ST11[344]13[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1555,7 +1553,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "TATTAAATCATGAAAAATCTAAAGTTACATTG",
       "idt": {"name": "ST13[344]15[343]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1565,7 +1563,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "TTTTTCAACCAGTCACACGACCTGAGAGCCA",
       "idt": {"name": "ST0[359]14[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1575,7 +1573,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "GAACCTACAGGGATAGCAAGCATAATAAT",
       "idt": {"name": "ST2[359]0[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1585,7 +1583,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "GCAGCACCACCAGAGCCGCCGCCCTATTTCG",
       "idt": {"name": "ST4[359]2[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1595,7 +1593,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "AATAAGACCACGGAATAAGTTCCATCGATA",
       "idt": {"name": "ST6[359]4[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1605,7 +1603,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "GCACTCATCTTTCCAGAGCCTAGCCCAAT",
       "idt": {"name": "ST8[359]6[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1615,7 +1613,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "TATATTTGCAGAGGCATTTTCGCCAAGTACC",
       "idt": {"name": "ST10[359]8[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1625,7 +1623,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CGTCAGATATGTGAGTGAATATTTTTCAAA",
       "idt": {"name": "ST12[359]10[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1635,7 +1633,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "GCAGCAACTTTGCCCGAACGTAGGTTTAA",
       "idt": {"name": "ST14[359]12[360]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1645,7 +1643,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "AAGGGACAACTAAAGGAATTGCGACCAATAGG",
       "idt": {"name": "ST15[376]1[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1655,7 +1653,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "AACCCATGTAGTTAATGCCCCCTGCAGCATTG",
       "idt": {"name": "ST1[376]3[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1665,7 +1663,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "ACAGGAGGACGTCACCAATGAAATATTTTGT",
       "idt": {"name": "ST3[376]5[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1675,7 +1673,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "CACAATCAACACAAGAATTGAGTTAAATTTGCC",
       "idt": {"name": "ST5[376]7[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1685,7 +1683,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "AGTTACAAAAGAACGGGTATTAAAAGCCAGTA",
       "idt": {"name": "ST7[376]9[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1695,7 +1693,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "ATAAGAGAAGAACGCGAGAAAACACCTTGCT",
       "idt": {"name": "ST9[376]11[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1705,7 +1703,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TCTGTAAATAATTGCGTAGATTTTCTATTAATT",
       "idt": {"name": "ST11[376]13[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1715,7 +1713,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "TTAAAAGTTGCAACAGTGCCACGCAGTAATAA",
       "idt": {"name": "ST13[376]15[375]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1725,7 +1723,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "AAGGAACATTCTGGCCAACAGAGACAGTATTAA",
       "idt": {"name": "ST0[391]14[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1735,7 +1733,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "GTATAAACACCGTAACACTGAGTAGAATAGA",
       "idt": {"name": "ST2[391]0[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1745,7 +1743,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GGCCGGAATTGAGGCAGGTCAGACACAGTGCCC",
       "idt": {"name": "ST4[391]2[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1755,7 +1753,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "AGATAACCTAGAAAATTCATATGCATTAGCAA",
       "idt": {"name": "ST6[391]4[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1765,7 +1763,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "TCATTCCAATAAACAGCCATATTTATCAGAG",
       "idt": {"name": "ST8[391]6[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1775,7 +1773,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "CAAGACAAATATAAAGTACCGACACTTTCCTTA",
       "idt": {"name": "ST10[391]8[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1785,7 +1783,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "AATAAAGACGTCGCTATTAATTAATCCAATCG",
       "idt": {"name": "ST12[391]10[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1795,7 +1793,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "CACCGCCTTGAGTAACATTATCAAAAACAGA",
       "idt": {"name": "ST14[391]12[392]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1805,7 +1803,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "CTTCTGACAGTTTCAGCGGAGTGTTCGTCA",
       "idt": {"name": "ST15[408]1[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1815,7 +1813,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "CCAGTACAACAGTGCCTTGAGTAGATTGGC",
       "idt": {"name": "ST1[408]3[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1825,7 +1823,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "CTTGATATAGTAGCACCATTACGTTTACC",
       "idt": {"name": "ST3[408]5[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1835,7 +1833,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "AGCGCCAAAGTAATTGAGCGCTAAATTTATC",
       "idt": {"name": "ST5[408]7[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1845,7 +1843,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "CCAATCCAACAATAATCGGCTGTAAAGGTA",
       "idt": {"name": "ST7[408]9[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1855,7 +1853,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "AAGTAATTAAATGCTGATGCAAATTTTCC",
       "idt": {"name": "ST9[408]11[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1865,7 +1863,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "CTTAGAATCAAATTATTTGCACGTTTTTGCG",
       "idt": {"name": "ST11[408]13[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1875,7 +1873,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "GAACAAAGAAGAGGTGAGGCGGTTAGAACC",
       "idt": {"name": "ST13[408]15[407]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1885,7 +1883,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "CTTTCAACCTGAAAGCGTAAGAATCCAGCAGAA",
       "idt": {"name": "ST0[423]14[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1895,7 +1893,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "AACGGGGTACTACAACGCCTGTACTAAACAA",
       "idt": {"name": "ST2[423]0[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1905,7 +1903,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "AAATCACCTCACAAACAAATAAATATAAGTTTT",
       "idt": {"name": "ST4[423]2[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1915,7 +1913,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "GTCAGAGGGACAAAAGGGCGACAGAGCCAGCA",
       "idt": {"name": "ST6[423]4[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1925,7 +1923,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "AAACCAATATAAGAAACGATTTTTGAACAAA",
       "idt": {"name": "ST8[423]6[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1935,7 +1933,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "CTATATGTCTGTCCAGACGACGACAGCATGTAG",
       "idt": {"name": "ST10[423]8[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1945,7 +1943,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "CCATATCACTTGAAAACATAGCGGTTATATAA",
       "idt": {"name": "ST12[423]10[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1955,7 +1953,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "GATAAAACAACCACCAGAAGGAGAGAACCTA",
       "idt": {"name": "ST14[423]12[424]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1965,7 +1963,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "CAGACAATTCTGTATGGGATTTTGGCATTCCA",
       "idt": {"name": "ST15[440]1[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1975,7 +1973,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "CAGACAGCCAGGAGTGTACTGGTACCTCATTA",
       "idt": {"name": "ST1[440]3[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1985,7 +1983,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "AAGCCAGAAGCCATTTGGGAATTATTCAACCG",
       "idt": {"name": "ST3[440]5[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -1995,7 +1993,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#32b86c",
       "sequence": "ATTGAGGGAATTAACTGAACACCCTTGTTTAA",
       "idt": {"name": "ST5[440]7[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2005,7 +2003,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#333333",
       "sequence": "CGTCAAAACCCATCCTAATTTACGAATAAACA",
       "idt": {"name": "ST7[440]9[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2015,7 +2013,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#320096",
       "sequence": "ACATGTTCCTCCGGCTTAGGTTGGATAGCTTA",
       "idt": {"name": "ST9[440]11[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2025,7 +2023,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#03b6a2",
       "sequence": "GATTAAGAGAATAATGGAAGGGTTCGGAATTA",
       "idt": {"name": "ST11[440]13[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2035,7 +2033,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#7300de",
       "sequence": "TCATCATAAATACCGAACGAACCAACGTGGCA",
       "idt": {"name": "ST13[440]15[439]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2045,7 +2043,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#aaaa00",
       "sequence": "TGAATTTATTTTTGAATGGCTAAACATCGC",
       "idt": {"name": "ST0[455]14[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2055,7 +2053,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#b8056c",
       "sequence": "GATGATACCTCATAGTTAGCGTTTAGTAAA",
       "idt": {"name": "ST2[455]0[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2065,7 +2063,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#007200",
       "sequence": "CGACTTGATGGAAAGCGCAGTCTGGCTTTT",
       "idt": {"name": "ST4[455]2[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2075,7 +2073,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#cc0000",
       "sequence": "ACGGGAGAGGGAAGGTAAATATACCGTCAC",
       "idt": {"name": "ST6[455]4[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2085,7 +2083,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#f7931e",
       "sequence": "ATAATATATGAAAATAGCAGCCCGCATTAG",
       "idt": {"name": "ST8[455]6[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2095,7 +2093,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#f74308",
       "sequence": "TTTTAACAGCTAATGCAGAACGCAAGAAAA",
       "idt": {"name": "ST10[455]8[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2105,7 +2103,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#57bb00",
       "sequence": "TACTTCTCGCTGAGAAGAGTCAGACTACCT",
       "idt": {"name": "ST12[455]10[456]", "scale": "25nm", "purification": "STD"},
       "domains": [
@@ -2115,7 +2113,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#888888",
       "sequence": "CATTAAATTCCTGATTATCAGATTGGATTA",
       "idt": {"name": "ST14[455]12[456]", "scale": "25nm", "purification": "STD"},
       "domains": [

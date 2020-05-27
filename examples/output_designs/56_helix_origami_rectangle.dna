@@ -1,6 +1,6 @@
 {
-  "version": "0.5.0",
-  "major_tick_distance": 8,
+  "version": "0.6.8",
+  "grid": "square",
   "helices": [
     {"max_offset": 160, "grid_position": [0, 0]},
     {"max_offset": 160, "grid_position": [0, 1]},

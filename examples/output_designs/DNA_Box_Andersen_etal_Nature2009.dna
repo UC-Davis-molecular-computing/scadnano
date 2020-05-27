@@ -16,7 +16,7 @@
   "strands": [
     {
       "color": "#0066cc",
-      "substrands": [
+      "domains": [
         {"helix": 10, "forward": true, "start": 0, "end": 112},
         {"helix": 9, "forward": false, "start": 0, "end": 112},
         {"helix": 8, "forward": true, "start": 0, "end": 112},

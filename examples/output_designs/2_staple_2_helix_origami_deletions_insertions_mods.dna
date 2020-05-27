@@ -1,6 +1,6 @@
 {
-  "version": "0.5.0",
-  "major_tick_distance": 8,
+  "version": "0.6.8",
+  "grid": "square",
   "helices": [
     {"max_offset": 48, "grid_position": [0, 0]},
     {"max_offset": 48, "grid_position": [0, 1]}
@@ -9,6 +9,7 @@
     "/5Biosg/": {
       "display_text": "B",
       "idt_text": "/5Biosg/",
+      "display_connector": false,
       "location": "5'"
     }
   },
