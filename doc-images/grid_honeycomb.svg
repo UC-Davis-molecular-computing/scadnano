@@ -80,7 +80,7 @@
           </circle>
           <text
              id="text6"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,0</text>
         </g>
         <g
@@ -98,7 +98,7 @@
           </circle>
           <text
              id="text14"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,-1</text>
         </g>
         <g
@@ -116,7 +116,7 @@
           </circle>
           <text
              id="text22"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,-1</text>
         </g>
         <g
@@ -134,7 +134,7 @@
           </circle>
           <text
              id="text30"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,-1</text>
         </g>
         <g
@@ -152,7 +152,7 @@
           </circle>
           <text
              id="text38"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,0</text>
         </g>
         <g
@@ -170,7 +170,7 @@
           </circle>
           <text
              id="text46"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,0</text>
         </g>
         <g
@@ -188,7 +188,7 @@
           </circle>
           <text
              id="text54"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,-1</text>
         </g>
         <g
@@ -206,7 +206,7 @@
           </circle>
           <text
              id="text62"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,1</text>
         </g>
         <g
@@ -224,7 +224,7 @@
           </circle>
           <text
              id="text70"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,1</text>
         </g>
         <g
@@ -242,7 +242,7 @@
           </circle>
           <text
              id="text78"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,1</text>
         </g>
         <g
@@ -260,7 +260,7 @@
           </circle>
           <text
              id="text86"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,0</text>
         </g>
         <g
@@ -278,7 +278,7 @@
           </circle>
           <text
              id="text94"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,1</text>
         </g>
         <g
@@ -296,7 +296,7 @@
           </circle>
           <text
              id="text102"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,2</text>
         </g>
         <g
@@ -314,7 +314,7 @@
           </circle>
           <text
              id="text110"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,2</text>
         </g>
         <g
@@ -332,7 +332,7 @@
           </circle>
           <text
              id="text118"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,2</text>
         </g>
         <g
@@ -350,7 +350,7 @@
           </circle>
           <text
              id="text126"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,2</text>
         </g>
         <g
@@ -368,7 +368,7 @@
           </circle>
           <text
              id="text134"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,-1</text>
         </g>
         <g
@@ -386,7 +386,7 @@
           </circle>
           <text
              id="text142"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,0</text>
         </g>
         <g
@@ -404,7 +404,7 @@
           </circle>
           <text
              id="text150"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,1</text>
         </g>
         <g
@@ -422,7 +422,7 @@
           </circle>
           <text
              id="text158"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,2</text>
         </g>
         <g
@@ -440,7 +440,7 @@
           </circle>
           <text
              id="text166"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,3</text>
         </g>
         <g
@@ -458,7 +458,7 @@
           </circle>
           <text
              id="text174"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,3</text>
         </g>
         <g
@@ -476,7 +476,7 @@
           </circle>
           <text
              id="text182"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,3</text>
         </g>
         <g
@@ -494,7 +494,7 @@
           </circle>
           <text
              id="text190"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,3</text>
         </g>
         <g
@@ -512,7 +512,7 @@
           </circle>
           <text
              id="text198"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,3</text>
         </g>
         <g
@@ -530,7 +530,7 @@
           </circle>
           <text
              id="text206"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">-1,4</text>
         </g>
         <g
@@ -548,7 +548,7 @@
           </circle>
           <text
              id="text214"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">0,4</text>
         </g>
         <g
@@ -566,7 +566,7 @@
           </circle>
           <text
              id="text222"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">1,4</text>
         </g>
         <g
@@ -584,7 +584,7 @@
           </circle>
           <text
              id="text230"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">2,4</text>
         </g>
         <g
@@ -602,7 +602,7 @@
           </circle>
           <text
              id="text238"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">3,4</text>
         </g>
         <g
@@ -620,7 +620,7 @@
           </circle>
           <text
              id="text246"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,4</text>
         </g>
         <g
@@ -638,7 +638,7 @@
           </circle>
           <text
              id="text254"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,3</text>
         </g>
         <g
@@ -656,7 +656,7 @@
           </circle>
           <text
              id="text262"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,2</text>
         </g>
         <g
@@ -674,7 +674,7 @@
           </circle>
           <text
              id="text270"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,1</text>
         </g>
         <g
@@ -692,7 +692,7 @@
           </circle>
           <text
              id="text278"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,0</text>
         </g>
         <g
@@ -710,7 +710,7 @@
           </circle>
           <text
              id="text286"
-             style="font-weight:400;font-size:18px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
+             style="font-weight:400;font-size:20px;font-family:Helvetica, serif;dominant-baseline:central;text-anchor:middle;fill:#00008b"
              class="side-view-helix-text">4,-1</text>
         </g>
       </g>
