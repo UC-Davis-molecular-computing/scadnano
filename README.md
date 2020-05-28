@@ -10,8 +10,14 @@ is a program for designing synthetic DNA structures such as DNA origami.
 
 If you find scadnano useful in a scientific project, please cite its associated paper:
 
-- [scadnano paper](https://arxiv.org/abs/2005.11841)
-- [BibTeX](https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib)
+- scadnano: A browser-based, easily scriptable tool for designing DNA nanostructures.
+  
+  David Doty, Benjamin L Lee, and Tristan Stérin.
+  
+  *Technical Report 2005.11841, arXiv*, 2020.
+  
+  [ [arXiv paper](https://arxiv.org/abs/2005.11841) | [BibTeX](https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib) ]
+
 
 ## Overview
 
