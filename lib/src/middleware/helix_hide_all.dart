@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:redux/redux.dart';
 
 import '../actions/actions.dart' as actions;
@@ -29,5 +27,3 @@ helix_hide_all_middleware(Store<AppState> store, dynamic action, NextDispatcher 
     }
   }
 }
-
-
