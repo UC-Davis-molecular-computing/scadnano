@@ -20,8 +20,8 @@ helix_hide_all_middleware(Store<AppState> store, dynamic action, NextDispatcher 
         ui_state.side_selected_helix_idxs.isEmpty &&
         dna_design.helices.isNotEmpty) {
       var msg = 'The option "Display only selected helices" is enabled. '
-          'Since no helices are selected, none will be displayed in the main view. '
-          'To display the helices, either select some in the side view, or disable the option '
+          'Since no helices are selected, none will be displayed in the main view.\n\n'
+          'To display the helices, either select some helices in the side view, or disable the option '
           '"Display only selected helices" under the "View" menu.';
       util.async_alert(msg);
     }
