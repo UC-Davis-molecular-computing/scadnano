@@ -1203,7 +1203,7 @@ bool use_png(String dna_sequence_png_uri, bool is_zoom_above_threshold,
       disable_png_cache_until_action_completes == null;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Saving unused fields
 
 /// Given a `map` and a list of `fields`, returns a `MapBuilder`
@@ -1214,4 +1214,12 @@ MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<Strin
     new_map.remove(field);
   }
   return MapBuilder<String, Object>(new_map);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// asynchronous alert dialog
+
+async_alert(String msg) async {
+  Timer(Duration(microseconds: 1), () => window.alert(msg));
 }
