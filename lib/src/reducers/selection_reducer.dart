@@ -181,6 +181,7 @@ Reducer<BuiltSet<int>> side_selected_helices_reducer = combineReducers([
   TypedReducer<BuiltSet<int>, actions.HelixSelect>(helix_select_reducer),
   TypedReducer<BuiltSet<int>, actions.HelixSelectionsClear>(helices_selected_clear_reducer),
   TypedReducer<BuiltSet<int>, actions.HelixRemoveAllSelected>(helices_remove_all_selected_reducer),
+  TypedReducer<BuiltSet<int>, actions.HelixRemove>(helix_remove_selected_reducer),
 ]);
 
 BuiltSet<int> helix_select_reducer(BuiltSet<int> side_selected_helix_idxs, actions.HelixSelect action) {
@@ -201,6 +202,9 @@ BuiltSet<int> helices_selected_clear_reducer(BuiltSet<int> _, actions.HelixSelec
 
 BuiltSet<int> helices_remove_all_selected_reducer(BuiltSet<int> _, actions.HelixRemoveAllSelected action) =>
     BuiltSet<int>();
+
+BuiltSet<int> helix_remove_selected_reducer(BuiltSet<int> selected_helices, actions.HelixRemove action) =>
+    selected_helices.rebuild((b) => b..remove(action.helix_idx));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selection box reducer
