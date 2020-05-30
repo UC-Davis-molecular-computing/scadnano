@@ -8,7 +8,7 @@ The design will look like this when we are done:
 
 ![](images/complete_design_no_DNA.png)
 
-The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) readable by scadnano.
+The completed design is available as a [`.dna` file](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.dna) readable by scadnano.
 
 
 ## Note about interface
@@ -31,7 +31,7 @@ If you have never used scadnano before, you will see a screen similar to this:
 
 ## Load completed design to see what it looks like
 
-Download the [completed design](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/24_helix_rectangle_twist_corrected.dna) and save it somewhere on your local file system.
+Download the [completed design](https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.dna) and save it somewhere on your local file system.
 
 Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different):
 
