@@ -51,6 +51,16 @@ AppState app_state_from_dna_design(DNADesign dna_design) {
   return state;
 }
 
+/// Returns an [AppState] based on dna_design_json
+/// and initial DNA design state. This is used to generate
+/// expected app states by adding the initial action to
+/// the undo stack as well as changing changed_since_last_save
+/// to true.
+AppState expected_state_from_json_string(String dna_design_json, DNADesign initial_design) {
+    return app_state_from_dna_design(DNADesign.from_json(json.decode(
+    dna_design_json))).rebuild((b) => b..undo_redo.undo_stack.add(initial_design)..ui_state.changed_since_last_save = true);
+}
+
 Color DUMMY_COLOR = Color.rgb(0, 0, 0);
 
 Strand recolor_strand(Strand strand) {
@@ -5572,6 +5582,1562 @@ main() {
       BuiltMap<int, int> expected_helices_view_order_inverse =
           BuiltMap<int, int>({12: 0, 13: 3, 15: 1, 17: 2});
       expect(out_of_order_design.helices_view_order_inverse, expected_helices_view_order_inverse);
+    });
+  });
+
+  group('Test strand editing with modifications -- split', () {
+    // many_helices_modification.dna
+    //    B     Cy3   B
+    // 0  [-----------------
+    //                     |
+    //                     |
+    //                     |
+    // 1  ------------------
+    //    |  B   Cy3
+    //    |
+    //    |      Cy3    B
+    // 2  ------------------
+    //                     |
+    //                     |
+    //                     |
+    // 3  ------------------
+    //    |  B      Cy3
+    //    |
+    //    |       Cy3    B
+    // 4  ------------------
+    //                     |
+    //                     |
+    //                     |
+    // 5  ------------------
+    //    |  B     Cy3
+    //    |
+    //    |        Cy3    B
+    // 6  ------------------
+    //                     |
+    //                     |
+    //                     |
+    // 7  <-----------------
+    //    Cy3  B      Cy3
+
+    String many_helices_modification_json = r"""
+    {
+      "version": "0.6.7",
+      "major_tick_distance": 8,
+      "grid": "square",
+      "helices": [
+        {"grid_position": [0, 0]},
+        {"grid_position": [0, 1]},
+        {"grid_position": [0, 2]},
+        {"grid_position": [0, 3]},
+        {"grid_position": [0, 4]},
+        {"grid_position": [0, 5]},
+        {"grid_position": [0, 6]},
+        {"grid_position": [0, 7]}
+      ],
+      "modifications_in_design": {
+        "/iCy3/": {
+          "display_text": "Cy3",
+          "idt_text": "/iCy3/",
+          "location": "internal"
+        },
+        "/5Biosg/": {
+          "display_text": "B",
+          "idt_text": "/5Biosg/",
+          "location": "5'"
+        },
+        "/3Cy3Sp/": {
+          "display_text": "Cy3",
+          "idt_text": "/3Cy3Sp/",
+          "location": "3'"
+        },
+        "/iBiodT/": {
+          "display_text": "B",
+          "idt_text": "/iBiodT/",
+          "location": "internal",
+          "allowed_bases": ["T"]
+        }
+      },
+      "strands": [
+        {
+          "color": "#f74308",
+          "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+          "domains": [
+            {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]},
+            {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]},
+            {"helix": 2, "forward": true, "start": 0, "end": 16},
+            {"helix": 3, "forward": false, "start": 0, "end": 16},
+            {"helix": 4, "forward": true, "start": 0, "end": 16},
+            {"helix": 5, "forward": false, "start": 0, "end": 16},
+            {"helix": 6, "forward": true, "start": 0, "end": 16},
+            {"helix": 7, "forward": false, "start": 0, "end": 16}
+          ],
+          "5prime_modification": "/5Biosg/",
+          "3prime_modification": "/3Cy3Sp/",
+          "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/", "21": "/iCy3/", "26": "/iBiodT/", "37": "/iCy3/", "42": "/iBiodT/", "53": "/iCy3/", "58": "/iBiodT/", "69": "/iCy3/", "74": "/iBiodT/", "85": "/iCy3/", "90": "/iBiodT/", "101": "/iCy3/", "106": "/iBiodT/", "117": "/iCy3/", "122": "/iBiodT/"}
+        }
+      ]
+    }
+    """;
+    DNADesign many_helices_modification_design = DNADesign.from_json(json.decode(many_helices_modification_json));
+    AppState initial_state = app_state_from_dna_design(many_helices_modification_design);
+
+    Crossover crossover23 = many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
+    Strand domain = many_helices_modification_design.strands.first;
+    Domain domain6 = many_helices_modification_design.strands.first.substrands[6] as Domain;
+    test('test delete crossover', () {
+      // Delete crossover between 2 and 3
+      //    B     Cy3   B
+      // 0  [-----------------
+      //                     |
+      //                     |
+      //                     |
+      // 1  ------------------
+      //    |  B   Cy3
+      //    |
+      //    |      Cy3    B
+      // 2  ----------------->
+      //
+      //
+      //
+      // 3  -----------------]
+      //    |  B      Cy3
+      //    |
+      //    |       Cy3    B
+      // 4  ------------------
+      //                     |
+      //                     |
+      //                     |
+      // 5  ------------------
+      //    |  B     Cy3
+      //    |
+      //    |        Cy3    B
+      // 6  ------------------
+      //                     |
+      //                     |
+      //                     |
+      // 7  <-----------------
+      //    Cy3  B      Cy3
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
+        r"""
+          {
+            "version": "0.6.7",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#cc0000",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]},
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]},
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/", "21": "/iCy3/", "26": "/iBiodT/", "37": "/iCy3/", "42": "/iBiodT/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16},
+                  {"helix": 4, "forward": true, "start": 0, "end": 16},
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16},
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/", "39": "/iCy3/", "44": "/iBiodT/", "55": "/iCy3/", "60": "/iBiodT/", "71": "/iCy3/", "76": "/iBiodT/"}
+              }
+            ]
+          }
+        """
+      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true);
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, Select(crossover23, toggle: false, only: true));
+      state = app_state_reducer(state, DeleteAllSelected());
+
+      expect_app_state_equal(state, expected_state);
+
+      Crossover crossover56 = expected_state.dna_design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+      // Delete crossover between 5 and 6.
+      //    B     Cy3   B
+      // 0  [-----------------
+      //                     |
+      //                     |
+      //                     |
+      // 1  ------------------
+      //    |  B   Cy3
+      //    |
+      //    |      Cy3    B
+      // 2  ----------------->
+      //
+      //
+      //
+      // 3  -----------------]
+      //    |  B      Cy3
+      //    |
+      //    |       Cy3    B
+      // 4  ------------------
+      //                     |
+      //                     |
+      //                     |
+      // 5  <-----------------
+      //       B     Cy3
+      //
+      //             Cy3    B
+      // 6  [-----------------
+      //                     |
+      //                     |
+      //                     |
+      // 7  <-----------------
+      //    Cy3  B      Cy3
+      expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
+        r"""
+          {
+            "version": "0.6.7",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#cc0000",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]},
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]},
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/", "21": "/iCy3/", "26": "/iBiodT/", "37": "/iCy3/", "42": "/iBiodT/"}
+              },
+              {
+                "color": "#f74308",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16},
+                  {"helix": 4, "forward": true, "start": 0, "end": 16},
+                  {"helix": 5, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/", "39": "/iCy3/", "44": "/iBiodT/"}
+              },
+              {
+                "color": "#57bb00",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 6, "forward": true, "start": 0, "end": 16},
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              }
+            ]
+          }
+        """
+      ))).rebuild((b) => b..undo_redo.undo_stack.addAll([many_helices_modification_design, state.dna_design])..ui_state.changed_since_last_save = true);
+
+      state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
+      state = app_state_reducer(state, DeleteAllSelected());
+
+      expect_app_state_equal(state, expected_state);
+    });
+    test('delete loopout', () {
+      // 0  -----------------]
+      //    |  B     Cy3
+      //    |  <----------------------------------------------loopout length 3
+      //    |      Cy3    B
+      // 1  ----------------->
+      DNADesign modifications_loopout = DNADesign.from_json(json.decode(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]}
+            ],
+            "modifications_in_design": {
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#7300de",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": false, "start": 0, "end": 16},
+                  {"loopout": 3},
+                  {"helix": 1, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              }
+            ]
+          }
+        """
+      ));
+      AppState initial_state = app_state_from_dna_design(modifications_loopout);
+      // 0  <----------------]
+      //       B     Cy3
+      //
+      //           Cy3    B
+      // 1  [---------------->
+      AppState expected_state = expected_state_from_json_string(r"""
+        {
+          "version": "0.7.0",
+          "grid": "square",
+          "helices": [
+            {"grid_position": [0, 0]},
+            {"grid_position": [0, 1]}
+          ],
+          "modifications_in_design": {
+            "/iCy3/": {
+              "display_text": "Cy3",
+              "idt_text": "/iCy3/",
+              "display_connector": false,
+              "location": "internal"
+            },
+            "/iBiodT/": {
+              "display_text": "B",
+              "idt_text": "/iBiodT/",
+              "display_connector": false,
+              "location": "internal",
+              "allowed_bases": ["T"]
+            }
+          },
+          "strands": [
+            {
+              "color": "#cc0000",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 0, "forward": false, "start": 0, "end": 16}
+              ],
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+            },
+            {
+              "color": "#32b86c",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 1, "forward": true, "start": 0, "end": 16}
+              ],
+              "internal_modifications": {"4": "/iCy3/", "9": "/iBiodT/"}
+            }
+          ]
+        }
+      """, modifications_loopout);
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse'], toggle: false, only: true));
+      state = app_state_reducer(state, DeleteAllSelected());
+
+      expect_app_state_equal(state, expected_state);
+    });
+
+    test('delete domain', () {
+      // Delete domain
+      // 0
+      // 1
+      // 2
+      // 3
+      // 4
+      // 5
+      // 6
+      // 7
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
+        r"""
+          {
+            "version": "0.6.7",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0], "max_offset": 16},
+              {"grid_position": [0, 1], "max_offset": 16},
+              {"grid_position": [0, 2], "max_offset": 16},
+              {"grid_position": [0, 3], "max_offset": 16},
+              {"grid_position": [0, 4], "max_offset": 16},
+              {"grid_position": [0, 5], "max_offset": 16},
+              {"grid_position": [0, 6], "max_offset": 16},
+              {"grid_position": [0, 7], "max_offset": 16}
+            ],
+            "strands": []
+          }
+        """
+      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true..ui_state.select_mode_state.replace(SelectModeState().set_modes([SelectModeChoice.strand, SelectModeChoice.scaffold, SelectModeChoice.staple])));
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, SelectModeToggle(SelectModeChoice.strand));
+      state = app_state_reducer(state, Select(domain, toggle: false, only: true));
+      state = app_state_reducer(state, DeleteAllSelected());
+
+      expect_app_state_equal(state, expected_state);
+    });
+
+    test('nick', () {
+      // nick at helix 6 offset 0
+      //    B     Cy3   B
+      // 0  [-----------------
+      //                     |
+      //                     |
+      //                     |
+      // 1  ------------------
+      //    |  B   Cy3
+      //    |
+      //    |      Cy3    B
+      // 2  ------------------
+      //                     |
+      //                     |
+      //                     |
+      // 3  ------------------
+      //    |  B      Cy3
+      //    |
+      //    |       Cy3    B
+      // 4  ------------------
+      //                     |
+      //                     |
+      //                     |
+      // 5  ------------------
+      //    |  B     Cy3
+      //    |
+      //    |        Cy3    B
+      // 6  ---->[------------
+      //                     |
+      //                     |
+      //                     |
+      // 7  <-----------------
+      //    Cy3  B      Cy3
+      var expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
+        r"""
+          {
+            "version": "0.6.7",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#f74308",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]},
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]},
+                  {"helix": 2, "forward": true, "start": 0, "end": 16},
+                  {"helix": 3, "forward": false, "start": 0, "end": 16},
+                  {"helix": 4, "forward": true, "start": 0, "end": 16},
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 4}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/", "21": "/iCy3/", "26": "/iBiodT/", "37": "/iCy3/", "42": "/iBiodT/", "53": "/iCy3/", "58": "/iBiodT/", "69": "/iCy3/", "74": "/iBiodT/", "85": "/iCy3/", "90": "/iBiodT/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 6, "forward": true, "start": 4, "end": 16},
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"3": "/iCy3/", "8": "/iBiodT/", "19": "/iCy3/", "24": "/iBiodT/"}
+              }
+            ]
+          }
+        """
+      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true);
+
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, Nick(domain: domain6, offset: 4));
+
+      expect_app_state_equal(state, expected_state);
+    });
+  });
+
+  group('Test strand editing with modifications -- merge, etc.', () {
+    //    B     Cy3   B
+    // 0  [---------------->
+    //
+    //
+    //
+    // 1  <----------------]
+    //       B   Cy3
+    //
+    //           Cy3    B
+    // 2  [---------------->
+    //
+    //
+    //
+    // 3  <----------------]
+    //       B      Cy3
+    //
+    //            Cy3    B
+    // 4  [----------->[--->
+    //
+    //
+    //
+    // 5  -----------------]
+    //    |  B     Cy3
+    //    |
+    //    |      Cy3    B
+    // 6  ----------------->
+    //
+    //
+    //
+    // 7  <----------------]
+    //    Cy3  B      Cy3
+    DNADesign many_helices_modifications_split = DNADesign.from_json(json.decode(
+      r"""
+        {
+          "version": "0.7.0",
+          "grid": "square",
+          "helices": [
+            {"grid_position": [0, 0]},
+            {"grid_position": [0, 1]},
+            {"grid_position": [0, 2]},
+            {"grid_position": [0, 3]},
+            {"grid_position": [0, 4]},
+            {"grid_position": [0, 5]},
+            {"grid_position": [0, 6]},
+            {"grid_position": [0, 7]}
+          ],
+          "modifications_in_design": {
+            "/5Biosg/": {
+              "display_text": "B",
+              "idt_text": "/5Biosg/",
+              "display_connector": false,
+              "location": "5'"
+            },
+            "/3Cy3Sp/": {
+              "display_text": "Cy3",
+              "idt_text": "/3Cy3Sp/",
+              "display_connector": false,
+              "location": "3'"
+            },
+            "/iCy3/": {
+              "display_text": "Cy3",
+              "idt_text": "/iCy3/",
+              "display_connector": false,
+              "location": "internal"
+            },
+            "/iBiodT/": {
+              "display_text": "B",
+              "idt_text": "/iBiodT/",
+              "display_connector": false,
+              "location": "internal",
+              "allowed_bases": ["T"]
+            }
+          },
+          "strands": [
+            {
+              "color": "#03b6a2",
+              "sequence": "TTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+              ],
+              "5prime_modification": "/5Biosg/",
+              "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+            },
+            {
+              "color": "#f7931e",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+              ],
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+            },
+            {
+              "color": "#320096",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 2, "forward": true, "start": 0, "end": 16}
+              ],
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+            },
+            {
+              "color": "#b8056c",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 3, "forward": false, "start": 0, "end": 16}
+              ],
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+            },
+            {
+              "color": "#7300de",
+              "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 5, "forward": false, "start": 0, "end": 16},
+                {"helix": 6, "forward": true, "start": 0, "end": 16}
+              ],
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+            },
+            {
+              "color": "#888888",
+              "sequence": "TTTTTTTTTTTTTTTT",
+              "domains": [
+                {"helix": 7, "forward": false, "start": 0, "end": 16}
+              ],
+              "3prime_modification": "/3Cy3Sp/",
+              "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+            },
+            {
+              "color": "#333333",
+              "sequence": "TTTTTTTTTT",
+              "domains": [
+                {"helix": 4, "forward": true, "start": 0, "end": 10}
+              ],
+              "internal_modifications": {"7": "/iCy3/"}
+            },
+            {
+              "color": "#32b86c",
+              "sequence": "TTTTTT",
+              "domains": [
+                {"helix": 4, "forward": true, "start": 10, "end": 16}
+              ],
+              "internal_modifications": {"2": "/iBiodT/"}
+            }
+          ]
+        }
+      """
+    ));
+    AppState initial_state = app_state_from_dna_design(many_helices_modifications_split);
+    DNAEnd end_3p_H4 = many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward'];
+    DNAEnd end_5p_H5 = many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H5-0-16-reverse'];
+    DNAEnd end_5p_H4 = many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H4-10-16-forward'];
+    Helix helix5 = many_helices_modifications_split.helices[5];
+    Strand strand_H4_forward_10 = many_helices_modifications_split.strands[7];
+    Strand strand_H4_forward_0 = many_helices_modifications_split.strands[6];
+    Strand strand_H3_reverse_0 = many_helices_modifications_split.strands[3];
+    test('new crossover', () {
+      // Crossover between 4 and 5
+      //
+      //    B     Cy3   B
+      // 0  [---------------->
+      //
+      //
+      //
+      // 1  <----------------]
+      //       B   Cy3
+      //
+      //           Cy3    B
+      // 2  [---------------->
+      //
+      //
+      //
+      // 3  <----------------]
+      //       B      Cy3
+      //
+      //            Cy3    B
+      // 4  [----------->[----
+      //                     |
+      //                     |
+      //                     |
+      // 5  ------------------
+      //    |  B     Cy3
+      //    |
+      //    |      Cy3    B
+      // 6  ----------------->
+      //
+      //
+      //
+      // 7  <----------------]
+      //    Cy3  B      Cy3
+      var expected_state = expected_state_from_json_string(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "display_connector": false,
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "display_connector": false,
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#03b6a2",
+                "sequence": "TTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+              },
+              {
+                "color": "#f7931e",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#320096",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#b8056c",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#888888",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#333333",
+                "sequence": "TTTTTTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 0, "end": 10}
+                ],
+                "internal_modifications": {"7": "/iCy3/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 10, "end": 16},
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"2": "/iBiodT/", "13": "/iCy3/", "18": "/iBiodT/", "29": "/iCy3/", "34": "/iBiodT/"}
+              }
+            ]
+          }
+        """, many_helices_modifications_split);
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, JoinStrandsByCrossover(dna_end_first_click: end_3p_H4, dna_end_second_click:  end_5p_H5));
+
+      expect_app_state_equal(state, expected_state);
+    });
+
+    test('ligate', () {
+      // ligate strands in 4
+      //
+      //    B     Cy3   B
+      // 0  [---------------->
+      //
+      //
+      //
+      // 1  <----------------]
+      //       B   Cy3
+      //
+      //           Cy3    B
+      // 2  [---------------->
+      //
+      //
+      //
+      // 3  <----------------]
+      //       B      Cy3
+      //
+      //            Cy3    B
+      // 4  [---------------->
+      //
+      //
+      //
+      // 5  -----------------]
+      //    |  B     Cy3
+      //    |
+      //    |      Cy3    B
+      // 6  ----------------->
+      //
+      //
+      //
+      // 7  <----------------]
+      //    Cy3  B      Cy3
+      var expected_state = expected_state_from_json_string(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "display_connector": false,
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "display_connector": false,
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#03b6a2",
+                "sequence": "TTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+              },
+              {
+                "color": "#f7931e",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#320096",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#b8056c",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#7300de",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              },
+              {
+                "color": "#888888",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#333333",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              }
+            ]
+          }
+        """, many_helices_modifications_split);
+
+      AppState state = initial_state;
+      state = app_state_reducer(state, Ligate(dna_end: end_5p_H4));
+
+      expect_app_state_equal(state, expected_state);
+    });
+    test('move DNA end', () {
+      // move 5' end on 5 helix to the left by 2 offsets
+      //
+      //    B     Cy3   B
+      // 0  [---------------->
+      //
+      //
+      //
+      // 1  <----------------]
+      //       B   Cy3
+      //
+      //           Cy3    B
+      // 2  [---------------->
+      //
+      //
+      //
+      // 3  <----------------]
+      //       B      Cy3
+      //
+      //            Cy3    B
+      // 4  [----------->[--->
+      //
+      //
+      //
+      // 5  -------------]
+      //    |B   Cy3
+      //    |
+      //    |        Cy3    B
+      // 6  ----------------->
+      //
+      //
+      //
+      // 7  <----------------]
+      //    Cy3  B      Cy3
+      var expected_state = expected_state_from_json_string(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5], "max_offset": 16},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "display_connector": false,
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "display_connector": false,
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#03b6a2",
+                "sequence": "TTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+              },
+              {
+                "color": "#f7931e",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#320096",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#b8056c",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#7300de",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 5, "forward": false, "start": 0, "end": 14},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              },
+              {
+                "color": "#888888",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#333333",
+                "sequence": "TTTTTTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 0, "end": 10}
+                ],
+                "internal_modifications": {"7": "/iCy3/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 10, "end": 16}
+                ],
+                "internal_modifications": {"2": "/iBiodT/"}
+              }
+            ]
+          }
+        """, many_helices_modifications_split);
+
+      AppState state = initial_state;
+      DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
+      DNAEndsMove moves = DNAEndsMove(moves: BuiltList<DNAEndMove>([move]), original_offset: 15, current_offset: 13, helix: helix5);
+      state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: moves));
+
+      expect_app_state_equal(state, expected_state);
+    });
+    test('move strands', () {
+      // move strands at 3 and 4 to 0 and 1
+      //
+      //    B     Cy3   B
+      // 0  [---------------->
+      //    <----------------]
+      //       B      Cy3
+      //
+      //
+      //            Cy3    B
+      // 1  [----------->[--->
+      //    <----------------]
+      //       B   Cy3
+      //
+      //           Cy3    B
+      // 2  [---------------->
+      //
+      //
+      //
+      // 3
+      //
+      //
+      //
+      // 4
+      //
+      //
+      //
+      // 5  -------------]
+      //    |  B     Cy3
+      //    |
+      //    |      Cy3    B
+      // 6  ----------------->
+      //
+      //
+      //
+      // 7  <----------------]
+      //    Cy3  B      Cy3
+      var expected_state = expected_state_from_json_string(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3], "max_offset": 16},
+              {"grid_position": [0, 4], "max_offset": 16},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "display_connector": false,
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "display_connector": false,
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#03b6a2",
+                "sequence": "TTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+              },
+              {
+                "color": "#f7931e",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#320096",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#b8056c",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#7300de",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              },
+              {
+                "color": "#888888",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#333333",
+                "sequence": "TTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": true, "start": 0, "end": 10}
+                ],
+                "internal_modifications": {"7": "/iCy3/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": true, "start": 10, "end": 16}
+                ],
+                "internal_modifications": {"2": "/iBiodT/"}
+              }
+            ]
+          }
+        """, many_helices_modifications_split);
+
+      AppState state = initial_state;
+
+
+      BuiltList<Strand> strands_moving = BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
+      BuiltList<Strand> all_strands = many_helices_modifications_split.strands;
+      Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
+      int original_helix_idx = 3;
+      BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltMap<int, int> helices_view_order_inverse = many_helices_modifications_split.helices_view_order_inverse;
+      bool copy = false;
+
+      StrandsMove strands_move = StrandsMove(
+        strands_moving: strands_moving,
+        all_strands: all_strands,
+        original_address: original_address,
+        original_helix_idx: original_helix_idx,
+        helices: helices,
+        helices_view_order: helices_view_order,
+        helices_view_order_inverse: helices_view_order_inverse,
+        copy: copy,
+      ).rebuild((b) => b
+        ..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder()
+      );
+
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
+
+      expect_app_state_equal(state, expected_state);
+    });
+    test('copy and paste strands', () {
+      // copy strands at 3 and 4 to 0 and 1
+      //
+      //    B     Cy3   B
+      // 0  [---------------->
+      //    <----------------]
+      //       B      Cy3
+      //
+      //
+      //            Cy3    B
+      // 1  [----------->[--->
+      //    <----------------]
+      //       B   Cy3
+      //
+      //           Cy3    B
+      // 2  [---------------->
+      //
+      //
+      //
+      // 3  <----------------]
+      //       B      Cy3
+      //
+      //            Cy3    B
+      // 4  [----------->[--->
+      //
+      //
+      //
+      // 5  -------------]
+      //    |  B     Cy3
+      //    |
+      //    |      Cy3    B
+      // 6  ----------------->
+      //
+      //
+      //
+      // 7  <----------------]
+      //    Cy3  B      Cy3
+      var expected_state = expected_state_from_json_string(
+        r"""
+          {
+            "version": "0.7.0",
+            "grid": "square",
+            "helices": [
+              {"grid_position": [0, 0]},
+              {"grid_position": [0, 1]},
+              {"grid_position": [0, 2]},
+              {"grid_position": [0, 3]},
+              {"grid_position": [0, 4]},
+              {"grid_position": [0, 5]},
+              {"grid_position": [0, 6]},
+              {"grid_position": [0, 7]}
+            ],
+            "modifications_in_design": {
+              "/5Biosg/": {
+                "display_text": "B",
+                "idt_text": "/5Biosg/",
+                "display_connector": false,
+                "location": "5'"
+              },
+              "/3Cy3Sp/": {
+                "display_text": "Cy3",
+                "idt_text": "/3Cy3Sp/",
+                "display_connector": false,
+                "location": "3'"
+              },
+              "/iCy3/": {
+                "display_text": "Cy3",
+                "idt_text": "/iCy3/",
+                "display_connector": false,
+                "location": "internal"
+              },
+              "/iBiodT/": {
+                "display_text": "B",
+                "idt_text": "/iBiodT/",
+                "display_connector": false,
+                "location": "internal",
+                "allowed_bases": ["T"]
+              }
+            },
+            "strands": [
+              {
+                "color": "#03b6a2",
+                "sequence": "TTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": true, "start": 0, "end": 16, "deletions": [11, 12]}
+                ],
+                "5prime_modification": "/5Biosg/",
+                "internal_modifications": {"5": "/iCy3/", "10": "/iBiodT/"}
+              },
+              {
+                "color": "#f7931e",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": false, "start": 0, "end": 16, "deletions": [12], "insertions": [[4, 1]]}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#320096",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 2, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#b8056c",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 3, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#7300de",
+                "sequence": "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 5, "forward": false, "start": 0, "end": 16},
+                  {"helix": 6, "forward": true, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/", "23": "/iCy3/", "28": "/iBiodT/"}
+              },
+              {
+                "color": "#888888",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 7, "forward": false, "start": 0, "end": 16}
+                ],
+                "3prime_modification": "/3Cy3Sp/",
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#333333",
+                "sequence": "TTTTTTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 0, "end": 10}
+                ],
+                "internal_modifications": {"7": "/iCy3/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTT",
+                "domains": [
+                  {"helix": 4, "forward": true, "start": 10, "end": 16}
+                ],
+                "internal_modifications": {"2": "/iBiodT/"}
+              },
+              {
+                "color": "#cc0000",
+                "sequence": "TTTTTTTTTTTTTTTT",
+                "domains": [
+                  {"helix": 0, "forward": false, "start": 0, "end": 16}
+                ],
+                "internal_modifications": {"7": "/iCy3/", "12": "/iBiodT/"}
+              },
+              {
+                "color": "#32b86c",
+                "sequence": "TTTTTTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": true, "start": 0, "end": 10}
+                ],
+                "internal_modifications": {"7": "/iCy3/"}
+              },
+              {
+                "color": "#f74308",
+                "sequence": "TTTTTT",
+                "domains": [
+                  {"helix": 1, "forward": true, "start": 10, "end": 16}
+                ],
+                "internal_modifications": {"2": "/iBiodT/"}
+              }
+            ]
+          }
+        """, many_helices_modifications_split);
+
+      AppState state = initial_state;
+
+
+      BuiltList<Strand> strands_moving = BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
+      BuiltList<Strand> all_strands = many_helices_modifications_split.strands;
+      Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
+      int original_helix_idx = 3;
+      BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltMap<int, int> helices_view_order_inverse = many_helices_modifications_split.helices_view_order_inverse;
+      bool copy = true;
+
+      StrandsMove strands_move = StrandsMove(
+        strands_moving: strands_moving,
+        all_strands: all_strands,
+        original_address: original_address,
+        original_helix_idx: original_helix_idx,
+        helices: helices,
+        helices_view_order: helices_view_order,
+        helices_view_order_inverse: helices_view_order_inverse,
+        copy: copy,
+      ).rebuild((b) => b
+        ..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder()
+      );
+
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
+
+      expect_app_state_equal(state, expected_state);
     });
   });
 }
