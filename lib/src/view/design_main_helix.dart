@@ -21,9 +21,7 @@ import 'pure_component.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
-
 UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
-
 
 mixin DesignMainHelixProps on UiProps {
   Helix helix;
@@ -31,7 +29,6 @@ mixin DesignMainHelixProps on UiProps {
   bool strand_create_enabled;
   int design_major_tick_distance;
 }
-
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
@@ -207,7 +204,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     bool use_major_tick_distance = (results[0] as DialogCheckbox).value;
     int major_tick_distance = (results[1] as DialogNumber).value;
-    List<String> major_ticks_str = (results[2] as DialogText).value.trim().split(' ').toList();
+    List<String> major_ticks_str =
+        (results[2] as DialogText).value.trim().split(' ').where((token) => token.isNotEmpty).toList();
     bool apply_to_all = (results[3] as DialogCheckbox).value;
 
     List<int> major_ticks = [];
