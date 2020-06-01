@@ -3122,8 +3122,8 @@ k.a=n+p
 t+=3
 s=t
 r=!0}else{if(q<127){o=q>>>4
-if(o>=8)return H.e(C.ag,o)
-o=(C.ag[o]&1<<(q&15))!==0}else o=!1
+if(o>=8)return H.e(C.ah,o)
+o=(C.ah[o]&1<<(q&15))!==0}else o=!1
 if(o){if(r&&65<=q&&90>=q){if(k==null)k=new P.bH("")
 if(s<t){k.a+=C.b.Y(a,s,t)
 s=t}r=!1}++t}else{if((q&64512)===55296&&t+1<c){m=C.b.am(a,t+1)
@@ -3213,8 +3213,8 @@ q=H.a0F(s)
 if(r<0||q<0)return"%"
 p=r*16+q
 if(p<127){o=C.d.cb(p,4)
-if(o>=8)return H.e(C.ag,o)
-o=(C.ag[o]&1<<(p&15))!==0}else o=!1
+if(o>=8)return H.e(C.ah,o)
+o=(C.ah[o]&1<<(p&15))!==0}else o=!1
 if(o)return H.c4(c&&65<=p&&90>=p?(p|32)>>>0:p)
 if(t>=97||s>=97)return C.b.Y(a,b,b+3).toUpperCase()
 return null},
@@ -6219,7 +6219,7 @@ else if(b instanceof U.f4||b instanceof U.eO)T.a4z(t.c.a.a.length!==0)},
 a4r:function(a){var t=0,s=P.b8(u.z),r
 var $async$a4r=P.b9(function(b,c){if(b===1)return P.b5(c,s)
 while(true)switch(t){case 0:r=K.a4Y(a.a)
-E.pO(a.b.c,r,C.aj)
+E.pO(a.b.c,r,C.ak)
 T.a4z(!1)
 return P.b6(null,s)}})
 return P.b7($async$a4r,s)},
@@ -7410,7 +7410,7 @@ for(t=o.length,r=u.Zo,n=a2,m=n,l=0;l<o.length;o.length===t||(0,H.ay)(o),++l,n=k)
 k=o[l]
 q.a=0
 if(n!=null){a4.toString
-if(a4===C.y){j=n.f
+if(a4===C.A){j=n.f
 i=k.f
 h=i.a
 g=j.a
@@ -7425,7 +7425,7 @@ f=h-f
 e=Math.sqrt(g*g+f*f)*29.41176470588235}else{d=n.d
 c=k.d
 d.toString
-if(a4===C.aq){h=d.a
+if(a4===C.af){h=d.a
 g=c.a
 if(typeof h!=="number")return h.A()
 if(typeof g!=="number")return H.m(g)
@@ -7537,7 +7537,7 @@ s=t.A(0,s)
 if(typeof r!=="number")return H.m(r)
 return s.ai(0,1/r)},
 wx:function(a,b){var t
-if(b===C.aq)t=new P.ap(a.a,a.b,u.H)
+if(b===C.af)t=new P.ap(a.a,a.b,u.H)
 else if(b===C.Z)t=E.a4T(a)
 else if(b===C.V)t=E.a4U(a)
 else throw H.b(P.Y("cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb"))
@@ -7563,8 +7563,8 @@ t=p/50
 p=b.b
 if(typeof p!=="number")return p.dd()
 s=p/50
-if(a===C.y)throw H.b(P.Y("cannot output grid coordinates for grid = Grid.none"))
-else if(a===C.aq){r=C.M.aD(t)
+if(a===C.A)throw H.b(P.Y("cannot output grid coordinates for grid = Grid.none"))
+else if(a===C.af){r=C.M.aD(t)
 q=C.M.aD(s)}else if(a===C.V){r=C.M.aD(t/Math.sin(1.0471975511965976))
 p=C.d.bp(r,2)
 if(p===0){if(C.d.bp(C.M.mE(s),3)===2)s-=0.5}else if(p===1)if(C.d.bp(C.M.mE(s-Math.cos(1.0471975511965976)),3)===1)s-=Math.cos(1.0471975511965976)
@@ -7596,7 +7596,7 @@ if(H.c(r.a6(a,s)))return d.a(r.j(a,s))}return null}else{r=d.a(r.j(a,b))
 return r}},
 a_O:function(a){var t=a?self.current_pan_main():self.current_pan_side(),s=J.an(t)
 return new P.ap(s.j(t,0),s.j(t,1),u.H)},
-a9T:function(a){switch(a){case C.aj:return"text/plain;charset=utf-8"
+a9T:function(a){switch(a){case C.ak:return"text/plain;charset=utf-8"
 case C.e4:return"application/octet-stream"
 case C.b_:return"image/svg+xml;charset=utf-8,"
 case C.by:return"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}throw H.b(P.eq("You have discovered a bug. Please send this entire error message to\n  https://github.com/UC-Davis-molecular-computing/scadnano/issues"))},
@@ -9100,10 +9100,10 @@ a2B:function a2B(){},
 a2G:function a2G(a){this.a=a},
 a2F:function a2F(a){this.a=a},
 ahQ:function(a){return S.ak3(H.F(a))},
-ak3:function(a){switch(a){case"square":return C.aq
+ak3:function(a){switch(a){case"square":return C.af
 case"hex":return C.Z
 case"honeycomb":return C.V
-case"none":return C.y
+case"none":return C.A
 default:throw H.b(P.Y(a))}},
 cE:function cE(a){this.a=a},
 Cn:function Cn(){},
@@ -13442,7 +13442,7 @@ l=q.j(0,n)
 k=b.a
 l.ga2().d=k
 k.toString
-l=k===C.y
+l=k===C.A
 if(!l&&m.d==null){j=q.j(0,n)
 i=m.f
 if(!(i!=null)){h=E.wx(m.d,m.c)
@@ -14199,7 +14199,7 @@ n=m.b
 r=m.e
 q=m.x
 if(n===200){p=a.b.c
-E.pO($.pQ().rA(p)+".json",B.a04(J.A(U.Xy(r).c.a,"charset")).cd(0,q),C.aj)}else{o=u.f.a(C.T.hU(0,B.a04(J.A(U.Xy(r).c.a,"charset")).cd(0,q),null))
+E.pO($.pQ().rA(p)+".json",B.a04(J.A(U.Xy(r).c.a,"charset")).cd(0,q),C.ak)}else{o=u.f.a(C.T.hU(0,B.a04(J.A(U.Xy(r).c.a,"charset")).cd(0,q),null))
 window.alert("Error exporting file: "+H.d(J.A(o,"error")))}return P.b6(null,s)}})
 return P.b7($async$Yd,s)},
 aoN:function(a,b,c){var t,s,r
@@ -14259,9 +14259,9 @@ r=u.z
 q=H.F(E.pN(c9,"version","0.1.0",c0,s,r))
 t.gbJ().b=q
 q=u.q
-q=q.a(E.pN(c9,"grid",C.y,S.aok(),q,s))
+q=q.a(E.pN(c9,"grid",C.af,S.aok(),q,s))
 t.gbJ().c=q
-p=t.gbJ().c===C.y
+p=t.gbJ().c===C.A
 q=u.W
 o=q.a(E.k3(c9,C.jg))
 t.gbJ().sly(o)
@@ -14269,7 +14269,7 @@ o=J.N(c9)
 if(H.c(o.a6(c9,c1))){n=H.L(o.j(c9,c1))
 t.gbJ().d=n}else{n=t.gbJ().c
 n.toString
-if(n!==C.y)if(t.gbJ().c===C.Z||t.gbJ().c===C.V)t.gbJ().d=7
+if(n!==C.A)if(t.gbJ().c===C.Z||t.gbJ().c===C.V)t.gbJ().d=7
 else t.gbJ().d=8}m=H.a([],u.MZ)
 n=u.j
 l=n.a(o.j(c9,"helices"))
@@ -19725,16 +19725,16 @@ gaq:function(a){if(this.b.length>1)throw H.b(P.a7("More than one element"))
 return this.ga1(this)}}
 W.vF.prototype={
 gn:function(a){return this.a.length},
-j:function(a,b){return this.$ti.c.a(C.ai.j(this.a,H.L(b)))},
+j:function(a,b){return this.$ti.c.a(C.aj.j(this.a,H.L(b)))},
 p:function(a,b,c){H.L(b)
 this.$ti.c.a(c)
 throw H.b(P.K("Cannot modify list"))},
 sn:function(a,b){throw H.b(P.K("Cannot modify list"))},
 bS:function(a,b){this.$ti.h("i(1,1)").a(b)
 throw H.b(P.K("Cannot sort list"))},
-ga1:function(a){return this.$ti.c.a(C.ai.ga1(this.a))},
-ga5:function(a){return this.$ti.c.a(C.ai.ga5(this.a))},
-gaq:function(a){return this.$ti.c.a(C.ai.gaq(this.a))}}
+ga1:function(a){return this.$ti.c.a(C.aj.ga1(this.a))},
+ga5:function(a){return this.$ti.c.a(C.aj.ga5(this.a))},
+gaq:function(a){return this.$ti.c.a(C.aj.gaq(this.a))}}
 W.ar.prototype={
 gaz:function(a){return new W.vA(a)},
 saz:function(a,b){var t,s
@@ -20126,7 +20126,7 @@ b1:function(a,b){this.lF(0,u.kn.a(b),!0)},
 p:function(a,b,c){var t
 H.L(b)
 t=this.a
-t.replaceChild(u._A.a(c),C.ai.j(t.childNodes,b))},
+t.replaceChild(u._A.a(c),C.aj.j(t.childNodes,b))},
 gS:function(a){var t=this.a.childNodes
 return new W.m_(t,t.length,H.V(t).h("m_<au.E>"))},
 bS:function(a,b){u.m6.a(b)
@@ -20137,7 +20137,7 @@ bv:function(a,b,c,d){return this.aO(a,b,c,d,0)},
 gn:function(a){return this.a.childNodes.length},
 sn:function(a,b){throw H.b(P.K("Cannot set length on immutable List."))},
 j:function(a,b){H.L(b)
-return C.ai.j(this.a.childNodes,b)}}
+return C.aj.j(this.a.childNodes,b)}}
 W.ad.prototype={
 eN:function(a){var t=a.parentNode
 if(t!=null)t.removeChild(a)},
@@ -24976,7 +24976,7 @@ U.nN.prototype={}
 X.nV.prototype={}
 B.a18.prototype={
 $2:function(a,b){var t=this.b
-return C.a.k(this.a,H.a([P.a9g(C.ag,a,t,!0),P.a9g(C.ag,b,t,!0)],u.s))},
+return C.a.k(this.a,H.a([P.a9g(C.ah,a,t,!0),P.a9g(C.ah,b,t,!0)],u.s))},
 $S:46}
 B.a19.prototype={
 $1:function(a){var t
@@ -27769,7 +27769,7 @@ $iy:1,
 gI:function(){return C.jj},
 gJ:function(){return"SelectionBoxRemove"}}
 U.CV.prototype={
-u:function(a,b,c){return["grid_position",a.q(u.zZ.a(b).a,C.an)]},
+u:function(a,b,c){return["grid_position",a.q(u.zZ.a(b).a,C.ao)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -27850,7 +27850,7 @@ u.is.a(b)
 t=[]
 s=b.a
 if(s!=null){t.push("grid_position")
-t.push(a.q(s,C.an))}s=b.b
+t.push(a.q(s,C.ao))}s=b.b
 if(s!=null){t.push("position")
 t.push(a.q(s,C.b7))}return t},
 K:function(a,b){return this.u(a,b,C.c)},
@@ -28027,7 +28027,7 @@ gI:function(){return C.jB},
 gJ:function(){return"JoinStrandsByCrossover"}}
 U.DH.prototype={
 u:function(a,b,c){u.ac.a(b)
-return["address",a.q(b.a,C.ad),"color",a.q(b.b,C.ap)]},
+return["address",a.q(b.a,C.ad),"color",a.q(b.b,C.aq)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28050,7 +28050,7 @@ gI:function(){return C.j2},
 gJ:function(){return"StrandCreateStop"}}
 U.DG.prototype={
 u:function(a,b,c){u.ne.a(b)
-return["helix_idx",a.q(b.a,C.h),"start",a.q(b.b,C.h),"end",a.q(b.c,C.h),"forward",a.q(b.d,C.j),"color",a.q(b.e,C.ap)]},
+return["helix_idx",a.q(b.a,C.h),"start",a.q(b.b,C.h),"end",a.q(b.c,C.h),"forward",a.q(b.d,C.j),"color",a.q(b.e,C.aq)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28155,7 +28155,7 @@ gI:function(){return C.fA},
 gJ:function(){return"DNAEndsMoveCommit"}}
 U.BC.prototype={
 u:function(a,b,c){u.JK.a(b)
-return["strand",a.q(b.a,C.ao),"dna_sequence",a.q(b.b,C.n),"assign_complements",a.q(b.c,C.j),"warn_on_change",a.q(b.d,C.j)]},
+return["strand",a.q(b.a,C.ap),"dna_sequence",a.q(b.b,C.n),"assign_complements",a.q(b.c,C.j),"warn_on_change",a.q(b.d,C.j)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28163,7 +28163,7 @@ gI:function(){return C.iX},
 gJ:function(){return"AssignDNA"}}
 U.Db.prototype={
 u:function(a,b,c){u.PX.a(b)
-return["strand",a.q(b.a,C.ao),"remove_complements",a.q(b.b,C.j),"remove_all",a.q(b.c,C.j)]},
+return["strand",a.q(b.a,C.ap),"remove_complements",a.q(b.b,C.j),"remove_all",a.q(b.c,C.j)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28248,7 +28248,7 @@ gI:function(){return C.fa},
 gJ:function(){return"ContextMenuHide"}}
 U.Dd.prototype={
 u:function(a,b,c){u.ub.a(b)
-return["strand",a.q(b.a,C.ao),"is_scaffold",a.q(b.b,C.j)]},
+return["strand",a.q(b.a,C.ap),"is_scaffold",a.q(b.b,C.j)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28256,7 +28256,7 @@ gI:function(){return C.iz},
 gJ:function(){return"ScaffoldSet"}}
 U.DE.prototype={
 u:function(a,b,c){u.MJ.a(b)
-return["strand",a.q(b.a,C.ao),"color",a.q(b.b,C.ap)]},
+return["strand",a.q(b.a,C.ap),"color",a.q(b.b,C.aq)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28279,7 +28279,7 @@ gI:function(){return C.fv},
 gJ:function(){return"HelixPositionSet"}}
 U.Cp.prototype={
 u:function(a,b,c){u.X1.a(b)
-return["helix",a.q(b.a,C.Y),"grid_position",a.q(b.b,C.an)]},
+return["helix",a.q(b.a,C.Y),"grid_position",a.q(b.b,C.ao)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -28804,7 +28804,7 @@ E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.h0&&this.a.E(0,b.a)&&!0},
 gB:function(a){var t=this.a
-return Y.a8(Y.p(Y.p(0,t.gB(t)),C.af.gB(!0)))},
+return Y.a8(Y.p(Y.p(0,t.gB(t)),C.ag.gB(!0)))},
 m:function(a){var t=$.a0().$1("SelectAll"),s=J.Q(t)
 s.w(t,"selectables",this.a)
 s.w(t,"only",!0)
@@ -29003,7 +29003,7 @@ U.tZ.prototype={
 E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.ib&&this.a===b.a&&this.b==b.b},
-gB:function(a){return Y.a8(Y.p(Y.p(0,C.af.gB(this.a)),J.q(this.b)))},
+gB:function(a){return Y.a8(Y.p(Y.p(0,C.ag.gB(this.a)),J.q(this.b)))},
 m:function(a){var t=$.a0().$1("ExportDNA"),s=J.Q(t)
 s.w(t,"include_scaffold",this.a)
 s.w(t,"export_dna_format",this.b)
@@ -29198,7 +29198,7 @@ E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.he&&this.a.E(0,b.a)&&this.b.E(0,b.b)&&!0},
 gB:function(a){var t=this.a,s=this.b
-return Y.a8(Y.p(Y.p(Y.p(0,t.gB(t)),s.gB(s)),C.af.gB(!0)))},
+return Y.a8(Y.p(Y.p(Y.p(0,t.gB(t)),s.gB(s)),C.ag.gB(!0)))},
 m:function(a){var t=$.a0().$1("StrandsMoveStart"),s=J.Q(t)
 s.w(t,"strands",this.a)
 s.w(t,"address",this.b)
@@ -29210,7 +29210,7 @@ E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.hf&&this.a.E(0,b.a)&&!0},
 gB:function(a){var t=this.a
-return Y.a8(Y.p(Y.p(0,t.gB(t)),C.af.gB(!1)))},
+return Y.a8(Y.p(Y.p(0,t.gB(t)),C.ag.gB(!1)))},
 m:function(a){var t=$.a0().$1("StrandsMoveStartSelectedStrands"),s=J.Q(t)
 s.w(t,"address",this.a)
 s.w(t,"copy",!1)
@@ -29421,7 +29421,7 @@ U.uO.prototype={
 E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.ed&&J.J(this.a,b.a)&&this.b===b.b},
-gB:function(a){return Y.a8(Y.p(Y.p(0,J.q(this.a)),C.af.gB(this.b)))},
+gB:function(a){return Y.a8(Y.p(Y.p(0,J.q(this.a)),C.ag.gB(this.b)))},
 m:function(a){var t=$.a0().$1("ScaffoldSet"),s=J.Q(t)
 s.w(t,"strand",this.a)
 s.w(t,"is_scaffold",this.b)
@@ -29483,7 +29483,7 @@ U.tr.prototype={
 E:function(a,b){if(b==null)return!1
 if(b===this)return!0
 return b instanceof U.er&&this.a===b.a},
-gB:function(a){return Y.a8(Y.p(0,C.af.gB(this.a)))},
+gB:function(a){return Y.a8(Y.p(0,C.ag.gB(this.a)))},
 m:function(a){var t=$.a0().$1("AutofitSet"),s=J.Q(t)
 s.w(t,"autofit",this.a)
 return s.m(t)}}
@@ -31154,7 +31154,7 @@ t.push(a.q(s,C.c6))}s=b.fy
 if(s!=null){t.push("strand_creation")
 t.push(a.q(s,C.eI))}s=b.go
 if(s!=null){t.push("side_view_grid_position_mouse_cursor")
-t.push(a.q(s,C.an))}s=b.id
+t.push(a.q(s,C.ao))}s=b.id
 if(s!=null){t.push("side_view_position_mouse_cursor")
 t.push(a.q(s,C.K))}s=b.k3
 if(s!=null){t.push("context_menu")
@@ -32182,13 +32182,12 @@ gCA:function(){var t=this.d,s=u.S
 return J.di(t.ga0(t),new N.Nv(),s).b6(0,H.eo(P.a1b(),s))},
 dv:function(a8){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this,a2="major_tick_distance",a3=u.N,a4=u.z,a5=P.ab(["version",a1.a],a3,a4),a6=a1.f,a7=H.w(a6)
 a5.Z(0,S.dR(a6.b,a6.a,a7.c,a7.Q[1]))
-a6=a1.b
-if(a6!==C.y)a5.p(0,"grid",a6.a)
-a7=a1.c
-if(a7!=null){a6.toString
-t=a7!==(a6===C.Z||a6===C.V?7:8)
-a6=t}else a6=!1
-if(a6)a5.p(0,a2,a7)
+a7=a1.b
+a5.p(0,"grid",a7.a)
+a6=a1.c
+if(a6!=null){t=a6!==(a7===C.Z||a7===C.V?7:8)
+a7=t}else a7=!1
+if(a7)a5.p(0,a2,a6)
 a6=u.S
 a7=P.a3(a6,a4)
 for(t=a1.d,s=J.ah(t.ga0(t)),r=u.t,q=u.Ci,p=u.a0;s.t();){o=s.gF(s)
@@ -33008,7 +33007,7 @@ gJ:function(){return"Insertion"}}
 G.C8.prototype={
 u:function(a,b,c){var t,s
 u.p.a(b)
-t=["helix",a.q(b.a,C.h),"forward",a.q(b.b,C.j),"start",a.q(b.c,C.h),"end",a.q(b.d,C.h),"deletions",a.q(b.e,C.O),"insertions",a.q(b.f,C.bQ),"is_first",a.q(b.r,C.j),"is_last",a.q(b.x,C.j),"unused_fields",a.q(b.Q,C.z)]
+t=["helix",a.q(b.a,C.h),"forward",a.q(b.b,C.j),"start",a.q(b.c,C.h),"end",a.q(b.d,C.h),"deletions",a.q(b.e,C.O),"insertions",a.q(b.f,C.bQ),"is_first",a.q(b.r,C.j),"is_last",a.q(b.x,C.j),"unused_fields",a.q(b.Q,C.y)]
 s=b.y
 if(s!=null){t.push("dna_sequence")
 t.push(a.q(s,C.n))}s=b.z
@@ -33164,18 +33163,18 @@ G.Fd.prototype={}
 G.G9.prototype={}
 M.bk.prototype={
 Ck:function(){var t,s
-for(t=J.ah(C.ah.gW(C.ah));t.t();){s=t.gF(t)
-if(C.ah.j(0,s)===this)return s}throw H.b(P.eq("This should be unreachable."))},
-gy0:function(){switch(this){case C.r:return L.kb(H.a([C.A,C.x,C.J,C.I,C.E,C.D],u.TA),u.d)
-case C.A:return L.kb(H.a([C.r,C.I,C.x],u.TA),u.d)
+for(t=J.ah(C.ai.gW(C.ai));t.t();){s=t.gF(t)
+if(C.ai.j(0,s)===this)return s}throw H.b(P.eq("This should be unreachable."))},
+gy0:function(){switch(this){case C.r:return L.kb(H.a([C.z,C.x,C.J,C.I,C.E,C.D],u.TA),u.d)
+case C.z:return L.kb(H.a([C.r,C.I,C.x],u.TA),u.d)
 case C.J:return L.kb(H.a([C.r,C.I,C.E,C.D,C.x],u.TA),u.d)
-case C.I:return L.kb(H.a([C.r,C.A,C.J,C.E,C.D,C.x],u.TA),u.d)
+case C.I:return L.kb(H.a([C.r,C.z,C.J,C.E,C.D,C.x],u.TA),u.d)
 case C.E:return L.kb(H.a([C.r,C.J,C.I,C.D,C.x],u.TA),u.d)
 case C.D:return L.kb(H.a([C.r,C.J,C.I,C.E,C.x],u.TA),u.d)
-case C.x:return L.kb(H.a([C.r,C.A,C.J,C.I,C.E,C.D],u.TA),u.d)
+case C.x:return L.kb(H.a([C.r,C.z,C.J,C.I,C.E,C.D],u.TA),u.d)
 default:throw H.b(P.Y(this.m(0)+" is not a valid EditModeChoice"))}},
 fR:function(){switch(this){case C.r:return"(s)elect"
-case C.A:return"(p)encil"
+case C.z:return"(p)encil"
 case C.J:return"(n)ick"
 case C.I:return"(l)igate"
 case C.E:return"(i)nsertion"
@@ -33237,18 +33236,18 @@ return n},
 soP:function(a){this.b=u.JX.a(a)}}
 M.Fk.prototype={}
 D.e2.prototype={
-y6:function(){switch(this){case C.ak:return"csv"
+y6:function(){switch(this){case C.al:return"csv"
 case C.aa:return"txt"
-case C.am:case C.al:return"xlsx"}throw H.b(D.iV("You have discovered a bug. Please send this entire error message to\n  https://github.com/UC-Davis-molecular-computing/scadnano/issues"))},
+case C.an:case C.am:return"xlsx"}throw H.b(D.iV("You have discovered a bug. Please send this entire error message to\n  https://github.com/UC-Davis-molecular-computing/scadnano/issues"))},
 m:function(a){return C.au.j(0,this)},
-xe:function(){switch(this){case C.ak:return C.aj
-case C.aa:return C.aj
-case C.am:case C.al:return C.by}throw H.b(D.iV("You have discovered a bug. Please send this entire error message to\n  https://github.com/UC-Davis-molecular-computing/scadnano/issues"))},
+xe:function(){switch(this){case C.al:return C.ak
+case C.aa:return C.ak
+case C.an:case C.am:return C.by}throw H.b(D.iV("You have discovered a bug. Please send this entire error message to\n  https://github.com/UC-Davis-molecular-computing/scadnano/issues"))},
 mx:function(a){u.lO.a(a)
 return this.y4(a)},
 y4:function(a){var t=0,s=P.b8(u.z),r,q=[],p=this,o,n,m
 var $async$mx=P.b9(function(b,c){if(b===1)return P.b5(c,s)
-while(true)$async$outer:switch(t){case 0:try{switch(p){case C.ak:n=D.a4G(a)
+while(true)$async$outer:switch(t){case 0:try{switch(p){case C.al:n=D.a4G(a)
 r=n
 t=1
 break $async$outer
@@ -33256,11 +33255,11 @@ case C.aa:n=D.a4V(a)
 r=n
 t=1
 break $async$outer
-case C.am:n=D.L9(a,C.aO)
+case C.an:n=D.L9(a,C.aO)
 r=n
 t=1
 break $async$outer
-case C.al:n=D.L9(a,C.bg)
+case C.am:n=D.L9(a,C.bg)
 r=n
 t=1
 break $async$outer}}catch(l){n=H.aa(l)
@@ -33352,7 +33351,7 @@ if(!t&&this.f!=null)throw H.b(P.Y("exactly one of Helix.grid_position and Helix.
 gr7:function(a){var t=this.f
 return t!=null?t:E.a27(E.wx(this.d,this.c))},
 ml:function(){var t,s,r,q,p=this
-if(p.c!==C.y){t=p.b
+if(p.c!==C.A){t=p.b
 if(typeof t!=="number")return H.m(t)
 return new P.ap(0,73.52941176470588*t,u.H)}else{t=u.H
 if(p.gr7(p)!=null){s=p.h7()
@@ -33449,10 +33448,10 @@ gJ:function(){return"Address"}}
 O.CE.prototype={
 u:function(a,b,c){var t,s
 u.T.a(b)
-t=["idx",a.q(b.a,C.h),"view_order",a.q(b.b,C.h),"grid",a.q(b.c,C.bP),"rotation",a.q(b.r,C.bS),"rotation_anchor",a.q(b.x,C.h),"max_offset",a.q(b.y,C.h),"min_offset",a.q(b.z,C.h),"unused_fields",a.q(b.cx,C.z)]
+t=["idx",a.q(b.a,C.h),"view_order",a.q(b.b,C.h),"grid",a.q(b.c,C.bP),"rotation",a.q(b.r,C.bS),"rotation_anchor",a.q(b.x,C.h),"max_offset",a.q(b.y,C.h),"min_offset",a.q(b.z,C.h),"unused_fields",a.q(b.cx,C.y)]
 s=b.d
 if(s!=null){t.push("grid_position")
-t.push(a.q(s,C.an))}s=b.e
+t.push(a.q(s,C.ao))}s=b.e
 if(s!=null){t.push("svg_position_")
 t.push(a.q(s,C.K))}s=b.f
 if(s!=null){t.push("position_")
@@ -33635,7 +33634,7 @@ $S:243}
 K.CF.prototype={
 u:function(a,b,c){var t,s
 u.lw.a(b)
-t=["name",a.q(b.a,C.n),"scale",a.q(b.b,C.n),"purification",a.q(b.c,C.n),"unused_fields",a.q(b.f,C.z)]
+t=["name",a.q(b.a,C.n),"scale",a.q(b.b,C.n),"purification",a.q(b.c,C.n),"unused_fields",a.q(b.f,C.y)]
 s=b.d
 if(s!=null){t.push("plate")
 t.push(a.q(s,C.n))}s=b.e
@@ -33731,7 +33730,7 @@ $S:28}
 G.CQ.prototype={
 u:function(a,b,c){var t,s
 u.mB.a(b)
-t=["loopout_length",a.q(b.a,C.h),"prev_domain_idx",a.q(b.b,C.h),"next_domain_idx",a.q(b.c,C.h),"unused_fields",a.q(b.f,C.z)]
+t=["loopout_length",a.q(b.a,C.h),"prev_domain_idx",a.q(b.b,C.h),"next_domain_idx",a.q(b.c,C.h),"unused_fields",a.q(b.f,C.y)]
 s=b.d
 if(s!=null){t.push("dna_sequence")
 t.push(a.q(s,C.n))}s=b.e
@@ -33862,7 +33861,7 @@ $S:249}
 Z.CS.prototype={
 u:function(a,b,c){var t,s
 u.k3.a(b)
-t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.d,C.z)]
+t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.d,C.y)]
 s=b.b
 if(s!=null){t.push("id")
 t.push(a.q(s,C.n))}return t},
@@ -33874,7 +33873,7 @@ gJ:function(){return"Modification5Prime"}}
 Z.CR.prototype={
 u:function(a,b,c){var t,s
 u.Ts.a(b)
-t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.d,C.z)]
+t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.d,C.y)]
 s=b.b
 if(s!=null){t.push("id")
 t.push(a.q(s,C.n))}return t},
@@ -33886,7 +33885,7 @@ gJ:function(){return"Modification3Prime"}}
 Z.CT.prototype={
 u:function(a,b,c){var t,s
 u.Cl.a(b)
-t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.e,C.z)]
+t=["display_text",a.q(b.a,C.n),"idt_text",a.q(b.c,C.n),"unused_fields",a.q(b.e,C.y)]
 s=b.b
 if(s!=null){t.push("id")
 t.push(a.q(s,C.n))}s=b.d
@@ -34972,7 +34971,7 @@ $S:7}
 E.DK.prototype={
 u:function(a,b,c){var t,s
 u.A.a(b)
-t=["substrands",a.q(b.a,C.bX),"is_scaffold",a.q(b.d,C.j),"modifications_int",a.q(b.r,C.c2),"color",a.q(b.x,C.ap),"unused_fields",a.q(b.y,C.z)]
+t=["substrands",a.q(b.a,C.bX),"is_scaffold",a.q(b.d,C.j),"modifications_int",a.q(b.r,C.c2),"color",a.q(b.x,C.aq),"unused_fields",a.q(b.y,C.y)]
 s=b.b
 if(s!=null){t.push("dna_sequence")
 t.push(a.q(s,C.n))}s=b.c
@@ -35129,7 +35128,7 @@ return a},
 $S:102}
 U.DJ.prototype={
 u:function(a,b,c){u.gy.a(b)
-return["helix",a.q(b.a,C.Y),"forward",a.q(b.b,C.j),"original_offset",a.q(b.c,C.h),"current_offset",a.q(b.d,C.h),"color",a.q(b.e,C.ap)]},
+return["helix",a.q(b.a,C.Y),"forward",a.q(b.b,C.j),"original_offset",a.q(b.c,C.h),"current_offset",a.q(b.d,C.h),"color",a.q(b.e,C.aq)]},
 K:function(a,b){return this.u(a,b,C.c)},
 $ir:1,
 $iy:1,
@@ -35783,10 +35782,10 @@ nJ:function(a,b){var t,s,r,q
 u.H.a(b)
 t=$.I().b
 s=u.i
-if(H.c(s.a(t.gL(t)).b.k2.b.G(0,C.A))){t=$.I().b
+if(H.c(s.a(t.gL(t)).b.k2.b.G(0,C.z))){t=$.I().b
 t=s.a(t.gL(t)).a.b
 t.toString
-if(t!==C.y){t=$.I().b
+if(t!==C.A){t=$.I().b
 r=E.ab8(s.a(t.gL(t)).a.b,E.abe(u.OM.a(document.querySelector("#side-view-svg")),!1,a,b))
 t=$.I().b
 if(!J.J(s.a(t.gL(t)).b.go,r))$.I().O(U.aik(r))}else{q=E.abe(this.y,!1,a,b)
@@ -35890,7 +35889,7 @@ p=u.i
 if(H.c(p.a(r.gL(r)).b.k2.b.G(0,C.r)))r=s===17||s==$.a5s()||s===16
 else r=!1
 if(r){q.qF(!0,C.b4,q.z)
-q.qF(!1,C.b5,q.y)}else if(!H.c(t.gbY(a))&&!H.c(t.gc_(a))&&!H.c(t.gcl(a))&&!H.c(t.gcJ(a))&&H.c(J.cc(C.ah.gW(C.ah),s)))$.I().O(U.a6q(C.ah.j(0,s)))
+q.qF(!1,C.b5,q.y)}else if(!H.c(t.gbY(a))&&!H.c(t.gc_(a))&&!H.c(t.gcl(a))&&!H.c(t.gcJ(a))&&H.c(J.cc(C.ai.gW(C.ai),s)))$.I().O(U.a6q(C.ai.j(0,s)))
 else if(s===46){r=$.I().b
 r=p.a(r.gL(r)).b.a.a.b
 if(r.gax(r))$.I().O(U.ahw())
@@ -35912,7 +35911,7 @@ else r=!1
 if(r){t.da(a)
 t=$.I()
 u.el.a(null)
-t.O(new U.uR())}if(s==C.A.Ck())q.t1(q.db)}}}},
+t.O(new U.uR())}if(s==C.z.Ck())q.t1(q.db)}}}},
 $S:27}
 U.Ou.prototype={
 $1:function(a){var t,s,r=J.agQ(u.JG.a(a))
@@ -36515,7 +36514,7 @@ r=r.gi(r).j(0,"DesignMainPropsMixin.grid")
 if(r==null)r=k
 u.q.a(r)
 J.v(p.gi(s),"DesignMainHelicesProps.grid",r)
-r=l.l.gan().b.G(0,C.A)
+r=l.l.gan().b.G(0,C.z)
 J.v(p.gi(s),"DesignMainHelicesProps.strand_create_enabled",r)
 r=u.O
 o=r.a(l.l.gc2())
@@ -36543,7 +36542,7 @@ C.a.k(t,s.$0())
 s=$.aca().$0()
 J.M7(s,"strands")
 C.a.k(t,s.$0())
-if(H.c(l.gi(l).gan().b.G(0,C.A))){s=l.l
+if(H.c(l.gi(l).gan().b.G(0,C.z))){s=l.l
 s=s.gi(s).j(0,"DesignMainPropsMixin.drawing_potential_crossover")
 s=!H.c(H.P(s==null?k:s))}else s=!1
 if(s){s=S.aaa().$0()
@@ -37205,7 +37204,7 @@ a=u.V.a(u.I.a(a))
 if(!H.c(a.shiftKey)){a.preventDefault()
 t=$.I()
 r.l.gae()
-s=r.l.gae().c===C.y?B.jc(r.gC2(),"adjust position"):B.jc(r.gBX(),"adjust grid position")
+s=r.l.gae().c===C.A?B.jc(r.gC2(),"adjust position"):B.jc(r.gBX(),"adjust grid position")
 t.O(U.Vp(B.BF(S.iy(H.a([B.jc(r.gBZ(),"adjust length"),B.jc(r.gC0(),"adjust tick marks"),s],u.Am),u.N6),new P.ap(a.pageX,a.pageY,u.H))))}},
 t9:function(a){var t,s,r,q=u.V.a(u.aw.a(a).y)
 if(q.button!==0)return
@@ -38375,7 +38374,7 @@ if(H.c(s.gi(s).gan().b.G(0,C.r))&&H.c(s.l.gbV())){t=u.V.a(a.y)
 s.gdH().jZ(t)}},
 BM:function(a){var t,s,r,q,p,o,n=this
 if(!J.J(J.M5(u.Y.a(a).y),0))return
-if(H.c(n.gi(n).gan().b.G(0,C.A)))if(!H.c(n.l.gjM()))if(!(H.c(n.l.gb_().r)&&H.c(n.l.gb4())))t=H.c(n.l.gb_().x)&&!H.c(n.l.gb4())
+if(H.c(n.gi(n).gan().b.G(0,C.z)))if(!H.c(n.l.gjM()))if(!(H.c(n.l.gb_().r)&&H.c(n.l.gb4())))t=H.c(n.l.gb_().x)&&!H.c(n.l.gb4())
 else t=!0
 else t=!1
 else t=!1
@@ -38396,7 +38395,7 @@ p=n.l
 p=p.gbG(p).c9()
 o=S.a8t("#"+p.gcg()+p.gca()+p.gcc(),q,n.gdH(),s,t,r,q)
 t=$.I()
-t.O(new U.uH(o))}else{if(H.c(n.gi(n).gan().b.G(0,C.A)))if(H.c(n.l.gjM()))if(!(H.c(n.l.gb_().r)&&H.c(n.l.gb4())))t=H.c(n.l.gb_().x)&&!H.c(n.l.gb4())
+t.O(new U.uH(o))}else{if(H.c(n.gi(n).gan().b.G(0,C.z)))if(H.c(n.l.gjM()))if(!(H.c(n.l.gb_().r)&&H.c(n.l.gb4())))t=H.c(n.l.gb_().x)&&!H.c(n.l.gb4())
 else t=!0
 else t=!1
 else t=!1
@@ -40083,14 +40082,14 @@ s=s.gi(s).j(0,"DesignSideHelixProps.selected")
 r=H.c(H.P(s==null?i:s))?"side-view-helix-circle selected":"side-view-helix-circle"
 s=j.l
 s=s.gi(s).j(0,"DesignSideHelixProps.mouse_is_over")
-if(H.c(H.P(s==null?i:s))&&H.c(j.l.gan().b.G(0,C.A)))r+=" deletable"
+if(H.c(H.P(s==null?i:s))&&H.c(j.l.gan().b.G(0,C.z)))r+=" deletable"
 s=j.l
 s=s.gi(s).j(0,"DesignSideHelixProps.grid")
 if(s==null)s=i
 u.q.a(s)
 s.toString
 q=j.l
-if(s===C.y){p=q.gae().h7()
+if(s===C.A){p=q.gae().h7()
 s=p.a
 q=H.d(s)+", "
 o=p.b
@@ -40127,7 +40126,7 @@ C.a.k(l,q.$0())}k=E.aaV(t.h7())
 h=A.aD(s.a($.c_),i)
 h.shb(0,"translate("+H.d(k.a)+" "+H.d(k.b)+")")
 return h.$1(l)},
-oA:function(a,b){if(H.c(this.l.gan().b.G(0,C.A)))$.I().O(U.ahT(b.a))
+oA:function(a,b){if(H.c(this.l.gan().b.G(0,C.z)))$.I().O(U.ahT(b.a))
 else if(H.c(a.k4))$.I().O(U.a6A(b.a,!1))
 else if(H.c(a.fr)||H.c(a.fy))$.I().O(U.a6A(b.a,!0))}}
 B.Ok.prototype={
@@ -40170,19 +40169,19 @@ Y.ne.prototype={
 at:function(a){var t,s,r,q,p,o=this,n=o.l
 n=n.geW(n)
 n.toString
-if(n!==C.y)if(o.l.gek()==null)return null
+if(n!==C.A)if(o.l.gek()==null)return null
 n=o.l
 t=n.geW(n)
 t.toString
 n=o.l
-if(t===C.y)s=n.gh4()
+if(t===C.A)s=n.gh4()
 else{n=n.gek()
 r=o.l
 s=E.wx(n,r.geW(r))}n=o.l
 n=n.geW(n)
 n.toString
 r=o.l
-if(n===C.y){q=E.a27(r.gh4())
+if(n===C.A){q=E.a27(r.gh4())
 p=J.ji(q.a,2)+", "+J.ji(q.b,2)}else{q=r.gek()
 p=H.d(q.a)+", "+H.d(q.b)}n=u.C
 r=A.aD(n.a($.Yy),null)
@@ -40197,7 +40196,7 @@ u.Y.a(a)
 t=this.l
 t=t.geW(t)
 t.toString
-if(t===C.y){s=E.a27(this.l.gh4())
+if(t===C.A){s=E.a27(this.l.gh4())
 $.I().O(U.a6z(null,s))}else $.I().O(U.a6z(this.l.gek(),null))}}
 Y.ZP.prototype={
 $0:function(){return new Y.pi(null)},
@@ -40781,7 +40780,7 @@ $1:function(a){u.J.a(a)
 return window.alert(this.a)},
 $S:55}
 D.YX.prototype={
-$0:function(){return new D.pr(H.a([C.aq,C.V,C.Z,C.y],u.va),1,new P.bI(new P.aI($.aG,u.wJ),u.BJ),0,null)},
+$0:function(){return new D.pr(H.a([C.af,C.V,C.Z,C.A],u.va),1,new P.bI(new P.aI($.aG,u.wJ),u.BJ),0,null)},
 $C:"$0",
 $R:0,
 $S:333}
@@ -45057,7 +45056,7 @@ C.L=W.qT.prototype
 C.c8=W.e6.prototype
 C.eT=J.o.prototype
 C.a=J.S.prototype
-C.af=J.nr.prototype
+C.ag=J.nr.prototype
 C.M=J.r0.prototype
 C.d=J.r1.prototype
 C.P=J.r2.prototype
@@ -45068,7 +45067,7 @@ C.eX=W.eF.prototype
 C.F=H.rk.prototype
 C.aN=H.rl.prototype
 C.C=H.m7.prototype
-C.ai=W.nB.prototype
+C.aj=W.nB.prototype
 C.d4=J.yT.prototype
 C.ks=W.rs.prototype
 C.rl=W.rJ.prototype
@@ -45079,7 +45078,7 @@ C.bq=J.j8.prototype
 C.dZ=W.ln.prototype
 C.e3=new P.wQ(!1,127)
 C.bx=new P.wR(127)
-C.aj=new E.mV("BlobType.text")
+C.ak=new E.mV("BlobType.text")
 C.e4=new E.mV("BlobType.binary")
 C.b_=new E.mV("BlobType.image")
 C.by=new E.mV("BlobType.excel")
@@ -45245,12 +45244,12 @@ C.D=new M.bk("deletion")
 C.E=new M.bk("insertion")
 C.I=new M.bk("ligate")
 C.J=new M.bk("nick")
-C.A=new M.bk("pencil")
+C.z=new M.bk("pencil")
 C.r=new M.bk("select")
-C.ak=new D.e2("csv")
+C.al=new D.e2("csv")
 C.aa=new D.e2("idt_bulk")
-C.al=new D.e2("idt_plates384")
-C.am=new D.e2("idt_plates96")
+C.am=new D.e2("idt_plates384")
+C.an=new D.e2("idt_plates96")
 C.bI=new U.nl("ExportSvgType.main")
 C.bJ=new U.nl("ExportSvgType.side")
 C.bK=new U.nl("ExportSvgType.both")
@@ -45263,11 +45262,11 @@ C.n=new U.as(C.aZ,C.m)
 C.uN=H.k("af")
 C.aE=new U.as(C.uN,C.m)
 C.fP=H.a(t([C.n,C.aE]),u.F)
-C.z=new U.as(C.a9,C.fP)
+C.y=new U.as(C.a9,C.fP)
 C.W=H.k("aQ<@>")
 C.dX=H.k("W")
-C.ao=new U.as(C.dX,C.m)
-C.cf=H.a(t([C.ao]),u.F)
+C.ap=new U.as(C.dX,C.m)
+C.cf=H.a(t([C.ap]),u.F)
 C.bM=new U.as(C.W,C.cf)
 C.cd=H.a(t([C.n]),u.F)
 C.bN=new U.as(C.W,C.cd)
@@ -45323,7 +45322,7 @@ C.eJ=new U.as(C.vG,C.m)
 C.k7=H.a(t([C.eJ]),u.F)
 C.bR=new U.as(C.B,C.k7)
 C.dB=H.k("cw")
-C.an=new U.as(C.dB,C.m)
+C.ao=new U.as(C.dB,C.m)
 C.dz=H.k("e0")
 C.eD=new U.as(C.dz,C.m)
 C.dt=H.k("cd")
@@ -45400,11 +45399,11 @@ C.c5=new U.as(C.B,C.fl)
 C.dw=H.k("cv")
 C.c6=new U.as(C.dw,C.m)
 C.dm=H.k("hB")
-C.ap=new U.as(C.dm,C.m)
+C.aq=new U.as(C.dm,C.m)
 C.Z=new S.cE("hex")
 C.V=new S.cE("honeycomb")
-C.y=new S.cE("none")
-C.aq=new S.cE("square")
+C.A=new S.cE("none")
+C.af=new S.cE("square")
 C.y7=new E.Py("HexGridCoordinateSystem.odd_q")
 C.eV=new P.ye(null)
 C.eW=new P.kz(null,null)
@@ -45667,7 +45666,7 @@ C.io=H.a(t([C.ay,C.b2,C.b3]),H.ax("S<iJ>"))
 C.vF=H.k("f4")
 C.xK=H.k("vo")
 C.iq=H.a(t([C.vF,C.xK]),u.w)
-C.iu=H.a(t([C.ak,C.aa,C.am,C.al]),H.ax("S<e2>"))
+C.iu=H.a(t([C.al,C.aa,C.an,C.am]),H.ax("S<e2>"))
 C.vl=H.k("eh")
 C.xv=H.k("va")
 C.iv=H.a(t([C.vl,C.xv]),u.w)
@@ -45776,14 +45775,14 @@ C.wn=H.k("u0")
 C.jD=H.a(t([C.u2,C.wn]),u.w)
 C.wS=H.k("uv")
 C.jF=H.a(t([C.dL,C.wS]),u.w)
-C.ag=H.a(t([0,0,24576,1023,65534,34815,65534,18431]),u.t)
+C.ah=H.a(t([0,0,24576,1023,65534,34815,65534,18431]),u.t)
 C.vs=H.k("he")
 C.xE=H.k("vj")
 C.jG=H.a(t([C.vs,C.xE]),u.w)
 C.tY=H.k("ic")
 C.wm=H.k("u_")
 C.jH=H.a(t([C.tY,C.wm]),u.w)
-C.jJ=H.a(t([C.r,C.A,C.J,C.I,C.E,C.D,C.x]),u.TA)
+C.jJ=H.a(t([C.r,C.z,C.J,C.I,C.E,C.D,C.x]),u.TA)
 C.um=H.k("fB")
 C.wG=H.k("uk")
 C.jK=H.a(t([C.um,C.wG]),u.w)
@@ -46133,7 +46132,7 @@ C.h7=H.a(t([C.o4,C.oa]),u.B)
 C.h0=H.a(t(["DesignMainMismatchesProps.show_mismatches","DesignMainMismatchesProps.strands"]),u.s)
 C.p_=new S.aO(C.h7,C.h0)
 C.cC=new H.aL([C.th,C.p_],u.R)
-C.ah=new H.aL([83,C.r,80,C.A,78,C.J,76,C.I,73,C.E,68,C.D,66,C.x],H.ax("aL<i,bk>"))
+C.ai=new H.aL([83,C.r,80,C.z,78,C.J,76,C.I,73,C.E,68,C.D,66,C.x],H.ax("aL<i,bk>"))
 C.dv=H.k("qj")
 C.lo=new S.z("DesignMainPropsMixin.helices")
 C.kG=new S.z("DesignMainPropsMixin.strands")
@@ -46308,7 +46307,7 @@ C.fI=H.a(t([C.n9]),u.B)
 C.jb=H.a(t(["EditModeProps.modes"]),u.s)
 C.oR=new S.aO(C.fI,C.jb)
 C.cQ=new H.aL([C.tI,C.oR],u.R)
-C.au=new H.aL([C.ak,"CSV (.csv)",C.aa,"IDT Bulk (.txt)",C.am,"IDT 96-well plate(s) (.xlsx)",C.al,"IDT 384-well plate(s) (.xlsx)"],H.ax("aL<e2,n>"))
+C.au=new H.aL([C.al,"CSV (.csv)",C.aa,"IDT Bulk (.txt)",C.an,"IDT 96-well plate(s) (.xlsx)",C.am,"IDT 384-well plate(s) (.xlsx)"],H.ax("aL<e2,n>"))
 C.y9=new H.dQ(0,{},C.v,u.dy)
 C.iU=H.a(t([]),H.ax("S<ir>"))
 C.cR=new H.dQ(0,{},C.iU,H.ax("dQ<ir,@>"))
@@ -47116,25 +47115,25 @@ s.ay(C.ac,new K.Zn())
 s.ay(C.ac,new K.Zo())
 s.ay(C.bX,new K.Zp())
 s.ay(C.c2,new K.Zq())
-s.ay(C.z,new K.Zr())
+s.ay(C.y,new K.Zr())
 s.ay(C.bR,new K.Zs())
 s.ay(C.O,new K.Zt())
 s.ay(C.O,new K.Zv())
 s.ay(C.O,new K.Zw())
 s.ay(C.bQ,new K.Zx())
-s.ay(C.z,new K.Zy())
+s.ay(C.y,new K.Zy())
 s.ay(C.O,new K.Zz())
-s.ay(C.z,new K.ZA())
-s.ay(C.z,new K.ZB())
-s.ay(C.z,new K.ZC())
-s.ay(C.z,new K.ZD())
-s.ay(C.z,new K.ZE())
+s.ay(C.y,new K.ZA())
+s.ay(C.y,new K.ZB())
+s.ay(C.y,new K.ZC())
+s.ay(C.y,new K.ZD())
+s.ay(C.y,new K.ZE())
 s.ay(C.aC,new K.ZG())
 s.ay(C.aA,new K.ZH())
 s.ay(C.aA,new K.ZI())
 s.ay(C.c_,new K.ZJ())
 s.ay(C.bN,new K.ZK())
-s.ay(C.z,new K.ZL())
+s.ay(C.y,new K.ZL())
 s.ay(C.bZ,new K.ZM())
 s.ay(C.bU,new K.ZN())
 s.ay(C.aC,new K.ZO())
