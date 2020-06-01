@@ -28,6 +28,7 @@ mixin DesignMainHelixProps on UiProps {
   int view_order;
   bool strand_create_enabled;
   int design_major_tick_distance;
+  Grid grid;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -185,10 +186,18 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   Future<void> dialog_helix_adjust_major_tick_marks() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
+    Grid grid = props.grid;
+
+    print('helix.major_ticks = ${helix.major_ticks}');
+    if (helix.major_ticks != null) {
+      var deltas = util.deltas(helix.major_ticks);
+      print('deltas = ${deltas}');
+    }
 
     var dialog = Dialog(title: 'adjust helix tick marks', items: [
-      DialogCheckbox(label: 'regular spacing', value: true),
-      DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
+      DialogCheckbox(label: 'regular spacing', value: helix.major_tick_distance != null),
+      DialogNumber(
+          label: 'regular distance', value: helix.major_tick_distance ?? grid.default_major_tick_distance()),
       DialogText(
           label: 'varying major tick distances (space-separated)',
           value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
@@ -214,6 +223,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         int major_tick = int.tryParse(major_tick_str);
         if (major_tick == null) {
           window.alert('"${major_tick_str}" is not a valid integer');
+          return;
+        } else if (major_tick <= 0 && major_ticks.isNotEmpty) {
+          window.alert('non-positive value ${major_tick} can only be used if it is the first element '
+              'in the list, specifying where the first tick should be; all others must be positive offsets '
+              'from the previous tick mark');
           return;
         } else {
           major_ticks.add(major_tick + (major_ticks.isEmpty ? 0 : major_ticks.last));

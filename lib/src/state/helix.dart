@@ -310,7 +310,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     if (json_map.containsKey(constants.major_ticks_key)) {
       helix_builder.major_ticks = ListBuilder<int>(List<int>.from(json_map[constants.major_ticks_key]));
-//      helix_builder.major_ticks = List<int>.from(json_map[constants.major_ticks_key]);
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
