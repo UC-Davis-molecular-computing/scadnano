@@ -29,6 +29,7 @@ mixin DesignMainHelixProps on UiProps {
   bool strand_create_enabled;
   int design_major_tick_distance;
   Grid grid;
+  bool helix_change_apply_to_all;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -160,7 +161,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var dialog = Dialog(title: 'adjust helix length', items: [
       DialogNumber(label: 'minimum', value: helix.min_offset),
       DialogNumber(label: 'maximum', value: helix.max_offset),
-      DialogCheckbox(label: 'apply to all helices', value: true),
+      DialogCheckbox(label: 'apply to all helices', value: props.helix_change_apply_to_all),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
@@ -195,7 +196,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       DialogText(
           label: 'varying major tick distances (space-separated)',
           value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
-      DialogCheckbox(label: 'apply to all', value: true),
+      DialogCheckbox(label: 'apply to all', value: props.helix_change_apply_to_all),
     ], disable_when_on: {
       2: 0
     }, disable_when_off: {

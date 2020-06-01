@@ -40,6 +40,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
       return (DesignMain()
         ..helices = state.dna_design.helices
         ..strands = state.dna_design.strands
+        ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..grid = state.dna_design.grid
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
@@ -81,6 +82,7 @@ mixin DesignMainPropsMixin on UiProps {
   Action disable_png_cache_until_action_completes;
   bool is_zoom_above_threshold;
   bool only_display_selected_helices;
+  bool helix_change_apply_to_all;
 }
 
 @Props()
@@ -101,6 +103,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
       (DesignMainHelices()
         ..helices = props.helices
         ..grid = props.grid
+        ..helix_change_apply_to_all = props.helix_change_apply_to_all
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance

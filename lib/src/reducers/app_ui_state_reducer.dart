@@ -31,17 +31,17 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
   ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
       ui_state.show_modifications, action)
-  ..modification_display_connector = TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
-      ui_state.modification_display_connector, action)
+  ..modification_display_connector =
+      TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
+          ui_state.modification_display_connector, action)
   ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(modification_font_size_reducer)(
       ui_state.modification_font_size, action)
   ..show_mismatches =
       TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
   ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
   ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
-  ..only_display_selected_helices =
-      TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(
-          ui_state.only_display_selected_helices, action)
+  ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(
+      ui_state.only_display_selected_helices, action)
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
@@ -54,20 +54,32 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
-  ..example_dna_designs.replace(
-      TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
-          ui_state.example_dna_designs, action))
+  ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(ui_state.helix_change_apply_to_all, action)
+  ..example_dna_designs.replace(TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
+      ui_state.example_dna_designs, action))
   ..assign_complement_to_bound_strands_default =
       TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
           ui_state.assign_complement_to_bound_strands_default, action)
   ..warn_on_change_strand_dna_assign_default =
-      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(
-          ui_state.warn_on_change_strand_dna_assign_default, action)
+      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(ui_state.warn_on_change_strand_dna_assign_default, action)
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
   ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
-  ..disable_png_cache_until_action_completes =
-      disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
+  ..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
   ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
+
+bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {
+  if (action is actions.HelixMajorTickDistanceChange ||
+      action is actions.HelixMajorTicksChange ||
+      action is actions.HelixOffsetChange) {
+    return false;
+  } else if (action is actions.HelixMajorTickDistanceChangeAll ||
+      action is actions.HelixMajorTicksChangeAll ||
+      action is actions.HelixOffsetChangeAll) {
+    return true;
+  } else {
+    return helix_change_apply_to_all;
+  }
+}
 
 Reducer<bool> drawing_potential_crossover_reducer = combineReducers([
   TypedReducer<bool, actions.PotentialCrossoverCreate>(potential_crossover_create_app_ui_state_reducer),
@@ -92,7 +104,8 @@ bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
 bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
 
-bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) => action.show;
+bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) =>
+    action.show;
 
 int modification_font_size_reducer(int _, actions.SetModificationFontSize action) => action.font;
 
