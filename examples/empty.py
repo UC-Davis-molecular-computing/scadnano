@@ -1,7 +1,7 @@
 import scadnano as sc
 
 def main():
-    return sc.DNADesign(strands=[])
+    return sc.DNADesign(strands=[], grid=sc.square)
 
 if not sc.in_browser() and __name__ == '__main__':
     design = main()
