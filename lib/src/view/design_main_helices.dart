@@ -20,6 +20,7 @@ mixin DesignMainHelicesProps on UiProps {
   int design_major_tick_distance;
   bool only_display_selected_helices;
   Grid grid;
+  bool helix_change_apply_to_all;
 }
 
 
@@ -34,6 +35,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) || !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid

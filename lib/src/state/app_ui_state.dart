@@ -45,6 +45,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..context_menu = null
   ..dialog = null
   ..strand_creation = null
+  ..helix_change_apply_to_all = false
   ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
@@ -109,6 +110,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get assign_complement_to_bound_strands_default;
 
   bool get warn_on_change_strand_dna_assign_default;
+
+  bool get helix_change_apply_to_all;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
