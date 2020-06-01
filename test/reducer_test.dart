@@ -3290,7 +3290,8 @@ main() {
     test('load and save design with unused fields', () {
       var json_before = r"""
       {
-        "version": "0.0.1", "grid": "square",
+        "version": "0.0.1", 
+        "grid": "square",
         "extra_dna_design_field": {
           "foo_field": "foo",
           "bar_field": "bar",
