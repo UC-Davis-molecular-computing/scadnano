@@ -752,16 +752,33 @@ save_file(String default_filename, var content, {BlobType blob_type = BlobType.t
 
     Url.revokeObjectUrl(url);
   } on Exception catch (e, stackTrace) {
-    var msg = e.toString() + '\n\n' + stackTrace.toString();
-    app.store.dispatch(actions.ErrorMessageSet(msg));
-    app.view.design_view.render(app.store.state);
-    return;
+    _alert_error_saving(e, stackTrace);
+  } on Error catch (e, stackTrace) {
+    _alert_error_saving(e, stackTrace);
   }
 
   //TODO: create separate textfield for user to enter desired save filename that we use above
   // we cannot pull it from the download dialog due to security:
   //  https://github.com/eligrey/FileSaver.js/issues/75
   //  https://github.com/WICG/native-file-system
+}
+
+_alert_error_saving(e, stack_trace) {
+  var msg = 'error while saving file: ${e}'
+      '${stack_trace_message_bug_report(stack_trace)}';
+  window.alert(msg);
+}
+
+
+String stack_trace_message_bug_report(stack_trace) {
+  return '\n'
+      '\n**********************************************************************************'
+      '\n* If you believe this is due to a bug in scadnano, please file a bug report at   *'
+      '\n*   ${constants.BUG_REPORT_URL}${' ' * (77 - constants.BUG_REPORT_URL.length)}*'
+      '\n* Include this entire message in the email.                                      *'
+      '\n**********************************************************************************'
+      '\n\nstack trace:'
+      '\n${stack_trace}';
 }
 
 pprint(Map map) {
@@ -1215,7 +1232,6 @@ MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<Strin
   }
   return MapBuilder<String, Object>(new_map);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // asynchronous alert dialog

@@ -8,19 +8,9 @@ import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/undo_redo.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 var hline = '*' * 100;
-
-String _stack_trace_message(stack_trace) {
-  return '\n'
-      '\n**********************************************************************************'
-      '\n* If you believe this is due to a bug in scadnano, please file a bug report at   *'
-      '\n*   ${constants.BUG_REPORT_URL}${' ' * (77 - constants.BUG_REPORT_URL.length)}*'
-      '\n* Include this entire message in the email.                                      *'
-      '\n**********************************************************************************'
-      '\n\nstack trace:'
-      '\n${stack_trace}';
-}
 
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   Map<String, dynamic> map;
@@ -37,7 +27,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '\n**********************'
         '\n\nThe DNA design has the following problem:'
         '\n\n${error.cause}'
-        '${_stack_trace_message(stack_trace)}';
+        '${util.stack_trace_message_bug_report(stack_trace)}';
   } catch (error, stack_trace) {
     error_message = "I encountered an error while reading the file ${action.filename}:"
         '\n\n$hline'
@@ -45,7 +35,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '\n* error message: ${error.toString()}'
         '\n$hline'
         '\n\nThat file\'s contents are printed below.'
-        '${_stack_trace_message(stack_trace)}'
+        '${util.stack_trace_message_bug_report(stack_trace)}'
         '\n\nThe file ${action.filename} has this content:\n\n${action.content}'
     ;
   }
