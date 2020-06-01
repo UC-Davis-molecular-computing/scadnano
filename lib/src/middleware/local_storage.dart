@@ -41,34 +41,35 @@ const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 const String _FILENAME_KEY = _LOCAL_STORAGE_PREFIX + 'loaded_filename';
 
-save(Storable storable) {
+save(AppState state, Storable storable) {
   String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
   String value_string;
 
   if (storable == Storable.dna_design) {
-    value_string = json_encode(app.state.dna_design);
-    window.localStorage[_FILENAME_KEY] = app.state.ui_state.loaded_filename;
+    var dna_design = state.dna_design;
+    value_string = json_encode(dna_design);
+    window.localStorage[_FILENAME_KEY] = state.ui_state.loaded_filename;
   } else if (storable == Storable.show_dna) {
-    value_string = app.state.ui_state.show_dna.toString();
+    value_string = state.ui_state.show_dna.toString();
   } else if (storable == Storable.show_modifications) {
-    value_string = app.state.ui_state.show_modifications.toString();
+    value_string = state.ui_state.show_modifications.toString();
   } else if (storable == Storable.modification_display_connector) {
-    value_string = app.state.ui_state.modification_display_connector.toString();
+    value_string = state.ui_state.modification_display_connector.toString();
   } else if (storable == Storable.modification_font_size) {
-    value_string = app.state.ui_state.modification_font_size.toString();
+    value_string = state.ui_state.modification_font_size.toString();
   } else if (storable == Storable.show_mismatches) {
-    value_string = app.state.ui_state.show_mismatches.toString();
+    value_string = state.ui_state.show_mismatches.toString();
   } else if (storable == Storable.autofit) {
-    value_string = app.state.ui_state.autofit.toString();
+    value_string = state.ui_state.autofit.toString();
   } else if (storable == Storable.edit_modes) {
-    List<String> edit_modes_list = [for (var mode in app.state.ui_state.edit_modes) mode.name];
+    List<String> edit_modes_list = [for (var mode in state.ui_state.edit_modes) mode.name];
     value_string = jsonEncode(edit_modes_list);
   } else if (storable == Storable.editor_mode) {
-    value_string = app.state.ui_state.show_editor.toString();
+    value_string = state.ui_state.show_editor.toString();
   } else if (storable == Storable.select_modes) {
-    value_string = app.state.ui_state.select_mode_state.to_json();
+    value_string = state.ui_state.select_mode_state.to_json();
   } else if (storable == Storable.only_display_selected_helices) {
-    value_string = app.state.ui_state.only_display_selected_helices.toString();
+    value_string = state.ui_state.only_display_selected_helices.toString();
   }
 
   if (value_string != null)
@@ -146,32 +147,23 @@ _restore(Storable storable) {
   }
 }
 
-save_all_local_storage() {
-  for (Storable storable in Storable.values) {
-    save(storable);
-  }
-}
-
 restore_all_local_storage() {
   for (Storable storable in Storable.values) {
     restore(storable);
   }
 }
 
-save_async(Iterable<Storable> storables) async {
+save_async(AppState state, Iterable<Storable> storables) async {
   for (var storable in storables) {
-    save(storable);
+    save(state, storable);
   }
 }
 
 local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
+  var state_before = store.state;
   next(action);
   if (action is actions.StorableAction) {
-    save_async(action.storables());
-//    (() async {
-//      for (var storable in action.storables()) {
-//        save(storable);
-//      }
-//    })();
+    var state_after = store.state;
+    save_async(state_after, action.storables());
   }
 }

@@ -121,6 +121,8 @@ const rotation_anchor_key = 'rotation_anchor';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 const position3d_key = 'position';
+const helix_major_ticks_key = 'major_ticks';
+const helix_major_tick_distance_key = 'major_tick_distance';
 const helix_keys = [
   idx_on_helix_key,
   max_offset_key,
@@ -130,6 +132,8 @@ const helix_keys = [
   grid_position_key,
   svg_position_key,
   position3d_key,
+  helix_major_ticks_key,
+  helix_major_tick_distance_key,
 ];
 
 // Strand keys
