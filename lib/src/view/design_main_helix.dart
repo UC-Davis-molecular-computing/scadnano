@@ -21,17 +21,15 @@ import 'pure_component.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
-
 UiFactory<DesignMainHelixProps> DesignMainHelix = _$DesignMainHelix;
-
 
 mixin DesignMainHelixProps on UiProps {
   Helix helix;
   int view_order;
   bool strand_create_enabled;
   int design_major_tick_distance;
+  Grid grid;
 }
-
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
@@ -188,10 +186,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   Future<void> dialog_helix_adjust_major_tick_marks() async {
     Helix helix = props.helix;
     int helix_idx = helix.idx;
+    Grid grid = props.grid;
 
     var dialog = Dialog(title: 'adjust helix tick marks', items: [
-      DialogCheckbox(label: 'regular spacing', value: true),
-      DialogNumber(label: 'regular distance', value: helix.major_tick_distance ?? 0),
+      DialogCheckbox(label: 'regular spacing', value: helix.major_tick_distance != null),
+      DialogNumber(
+          label: 'regular distance', value: helix.major_tick_distance ?? grid.default_major_tick_distance()),
       DialogText(
           label: 'varying major tick distances (space-separated)',
           value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
@@ -207,7 +207,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     bool use_major_tick_distance = (results[0] as DialogCheckbox).value;
     int major_tick_distance = (results[1] as DialogNumber).value;
-    List<String> major_ticks_str = (results[2] as DialogText).value.trim().split(' ').toList();
+    List<String> major_ticks_str =
+        (results[2] as DialogText).value.trim().split(' ').where((token) => token.isNotEmpty).toList();
     bool apply_to_all = (results[3] as DialogCheckbox).value;
 
     List<int> major_ticks = [];
@@ -216,6 +217,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         int major_tick = int.tryParse(major_tick_str);
         if (major_tick == null) {
           window.alert('"${major_tick_str}" is not a valid integer');
+          return;
+        } else if (major_tick <= 0 && major_ticks.isNotEmpty) {
+          window.alert('non-positive value ${major_tick} can only be used if it is the first element '
+              'in the list, specifying where the first tick should be; all others must be positive offsets '
+              'from the previous tick mark');
           return;
         } else {
           major_ticks.add(major_tick + (major_ticks.isEmpty ? 0 : major_ticks.last));
@@ -227,11 +233,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         window.alert('major tick ${t} is less than minimum offset ${helix.min_offset}');
         return;
       }
-      t = major_ticks.firstWhere((t) => t > helix.max_offset, orElse: () => null);
-      if (t != null) {
-        window.alert('major tick ${t} is greater than maximum offset ${helix.max_offset}');
-        return;
-      }
+//      t = major_ticks.firstWhere((t) => t > helix.max_offset, orElse: () => null);
+//      if (t != null) {
+//        //XXX: we issue the warning here, but pass the full list in to the Action and let the reducer
+//        // handle the logic of cutting off at the max offset; this ensures different ticks can be used for
+//        // helices with different max offsets
+//        window.alert("major tick ${t} is greater than maximum offset ${helix.max_offset}, "
+//            "so I'm only going up to the major tick just before that");
+//      }
 
       // TODO: avoid global variable here if possible (move this logic to middleware)
       if (apply_to_all) {
@@ -242,13 +251,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             return;
           }
         }
-        for (var other_helix in app.state.dna_design.helices.values) {
-          t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
-          if (t != null) {
-            window.alert('major tick ${t} is greater than maximum offset ${other_helix.max_offset}');
-            return;
-          }
-        }
+//        for (var other_helix in app.state.dna_design.helices.values) {
+//          t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
+//          if (t != null) {
+//            window.alert("major tick ${t} is greater than maximum offset ${other_helix.max_offset}, "
+//                "so I'm only going up to the major tick just before that");
+//          }
+//        }
       }
     }
 

@@ -105,7 +105,6 @@ It is instructive to see how that example design is represented as a `.dna` file
   "modifications_in_design": {
     "/5Biosg/": {
       "display_text": "B",
-      "id": "/5Biosg/",
       "idt_text": "/5Biosg/",
       "location": "5'"
     }

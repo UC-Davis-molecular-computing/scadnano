@@ -95,8 +95,8 @@ List<int> deltas(Iterable<int> nums) {
     return [];
   }
 
-  List<int> deltas = [nums.first];
-  int prev = nums.first;
+  List<int> deltas = [];
+  int prev = 0;
   for (int num in nums) {
     int delta = num - prev;
     deltas.add(delta);

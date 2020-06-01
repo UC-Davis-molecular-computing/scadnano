@@ -112,6 +112,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             // But if we don't set (e.target).value to null, if the user selects the same filename,
             // then the onChange event won't fire and we won't reload the file.
             'onClick': (e) {
+              document.getElementById('file-nav-dropdown').click();
               (e.target).value = null;
             },
             'onChange': (e) {
@@ -145,6 +146,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             // But if we don't set (e.target).value to null, if the user selects the same filename,
             // then the onChange event won't fire and we won't reload the file.
             'onClick': (e) {
+              document.getElementById('file-nav-dropdown').click();
               (e.target).value = null;
             },
             'onChange': (e) {

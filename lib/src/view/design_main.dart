@@ -4,16 +4,17 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/potential_vertical_crossover.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strand_creation.dart';
-import 'package:scadnano/src/state/strands_move.dart';
-import 'package:scadnano/src/view/design_main_strand_creating.dart';
-import 'package:scadnano/src/view/design_main_strands_moving.dart';
 
+import '../actions/actions.dart';
+import '../state/edit_mode.dart';
+import '../state/grid.dart';
+import '../state/helix.dart';
+import '../state/potential_vertical_crossover.dart';
+import '../state/strand.dart';
+import '../state/strand_creation.dart';
+import '../state/strands_move.dart';
+import 'design_main_strand_creating.dart';
+import 'design_main_strands_moving.dart';
 import 'design_main_mismatches.dart';
 import 'design_main_helices.dart';
 import 'design_main_potential_vertical_crossovers.dart';
@@ -39,6 +40,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
       return (DesignMain()
         ..helices = state.dna_design.helices
         ..strands = state.dna_design.strands
+        ..grid = state.dna_design.grid
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
         ..has_error = state.has_error()
@@ -64,6 +66,7 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 mixin DesignMainPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltList<Strand> strands;
+  Grid grid;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltSet<EditModeChoice> edit_modes;
@@ -97,6 +100,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.helices
+        ..grid = props.grid
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance
