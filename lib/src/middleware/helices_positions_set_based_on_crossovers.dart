@@ -12,7 +12,9 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../state/app_state.dart';
 
-/// Check whether user wants to remove helix that has strands on it.
+/// Set positions of helices based on crossovers, assuming all helices are parallel.
+/// Dispatches a normal HelixPositionSet action (many of them batched).
+/// Also changes the roll of each Helix to point those crossovers at each other in the new positions.
 helix_positions_set_based_on_crossovers_middleware(
     Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
@@ -23,12 +25,28 @@ helix_positions_set_based_on_crossovers_middleware(
 
 _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async {
   List<Helix> helices = _get_helices_to_process(state);
-  print('helices idxs: ${helices.map((e) => e.idx)}');
   List<Crossover> crossovers = _get_crossovers_to_process(state, helices);
   if (crossovers == null) return;
-  print('crossovers: ${crossovers}');
+  
 }
 
+// Gets helices in order of their view order
+List<Helix> _get_helices_to_process(AppState state) {
+  DNADesign design = state.dna_design;
+  List<Helix> helices;
+  BuiltSet<int> selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
+  if (selected_helix_idxs.isEmpty) {
+    helices = design.helices.values.toList();
+  } else {
+    helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]];
+  }
+  helices.sort((h1, h2) => h1.view_order - h2.view_order);
+  return helices;
+}
+
+/// gets crossovers selected by user between helices that are adjacent in [helices]
+/// returns null if two such crossovers are selected
+/// if none are selected, finds the first (one with lowest offset on helix earlier in order in [helices])
 List<Crossover> _get_crossovers_to_process(AppState state, List<Helix> helices) {
   var dna_design = state.dna_design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
@@ -139,18 +157,4 @@ Map<Tuple2<int, int>, List<Crossover>> _get_selected_crossovers_by_prev_helix_id
   }
 
   return crossovers;
-}
-
-// Gets helices in order of their view order
-List<Helix> _get_helices_to_process(AppState state) {
-  DNADesign design = state.dna_design;
-  List<Helix> helices;
-  BuiltSet<int> selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
-  if (selected_helix_idxs.isEmpty) {
-    helices = design.helices.values.toList();
-  } else {
-    helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]];
-  }
-  helices.sort((h1, h2) => h1.view_order - h2.view_order);
-  return helices;
 }

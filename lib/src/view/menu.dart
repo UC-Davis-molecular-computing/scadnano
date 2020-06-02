@@ -231,10 +231,10 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
           },
           (Dom.span()
-                ..title = '''Select some crossovers and some helices. If no helices are selected, 
-then all helices are processed. At most one crossover between pairs of adjacent (in view order) helices 
-can be selected. If a pair of adjacent helices has no crossover selected, it is assumed it is the first
-crossover. The grid must be set to none. 
+                ..title = ''
+'''Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
+most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
+helices has no crossover selected, it is assumed to be the first crossover. The grid must be set to none. 
 
 New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
 has crossover angles that point the backbone angles directly at the adjoining helix.''')(
