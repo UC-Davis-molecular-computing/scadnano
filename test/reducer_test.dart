@@ -3563,39 +3563,27 @@ main() {
  }
   """;
     DNADesign two_helices_crossover_design = DNADesign.from_json(jsonDecode(two_helices_crossover_json));
-    test('HelixRotationSetAtOther', () {
+    test('HelixRollSetAtOther', () {
       AppState state = app_state_from_dna_design(two_helices_crossover_design);
 
       state = app_state_reducer(
-          state, HelixRotationSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
+          state, HelixRollSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
 
       Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
-        ..rotation = 30
-        ..rotation_anchor = 15);
+        ..roll = 235.71428571428567
+        );
 
       expect(state.dna_design.helices.values.first, expected_helix0);
 
       state = app_state_reducer(
-          state, HelixRotationSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
+          state, HelixRollSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
 
       Helix expected_helix1 = two_helices_crossover_design.helices.values.last.rebuild((b) => b
-        ..rotation = 0
-        ..rotation_anchor = 15);
+        ..roll = 205.71428571428567
+        );
 
       expect(state.dna_design.helices.values.first, expected_helix0);
       expect(state.dna_design.helices.values.last, expected_helix1);
-    });
-
-    test('HelixRotationSet', () {
-      AppState state = app_state_from_dna_design(two_helices_crossover_design);
-
-      state = app_state_reducer(state, HelixRotationSet(0, 150, 4));
-
-      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
-        ..rotation = 150
-        ..rotation_anchor = 4);
-
-      expect(state.dna_design.helices.values.first, expected_helix0);
     });
   });
 

@@ -23,18 +23,8 @@ BuiltList<MouseoverData> mouseover_data_update_reducer(_, AppState state, action
   return mouseover_datas.toBuiltList();
 }
 
-BuiltList<MouseoverData> helix_rotation_set_mouseover_reducer(
-    BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRotationSet action) =>
-    _update_mouseover_datas_with_helix_rotation(
-      model: model,
-      helix_idx: action.helix_idx,
-      rotation: action.rotation,
-      rotation_anchor: action.anchor,
-      mouseover_datas: mouseover_datas,
-    );
-
 BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
-    BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRotationSetAtOther action) =>
+    BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRollSetAtOther action) =>
     _update_mouseover_datas_with_helix_rotation(
       model: model,
       helix_idx: action.helix_idx,
@@ -45,9 +35,15 @@ BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
 
 BuiltList<MouseoverData> _update_mouseover_datas_with_helix_rotation(
     {AppState model, int helix_idx, num rotation, int rotation_anchor, BuiltList<MouseoverData> mouseover_datas}) {
-  Helix new_helix = model.dna_design.helices[helix_idx].rebuild((h) => h
-    ..rotation = rotation
-    ..rotation_anchor = rotation_anchor);
+  Helix old_helix = model.dna_design.helices[helix_idx];
+  double old_rotation_at_rotation_anchor = model.dna_design.helix_rotation_forward(old_helix, rotation_anchor);
+  double delta_roll = rotation - old_rotation_at_rotation_anchor;
+
+  double new_roll = (old_helix.roll + delta_roll) % 360.0;
+
+  Helix new_helix = old_helix.rebuild((h) => h
+    ..roll = new_roll
+  );
 
   var mouseover_datas_builder = mouseover_datas.toBuilder();
   for (int i = 0; i < mouseover_datas.length; i++) {

@@ -18,8 +18,6 @@ import 'selection_reducer.dart';
 import '../extension_methods.dart';
 
 Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
-  TypedReducer<BuiltMap<int, Helix>, actions.HelixRotationSet>(helix_rotation_set_reducer),
-  TypedReducer<BuiltMap<int, Helix>, actions.HelixRotationSetAtOther>(helix_rotation_set_at_other_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixOffsetChangeAll>(helix_offset_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
@@ -37,6 +35,9 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
       helix_selections_clear_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetOnlyDisplaySelectedHelices>(
     set_only_display_selected_helices_reducer,
+  ),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixRollSetAtOther>(
+    helix_roll_set_at_other_reducer,
   ),
 ]);
 
@@ -104,27 +105,20 @@ Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone
 
-BuiltMap<int, Helix> helix_rotation_set_reducer(
-    BuiltMap<int, Helix> helices, actions.HelixRotationSet action) {
-  Helix helix_new = helices[action.helix_idx].rebuild((h) => h
-    ..rotation = action.rotation
-    ..rotation_anchor = action.anchor);
-  MapBuilder<int, Helix> helix_map_builder = helices.toBuilder();
-  helix_map_builder[action.helix_idx] = helix_new;
-
-  return helix_map_builder.build();
-}
-
-BuiltMap<int, Helix> helix_rotation_set_at_other_reducer(
-    BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
+BuiltMap<int, Helix> helix_roll_set_at_other_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixRollSetAtOther action) {
   num rotation = util.rotation_between_helices(helices, action);
 
   Helix helix = helices[action.helix_idx];
 
+  double old_rotation_at_rotation_anchor = state.dna_design.helix_rotation_forward(helix, action.anchor);
+  double delta_roll = rotation - old_rotation_at_rotation_anchor;
+
+  double new_roll = (helix.roll + delta_roll) % 360.0;
+
   // adjust helix rotation
   Helix helix_new = helix.rebuild((h) => h
-    ..rotation = rotation
-    ..rotation_anchor = action.anchor);
+    ..roll = new_roll);
 
   // create new helices
   var helices_builder = helices.toBuilder();

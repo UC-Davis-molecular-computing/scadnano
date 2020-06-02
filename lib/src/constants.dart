@@ -83,7 +83,7 @@ const compile_button_id = 'compile';
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
-const default_helix_rotation = 0.0;
+const default_helix_roll = 0.0;
 const default_helix_rotation_anchor = 0;
 
 const default_side_pane_width = '8%';
@@ -117,8 +117,7 @@ const dna_design_keys = [
 const idx_on_helix_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
-const rotation_key = 'rotation';
-const rotation_anchor_key = 'rotation_anchor';
+const roll_key = 'roll';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 const position3d_key = 'position';
@@ -128,8 +127,7 @@ const helix_keys = [
   idx_on_helix_key,
   max_offset_key,
   min_offset_key,
-  rotation_key,
-  rotation_anchor_key,
+  roll_key,
   grid_position_key,
   svg_position_key,
   position3d_key,

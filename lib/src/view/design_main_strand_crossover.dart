@@ -166,14 +166,14 @@ class DesignMainStrandCrossoverComponent
   handle_crossover_click() {
     Domain prev_substrand = props.prev_substrand;
     Domain next_substrand = props.next_substrand;
-    List<actions.UndoableAction> rotation_actions = [];
+    List<actions.UndoableAction> roll_actions = [];
     for (var ss in [prev_substrand, next_substrand]) {
       var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
       int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-      var rotation_action = actions.HelixRotationSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
-      rotation_actions.add(rotation_action);
+      var roll_action = actions.HelixRollSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
+      roll_actions.add(roll_action);
     }
-    var action = actions.BatchAction(rotation_actions);
+    var action = actions.BatchAction(roll_actions);
     app.dispatch(action);
   }
 

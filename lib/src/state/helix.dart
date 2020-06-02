@@ -59,8 +59,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     Grid grid,
     int view_order = null,
     GridPosition grid_position = null,
-    num rotation = constants.default_helix_rotation,
-    int rotation_anchor = constants.default_helix_rotation_anchor,
+    num roll = constants.default_helix_roll,
     int min_offset = 0,
     int max_offset = constants.default_max_offset,
     Position3D position = null,
@@ -76,8 +75,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
       ..svg_position_ = svg_position
-      ..rotation = rotation
-      ..rotation_anchor = rotation_anchor
+      ..roll = roll
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..unused_fields = MapBuilder<String, Object>({}));
@@ -112,9 +110,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   Position3D get position => position_ != null ? position_ : util.grid_to_position3d(grid_position, grid);
 
-  double get rotation;
-
-  int get rotation_anchor;
+  /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset.
+  double get roll;
 
   /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix. i.e. EXCLUSIVE.
   int get max_offset;
@@ -205,9 +202,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   bool has_major_ticks() => major_ticks != null;
 
-  bool has_nondefault_rotation() => (rotation - constants.default_helix_rotation).abs() > 0.0001;
-
-  bool has_nondefault_rotation_anchor() => rotation_anchor != constants.default_helix_rotation_anchor;
+  bool has_nondefault_roll() => (roll - constants.default_helix_roll).abs() > 0.0001;
 
   bool has_nondefault_major_tick_distance() => major_tick_distance != null;
 
@@ -230,12 +225,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       json_map[constants.svg_position_key] = [svg_position.x, svg_position.y];
     }
 
-    if (has_nondefault_rotation()) {
-      json_map[constants.rotation_key] = rotation;
-    }
-
-    if (has_nondefault_rotation_anchor()) {
-      json_map[constants.rotation_anchor_key] = rotation_anchor;
+    if (has_nondefault_roll()) {
+      json_map[constants.roll_key] = roll;
     }
 
     if (has_nondefault_major_tick_distance()) {
@@ -342,10 +333,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       helix_builder.idx = json_map[constants.idx_on_helix_key];
     }
 
-    helix_builder.rotation =
-        util.get_value_with_default(json_map, constants.rotation_key, constants.default_helix_rotation);
-    helix_builder.rotation_anchor = util.get_value_with_default(
-        json_map, constants.rotation_anchor_key, constants.default_helix_rotation_anchor);
+    helix_builder.roll =
+        util.get_value_with_default(json_map, constants.roll_key, constants.default_helix_roll);
 
     Position3D position = Position3D.get_position_from_helix_json_map(json_map);
     helix_builder.position_ = position?.toBuilder();

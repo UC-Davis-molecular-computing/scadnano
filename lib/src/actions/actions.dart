@@ -493,32 +493,10 @@ abstract class MouseoverDataUpdate
   static Serializer<MouseoverDataUpdate> get serializer => _$mouseoverDataUpdateSerializer;
 }
 
-abstract class HelixRotationSet
+// set helix roll such that rotation at anchor points at helix_other
+abstract class HelixRollSetAtOther
     with BuiltJsonSerializable, UndoableAction
-    implements Built<HelixRotationSet, HelixRotationSetBuilder> {
-  int get helix_idx;
-
-  double get rotation;
-
-  int get anchor;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory HelixRotationSet(int helix_idx, double rotation, int anchor) => HelixRotationSet.from((b) => b
-    ..helix_idx = helix_idx
-    ..rotation = rotation
-    ..anchor = anchor);
-
-  factory HelixRotationSet.from([void Function(HelixRotationSetBuilder) updates]) = _$HelixRotationSet;
-
-  HelixRotationSet._();
-
-  static Serializer<HelixRotationSet> get serializer => _$helixRotationSetSerializer;
-}
-
-// set helix rotation at anchor to point at helix_other
-abstract class HelixRotationSetAtOther
-    with BuiltJsonSerializable, UndoableAction
-    implements Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
+    implements Built<HelixRollSetAtOther, HelixRollSetAtOtherBuilder> {
   int get helix_idx;
 
   int get helix_other_idx;
@@ -528,19 +506,19 @@ abstract class HelixRotationSetAtOther
   int get anchor;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixRotationSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
-      HelixRotationSetAtOther.from((b) => b
+  factory HelixRollSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
+      HelixRollSetAtOther.from((b) => b
         ..helix_idx = helix_idx
         ..helix_other_idx = helix_other_idx
         ..forward = forward
         ..anchor = anchor);
 
-  factory HelixRotationSetAtOther.from([void Function(HelixRotationSetAtOtherBuilder) updates]) =
-      _$HelixRotationSetAtOther;
+  factory HelixRollSetAtOther.from([void Function(HelixRollSetAtOtherBuilder) updates]) =
+      _$HelixRollSetAtOther;
 
-  HelixRotationSetAtOther._();
+  HelixRollSetAtOther._();
 
-  static Serializer<HelixRotationSetAtOther> get serializer => _$helixRotationSetAtOtherSerializer;
+  static Serializer<HelixRollSetAtOther> get serializer => _$helixRollSetAtOtherSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

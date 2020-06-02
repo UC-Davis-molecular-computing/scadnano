@@ -807,7 +807,7 @@ num to_degrees(num radians) => radians * 360 / (2 * pi);
 
 num to_radians(num degrees) => degrees * 2 * pi / 360;
 
-num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
+num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRollSetAtOther action) {
   Helix helix = helices[action.helix_idx];
   Helix helix_other = helices[action.helix_other_idx];
 

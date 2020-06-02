@@ -879,10 +879,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   /// in radians; gives rotation of backbone of strand in the forward direction, as viewed in the side view
   double helix_rotation_forward(Helix helix, int offset) {
     int num_bases;
-    if (helix.rotation_anchor < offset) {
-      num_bases = this.helix_num_bases_between(helix, helix.rotation_anchor, offset - 1);
-    } else if (helix.rotation_anchor > offset) {
-      num_bases = -this.helix_num_bases_between(helix, offset + 1, helix.rotation_anchor);
+    if (helix.min_offset < offset) {
+      num_bases = this.helix_num_bases_between(helix, helix.min_offset, offset - 1);
+    } else if (helix.min_offset > offset) {
+      num_bases = -this.helix_num_bases_between(helix, offset + 1, helix.min_offset);
     } else {
       num_bases = 0;
     }
@@ -890,7 +890,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 //    return rad;
 //    num rad = (util.to_radians(helix.rotation) + (2 * pi * num_bases / 10.5)) % (2 * pi);
 //    return util.to_degrees(rad);
-    num rot = (helix.rotation + (360 * num_bases / 10.5)) % (360);
+    num rot = (helix.roll + (360 * num_bases / 10.5)) % (360);
     return rot;
   }
 
