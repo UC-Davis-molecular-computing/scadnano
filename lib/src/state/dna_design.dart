@@ -71,6 +71,20 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   // all crossovers incident on helix with given idx, sorted by offset on that helix
   @memoized
   BuiltMap<int, BuiltList<Crossover>> get crossovers_by_helix_idx {
+    // convert to proper return type by dropping the offset
+    Map<int, BuiltList<Crossover>> builder = {
+      for (int idx in offset_crossover_pairs_by_helix_idx.keys)
+        idx: offset_crossover_pairs_by_helix_idx[idx]
+            .map((offset_crossover_pair) => offset_crossover_pair.item2)
+            .toBuiltList()
+    };
+
+    return builder.build();
+  }
+
+  // all (offset,crossover) pairs incident on helix with given idx, sorted by offset on that helix
+  @memoized
+  BuiltMap<int, BuiltList<Tuple2<int, Crossover>>> get offset_crossover_pairs_by_helix_idx {
     // this is essentially what we return, but each crossover also carries with it the start offset of
     // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
     Map<int, List<Tuple2<int, Crossover>>> offset_crossover_pairs = {};
@@ -105,11 +119,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
 
     // convert to proper return type by dropping the offset
-    Map<int, BuiltList<Crossover>> builder = {
-      for (int idx in offset_crossover_pairs.keys)
-        idx: offset_crossover_pairs[idx]
-            .map((offset_crossover_pair) => offset_crossover_pair.item2)
-            .toBuiltList()
+    Map<int, BuiltList<Tuple2<int, Crossover>>> builder = {
+      for (int idx in offset_crossover_pairs.keys) idx: offset_crossover_pairs[idx].toBuiltList()
     };
 
     return builder.build();

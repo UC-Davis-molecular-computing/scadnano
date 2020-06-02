@@ -199,7 +199,7 @@ main() {
     self.assertEqual(expected_position, actual_position)
      */
     DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
-    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var expected_position = Position3D(x: 1, y: 2, z: 3);
     var actual_position = dna_design.helices[0].position3d();
     expect(actual_position, expected_position);
   });
@@ -235,7 +235,7 @@ main() {
     self.assertEqual(expected_position, actual_position)
      */
     DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
-    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var expected_position = Position3D(x: 1, y: 2, z: 3);
     var actual_position = dna_design.helices[0].position3d();
     expect(actual_position, expected_position);
   });
@@ -267,7 +267,7 @@ main() {
     self.assertEqual(expected_position, actual_position)
      */
     DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
-    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var expected_position = Position3D(x: 1, y: 2, z: 3);
     var actual_position = dna_design.helices[0].position3d();
     expect(actual_position, expected_position);
   });
@@ -301,7 +301,7 @@ main() {
     self.assertEqual(expected_position, actual_position)
      */
     DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
-    var expected_position = Position3D(x: 1, y: 2, z: 3, pitch: 4, roll: 5, yaw: 6);
+    var expected_position = Position3D(x: 1, y: 2, z: 3);
     var actual_position = dna_design.helices[0].position3d();
     expect(actual_position, expected_position);
   });
@@ -5470,7 +5470,7 @@ main() {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
 
     Helix helix = no_grid_two_helices_design.helices.values.first;
-    Position3D position = Position3D(x: 10, y: 30, z: 10, pitch: 40, roll: -12, yaw: -2);
+    Position3D position = Position3D(x: 10, y: 30, z: 10);
 
     Helix expected_helix = helix.rebuild((b) => b
       ..position_.replace(position)
