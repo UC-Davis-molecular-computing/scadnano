@@ -222,6 +222,24 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           },
           'Inline Insertions/Deletions',
         ),
+        DropdownDivider({}),
+        DropdownItem(
+          {
+            'disabled': props.grid != Grid.none,
+            'onClick': (_) {
+              props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
+            },
+          },
+          (Dom.span()
+                ..title = '''Select some crossovers and some helices. If no helices are selected, 
+then all helices are processed. At most one crossover between pairs of adjacent (in view order) helices 
+can be selected. If a pair of adjacent helices has no crossover selected, it is assumed it is the first
+crossover. The grid must be set to none. 
+
+New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
+has crossover angles that point the backbone angles directly at the adjoining helix.''')(
+              'Set helix coordinates based on crossovers'),
+        ),
       ),
       NavDropdown(
         {
@@ -275,7 +293,8 @@ zooming navigation, so uncheck it to speed up navigation.'''
               ..style = {'marginRight': '1em'}
               ..checked = props.modification_display_connector
               ..onChange = (_) {
-                props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
+                props
+                    .dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
               }
               ..addTestId('scadnano.MenuComponent.input.show_modifications')
               ..type = 'checkbox')(),
@@ -301,8 +320,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
                 int font = int.parse(inputElement.value);
                 props.dispatch(actions.SetModificationFontSize(font));
               }
-              ..value = 'Set Modification Font'
-            )(),
+              ..value = 'Set Modification Font')(),
           ),
         ),
         DropdownDivider({}),

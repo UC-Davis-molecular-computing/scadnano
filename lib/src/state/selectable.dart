@@ -7,6 +7,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
+import 'crossover.dart';
 import 'dna_end.dart';
 import 'select_mode.dart';
 import 'strand.dart';
@@ -30,6 +31,10 @@ abstract class SelectablesStore
 
   @memoized
   BuiltSet<Strand> get selected_strands => BuiltSet<Strand>.from(selected_items.where((s) => s is Strand));
+
+  @memoized
+  BuiltSet<Crossover> get selected_crossovers =>
+      BuiltSet<Crossover>.from(selected_items.where((s) => s is Crossover));
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));

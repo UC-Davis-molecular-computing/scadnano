@@ -18,6 +18,7 @@ import 'local_storage.dart';
 import 'strand_create.dart';
 import 'throttle.dart';
 import 'helix_remove.dart';
+import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
 import '../state/app_state.dart';
 
@@ -34,6 +35,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   helix_remove_middleware,
   helix_change_offsets_middleware,
   helix_hide_all_middleware,
+  helix_positions_set_based_on_crossovers_middleware,
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,

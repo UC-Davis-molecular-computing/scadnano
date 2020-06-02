@@ -181,6 +181,7 @@ part 'serializers.g.dart';
   SetOnlyDisplaySelectedHelices,
   SetModificationDisplayConnector,
   SetModificationFontSize,
+  HelicesPositionsSetBasedOnCrossovers,
 ])
 Serializers serializers = _$serializers;
 

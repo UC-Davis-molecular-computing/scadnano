@@ -7,6 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import 'package:tuple/tuple.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -60,6 +61,58 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       }
     }
     return false;
+  }
+
+  // like crossovers_by_helix_idx, but maps to sets instead of lists
+  @memoized
+  BuiltMap<int, BuiltSet<Crossover>> get crossovers_by_helix_idx_as_sets =>
+      {for (int idx in crossovers_by_helix_idx.keys) idx: crossovers_by_helix_idx[idx].toBuiltSet()}.build();
+
+  // all crossovers incident on helix with given idx, sorted by offset on that helix
+  @memoized
+  BuiltMap<int, BuiltList<Crossover>> get crossovers_by_helix_idx {
+    // this is essentially what we return, but each crossover also carries with it the start offset of
+    // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
+    Map<int, List<Tuple2<int, Crossover>>> offset_crossover_pairs = {};
+
+    // initialize internal map to have empty lists
+    for (int helix_idx in helices.keys) {
+      offset_crossover_pairs[helix_idx] = [];
+    }
+
+    // populate internal map with offsets along with lists
+    for (var strand in strands) {
+      for (var crossover in strand.crossovers) {
+        var dom1 = strand.substrands[crossover.prev_domain_idx] as Domain;
+        var dom2 = strand.substrands[crossover.next_domain_idx] as Domain;
+        for (var dom in [dom1, dom2]) {
+          List<Tuple2<int, Crossover>> offset_crossover_pair_list = offset_crossover_pairs[dom.helix];
+          int offset = dom.forward ? dom.start : dom.end;
+          var pair = Tuple2<int, Crossover>(offset, crossover);
+          offset_crossover_pair_list.add(pair);
+        }
+      }
+    }
+
+    // sort by offset where it intersects the helix
+    for (var pair_idxs in offset_crossover_pairs.keys) {
+      List<Tuple2<int, Crossover>> start_crossover_pair_list = offset_crossover_pairs[pair_idxs];
+      start_crossover_pair_list.sort((offset_crossover_pair1, offset_crossover_pair2) {
+        int offset1 = offset_crossover_pair1.item1;
+        int offset2 = offset_crossover_pair2.item1;
+        return offset1 - offset2;
+      });
+    }
+
+    // convert to proper return type by dropping the offset
+    Map<int, BuiltList<Crossover>> builder = {
+      for (int idx in offset_crossover_pairs.keys)
+        idx: offset_crossover_pairs[idx]
+            .map((offset_crossover_pair) => offset_crossover_pair.item2)
+            .toBuiltList()
+    };
+
+    return builder.build();
   }
 
   @memoized
@@ -490,8 +543,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
-    if (json_map == null)
-      return null;
+    if (json_map == null) return null;
 
     var dna_design_builder = DNADesignBuilder();
 

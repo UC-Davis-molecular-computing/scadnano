@@ -341,20 +341,24 @@ abstract class SetModificationFontSize
 
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
+    implements
+        StorableAction,
+        Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.modification_display_connector];
 
-  factory SetModificationDisplayConnector(bool show) => SetModificationDisplayConnector.from((b) => b..show = show);
+  factory SetModificationDisplayConnector(bool show) =>
+      SetModificationDisplayConnector.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetModificationDisplayConnector.from([void Function(SetModificationDisplayConnectorBuilder) updates]) =
-      _$SetModificationDisplayConnector;
+  factory SetModificationDisplayConnector.from(
+      [void Function(SetModificationDisplayConnectorBuilder) updates]) = _$SetModificationDisplayConnector;
 
   SetModificationDisplayConnector._();
 
-  static Serializer<SetModificationDisplayConnector> get serializer => _$setModificationDisplayConnectorSerializer;
+  static Serializer<SetModificationDisplayConnector> get serializer =>
+      _$setModificationDisplayConnectorSerializer;
 }
 
 abstract class ShowMismatchesSet
@@ -1747,8 +1751,22 @@ abstract class HelixGridPositionSet
   static Serializer<HelixGridPositionSet> get serializer => _$helixGridPositionSetSerializer;
 }
 
+// NOTE: not an undoable action because it merely triggers middleware to gather data to send actions
+// that actually change the DNADesign, but it causes no change itself
+abstract class HelicesPositionsSetBasedOnCrossovers
+    with BuiltJsonSerializable
+    implements Built<HelicesPositionsSetBasedOnCrossovers, HelicesPositionsSetBasedOnCrossoversBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelicesPositionsSetBasedOnCrossovers() = _$HelicesPositionsSetBasedOnCrossovers;
+
+  HelicesPositionsSetBasedOnCrossovers._();
+
+  static Serializer<HelicesPositionsSetBasedOnCrossovers> get serializer =>
+      _$helicesPositionsSetBasedOnCrossoversSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// change helix position
+// inline insertions and deletions
 
 abstract class InlineInsertionsDeletions
     with BuiltJsonSerializable, UndoableAction
