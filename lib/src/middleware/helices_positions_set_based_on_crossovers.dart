@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
@@ -28,7 +29,7 @@ helix_positions_set_based_on_crossovers_middleware(
 
 _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async {
   List<Helix> helices = _get_helices_to_process(state);
-  List<Tuple2<Address,Address>> addresses = _get_addresses_to_process(state, helices);
+  List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
   if (addresses == null) return;
   List<RollXY> rolls_and_positions = _calculate_rolls_and_positions(state.dna_design, helices, addresses, 0);
   print('rolls_and_positions = \n${rolls_and_positions.map((r) => r.toString()).join("\n")}');
@@ -206,7 +207,7 @@ class RollXY {
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
 List<RollXY> _calculate_rolls_and_positions(
-    DNADesign dna_design, List<Helix> helices, List<Tuple2<Address,Address>> addresses, double first_roll) {
+    DNADesign dna_design, List<Helix> helices, List<Tuple2<Address, Address>> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
   double x = helices[0].position3d().x;
   double y = helices[0].position3d().y;
@@ -217,14 +218,23 @@ List<RollXY> _calculate_rolls_and_positions(
     var roll = rollxys[i].roll;
     var x = rollxys[i].x;
     var y = rollxys[i].y;
-    double degrees_top = dna_design.helix_rotation_at(address_top, roll) - 90; // 0 is straight up, not right
-    double radians_top = util.to_radians(degrees_top);
-    var next_x = x + cos(radians_top) * constants.SIDE_HELIX_RADIUS * 2;
-    var next_y = y + sin(radians_top) * constants.SIDE_HELIX_RADIUS * 2;
 
-    double degrees_bot = dna_design.helix_rotation_at(address_bot, roll) - 90; // 0 is straight up, not right
-    var next_roll = (degrees_top - degrees_bot + 180) % 360;
-    rollxys.add(RollXY(roll: next_roll, x: next_x, y: next_y));
+    var degrees_top = dna_design.helix_rotation_at(address_top, roll);
+    // 0 is straight up, not right as in Cartesian rotation, so we have to convert
+    var radians_top_cartesian = util.to_radians(degrees_top - 90);
+    var next_x = x + cos(radians_top_cartesian) * constants.HELIX_DIAMETER_NM;
+    var next_y = y + sin(radians_top_cartesian) * constants.HELIX_DIAMETER_NM;
+
+    // now back to using our "0 is straight up" rotation coordinate system
+    // first calculate angle that strand on bottom helix has
+    var angle_strand_bot = (degrees_top + 180) % 360;
+    if (!address_bot.forward) { // translate to the angle of the forward strand
+      angle_strand_bot = (angle_strand_bot + 150) % 360;
+    }
+    // then correct for offset of crossover
+    var current_roll_at_address_bot = dna_design.helix_rotation_at(address_bot);
+    var delta_roll = (angle_strand_bot - current_roll_at_address_bot) % 360;
+    rollxys.add(RollXY(roll: delta_roll, x: next_x, y: next_y));
   }
 
   return rollxys;
@@ -232,7 +242,7 @@ List<RollXY> _calculate_rolls_and_positions(
 
 _set_rolls_and_positions(List<Helix> helices, List<RollXY> rolls_and_positions) {
   List<actions.UndoableAction> all_actions = [];
-  for (int i=0; i<helices.length; i++) {
+  for (int i = 0; i < helices.length; i++) {
     var helix = helices[i];
     var rollxy = rolls_and_positions[i];
     var roll_action = actions.HelixRollSet(helix_idx: helix.idx, roll: rollxy.roll);

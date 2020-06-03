@@ -59,6 +59,7 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
+  TypedReducer<Helix, actions.HelixRollSet>(helix_roll_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +102,9 @@ Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance
 Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => helix.rebuild((b) => b
   ..major_ticks.replace(major_ticks)
   ..major_tick_distance = null);
+
+Helix helix_roll_set_reducer(Helix helix, actions.HelixRollSet action) =>
+    helix.rebuild((h) => h..roll = action.roll);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // set rotation of backbone

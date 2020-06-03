@@ -38,20 +38,25 @@ const default_max_offset = 256;
 
 //const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 
+const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
+
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:
-/// The width of one base pair of double-stranded DNA bp is 0.34 nm.
+/// The width of one base pair of double-stranded DNA bp is 0.34 nm. (DNA_BASE_WIDTH_NM)
 /// In a DNA origami, AFM images estimate that the average distance between adjacent double helices is 2.5 nm.
+/// (HELIX_DIAMETER_NM)
 /// (A DNA double-helix is only 2 nm wide, but the helices electrostatically repel each other so the spacing
 /// in a DNA origami or an other DNA nanostructure with many parallel DNA helices---e.g., single-stranded tile
 /// lattices---is larger than 2 nm.)
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
-const double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+const double HELIX_DIAMETER_NM = 2.5;
+const double DNA_BASE_WIDTH_NM = 0.34;
+const double DISTANCE_BETWEEN_HELICES_MAIN_SVG = (BASE_WIDTH_SVG * HELIX_DIAMETER_NM / DNA_BASE_WIDTH_NM);
 
 // unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
-const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
+const double NM_TO_MAIN_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
-const SIDE_HELIX_RADIUS = 25.0;
+const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 
 //const Grid default_grid = Grid.none;
 const Grid default_grid = Grid.square;

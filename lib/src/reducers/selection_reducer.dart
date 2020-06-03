@@ -164,9 +164,9 @@ util.Box helix_to_box(Helix helix) {
   var position3d = helix.position3d();
   num x, y, width, height;
   var svg_pos = util.position3d_to_side_view_svg(position3d);
-  x = svg_pos.x - constants.SIDE_HELIX_RADIUS;
-  y = svg_pos.y - constants.SIDE_HELIX_RADIUS;
-  height = width = constants.SIDE_HELIX_RADIUS * 2.0;
+  x = svg_pos.x - constants.HELIX_RADIUS_SIDE_PIXELS;
+  y = svg_pos.y - constants.HELIX_RADIUS_SIDE_PIXELS;
+  height = width = constants.HELIX_RADIUS_SIDE_PIXELS * 2.0;
   return util.Box(x, y, width: width, height: height);
 }
 

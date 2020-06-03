@@ -166,81 +166,85 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ),
       ),
       NavDropdown(
-        {
-          'title': 'Edit',
-          'id': 'edit-nav-dropdown',
-        },
-        DropdownItem(
           {
-            'disabled': props.undo_stack_empty,
-            'onClick': (_) {
-              props.dispatch(actions.Undo());
-            },
+            'title': 'Edit',
+            'id': 'edit-nav-dropdown',
           },
-          'Undo',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Z'),
-        ),
-        DropdownItem(
-          {
-            'disabled': props.redo_stack_empty,
-            'onClick': (_) {
-              props.dispatch(actions.Redo());
+          DropdownItem(
+            {
+              'disabled': props.undo_stack_empty,
+              'onClick': (_) {
+                props.dispatch(actions.Undo());
+              },
             },
-          },
-          'Redo',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Shift+Z'),
-        ),
-        DropdownDivider({}),
-        DropdownItem(
-          {
-            'disabled': !props.enable_copy,
-            'onClick': (_) {
-              if (props.enable_copy) {
-                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
-              }
+            'Undo',
+            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Z'),
+          ),
+          DropdownItem(
+            {
+              'disabled': props.redo_stack_empty,
+              'onClick': (_) {
+                props.dispatch(actions.Redo());
+              },
             },
-          },
-          'Copy',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+C'),
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
+            'Redo',
+            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Shift+Z'),
+          ),
+          DropdownDivider({}),
+          DropdownItem(
+            {
+              'disabled': !props.enable_copy,
+              'onClick': (_) {
+                if (props.enable_copy) {
+                  window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+                }
+              },
             },
-          },
-          'Paste',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
-        ),
-        DropdownDivider({}),
-        DropdownItem(
-          {
-            'disabled': !props.design_has_insertions_or_deletions,
-            'onClick': (_) {
-              props.dispatch(actions.InlineInsertionsDeletions());
+            'Copy',
+            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+C'),
+          ),
+          DropdownItem(
+            {
+              'onClick': (_) {
+                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
+              },
             },
-          },
-          'Inline Insertions/Deletions',
-        ),
-        DropdownDivider({}),
-        DropdownItem(
-          {
-            'disabled': props.grid != Grid.none,
-            'onClick': (_) {
-              props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
+            'Paste',
+            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
+          ),
+          DropdownDivider({}),
+          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
+            ..title = ''
+                '''Click this to remove insertions and deletions from the design and replace them with domains
+whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(DropdownItem(
+            {
+              'disabled': !props.design_has_insertions_or_deletions,
+              'onClick': (_) {
+                props.dispatch(actions.InlineInsertionsDeletions());
+              },
             },
-          },
-          (Dom.span()
-                ..title = ''
-'''Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
+            'Inline Insertions/Deletions',
+          )),
+          DropdownDivider({}),
+          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
+            ..title = '''The grid must be set to none to enable this.
+
+Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
 most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
-helices has no crossover selected, it is assumed to be the first crossover. The grid must be set to none. 
+helices has no crossover selected, it is assumed to be the first crossover.  
 
 New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
 has crossover angles that point the backbone angles directly at the adjoining helix.''')(
-              'Set helix coordinates based on crossovers'),
-        ),
-      ),
+            DropdownItem(
+              {
+                'disabled': props.grid != Grid.none,
+                'onClick': (_) {
+                  props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
+                },
+              },
+              'Set helix coordinates based on crossovers',
+            ),
+          )),
       NavDropdown(
         {
           'title': 'View',

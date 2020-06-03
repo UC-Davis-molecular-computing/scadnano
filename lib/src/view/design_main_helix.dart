@@ -38,7 +38,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     Helix helix = props.helix;
 
     // for helix circles
-    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_SVG / 2);
+    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
 
     // for helix horizontal lines
@@ -61,7 +61,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..id = helix_circle_id()
         ..cx = '$cx'
         ..cy = '$cy'
-        ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}'
+        ..r = '${constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2.0}'
         ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'

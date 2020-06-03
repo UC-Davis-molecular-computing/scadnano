@@ -904,13 +904,17 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return dna_length;
   }
 
-  /// rotation angle of the backbone at the given address, with the given roll. If roll is not specified,
+  /// rotation angle of the backbone at the given address, assuming the given roll.
+  /// It is assumed that the helix has roll [roll]; if parameter [roll] is not specified,
   /// the current value of the helix's roll is used
   double helix_rotation_at(Address address, [double roll = null]) {
     var helix = helices[address.helix_idx];
     int offset = address.offset;
-    double rotation = helix_rotation_forward(helix, offset);
-    return address.forward? rotation : rotation + 150;
+    double rotation = helix_rotation_forward(helix, offset, roll);
+    if (!address.forward) {
+      rotation = (rotation + 150) % 360;
+    }
+    return rotation;
   }
 
   /// rotation angle of the backbone of the forward strand on [helix] at [offset]
@@ -932,8 +936,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// in degrees; rotation of forward strand  + 150 degrees
-  double helix_rotation_reverse(Helix helix, int offset) =>
-      this.helix_rotation_forward(helix, offset) + 150;
+  double helix_rotation_reverse(Helix helix, int offset) => this.helix_rotation_forward(helix, offset) + 150;
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;

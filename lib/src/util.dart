@@ -195,12 +195,12 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
         delta_y =
-            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_SVG;
+            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
       }
       y = prev_y + delta_y;
     }
@@ -384,7 +384,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
 }
 
 Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
-  num radius = constants.SIDE_HELIX_RADIUS;
+  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -474,7 +474,7 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num radius = constants.SIDE_HELIX_RADIUS;
+  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
   int b = 0;
@@ -542,15 +542,15 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 
 Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
     (position.z / 0.34) * constants.BASE_WIDTH_SVG,
-    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
+    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG);
 
 Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
-    position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
-    position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
+    position.x * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
+    position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5);
 
 Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
-    x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
-    y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
+    x: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+    y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window

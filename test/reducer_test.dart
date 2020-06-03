@@ -4062,8 +4062,8 @@ main() {
     var MARGIN = 1;
     test('HelixSelectionAdjust', () {
       // Creating a box that wraps around the grid from (0, 0) to (1, 0) to select helix 0
-      var x = SIDE_HELIX_RADIUS + MARGIN;
-      var y = SIDE_HELIX_RADIUS + MARGIN;
+      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
@@ -4071,8 +4071,8 @@ main() {
 
     test('HelixSelectionAdjust with toggle on', () {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
-      var x = SIDE_HELIX_RADIUS + MARGIN;
-      var y = 2 * SIDE_HELIX_RADIUS * 3 + MARGIN;
+      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = 2 * HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -4085,8 +4085,8 @@ main() {
       state = app_state_reducer(state, HelixSelect(0, true));
 
       // Unselct 0 and select 1 and 2
-      var x = SIDE_HELIX_RADIUS + MARGIN;
-      var y = 2 * SIDE_HELIX_RADIUS * 3 + MARGIN;
+      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = 2 * HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -4102,7 +4102,7 @@ main() {
             0,
             simple_strand_dna_design.helices[1].grid_position.distance_nm(
                     simple_strand_dna_design.helices[2].grid_position, simple_strand_dna_design.grid) *
-                NM_TO_MAIN_VIEW_SVG_PIXELS,
+                NM_TO_MAIN_SVG_PIXELS,
           )));
       expect_app_state_equal(state, expected_state);
     });
@@ -5477,7 +5477,7 @@ main() {
 //    Position3D old_position1 = Position3D(x: 50, y: 80, z: 0);
     Point<num> svg_position0 = Point<num>(0, 0);
     Point<num> svg_position1 = Point<num>(
-        0, sqrt((50 - 10) * (50 - 10) + (80 - 30) * (80 - 30)) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS);
+        0, sqrt((50 - 10) * (50 - 10) + (80 - 30) * (80 - 30)) * constants.NM_TO_MAIN_SVG_PIXELS);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5503,7 +5503,7 @@ main() {
     Position3D position1 = Position3D(x: 0, y: 100, z: 0);
     Point<num> svg_position0 = Point<num>(0, 0);
     Point<num> svg_position1 = Point<num>(
-        0, sqrt((0 - 10) * (0 - 10) + (100 - 30) * (100 - 30)) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS);
+        0, sqrt((0 - 10) * (0 - 10) + (100 - 30) * (100 - 30)) * constants.NM_TO_MAIN_SVG_PIXELS);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)

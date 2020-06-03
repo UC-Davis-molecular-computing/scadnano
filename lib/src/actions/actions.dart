@@ -496,7 +496,7 @@ abstract class MouseoverDataUpdate
 // set helix roll
 abstract class HelixRollSet
     with BuiltJsonSerializable, UndoableAction
-    implements Built<HelixRollSet, HelixRollSetBuilder> {
+    implements HelixIndividualAction, Built<HelixRollSet, HelixRollSetBuilder> {
   int get helix_idx;
 
   double get roll;
