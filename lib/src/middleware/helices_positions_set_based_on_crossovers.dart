@@ -84,13 +84,13 @@ Please select only one, or select none to default to the first crossover between
     } else {
       // otherwise if none are selected, find the addresses of first crossover between this pair of helices
       var address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, dna_design);
-      address_top = address_top_bot.item1;
-      address_bot = address_top_bot.item2;
-      if (address_top == null) {
+      if (address_top_bot == null) {
         var msg = 'Must have at least one crossover between helices ${helix_top.idx} and ${helix_bot.idx}';
         util.async_alert(msg);
         return null;
       }
+      address_top = address_top_bot.item1;
+      address_bot = address_top_bot.item2;
     }
     addresses.add(Tuple2<Address, Address>(address_top, address_bot));
   }

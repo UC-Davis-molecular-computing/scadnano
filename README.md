@@ -321,7 +321,12 @@ Setting length to a positive integer converts to a loopout and setting a length 
   Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
 
 * Edit
-  * **Undo/Redo:** Undo or redo the last edit that was made to the design.
+  * **Copy/paste:**
+    Strands can be copied and pasted. If they are pasted to the opposite direction (e.g., if you copy a strand that is forward on a helix and paste it to the reverse part of a helix),
+    then the "polarity" of each strand is reversed: 5' and 3' ends swap.
+
+  * **Undo/Redo:** 
+    Undo or redo the last edit that was made to the design.
 
   * **Inline insertions/deletions:**
     The "Inline I/D" button "inlines" insertions and deletions in the following way.
@@ -334,6 +339,11 @@ Setting length to a positive integer converts to a loopout and setting a length 
     e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
     *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
+
+  * **Set helix coordinates based on crossovers:**
+    scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the*none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
+
+    You can also selected some helices first, and then this will only be done to those helices. You can choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
   
 * View
 
