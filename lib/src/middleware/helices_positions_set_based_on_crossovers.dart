@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
-import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
