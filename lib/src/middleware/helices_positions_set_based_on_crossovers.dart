@@ -32,7 +32,6 @@ _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async 
   List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
   if (addresses == null) return;
   List<RollXY> rolls_and_positions = _calculate_rolls_and_positions(state.dna_design, helices, addresses, 0);
-  print('rolls_and_positions = \n${rolls_and_positions.map((r) => r.toString()).join("\n")}');
   _set_rolls_and_positions(helices, rolls_and_positions);
 }
 
@@ -58,30 +57,31 @@ List<Helix> _get_helices_to_process(AppState state) {
 List<Tuple2<Address, Address>> _get_addresses_to_process(AppState state, List<Helix> helices) {
   var dna_design = state.dna_design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
-  var selected_crossovers_by_prev_helix_idx =
-      _get_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, dna_design);
+  var addresses_of_selected_crossovers_by_prev_helix_idx =
+      _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, dna_design);
 
   List<Tuple2<Address, Address>> addresses = [];
   for (int i = 0; i < helices.length - 1; i++) {
     var helix_top = helices[i];
     var helix_bot = helices[i + 1];
     var helix_idx_top_bot = Tuple2<int, int>(helix_top.idx, helix_bot.idx);
-    var crossovers_this_helices_pair = selected_crossovers_by_prev_helix_idx[helix_idx_top_bot];
+    var addresses_crossovers_this_helices_pair =
+        addresses_of_selected_crossovers_by_prev_helix_idx[helix_idx_top_bot];
 
     Address address_top, address_bot;
 
     // first try selected crossovers, but ensure there's at most one per pair of helices
-    if (crossovers_this_helices_pair.length > 1) {
+    if (addresses_crossovers_this_helices_pair.length > 1) {
       var msg = '''You can select at most one crossover between any pair of adjacent helices.
 But you have selected multiple crossovers between helices ${helix_top.idx} and ${helix_bot.idx}.
 Please select only one, or select none to default to the first crossover between the helices.
 ''';
       util.async_alert(msg);
       return null;
-    } else if (crossovers_this_helices_pair.length == 1) {
+    } else if (addresses_crossovers_this_helices_pair.length == 1) {
       // first try selected crossovers between this pair of helices
-      address_top = crossovers_this_helices_pair.first.item1;
-      //TODO: set address_bot in this case
+      address_top = addresses_crossovers_this_helices_pair.first.item1;
+      address_bot = addresses_crossovers_this_helices_pair.first.item2;
     } else {
       // otherwise if none are selected, find the addresses of first crossover between this pair of helices
       var address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, dna_design);
@@ -133,18 +133,18 @@ Tuple2<Address, Address> _first_crossover_addresses_between_helices(
 //   (7,5): [... (offset,crossover) pairs between 5 and 7, offset is where crossover touches helix 7]
 // }
 // Sorts each list by the offset on its first helix (first meaning first in order in helices)
-Map<Tuple2<int, int>, List<Tuple2<Address, Crossover>>> _get_selected_crossovers_by_prev_helix_idx(
+Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected_crossovers_by_prev_helix_idx(
     BuiltSet<Crossover> selected_crossovers, List<Helix> helices, DNADesign dna_design) {
   // this is essentially what we return, but each crossover also carries with it the start offset of
   // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
-  Map<Tuple2<int, int>, List<Tuple2<Address, Crossover>>> address_crossover_pairs = {};
+  Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> addresses_top_bot_crossovers = {};
 
   // initialize internal map to have empty lists
   for (int i = 0; i < helices.length - 1; i++) {
     int idx1 = helices[i].idx;
     int idx2 = helices[i + 1].idx;
     var pair_idxs = Tuple2<int, int>(idx1, idx2);
-    address_crossover_pairs[pair_idxs] = [];
+    addresses_top_bot_crossovers[pair_idxs] = [];
   }
 
   // populate internal map with start offsets along with lists
@@ -160,35 +160,48 @@ Map<Tuple2<int, int>, List<Tuple2<Address, Crossover>>> _get_selected_crossovers
     var pair_idxs = Tuple2<int, int>(prev_idx, next_idx);
     var pair_idxs_rev = Tuple2<int, int>(next_idx, prev_idx);
 
-    if (address_crossover_pairs.containsKey(pair_idxs) ||
-        address_crossover_pairs.containsKey(pair_idxs_rev)) {
-      var top_dom = prev_dom;
+    if (addresses_top_bot_crossovers.containsKey(pair_idxs) ||
+        addresses_top_bot_crossovers.containsKey(pair_idxs_rev)) {
+      var dom_top = prev_dom;
+      var dom_bot = next_dom;
       bool prev_is_top = true;
-      if (address_crossover_pairs.containsKey(pair_idxs_rev)) {
-        top_dom = next_dom;
+      if (addresses_top_bot_crossovers.containsKey(pair_idxs_rev)) {
+        dom_top = next_dom;
+        dom_bot = prev_dom;
         pair_idxs = pair_idxs_rev;
         prev_is_top = false;
       }
-      int offset;
+      int offset_top, offset_bot;
       // ugg, this logic is ugly. Here's the various possibilities
       /*
       !prev_is_top       prev_is_top        prev_is_top        !prev_is_top
-      !top_dom.forward   top_dom.forward    !top_dom.forward   top_dom.forward
+      !dom_top.forward   dom_top.forward    !dom_top.forward   dom_top.forward
       <----+             [----+             +----]             +---->
+           |                  |             |                  |
+       */
+      if ((prev_is_top && dom_top.forward) || (!prev_is_top && !dom_top.forward)) {
+        offset_top = dom_top.end - 1;
+      } else {
+        offset_top = dom_top.start;
+      }
+      /*
+      !prev_is_top       prev_is_top        prev_is_top        !prev_is_top
+      dom_bot.forward    !dom_bot.forward   dom_bot.forward    !dom_bot.forward
            |                  |             |                  |
       [----+             <----+             +---->             +----]
        */
-      if ((prev_is_top && top_dom.forward) || (!prev_is_top && !top_dom.forward)) {
-        offset = top_dom.end - 1;
+      if ((prev_is_top && dom_bot.forward) || (!prev_is_top && !dom_bot.forward)) {
+        offset_bot = dom_bot.start;
       } else {
-        offset = top_dom.start;
+        offset_bot = dom_bot.end - 1;
       }
-      var address = Address(helix_idx: top_dom.helix, offset: offset, forward: top_dom.forward);
-      address_crossover_pairs[pair_idxs].add(Tuple2<Address, Crossover>(address, crossover));
+      var address_top = Address(helix_idx: dom_top.helix, offset: offset_top, forward: dom_top.forward);
+      var address_bot = Address(helix_idx: dom_bot.helix, offset: offset_bot, forward: dom_bot.forward);
+      addresses_top_bot_crossovers[pair_idxs].add(Tuple2<Address, Address>(address_top, address_bot));
     }
   }
 
-  return address_crossover_pairs;
+  return addresses_top_bot_crossovers;
 }
 
 /// Represents a roll and 2D (x,y) position. The roll and position are both assigned to helices
@@ -203,6 +216,7 @@ class RollXY {
   String toString() => 'RollXY(roll=$roll, x=$x, y=$y)';
 }
 
+//XXX: be careful editing this function; this logic was very tricky to get correct
 /// Return list of rolls, same length as [helices], giving the roll that each should be to point
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
@@ -228,13 +242,16 @@ List<RollXY> _calculate_rolls_and_positions(
     // now back to using our "0 is straight up" rotation coordinate system
     // first calculate angle that strand on bottom helix has
     var angle_strand_bot = (degrees_top + 180) % 360;
-    if (!address_bot.forward) { // translate to the angle of the forward strand
+    if (!address_bot.forward) {
+      // translate to the angle of the forward strand
       angle_strand_bot = (angle_strand_bot + 150) % 360;
     }
     // then correct for offset of crossover
     var current_roll_at_address_bot = dna_design.helix_rotation_at(address_bot);
     var delta_roll = (angle_strand_bot - current_roll_at_address_bot) % 360;
-    rollxys.add(RollXY(roll: delta_roll, x: next_x, y: next_y));
+    Helix helix_bot = helices[i + 1];
+    var new_roll = helix_bot.roll + delta_roll;
+    rollxys.add(RollXY(roll: new_roll, x: next_x, y: next_y));
   }
 
   return rollxys;
