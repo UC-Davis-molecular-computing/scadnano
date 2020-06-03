@@ -47,8 +47,8 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Crossover crossover;
   Strand strand;
 
-  Domain prev_substrand;
-  Domain next_substrand;
+  Domain prev_domain;
+  Domain next_domain;
   bool selected;
   bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
@@ -74,8 +74,8 @@ class DesignMainStrandCrossoverComponent
   render() {
     Strand strand = props.strand;
     Crossover crossover = props.crossover;
-    Domain prev_substrand = props.prev_substrand;
-    Domain next_substrand = props.next_substrand;
+    Domain prev_substrand = props.prev_domain;
+    Domain next_substrand = props.next_domain;
 
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
@@ -164,13 +164,13 @@ class DesignMainStrandCrossoverComponent
       ];
 
   handle_crossover_click() {
-    Domain prev_substrand = props.prev_substrand;
-    Domain next_substrand = props.next_substrand;
+    Domain prev_domain = props.prev_domain;
+    Domain next_domain = props.next_domain;
     List<actions.UndoableAction> roll_actions = [];
-    for (var ss in [prev_substrand, next_substrand]) {
-      var other_ss = ss == prev_substrand ? next_substrand : prev_substrand;
-      int anchor = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-      var roll_action = actions.HelixRollSetAtOther(ss.helix, other_ss.helix, ss.forward, anchor);
+    for (var dom in [prev_domain, next_domain]) {
+      var other_ss = dom == prev_domain ? next_domain : prev_domain;
+      int anchor = dom == prev_domain ? dom.offset_3p : dom.offset_5p;
+      var roll_action = actions.HelixRollSetAtOther(dom.helix, other_ss.helix, dom.forward, anchor);
       roll_actions.add(roll_action);
     }
     var action = actions.BatchAction(roll_actions);
@@ -178,13 +178,13 @@ class DesignMainStrandCrossoverComponent
   }
 
   update_mouseover_crossover() {
-    Domain prev_substrand = props.prev_substrand;
-    Domain next_substrand = props.next_substrand;
+    Domain prev_domain = props.prev_domain;
+    Domain next_domain = props.next_domain;
     List<MouseoverParams> param_list = [];
-    for (var ss in [prev_substrand, next_substrand]) {
-      int helix_idx = ss == prev_substrand ? prev_substrand.helix : next_substrand.helix;
-      int offset = ss == prev_substrand ? ss.offset_3p : ss.offset_5p;
-      bool forward = ss.forward;
+    for (var dom in [prev_domain, next_domain]) {
+      int helix_idx = dom == prev_domain ? prev_domain.helix : next_domain.helix;
+      int offset = dom == prev_domain ? dom.offset_3p : dom.offset_5p;
+      bool forward = dom.forward;
       param_list.add(MouseoverParams(helix_idx, offset, forward));
     }
 

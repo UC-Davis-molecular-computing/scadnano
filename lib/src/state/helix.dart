@@ -74,7 +74,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
-      ..svg_position_ = svg_position
+      ..svg_position = svg_position
       ..roll = roll
       ..min_offset = min_offset
       ..max_offset = max_offset
@@ -103,12 +103,12 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
   @nullable
-  Point<num> get svg_position_;
+  Point<num> get svg_position;
 
   @nullable
   Position3D get position_;
 
-  Position3D get position => position_ != null ? position_ : util.grid_to_position3d(grid_position, grid);
+  Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid);
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset.
   double get roll;
@@ -129,28 +129,29 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
-  Point<num> default_svg_position() {
-    if (grid != Grid.none) {
-      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-//      return Point<num>(grid_position.b * constants.BASE_WIDTH_SVG,
-//          grid_position.v * constants.DISTANCE_BETWEEN_HELICES_SVG);
-      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-    } else if (position != null) {
-      var pos3d = position3d();
-      // position z is main view x
-      // SVG pixels in x direction = p.z in nm * (1/0.34 bp/nm) * (BASE_WIDTH_SVG pixels/bp)
-      // SVG pixels in y direction =
-      //   p.y in nm * (1/2.5 helix/nm)
-      //   * (GridPosition.distance grid_point/helix)
-      //   * (DISTANCE_BETWEEN_HELICES_SVG pixels/grid_point)
-      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-      return util.position3d_to_main_view_svg(pos3d);
-    } else {
-//      throw AssertionError('cannot have grid_position, position both null and call default_svg_position');
-      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-    }
-  }
+//  Point<num> calculate_svg_position_from_position() {
+//    if (grid != Grid.none) {
+//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
+////      return Point<num>(grid_position.b * constants.BASE_WIDTH_SVG,
+////          grid_position.v * constants.DISTANCE_BETWEEN_HELICES_SVG);
+//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
+//    } else if (position != null) {
+//      var pos3d = position3d();
+//      // position z is main view x
+//      // SVG pixels in x direction = p.z in nm * (1/0.34 bp/nm) * (BASE_WIDTH_SVG pixels/bp)
+//      // SVG pixels in y direction =
+//      //   p.y in nm * (1/2.5 helix/nm)
+//      //   * (GridPosition.distance grid_point/helix)
+//      //   * (DISTANCE_BETWEEN_HELICES_SVG pixels/grid_point)
+//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
+//      return util.position3d_to_main_view_svg(pos3d);
+//    } else {
+////      throw AssertionError('cannot have grid_position, position both null and call default_svg_position');
+//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
+//    }
+//  }
 
+  //TODO: should this be memoized?
   Position3D default_position() {
     num z = grid_position.b * constants.BASE_WIDTH_SVG;
     Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
@@ -161,7 +162,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   bool has_grid_position() => this.grid_position != null;
 
   /// More like "has *assigned* SVG position"; if not one is calculated from grid_position or position
-  bool has_svg_position() => this.svg_position_ != null;
+//  bool has_svg_position() => this.svg_position_ != null;
 
   bool has_position() => this.position_ != null;
 
@@ -169,15 +170,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 //  String toString() =>
 //      super.toString().replaceFirst(r'helix=[+-]?\d+(\.\d+)?', 'helix=${util.to_degrees(rotation)}');
 
-  /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
-  /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
-  @memoized
-  Point<num> get svg_position {
-    if (svg_position_ != null) {
-      return svg_position_;
-    }
-    return default_svg_position();
-  }
+//  @memoized
+//  Point<num> get svg_position => svg_position_ ?? calculate_svg_position_from_position();
 
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
@@ -221,9 +215,9 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
           this.position.to_json_serializable(suppress_indent: suppress_indent);
     }
 
-    if (has_nondefault_svg_position()) {
-      json_map[constants.svg_position_key] = [svg_position.x, svg_position.y];
-    }
+//    if (has_nondefault_svg_position()) {
+//      json_map[constants.svg_position_key] = [svg_position.x, svg_position.y];
+//    }
 
     if (has_nondefault_roll()) {
       json_map[constants.roll_key] = roll;
@@ -273,16 +267,16 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return relative_y < 10;
   }
 
-  bool has_nondefault_svg_position() {
-    num eps = 0.00000001;
-    num default_x = this.default_svg_position().x;
-    num default_y = this.default_svg_position().y;
-    num this_x = this.svg_position.x;
-    num this_y = this.svg_position.y;
-    num diff_x = (this_x - default_x).abs();
-    num diff_y = (this_y - default_y).abs();
-    return diff_x > eps && diff_y > eps;
-  }
+//  bool has_nondefault_svg_position() {
+//    num eps = 0.00000001;
+//    num default_x = this.calculate_svg_position_from_position().x;
+//    num default_y = this.calculate_svg_position_from_position().y;
+//    num this_x = this.svg_position.x;
+//    num this_y = this.svg_position.y;
+//    num diff_x = (this_x - default_x).abs();
+//    num diff_y = (this_y - default_y).abs();
+//    return diff_x > eps && diff_y > eps;
+//  }
 
   bool has_max_offset() => this.max_offset != null;
 
@@ -318,7 +312,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
         throw ArgumentError(
             "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
       }
-      helix_builder.svg_position_ = Point<num>(svg_position_list[0], svg_position_list[1]);
+      helix_builder.svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
 
     if (json_map.containsKey(constants.max_offset_key)) {

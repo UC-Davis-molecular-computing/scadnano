@@ -25,6 +25,7 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltMap<int, Helix>, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.GridChange>(helix_grid_change_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixGridPositionSet>(helix_grid_position_set_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixPositionSet>(helix_position_set_reducer),
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
@@ -58,7 +59,6 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
-  TypedReducer<Helix, actions.HelixPositionSet>(helix_position_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,18 +107,16 @@ Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => 
 
 BuiltMap<int, Helix> helix_roll_set_at_other_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixRollSetAtOther action) {
-  num rotation = util.rotation_between_helices(helices, action);
-
   Helix helix = helices[action.helix_idx];
+  Helix helix_other = helices[action.helix_other_idx];
 
-  double old_rotation_at_rotation_anchor = state.dna_design.helix_rotation_forward(helix, action.anchor);
-  double delta_roll = rotation - old_rotation_at_rotation_anchor;
-
+  num rotation = util.rotation_between_helices(helix, helix_other, action.forward);
+  double old_rotation_at_anchor = state.dna_design.helix_rotation_forward(helix, action.anchor);
+  double delta_roll = rotation - old_rotation_at_anchor;
   double new_roll = (helix.roll + delta_roll) % 360.0;
 
-  // adjust helix rotation
-  Helix helix_new = helix.rebuild((h) => h
-    ..roll = new_roll);
+  // adjust helix roll
+  Helix helix_new = helix.rebuild((h) => h..roll = new_roll);
 
   // create new helices
   var helices_builder = helices.toBuilder();
@@ -305,21 +303,37 @@ BuiltMap<int, Helix> helix_grid_change_reducer(BuiltMap<int, Helix> helices, act
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
-Helix helix_position_set_reducer(Helix helix, actions.HelixPositionSet action) => helix.rebuild((b) => b
-  ..position_.replace(action.position)
-  ..grid_position = null
-  ..svg_position_ = null);
-
 Helix helix_individual_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
     helix.rebuild((b) => b
       ..position_ = null
       ..grid_position.replace(action.grid_position)
-      ..svg_position_ = null);
+      ..svg_position = null);
 
 BuiltMap<int, Helix> helix_grid_position_set_reducer(
     BuiltMap<int, Helix> helices, actions.HelixGridPositionSet action) {
   Helix helix = helices[action.helix_idx];
   var new_helix = helix_individual_grid_position_set_reducer(helix, action);
+  if (new_helix != helix) {
+    var helices_map = helices.toBuilder();
+    helices_map[action.helix_idx] = new_helix;
+    var new_helices = helices_map.build();
+    new_helices = _reassign_svg_positions(new_helices, null);
+    return new_helices;
+  } else {
+    return helices;
+  }
+}
+
+Helix helix_individual_position_set_reducer(Helix helix, actions.HelixPositionSet action) =>
+    helix.rebuild((b) => b
+      ..position_.replace(action.position)
+      ..grid_position = null
+      ..svg_position = null);
+
+BuiltMap<int, Helix> helix_position_set_reducer(
+    BuiltMap<int, Helix> helices, actions.HelixPositionSet action) {
+  Helix helix = helices[action.helix_idx];
+  var new_helix = helix_individual_position_set_reducer(helix, action);
   if (new_helix != helix) {
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;

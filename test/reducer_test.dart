@@ -1,6 +1,8 @@
 // import 'dart:convert';
 // import 'dart:io';
 
+import 'dart:math';
+
 import 'package:scadnano/src/serializers.dart';
 import 'package:test/test.dart';
 
@@ -37,8 +39,9 @@ import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:scadnano/src/util.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
-import 'package:scadnano/src/util.dart' as util;
 import 'package:scadnano/src/extension_methods.dart';
+import 'package:scadnano/src/util.dart' as util;
+import 'package:scadnano/src/constants.dart' as constants;
 
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_dna_design(DNADesign dna_design) {
@@ -57,8 +60,9 @@ AppState app_state_from_dna_design(DNADesign dna_design) {
 /// the undo stack as well as changing changed_since_last_save
 /// to true.
 AppState expected_state_from_json_string(String dna_design_json, DNADesign initial_design) {
-    return app_state_from_dna_design(DNADesign.from_json(json.decode(
-    dna_design_json))).rebuild((b) => b..undo_redo.undo_stack.add(initial_design)..ui_state.changed_since_last_save = true);
+  return app_state_from_dna_design(DNADesign.from_json(json.decode(dna_design_json))).rebuild((b) => b
+    ..undo_redo.undo_stack.add(initial_design)
+    ..ui_state.changed_since_last_save = true);
 }
 
 Color DUMMY_COLOR = Color.rgb(0, 0, 0);
@@ -1903,7 +1907,7 @@ main() {
 
     Helix helix1 = two_helices_design.helices[1];
     Helix new_helix1 = helix1.rebuild((b) => b
-      ..svg_position_ = Point(0, 0)
+      ..svg_position = Point(0, 0)
       ..view_order = 0);
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
     DNADesign new_dna_design =
@@ -3188,7 +3192,7 @@ main() {
           .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
 
       // Because it is selected, it will appear at the top now.
-      Helix new_selected_helix = two_helices_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0));
+      Helix new_selected_helix = two_helices_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0));
 
       AppState expected_state_after_set_true = initial_state.rebuild((b) => b
         ..ui_state.only_display_selected_helices = true
@@ -3569,18 +3573,16 @@ main() {
       state = app_state_reducer(
           state, HelixRollSetAtOther(0, 1, false, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix0 = two_helices_crossover_design.helices.values.first.rebuild((b) => b
-        ..roll = 235.71428571428567
-        );
+      Helix expected_helix0 =
+          two_helices_crossover_design.helices.values.first.rebuild((b) => b..roll = 235.71428571428567);
 
       expect(state.dna_design.helices.values.first, expected_helix0);
 
       state = app_state_reducer(
           state, HelixRollSetAtOther(1, 0, true, 15)); // helix_idx, other_idx, forward, anchor
 
-      Helix expected_helix1 = two_helices_crossover_design.helices.values.last.rebuild((b) => b
-        ..roll = 205.71428571428567
-        );
+      Helix expected_helix1 =
+          two_helices_crossover_design.helices.values.last.rebuild((b) => b..roll = 205.71428571428567);
 
       expect(state.dna_design.helices.values.first, expected_helix0);
       expect(state.dna_design.helices.values.last, expected_helix1);
@@ -4028,7 +4030,7 @@ main() {
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
         ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0)));
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0)));
       expect_app_state_equal(state, expected_state);
     });
 
@@ -4047,7 +4049,7 @@ main() {
         ..ui_state.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
         ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0)));
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0)));
       expect_app_state_equal(state, expected_state);
 
       // clear should reset helix positions (but keep only display selected helices true).
@@ -4094,9 +4096,9 @@ main() {
         ..ui_state.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2])
         ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position_ = Point(0, 0))
+            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0))
         ..dna_design.helices[2] = simple_strand_dna_design.helices[2].rebuild((b) => b
-          ..svg_position_ = Point(
+          ..svg_position = Point(
             0,
             simple_strand_dna_design.helices[1].grid_position.distance_nm(
                     simple_strand_dna_design.helices[2].grid_position, simple_strand_dna_design.grid) *
@@ -5469,21 +5471,58 @@ main() {
   test('HelixPositionSet', () {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
 
-    Helix helix = no_grid_two_helices_design.helices.values.first;
-    Position3D position = Position3D(x: 10, y: 30, z: 10);
+    Helix helix0 = no_grid_two_helices_design.helices[0];
+    Helix helix1 = no_grid_two_helices_design.helices[1];
+    Position3D new_position0 = Position3D(x: 10, y: 30, z: 10);
+//    Position3D old_position1 = Position3D(x: 50, y: 80, z: 0);
+    Point<num> svg_position0 = Point<num>(0, 0);
+    Point<num> svg_position1 = Point<num>(
+        0, sqrt((50 - 10) * (50 - 10) + (80 - 30) * (80 - 30)) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS);
 
-    Helix expected_helix = helix.rebuild((b) => b
-      ..position_.replace(position)
-      ..svg_position_ = null);
-    var expected_helices = no_grid_two_helices_design.helices.toBuilder();
-    expected_helices[0] = expected_helix;
+    Helix expected_helix0 = helix0.rebuild((b) => b
+      ..position_.replace(new_position0)
+      ..svg_position = svg_position0);
+    Helix expected_helix1 = helix1.rebuild((b) => b..svg_position = svg_position1);
+    var expected_helices = {0: expected_helix0, 1: expected_helix1};
 
     AppState expected_state = state.rebuild((b) => b
-      ..dna_design.helices.replace(expected_helices.build())
+      ..dna_design.helices.replace(expected_helices)
       ..undo_redo.undo_stack.add(no_grid_two_helices_design)
       ..ui_state.changed_since_last_save = true);
 
-    state = app_state_reducer(state, HelixPositionSet(helix: helix, position: position));
+    state = app_state_reducer(state, HelixPositionSet(helix_idx: helix0.idx, position: new_position0));
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixPositionSet two helices', () {
+    AppState state = app_state_from_dna_design(no_grid_two_helices_design);
+
+    Helix helix0 = no_grid_two_helices_design.helices[0];
+    Helix helix1 = no_grid_two_helices_design.helices[1];
+    Position3D position0 = Position3D(x: 10, y: 30, z: 0);
+    Position3D position1 = Position3D(x: 0, y: 100, z: 0);
+    Point<num> svg_position0 = Point<num>(0, 0);
+    Point<num> svg_position1 = Point<num>(
+        0, sqrt((0 - 10) * (0 - 10) + (100 - 30) * (100 - 30)) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS);
+
+    Helix expected_helix0 = helix0.rebuild((b) => b
+      ..position_.replace(position0)
+      ..svg_position = svg_position0);
+    Helix expected_helix1 = helix1.rebuild((b) => b
+      ..position_.replace(position1)
+      ..svg_position = svg_position1);
+    var expected_helices = {0: expected_helix0, 1: expected_helix1};
+
+    AppState expected_state = state.rebuild((b) => b
+      ..dna_design.helices.replace(expected_helices)
+      ..undo_redo.undo_stack.add(no_grid_two_helices_design)
+      ..ui_state.changed_since_last_save = true);
+
+    var batch_action = BatchAction([
+      HelixPositionSet(helix_idx: helix0.idx, position: position0),
+      HelixPositionSet(helix_idx: helix1.idx, position: position1)
+    ]);
+    state = app_state_reducer(state, batch_action);
     expect_app_state_equal(state, expected_state);
   });
 
@@ -5494,7 +5533,7 @@ main() {
     GridPosition grid_position = GridPosition(5, -3);
     Helix expected_helix = helix.rebuild((b) => b
       ..grid_position.replace(grid_position)
-      ..svg_position_ = Point(0, 0));
+      ..svg_position = Point(0, 0));
 
     var expected_helices = two_helices_design.helices.toBuilder();
     expected_helices[0] = expected_helix;
@@ -5667,10 +5706,12 @@ main() {
       ]
     }
     """;
-    DNADesign many_helices_modification_design = DNADesign.from_json(json.decode(many_helices_modification_json));
+    DNADesign many_helices_modification_design =
+        DNADesign.from_json(json.decode(many_helices_modification_json));
     AppState initial_state = app_state_from_dna_design(many_helices_modification_design);
 
-    Crossover crossover23 = many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
+    Crossover crossover23 =
+        many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
     Strand domain = many_helices_modification_design.strands.first;
     Domain domain6 = many_helices_modification_design.strands.first.substrands[6] as Domain;
     test('test delete crossover', () {
@@ -5706,8 +5747,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
-        r"""
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
           {
             "version": "0.6.7",
             "grid": "square",
@@ -5771,8 +5811,9 @@ main() {
               }
             ]
           }
-        """
-      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true);
+        """))).rebuild((b) => b
+        ..undo_redo.undo_stack.add(many_helices_modification_design)
+        ..ui_state.changed_since_last_save = true);
 
       AppState state = initial_state;
       state = app_state_reducer(state, Select(crossover23, toggle: false, only: true));
@@ -5780,7 +5821,8 @@ main() {
 
       expect_app_state_equal(state, expected_state);
 
-      Crossover crossover56 = expected_state.dna_design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+      Crossover crossover56 =
+          expected_state.dna_design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
       // Delete crossover between 5 and 6.
       //    B     Cy3   B
       // 0  [-----------------
@@ -5813,8 +5855,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
-        r"""
+      expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
           {
             "version": "0.6.7",
             "grid": "square",
@@ -5885,8 +5926,9 @@ main() {
               }
             ]
           }
-        """
-      ))).rebuild((b) => b..undo_redo.undo_stack.addAll([many_helices_modification_design, state.dna_design])..ui_state.changed_since_last_save = true);
+        """))).rebuild((b) => b
+        ..undo_redo.undo_stack.addAll([many_helices_modification_design, state.dna_design])
+        ..ui_state.changed_since_last_save = true);
 
       state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
@@ -5899,8 +5941,7 @@ main() {
       //    |  <----------------------------------------------loopout length 3
       //    |      Cy3    B
       // 1  ----------------->
-      DNADesign modifications_loopout = DNADesign.from_json(json.decode(
-        r"""
+      DNADesign modifications_loopout = DNADesign.from_json(json.decode(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -5936,8 +5977,7 @@ main() {
               }
             ]
           }
-        """
-      ));
+        """));
       AppState initial_state = app_state_from_dna_design(modifications_loopout);
       // 0  <----------------]
       //       B     Cy3
@@ -5989,7 +6029,10 @@ main() {
       """, modifications_loopout);
 
       AppState state = initial_state;
-      state = app_state_reducer(state, Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse'], toggle: false, only: true));
+      state = app_state_reducer(
+          state,
+          Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse'],
+              toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
       expect_app_state_equal(state, expected_state);
@@ -6005,8 +6048,7 @@ main() {
       // 5
       // 6
       // 7
-      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
-        r"""
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6022,8 +6064,11 @@ main() {
             ],
             "strands": []
           }
-        """
-      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true..ui_state.select_mode_state.replace(SelectModeState().set_modes([SelectModeChoice.strand, SelectModeChoice.scaffold, SelectModeChoice.staple])));
+        """))).rebuild((b) => b
+        ..undo_redo.undo_stack.add(many_helices_modification_design)
+        ..ui_state.changed_since_last_save = true
+        ..ui_state.select_mode_state.replace(SelectModeState()
+            .set_modes([SelectModeChoice.strand, SelectModeChoice.scaffold, SelectModeChoice.staple])));
 
       AppState state = initial_state;
       state = app_state_reducer(state, SelectModeToggle(SelectModeChoice.strand));
@@ -6066,8 +6111,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      var expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(
-        r"""
+      var expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6132,9 +6176,9 @@ main() {
               }
             ]
           }
-        """
-      ))).rebuild((b) => b..undo_redo.undo_stack.add(many_helices_modification_design)..ui_state.changed_since_last_save = true);
-
+        """))).rebuild((b) => b
+        ..undo_redo.undo_stack.add(many_helices_modification_design)
+        ..ui_state.changed_since_last_save = true);
 
       AppState state = initial_state;
       state = app_state_reducer(state, Nick(domain: domain6, offset: 4));
@@ -6175,8 +6219,7 @@ main() {
     //
     // 7  <----------------]
     //    Cy3  B      Cy3
-    DNADesign many_helices_modifications_split = DNADesign.from_json(json.decode(
-      r"""
+    DNADesign many_helices_modifications_split = DNADesign.from_json(json.decode(r"""
         {
           "version": "0.7.0",
           "grid": "square",
@@ -6287,12 +6330,14 @@ main() {
             }
           ]
         }
-      """
-    ));
+      """));
     AppState initial_state = app_state_from_dna_design(many_helices_modifications_split);
-    DNAEnd end_3p_H4 = many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward'];
-    DNAEnd end_5p_H5 = many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H5-0-16-reverse'];
-    DNAEnd end_5p_H4 = many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H4-10-16-forward'];
+    DNAEnd end_3p_H4 =
+        many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward'];
+    DNAEnd end_5p_H5 =
+        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H5-0-16-reverse'];
+    DNAEnd end_5p_H4 =
+        many_helices_modifications_split.ends_5p_strand_by_id['end-5p-substrand-H4-10-16-forward'];
     Helix helix5 = many_helices_modifications_split.helices[5];
     Strand strand_H4_forward_10 = many_helices_modifications_split.strands[7];
     Strand strand_H4_forward_0 = many_helices_modifications_split.strands[6];
@@ -6331,8 +6376,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(
-        r"""
+      var expected_state = expected_state_from_json_string(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6439,7 +6483,8 @@ main() {
         """, many_helices_modifications_split);
 
       AppState state = initial_state;
-      state = app_state_reducer(state, JoinStrandsByCrossover(dna_end_first_click: end_3p_H4, dna_end_second_click:  end_5p_H5));
+      state = app_state_reducer(
+          state, JoinStrandsByCrossover(dna_end_first_click: end_3p_H4, dna_end_second_click: end_5p_H5));
 
       expect_app_state_equal(state, expected_state);
     });
@@ -6478,8 +6523,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(
-        r"""
+      var expected_state = expected_state_from_json_string(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6623,8 +6667,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(
-        r"""
+      var expected_state = expected_state_from_json_string(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6739,7 +6782,8 @@ main() {
 
       AppState state = initial_state;
       DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
-      DNAEndsMove moves = DNAEndsMove(moves: BuiltList<DNAEndMove>([move]), original_offset: 15, current_offset: 13, helix: helix5);
+      DNAEndsMove moves = DNAEndsMove(
+          moves: BuiltList<DNAEndMove>([move]), original_offset: 15, current_offset: 13, helix: helix5);
       state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: moves));
 
       expect_app_state_equal(state, expected_state);
@@ -6781,8 +6825,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(
-        r"""
+      var expected_state = expected_state_from_json_string(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6897,14 +6940,15 @@ main() {
 
       AppState state = initial_state;
 
-
-      BuiltList<Strand> strands_moving = BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
+      BuiltList<Strand> strands_moving =
+          BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
       BuiltList<Strand> all_strands = many_helices_modifications_split.strands;
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
       BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
-      BuiltMap<int, int> helices_view_order_inverse = many_helices_modifications_split.helices_view_order_inverse;
+      BuiltMap<int, int> helices_view_order_inverse =
+          many_helices_modifications_split.helices_view_order_inverse;
       bool copy = false;
 
       StrandsMove strands_move = StrandsMove(
@@ -6916,9 +6960,7 @@ main() {
         helices_view_order: helices_view_order,
         helices_view_order_inverse: helices_view_order_inverse,
         copy: copy,
-      ).rebuild((b) => b
-        ..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder()
-      );
+      ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
 
@@ -6961,8 +7003,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(
-        r"""
+      var expected_state = expected_state_from_json_string(r"""
           {
             "version": "0.7.0",
             "grid": "square",
@@ -7101,14 +7142,15 @@ main() {
 
       AppState state = initial_state;
 
-
-      BuiltList<Strand> strands_moving = BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
+      BuiltList<Strand> strands_moving =
+          BuiltList<Strand>([strand_H3_reverse_0, strand_H4_forward_0, strand_H4_forward_10]);
       BuiltList<Strand> all_strands = many_helices_modifications_split.strands;
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
       BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
-      BuiltMap<int, int> helices_view_order_inverse = many_helices_modifications_split.helices_view_order_inverse;
+      BuiltMap<int, int> helices_view_order_inverse =
+          many_helices_modifications_split.helices_view_order_inverse;
       bool copy = true;
 
       StrandsMove strands_move = StrandsMove(
@@ -7120,9 +7162,7 @@ main() {
         helices_view_order: helices_view_order,
         helices_view_order_inverse: helices_view_order_inverse,
         copy: copy,
-      ).rebuild((b) => b
-        ..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder()
-      );
+      ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
 

@@ -317,7 +317,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(
-        helix: props.helix,
+        helix_idx: props.helix.idx,
         position: Position3D(
           x: x,
           y: y,

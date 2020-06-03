@@ -73,9 +73,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<int, BuiltList<Crossover>> get crossovers_by_helix_idx {
     // convert to proper return type by dropping the offset
     Map<int, BuiltList<Crossover>> builder = {
-      for (int idx in offset_crossover_pairs_by_helix_idx.keys)
-        idx: offset_crossover_pairs_by_helix_idx[idx]
-            .map((offset_crossover_pair) => offset_crossover_pair.item2)
+      for (int idx in address_crossover_pairs_by_helix_idx.keys)
+        idx: address_crossover_pairs_by_helix_idx[idx]
+            .map((address_crossover_pair) => address_crossover_pair.item2)
             .toBuiltList()
     };
 
@@ -83,44 +83,61 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   // all (offset,crossover) pairs incident on helix with given idx, sorted by offset on that helix
+  // offset is inclusive on either end. This ensures that each half of a double crossover actual
+  // has different offsets, and the leftmost one is considered smaller.
   @memoized
-  BuiltMap<int, BuiltList<Tuple2<int, Crossover>>> get offset_crossover_pairs_by_helix_idx {
+  BuiltMap<int, BuiltList<Tuple2<Address, Crossover>>> get address_crossover_pairs_by_helix_idx {
     // this is essentially what we return, but each crossover also carries with it the start offset of
     // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
-    Map<int, List<Tuple2<int, Crossover>>> offset_crossover_pairs = {};
+    Map<int, List<Tuple2<Address, Crossover>>> address_crossover_pairs = {};
 
     // initialize internal map to have empty lists
     for (int helix_idx in helices.keys) {
-      offset_crossover_pairs[helix_idx] = [];
+      address_crossover_pairs[helix_idx] = [];
     }
 
     // populate internal map with offsets along with lists
     for (var strand in strands) {
       for (var crossover in strand.crossovers) {
-        var dom1 = strand.substrands[crossover.prev_domain_idx] as Domain;
-        var dom2 = strand.substrands[crossover.next_domain_idx] as Domain;
-        for (var dom in [dom1, dom2]) {
-          List<Tuple2<int, Crossover>> offset_crossover_pair_list = offset_crossover_pairs[dom.helix];
-          int offset = dom.forward ? dom.start : dom.end;
-          var pair = Tuple2<int, Crossover>(offset, crossover);
-          offset_crossover_pair_list.add(pair);
+        var prev_dom = strand.substrands[crossover.prev_domain_idx] as Domain;
+        var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
+        bool is_prev = true;
+        for (var dom in [prev_dom, next_dom]) {
+          List<Tuple2<Address, Crossover>> address_crossover_pair_list = address_crossover_pairs[dom.helix];
+          int offset;
+          // ugg, this logic is ugly. Here's the various possibilities
+          /*
+          !is_prev           is_prev            is_prev            !is_prev
+          !dom.forward       dom.forward        !dom.forward       dom.forward
+          <----+             [----+             |                  |
+               |                  |             +----]             +---->
+          */
+          if ((is_prev && dom.forward) || (!is_prev && !dom.forward)) {
+            offset = dom.end - 1;
+          } else {
+            offset = dom.start;
+          }
+          var address = Address(helix_idx: dom.helix, offset: offset, forward: dom.forward);
+          var pair = Tuple2<Address, Crossover>(address, crossover);
+          address_crossover_pair_list.add(pair);
+          is_prev = false;
         }
       }
     }
 
     // sort by offset where it intersects the helix
-    for (var pair_idxs in offset_crossover_pairs.keys) {
-      List<Tuple2<int, Crossover>> start_crossover_pair_list = offset_crossover_pairs[pair_idxs];
-      start_crossover_pair_list.sort((offset_crossover_pair1, offset_crossover_pair2) {
-        int offset1 = offset_crossover_pair1.item1;
-        int offset2 = offset_crossover_pair2.item1;
-        return offset1 - offset2;
+    for (var pair_idxs in address_crossover_pairs.keys) {
+      List<Tuple2<Address, Crossover>> start_crossover_pair_list = address_crossover_pairs[pair_idxs];
+      start_crossover_pair_list.sort((address_crossover_pair1, address_crossover_pair2) {
+        Address add1 = address_crossover_pair1.item1;
+        Address add2 = address_crossover_pair2.item1;
+        return add1.offset - add2.offset;
       });
     }
 
     // convert to proper return type by dropping the offset
-    Map<int, BuiltList<Tuple2<int, Crossover>>> builder = {
-      for (int idx in offset_crossover_pairs.keys) idx: offset_crossover_pairs[idx].toBuiltList()
+    Map<int, BuiltList<Tuple2<Address, Crossover>>> builder = {
+      for (int idx in address_crossover_pairs.keys) idx: address_crossover_pairs[idx].toBuiltList()
     };
 
     return builder.build();
@@ -887,8 +904,21 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return dna_length;
   }
 
-  /// in radians; gives rotation of backbone of strand in the forward direction, as viewed in the side view
-  double helix_rotation_forward(Helix helix, int offset) {
+  /// rotation angle of the backbone at the given address, with the given roll. If roll is not specified,
+  /// the current value of the helix's roll is used
+  double helix_rotation_at(Address address, [double roll = null]) {
+    var helix = helices[address.helix_idx];
+    int offset = address.offset;
+    double rotation = helix_rotation_forward(helix, offset);
+    return address.forward? rotation : rotation + 150;
+  }
+
+  /// rotation angle of the backbone of the forward strand on [helix] at [offset]
+  /// in degrees; gives rotation of backbone of strand in the forward direction, as viewed in the side view
+  double helix_rotation_forward(Helix helix, int offset, [double roll = null]) {
+    if (roll == null) {
+      roll = helix.roll;
+    }
     int num_bases;
     if (helix.min_offset < offset) {
       num_bases = this.helix_num_bases_between(helix, helix.min_offset, offset - 1);
@@ -897,17 +927,12 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     } else {
       num_bases = 0;
     }
-//    num rad = (helix.rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
-//    return rad;
-//    num rad = (util.to_radians(helix.rotation) + (2 * pi * num_bases / 10.5)) % (2 * pi);
-//    return util.to_degrees(rad);
-    num rot = (helix.roll + (360 * num_bases / 10.5)) % (360);
+    num rot = (roll + (360 * num_bases / 10.5)) % (360);
     return rot;
   }
 
-  /// in radians; rotation of forward strand  + 150 degrees
+  /// in degrees; rotation of forward strand  + 150 degrees
   double helix_rotation_reverse(Helix helix, int offset) =>
-//      this.helix_rotation_3p(helix, offset) + (2 * pi * 150.0 / 360.0);
       this.helix_rotation_forward(helix, offset) + 150;
 
   bool helix_has_nondefault_max_offset(Helix helix) {

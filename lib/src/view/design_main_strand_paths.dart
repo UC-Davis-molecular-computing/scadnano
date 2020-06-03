@@ -171,8 +171,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               props.edit_modes.contains(EditModeChoice.select) &&
               props.origami_type_is_selectable
           ..edit_modes = props.edit_modes
-          ..prev_substrand = prev_ss
-          ..next_substrand = next_ss
+          ..prev_domain = prev_ss
+          ..next_domain = next_ss
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }

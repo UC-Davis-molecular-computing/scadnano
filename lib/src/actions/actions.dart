@@ -493,6 +493,22 @@ abstract class MouseoverDataUpdate
   static Serializer<MouseoverDataUpdate> get serializer => _$mouseoverDataUpdateSerializer;
 }
 
+// set helix roll
+abstract class HelixRollSet
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixRollSet, HelixRollSetBuilder> {
+  int get helix_idx;
+
+  double get roll;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixRollSet({int helix_idx, double roll}) = _$HelixRollSet._;
+
+  HelixRollSet._();
+
+  static Serializer<HelixRollSet> get serializer => _$helixRollSetSerializer;
+}
+
 // set helix roll such that rotation at anchor points at helix_other
 abstract class HelixRollSetAtOther
     with BuiltJsonSerializable, UndoableAction
@@ -1698,14 +1714,13 @@ abstract class ExampleDNADesignsLoad
 abstract class HelixPositionSet
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixPositionSet, HelixPositionSetBuilder> {
-  Helix get helix;
+  int get helix_idx;
 
   Position3D get position;
 
-  int get helix_idx => helix.idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixPositionSet({Helix helix, Position3D position}) = _$HelixPositionSet._;
+  factory HelixPositionSet({int helix_idx, Position3D position}) = _$HelixPositionSet._;
 
   HelixPositionSet._();
 
