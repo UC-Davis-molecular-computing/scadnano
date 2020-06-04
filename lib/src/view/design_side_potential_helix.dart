@@ -58,7 +58,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     return (Dom.circle()
           ..cx = svg_ideal_pos.x
           ..cy = svg_ideal_pos.y
-          ..r = '${constants.SIDE_HELIX_RADIUS}'
+          ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
           ..onClick = _handle_click
           ..className =
 //      allowed_grid_position ?

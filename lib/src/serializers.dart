@@ -75,8 +75,6 @@ part 'serializers.g.dart';
   MouseoverDataClear,
   Grid,
   BatchAction,
-  HelixRotationSet,
-  HelixRotationSetAtOther,
   Undo,
   Redo,
   UndoRedoClear,
@@ -108,6 +106,8 @@ part 'serializers.g.dart';
   HelixMajorTickDistanceChangeAll,
   HelixMajorTicksChange,
   HelixMajorTicksChangeAll,
+  HelixRollSet,
+  HelixRollSetAtOther,
   Nick,
   Ligate,
   JoinStrandsByCrossover,
@@ -157,6 +157,7 @@ part 'serializers.g.dart';
   DialogItem,
   DialogText,
   DialogNumber,
+  DialogFloatingNumber,
   DialogTextArea,
   DialogCheckbox,
   DialogSelect,
@@ -181,6 +182,7 @@ part 'serializers.g.dart';
   SetOnlyDisplaySelectedHelices,
   SetModificationDisplayConnector,
   SetModificationFontSize,
+  HelicesPositionsSetBasedOnCrossovers,
 ])
 Serializers serializers = _$serializers;
 

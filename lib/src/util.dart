@@ -180,58 +180,38 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
     for (var helix in helices.values) if (selected_helix_idxs.contains(helix.idx)) helix
   ];
 
-//  List<int> view_order = List<int>(selected_helices.length);
-//  for (int i = 0; i < selected_helices.length; i++) {
-//    view_order[i] = selected_helices[i].view_order;
-//  }
-
-//  List<Helix> new_helices_sorted_by_view_order = List<Helix>.from(helices.values);
-//
-//  new_helices_sorted_by_view_order.sort((h1, h2) => h1.idx - h2.idx);
-
   Map<int, Helix> new_helices = Map<int, Helix>.from(helices);
   var selected_helices_sorted_by_view_order = List<Helix>.from(selected_helices);
   selected_helices_sorted_by_view_order.sort((h1, h2) => h1.view_order - h2.view_order);
 
   num prev_y = null;
-//  for (int i = 0; i < view_order.length; i++) {
-//    int i_unsorted = view_order[i];
-//    int idx_unsorted = new_helices_sorted_by_view_order[i_unsorted].idx;
-//    Helix helix = helices[idx_unsorted];
-//    assert(helix != null);
 
   var prev_helix = null;
   for (var helix in selected_helices_sorted_by_view_order) {
     num x = 0; //TODO: shift x by grid_position.b or position.z
     num y = 0;
     if (prev_helix != null) {
-//      int prev_i_unsorted = view_order[i - 1];
-//      int prev_idx_unsorted = new_helices_sorted_by_view_order[prev_i_unsorted].idx;
-//      var prev_helix = helices[prev_idx_unsorted];
-//      assert(prev_helix != null);
-
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
+        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
         delta_y =
-            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_SVG;
+            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
       }
       y = prev_y + delta_y;
     }
     prev_y = y;
-    helix = helix.rebuild((b) => b..svg_position_ = Point<num>(x, y));
+    helix = helix.rebuild((b) => b..svg_position = Point<num>(x, y));
     prev_helix = helix;
 
     new_helices[helix.idx] = helix;
   }
 
   return new_helices;
-//  return helices_list_to_map(new_helices_sorted_by_view_order);
 }
 
 Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
@@ -404,7 +384,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
 }
 
 Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
-  num radius = constants.SIDE_HELIX_RADIUS;
+  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -494,7 +474,7 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num radius = constants.SIDE_HELIX_RADIUS;
+  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
   int h, v;
   int b = 0;
@@ -562,15 +542,15 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 
 Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
     (position.z / 0.34) * constants.BASE_WIDTH_SVG,
-    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_SVG);
+    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG);
 
 Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
-    position.x * (constants.SIDE_HELIX_RADIUS * 2) / 2.5,
-    position.y * (constants.SIDE_HELIX_RADIUS * 2) / 2.5);
+    position.x * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
+    position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5);
 
 Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
-    x: svg_pos.x / (constants.SIDE_HELIX_RADIUS * 2) * 2.5,
-    y: svg_pos.y / (constants.SIDE_HELIX_RADIUS * 2) * 2.5);
+    x: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+    y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
@@ -752,16 +732,33 @@ save_file(String default_filename, var content, {BlobType blob_type = BlobType.t
 
     Url.revokeObjectUrl(url);
   } on Exception catch (e, stackTrace) {
-    var msg = e.toString() + '\n\n' + stackTrace.toString();
-    app.store.dispatch(actions.ErrorMessageSet(msg));
-    app.view.design_view.render(app.store.state);
-    return;
+    _alert_error_saving(e, stackTrace);
+  } on Error catch (e, stackTrace) {
+    _alert_error_saving(e, stackTrace);
   }
 
   //TODO: create separate textfield for user to enter desired save filename that we use above
   // we cannot pull it from the download dialog due to security:
   //  https://github.com/eligrey/FileSaver.js/issues/75
   //  https://github.com/WICG/native-file-system
+}
+
+_alert_error_saving(e, stack_trace) {
+  var msg = 'error while saving file: ${e}'
+      '${stack_trace_message_bug_report(stack_trace)}';
+  window.alert(msg);
+}
+
+
+String stack_trace_message_bug_report(stack_trace) {
+  return '\n'
+      '\n**********************************************************************************'
+      '\n* If you believe this is due to a bug in scadnano, please file a bug report at   *'
+      '\n*   ${constants.BUG_REPORT_URL}${' ' * (77 - constants.BUG_REPORT_URL.length)}*'
+      '\n* Include this entire message in the email.                                      *'
+      '\n**********************************************************************************'
+      '\n\nstack trace:'
+      '\n${stack_trace}';
 }
 
 pprint(Map map) {
@@ -790,12 +787,22 @@ num to_degrees(num radians) => radians * 360 / (2 * pi);
 
 num to_radians(num degrees) => degrees * 2 * pi / 360;
 
-num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRotationSetAtOther action) {
-  Helix helix = helices[action.helix_idx];
-  Helix helix_other = helices[action.helix_other_idx];
+//num rotation_between_helices(BuiltMap<int, Helix> helices, actions.HelixRollSetAtOther action) {
+//  Helix helix = helices[action.helix_idx];
+//  Helix helix_other = helices[action.helix_other_idx];
+//
+//  num rotation = helix.angle_to(helix_other);
+//  if (!action.forward) {
+//    rotation = (rotation - 150) % 360;
+//  }
+//
+//  return rotation;
+//}
 
+
+num rotation_between_helices(Helix helix, Helix helix_other, bool forward) {
   num rotation = helix.angle_to(helix_other);
-  if (!action.forward) {
+  if (!forward) {
     rotation = (rotation - 150) % 360;
   }
 
@@ -1215,7 +1222,6 @@ MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<Strin
   }
   return MapBuilder<String, Object>(new_map);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // asynchronous alert dialog

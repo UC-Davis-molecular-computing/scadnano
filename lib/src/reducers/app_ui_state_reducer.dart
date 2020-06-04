@@ -222,9 +222,7 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, state, action)));
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRotationSet>(
-      helix_rotation_set_mouseover_reducer),
-  TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRotationSetAtOther>(
+  TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(
       helix_rotation_set_at_other_mouseover_reducer),
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
       mouseover_data_update_reducer),

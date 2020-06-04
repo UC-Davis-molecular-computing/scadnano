@@ -7,6 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
+import 'package:tuple/tuple.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -60,6 +61,86 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       }
     }
     return false;
+  }
+
+  // like crossovers_by_helix_idx, but maps to sets instead of lists
+  @memoized
+  BuiltMap<int, BuiltSet<Crossover>> get crossovers_by_helix_idx_as_sets =>
+      {for (int idx in crossovers_by_helix_idx.keys) idx: crossovers_by_helix_idx[idx].toBuiltSet()}.build();
+
+  // all crossovers incident on helix with given idx, sorted by offset on that helix
+  @memoized
+  BuiltMap<int, BuiltList<Crossover>> get crossovers_by_helix_idx {
+    // convert to proper return type by dropping the offset
+    Map<int, BuiltList<Crossover>> builder = {
+      for (int idx in address_crossover_pairs_by_helix_idx.keys)
+        idx: address_crossover_pairs_by_helix_idx[idx]
+            .map((address_crossover_pair) => address_crossover_pair.item2)
+            .toBuiltList()
+    };
+
+    return builder.build();
+  }
+
+  // all (offset,crossover) pairs incident on helix with given idx, sorted by offset on that helix
+  // offset is inclusive on either end. This ensures that each half of a double crossover actual
+  // has different offsets, and the leftmost one is considered smaller.
+  @memoized
+  BuiltMap<int, BuiltList<Tuple2<Address, Crossover>>> get address_crossover_pairs_by_helix_idx {
+    // this is essentially what we return, but each crossover also carries with it the start offset of
+    // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
+    Map<int, List<Tuple2<Address, Crossover>>> address_crossover_pairs = {};
+
+    // initialize internal map to have empty lists
+    for (int helix_idx in helices.keys) {
+      address_crossover_pairs[helix_idx] = [];
+    }
+
+    // populate internal map with offsets along with lists
+    for (var strand in strands) {
+      for (var crossover in strand.crossovers) {
+        var prev_dom = strand.substrands[crossover.prev_domain_idx] as Domain;
+        var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
+        bool is_prev = true;
+        for (var dom in [prev_dom, next_dom]) {
+          List<Tuple2<Address, Crossover>> address_crossover_pair_list = address_crossover_pairs[dom.helix];
+          int offset;
+          // ugg, this logic is ugly. Here's the various possibilities
+          /*
+          !is_prev           is_prev            is_prev            !is_prev
+          !dom.forward       dom.forward        !dom.forward       dom.forward
+          <----+             [----+             |                  |
+               |                  |             +----]             +---->
+          */
+          if ((is_prev && dom.forward) || (!is_prev && !dom.forward)) {
+            offset = dom.end - 1;
+          } else {
+            offset = dom.start;
+          }
+          var address = Address(helix_idx: dom.helix, offset: offset, forward: dom.forward);
+          var pair = Tuple2<Address, Crossover>(address, crossover);
+          address_crossover_pair_list.add(pair);
+          is_prev = false;
+        }
+      }
+    }
+
+    // sort by offset where it intersects the helix
+    for (var pair_idxs in address_crossover_pairs.keys) {
+      List<Tuple2<Address, Crossover>> start_crossover_pair_list = address_crossover_pairs[pair_idxs];
+      start_crossover_pair_list.sort((address_crossover_pair1, address_crossover_pair2) {
+        Address add1 = address_crossover_pair1.item1;
+        Address add2 = address_crossover_pair2.item1;
+        return add1.offset - add2.offset;
+      });
+    }
+
+    // convert to proper return type by dropping the offset
+    Map<int, BuiltList<Tuple2<Address, Crossover>>> builder = {
+      for (int idx in address_crossover_pairs.keys) idx: address_crossover_pairs[idx].toBuiltList()
+    };
+
+    return builder.build();
   }
 
   @memoized
@@ -490,8 +571,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   static DNADesign from_json(Map<String, dynamic> json_map) {
-    if (json_map == null)
-      return null;
+    if (json_map == null) return null;
 
     var dna_design_builder = DNADesignBuilder();
 
@@ -824,28 +904,39 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return dna_length;
   }
 
-  /// in radians; gives rotation of backbone of strand in the forward direction, as viewed in the side view
-  double helix_rotation_forward(Helix helix, int offset) {
+  /// rotation angle of the backbone at the given address, assuming the given roll.
+  /// It is assumed that the helix has roll [roll]; if parameter [roll] is not specified,
+  /// the current value of the helix's roll is used
+  double helix_rotation_at(Address address, [double roll = null]) {
+    var helix = helices[address.helix_idx];
+    int offset = address.offset;
+    double rotation = helix_rotation_forward(helix, offset, roll);
+    if (!address.forward) {
+      rotation = (rotation + 150) % 360;
+    }
+    return rotation;
+  }
+
+  /// rotation angle of the backbone of the forward strand on [helix] at [offset]
+  /// in degrees; gives rotation of backbone of strand in the forward direction, as viewed in the side view
+  double helix_rotation_forward(Helix helix, int offset, [double roll = null]) {
+    if (roll == null) {
+      roll = helix.roll;
+    }
     int num_bases;
-    if (helix.rotation_anchor < offset) {
-      num_bases = this.helix_num_bases_between(helix, helix.rotation_anchor, offset - 1);
-    } else if (helix.rotation_anchor > offset) {
-      num_bases = -this.helix_num_bases_between(helix, offset + 1, helix.rotation_anchor);
+    if (helix.min_offset < offset) {
+      num_bases = this.helix_num_bases_between(helix, helix.min_offset, offset - 1);
+    } else if (helix.min_offset > offset) {
+      num_bases = -this.helix_num_bases_between(helix, offset + 1, helix.min_offset);
     } else {
       num_bases = 0;
     }
-//    num rad = (helix.rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
-//    return rad;
-//    num rad = (util.to_radians(helix.rotation) + (2 * pi * num_bases / 10.5)) % (2 * pi);
-//    return util.to_degrees(rad);
-    num rot = (helix.rotation + (360 * num_bases / 10.5)) % (360);
+    num rot = (roll + (360 * num_bases / 10.5)) % (360);
     return rot;
   }
 
-  /// in radians; rotation of forward strand  + 150 degrees
-  double helix_rotation_reverse(Helix helix, int offset) =>
-//      this.helix_rotation_3p(helix, offset) + (2 * pi * 150.0 / 360.0);
-      this.helix_rotation_forward(helix, offset) + 150;
+  /// in degrees; rotation of forward strand  + 150 degrees
+  double helix_rotation_reverse(Helix helix, int offset) => this.helix_rotation_forward(helix, offset) + 150;
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;

@@ -63,7 +63,8 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     String tooltip;
     if (props.grid.is_none()) {
       var pos = props.helix.position3d();
-      tooltip = '${pos.x}, ${pos.y}';
+      int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
+      tooltip = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
       temp_text_for_help_doc_figure_making = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
       var pos = props.helix.grid_position;
@@ -74,7 +75,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     var children = [
       (Dom.circle()
         ..className = classname_circle
-        ..r = '${constants.SIDE_HELIX_RADIUS}'
+        ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
         ..onClick = ((e) => this._handle_click(e, helix))
         ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
@@ -93,7 +94,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 //      print('mouseover data not null; creating DesignSideRotation now');
       assert(mouseover_data.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
-        ..radius = constants.SIDE_HELIX_RADIUS
+        ..radius = constants.HELIX_RADIUS_SIDE_PIXELS
         ..helix = mouseover_data.helix
         ..offset = mouseover_data.offset
         ..key = 'rotation'

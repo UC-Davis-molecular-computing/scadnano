@@ -341,20 +341,24 @@ abstract class SetModificationFontSize
 
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
+    implements
+        StorableAction,
+        Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
   bool get show;
 
   Iterable<Storable> storables() => [Storable.modification_display_connector];
 
-  factory SetModificationDisplayConnector(bool show) => SetModificationDisplayConnector.from((b) => b..show = show);
+  factory SetModificationDisplayConnector(bool show) =>
+      SetModificationDisplayConnector.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetModificationDisplayConnector.from([void Function(SetModificationDisplayConnectorBuilder) updates]) =
-      _$SetModificationDisplayConnector;
+  factory SetModificationDisplayConnector.from(
+      [void Function(SetModificationDisplayConnectorBuilder) updates]) = _$SetModificationDisplayConnector;
 
   SetModificationDisplayConnector._();
 
-  static Serializer<SetModificationDisplayConnector> get serializer => _$setModificationDisplayConnectorSerializer;
+  static Serializer<SetModificationDisplayConnector> get serializer =>
+      _$setModificationDisplayConnectorSerializer;
 }
 
 abstract class ShowMismatchesSet
@@ -489,32 +493,26 @@ abstract class MouseoverDataUpdate
   static Serializer<MouseoverDataUpdate> get serializer => _$mouseoverDataUpdateSerializer;
 }
 
-abstract class HelixRotationSet
+// set helix roll
+abstract class HelixRollSet
     with BuiltJsonSerializable, UndoableAction
-    implements Built<HelixRotationSet, HelixRotationSetBuilder> {
+    implements HelixIndividualAction, Built<HelixRollSet, HelixRollSetBuilder> {
   int get helix_idx;
 
-  double get rotation;
-
-  int get anchor;
+  double get roll;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixRotationSet(int helix_idx, double rotation, int anchor) => HelixRotationSet.from((b) => b
-    ..helix_idx = helix_idx
-    ..rotation = rotation
-    ..anchor = anchor);
+  factory HelixRollSet({int helix_idx, double roll}) = _$HelixRollSet._;
 
-  factory HelixRotationSet.from([void Function(HelixRotationSetBuilder) updates]) = _$HelixRotationSet;
+  HelixRollSet._();
 
-  HelixRotationSet._();
-
-  static Serializer<HelixRotationSet> get serializer => _$helixRotationSetSerializer;
+  static Serializer<HelixRollSet> get serializer => _$helixRollSetSerializer;
 }
 
-// set helix rotation at anchor to point at helix_other
-abstract class HelixRotationSetAtOther
+// set helix roll such that rotation at anchor points at helix_other
+abstract class HelixRollSetAtOther
     with BuiltJsonSerializable, UndoableAction
-    implements Built<HelixRotationSetAtOther, HelixRotationSetAtOtherBuilder> {
+    implements Built<HelixRollSetAtOther, HelixRollSetAtOtherBuilder> {
   int get helix_idx;
 
   int get helix_other_idx;
@@ -524,19 +522,19 @@ abstract class HelixRotationSetAtOther
   int get anchor;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixRotationSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
-      HelixRotationSetAtOther.from((b) => b
+  factory HelixRollSetAtOther(int helix_idx, int helix_other_idx, bool forward, int anchor) =>
+      HelixRollSetAtOther.from((b) => b
         ..helix_idx = helix_idx
         ..helix_other_idx = helix_other_idx
         ..forward = forward
         ..anchor = anchor);
 
-  factory HelixRotationSetAtOther.from([void Function(HelixRotationSetAtOtherBuilder) updates]) =
-      _$HelixRotationSetAtOther;
+  factory HelixRollSetAtOther.from([void Function(HelixRollSetAtOtherBuilder) updates]) =
+      _$HelixRollSetAtOther;
 
-  HelixRotationSetAtOther._();
+  HelixRollSetAtOther._();
 
-  static Serializer<HelixRotationSetAtOther> get serializer => _$helixRotationSetAtOtherSerializer;
+  static Serializer<HelixRollSetAtOther> get serializer => _$helixRollSetAtOtherSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1716,14 +1714,13 @@ abstract class ExampleDNADesignsLoad
 abstract class HelixPositionSet
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixPositionSet, HelixPositionSetBuilder> {
-  Helix get helix;
+  int get helix_idx;
 
   Position3D get position;
 
-  int get helix_idx => helix.idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixPositionSet({Helix helix, Position3D position}) = _$HelixPositionSet._;
+  factory HelixPositionSet({int helix_idx, Position3D position}) = _$HelixPositionSet._;
 
   HelixPositionSet._();
 
@@ -1747,8 +1744,22 @@ abstract class HelixGridPositionSet
   static Serializer<HelixGridPositionSet> get serializer => _$helixGridPositionSetSerializer;
 }
 
+// NOTE: not an undoable action because it merely triggers middleware to gather data to send actions
+// that actually change the DNADesign, but it causes no change itself
+abstract class HelicesPositionsSetBasedOnCrossovers
+    with BuiltJsonSerializable
+    implements Built<HelicesPositionsSetBasedOnCrossovers, HelicesPositionsSetBasedOnCrossoversBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelicesPositionsSetBasedOnCrossovers() = _$HelicesPositionsSetBasedOnCrossovers;
+
+  HelicesPositionsSetBasedOnCrossovers._();
+
+  static Serializer<HelicesPositionsSetBasedOnCrossovers> get serializer =>
+      _$helicesPositionsSetBasedOnCrossoversSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// change helix position
+// inline insertions and deletions
 
 abstract class InlineInsertionsDeletions
     with BuiltJsonSerializable, UndoableAction

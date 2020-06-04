@@ -38,7 +38,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     Helix helix = props.helix;
 
     // for helix circles
-    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_SVG / 2);
+    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
 
     // for helix horizontal lines
@@ -61,7 +61,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..id = helix_circle_id()
         ..cx = '$cx'
         ..cy = '$cy'
-        ..r = '${constants.DISTANCE_BETWEEN_HELICES_SVG / 2.0}'
+        ..r = '${constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2.0}'
         ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'
@@ -306,9 +306,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       DialogFloatingNumber(label: 'x', value: position.x),
       DialogFloatingNumber(label: 'y', value: position.y),
       DialogFloatingNumber(label: 'z', value: position.z),
-      DialogFloatingNumber(label: 'pitch', value: position.pitch),
-      DialogFloatingNumber(label: 'roll', value: position.roll),
-      DialogFloatingNumber(label: 'yaw', value: position.yaw),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
@@ -317,20 +314,14 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     num x = (results[0] as DialogFloatingNumber).value;
     num y = (results[1] as DialogFloatingNumber).value;
     num z = (results[2] as DialogFloatingNumber).value;
-    num pitch = (results[3] as DialogFloatingNumber).value;
-    num roll = (results[4] as DialogFloatingNumber).value;
-    num yaw = (results[5] as DialogFloatingNumber).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(
-        helix: props.helix,
+        helix_idx: props.helix.idx,
         position: Position3D(
           x: x,
           y: y,
           z: z,
-          pitch: pitch,
-          roll: roll,
-          yaw: yaw,
         )));
   }
 

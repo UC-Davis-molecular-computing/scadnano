@@ -26,7 +26,7 @@ const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.7.0";
+const String CURRENT_VERSION = "0.8.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
@@ -38,20 +38,25 @@ const default_max_offset = 256;
 
 //const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 
+const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
+
 /// DISTANCE_BETWEEN_HELICES_SVG is set to (BASE_WIDTH_SVG * 2.5/0.34) based on the following calculation,
 /// to attempt to make the DNA appear to scale in 2D drawings:
-/// The width of one base pair of double-stranded DNA bp is 0.34 nm.
+/// The width of one base pair of double-stranded DNA bp is 0.34 nm. (DNA_BASE_WIDTH_NM)
 /// In a DNA origami, AFM images estimate that the average distance between adjacent double helices is 2.5 nm.
+/// (HELIX_DIAMETER_NM)
 /// (A DNA double-helix is only 2 nm wide, but the helices electrostatically repel each other so the spacing
 /// in a DNA origami or an other DNA nanostructure with many parallel DNA helices---e.g., single-stranded tile
 /// lattices---is larger than 2 nm.)
 /// Thus the distance between the helices is 2.5/0.34 ~ 7.5 times the width of a single DNA base.
-const double DISTANCE_BETWEEN_HELICES_SVG = (BASE_WIDTH_SVG * 2.5 / 0.34);
+const double HELIX_DIAMETER_NM = 2.5;
+const double DNA_BASE_WIDTH_NM = 0.34;
+const double DISTANCE_BETWEEN_HELICES_MAIN_SVG = (BASE_WIDTH_SVG * HELIX_DIAMETER_NM / DNA_BASE_WIDTH_NM);
 
 // unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
-const double NM_TO_MAIN_VIEW_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
+const double NM_TO_MAIN_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
-const SIDE_HELIX_RADIUS = 25.0;
+const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 
 //const Grid default_grid = Grid.none;
 const Grid default_grid = Grid.square;
@@ -83,7 +88,7 @@ const compile_button_id = 'compile';
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
-const default_helix_rotation = 0.0;
+const default_helix_roll = 0.0;
 const default_helix_rotation_anchor = 0;
 
 const default_side_pane_width = '8%';
@@ -117,8 +122,7 @@ const dna_design_keys = [
 const idx_on_helix_key = 'idx';
 const max_offset_key = 'max_offset';
 const min_offset_key = 'min_offset';
-const rotation_key = 'rotation';
-const rotation_anchor_key = 'rotation_anchor';
+const roll_key = 'roll';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 const position3d_key = 'position';
@@ -128,8 +132,7 @@ const helix_keys = [
   idx_on_helix_key,
   max_offset_key,
   min_offset_key,
-  rotation_key,
-  rotation_anchor_key,
+  roll_key,
   grid_position_key,
   svg_position_key,
   position3d_key,
