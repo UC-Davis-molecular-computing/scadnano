@@ -42,9 +42,9 @@ try {
     dartNodeIsActuallyNode = false;
   }
 
-  // Check if we're in Electron.
-  if (dartNodeIsActuallyNode && dartNodePreambleSelf.process && dartNodePreambleSelf.versions && process.versions.hasOwnProperty('electron')) {
-    dartNodeIsActuallyNode = false;
+  // Check if we're in Electron, with Node.js integration, and override if true.
+  if (dartNodeIsActuallyNode && dartNodePreambleSelf.process && dartNodePreambleSelf.versions && process.versions.hasOwnProperty('electron') && process.versions.hasOwnProperty('node')) {
+    dartNodeIsActuallyNode = true;
   }
 } catch(e) {}
 

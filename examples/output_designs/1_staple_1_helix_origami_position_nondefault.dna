@@ -1,8 +1,8 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "grid": "square",
   "helices": [
-    {"position": {"x": 3, "y": 2, "z": 1, "pitch": 90, "roll": 0, "yaw": 0}, "major_ticks": [2, 5]}
+    {"position": {"x": 3, "y": 2, "z": 1}, "pitch": 90, "major_ticks": [2, 5]}
   ],
   "strands": [
     {
