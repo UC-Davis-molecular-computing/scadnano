@@ -13,6 +13,7 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.LoadDNAFile) {
     document.title = action.filename;
     app?.view?.design_view?.render(store.state);
+    app?.view?.design_view?.clear_copy_buffer();
 
     // re-center if necessary
     if (store.state.ui_state.autofit && store.state.dna_design != null) {

@@ -77,7 +77,10 @@ Unfortunately, due to
 it is not possible to save your file automatically without further interaction;
 after pressing "Save", you will always be prompted to specify a filename to which to save.
 
-Annoyingly, Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory. To disable this so that it uses the same filename every time you save, you can install the extension [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
+Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
+so repeatedly saving the file will change its name every time. 
+To disable this so that it uses the same filename every time you save, you can install the extension 
+[Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
 
 
@@ -193,30 +196,40 @@ Although it is not necessary to deal directly with the above JSON data, it is wo
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
-A design consists of a *grid* type (a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none, explained below), a list of *helices*, and a list of *strands*. 
+A design consists of a *grid* type 
+(a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none, explained below), 
+a list of *helices*, 
+and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
 This can be overridden by specifying a field called `idx` in each helix, but the default is to number them consecutively in order.
 (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
-Each offset is a position where a DNA base of a strand can go.
+Each offset is a position along the length of a helix where a DNA base of a strand can go.
 
 Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
-Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* positions.
+Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* coordinates in units of nanometers.
 
 A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, but this feature is currently 
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
-Helix.yaw will likely never be supported visually in the main or side views, but it is retained as a field for compatibility with other software for 3D visualization.
-Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, with default 0 meaning that the helix moves to the right as offsets increase.
+Helix.yaw will likely never be supported visually in the main or side views, 
+but it is retained as a field for compatibility with other software for 3D visualization.
+Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, 
+with default value 0 meaning that the helix moves to the right as offsets increase.
 Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
-They are listed from top to bottom in the order they appear in the sequence (unless the property *helices_view_order* is specified in the design to display them in a different order, though currently this can only be done in the scripting library).
+They are listed from top to bottom in the order they appear in the sequence 
+(unless the property *helices_view_order* is specified in the design to display them in a different order, 
+though currently this can only be done in the scripting library).
 
 Each strand is defined primarily by an ordered list of *domains*.
-Each domain is either a single-stranded *loopout* not associated to any helix, or it is a *bound domain*: a region of the strand that is contiguous on a single helix.
-The phrase is a bit misleading, since a bound domain is not necessarily bound to another strand, but the intention is for most of them to be bound, and for single-stranded regions usually to be represented by loopouts.
+Each domain is either a single-stranded *loopout* not associated to any helix, 
+or it is a *bound domain*: a region of the strand that is contiguous on a single helix.
+The phrase is a bit misleading, since a bound domain is not necessarily bound to another strand, 
+but the intention is for most of them to be bound, 
+and for single-stranded regions usually to be represented by loopouts.
 
 Each bound domain is specified by four mandatory properties:
 *helix*, direction (*forward* or reverse), *start* offset, and a larger *end* offset.
