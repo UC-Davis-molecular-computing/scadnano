@@ -1,6 +1,6 @@
 {
-  "version": "0.7.0",
-  "grid": "square",
+  "version": "0.7.4",
+  "grid": "e",
   "helices": [
     {"max_offset": 304, "grid_position": [0, -3]},
     {"max_offset": 304, "grid_position": [0, -2]},

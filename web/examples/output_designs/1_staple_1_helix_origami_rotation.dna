@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.7.4",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "rotation": 1.5707963267948966, "rotation_anchor": 2}
