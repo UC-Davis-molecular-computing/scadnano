@@ -206,9 +206,9 @@ Helices without a grid have a *position*, a 3D real vector describing their *x*,
 
 A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, but this feature is currently 
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
-Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
-Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, with default 0 meaning that the helix moves to the right as offsets increase.
 Helix.yaw will likely never be supported visually in the main or side views, but it is retained as a field for compatibility with other software for 3D visualization.
+Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, with default 0 meaning that the helix moves to the right as offsets increase.
+Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
@@ -247,9 +247,6 @@ However, it is often best to mostly finalize the design before assigning a DNA s
 Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it's not clear what to do. 
 (e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)
 
-Each helix has a integer *rotation anchor* and a real number *rotation*, with the following interpretation. 
-At the offset *rotation anchor*, the backbone of the forward strand on that helix has angle *rotation*, where we define 0 degrees to point to straight *up* in the side view. Rotation is *clockwise* as the rotation increases from 0 up to 360 degrees.
-The purpose of this feature is to help reduce strain by ensuring crossovers are "locally consistent", without enforcing a global notion of absolute backbone rotation on all offsets in the system.
 
 
 
@@ -453,22 +450,22 @@ There are different edit modes available, shown on the right side of the screen.
   (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
 
 * **(b)ackbone:**
-  This shows information in the side view about the rotation of the helix when the pointer is over an offset of that helix in the main view, 
+  This shows information in the side view about the roll of the helix when the pointer is over an offset of that helix in the main view, 
   or of two helices when the pointer is over a crossover joining those two helices. 
   (It doesn't actually enable any edits, but it *disables* other edits for technical reasons related detecting click events.)
-  Each helix has a notion of a rotation angle where the phosphate backbone of each of its two bound domains are pointing. 
+  Each helix has a notion of a roll angle where the phosphate backbone of each of its two bound domains are pointing. 
   The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
   Most interesting crossovers will be between two helices that are tangent to each other in the side view.
-  Ideally, the rotation of each helix is such that the backbones "point at each other".
+  Ideally, the roll of each helix is such that the backbones "point at each other".
 
   This is not intended to be a predictive model based on molecular kinetics, 
   nor is it even intended to be meaningful over the entirety of a helix. 
-  Rather, it is useful to set the rotation at one offset on a helix to be "perfect"
+  Rather, it is useful to set the roll at one offset on a helix to be "perfect"
   (i.e., the backbones of the two helices at that offset point directly at each other)
-  and then inspect what scadnano claims the rotation will be at nearby offsets, in order to help pick appropriate crossover positions. 
+  and then inspect what scadnano claims the roll will be at nearby offsets, in order to help pick appropriate crossover positions. 
 
   Each crossover has a right-click option "unstrain backbone here".
-  If this is selected, then the backbone rotation angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
+  If this is selected, then the backbone roll angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
   The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. 
   It is also the case that some simple information about strands and domains under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
