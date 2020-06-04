@@ -30,7 +30,9 @@ _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async 
   List<Helix> helices = _get_helices_to_process(state);
   List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
   if (addresses == null) return;
-  List<RollXY> rolls_and_positions = _calculate_rolls_and_positions(state.dna_design, helices, addresses, 0);
+  double first_roll = helices[0].roll;
+  List<RollXY> rolls_and_positions =
+      _calculate_rolls_and_positions(state.dna_design, helices, addresses, first_roll);
   _set_rolls_and_positions(helices, rolls_and_positions);
 }
 
@@ -239,16 +241,21 @@ List<RollXY> _calculate_rolls_and_positions(
     var next_y = y + sin(radians_top_cartesian) * constants.HELIX_DIAMETER_NM;
 
     // now back to using our "0 is straight up" rotation coordinate system
-    // first calculate angle that strand on bottom helix has
+    // first calculate angle that strand on bottom helix, at crossover's offset on bottom helix,
+    // should have after we are done
     var angle_strand_bot = (degrees_top + 180) % 360;
     if (!address_bot.forward) {
       // translate to the angle of the forward strand
-      angle_strand_bot = (angle_strand_bot + 150) % 360;
+      angle_strand_bot = (angle_strand_bot - 150) % 360;
     }
-    // then correct for offset of crossover
-    var current_roll_at_address_bot = dna_design.helix_rotation_at(address_bot);
+    // then find out *current* angle at that offset (of forward strand, since that defines roll by convention)
+    var address_bot_forward = address_bot.rebuild((b) => b..forward = true);
+    var current_roll_at_address_bot = dna_design.helix_rotation_at(address_bot_forward);
+    // now calculate difference between what we want (angle_strand_bot)
+    // and what we have now (current_roll_at_address_bot)
     var delta_roll = (angle_strand_bot - current_roll_at_address_bot) % 360;
     Helix helix_bot = helices[i + 1];
+    // add this difference to the roll (which is defined at offset min_offset)
     var new_roll = helix_bot.roll + delta_roll;
     rollxys.add(RollXY(roll: new_roll, x: next_x, y: next_y));
   }
