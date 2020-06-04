@@ -202,8 +202,14 @@ Each offset is a position where a DNA base of a strand can go.
 
 Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
-Helices without a grid have a *position*, a six-real-number vector describing their *x*, *y*, *z* positions, as well as *pitch*, *roll*, and *yaw*, but this feature is currently 
+Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* positions.
+
+A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, but this feature is currently 
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
+Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
+Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, with default 0 meaning that the helix moves to the right as offsets increase.
+Helix.yaw will likely never be supported visually in the main or side views, but it is retained as a field for compatibility with other software for 3D visualization.
+
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
 They are listed from top to bottom in the order they appear in the sequence (unless the property *helices_view_order* is specified in the design to display them in a different order, though currently this can only be done in the scripting library).
