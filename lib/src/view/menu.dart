@@ -15,6 +15,7 @@ import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:scadnano/src/constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
+import 'package:scadnano/src/view/menu_boolean.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -223,25 +224,15 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
           ),
           DropdownDivider({}),
-          (Dom.span()
-            ..className = 'strand-paste-keep-color-span menu-item'
-            ..style = {'display': 'block'}
-            ..key = 'strand_paste_keep_color')(
-            (Dom.label()
-              ..title = '''If checked, when copying and pasting a strand, the color is preserved.
+          (MenuBoolean()
+            ..value = props.strand_paste_keep_color
+            ..display = 'Pasted Strands Keep Original Color'
+            ..tooltip = '''If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-              ..key = 'strand_paste_keep_color-label')(
-              (Dom.input()
-                ..style = {'marginRight': '1em'}
-                ..checked = props.strand_paste_keep_color
-                ..onChange = (_) {
-                  props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
-                }
-                ..addTestId('scadnano.MenuComponent.input.strand_paste_keep_color')
-                ..type = 'checkbox')(),
-              'Pasted Strands Keep Original Color',
-            ),
-          ),
+            ..name = 'strand-paste-keep-color'
+            ..onChange = (_) {
+              props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
+            })(),
           DropdownDivider({}),
           (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
             ..title = ''
@@ -280,67 +271,38 @@ has crossover angles that point the backbone angles directly at the adjoining he
           'title': 'View',
           'id': 'view-nav-dropdown',
         },
-        (Dom.span()
-          ..title = '''Check to show DNA sequences that have been assigned to strands.
+        (MenuBoolean()
+          ..value = props.show_dna
+          ..display = 'Show DNA Sequences'
+          ..tooltip = '''Check to show DNA sequences that have been assigned to strands.
 In a large design, this can slow down the performance of panning and
 zooming navigation, so uncheck it to speed up navigation.'''
-          ..className = 'show-dna-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-dna')(
-          (Dom.label()..key = 'show-dna-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_dna
-              ..onChange = (_) {
-                props.dispatch(actions.ShowDNASet(!props.show_dna));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_dna')
-              ..type = 'checkbox')(),
-            'Show DNA Sequences',
-          ),
-        ),
+          ..name = 'show-dna'
+          ..onChange = (_) {
+            props.dispatch(actions.ShowDNASet(!props.show_dna));
+          })(),
         DropdownDivider({}),
-        (Dom.span()
-          ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
-          ..className = 'show-modifications-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-modifications')(
-          (Dom.label()..key = 'show-modifications-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_modifications
-              ..onChange = (_) {
-                props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_modifications')
-              ..type = 'checkbox')(),
-            'Show Modifications',
-          ),
-        ),
-        (Dom.span()
-          ..title = '''Check to display DNA modification connectors.'''
-          ..className = 'modifications-display-connector-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'modifications-display-connector')(
-          (Dom.label()..key = 'modifications-display-connector-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.modification_display_connector
-              ..onChange = (_) {
-                props
-                    .dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_modifications')
-              ..type = 'checkbox')(),
-            'Display Modification Connector',
-          ),
-        ),
+        (MenuBoolean()
+          ..value = props.show_modifications
+          ..display = 'Show Modifications'
+          ..tooltip = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
+          ..name = 'show-modifications-span'
+          ..onChange = (_) {
+            props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
+          })(),
+        (MenuBoolean()
+          ..value = props.modification_display_connector
+          ..display = 'Display Modification Connector'
+          ..tooltip = '''Check to display DNA modification connectors.'''
+          ..name = 'modifications-display-connector-span'
+          ..onChange = (_) {
+            props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
+          })(),
         (Dom.span()
           ..title = '''Adjust modification font size.'''
           ..className = 'modifications-font-size-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'modifications-font-size')(
-          (Dom.label()..key = 'show-modifications-font-size-label')(
+          ..style = {'display': 'block'})(
+          (Dom.label())(
             (Dom.input()
               ..style = {'marginRight': '1em', 'width': '4em'}
               ..type = 'number'
@@ -358,31 +320,19 @@ zooming navigation, so uncheck it to speed up navigation.'''
           ),
         ),
         DropdownDivider({}),
-        (Dom.span()
-          ..className = 'show-mismatches-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-mismatches')(
-          (Dom.label()
-            ..title = '''Check to show mismatches between DNA assigned to one strand
+        (MenuBoolean()
+          ..value = props.show_mismatches
+          ..display = 'Show DNA Base Mismatches'
+          ..tooltip = '''Check to show mismatches between DNA assigned to one strand
 and the strand on the same helix with the opposite orientation.'''
-            ..key = 'show-mismatches-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_mismatches
-              ..onChange = (_) {
-                props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_mismatches')
-              ..type = 'checkbox')(),
-            'Show DNA Base Mismatches',
-          ),
-        ),
-        (Dom.span()
-          ..className = 'center-on-load-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'center-on-load')(
-          (Dom.label()
-            ..title = '''Check this so that, when loading a new design, the side and main views will be
+          ..name = 'show-mismatches'
+          ..onChange = (_) {
+            props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+          })(),
+        (MenuBoolean()
+          ..value = props.autofit
+          ..display = 'Auto-fit On Loading New Design'
+          ..tooltip = '''Check this so that, when loading a new design, the side and main views will be
 translated to show the lowest-index helix in the upper-left. otherwise, after
 loading the design, you may not be able to see it because it is translated off
 the screen.
@@ -392,38 +342,19 @@ in that case, when repeatedly re-running the script to modify the design and the
 re-loading it, it is preferable to keep the design centered at the same location
 you had before, in order to be able to see the same part of the design you were
 looking at before changing the script.'''
-            ..key = 'center-on-load-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.autofit
-              ..onChange = (_) {
-                props.dispatch(actions.AutofitSet(autofit: !props.autofit));
-              }
-              ..addTestId('scadnano.MenuComponent.input.center_on_load')
-              ..type = 'checkbox')(),
-            'Auto-fit On Loading New Design',
-          ),
-        ),
-        (Dom.span()
-          ..className = 'display-only-selected-helices-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'display-only-selected-helices')(
-          (Dom.label()
-            ..title =
-                '''Check this so that, only selected helices in the side view are displayed in the main view.'''
-            ..key = 'display-only-selected-helices-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.only_display_selected_helices
-              ..onChange = (_) {
-                props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
-              }
-              // TODO(benlee12): rewrite these test ids for component tests
-              // ..addTestId('scadnano.MenuComponent.input.center_on_load')
-              ..type = 'checkbox')(),
-            'Display only selected helices',
-          ),
-        ),
+          ..name = 'center-on-load'
+          ..onChange = (_) {
+            props.dispatch(actions.AutofitSet(autofit: !props.autofit));
+          })(),
+        (MenuBoolean()
+          ..value = props.only_display_selected_helices
+          ..display = 'Display only selected helices'
+          ..tooltip =
+              '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+          ..name = 'display-only-selected-helices'
+          ..onChange = (_) {
+            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
+          })(),
         //XXX: let's keep this commented out until we need it
         // (Dom.span()
         //   ..key = 'show-editor menu-item'
