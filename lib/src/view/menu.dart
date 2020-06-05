@@ -29,6 +29,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_dna = state.ui_state.show_dna
     ..show_modifications = state.ui_state.show_modifications
     ..show_mismatches = state.ui_state.show_mismatches
+    ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
     ..autofit = state.ui_state.autofit
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
     ..grid = state.dna_design?.grid
@@ -53,6 +54,7 @@ mixin MenuPropsMixin on UiProps {
   int modification_font_size;
   bool modification_display_connector;
   bool show_mismatches;
+  bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
   Grid grid;
@@ -219,6 +221,26 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
             },
             'Paste',
             (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
+          ),
+          DropdownDivider({}),
+          (Dom.span()
+            ..className = 'strand-paste-keep-color-span menu-item'
+            ..style = {'display': 'block'}
+            ..key = 'strand_paste_keep_color')(
+            (Dom.label()
+              ..title = '''If checked, when copying and pasting a strand, the color is preserved.
+If unchecked, then a new color is generated.'''
+              ..key = 'strand_paste_keep_color-label')(
+              (Dom.input()
+                ..style = {'marginRight': '1em'}
+                ..checked = props.strand_paste_keep_color
+                ..onChange = (_) {
+                  props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
+                }
+                ..addTestId('scadnano.MenuComponent.input.strand_paste_keep_color')
+                ..type = 'checkbox')(),
+              'Pasted Strands Keep Original Color',
+            ),
           ),
           DropdownDivider({}),
           (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled

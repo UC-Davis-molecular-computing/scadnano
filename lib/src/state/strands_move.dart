@@ -25,7 +25,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       BuiltMap<int, Helix> helices,
       BuiltList<int> helices_view_order,
       BuiltMap<int, int> helices_view_order_inverse,
-      bool copy = false}) {
+      bool copy = false,
+      bool keep_color = true}) {
     var strands_fixed =
         copy ? all_strands : [for (var strand in all_strands) if (!strands_moving.contains(strand)) strand];
     return StrandsMove.from((b) => b
@@ -37,6 +38,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..original_address.replace(original_address)
       ..current_address.replace(original_address)
       ..copy = copy
+      ..keep_color = keep_color
       ..allowable = true);
   }
 
@@ -59,6 +61,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   bool get allowable;
 
   bool get copy;
+
+  bool get keep_color;
 
   BuiltMap<int, Helix> get helices;
 
