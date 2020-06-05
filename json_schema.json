@@ -45,6 +45,9 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "idx": {
+                    "type": "integer"
+                },
                 "min_offset": {
                     "type": "integer"
                 },
