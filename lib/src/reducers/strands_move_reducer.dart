@@ -29,7 +29,8 @@ StrandsMove strands_move_start_reducer(
       helices: state.dna_design.helices,
       helices_view_order: state.dna_design.helices_view_order,
       helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
-      copy: action.copy);
+      copy: action.copy,
+      keep_color: state.ui_state.strand_paste_keep_color);
 }
 
 StrandsMove strands_move_start_selected_strands_reducer(
@@ -43,7 +44,8 @@ StrandsMove strands_move_start_selected_strands_reducer(
       helices: state.dna_design.helices,
       helices_view_order: state.dna_design.helices_view_order,
       helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
-      copy: action.copy);
+      copy: action.copy,
+      keep_color: state.ui_state.strand_paste_keep_color);
 }
 
 StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsMoveStop action) => null;

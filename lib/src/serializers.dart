@@ -166,6 +166,7 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   StrandColorSet,
+  StrandPasteKeepColorSet,
   ExampleDNADesigns,
   ExampleDNADesignsLoad,
   HelixPositionSet,

@@ -1703,6 +1703,19 @@ abstract class StrandColorSet
   static Serializer<StrandColorSet> get serializer => _$strandColorSetSerializer;
 }
 
+abstract class StrandPasteKeepColorSet
+    with BuiltJsonSerializable
+    implements Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
+  bool get keep;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandPasteKeepColorSet({bool keep}) = _$StrandPasteKeepColorSet._;
+
+  StrandPasteKeepColorSet._();
+
+  static Serializer<StrandPasteKeepColorSet> get serializer => _$strandPasteKeepColorSetSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // example DNA design
 

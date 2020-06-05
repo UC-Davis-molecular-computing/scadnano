@@ -103,7 +103,7 @@ Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move
       delta_forward: delta_forward,
       helices_view_order: strands_move.helices_view_order,
       helices_view_order_inverse: strands_move.helices_view_order_inverse);
-  if (strands_move.copy && !strand.is_scaffold) {
+  if (strands_move.copy && !strands_move.keep_color && !strand.is_scaffold) {
     //FIXME: this makes the reducer not pure
     strand = strand.rebuild((b) => b..color = util.color_cycler.next());
   }

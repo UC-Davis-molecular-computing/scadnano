@@ -24,48 +24,60 @@ import 'mouseover_datas_reducer.dart';
 // ui state local reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
-  ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
-  ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
-  ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
-  ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
-  ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
-      ui_state.show_modifications, action)
-  ..modification_display_connector =
+AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
+    ui_state.rebuild((u) =>
+    u
+      ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
+      ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
+      ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
+      ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
+      ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
+          ui_state.show_modifications, action)
+      ..modification_display_connector =
       TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
           ui_state.modification_display_connector, action)
-  ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(modification_font_size_reducer)(
-      ui_state.modification_font_size, action)
-  ..show_mismatches =
+      ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(
+          modification_font_size_reducer)(
+          ui_state.modification_font_size, action)
+      ..show_mismatches =
       TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
-  ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
-  ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(ui_state.show_editor, action)
-  ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(only_display_selected_helices_reducer)(
-      ui_state.only_display_selected_helices, action)
-  ..drawing_potential_crossover =
+      ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(
+          strand_paste_keep_color_reducer)(ui_state.strand_paste_keep_color, action)
+      ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
+      ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(
+          ui_state.show_editor, action)
+      ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
+          only_display_selected_helices_reducer)(
+          ui_state.only_display_selected_helices, action)
+      ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
-  ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
-  ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
-  ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
-  ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
-  ..side_view_grid_position_mouse_cursor =
+      ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
+      ..side_selected_helix_idxs.replace(
+          side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
+      ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
+      ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
+      ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
-  ..side_view_position_mouse_cursor =
+      ..side_view_position_mouse_cursor =
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
-  ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
-  ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
-  ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(ui_state.helix_change_apply_to_all, action)
-  ..example_dna_designs.replace(TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
-      ui_state.example_dna_designs, action))
-  ..assign_complement_to_bound_strands_default =
+      ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
+      ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+      ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(
+          ui_state.helix_change_apply_to_all, action)
+      ..example_dna_designs.replace(
+          TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
+              ui_state.example_dna_designs, action))
+      ..assign_complement_to_bound_strands_default =
       TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
           ui_state.assign_complement_to_bound_strands_default, action)
-  ..warn_on_change_strand_dna_assign_default =
-      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(ui_state.warn_on_change_strand_dna_assign_default, action)
-  ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
-  ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
-  ..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
-  ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
+      ..warn_on_change_strand_dna_assign_default =
+      TypedReducer<bool, actions.AssignDNA>(warn_on_change_strand_dna_assign_default_reducer)(
+          ui_state.warn_on_change_strand_dna_assign_default, action)
+      ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
+      ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
+      ..disable_png_cache_until_action_completes = disable_png_cache_until_action_completes(
+          ui_state.disable_png_cache_until_action_completes, action)
+      ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
 
 bool helix_change_apply_to_all_reducer(bool helix_change_apply_to_all, action) {
   if (action is actions.HelixMajorTickDistanceChange ||
@@ -111,6 +123,8 @@ int modification_font_size_reducer(int _, actions.SetModificationFontSize action
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
+bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet action) => action.keep;
+
 bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
 
 bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
@@ -138,8 +152,8 @@ Reducer<bool> changed_since_last_save_reducer = combineReducers([
   TypedReducer<bool, actions.SaveDNAFile>(changed_since_last_save_just_saved_reducer),
 ]);
 
-bool changed_since_last_save_undoable_action_reducer(
-        bool changed_since_last_save, actions.UndoableAction action) =>
+bool changed_since_last_save_undoable_action_reducer(bool changed_since_last_save,
+    actions.UndoableAction action) =>
     true;
 
 bool changed_since_last_save_just_saved_reducer(bool changed_since_last_save, actions.SaveDNAFile action) =>
@@ -149,8 +163,8 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
 ]);
 
-ExampleDNADesigns example_dna_designs_idx_set_reducer(
-        ExampleDNADesigns example_dna_designs, actions.ExampleDNADesignsLoad action) =>
+ExampleDNADesigns example_dna_designs_idx_set_reducer(ExampleDNADesigns example_dna_designs,
+    actions.ExampleDNADesignsLoad action) =>
     example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +178,8 @@ Reducer<String> dna_sequence_png_uri_reducer = combineReducers([
   TypedReducer<String, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
 ]);
 
-actions.Action set_disable_png_cache_until_action_completes(
-    actions.Action _, actions.SetDisablePngCacheUntilActionCompletes action) {
+actions.Action set_disable_png_cache_until_action_completes(actions.Action _,
+    actions.SetDisablePngCacheUntilActionCompletes action) {
   return action.disable_png_cache_until_action_completes;
 }
 
@@ -180,7 +194,7 @@ bool set_is_zoom_above_threshold(bool _, actions.SetIsZoomAboveThreshold action)
 }
 
 Reducer<bool> is_zoom_above_threshold_reducer =
-    combineReducers([TypedReducer<bool, actions.SetIsZoomAboveThreshold>(set_is_zoom_above_threshold)]);
+combineReducers([TypedReducer<bool, actions.SetIsZoomAboveThreshold>(set_is_zoom_above_threshold)]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // side view mouse position/grid position reducers
@@ -190,12 +204,12 @@ Reducer<GridPosition> side_view_mouse_grid_pos_reducer = combineReducers([
   TypedReducer<GridPosition, actions.MouseGridPositionSideClear>(side_view_mouse_grid_pos_clear_reducer),
 ]);
 
-GridPosition side_view_mouse_grid_pos_update_reducer(
-        GridPosition _, actions.MouseGridPositionSideUpdate action) =>
+GridPosition side_view_mouse_grid_pos_update_reducer(GridPosition _,
+    actions.MouseGridPositionSideUpdate action) =>
     action.grid_position;
 
-GridPosition side_view_mouse_grid_pos_clear_reducer(
-        GridPosition _, actions.MouseGridPositionSideClear action) =>
+GridPosition side_view_mouse_grid_pos_clear_reducer(GridPosition _,
+    actions.MouseGridPositionSideClear action) =>
     null;
 
 Reducer<Point<num>> side_view_position_mouse_cursor_reducer = combineReducers([
@@ -213,13 +227,16 @@ Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePosition
 // ui state global reducer
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) => ui_state.rebuild((u) => u
-  ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
-  ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
-  ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
-  ..side_selected_helix_idxs
-      .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action))
-  ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, state, action)));
+AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) =>
+    ui_state.rebuild((u) =>
+    u
+      ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
+      ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
+      ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
+      ..side_selected_helix_idxs
+          .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action))
+      ..selectables_store.replace(
+          selectables_store_global_reducer(ui_state.selectables_store, state, action)));
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

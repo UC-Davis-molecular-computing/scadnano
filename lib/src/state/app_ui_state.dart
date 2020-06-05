@@ -35,6 +35,7 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..show_modifications = true
   ..show_editor = false
   ..show_mismatches = true
+  ..strand_paste_keep_color = true
   ..autofit = true
   ..drawing_potential_crossover = false
   ..moving_dna_ends = false
@@ -97,6 +98,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get autofit;
 
+  bool get strand_paste_keep_color;
+
   bool get show_editor;
 
   bool get drawing_potential_crossover;
@@ -156,7 +159,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
 
-  int  get modification_font_size;
+  int get modification_font_size;
+
   bool get modification_display_connector;
 }
 
