@@ -150,6 +150,7 @@ Here is Python code that would produce this design using the
 
 ```python
 import scadnano as sc
+import modifications as mod
 
 
 def main():
@@ -165,6 +166,7 @@ def main():
     stap_right_domain0 = sc.Domain(helix=0, forward=False, start=24, end=40)
     stap_right_domain1 = sc.Domain(helix=1, forward=True, start=24, end=40)
     stap_right = sc.Strand(domains=[stap_right_domain0, stap_right_domain1])
+    stap_right.set_modification_5p(mod.biotin_5p)
 
     # scaffold
     scaf_domain1_left = sc.Domain(helix=1, forward=False, start=8, end=24)
