@@ -361,7 +361,9 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **Set helix coordinates based on crossovers:**
     scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the *none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
 
-    You can also selected some helices first, and then this will only be done to those helices. You can choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
+    You can also select some helices first, and then only those helices will be adjusted. (This is useful if some adjacent helices in your design do not have crossovers between them.) 
+    
+    You can also choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
   
 * View
 
