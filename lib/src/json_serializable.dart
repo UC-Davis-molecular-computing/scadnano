@@ -23,20 +23,20 @@ String json_encode(JSONSerializable obj, [bool suppress_indent = true]) {
   if (obj == null) {
     return null;
   }
-  var encoder = _SuppressableIndentEncoder(_Replacer(), suppress: suppress_indent);
+  var encoder = SuppressableIndentEncoder(Replacer(), suppress: suppress_indent);
   var serializable = obj.to_json_serializable(suppress_indent: suppress_indent);
   var json_str = encoder.convert(serializable);
   return json_str;
 }
 
-class _SuppressableIndentEncoder extends JsonEncoder {
+class SuppressableIndentEncoder extends JsonEncoder {
   final String indent;
   final bool suppress;
-  final _Replacer replacer;
+  final Replacer replacer;
 
   final JsonEncoder encoder_indent;
 
-  _SuppressableIndentEncoder(_Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
+  SuppressableIndentEncoder(Replacer replacer, {String this.indent = "  ", bool this.suppress = true})
       : this.replacer = replacer,
         this.encoder_indent = JsonEncoder.withIndent(indent),
         super(replacer.default_encode);
@@ -57,7 +57,7 @@ class _SuppressableIndentEncoder extends JsonEncoder {
   }
 }
 
-class _Replacer {
+class Replacer {
   int unique_id = 0;
   final Map replacement_map = {};
   final JsonEncoder encoder_no_indent = JsonEncoder();
