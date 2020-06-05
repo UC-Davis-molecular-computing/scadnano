@@ -146,6 +146,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
   }
 
+  helix_adjust_roll() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_roll);
+  }
+
   helix_adjust_position() {
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_position);
   }
@@ -182,6 +186,22 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       app.dispatch(
           actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
     }
+  }
+
+  Future<void> dialog_helix_adjust_roll() async {
+    Helix helix = props.helix;
+    int helix_idx = helix.idx;
+
+    var dialog = Dialog(title: 'adjust helix roll (degrees)', items: [
+      DialogFloatingNumber(label: 'roll', value: helix.roll),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    double roll = (results[0] as DialogFloatingNumber).value;
+    roll = roll % 360;
+
+    app.dispatch(actions.HelixRollSet(helix_idx: helix_idx, roll: roll));
   }
 
   Future<void> dialog_helix_adjust_major_tick_marks() async {
@@ -348,6 +368,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ContextMenuItem(
         title: 'adjust tick marks',
         on_click: helix_adjust_major_tick_marks,
+      ),
+      ContextMenuItem(
+        title: 'adjust roll',
+        on_click: helix_adjust_roll,
       ),
       context_menu_item_adjust_position,
     ];
