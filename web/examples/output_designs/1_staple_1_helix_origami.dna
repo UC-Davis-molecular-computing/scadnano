@@ -1,8 +1,11 @@
 {
-  "version": "0.8.0",
+  "version": "0.8.2",
   "grid": "square",
   "helices": [
-    {"grid_position": [0, 0], "major_ticks": [2, 5]}
+    {
+      "grid_position": [0, 0],
+      "major_ticks": [2, 5]
+    }
   ],
   "strands": [
     {

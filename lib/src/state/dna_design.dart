@@ -483,7 +483,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
-    Map<String, dynamic> json_map = {constants.version_key: this.version};
+    Map<String, dynamic> json_map = {constants.version_key: constants.CURRENT_VERSION};
 
     json_map.addAll(unused_fields.toMap());
 

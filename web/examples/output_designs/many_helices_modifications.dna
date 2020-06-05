@@ -1,5 +1,5 @@
 {
-  "version": "0.8.0",
+  "version": "0.8.2",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -12,6 +12,12 @@
     {"grid_position": [0, 7]}
   ],
   "modifications_in_design": {
+    "/5Biosg/": {
+      "display_text": "B",
+      "idt_text": "/5Biosg/",
+      "display_connector": false,
+      "location": "5'"
+    },
     "/iBiodT/": {
       "display_text": "B",
       "idt_text": "/iBiodT/",
@@ -30,12 +36,6 @@
       "idt_text": "/iCy3/",
       "display_connector": false,
       "location": "internal"
-    },
-    "/5Biosg/": {
-      "display_text": "B",
-      "idt_text": "/5Biosg/",
-      "display_connector": false,
-      "location": "5'"
     }
   },
   "strands": [

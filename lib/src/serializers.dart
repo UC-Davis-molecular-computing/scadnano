@@ -49,6 +49,7 @@ part 'serializers.g.dart';
   SaveDNAFile,
   LoadDNAFile,
   ExportCadnanoFile,
+  ExportCodenanoFile,
   MouseoverDataClear,
   MouseoverDataUpdate,
   SelectionBoxCreate,

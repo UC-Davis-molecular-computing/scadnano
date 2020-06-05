@@ -461,6 +461,17 @@ abstract class ExportCadnanoFile
   static Serializer<ExportCadnanoFile> get serializer => _$exportCadnanoFileSerializer;
 }
 
+abstract class ExportCodenanoFile
+    with BuiltJsonSerializable
+    implements Action, Built<ExportCodenanoFile, ExportCodenanoFileBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExportCodenanoFile([void Function(ExportCodenanoFileBuilder) updates]) = _$ExportCodenanoFile;
+
+  ExportCodenanoFile._();
+
+  static Serializer<ExportCodenanoFile> get serializer => _$exportCodenanoFileSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouseover data (main view)
 

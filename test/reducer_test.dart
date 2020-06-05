@@ -3400,7 +3400,8 @@ main() {
 
       String filename = 'two_helicies_with_unused_fields.dna';
       AppState final_state = app_state_reducer(state, LoadDNAFile(content: json_before, filename: filename));
-      var json_map_before = json.decode(json_before);
+      var json_before_current_version = json_before.replaceFirst("0.0.1", constants.CURRENT_VERSION);
+      var json_map_before = json.decode(json_before_current_version);
       var json_map_after = final_state.dna_design.to_json_serializable();
 
       expect(json_map_before, json_map_after);

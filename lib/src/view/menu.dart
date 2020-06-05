@@ -164,6 +164,14 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           },
           'Export cadnano v2',
         ),
+        DropdownItem(
+          {
+            'onClick': (_) {
+              props.dispatch(actions.ExportCodenanoFile());
+            },
+          },
+          'Export codenano',
+        ),
       ),
       NavDropdown(
           {
