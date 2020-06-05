@@ -532,7 +532,7 @@ For instance, to create a vertical "column" of 32 staples in a 32-helix rectangl
 Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
-The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
+One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
