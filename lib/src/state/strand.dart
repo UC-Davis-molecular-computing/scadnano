@@ -579,16 +579,10 @@ Color parse_json_color(Object json_obj) {
   } else if (json_obj is String) {
     return HexColor(json_obj);
   } else if (json_obj is int) {
-    String hex_str = _decimal_int_to_hex(json_obj);
+    String hex_str = util.color_decimal_int_to_hex(json_obj);
     return HexColor(hex_str);
   } else {
     throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
         '${json_obj.runtimeType}:\n${json_obj}');
   }
-}
-
-String _decimal_int_to_hex(int d) {
-  String hex = d.toRadixString(16);
-  String hex_padded = hex.padLeft(6, '0');
-  return "#${hex_padded}";
 }

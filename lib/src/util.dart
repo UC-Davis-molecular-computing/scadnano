@@ -75,6 +75,25 @@ class ColorCycler {
 
 final scaffold_color = ColorCycler.scaffold_color;
 
+// converts from decimal integer representation of Color to hex string representation of color
+// e.g., 0066cc hex is 26316 decimal
+String color_decimal_int_to_hex(int d) {
+  String hex = d.toRadixString(16);
+  String hex_padded = hex.padLeft(6, '0');
+  return "#${hex_padded}";
+}
+
+// converts from hex string representation of Color to decimal integer representation of color
+// e.g., 0066cc hex is 26316 decimal
+int color_hex_to_decimal_int(String hex) {
+  if (hex[0] == '#') {
+    hex = hex.substring(1);
+  }
+  int d = int.parse(hex, radix: 16);
+  return d;
+}
+
+
 bool is_increasing<T extends Comparable>(Iterable<T> items) {
   T prev = null;
   for (T val in items) {
