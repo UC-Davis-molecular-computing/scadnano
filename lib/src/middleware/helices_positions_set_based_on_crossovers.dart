@@ -256,7 +256,7 @@ List<RollXY> _calculate_rolls_and_positions(
     var delta_roll = (angle_strand_bot - current_roll_at_address_bot) % 360;
     Helix helix_bot = helices[i + 1];
     // add this difference to the roll (which is defined at offset min_offset)
-    var new_roll = helix_bot.roll + delta_roll;
+    var new_roll = (helix_bot.roll + delta_roll) % 360;
     rollxys.add(RollXY(roll: new_roll, x: next_x, y: next_y));
   }
 

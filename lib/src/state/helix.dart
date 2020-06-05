@@ -205,37 +205,40 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
 
+    // if we have major ticks or position, it's harder to read Helix on one line,
+    // so don't wrap it in NoIndent, but still wrap longer sub-objects in them
+    bool use_no_indent = !(has_nondefault_major_ticks() || has_position());
+
+    if (has_nondefault_roll()) {
+      // round if close to an integer
+      num roll_rounded = (roll - roll.round()) < 0.0000001 ? roll.round() : roll;
+      json_map[constants.roll_key] = roll_rounded;
+    }
+
     if (has_grid_position()) {
-      json_map[constants.grid_position_key] =
-          this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
+      var gp = this.grid_position.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.grid_position_key] = suppress_indent && !use_no_indent ? NoIndent(gp) : gp;
     }
 
     if (has_position()) {
-      json_map[constants.position3d_key] =
-          this.position.to_json_serializable(suppress_indent: suppress_indent);
-    }
-
-//    if (has_nondefault_svg_position()) {
-//      json_map[constants.svg_position_key] = [svg_position.x, svg_position.y];
-//    }
-
-    if (has_nondefault_roll()) {
-      json_map[constants.roll_key] = roll;
+      var pos = this.position.to_json_serializable(suppress_indent: suppress_indent);
+      json_map[constants.position3d_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
     }
 
     if (has_nondefault_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = major_tick_distance;
     }
 
-    if (has_nondefault_major_ticks()) {
-      json_map[constants.major_ticks_key] = major_ticks.toList();
-    }
-
     json_map.addAll(unused_fields.toMap());
+
+    if (has_nondefault_major_ticks()) {
+      var ticks = this.major_ticks.toList();
+      json_map[constants.major_ticks_key] = suppress_indent && !use_no_indent ? NoIndent(ticks) : ticks;
+    }
 
     json_map[constants.idx_on_helix_key] = idx;
 
-    return suppress_indent ? NoIndent(json_map) : json_map;
+    return suppress_indent && use_no_indent ? NoIndent(json_map) : json_map;
   }
 
   /// Gets "center of base" (middle of square representing base) given helix idx and offset,
