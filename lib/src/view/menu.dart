@@ -114,7 +114,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
   }
 
   file_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'File',
         'id': 'file-nav-dropdown',
@@ -163,7 +163,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
   }
 
   edit_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'Edit',
         'id': 'edit-nav-dropdown',
@@ -237,7 +237,7 @@ has crossover angles that point the backbone angles directly at the adjoining he
   }
 
   view_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'View',
         'id': 'view-nav-dropdown',
@@ -344,7 +344,7 @@ looking at before changing the script.'''
   }
 
   grid_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'Grid',
         'id': 'grid-nav-dropdown',
@@ -367,7 +367,7 @@ looking at before changing the script.'''
   }
 
   export_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'Export',
         'id': 'export-nav-dropdown',
@@ -391,7 +391,7 @@ looking at before changing the script.'''
   }
 
   help_menu() {
-    NavDropdown(
+    return NavDropdown(
       {
         'title': 'Help',
         'id': 'help-nav-dropdown',
