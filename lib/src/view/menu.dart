@@ -16,6 +16,8 @@ import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:scadnano/src/constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
 import 'package:scadnano/src/view/menu_boolean.dart';
+import 'package:scadnano/src/view/menu_dropdown_item.dart';
+import 'package:scadnano/src/view/menu_form_file.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -97,175 +99,118 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           'title': 'File',
           'id': 'file-nav-dropdown',
         },
-        DropdownItem(
-          {
-            'onClick': (_) {
-              app.disable_keyboard_shortcuts_while(load_example_dialog);
-            },
-          },
-          '📄 Load example',
-        ),
-        FormFile(
-          {
-            'id': 'open-form-file',
-            'className': 'form-file-dropdown',
-            'accept': ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(","),
-            // If the user selects the same filename as last time they used the fileLoader,
-            // we still want to reload the file (it may have changed).
-            // But if we don't set (e.target).value to null, if the user selects the same filename,
-            // then the onChange event won't fire and we won't reload the file.
-            'onClick': (e) {
-              document.getElementById('file-nav-dropdown').click();
-              (e.target).value = null;
-            },
-            'onChange': (e) {
-              request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
-            },
-            'label': Dom.div()(
-              '📂 Open...',
-              (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+O'),
-            ),
-            'custom': 'false',
-          },
-        ),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            app.disable_keyboard_shortcuts_while(load_example_dialog);
+          }
+          ..display = '📄 Load example')(),
+        (MenuFormFile()
+          ..id = 'open-form-file'
+          ..accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",")
+          ..onChange = (e) {
+            request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
+          }
+          ..display = '📂 Open...'
+          ..keyboard_shortcut = 'Ctrl+O'
+        )(),
         DropdownDivider({}),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.SaveDNAFile());
-            },
-          },
-          '💾 Save...',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+S'),
-        ),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.SaveDNAFile());
+          }
+          ..display = '💾 Save...'
+          ..keyboard_shortcut = 'Ctrl+S')(),
         DropdownDivider({}),
-        FormFile(
-          {
-            'id': 'import-cadnano-form-file',
-            'className': 'form-file-dropdown',
-            'accept': '.json',
-            // If the user selects the same filename as last time they used the fileLoader,
-            // we still want to reload the file (it may have changed).
-            // But if we don't set (e.target).value to null, if the user selects the same filename,
-            // then the onChange event won't fire and we won't reload the file.
-            'onClick': (e) {
-              document.getElementById('file-nav-dropdown').click();
-              (e.target).value = null;
-            },
-            'onChange': (e) {
-              request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
-            },
-            'label': 'Import cadnano v2',
-            'custom': 'false',
-          },
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportCadnanoFile());
-            },
-          },
-          'Export cadnano v2',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportCodenanoFile());
-            },
-          },
-          'Export codenano',
-        ),
+        (MenuFormFile()
+          ..id = 'import-cadnano-form-file'
+          ..accept = '.json'
+          ..onChange = (e) {
+            request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
+          }
+          ..display = 'Import cadnano v2'
+        )(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.ExportCadnanoFile());
+          }
+          ..display = 'Export cadnano v2')(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.ExportCodenanoFile());
+          }
+          ..display = 'Export codenano')(),
       ),
       NavDropdown(
-          {
-            'title': 'Edit',
-            'id': 'edit-nav-dropdown',
-          },
-          DropdownItem(
-            {
-              'disabled': props.undo_stack_empty,
-              'onClick': (_) {
-                props.dispatch(actions.Undo());
-              },
-            },
-            'Undo',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Z'),
-          ),
-          DropdownItem(
-            {
-              'disabled': props.redo_stack_empty,
-              'onClick': (_) {
-                props.dispatch(actions.Redo());
-              },
-            },
-            'Redo',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Shift+Z'),
-          ),
-          DropdownDivider({}),
-          DropdownItem(
-            {
-              'disabled': !props.enable_copy,
-              'onClick': (_) {
-                if (props.enable_copy) {
-                  window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
-                }
-              },
-            },
-            'Copy',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+C'),
-          ),
-          DropdownItem(
-            {
-              'onClick': (_) {
-                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
-              },
-            },
-            'Paste',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
-          ),
-          DropdownDivider({}),
-          (MenuBoolean()
-            ..value = props.strand_paste_keep_color
-            ..display = 'Pasted Strands Keep Original Color'
-            ..tooltip = '''If checked, when copying and pasting a strand, the color is preserved.
+        {
+          'title': 'Edit',
+          'id': 'edit-nav-dropdown',
+        },
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.Undo());
+          }
+          ..display = 'Undo'
+          ..keyboard_shortcut = 'Ctrl+Z'
+          ..disabled = props.undo_stack_empty)(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.Redo());
+          }
+          ..display = 'Redo'
+          ..keyboard_shortcut = 'Ctrl+Shift+Z'
+          ..disabled = props.redo_stack_empty)(),
+        DropdownDivider({}),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            if (props.enable_copy) {
+              window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+            }
+          }
+          ..display = 'Copy'
+          ..keyboard_shortcut = 'Ctrl+C'
+          ..disabled = !props.enable_copy)(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
+          }
+          ..display = 'Paste'
+          ..keyboard_shortcut = 'Ctrl+V')(),
+        DropdownDivider({}),
+        (MenuBoolean()
+          ..value = props.strand_paste_keep_color
+          ..display = 'Pasted Strands Keep Original Color'
+          ..tooltip = '''If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-            ..name = 'strand-paste-keep-color'
-            ..onChange = (_) {
-              props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
-            })(),
-          DropdownDivider({}),
-          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-            ..title = ''
-                '''Click this to remove insertions and deletions from the design and replace them with domains
-whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(DropdownItem(
-            {
-              'disabled': !props.design_has_insertions_or_deletions,
-              'onClick': (_) {
-                props.dispatch(actions.InlineInsertionsDeletions());
-              },
-            },
-            'Inline Insertions/Deletions',
-          )),
-          DropdownDivider({}),
-          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-            ..title = '''The grid must be set to none to enable this.
+          ..name = 'strand-paste-keep-color'
+          ..onChange = (_) {
+            props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
+          })(),
+        DropdownDivider({}),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.InlineInsertionsDeletions());
+          }
+          ..display = 'Inline Insertions/Deletions'
+          ..disabled = !props.design_has_insertions_or_deletions
+          ..tooltip = ''
+              '''Click this to remove insertions and deletions from the design and replace them with domains
+whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(),
+        DropdownDivider({}),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
+          }
+          ..display = 'Set helix coordinates based on crossovers'
+          ..disabled = props.grid != Grid.none
+          ..tooltip = '''The grid must be set to none to enable this.
 
 Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
 most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
 helices has no crossover selected, it is assumed to be the first crossover.  
 
 New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
-has crossover angles that point the backbone angles directly at the adjoining helix.''')(
-            DropdownItem(
-              {
-                'disabled': props.grid != Grid.none,
-                'onClick': (_) {
-                  props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
-                },
-              },
-              'Set helix coordinates based on crossovers',
-            ),
-          )),
+has crossover angles that point the backbone angles directly at the adjoining helix.''')(),
+      ),
       NavDropdown(
         {
           'title': 'View',
@@ -395,30 +340,21 @@ looking at before changing the script.'''
           'title': 'Export',
           'id': 'export-nav-dropdown',
         },
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
-            },
-          },
-          'SVG Side View',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
-            },
-          },
-          'SVG Main View',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              app.disable_keyboard_shortcuts_while(export_dna);
-            },
-          },
-          'DNA Sequences',
-        ),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
+          }
+          ..display = 'SVG Side View')(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
+          }
+          ..display = 'SVG Main View')(),
+        (MenuDropdownItem()
+          ..on_click = (_) {
+            app.disable_keyboard_shortcuts_while(export_dna);
+          }
+          ..display = 'DNA Sequences')(),
       ),
       NavDropdown(
         {
