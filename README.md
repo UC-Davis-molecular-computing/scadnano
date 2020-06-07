@@ -364,6 +364,8 @@ Setting length to a positive integer converts to a loopout and setting a length 
     You can also select some helices first, and then only those helices will be adjusted. (This is useful if some adjacent helices in your design do not have crossovers between them.) 
     
     You can also choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
+
+    The roll of the first helix in view order is used to compute positions and rolls of the remaining. Thus, if you would like the whole design to be at a certain rotation, first set the roll of the first helix, and then click this button.
   
 * View
 
