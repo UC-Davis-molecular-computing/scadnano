@@ -7,6 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
+import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/crossover.dart';
@@ -81,6 +82,9 @@ abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<Skip
 abstract class StorableAction extends Action {
   Iterable<Storable> storables();
 }
+
+/// [Action] that should trigger all of AppUIStateStorable to be written into localStorage.
+abstract class AppUIStateStorableAction extends Action {}
 
 /// [Action] that should invalidate the svg png cache.
 abstract class SvgPngCacheInvalidatingAction extends Action {}
@@ -215,10 +219,8 @@ abstract class ThrottledActionNonFast
 
 abstract class EditModeToggle
     with BuiltJsonSerializable
-    implements StorableAction, Built<EditModeToggle, EditModeToggleBuilder> {
+    implements AppUIStateStorableAction, Built<EditModeToggle, EditModeToggleBuilder> {
   EditModeChoice get mode;
-
-  Iterable<Storable> storables() => [Storable.edit_modes];
 
   /************************ begin BuiltValue boilerplate ************************/
   factory EditModeToggle(EditModeChoice mode) => EditModeToggle.from((b) => b..mode = mode);
@@ -251,10 +253,8 @@ abstract class EditModesSet
 
 abstract class SelectModeToggle
     with BuiltJsonSerializable
-    implements StorableAction, Built<SelectModeToggle, SelectModeToggleBuilder> {
+    implements AppUIStateStorableAction, Built<SelectModeToggle, SelectModeToggleBuilder> {
   SelectModeChoice get select_mode_choice;
-
-  Iterable<Storable> storables() => [Storable.select_modes];
 
   /************************ begin BuiltValue boilerplate ************************/
   factory SelectModeToggle(SelectModeChoice select_mode_choice) =>
@@ -285,13 +285,27 @@ abstract class SelectModesSet
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Show/hide DNA/modifications/mismatches/editor
+abstract class SetAppUIStateStorable
+    with BuiltJsonSerializable
+    implements Action, Built<SetAppUIStateStorable, SetAppUIStateStorableBuilder> {
+  AppUIStateStorable get storables;
+
+  factory SetAppUIStateStorable(AppUIStateStorable storables) =>
+      SetAppUIStateStorable.from((b) => b..storables = storables.toBuilder());
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetAppUIStateStorable.from([void Function(SetAppUIStateStorableBuilder) updates]) =
+      _$SetAppUIStateStorable;
+
+  SetAppUIStateStorable._();
+
+  static Serializer<SetAppUIStateStorable> get serializer => _$setAppUIStateStorableSerializer;
+}
 
 abstract class ShowDNASet
     with BuiltJsonSerializable
-    implements StorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
+    implements AppUIStateStorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.show_dna];
 
   factory ShowDNASet(bool show) => ShowDNASet.from((b) => b..show = show);
 
@@ -305,10 +319,8 @@ abstract class ShowDNASet
 
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
-    implements StorableAction, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
+    implements AppUIStateStorableAction, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.show_modifications];
 
   factory ShowModificationsSet(bool show) => ShowModificationsSet.from((b) => b..show = show);
 
@@ -323,10 +335,8 @@ abstract class ShowModificationsSet
 
 abstract class SetModificationFontSize
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetModificationFontSize, SetModificationFontSizeBuilder> {
+    implements AppUIStateStorableAction, Built<SetModificationFontSize, SetModificationFontSizeBuilder> {
   int get font;
-
-  Iterable<Storable> storables() => [Storable.modification_font_size];
 
   factory SetModificationFontSize(int font) => SetModificationFontSize.from((b) => b..font = font);
 
@@ -342,11 +352,9 @@ abstract class SetModificationFontSize
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
     implements
-        StorableAction,
+        AppUIStateStorableAction,
         Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.modification_display_connector];
 
   factory SetModificationDisplayConnector(bool show) =>
       SetModificationDisplayConnector.from((b) => b..show = show);
@@ -363,10 +371,8 @@ abstract class SetModificationDisplayConnector
 
 abstract class ShowMismatchesSet
     with BuiltJsonSerializable
-    implements StorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
+    implements AppUIStateStorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.show_mismatches];
 
   factory ShowMismatchesSet(bool show) => ShowMismatchesSet.from((b) => b..show = show);
 
@@ -380,10 +386,8 @@ abstract class ShowMismatchesSet
 
 abstract class SetShowEditor
     with BuiltJsonSerializable
-    implements StorableAction, Built<SetShowEditor, SetShowEditorBuilder> {
+    implements AppUIStateStorableAction, Built<SetShowEditor, SetShowEditorBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.show_editor];
 
   factory SetShowEditor(bool show) => SetShowEditor.from((b) => b..show = show);
 
@@ -398,12 +402,10 @@ abstract class SetShowEditor
 abstract class SetOnlyDisplaySelectedHelices
     with BuiltJsonSerializable
     implements
-        StorableAction,
+        AppUIStateStorableAction,
         SvgPngCacheInvalidatingAction,
         Built<SetOnlyDisplaySelectedHelices, SetOnlyDisplaySelectedHelicesBuilder> {
   bool get show;
-
-  Iterable<Storable> storables() => [Storable.only_display_selected_helices];
 
   factory SetOnlyDisplaySelectedHelices(bool show) =>
       SetOnlyDisplaySelectedHelices.from((b) => b..show = show);
@@ -1705,7 +1707,7 @@ abstract class StrandColorSet
 
 abstract class StrandPasteKeepColorSet
     with BuiltJsonSerializable
-    implements Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
+    implements AppUIStateStorableAction, Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
   bool get keep;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1741,7 +1743,6 @@ abstract class HelixPositionSet
   int get helix_idx;
 
   Position3D get position;
-
 
   /************************ begin BuiltValue boilerplate ************************/
   factory HelixPositionSet({int helix_idx, Position3D position}) = _$HelixPositionSet._;
@@ -1801,10 +1802,8 @@ abstract class InlineInsertionsDeletions
 
 abstract class AutofitSet
     with BuiltJsonSerializable
-    implements StorableAction, Built<AutofitSet, AutofitSetBuilder> {
+    implements AppUIStateStorableAction, Built<AutofitSet, AutofitSetBuilder> {
   bool get autofit;
-
-  Iterable<Storable> storables() => [Storable.autofit];
 
   /************************ begin BuiltValue boilerplate ************************/
   factory AutofitSet({bool autofit}) = _$AutofitSet._;

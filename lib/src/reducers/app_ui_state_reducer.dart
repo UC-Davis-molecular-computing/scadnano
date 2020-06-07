@@ -27,28 +27,8 @@ import 'mouseover_datas_reducer.dart';
 AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
     ui_state.rebuild((u) =>
     u
+      ..storables.replace(app_ui_state_storable_reducer(ui_state.storables, action))
       ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
-      ..select_mode_state.replace(select_mode_state_reducer(ui_state.select_mode_state, action))
-      ..edit_modes.replace(edit_modes_reducer(ui_state.edit_modes, action))
-      ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(ui_state.show_dna, action)
-      ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
-          ui_state.show_modifications, action)
-      ..modification_display_connector =
-      TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
-          ui_state.modification_display_connector, action)
-      ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(
-          modification_font_size_reducer)(
-          ui_state.modification_font_size, action)
-      ..show_mismatches =
-      TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(ui_state.show_mismatches, action)
-      ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(
-          strand_paste_keep_color_reducer)(ui_state.strand_paste_keep_color, action)
-      ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(ui_state.autofit, action)
-      ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(
-          ui_state.show_editor, action)
-      ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
-          only_display_selected_helices_reducer)(
-          ui_state.only_display_selected_helices, action)
       ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
       ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
@@ -166,6 +146,38 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
 ExampleDNADesigns example_dna_designs_idx_set_reducer(ExampleDNADesigns example_dna_designs,
     actions.ExampleDNADesignsLoad action) =>
     example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// storables
+AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, action){
+  if (action is actions.SetAppUIStateStorable) {
+    return action.storables;
+  } else {
+    return storables.rebuild((b) => b
+      ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
+      ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
+      ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
+      ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
+          storables.show_modifications, action)
+      ..modification_display_connector =
+      TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
+          storables.modification_display_connector, action)
+      ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(
+          modification_font_size_reducer)(
+          storables.modification_font_size, action)
+      ..show_mismatches =
+      TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(storables.show_mismatches, action)
+      ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(
+          strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
+      ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
+      ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(
+          storables.show_editor, action)
+      ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
+          only_display_selected_helices_reducer)(
+          storables.only_display_selected_helices, action)
+    );
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // svg-png-caching

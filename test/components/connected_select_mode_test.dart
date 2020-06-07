@@ -20,7 +20,7 @@ AppState initializeTestState() {
   ];
   return util
       .default_state()
-      .rebuild((b) => b.ui_state.select_mode_state.replace(SelectModeState().set_modes(modes)));
+      .rebuild((b) => b.ui_state.storables.select_mode_state.replace(SelectModeState().set_modes(modes)));
 }
 
 const SelectModeTestId = 'scadnano.SelectModeComponent';

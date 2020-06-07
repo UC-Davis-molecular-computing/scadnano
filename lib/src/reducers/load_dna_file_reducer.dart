@@ -67,7 +67,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
       ..ui_state.update((u) => u
         ..selectables_store.replace(new_selectables_store)
         ..changed_since_last_save = false
-        ..loaded_filename = new_filename
+        ..storables.loaded_filename = new_filename
         ..side_selected_helix_idxs.replace(side_selected_helix_idxs))
       ..error_message = "");
   } else {

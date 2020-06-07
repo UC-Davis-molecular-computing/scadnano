@@ -3,7 +3,6 @@
 
 import 'dart:math';
 
-import 'package:scadnano/src/serializers.dart';
 import 'package:test/test.dart';
 
 import 'dart:convert';
@@ -2996,7 +2995,7 @@ main() {
   group('Edit modes tests: ', () {
     test('test EditModeToggle to toggle off', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.edit_modes.replace([EditModeChoice.select]));
+          .rebuild((b) => b..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
 
       AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.select));
 
@@ -3005,7 +3004,7 @@ main() {
 
     test('test EditModeToggle to toggle on (with exclusion)', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.edit_modes.replace([EditModeChoice.select]));
+          .rebuild((b) => b..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
 
       AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.ligate));
 
@@ -3014,7 +3013,7 @@ main() {
 
     test('test EditModeToggle to toggle on (without exclusion)', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.edit_modes.replace([EditModeChoice.pencil]));
+          .rebuild((b) => b..ui_state.storables.edit_modes.replace([EditModeChoice.pencil]));
 
       AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.nick));
 
@@ -3037,7 +3036,7 @@ main() {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
           app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
@@ -3050,7 +3049,7 @@ main() {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
           app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_substrand));
@@ -3063,7 +3062,7 @@ main() {
       SelectModeState modes =
           SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.strand));
 
@@ -3075,7 +3074,7 @@ main() {
       SelectModeState modes = SelectModeState().set_modes(
           [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.crossover));
 
@@ -3088,7 +3087,7 @@ main() {
       SelectModeState modes = SelectModeState().set_modes(
           [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state = app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.loopout));
 
@@ -3100,7 +3099,7 @@ main() {
       SelectModeState modes = SelectModeState()
           .set_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
-          .rebuild((b) => b..ui_state.select_mode_state.replace(modes));
+          .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
           app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
@@ -3115,7 +3114,7 @@ main() {
           .set_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.scaffold]);
       SelectablesStore selectables_store = SelectablesStore().select(two_helices_design.strands[0].dnaend_3p);
       AppState initial_state = app_state_from_dna_design(two_helices_design).rebuild((b) => b
-        ..ui_state.select_mode_state.replace(modes)
+        ..ui_state.storables.select_mode_state.replace(modes)
         ..ui_state.selectables_store.replace(selectables_store));
 
       AppState final_state =
@@ -3195,7 +3194,7 @@ main() {
       Helix new_selected_helix = two_helices_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0));
 
       AppState expected_state_after_set_true = initial_state.rebuild((b) => b
-        ..ui_state.only_display_selected_helices = true
+        ..ui_state.storables.only_display_selected_helices = true
         ..dna_design.helices.updateValue(1, (_) => new_selected_helix));
 
       AppState final_state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
@@ -3276,7 +3275,7 @@ main() {
           app_state_reducer(state, LoadDNAFile(content: simple_strand_json, filename: filename));
 
       AppState expected_state = app_state_from_dna_design(simple_strand_dna_design)
-          .rebuild((b) => b..ui_state.loaded_filename = filename);
+          .rebuild((b) => b..ui_state.storables.loaded_filename = filename);
 
       expect(final_state, expected_state);
     });
@@ -4047,7 +4046,7 @@ main() {
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state = state.rebuild((b) => b
-        ..ui_state.only_display_selected_helices = true
+        ..ui_state.storables.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
         ..dna_design.helices[1] =
             simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0)));
@@ -4056,7 +4055,7 @@ main() {
       // clear should reset helix positions (but keep only display selected helices true).
       state = app_state_reducer(state, HelixSelectionsClear());
       expect_app_state_equal(
-          state, initial_state.rebuild((b) => b.ui_state.only_display_selected_helices = true));
+          state, initial_state.rebuild((b) => b.ui_state.storables.only_display_selected_helices = true));
     });
 
     // Distance from selection box to enclosing helix.
@@ -4094,7 +4093,7 @@ main() {
 
       // Should readjust svg position of helices 1 and 2.
       AppState expected_state = state.rebuild((b) => b
-        ..ui_state.only_display_selected_helices = true
+        ..ui_state.storables.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2])
         ..dna_design.helices[1] =
             simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0))
@@ -6068,7 +6067,7 @@ main() {
         """))).rebuild((b) => b
         ..undo_redo.undo_stack.add(many_helices_modification_design)
         ..ui_state.changed_since_last_save = true
-        ..ui_state.select_mode_state.replace(SelectModeState()
+        ..ui_state.storables.select_mode_state.replace(SelectModeState()
             .set_modes([SelectModeChoice.strand, SelectModeChoice.scaffold, SelectModeChoice.staple])));
 
       AppState state = initial_state;
