@@ -13,7 +13,6 @@ If you find scadnano useful in a scientific project, please cite its associated 
 
 ## Table of contents
 
-* [Table of contents](#table-of-contents)
 * [Overview](#overview)
 * [Reporting issues](#reporting-issues)
 * [Tutorial](#tutorial)
