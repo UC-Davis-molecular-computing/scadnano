@@ -16,8 +16,8 @@ import '../utils.dart' as utils;
 
 AppState initializeTestState() {
   return util.default_state().rebuild((b) => b
-    ..ui_state.show_dna = false
-    ..ui_state.show_mismatches = true
+    ..ui_state.storables.show_dna = false
+    ..ui_state.storables.show_mismatches = true
     ..dna_design.replace(two_helices_design));
 }
 
