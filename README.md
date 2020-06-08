@@ -1,7 +1,3 @@
-<!-- ---
-title: "scadnano help"
---- -->
-
 # scadnano
 
 [scadnano](http://scadnano.org) 
@@ -15,6 +11,21 @@ If you find scadnano useful in a scientific project, please cite its associated 
   *Technical Report 2005.11841, arXiv*, 2020.  
   [ [arXiv paper](https://arxiv.org/abs/2005.11841) | [BibTeX](https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib) ]
 
+## Table of contents
+
+* [Overview](#overview)
+* [Reporting issues](#reporting-issues)
+* [Tutorial](#tutorial)
+* [**WARNING: Save your work**](#warning-save-your-work)
+* [Terminology](#terminology)
+* [Grid types](#grid-types)
+* [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)
+* [Navigation and control](#navigation-and-control)
+* [Menu](#menu)
+* [Edit modes](#edit-modes)
+* [Assigning DNA](#assigning-dna)
+* [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
+* [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
 
 ## Overview
 
@@ -359,9 +370,13 @@ Setting length to a positive integer converts to a loopout and setting a length 
     *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
 
   * **Set helix coordinates based on crossovers:**
-    scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the*none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
+    scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the *none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
 
-    You can also selected some helices first, and then this will only be done to those helices. You can choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
+    You can also select some helices first, and then only those helices will be adjusted. (This is useful if some adjacent helices in your design do not have crossovers between them.) 
+    
+    You can also choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
+
+    The roll of the first helix in view order is used to compute positions and rolls of the remaining. Thus, if you would like the whole design to be at a certain rotation, first set the roll of the first helix, and then click this button.
   
 * View
 
@@ -530,7 +545,7 @@ For instance, to create a vertical "column" of 32 staples in a 32-helix rectangl
 Since most of the design consists of horizontally translated copies of this column it can be created quickly by copying and pasting the whole column.
 
 A standard DNA origami rectangle, for instance, can be created in about 10 minutes.
-The tradeoff is that a complete novice who has no idea where staples ought to go does not have a default push-button for creating a design.
+One downside is that a complete novice, who has no idea where staples ought to go, does not have a default push-button way to create an initial design.
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.

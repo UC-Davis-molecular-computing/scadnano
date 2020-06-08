@@ -25,7 +25,7 @@ const EditModeComponentTestID = 'scadnano.EditModeComponent';
 AppState initializeTestState() {
   return util
       .default_state()
-      .rebuild((b) => b.ui_state.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]));
+      .rebuild((b) => b.ui_state.storables.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]));
 }
 
 void main() {

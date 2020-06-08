@@ -66,6 +66,7 @@ part 'serializers.g.dart';
   Position3D,
   Point,
   AppUIState,
+  AppUIStateStorable,
   SelectablesStore,
   SelectionBox,
   SelectModeChoice,
@@ -185,6 +186,7 @@ part 'serializers.g.dart';
   SetModificationDisplayConnector,
   SetModificationFontSize,
   HelicesPositionsSetBasedOnCrossovers,
+  SetAppUIStateStorable,
 ])
 Serializers serializers = _$serializers;
 

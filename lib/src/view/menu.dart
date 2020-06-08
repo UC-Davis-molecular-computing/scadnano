@@ -15,6 +15,9 @@ import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:scadnano/src/constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
+import 'package:scadnano/src/view/menu_boolean.dart';
+import 'package:scadnano/src/view/menu_dropdown_item.dart';
+import 'package:scadnano/src/view/menu_form_file.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -91,448 +94,12 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         'expand': 'lg',
       },
       NavbarBrand({}, 'scadnano'),
-      NavDropdown(
-        {
-          'title': 'File',
-          'id': 'file-nav-dropdown',
-        },
-        DropdownItem(
-          {
-            'onClick': (_) {
-              app.disable_keyboard_shortcuts_while(load_example_dialog);
-            },
-          },
-          '📄 Load example',
-        ),
-        FormFile(
-          {
-            'id': 'open-form-file',
-            'className': 'form-file-dropdown',
-            'accept': ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(","),
-            // If the user selects the same filename as last time they used the fileLoader,
-            // we still want to reload the file (it may have changed).
-            // But if we don't set (e.target).value to null, if the user selects the same filename,
-            // then the onChange event won't fire and we won't reload the file.
-            'onClick': (e) {
-              document.getElementById('file-nav-dropdown').click();
-              (e.target).value = null;
-            },
-            'onChange': (e) {
-              request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
-            },
-            'label': Dom.div()(
-              '📂 Open...',
-              (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+O'),
-            ),
-            'custom': 'false',
-          },
-        ),
-        DropdownDivider({}),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.SaveDNAFile());
-            },
-          },
-          '💾 Save...',
-          (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+S'),
-        ),
-        DropdownDivider({}),
-        FormFile(
-          {
-            'id': 'import-cadnano-form-file',
-            'className': 'form-file-dropdown',
-            'accept': '.json',
-            // If the user selects the same filename as last time they used the fileLoader,
-            // we still want to reload the file (it may have changed).
-            // But if we don't set (e.target).value to null, if the user selects the same filename,
-            // then the onChange event won't fire and we won't reload the file.
-            'onClick': (e) {
-              document.getElementById('file-nav-dropdown').click();
-              (e.target).value = null;
-            },
-            'onChange': (e) {
-              request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
-            },
-            'label': 'Import cadnano v2',
-            'custom': 'false',
-          },
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportCadnanoFile());
-            },
-          },
-          'Export cadnano v2',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportCodenanoFile());
-            },
-          },
-          'Export codenano',
-        ),
-      ),
-      NavDropdown(
-          {
-            'title': 'Edit',
-            'id': 'edit-nav-dropdown',
-          },
-          DropdownItem(
-            {
-              'disabled': props.undo_stack_empty,
-              'onClick': (_) {
-                props.dispatch(actions.Undo());
-              },
-            },
-            'Undo',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Z'),
-          ),
-          DropdownItem(
-            {
-              'disabled': props.redo_stack_empty,
-              'onClick': (_) {
-                props.dispatch(actions.Redo());
-              },
-            },
-            'Redo',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+Shift+Z'),
-          ),
-          DropdownDivider({}),
-          DropdownItem(
-            {
-              'disabled': !props.enable_copy,
-              'onClick': (_) {
-                if (props.enable_copy) {
-                  window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
-                }
-              },
-            },
-            'Copy',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+C'),
-          ),
-          DropdownItem(
-            {
-              'onClick': (_) {
-                window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
-              },
-            },
-            'Paste',
-            (Dom.span()..className = 'dropdown-item-keyboard-shortcut-span')('Ctrl+V'),
-          ),
-          DropdownDivider({}),
-          (Dom.span()
-            ..className = 'strand-paste-keep-color-span menu-item'
-            ..style = {'display': 'block'}
-            ..key = 'strand_paste_keep_color')(
-            (Dom.label()
-              ..title = '''If checked, when copying and pasting a strand, the color is preserved.
-If unchecked, then a new color is generated.'''
-              ..key = 'strand_paste_keep_color-label')(
-              (Dom.input()
-                ..style = {'marginRight': '1em'}
-                ..checked = props.strand_paste_keep_color
-                ..onChange = (_) {
-                  props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
-                }
-                ..addTestId('scadnano.MenuComponent.input.strand_paste_keep_color')
-                ..type = 'checkbox')(),
-              'Pasted Strands Keep Original Color',
-            ),
-          ),
-          DropdownDivider({}),
-          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-            ..title = ''
-                '''Click this to remove insertions and deletions from the design and replace them with domains
-whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(DropdownItem(
-            {
-              'disabled': !props.design_has_insertions_or_deletions,
-              'onClick': (_) {
-                props.dispatch(actions.InlineInsertionsDeletions());
-              },
-            },
-            'Inline Insertions/Deletions',
-          )),
-          DropdownDivider({}),
-          (Dom.span() // had to put outside of DropdownItem to make tooltip show up when disabled
-            ..title = '''The grid must be set to none to enable this.
-
-Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
-most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
-helices has no crossover selected, it is assumed to be the first crossover.  
-
-New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
-has crossover angles that point the backbone angles directly at the adjoining helix.''')(
-            DropdownItem(
-              {
-                'disabled': props.grid != Grid.none,
-                'onClick': (_) {
-                  props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
-                },
-              },
-              'Set helix coordinates based on crossovers',
-            ),
-          )),
-      NavDropdown(
-        {
-          'title': 'View',
-          'id': 'view-nav-dropdown',
-        },
-        (Dom.span()
-          ..title = '''Check to show DNA sequences that have been assigned to strands.
-In a large design, this can slow down the performance of panning and
-zooming navigation, so uncheck it to speed up navigation.'''
-          ..className = 'show-dna-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-dna')(
-          (Dom.label()..key = 'show-dna-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_dna
-              ..onChange = (_) {
-                props.dispatch(actions.ShowDNASet(!props.show_dna));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_dna')
-              ..type = 'checkbox')(),
-            'Show DNA Sequences',
-          ),
-        ),
-        DropdownDivider({}),
-        (Dom.span()
-          ..title = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
-          ..className = 'show-modifications-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-modifications')(
-          (Dom.label()..key = 'show-modifications-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_modifications
-              ..onChange = (_) {
-                props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_modifications')
-              ..type = 'checkbox')(),
-            'Show Modifications',
-          ),
-        ),
-        (Dom.span()
-          ..title = '''Check to display DNA modification connectors.'''
-          ..className = 'modifications-display-connector-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'modifications-display-connector')(
-          (Dom.label()..key = 'modifications-display-connector-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.modification_display_connector
-              ..onChange = (_) {
-                props
-                    .dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_modifications')
-              ..type = 'checkbox')(),
-            'Display Modification Connector',
-          ),
-        ),
-        (Dom.span()
-          ..title = '''Adjust modification font size.'''
-          ..className = 'modifications-font-size-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'modifications-font-size')(
-          (Dom.label()..key = 'show-modifications-font-size-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em', 'width': '4em'}
-              ..type = 'number'
-              ..min = '1'
-              ..id = 'modifications-font-size-number-input'
-              ..defaultValue = props.modification_font_size)(),
-            (Dom.input()
-              ..type = 'submit'
-              ..onClick = (_) {
-                InputElement inputElement = document.getElementById('modifications-font-size-number-input');
-                int font = int.parse(inputElement.value);
-                props.dispatch(actions.SetModificationFontSize(font));
-              }
-              ..value = 'Set Modification Font')(),
-          ),
-        ),
-        DropdownDivider({}),
-        (Dom.span()
-          ..className = 'show-mismatches-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'show-mismatches')(
-          (Dom.label()
-            ..title = '''Check to show mismatches between DNA assigned to one strand
-and the strand on the same helix with the opposite orientation.'''
-            ..key = 'show-mismatches-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.show_mismatches
-              ..onChange = (_) {
-                props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
-              }
-              ..addTestId('scadnano.MenuComponent.input.show_mismatches')
-              ..type = 'checkbox')(),
-            'Show DNA Base Mismatches',
-          ),
-        ),
-        (Dom.span()
-          ..className = 'center-on-load-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'center-on-load')(
-          (Dom.label()
-            ..title = '''Check this so that, when loading a new design, the side and main views will be
-translated to show the lowest-index helix in the upper-left. otherwise, after
-loading the design, you may not be able to see it because it is translated off
-the screen.
-
-You may want to uncheck this when working on a design with the scripting library.
-in that case, when repeatedly re-running the script to modify the design and then
-re-loading it, it is preferable to keep the design centered at the same location
-you had before, in order to be able to see the same part of the design you were
-looking at before changing the script.'''
-            ..key = 'center-on-load-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.autofit
-              ..onChange = (_) {
-                props.dispatch(actions.AutofitSet(autofit: !props.autofit));
-              }
-              ..addTestId('scadnano.MenuComponent.input.center_on_load')
-              ..type = 'checkbox')(),
-            'Auto-fit On Loading New Design',
-          ),
-        ),
-        (Dom.span()
-          ..className = 'display-only-selected-helices-span menu-item'
-          ..style = {'display': 'block'}
-          ..key = 'display-only-selected-helices')(
-          (Dom.label()
-            ..title =
-                '''Check this so that, only selected helices in the side view are displayed in the main view.'''
-            ..key = 'display-only-selected-helices-label')(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.only_display_selected_helices
-              ..onChange = (_) {
-                props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
-              }
-              // TODO(benlee12): rewrite these test ids for component tests
-              // ..addTestId('scadnano.MenuComponent.input.center_on_load')
-              ..type = 'checkbox')(),
-            'Display only selected helices',
-          ),
-        ),
-        //XXX: let's keep this commented out until we need it
-        // (Dom.span()
-        //   ..key = 'show-editor menu-item'
-        //   ..className = 'show-editor-span')(
-        //   (Dom.label()..key = 'show-editor-label')(
-        //     (Dom.input()
-        //       ..checked = show_editor
-        //       ..onChange = (_) {
-        //         app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
-        //       }
-        //       ..type = 'checkbox')(),
-        //     'show editor',
-        //   ),
-        // ),
-      ),
-      NavDropdown(
-        {
-          'title': 'Grid',
-          'id': 'grid-nav-dropdown',
-        },
-        [
-          for (var grid in grid_options)
-            DropdownItem(
-              {
-                'active': grid == props.grid,
-                'disabled': grid == props.grid,
-                'key': grid.toString(),
-                'onClick': (ev) {
-                  props.dispatch(actions.GridChange(grid: grid));
-                },
-              },
-              grid.toString(),
-            )
-        ],
-      ),
-      NavDropdown(
-        {
-          'title': 'Export',
-          'id': 'export-nav-dropdown',
-        },
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
-            },
-          },
-          'SVG Side View',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
-            },
-          },
-          'SVG Main View',
-        ),
-        DropdownItem(
-          {
-            'onClick': (_) {
-              app.disable_keyboard_shortcuts_while(export_dna);
-            },
-          },
-          'DNA Sequences',
-        ),
-      ),
-      NavDropdown(
-        {
-          'title': 'Help',
-          'id': 'help-nav-dropdown',
-        },
-        DropdownItem(
-          {
-            'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
-            'target': '_blank',
-          },
-          'Web Interface Help',
-        ),
-        DropdownItem(
-          {
-            'href':
-                'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
-            'target': '_blank',
-          },
-          'Web Interface Tutorial',
-        ),
-        DropdownItem(
-          {
-            'href':
-                'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
-            'target': '_blank',
-          },
-          'Python Scripting Help',
-        ),
-        DropdownItem(
-          {
-            'href':
-                'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
-            'target': '_blank',
-          },
-          'Python Scripting Tutorial',
-        ),
-        DropdownItem(
-          {
-            'href': 'https://scadnano-python-package.readthedocs.io',
-            'target': '_blank',
-          },
-          'Python Scripting API',
-        ),
-      ),
+      file_menu(),
+      edit_menu(),
+      view_menu(),
+      grid_menu(),
+      export_menu(),
+      help_menu(),
       //XXX: I like to keep this button around to simulate random things that require user interaction
       // Button(
       //   {
@@ -543,6 +110,330 @@ looking at before changing the script.'''
       //   },
       //   'Dummy',
       // ),
+    );
+  }
+
+  file_menu() {
+    return NavDropdown(
+      {
+        'title': 'File',
+        'id': 'file-nav-dropdown',
+      },
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          app.disable_keyboard_shortcuts_while(load_example_dialog);
+        }
+        ..display = '📄 Load example')(),
+      (MenuFormFile()
+        ..id = 'open-form-file'
+        ..accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",")
+        ..onChange = (e) {
+          request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
+        }
+        ..display = '📂 Open...'
+        ..keyboard_shortcut = 'Ctrl+O'
+      )(),
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.SaveDNAFile());
+        }
+        ..display = '💾 Save...'
+        ..keyboard_shortcut = 'Ctrl+S')(),
+      DropdownDivider({}),
+      (MenuFormFile()
+        ..id = 'import-cadnano-form-file'
+        ..accept = '.json'
+        ..onChange = (e) {
+          request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
+        }
+        ..display = 'Import cadnano v2'
+      )(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.ExportCadnanoFile());
+        }
+        ..display = 'Export cadnano v2')(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.ExportCodenanoFile());
+        }
+        ..display = 'Export codenano')(),
+    );
+  }
+
+  edit_menu() {
+    return NavDropdown(
+      {
+        'title': 'Edit',
+        'id': 'edit-nav-dropdown',
+      },
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.Undo());
+        }
+        ..display = 'Undo'
+        ..keyboard_shortcut = 'Ctrl+Z'
+        ..disabled = props.undo_stack_empty)(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.Redo());
+        }
+        ..display = 'Redo'
+        ..keyboard_shortcut = 'Ctrl+Shift+Z'
+        ..disabled = props.redo_stack_empty)(),
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          if (props.enable_copy) {
+            window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.C, ctrlKey: true).wrapped);
+          }
+        }
+        ..display = 'Copy'
+        ..keyboard_shortcut = 'Ctrl+C'
+        ..disabled = !props.enable_copy)(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
+        }
+        ..display = 'Paste'
+        ..keyboard_shortcut = 'Ctrl+V')(),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.strand_paste_keep_color
+        ..display = 'Pasted Strands Keep Original Color'
+        ..tooltip = '''If checked, when copying and pasting a strand, the color is preserved.
+If unchecked, then a new color is generated.'''
+        ..name = 'strand-paste-keep-color'
+        ..onChange = (_) {
+          props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
+        })(),
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.InlineInsertionsDeletions());
+        }
+        ..display = 'Inline Insertions/Deletions'
+        ..disabled = !props.design_has_insertions_or_deletions
+        ..tooltip = ''
+            '''Click this to remove insertions and deletions from the design and replace them with domains
+whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(),
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
+        }
+        ..display = 'Set helix coordinates based on crossovers'
+        ..disabled = props.grid != Grid.none
+        ..tooltip = '''The grid must be set to none to enable this.
+
+Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
+most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
+helices has no crossover selected, it is assumed to be the first crossover.  
+
+New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
+has crossover angles that point the backbone angles directly at the adjoining helix.''')(),
+    );
+  }
+
+  view_menu() {
+    return NavDropdown(
+      {
+        'title': 'View',
+        'id': 'view-nav-dropdown',
+      },
+      (MenuBoolean()
+        ..value = props.show_dna
+        ..display = 'Show DNA Sequences'
+        ..tooltip = '''Check to show DNA sequences that have been assigned to strands.
+In a large design, this can slow down the performance of panning and
+zooming navigation, so uncheck it to speed up navigation.'''
+        ..name = 'show-dna'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDNASet(!props.show_dna));
+        })(),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.show_modifications
+        ..display = 'Show Modifications'
+        ..tooltip = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
+        ..name = 'show-modifications-span'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
+        })(),
+      (MenuBoolean()
+        ..value = props.modification_display_connector
+        ..display = 'Display Modification Connector'
+        ..tooltip = '''Check to display DNA modification connectors.'''
+        ..name = 'modifications-display-connector-span'
+        ..onChange = (_) {
+          props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
+        })(),
+      (Dom.span()
+        ..title = '''Adjust modification font size.'''
+        ..className = 'modifications-font-size-span menu-item'
+        ..style = {'display': 'block'})(
+        (Dom.label())(
+          (Dom.input()
+            ..style = {'marginRight': '1em', 'width': '4em'}
+            ..type = 'number'
+            ..min = '1'
+            ..id = 'modifications-font-size-number-input'
+            ..defaultValue = props.modification_font_size)(),
+          (Dom.input()
+            ..type = 'submit'
+            ..onClick = (_) {
+              InputElement inputElement = document.getElementById('modifications-font-size-number-input');
+              int font = int.parse(inputElement.value);
+              props.dispatch(actions.SetModificationFontSize(font));
+            }
+            ..value = 'Set Modification Font')(),
+        ),
+      ),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.show_mismatches
+        ..display = 'Show DNA Base Mismatches'
+        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
+and the strand on the same helix with the opposite orientation.'''
+        ..name = 'show-mismatches'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+        })(),
+      (MenuBoolean()
+        ..value = props.autofit
+        ..display = 'Auto-fit On Loading New Design'
+        ..tooltip = '''Check this so that, when loading a new design, the side and main views will be
+translated to show the lowest-index helix in the upper-left. otherwise, after
+loading the design, you may not be able to see it because it is translated off
+the screen.
+
+You may want to uncheck this when working on a design with the scripting library.
+in that case, when repeatedly re-running the script to modify the design and then
+re-loading it, it is preferable to keep the design centered at the same location
+you had before, in order to be able to see the same part of the design you were
+looking at before changing the script.'''
+        ..name = 'center-on-load'
+        ..onChange = (_) {
+          props.dispatch(actions.AutofitSet(autofit: !props.autofit));
+        })(),
+      (MenuBoolean()
+        ..value = props.only_display_selected_helices
+        ..display = 'Display only selected helices'
+        ..tooltip =
+        '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+        ..name = 'display-only-selected-helices'
+        ..onChange = (_) {
+          props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
+        })(),
+      //XXX: let's keep this commented out until we need it
+      // (Dom.span()
+      //   ..key = 'show-editor menu-item'
+      //   ..className = 'show-editor-span')(
+      //   (Dom.label()..key = 'show-editor-label')(
+      //     (Dom.input()
+      //       ..checked = show_editor
+      //       ..onChange = (_) {
+      //         app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
+      //       }
+      //       ..type = 'checkbox')(),
+      //     'show editor',
+      //   ),
+      // ),
+    );
+  }
+
+  grid_menu() {
+    return NavDropdown(
+      {
+        'title': 'Grid',
+        'id': 'grid-nav-dropdown',
+      },
+      [
+        for (var grid in grid_options)
+          DropdownItem(
+            {
+              'active': grid == props.grid,
+              'disabled': grid == props.grid,
+              'key': grid.toString(),
+              'onClick': (ev) {
+                props.dispatch(actions.GridChange(grid: grid));
+              },
+            },
+            grid.toString(),
+          )
+      ],
+    );
+  }
+
+  export_menu() {
+    return NavDropdown(
+      {
+        'title': 'Export',
+        'id': 'export-nav-dropdown',
+      },
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
+        }
+        ..display = 'SVG Side View')(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
+        }
+        ..display = 'SVG Main View')(),
+      (MenuDropdownItem()
+        ..on_click = (_) {
+          app.disable_keyboard_shortcuts_while(export_dna);
+        }
+        ..display = 'DNA Sequences')(),
+    );
+  }
+
+  help_menu() {
+    return NavDropdown(
+      {
+        'title': 'Help',
+        'id': 'help-nav-dropdown',
+      },
+      DropdownItem(
+        {
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
+          'target': '_blank',
+        },
+        'Web Interface Help',
+      ),
+      DropdownItem(
+        {
+          'href':
+              'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'target': '_blank',
+        },
+        'Web Interface Tutorial',
+      ),
+      DropdownItem(
+        {
+          'href':
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
+          'target': '_blank',
+        },
+        'Python Scripting Help',
+      ),
+      DropdownItem(
+        {
+          'href':
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+          'target': '_blank',
+        },
+        'Python Scripting Tutorial',
+      ),
+      DropdownItem(
+        {
+          'href': 'https://scadnano-python-package.readthedocs.io',
+          'target': '_blank',
+        },
+        'Python Scripting API',
+      ),
     );
   }
 

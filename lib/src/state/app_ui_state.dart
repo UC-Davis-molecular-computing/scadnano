@@ -18,25 +18,24 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
-import '../constants.dart' as constants;
 
 part 'app_ui_state.g.dart';
 
 final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
-  ..edit_modes.replace([EditModeChoice.select])
-  ..loaded_filename = default_filename()
+  ..storables.edit_modes.replace([EditModeChoice.select])
+  ..storables.loaded_filename = default_filename()
   ..loaded_script_filename = default_script_filename()
   ..mouseover_datas.replace([])
   ..selection_box_displayed_main = false
   ..selection_box_displayed_side = false
   ..selectables_store = SelectablesStoreBuilder()
   ..side_selected_helix_idxs.replace([])
-  ..show_dna = false
-  ..show_modifications = true
-  ..show_editor = false
-  ..show_mismatches = true
-  ..strand_paste_keep_color = true
-  ..autofit = true
+  ..storables.show_dna = false
+  ..storables.show_modifications = true
+  ..storables.show_editor = false
+  ..storables.show_mismatches = true
+  ..storables.strand_paste_keep_color = true
+  ..storables.autofit = true
   ..drawing_potential_crossover = false
   ..moving_dna_ends = false
   ..changed_since_last_save = false
@@ -50,13 +49,13 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..example_dna_designs.replace(DEFAULT_example_dna_designs)
   ..assign_complement_to_bound_strands_default = true
   ..warn_on_change_strand_dna_assign_default = true
-  ..select_mode_state = DEFAULT_SelectModeStateBuilder
+  ..storables.select_mode_state = DEFAULT_SelectModeStateBuilder
   ..dna_sequence_png_uri = null
   ..disable_png_cache_until_action_completes = null
   ..is_zoom_above_threshold = false
-  ..only_display_selected_helices = false
-  ..modification_font_size = 12
-  ..modification_display_connector = true;
+  ..storables.only_display_selected_helices = false
+  ..storables.modification_font_size = 12
+  ..storables.modification_display_connector = true;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -83,24 +82,24 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// Special case for helices, which can always be selected, but only in the side view.
   BuiltSet<int> get side_selected_helix_idxs;
 
-  String get loaded_filename;
+  String get loaded_filename => storables.loaded_filename;
 
   String get loaded_script_filename;
 
   @nullable
   StrandsMove get strands_move;
 
-  bool get show_dna;
+  bool get show_dna => storables.show_dna;
 
-  bool get show_modifications;
+  bool get show_modifications => storables.show_modifications;
 
-  bool get show_mismatches;
+  bool get show_mismatches => storables.show_mismatches;
 
-  bool get autofit;
+  bool get autofit => storables.autofit;
 
-  bool get strand_paste_keep_color;
+  bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
-  bool get show_editor;
+  bool get show_editor => storables.show_editor;
 
   bool get drawing_potential_crossover;
 
@@ -132,9 +131,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   @nullable // null when mouse outside of side view or helix edit mode not enabled
   Point<num> get side_view_position_mouse_cursor;
 
-  SelectModeState get select_mode_state;
+  SelectModeState get select_mode_state => storables.select_mode_state;
 
-  BuiltSet<EditModeChoice> get edit_modes;
+  BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
   @nullable
   ContextMenu get context_menu;
@@ -157,11 +156,44 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /// True if only selected helices in the side view should be displayed in the
   /// main view. False means all helices should be drawn.
+  bool get only_display_selected_helices => storables.only_display_selected_helices;
+
+  int get modification_font_size => storables.modification_font_size;
+
+  bool get modification_display_connector => storables.modification_display_connector;
+
+  AppUIStateStorable get storables;
+}
+
+abstract class AppUIStateStorable
+    with BuiltJsonSerializable
+    implements Built<AppUIStateStorable, AppUIStateStorableBuilder> {
+  SelectModeState get select_mode_state;
+
+  BuiltSet<EditModeChoice> get edit_modes;
+  bool get autofit;
+  bool get show_dna;
+  bool get show_modifications;
+  bool get show_mismatches;
+  bool get show_editor;
+
+  /// True if only selected helices in the side view should be displayed in the
+  /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
-
   int get modification_font_size;
-
   bool get modification_display_connector;
+  bool get strand_paste_keep_color;
+  String get loaded_filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AppUIStateStorable(bool modification_display_connector) =>
+      AppUIStateStorable.from((b) => b..modification_display_connector = modification_display_connector);
+
+  factory AppUIStateStorable.from([void Function(AppUIStateStorableBuilder) updates]) = _$AppUIStateStorable;
+
+  AppUIStateStorable._();
+
+  static Serializer<AppUIStateStorable> get serializer => _$appUIStateStorableSerializer;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';
