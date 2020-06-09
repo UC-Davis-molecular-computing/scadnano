@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/state/dna_design.dart';
 
 import '../actions/actions.dart';
 import '../state/edit_mode.dart';
@@ -38,8 +39,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
       return (DesignMain()..has_error = true);
     } else {
       return (DesignMain()
-        ..helices = state.dna_design.helices
-        ..strands = state.dna_design.strands
+        ..dna_design = state.dna_design
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..grid = state.dna_design.grid
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
@@ -65,8 +65,7 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
 mixin DesignMainPropsMixin on UiProps {
-  BuiltMap<int, Helix> helices;
-  BuiltList<Strand> strands;
+  DNADesign dna_design;
   Grid grid;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
@@ -101,7 +100,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
 
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
-        ..helices = props.helices
+        ..helices = props.dna_design.helices
         ..grid = props.grid
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
@@ -109,16 +108,16 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices
         ..key = 'helices')(),
-      (DesignMainMismatches()
-        ..show_mismatches = props.show_mismatches
-        ..strands = props.strands
-        ..key = 'mismatches')(),
+      if (props.show_mismatches)
+        (DesignMainMismatches()
+          ..dna_design = props.dna_design
+          ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
       if (pencil_mode && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
-          ..helices = props.helices
+          ..helices = props.dna_design.helices
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
@@ -130,8 +129,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
-          ..helices = props.helices
-          ..strands = props.strands
+          ..helices = props.dna_design.helices
+          ..strands = props.dna_design.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
@@ -148,7 +147,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..key = 'selection-box')(),
       if (backbone_mode)
         (DesignMainMouseoverRectHelices()
-          ..helices = props.helices
+          ..helices = props.dna_design.helices
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
     ]);

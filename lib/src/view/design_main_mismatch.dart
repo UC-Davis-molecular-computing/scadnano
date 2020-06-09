@@ -59,8 +59,8 @@ Tuple2<List<num>, List<num>> _star_at_origin() {
   List<num> xs = [];
   List<num> ys = [];
 
-  num inner_radius = 0.2 * constants.BASE_WIDTH_SVG;
-  num outer_radius = 0.45 * constants.BASE_WIDTH_SVG;
+  num inner_radius = 0.4 * constants.BASE_WIDTH_SVG;
+  num outer_radius = 0.65 * constants.BASE_WIDTH_SVG;
 
   num num_points = 12;
   num inner_angle = 0;
