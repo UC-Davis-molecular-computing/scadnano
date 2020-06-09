@@ -392,6 +392,14 @@ html, body {
     stroke-width: 3;
 }
 
+.main-view-helix-major-tick-offset-text {
+    font-size: 8px;
+}
+
+.main-view-helix-major-tick-distance-text {
+    font-size: 6px;
+}
+
 .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
     stroke: black;

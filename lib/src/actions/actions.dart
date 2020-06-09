@@ -399,6 +399,36 @@ abstract class SetShowEditor
   static Serializer<SetShowEditor> get serializer => _$setShowEditorSerializer;
 }
 
+abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
+  bool get show;
+
+  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(bool show) => SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from([void Function(SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder) updates]) = _$SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix;
+
+  SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix._();
+
+  static Serializer<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix> get serializer => _$setDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixSerializer;
+}
+
+abstract class SetDisplayBaseOffsetsOfMajorTicks
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<SetDisplayBaseOffsetsOfMajorTicks, SetDisplayBaseOffsetsOfMajorTicksBuilder> {
+  bool get show;
+
+  factory SetDisplayBaseOffsetsOfMajorTicks(bool show) => SetDisplayBaseOffsetsOfMajorTicks.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetDisplayBaseOffsetsOfMajorTicks.from([void Function(SetDisplayBaseOffsetsOfMajorTicksBuilder) updates]) = _$SetDisplayBaseOffsetsOfMajorTicks;
+
+  SetDisplayBaseOffsetsOfMajorTicks._();
+
+  static Serializer<SetDisplayBaseOffsetsOfMajorTicks> get serializer => _$setDisplayBaseOffsetsOfMajorTicksSerializer;
+}
+
 abstract class SetOnlyDisplaySelectedHelices
     with BuiltJsonSerializable
     implements

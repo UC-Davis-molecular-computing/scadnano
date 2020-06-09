@@ -3054,6 +3054,22 @@ main() {
       expect(final_state.ui_state.modification_display_connector, false);
     });
 
+    test('Test SetDisplayBaseOffsetsOfMajorTicks', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayBaseOffsetsOfMajorTicks(true));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks, true);
+      final_state = app_state_reducer(final_state, SetDisplayBaseOffsetsOfMajorTicks(false));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks, false);
+    });
+
+    test('Test SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(true));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks_only_first_helix, true);
+      final_state = app_state_reducer(final_state, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(false));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks_only_first_helix, false);
+    });
+
     test('Test SetModificationFontSize', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
       AppState final_state = app_state_reducer(initial_state, SetModificationFontSize(45));

@@ -103,6 +103,10 @@ int modification_font_size_reducer(int _, actions.SetModificationFontSize action
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
+bool display_base_offsets_of_major_ticks_reducer(bool _, actions.SetDisplayBaseOffsetsOfMajorTicks action) => action.show;
+
+bool display_base_offsets_of_major_ticks_only_first_helix_reducer(bool _, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix action) => action.show;
+
 bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet action) => action.keep;
 
 bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
@@ -172,6 +176,8 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
       ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
       ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(
           storables.show_editor, action)
+      ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicks>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
+      ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
       ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
           only_display_selected_helices_reducer)(
           storables.only_display_selected_helices, action)

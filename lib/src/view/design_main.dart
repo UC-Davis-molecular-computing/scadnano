@@ -55,7 +55,9 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
-        ..only_display_selected_helices = state.ui_state.only_display_selected_helices);
+        ..only_display_selected_helices = state.ui_state.only_display_selected_helices
+        ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
+        ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix);
     }
   },
 )(DesignMain);
@@ -82,6 +84,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool is_zoom_above_threshold;
   bool only_display_selected_helices;
   bool helix_change_apply_to_all;
+  bool display_base_offsets_of_major_ticks;
+  bool display_base_offsets_of_major_ticks_only_first_helix;
 }
 
 @Props()
@@ -107,6 +111,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices
+        ..show_dna = props.show_dna
+        ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
+        ..display_base_offsets_of_major_ticks_only_first_helix = props.display_base_offsets_of_major_ticks_only_first_helix
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainMismatches()

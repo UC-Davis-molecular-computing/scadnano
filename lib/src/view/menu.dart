@@ -44,7 +44,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
         app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
         app.state.ui_state.selectables_store.selected_items.isNotEmpty)
     ..modification_font_size = state.ui_state.modification_font_size
-    ..modification_display_connector = state.ui_state.modification_display_connector),
+    ..modification_display_connector = state.ui_state.modification_display_connector
+    ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
+    ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+    ),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -66,6 +69,8 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool display_base_offsets_of_major_ticks;
+  bool display_base_offsets_of_major_ticks_only_first_helix;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -252,6 +257,15 @@ zooming navigation, so uncheck it to speed up navigation.'''
         ..onChange = (_) {
           props.dispatch(actions.ShowDNASet(!props.show_dna));
         })(),
+      (MenuBoolean()
+        ..value = props.show_mismatches
+        ..display = 'Show DNA Base Mismatches'
+        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
+and the strand on the same helix with the opposite orientation.'''
+        ..name = 'show-mismatches'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+        })(),
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.show_modifications
@@ -263,6 +277,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
         })(),
       (MenuBoolean()
         ..value = props.modification_display_connector
+        ..hide = !props.show_modifications
         ..display = 'Display Modification Connector'
         ..tooltip = '''Check to display DNA modification connectors.'''
         ..name = 'modifications-display-connector-span'
@@ -272,7 +287,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
       (Dom.span()
         ..title = '''Adjust modification font size.'''
         ..className = 'modifications-font-size-span menu-item'
-        ..style = {'display': 'block'})(
+        ..style = props.show_modifications ? {'display': 'block'} : {'display': 'none'})(
         (Dom.label())(
           (Dom.input()
             ..style = {'marginRight': '1em', 'width': '4em'}
@@ -292,14 +307,21 @@ zooming navigation, so uncheck it to speed up navigation.'''
       ),
       DropdownDivider({}),
       (MenuBoolean()
-        ..value = props.show_mismatches
-        ..display = 'Show DNA Base Mismatches'
-        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
-and the strand on the same helix with the opposite orientation.'''
-        ..name = 'show-mismatches'
+        ..value = props.display_base_offsets_of_major_ticks
+        ..display = 'Display Base Offsets Above Major Ticks'
+        ..tooltip = '''Check to display the integer base offset above major tick.'''
         ..onChange = (_) {
-          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
         })(),
+      (MenuBoolean()
+        ..value = props.display_base_offsets_of_major_ticks_only_first_helix
+        ..hide = !props.display_base_offsets_of_major_ticks
+        ..display = '...Only On Topmost Helix'
+        ..tooltip = '''Check to display the integer base offset above major tick on the topmost helix.'''
+        ..onChange = (_) {
+          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(!props.display_base_offsets_of_major_ticks_only_first_helix));
+        })(),
+      DropdownDivider({}),
       (MenuBoolean()
         ..value = props.autofit
         ..display = 'Auto-fit On Loading New Design'

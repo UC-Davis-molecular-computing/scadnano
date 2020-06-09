@@ -21,6 +21,9 @@ mixin DesignMainHelicesProps on UiProps {
   bool only_display_selected_helices;
   Grid grid;
   bool helix_change_apply_to_all;
+  bool show_dna;
+  bool display_base_offsets_of_major_ticks;
+  bool display_base_offsets_of_major_ticks_only_first_helix;
 }
 
 
@@ -39,6 +42,8 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid
+          ..show_dna = props.show_dna
+          ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks && (!props.display_base_offsets_of_major_ticks_only_first_helix || helix.view_order == 0)
           ..key = helix.toString())());
       }
     }

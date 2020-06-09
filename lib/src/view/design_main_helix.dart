@@ -30,6 +30,8 @@ mixin DesignMainHelixProps on UiProps {
   int design_major_tick_distance;
   Grid grid;
   bool helix_change_apply_to_all;
+  bool show_dna;
+  bool display_base_offsets_of_major_ticks;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -90,6 +92,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
+      if (props.display_base_offsets_of_major_ticks)
+        major_tick_offsets_svg_group(),
       if (props.strand_create_enabled)
         (Dom.rect()
 //          ..onClick = start_strand_create
@@ -376,6 +380,62 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       context_menu_item_adjust_position,
     ];
   }
+
+  dynamic major_tick_offsets_svg_group() {
+    var helix = props.helix;
+
+    var major_tick_distance =
+        helix.has_major_tick_distance() ? helix.major_tick_distance : props.design_major_tick_distance;
+    Set<int> major_ticks = (helix.has_major_ticks()
+            ? helix.major_ticks
+            : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
+        .toSet();
+
+    var y = constants.MAJOR_TICKS_OFFSET_TEXT_Y;
+    var dx = constants.MAJOR_TICKS_OFFSET_TEXT_DX;
+    var dy = props.show_dna ?  -constants.BASE_HEIGHT_SVG : 0;
+
+    var offset_texts_elements = [];
+    for (int base in major_ticks) {
+      var x = base * constants.BASE_WIDTH_SVG;
+      var text_element = (Dom.text()
+        ..className = 'main-view-helix-major-tick-offset-text'
+        ..x = '$x'
+        ..y = '$y'
+        ..dx = '$dx'
+        ..dy = '$dy'
+        ..key = 'main-view-helix-major-tick-offset-$x')(base);
+
+      offset_texts_elements.add(text_element);
+    }
+    var major_tick_offsets_text_elements = (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
+
+    var major_ticks_sorted = major_ticks.toList()..sort();
+    Map<num, int> map_offset_to_distance = {};
+
+    for (var i = 0, j = 1; j < major_ticks_sorted.length; i++, j++) {
+      var left_base_offset = major_ticks_sorted[i];
+      var right_base_offset = major_ticks_sorted[j];
+      var distance = right_base_offset - left_base_offset;
+      var offset = (right_base_offset + left_base_offset) / 2;
+
+      map_offset_to_distance[offset] = distance;
+    }
+    for (var entry in map_offset_to_distance.entries) {
+      var base = entry.key;
+      var distance = entry.value;
+      var x = base * constants.BASE_WIDTH_SVG;
+      var text_element = (Dom.text()
+        ..className = 'main-view-helix-major-tick-distance-text'
+        ..x = '$x'
+        ..y = '$y'
+        ..dx = '$dx'
+        ..dy = '$dy'
+        ..key = 'main-view-helix-major-tick-distance-$x')(distance);
+      offset_texts_elements.addAll([text_element]);
+    }
+    return major_tick_offsets_text_elements;
+  }
 }
 
 //static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
@@ -392,18 +452,18 @@ Point<num> helix_main_view_translation(Helix helix) {
 //  }
 }
 
+List<int> regularly_spaced_ticks(int distance, int start, int end) {
+  if (distance == null || distance == 0) {
+    return [];
+  } else if (distance < 0) {
+    throw ArgumentError('distance between major ticks must be positive');
+  } else {
+    return [for (int offset in iter.range(start, end + 1, distance)) offset];
+  }
+}
+
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
 Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
-  List<int> regularly_spaced_ticks(int distance, int start, int end) {
-    if (distance == null || distance == 0) {
-      return [];
-    } else if (distance < 0) {
-      throw ArgumentError('distance between major ticks must be positive');
-    } else {
-      return [for (int offset in iter.range(start, end + 1, distance)) offset];
-    }
-  }
-
   var major_tick_distance =
       helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
   Set<int> major_ticks = (helix.has_major_ticks()

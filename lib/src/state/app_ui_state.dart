@@ -55,7 +55,9 @@ final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
   ..is_zoom_above_threshold = false
   ..storables.only_display_selected_helices = false
   ..storables.modification_font_size = 12
-  ..storables.modification_display_connector = true;
+  ..storables.modification_display_connector = true
+  ..storables.display_base_offsets_of_major_ticks = false
+  ..storables.display_base_offsets_of_major_ticks_only_first_helix = false;
 
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 
@@ -162,6 +164,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get modification_display_connector => storables.modification_display_connector;
 
+  bool get display_base_offsets_of_major_ticks => storables.display_base_offsets_of_major_ticks;
+  bool get display_base_offsets_of_major_ticks_only_first_helix => storables.display_base_offsets_of_major_ticks_only_first_helix;
+
   AppUIStateStorable get storables;
 }
 
@@ -183,6 +188,8 @@ abstract class AppUIStateStorable
   int get modification_font_size;
   bool get modification_display_connector;
   bool get strand_paste_keep_color;
+  bool get display_base_offsets_of_major_ticks;
+  bool get display_base_offsets_of_major_ticks_only_first_helix;
   String get loaded_filename;
 
   /************************ begin BuiltValue boilerplate ************************/

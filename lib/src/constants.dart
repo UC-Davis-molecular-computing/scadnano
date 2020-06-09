@@ -58,6 +58,9 @@ const double NM_TO_MAIN_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 
+const double MAJOR_TICKS_OFFSET_TEXT_Y = -2;
+const double MAJOR_TICKS_OFFSET_TEXT_DX = -2;
+
 //const Grid default_grid = Grid.none;
 const Grid default_grid = Grid.square;
 

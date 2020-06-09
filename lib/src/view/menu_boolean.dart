@@ -6,6 +6,7 @@ UiFactory<MenuBooleanProps> MenuBoolean = _$MenuBoolean;
 
 mixin MenuBooleanPropsMixin on UiProps {
   bool value;
+  bool hide;
   String tooltip;
   String display;
   String name;
@@ -15,25 +16,31 @@ mixin MenuBooleanPropsMixin on UiProps {
 class MenuBooleanProps = UiProps with MenuBooleanPropsMixin;
 
 class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
+  @override
+  get defaultProps => (newProps()..hide = false);
 
   @override
   render() {
     var name = props.name;
     name ??= props.display.toLowerCase().replaceAll(' ', '-');
 
-    return (Dom.span()
-      ..className = 'menu-item'
-      ..id = '${name}-span'
-      ..style = {'display': 'block'})(
-      (Dom.label()..title = props.tooltip)(
-          (Dom.input()
-            ..style = {'marginRight': '1em'}
-            ..checked = props.value
-            ..onChange = props.onChange
-            // TODO(benlee12): Add unit tests that use this.
-            // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
-            ..type = 'checkbox')(),
-          props.display),
-    );
+    if (!props.hide) {
+      return (Dom.span()
+        ..className = 'menu-item'
+        ..id = '${name}-span'
+        ..style = {'display': 'block'})(
+        (Dom.label()..title = props.tooltip)(
+            (Dom.input()
+              ..style = {'marginRight': '1em'}
+              ..checked = props.value
+              ..onChange = props.onChange
+              // TODO(benlee12): Add unit tests that use this.
+              // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
+              ..type = 'checkbox')(),
+            props.display),
+      );
+    } else {
+      return null;
+    }
   }
 }
