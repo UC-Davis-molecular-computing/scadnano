@@ -436,7 +436,7 @@ html, body {
 }
 
 .selected {
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 .disallowed {
@@ -493,13 +493,13 @@ html, body {
 .selectable.three-prime-end:hover,
 .selectable.insertion-line:hover,
 .selectable.deletion-cross:hover {
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 
 .selectable.crossover-curve:hover {
     stroke-dasharray: 0;
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 .crossover-curve {
