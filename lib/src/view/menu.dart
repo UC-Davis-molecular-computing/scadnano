@@ -46,8 +46,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..modification_font_size = state.ui_state.modification_font_size
     ..modification_display_connector = state.ui_state.modification_display_connector
     ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-    ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
-    ),
+    ..display_base_offsets_of_major_ticks_only_first_helix =
+        state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+    ..display_major_tick_widths = state.ui_state.display_major_tick_widths
+    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -71,6 +73,8 @@ mixin MenuPropsMixin on UiProps {
   bool enable_copy;
   bool display_base_offsets_of_major_ticks;
   bool display_base_offsets_of_major_ticks_only_first_helix;
+  bool display_major_tick_widths;
+  bool display_major_tick_widths_all_helices;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -136,8 +140,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
         }
         ..display = '📂 Open...'
-        ..keyboard_shortcut = 'Ctrl+O'
-      )(),
+        ..keyboard_shortcut = 'Ctrl+O')(),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = (_) {
@@ -152,8 +155,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..onChange = (e) {
           request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
         }
-        ..display = 'Import cadnano v2'
-      )(),
+        ..display = 'Import cadnano v2')(),
       (MenuDropdownItem()
         ..on_click = (_) {
           props.dispatch(actions.ExportCadnanoFile());
@@ -308,18 +310,37 @@ and the strand on the same helix with the opposite orientation.'''
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.display_base_offsets_of_major_ticks
-        ..display = 'Display Base Offsets Above Major Ticks'
-        ..tooltip = '''Check to display the integer base offset above major tick.'''
+        ..display = 'Display Major Tick Offsets'
+        ..tooltip = '''Check to display the integer base offset above major ticks.'''
         ..onChange = (_) {
-          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
+          props.dispatch(
+              actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
         })(),
       (MenuBoolean()
-        ..value = props.display_base_offsets_of_major_ticks_only_first_helix
+        ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.display_base_offsets_of_major_ticks
-        ..display = '...Only On Topmost Helix'
-        ..tooltip = '''Check to display the integer base offset above major tick on the topmost helix.'''
+        ..display = '... On All Helices'
+        ..tooltip = '''Check to display the integer base offset above major tick for all helices.'''
         ..onChange = (_) {
-          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(!props.display_base_offsets_of_major_ticks_only_first_helix));
+          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+              !props.display_base_offsets_of_major_ticks_only_first_helix));
+        })(),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.display_major_tick_widths
+        ..display = 'Display Major Tick Widths'
+        ..tooltip = '''Check to display the space between major ticks.'''
+        ..onChange = (_) {
+          props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths));
+        })(),
+      (MenuBoolean()
+        ..value = props.display_major_tick_widths_all_helices
+        ..hide = !props.display_major_tick_widths
+        ..display = '...On All Helices'
+        ..tooltip = '''Check to display the space between major ticks for all helices.'''
+        ..onChange = (_) {
+          props.dispatch(
+              actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices));
         })(),
       DropdownDivider({}),
       (MenuBoolean()
@@ -343,7 +364,7 @@ looking at before changing the script.'''
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
         ..tooltip =
-        '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+            '''Check this so that, only selected helices in the side view are displayed in the main view.'''
         ..name = 'display-only-selected-helices'
         ..onChange = (_) {
           props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
@@ -427,8 +448,7 @@ looking at before changing the script.'''
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
         'Web Interface Tutorial',

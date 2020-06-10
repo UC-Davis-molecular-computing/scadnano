@@ -107,6 +107,10 @@ bool display_base_offsets_of_major_ticks_reducer(bool _, actions.SetDisplayBaseO
 
 bool display_base_offsets_of_major_ticks_only_first_helix_reducer(bool _, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix action) => action.show;
 
+bool display_major_tick_widths_all_helices_reducer(bool _, actions.SetDisplayMajorTickWidthsAllHelices action) => action.show;
+
+bool display_major_tick_widths_reducer(bool _, actions.SetDisplayMajorTickWidths action) => action.show;
+
 bool strand_paste_keep_color_reducer(bool _, actions.StrandPasteKeepColorSet action) => action.keep;
 
 bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit;
@@ -178,6 +182,8 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
           storables.show_editor, action)
       ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicks>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
       ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
+      ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
+      ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(display_major_tick_widths_all_helices_reducer)(storables.display_major_tick_widths_all_helices, action)
       ..only_display_selected_helices = TypedReducer<bool, actions.SetOnlyDisplaySelectedHelices>(
           only_display_selected_helices_reducer)(
           storables.only_display_selected_helices, action)

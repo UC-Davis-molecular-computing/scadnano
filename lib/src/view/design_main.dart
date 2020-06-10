@@ -57,7 +57,9 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-        ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix);
+        ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+        ..display_major_tick_widths = state.ui_state.display_major_tick_widths
+        ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices);
     }
   },
 )(DesignMain);
@@ -86,6 +88,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool helix_change_apply_to_all;
   bool display_base_offsets_of_major_ticks;
   bool display_base_offsets_of_major_ticks_only_first_helix;
+  bool display_major_tick_widths;
+  bool display_major_tick_widths_all_helices;
 }
 
 @Props()
@@ -114,6 +118,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..show_dna = props.show_dna
         ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
         ..display_base_offsets_of_major_ticks_only_first_helix = props.display_base_offsets_of_major_ticks_only_first_helix
+        ..display_major_tick_widths = props.display_major_tick_widths
+        ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainMismatches()

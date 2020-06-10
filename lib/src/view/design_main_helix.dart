@@ -32,6 +32,7 @@ mixin DesignMainHelixProps on UiProps {
   bool helix_change_apply_to_all;
   bool show_dna;
   bool display_base_offsets_of_major_ticks;
+  bool display_major_tick_widths;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -92,8 +93,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
-      if (props.display_base_offsets_of_major_ticks)
-        major_tick_offsets_svg_group(),
+      major_tick_offsets_svg_group(),
       if (props.strand_create_enabled)
         (Dom.rect()
 //          ..onClick = start_strand_create
@@ -396,45 +396,56 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var dy = props.show_dna ?  -constants.BASE_HEIGHT_SVG : 0;
 
     var offset_texts_elements = [];
-    for (int base in major_ticks) {
-      var x = base * constants.BASE_WIDTH_SVG;
-      var text_element = (Dom.text()
-        ..className = 'main-view-helix-major-tick-offset-text'
-        ..x = '$x'
-        ..y = '$y'
-        ..dx = '$dx'
-        ..dy = '$dy'
-        ..key = 'main-view-helix-major-tick-offset-$x')(base);
 
-      offset_texts_elements.add(text_element);
+    if (props.display_base_offsets_of_major_ticks) {
+      for (int base in major_ticks) {
+        var x = base * constants.BASE_WIDTH_SVG;
+        var text_element = (Dom.text()
+          ..className = 'main-view-helix-major-tick-offset-text'
+          ..x = '$x'
+          ..y = '$y'
+          ..dx = '$dx'
+          ..dy = '$dy'
+          ..key = 'main-view-helix-major-tick-offset-$x')(base);
+
+        offset_texts_elements.add(text_element);
+      }
     }
-    var major_tick_offsets_text_elements = (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
 
-    var major_ticks_sorted = major_ticks.toList()..sort();
-    Map<num, int> map_offset_to_distance = {};
+    if (props.display_major_tick_widths) {
+      var major_ticks_sorted = major_ticks.toList()..sort();
+      Map<num, int> map_offset_to_distance = {};
 
-    for (var i = 0, j = 1; j < major_ticks_sorted.length; i++, j++) {
-      var left_base_offset = major_ticks_sorted[i];
-      var right_base_offset = major_ticks_sorted[j];
-      var distance = right_base_offset - left_base_offset;
-      var offset = (right_base_offset + left_base_offset) / 2;
+      for (var i = 0, j = 1; j < major_ticks_sorted.length; i++, j++) {
+        var left_base_offset = major_ticks_sorted[i];
+        var right_base_offset = major_ticks_sorted[j];
+        var distance = right_base_offset - left_base_offset;
+        var offset = (right_base_offset + left_base_offset) / 2;
 
-      map_offset_to_distance[offset] = distance;
+        map_offset_to_distance[offset] = distance;
+      }
+
+      for (var entry in map_offset_to_distance.entries) {
+        var base = entry.key;
+        var distance = entry.value;
+        var x = base * constants.BASE_WIDTH_SVG;
+        var text_element = (Dom.text()
+          ..className = 'main-view-helix-major-tick-distance-text'
+          ..x = '$x'
+          ..y = '$y'
+          ..dx = '$dx'
+          ..dy = '$dy'
+          ..key = 'main-view-helix-major-tick-distance-$x')(distance);
+        offset_texts_elements.addAll([text_element]);
+      }
     }
-    for (var entry in map_offset_to_distance.entries) {
-      var base = entry.key;
-      var distance = entry.value;
-      var x = base * constants.BASE_WIDTH_SVG;
-      var text_element = (Dom.text()
-        ..className = 'main-view-helix-major-tick-distance-text'
-        ..x = '$x'
-        ..y = '$y'
-        ..dx = '$dx'
-        ..dy = '$dy'
-        ..key = 'main-view-helix-major-tick-distance-$x')(distance);
-      offset_texts_elements.addAll([text_element]);
+
+
+    if (offset_texts_elements.isEmpty) {
+      return null;
+    } else {
+      return (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
     }
-    return major_tick_offsets_text_elements;
   }
 }
 

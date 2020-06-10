@@ -429,6 +429,38 @@ abstract class SetDisplayBaseOffsetsOfMajorTicks
   static Serializer<SetDisplayBaseOffsetsOfMajorTicks> get serializer => _$setDisplayBaseOffsetsOfMajorTicksSerializer;
 }
 
+abstract class SetDisplayMajorTickWidthsAllHelices
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidthsAllHelices, SetDisplayMajorTickWidthsAllHelicesBuilder> {
+  bool get show;
+
+  factory SetDisplayMajorTickWidthsAllHelices(bool show) => SetDisplayMajorTickWidthsAllHelices.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetDisplayMajorTickWidthsAllHelices.from([void Function(SetDisplayMajorTickWidthsAllHelicesBuilder) updates]) = _$SetDisplayMajorTickWidthsAllHelices;
+
+  SetDisplayMajorTickWidthsAllHelices._();
+
+  static Serializer<SetDisplayMajorTickWidthsAllHelices> get serializer => _$setDisplayMajorTickWidthsAllHelicesSerializer;
+}
+
+abstract class SetDisplayMajorTickWidths
+  with BuiltJsonSerializable
+  implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder>
+{
+  bool get show;
+
+  factory SetDisplayMajorTickWidths(bool show) => SetDisplayMajorTickWidths.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SetDisplayMajorTickWidths.from([void Function(SetDisplayMajorTickWidthsBuilder) updates]) = _$SetDisplayMajorTickWidths;
+
+  SetDisplayMajorTickWidths._();
+
+  static Serializer<SetDisplayMajorTickWidths> get serializer => _$setDisplayMajorTickWidthsSerializer;
+
+}
+
 abstract class SetOnlyDisplaySelectedHelices
     with BuiltJsonSerializable
     implements

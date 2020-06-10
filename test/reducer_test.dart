@@ -3070,6 +3070,22 @@ main() {
       expect(final_state.ui_state.display_base_offsets_of_major_ticks_only_first_helix, false);
     });
 
+    test('Test SetDisplayMajorTickWidths', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayMajorTickWidths(true));
+      expect(final_state.ui_state.display_major_tick_widths, true);
+      final_state = app_state_reducer(final_state, SetDisplayMajorTickWidths(false));
+      expect(final_state.ui_state.display_major_tick_widths, false);
+    });
+
+    test('Test SetDisplayMajorTickWidthsAllHelices', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayMajorTickWidthsAllHelices(true));
+      expect(final_state.ui_state.display_major_tick_widths_all_helices, true);
+      final_state = app_state_reducer(final_state, SetDisplayMajorTickWidthsAllHelices(false));
+      expect(final_state.ui_state.display_major_tick_widths_all_helices, false);
+    });
+
     test('Test SetModificationFontSize', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
       AppState final_state = app_state_reducer(initial_state, SetModificationFontSize(45));
