@@ -22,18 +22,18 @@ mixin DesignMainMismatchesProps on UiProps {
 class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> with PureComponent {
   @override
   render() {
-    List<ReactElement> mismatch_components = this._create_mismatch_components(props.dna_design);
+    List<ReactElement> mismatch_components = this._create_mismatch_components();
     return (Dom.g()..className = 'mismatches-main-view')(mismatch_components);
   }
 
-  List<ReactElement> _create_mismatch_components(DNADesign dna_design) {
+  List<ReactElement> _create_mismatch_components() {
     List<ReactElement> mismatch_components = [];
     Set<String> keys = {};
+    var dna_design = props.dna_design;
     for (Strand strand in dna_design.strands) {
       for (Domain substrand in strand.domains()) {
         BuiltList<Mismatch> mismatches = dna_design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
-          //FIXME: don't access global variable; make this a connected component and used a memoized selector
           var helix = dna_design.helices[substrand.helix];
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
             var base_svg_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
