@@ -124,6 +124,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
       if (props.show_mismatches)
         (DesignMainMismatches()
           ..dna_design = props.dna_design
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
