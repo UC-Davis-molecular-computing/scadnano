@@ -27,4 +27,4 @@ targets:
           templates:
             "test/_templates/react_components_test_template.html":
               - "test/components/*_test.dart"
-              
+              - "test/middleware_test.dart"

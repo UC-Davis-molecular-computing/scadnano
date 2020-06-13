@@ -28,7 +28,7 @@ def adjust_helix_grid_and_positions(design: sc.DNADesign):
     for helix in design.helices.values():
         helix.grid_position = None
         position3d = idx_to_position(helix.idx)
-        helix.position3d = position3d
+        helix.position = position3d
 
 
 def idx_to_position(idx: int):

@@ -44,7 +44,12 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
         app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
         app.state.ui_state.selectables_store.selected_items.isNotEmpty)
     ..modification_font_size = state.ui_state.modification_font_size
-    ..modification_display_connector = state.ui_state.modification_display_connector),
+    ..modification_display_connector = state.ui_state.modification_display_connector
+    ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
+    ..display_base_offsets_of_major_ticks_only_first_helix =
+        state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+    ..display_major_tick_widths = state.ui_state.display_major_tick_widths
+    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -66,6 +71,10 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
+  bool display_base_offsets_of_major_ticks;
+  bool display_base_offsets_of_major_ticks_only_first_helix;
+  bool display_major_tick_widths;
+  bool display_major_tick_widths_all_helices;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -131,8 +140,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
           request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
         }
         ..display = '📂 Open...'
-        ..keyboard_shortcut = 'Ctrl+O'
-      )(),
+        ..keyboard_shortcut = 'Ctrl+O')(),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = (_) {
@@ -147,8 +155,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..onChange = (e) {
           request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
         }
-        ..display = 'Import cadnano v2'
-      )(),
+        ..display = 'Import cadnano v2')(),
       (MenuDropdownItem()
         ..on_click = (_) {
           props.dispatch(actions.ExportCadnanoFile());
@@ -252,6 +259,15 @@ zooming navigation, so uncheck it to speed up navigation.'''
         ..onChange = (_) {
           props.dispatch(actions.ShowDNASet(!props.show_dna));
         })(),
+      (MenuBoolean()
+        ..value = props.show_mismatches
+        ..display = 'Show DNA Base Mismatches'
+        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
+and the strand on the same helix with the opposite orientation.'''
+        ..name = 'show-mismatches'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+        })(),
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.show_modifications
@@ -263,6 +279,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
         })(),
       (MenuBoolean()
         ..value = props.modification_display_connector
+        ..hide = !props.show_modifications
         ..display = 'Display Modification Connector'
         ..tooltip = '''Check to display DNA modification connectors.'''
         ..name = 'modifications-display-connector-span'
@@ -272,7 +289,7 @@ zooming navigation, so uncheck it to speed up navigation.'''
       (Dom.span()
         ..title = '''Adjust modification font size.'''
         ..className = 'modifications-font-size-span menu-item'
-        ..style = {'display': 'block'})(
+        ..style = props.show_modifications ? {'display': 'block'} : {'display': 'none'})(
         (Dom.label())(
           (Dom.input()
             ..style = {'marginRight': '1em', 'width': '4em'}
@@ -287,19 +304,45 @@ zooming navigation, so uncheck it to speed up navigation.'''
               int font = int.parse(inputElement.value);
               props.dispatch(actions.SetModificationFontSize(font));
             }
-            ..value = 'Set Modification Font')(),
+            ..value = 'Modification Font Size')(),
         ),
       ),
       DropdownDivider({}),
       (MenuBoolean()
-        ..value = props.show_mismatches
-        ..display = 'Show DNA Base Mismatches'
-        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
-and the strand on the same helix with the opposite orientation.'''
-        ..name = 'show-mismatches'
+        ..value = props.display_base_offsets_of_major_ticks
+        ..display = 'Display Major Tick Offsets'
+        ..tooltip = '''Check to display the integer base offset above major ticks.'''
         ..onChange = (_) {
-          props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
+          props.dispatch(
+              actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
         })(),
+      (MenuBoolean()
+        ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
+        ..hide = !props.display_base_offsets_of_major_ticks
+        ..display = '... On All Helices'
+        ..tooltip = '''Check to display the integer base offset above major tick for all helices.'''
+        ..onChange = (_) {
+          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+              !props.display_base_offsets_of_major_ticks_only_first_helix));
+        })(),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.display_major_tick_widths
+        ..display = 'Display Major Tick Widths'
+        ..tooltip = '''Check to display the space between major ticks.'''
+        ..onChange = (_) {
+          props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths));
+        })(),
+      (MenuBoolean()
+        ..value = props.display_major_tick_widths_all_helices
+        ..hide = !props.display_major_tick_widths
+        ..display = '...On All Helices'
+        ..tooltip = '''Check to display the space between major ticks for all helices.'''
+        ..onChange = (_) {
+          props.dispatch(
+              actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices));
+        })(),
+      DropdownDivider({}),
       (MenuBoolean()
         ..value = props.autofit
         ..display = 'Auto-fit On Loading New Design'
@@ -321,7 +364,7 @@ looking at before changing the script.'''
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
         ..tooltip =
-        '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+            '''Check this so that, only selected helices in the side view are displayed in the main view.'''
         ..name = 'display-only-selected-helices'
         ..onChange = (_) {
           props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
@@ -405,8 +448,7 @@ looking at before changing the script.'''
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
         'Web Interface Tutorial',

@@ -26,7 +26,7 @@ const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
 
 const String INITIAL_VERSION = "0.1.0";
 
-const String CURRENT_VERSION = "0.8.2";
+const String CURRENT_VERSION = "0.9.0";
 
 const String DNA_BASE_WILDCARD = '?';
 
@@ -57,6 +57,9 @@ const double DISTANCE_BETWEEN_HELICES_MAIN_SVG = (BASE_WIDTH_SVG * HELIX_DIAMETE
 const double NM_TO_MAIN_SVG_PIXELS = (BASE_WIDTH_SVG / 0.34);
 
 const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
+
+const double MAJOR_TICKS_OFFSET_TEXT_Y = -2;
+const double MAJOR_TICKS_OFFSET_TEXT_DX = -2;
 
 //const Grid default_grid = Grid.none;
 const Grid default_grid = Grid.square;
@@ -127,7 +130,8 @@ const roll_key = 'roll';
 const yaw_key = 'yaw';
 const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
-const position3d_key = 'position';
+const position_key = 'position';
+const legacy_position_keys = ['origin']; //XXX: we aren't check for this currently
 const helix_major_ticks_key = 'major_ticks';
 const helix_major_tick_distance_key = 'major_tick_distance';
 const helix_keys = [
@@ -137,7 +141,7 @@ const helix_keys = [
   roll_key,
   grid_position_key,
   svg_position_key,
-  position3d_key,
+  position_key,
   helix_major_ticks_key,
   helix_major_tick_distance_key,
 ];

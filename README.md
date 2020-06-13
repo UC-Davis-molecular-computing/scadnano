@@ -61,6 +61,8 @@ Please file bug reports and make feature requests as GitHub repository issues in
 or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
+Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) won't always advance at the same time. However, when a breaking change is made, this will increment the minor or major version numbers in both libraries (version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9).
+
 
 ## Reporting issues
 

@@ -487,9 +487,8 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     json_map.addAll(unused_fields.toMap());
 
-//    if (this.grid != constants.default_grid) {
     json_map[constants.grid_key] = this.grid.to_json();
-//    }
+
     if (this.major_tick_distance != null && this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
@@ -576,7 +575,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     var dna_design_builder = DNADesignBuilder();
 
     dna_design_builder.version =
-        util.get_value_with_default(json_map, constants.version_key, constants.INITIAL_VERSION);
+        util.get_value_with_default(json_map, constants.version_key, constants.CURRENT_VERSION);
+    bool position_x_z_should_swap = util.version_precedes(dna_design_builder.version, '0.9.0');
+
     dna_design_builder.grid = util.get_value_with_default(
         json_map, constants.grid_key, constants.default_grid,
         transformer: Grid.valueOf);
@@ -610,9 +611,15 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDNADesignError(
             'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
-      } else if (!grid_is_none && helix_json.containsKey(constants.position3d_key)) {
+      } else if (!grid_is_none && helix_json.containsKey(constants.position_key)) {
         throw IllegalDNADesignError(
-            'grid is not none, but Helix $idx has position = ${helix_json[constants.position3d_key]}');
+            'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
+      }
+      if (position_x_z_should_swap && grid_is_none) {
+        // prior to version 0.10.0, x and z had the opposite role
+        num swap = helix_builder.position_.x;
+        helix_builder.position_.x = helix_builder.position_.z;
+        helix_builder.position_.z = swap;
       }
       helix_builders.add(helix_builder);
       idx++;

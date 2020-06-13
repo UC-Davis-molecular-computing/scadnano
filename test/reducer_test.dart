@@ -10,12 +10,11 @@ import 'dart:html';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
+
 import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
 import 'package:scadnano/src/reducers/selection_reducer.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
@@ -35,120 +34,12 @@ import 'package:scadnano/src/state/selection_box.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
-import 'package:scadnano/src/util.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/extension_methods.dart';
 import 'package:scadnano/src/util.dart' as util;
 import 'package:scadnano/src/constants.dart' as constants;
-
-/// Returns an [AppState] based on dna design.
-AppState app_state_from_dna_design(DNADesign dna_design) {
-  var ui_state = AppUIState.from_dna_design(dna_design);
-  var state = (DEFAULT_AppStateBuilder
-        ..dna_design.replace(dna_design)
-        ..ui_state.replace(ui_state)
-        ..editor_content = '')
-      .build();
-  return state;
-}
-
-/// Returns an [AppState] based on dna_design_json
-/// and initial DNA design state. This is used to generate
-/// expected app states by adding the initial action to
-/// the undo stack as well as changing changed_since_last_save
-/// to true.
-AppState expected_state_from_json_string(String dna_design_json, DNADesign initial_design) {
-  return app_state_from_dna_design(DNADesign.from_json(json.decode(dna_design_json))).rebuild((b) => b
-    ..undo_redo.undo_stack.add(initial_design)
-    ..ui_state.changed_since_last_save = true);
-}
-
-Color DUMMY_COLOR = Color.rgb(0, 0, 0);
-
-Strand recolor_strand(Strand strand) {
-  return strand.rebuild((b) => b.color = DUMMY_COLOR);
-}
-
-BuiltList<Strand> recolor_strands(BuiltList<Strand> strands) {
-  var strandsBuilder = strands.toBuilder();
-  for (int i = 0; i < strands.length; ++i) {
-    strandsBuilder[i] = recolor_strand(strands[i]);
-  }
-
-  return strandsBuilder.build();
-}
-
-/// Checks that two lists of strands contain the same elements.
-void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> expected_strands) {
-  var actual_recolored_strands = recolor_strands(actual_strands);
-  var expected_recolored_strands = recolor_strands(expected_strands);
-
-  // Check hashing for potential quick comparison.
-  if (actual_recolored_strands.hashCode != expected_recolored_strands.hashCode) {
-    expect(actual_recolored_strands.length == expected_recolored_strands.length, true);
-    for (Strand strand in expected_recolored_strands) {
-      expect(actual_recolored_strands.contains(strand), true);
-    }
-  }
-}
-
-/// Checks that two lists of helices contain the same helix (and same order).
-void expect_helices_equal(BuiltMap<int, Helix> actual_helices, BuiltMap<int, Helix> expected_helices) {
-  // Check hashing for potential quick comparison.
-  if (actual_helices.hashCode != expected_helices.hashCode) {
-    expect(actual_helices.length, expected_helices.length);
-    for (int key in actual_helices.keys) {
-      expect(actual_helices[key], expected_helices[key]);
-    }
-  }
-}
-
-/// Asserts that the [actual] matches [matcher] DNADesign.
-///
-/// This function makes debugging easier by splitting the giant assertion
-/// into smaller assertions on individual fields.
-void expect_dna_design_equal(DNADesign actual, DNADesign matcher) {
-  expect(actual.version, matcher.version);
-  expect(actual.grid, matcher.grid);
-  expect(actual.major_tick_distance, matcher.major_tick_distance);
-  expect_helices_equal(actual.helices, matcher.helices);
-  expect_strands_equal(actual.strands, matcher.strands);
-  expect(actual.is_origami, matcher.is_origami);
-}
-
-/// Asserts that the [actual] matches [matcher] AppUIState.
-void expect_ui_state_equal(AppUIState actual, AppUIState matcher) {
-  // Not neccessary to split assertion at the moment.
-  expect(actual, matcher);
-}
-
-/// Asserts that [actual] stack matches [matcher] stack.
-void expect_stack_equal(BuiltList<DNADesign> actual, BuiltList<DNADesign> matcher) {
-  expect(actual.length, matcher.length);
-
-  for (int i = 0; i < actual.length; ++i) {
-    expect_dna_design_equal(actual[i], matcher[i]);
-  }
-}
-
-/// Asserts that the [actual] matches [matcher] UndoRedo.
-void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
-  expect_stack_equal(actual.undo_stack, matcher.undo_stack);
-  expect_stack_equal(actual.redo_stack, matcher.redo_stack);
-}
-
-/// Asserts that the [actual] matches [matcher] AppState.
-///
-/// This function makes debugging easier by splitting the giant assertion
-/// into smaller assertions on individual fields.
-void expect_app_state_equal(AppState actual, AppState matcher) {
-  expect_dna_design_equal(actual.dna_design, matcher.dna_design);
-  expect_ui_state_equal(actual.ui_state, matcher.ui_state);
-  expect_undo_redo_equal(actual.undo_redo, matcher.undo_redo);
-  expect(actual.error_message, matcher.error_message);
-  expect(actual.editor_content, matcher.editor_content);
-}
+import 'utils.dart';
 
 main() {
   test('read in color specified as decimal', () {
@@ -212,6 +103,7 @@ main() {
     // 0066cc hex is 26316 decimal
     String json_str = r"""
     { 
+      "version": "0.9.0",
       "grid": "none",
       "helices": [{
         "position": { 
@@ -248,6 +140,7 @@ main() {
     // 0066cc hex is 26316 decimal
     String json_str = r"""
     { 
+      "version": "0.9.0",
       "grid": "none",
       "helices": [{ 
           "origin": { "x": 1, "y": 2, "z": 3}, 
@@ -280,6 +173,7 @@ main() {
     // 0066cc hex is 26316 decimal
     String json_str = r"""
     { 
+      "version": "0.9.0",
       "grid": "none",
       "helices": [{ 
           "x": 1, 
@@ -333,7 +227,7 @@ main() {
 
   String simple_strand = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -359,7 +253,7 @@ main() {
   test('test add nick on substrand', () {
     String content_after = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -397,7 +291,7 @@ main() {
   test('test add two nicks on substrand', () {
     String content_after = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -438,7 +332,7 @@ main() {
   //     TTTGGGCC AAACCCGG
   String smaller_design_h0_json = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -468,7 +362,7 @@ main() {
   test('test add nick small_design_h0 forward', () {
     String content_after = """
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -513,7 +407,7 @@ main() {
   test('test add nick small_design_h0 reverse', () {
     String content_after = """
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -570,7 +464,7 @@ main() {
 //     <------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------]
   String six_helix_rectangle_json = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -673,7 +567,7 @@ main() {
 
     String h5_after_nick_json = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -709,7 +603,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h0_reverse, offset: 40));
     String h0_after_nick_json = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square", 
   "helices": [ 
     {"grid_position": [0, 0]}, 
@@ -744,7 +638,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h0_reverse_for_nick3, offset: 72));
     String h0_after_nick3_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -771,7 +665,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick4, offset: 40));
     String h2_after_nick4_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -798,7 +692,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick5, offset: 72));
     String h2_after_nick5_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -825,7 +719,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick6, offset: 40));
     String h4_after_nick6_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -852,7 +746,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick7, offset: 72));
     String h4_after_nick7_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -879,7 +773,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick8, offset: 24));
     String h1_after_nick8_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -906,7 +800,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick9, offset: 56));
     String h1_after_nick9_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -933,7 +827,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick10, offset: 24));
     String h3_after_nick10_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -960,7 +854,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick11, offset: 56));
     String h3_after_nick11_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -987,7 +881,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick12, offset: 24));
     String h5_after_nick12_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -1014,7 +908,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick13, offset: 56));
     String h5_after_nick13_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -1039,7 +933,7 @@ main() {
 
     String content_after = r"""
  {
-  "version": "0.0.1",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -1190,7 +1084,7 @@ main() {
   //    <-------------X----------------]
   String simple_helix_with_deletion_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
@@ -1221,7 +1115,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r"""
  {
-  "version": "0.0.1", "grid": "square", 
+  "version": "0.9.0", "grid": "square", 
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
@@ -1258,7 +1152,7 @@ main() {
 
     content_after = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
@@ -1306,7 +1200,7 @@ main() {
   //    <-------------I----------------]
   String simple_helix_with_insertion_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1335,7 +1229,7 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
     String content_after = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1371,7 +1265,7 @@ main() {
 
     content_after = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1431,7 +1325,7 @@ main() {
   //    TTTTAAAAGGGGCCCC
   String simple_strand_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -1482,7 +1376,7 @@ main() {
 
     String content_after = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATT",
@@ -1524,7 +1418,7 @@ main() {
   //   AGTCAGTC AATTCCGG
   String two_strands_forward_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTC",
@@ -1548,7 +1442,7 @@ main() {
   //   AGTCAGTCAATTCCGG
   String ligate_two_strands_forward_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1582,7 +1476,7 @@ main() {
   //   GGCCTTAA CTGACTGA
   String two_strands_reverse_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AATTCCGG",
@@ -1606,7 +1500,7 @@ main() {
   //   GGCCTTAACTGACTGA
   String ligate_two_strands_reverse_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1644,7 +1538,7 @@ main() {
   //   <-------------------]
   String two_helices_json = r"""
  {
-  "version": "0.0.1", 
+  "version": "0.9.0", 
   "grid": "square", 
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
@@ -1764,7 +1658,7 @@ main() {
   //   <-------------------]
   String two_helices_join_inner_strands_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -1848,7 +1742,7 @@ main() {
 
     String two_helices_helix_add_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
       "domains": [
@@ -1897,7 +1791,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
   });
 
-  test('remove first helix from DNA design (see issue #184)', () {
+  test('remove_first_helix_from_DNA_design', () {
+    // see issue #184
     AppState original_state = app_state_from_dna_design(two_helices_design);
 
     AppState final_state = app_state_reducer(original_state, HelixRemove(0));
@@ -1905,8 +1800,11 @@ main() {
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design]));
 
     Helix helix1 = two_helices_design.helices[1];
+    num svg_y_helix_1 =
+        helix1.grid_position.v * constants.HELIX_DIAMETER_NM * constants.NM_TO_MAIN_SVG_PIXELS;
+
     Helix new_helix1 = helix1.rebuild((b) => b
-      ..svg_position = Point(0, 0)
+      ..svg_position = Point(0, svg_y_helix_1)
       ..view_order = 0);
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
     DNADesign new_dna_design =
@@ -1950,7 +1848,7 @@ main() {
     //    TTAAGGCCTTAAGGCC
     String expected_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
+      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
       "strands": [
         {
           "sequence": "CCGGAATTCCGGAATT",
@@ -2012,7 +1910,7 @@ main() {
     //    TTTTAAAAGGGGCCCC
     String expected_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
+      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
       "strands": [
         {
           "sequence": "CCCCGGGGAAAATTTT",
@@ -2052,7 +1950,7 @@ main() {
   //   <-------------------]
   String two_helices_with_helix_idx_gap_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
   "strands": [
     {
       "domains": [
@@ -2089,7 +1987,7 @@ main() {
         UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_with_helix_idx_gap_design]));
     String expected_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
+      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
       "strands": [
         {
           "domains": [
@@ -2127,7 +2025,7 @@ main() {
   //     <---------------]
   String simple_helix_no_seq_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2190,7 +2088,7 @@ main() {
     //     <---------------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2241,7 +2139,7 @@ main() {
     //     <---------------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2292,7 +2190,7 @@ main() {
     //     <--]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2343,7 +2241,7 @@ main() {
     //         <-----------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2403,7 +2301,7 @@ main() {
     //         <-----------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2474,7 +2372,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2546,7 +2444,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2647,7 +2545,7 @@ main() {
     //            4  5
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2697,7 +2595,7 @@ main() {
   //          <------]
   String simple_helix_no_seq_smaller_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2740,7 +2638,7 @@ main() {
     //          <------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2795,7 +2693,7 @@ main() {
     //          <------]
     String expected_json = r"""
 {
-"version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2915,7 +2813,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -2968,7 +2866,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -3136,8 +3034,8 @@ main() {
     });
   });
 
-  group('View Menu options tests:', () {
-    test('Test SetShowDNA', () {
+  group('View_Menu_options_tests:', () {
+    test('Test_SetShowDNA', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
       AppState final_state = app_state_reducer(initial_state, ShowDNASet(true));
@@ -3146,7 +3044,7 @@ main() {
       expect(final_state.ui_state.show_dna, false);
     });
 
-    test('Test ShowModificationsSet', () {
+    test('Test_ShowModificationsSet', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
       AppState final_state = app_state_reducer(initial_state, ShowModificationsSet(true));
       expect(final_state.ui_state.show_modifications, true);
@@ -3154,7 +3052,7 @@ main() {
       expect(final_state.ui_state.show_modifications, false);
     });
 
-    test('Test SetModificationDisplayConnector', () {
+    test('Test_SetModificationDisplayConnector', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
       AppState final_state = app_state_reducer(initial_state, SetModificationDisplayConnector(true));
       expect(final_state.ui_state.modification_display_connector, true);
@@ -3162,13 +3060,46 @@ main() {
       expect(final_state.ui_state.modification_display_connector, false);
     });
 
-    test('Test SetModificationFontSize', () {
+    test('Test_SetDisplayBaseOffsetsOfMajorTicks', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayBaseOffsetsOfMajorTicks(true));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks, true);
+      final_state = app_state_reducer(final_state, SetDisplayBaseOffsetsOfMajorTicks(false));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks, false);
+    });
+
+    test('Test_SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state =
+          app_state_reducer(initial_state, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(true));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks_only_first_helix, true);
+      final_state = app_state_reducer(final_state, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(false));
+      expect(final_state.ui_state.display_base_offsets_of_major_ticks_only_first_helix, false);
+    });
+
+    test('Test_etDisplayMajorTickWidths', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayMajorTickWidths(true));
+      expect(final_state.ui_state.display_major_tick_widths, true);
+      final_state = app_state_reducer(final_state, SetDisplayMajorTickWidths(false));
+      expect(final_state.ui_state.display_major_tick_widths, false);
+    });
+
+    test('Test_SetDisplayMajorTickWidthsAllHelices', () {
+      AppState initial_state = app_state_from_dna_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, SetDisplayMajorTickWidthsAllHelices(true));
+      expect(final_state.ui_state.display_major_tick_widths_all_helices, true);
+      final_state = app_state_reducer(final_state, SetDisplayMajorTickWidthsAllHelices(false));
+      expect(final_state.ui_state.display_major_tick_widths_all_helices, false);
+    });
+
+    test('Test_SetModificationFontSize', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
       AppState final_state = app_state_reducer(initial_state, SetModificationFontSize(45));
       expect(final_state.ui_state.modification_font_size, 45);
     });
 
-    test('Test SetShowMismatches', () {
+    test('Test_SetShowMismatches', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
       AppState final_state = app_state_reducer(initial_state, ShowMismatchesSet(true));
@@ -3177,7 +3108,7 @@ main() {
       expect(final_state.ui_state.show_mismatches, false);
     });
 
-    test('Test SetShowEditor', () {
+    test('Test_SetShowEditor', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
 
       AppState final_state = app_state_reducer(initial_state, SetShowEditor(true));
@@ -3186,16 +3117,12 @@ main() {
       expect(final_state.ui_state.show_editor, false);
     });
 
-    test('Test SetOnlyDisplaySelectedHelices', () {
+    test('Test_SetOnlyDisplaySelectedHelices', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
 
-      // Because it is selected, it will appear at the top now.
-      Helix new_selected_helix = two_helices_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0));
-
       AppState expected_state_after_set_true = initial_state.rebuild((b) => b
-        ..ui_state.storables.only_display_selected_helices = true
-        ..dna_design.helices.updateValue(1, (_) => new_selected_helix));
+        ..ui_state.storables.only_display_selected_helices = true);
 
       AppState final_state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
       expect(final_state.ui_state.only_display_selected_helices, true);
@@ -3225,14 +3152,20 @@ main() {
       expect(new_state == expected_state, true);
     });
 
-    test('save design after add helix to DNA design', () {
+    test('save_design_after_add_helix_to_DNA_design', () {
       AppState state = app_state_from_dna_design(two_helices_design);
       state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
       state = app_state_reducer(state, SaveDNAFile());
 
-      String two_helices_helix_add_json = r"""
+      String two_helices_helix_add_json = """
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "version": "${constants.CURRENT_VERSION}",""" + r"""
+  "grid": "square", 
+  "helices": [ 
+    {"grid_position": [0, 0]}, 
+    {"grid_position": [0, 1]}, 
+    {"grid_position": [0, 2], "max_offset": 16} 
+  ],
   "strands": [
     {
       "domains": [
@@ -3290,10 +3223,10 @@ main() {
       expect(final_state.dna_design == null, true);
     });
 
-    test('load and save design with unused fields', () {
-      var json_before = r"""
+    test('load_and_save_design_with_unused_fields', () {
+      var json_before = """
       {
-        "version": "0.0.1", 
+        "version": "${constants.CURRENT_VERSION}",""" + r"""
         "grid": "square",
         "extra_dna_design_field": {
           "foo_field": "foo",
@@ -3407,7 +3340,7 @@ main() {
     });
   });
 
-  group('Mouseover Data tests: ', () {
+  group('Mouseover_Data_tests:', () {
     test('MouseOverUpdate over an offset', () {
       //   0                  16
       //
@@ -3545,7 +3478,7 @@ main() {
     //   <-------------------]
     String two_helices_crossover_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -3770,7 +3703,7 @@ main() {
   //   TCAGTCAGTCAGTCAG  \_/  T
   String simple_loopout_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -3909,7 +3842,7 @@ main() {
       //    TTTTAAAAGGGGCCCC
       String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -3966,7 +3899,7 @@ main() {
       //   TCAGTCAGTCAGTCAG
       String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTC",
@@ -4022,15 +3955,13 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
     });
 
-    test('HelixSelect (only display selected helices)', () {
+    test('HelixSelect_only_display_selected_helices)', () {
       AppState state = app_state_from_dna_design(simple_strand_dna_design);
       state = app_state_reducer(state, HelixSelect(1, true));
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state = state.rebuild((b) => b
-        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
-        ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0)));
+        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
       expect_app_state_equal(state, expected_state);
     });
 
@@ -4039,7 +3970,7 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, BuiltList<int>());
     });
 
-    test('HelixSelectionClear (only display selected helices)', () {
+    test('HelixSelectionClear_only_display_selected_helices)', () {
       // setup
       AppState initial_state = app_state_from_dna_design(simple_strand_dna_design);
       AppState state = app_state_reducer(initial_state, HelixSelect(1, true));
@@ -4048,8 +3979,7 @@ main() {
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1])
-        ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0)));
+      );
       expect_app_state_equal(state, expected_state);
 
       // clear should reset helix positions (but keep only display selected helices true).
@@ -4062,53 +3992,44 @@ main() {
     var MARGIN = 1;
     test('HelixSelectionAdjust', () {
       // Creating a box that wraps around the grid from (0, 0) to (1, 0) to select helix 0
-      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
     });
 
-    test('HelixSelectionAdjust with toggle on', () {
+    test('HelixSelectionAdjust_with_toggle_on', () {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
-      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
     });
 
-    test('HelixSelectionAdjust with toggle on (only display selected helices)', () {
+    test('HelixSelectionAdjust_with_toggle_on_only_display_selected_helices)', () {
       // setup (set only display selected helices to true and select just 0)
       AppState initial_state = app_state_from_dna_design(simple_strand_dna_design);
       AppState state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
       state = app_state_reducer(state, HelixSelect(0, true));
 
-      // Unselct 0 and select 1 and 2
-      var x = HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      // Unselect 0 and select 1 and 2
+      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
 
-      // Should readjust svg position of helices 1 and 2.
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
         ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2])
-        ..dna_design.helices[1] =
-            simple_strand_dna_design.helices[1].rebuild((b) => b..svg_position = Point(0, 0))
-        ..dna_design.helices[2] = simple_strand_dna_design.helices[2].rebuild((b) => b
-          ..svg_position = Point(
-            0,
-            simple_strand_dna_design.helices[1].grid_position.distance_nm(
-                    simple_strand_dna_design.helices[2].grid_position, simple_strand_dna_design.grid) *
-                NM_TO_MAIN_SVG_PIXELS,
-          )));
+      );
       expect_app_state_equal(state, expected_state);
     });
   });
 
-  group('Helix Change min/max offsets', () {
+  group('Helix_Change_min_max_offsets', () {
     // simple_strand_dna_design
     //     0            16
     //    AGTCAGTCAGTCAGTC
@@ -4138,7 +4059,7 @@ main() {
 
       String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ 
+  "version": "0.9.0", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 60},
     {"grid_position": [0, 1], "max_offset": 70},
     {"grid_position": [0, 2] }
@@ -4174,7 +4095,7 @@ main() {
 
     String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ 
+  "version": "0.9.0", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 50},
     {"grid_position": [0, 1], "max_offset": 50},
     {"grid_position": [0, 2], "max_offset": 50 }
@@ -4219,7 +4140,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 5));
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4240,7 +4161,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 3));
       expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4272,7 +4193,7 @@ main() {
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 0));
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4306,7 +4227,7 @@ main() {
 
       String expected_json = r"""
  {
-  "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -4340,7 +4261,7 @@ main() {
     //
     String one_empty_helix_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
+      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
       "strands": []
     }
     """;
@@ -4493,7 +4414,7 @@ main() {
     //   <-------------------]   strand2
     String two_helices_with_empty_offsets_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [
+      "version": "0.9.0", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32},
         {"grid_position": [0, 1], "max_offset": 32}
       ],
@@ -4633,7 +4554,7 @@ main() {
 
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [
+        "version": "0.9.0", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4731,7 +4652,7 @@ main() {
 
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [
+        "version": "0.9.0", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4770,7 +4691,7 @@ main() {
 
     String two_helices_with_empty_offsets_non_sequential_idx_json = r"""
     {
-      "version": "0.0.1", "grid": "square", "helices": [
+      "version": "0.9.0", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32, "idx": 3},
         {"grid_position": [0, 1], "max_offset": 32, "idx": 4}
       ],
@@ -5034,7 +4955,7 @@ main() {
 
   String simple_helix_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -5098,7 +5019,7 @@ main() {
       //     GCTCCCCGACAACCTA
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -5152,7 +5073,7 @@ main() {
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1));
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5193,7 +5114,7 @@ main() {
 
       String expected_json = r"""
         {
-          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5231,7 +5152,7 @@ main() {
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1));
       String expected_json = r"""
       {
-        "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5273,7 +5194,7 @@ main() {
       );
       String expected_json = r"""
         {
-          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5312,7 +5233,7 @@ main() {
       );
       String expected_json = r"""
         {
-          "version": "0.0.1", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5341,14 +5262,14 @@ main() {
   //   <-------------------]
   String no_grid_two_helices_json = r"""
           {
-            "version": "0.0.1",
+            "version": "0.9.0",
             "grid": "none",
             "helices": [
               {
-                "position": {"x": 30, "y": 60, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+                "position": {"x": 10, "y": 60, "z": 30}
               },
               {
-                "position": {"x": 50, "y": 80, "z": 0, "pitch": 0, "roll": 0, "yaw": 0}
+                "position": {"x": 20, "y": 80, "z": 50}
               }
             ],
             "strands": [
@@ -5406,7 +5327,7 @@ main() {
         GridPosition gridPosition = helices_builder[i].grid_position.build();
         helices_builder[i]
           ..grid = grid
-          ..position_.replace(grid_to_position3d(gridPosition, Grid.square))
+          ..position_.replace(util.grid_to_position3d(gridPosition, Grid.square))
           ..grid_position = null;
       }
       BuiltMap<int, Helix> new_helices =
@@ -5418,8 +5339,8 @@ main() {
     });
 
     test('GridChange none to square', () {
-      Position3D position0 = Position3D(x: 30, y: 60, z: 0);
-      Position3D position1 = Position3D(x: 50, y: 80, z: 0);
+      Position3D position0 = Position3D(x: 0, y: 60, z: 30);
+      Position3D position1 = Position3D(x: 0, y: 80, z: 50);
       AppState state = app_state_from_dna_design(no_grid_two_helices_design);
       Grid grid = Grid.square;
       state = app_state_reducer(state, GridChange(grid: grid));
@@ -5468,16 +5389,36 @@ main() {
     expect_app_state_equal(state, expected_state);
   });
 
-  test('HelixPositionSet', () {
+  test('helix_svg_position_from_position', () {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
-
+    // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
+    // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Position3D new_position0 = Position3D(x: 10, y: 30, z: 10);
-//    Position3D old_position1 = Position3D(x: 50, y: 80, z: 0);
-    Point<num> svg_position0 = Point<num>(0, 0);
-    Point<num> svg_position1 = Point<num>(
-        0, sqrt((50 - 10) * (50 - 10) + (80 - 30) * (80 - 30)) * constants.NM_TO_MAIN_SVG_PIXELS);
+    Point<num> svg_position0 = Point<num>(10, 60) * constants.NM_TO_MAIN_SVG_PIXELS;
+    Point<num> svg_position1 = Point<num>(20 * constants.NM_TO_MAIN_SVG_PIXELS,
+        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * constants.NM_TO_MAIN_SVG_PIXELS);
+
+    Helix expected_helix0 = helix0.rebuild((b) => b..svg_position = svg_position0);
+    Helix expected_helix1 = helix1.rebuild((b) => b..svg_position = svg_position1);
+    var expected_helices = {0: expected_helix0, 1: expected_helix1};
+
+    AppState expected_state = state.rebuild((b) => b..dna_design.helices.replace(expected_helices));
+
+    expect_app_state_equal(state, expected_state);
+  });
+
+  test('HelixPositionSet', () {
+    AppState state = app_state_from_dna_design(no_grid_two_helices_design);
+    // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
+    // helix 0 new position: Position3D(x: 40, y: 30, z: 130);
+    // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
+    Helix helix0 = no_grid_two_helices_design.helices[0];
+    Helix helix1 = no_grid_two_helices_design.helices[1];
+    Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
+    Point<num> svg_position0 = Point<num>(40, 30) * constants.NM_TO_MAIN_SVG_PIXELS;
+    Point<num> svg_position1 = Point<num>(20 * constants.NM_TO_MAIN_SVG_PIXELS,
+        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * constants.NM_TO_MAIN_SVG_PIXELS);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5494,16 +5435,19 @@ main() {
     expect_app_state_equal(state, expected_state);
   });
 
-  test('HelixPositionSet two helices', () {
+  test('two_helices_Helix_Position_Set', () {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
-
+    // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
+    // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
+    // helix 0 new position: Position3D(x: 200, y: 160, z: 10);
+    // helix 1 new position: Position3D(x: 300, y: 280, z: 500);
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Position3D position0 = Position3D(x: 10, y: 30, z: 0);
-    Position3D position1 = Position3D(x: 0, y: 100, z: 0);
-    Point<num> svg_position0 = Point<num>(0, 0);
-    Point<num> svg_position1 = Point<num>(
-        0, sqrt((0 - 10) * (0 - 10) + (100 - 30) * (100 - 30)) * constants.NM_TO_MAIN_SVG_PIXELS);
+    Position3D position0 = Position3D(x: 200, y: 160, z: 10);
+    Position3D position1 = Position3D(x: 300, y: 280, z: 500);
+    Point<num> svg_position0 = Point<num>(200, 160) * constants.NM_TO_MAIN_SVG_PIXELS;
+    Point<num> svg_position1 = Point<num>(300 * constants.NM_TO_MAIN_SVG_PIXELS,
+        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * constants.NM_TO_MAIN_SVG_PIXELS);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)

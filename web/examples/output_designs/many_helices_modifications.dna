@@ -1,5 +1,5 @@
 {
-  "version": "0.8.2",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -12,6 +12,18 @@
     {"grid_position": [0, 7]}
   ],
   "modifications_in_design": {
+    "/iCy3/": {
+      "display_text": "Cy3",
+      "idt_text": "/iCy3/",
+      "display_connector": false,
+      "location": "internal"
+    },
+    "/3Cy3Sp/": {
+      "display_text": "Cy3",
+      "idt_text": "/3Cy3Sp/",
+      "display_connector": false,
+      "location": "3'"
+    },
     "/5Biosg/": {
       "display_text": "B",
       "idt_text": "/5Biosg/",
@@ -24,18 +36,6 @@
       "display_connector": false,
       "location": "internal",
       "allowed_bases": ["T"]
-    },
-    "/3Cy3Sp/": {
-      "display_text": "Cy3",
-      "idt_text": "/3Cy3Sp/",
-      "display_connector": false,
-      "location": "3'"
-    },
-    "/iCy3/": {
-      "display_text": "Cy3",
-      "idt_text": "/iCy3/",
-      "display_connector": false,
-      "location": "internal"
     }
   },
   "strands": [

@@ -18,6 +18,7 @@ import 'package:scadnano/src/middleware/export_svg.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
+import 'package:tuple/tuple.dart';
 
 import 'app.dart';
 import 'json_serializable.dart';
@@ -92,7 +93,6 @@ int color_hex_to_decimal_int(String hex) {
   int d = int.parse(hex, radix: 16);
   return d;
 }
-
 
 bool is_increasing<T extends Comparable>(Iterable<T> items) {
   T prev = null;
@@ -186,6 +186,38 @@ GridPosition grid_position_of_mouse_in_side_view(Grid grid,
   return grid_pos;
 }
 
+bool version_precedes(String v1_str, String v2_str) {
+  var version1 = get_version(v1_str);
+  var version2 = get_version(v2_str);
+  return version1 < version2;
+}
+
+class Version {
+  int major;
+  int minor;
+  int patch;
+
+  Version(this.major, this.minor, this.patch);
+
+  bool operator <(Version other) =>
+      (major < other.major) ||
+      (major == other.major && minor < other.minor) ||
+      (major == other.major && minor == other.minor && patch < other.patch);
+}
+
+/// Pulls major/minor/patch integers from version_str, e.g., "2.13.432" becomes the Tuple (2, 13, 432)
+Version get_version(String version_str) {
+  var regex = RegExp(r"(\d+)\.(\d+)\.(\d+)");
+  var match = regex.firstMatch(version_str);
+  var match_g1 = match.group(1);
+  var match_g2 = match.group(2);
+  var match_g3 = match.group(3);
+  int major = int.parse(match_g1);
+  int minor = int.parse(match_g2);
+  int patch = int.parse(match_g3);
+  return Version(major, minor, patch);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
@@ -207,19 +239,19 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
 
   var prev_helix = null;
   for (var helix in selected_helices_sorted_by_view_order) {
-    num x = 0; //TODO: shift x by grid_position.b or position.z
-    num y = 0;
+    num x = main_view_svg_x_of_helix(helix, grid);
+    num y = main_view_svg_y_of_helix(helix, grid);
     if (prev_helix != null) {
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = pos.distance_xy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
+        delta_y = pos.distance_zy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
-        delta_y =
-            prev_grid_position.distance_lattice(grid_position, grid) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
+        delta_y = prev_grid_position.distance_lattice(grid_position, grid) *
+            constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
       }
       y = prev_y + delta_y;
     }
@@ -232,6 +264,19 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
 
   return new_helices;
 }
+
+num main_view_svg_x_of_helix(Helix helix, Grid grid) {
+  if (grid.is_none()) {
+    return helix.position3d().x * constants.NM_TO_MAIN_SVG_PIXELS;
+  } else {
+    return helix.min_offset * constants.BASE_WIDTH_SVG;
+  }
+}
+
+num main_view_svg_y_of_helix(Helix helix, Grid grid) =>
+    helix.position3d().y * constants.NM_TO_MAIN_SVG_PIXELS;
+
+num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
 
 Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in helices) helix.idx: helix};
 
@@ -426,11 +471,11 @@ enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
 /// and the center of circle at grid_position (0,0) is the origin.
 Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num x, y;
+  num z, y;
   if (coordinate_system == HexGridCoordinateSystem.odd_r) {
-    x = gp.h; // x offset from h
+    z = gp.h; // x offset from h
     if (gp.v % 2 == 1) {
-      x += cos(2 * pi / 6); // x offset from v
+      z += cos(2 * pi / 6); // x offset from v
     }
     y = sin(2 * pi / 6) * gp.v; // y offset from v
   } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
@@ -438,17 +483,17 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
     if (gp.h % 2 == 1) {
       y -= cos(2 * pi / 6);
     }
-    x = sin(2 * pi / 6) * gp.h;
+    z = sin(2 * pi / 6) * gp.h;
   } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
     y = gp.v;
     if (gp.h % 2 == 1) {
       y += cos(2 * pi / 6);
     }
-    x = sin(2 * pi / 6) * gp.h;
+    z = sin(2 * pi / 6) * gp.h;
   } else {
     throw UnsupportedError('coordinate system ${coordinate_system} not supported');
   }
-  return Point<num>(x, y);
+  return Point<num>(z, y);
 }
 
 // Uses cadnano coordinate system:
@@ -467,15 +512,15 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
 //
 // The first is used when the row is even and the second when the row is odd.
 Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
-  num x, y;
+  num z, y;
   y = 1.5 * gp.v;
   if (gp.h % 2 == 0 && gp.v % 2 == 1) {
     y += 0.5;
   } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
     y += cos(2 * pi / 6);
   }
-  x = gp.h * sin(2 * pi / 6);
-  return Point<num>(x, y);
+  z = gp.h * sin(2 * pi / 6);
+  return Point<num>(z, y);
   // below inverts the rows, i.e., implements the convention
   //   "The first is used when the row is odd and the second when the row is even."
   // in the documentation above.
@@ -486,25 +531,25 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 //  } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
 //    y -= cos(2 * pi / 6);
 //  }
-//  x = gp.h * sin(2 * pi / 6);
-//  return Point<num>(x, y);
+//  z = gp.h * sin(2 * pi / 6);
+//  return Point<num>(z, y);
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
-  num x = svg_coord.x / (2 * radius), y = svg_coord.y / (2 * radius);
+  num z = svg_coord.x / (2 * radius);
+  num y = svg_coord.y / (2 * radius);
   int h, v;
-  int b = 0;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
     throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
   } else if (grid == Grid.square) {
-    h = x.round();
+    h = z.round();
     v = y.round();
   } else if (grid == Grid.honeycomb) {
-    h = (x / sin(2 * pi / 6)).round();
+    h = (z / sin(2 * pi / 6)).round();
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
@@ -523,17 +568,17 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
     if (coordinate_system == HexGridCoordinateSystem.odd_r) {
       v = (y / sin(2 * pi / 6)).round();
       if (v % 2 == 1) {
-        x -= cos(2 * pi / 6);
+        z -= cos(2 * pi / 6);
       }
-      h = x.round();
+      h = z.round();
     } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
-      h = (x / sin(2 * pi / 6)).round();
+      h = (z / sin(2 * pi / 6)).round();
       if (h % 2 == 1) {
         y += cos(2 * pi / 6);
       }
       v = y.round();
     } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
-      h = (x / sin(2 * pi / 6)).round();
+      h = (z / sin(2 * pi / 6)).round();
       if (h % 2 == 1) {
         y -= cos(2 * pi / 6);
       }
@@ -542,7 +587,7 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
       throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
   }
-  return GridPosition(h, v, b);
+  return GridPosition(h, v);
 }
 
 GridPosition position3d_to_grid(Position3D position, Grid grid) {
@@ -560,16 +605,17 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 }
 
 Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
-    (position.z / 0.34) * constants.BASE_WIDTH_SVG,
+    (position.x / 0.34) * constants.BASE_WIDTH_SVG,
     (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG);
 
 Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
-    position.x * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
+    position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
     position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5);
 
 Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
-    x: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
-    y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5);
+    z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+    y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+    x: 0);
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window
@@ -581,6 +627,8 @@ save_editor_content_to_js_context(String new_content) {
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
 /// Since this is only used for [DNADesign]s, it throws an [IllegalDNADesignError].
 /// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
+/// [name] is the name of the class in which we expect to find this key (e.g., we expect to find
+/// "domains" in Strand
 dynamic get_value(Map<String, dynamic> map, String key, String name, {List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
@@ -768,7 +816,6 @@ _alert_error_saving(e, stack_trace) {
   window.alert(msg);
 }
 
-
 String stack_trace_message_bug_report(stack_trace) {
   return '\n'
       '\n**********************************************************************************'
@@ -817,7 +864,6 @@ num to_radians(num degrees) => degrees * 2 * pi / 360;
 //
 //  return rotation;
 //}
-
 
 num rotation_between_helices(Helix helix, Helix helix_other, bool forward) {
   num rotation = helix.angle_to(helix_other);

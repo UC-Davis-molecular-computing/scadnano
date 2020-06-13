@@ -6,6 +6,7 @@ import 'package:built_value/serializer.dart';
 //import '../built_intern.dart';
 import '../serializers.dart';
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'position3d.g.dart';
 
@@ -33,8 +34,8 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
   // "x", "y", "z" to be under "origin" in either case.
   factory Position3D.get_position_from_helix_json_map(Map<String, dynamic> helix_map) {
     var map = helix_map;
-    if (helix_map.containsKey(constants.position3d_key)) {
-      map = helix_map[constants.position3d_key];
+    if (helix_map.containsKey(constants.position_key)) {
+      map = helix_map[constants.position_key];
     }
     return Position3D.from_json(map);
   }
@@ -53,5 +54,7 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   to_json_serializable({bool suppress_indent = false}) => {'x': x, 'y': y, 'z': z};
 
-  num distance_xy(Position3D other) => sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y));
+  num distance_xy(Position3D other) => util.norm_l2(x - other.x, y - other.y);
+
+  num distance_zy(Position3D other) => util.norm_l2(z - other.z, y - other.y);
 }

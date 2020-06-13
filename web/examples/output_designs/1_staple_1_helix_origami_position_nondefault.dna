@@ -1,9 +1,9 @@
 {
-  "version": "0.8.2",
+  "version": "0.9.0",
   "grid": "square",
   "helices": [
     {
-      "position": {"x": 3, "y": 2, "z": 1},
+      "position": {"x": 1, "y": 2, "z": 3},
       "pitch": 90,
       "major_ticks": [2, 5]
     }

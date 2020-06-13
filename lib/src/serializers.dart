@@ -187,6 +187,10 @@ part 'serializers.g.dart';
   SetModificationFontSize,
   HelicesPositionsSetBasedOnCrossovers,
   SetAppUIStateStorable,
+  SetDisplayBaseOffsetsOfMajorTicks,
+  SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
+  SetDisplayMajorTickWidths,
+  SetDisplayMajorTickWidthsAllHelices,
 ])
 Serializers serializers = _$serializers;
 

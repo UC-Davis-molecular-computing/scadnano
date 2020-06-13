@@ -153,9 +153,9 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   //TODO: should this be memoized?
   Position3D default_position() {
-    num z = grid_position.b * constants.BASE_WIDTH_SVG;
+    num x = min_offset * constants.BASE_WIDTH_SVG;
     Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..z = z);
+    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..x = x);
     return position3d;
   }
 
@@ -222,7 +222,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
     if (has_position()) {
       var pos = this.position.to_json_serializable(suppress_indent: suppress_indent);
-      json_map[constants.position3d_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
+      json_map[constants.position_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
     }
 
     if (has_nondefault_major_tick_distance()) {
@@ -307,15 +307,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
             "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
-    }
-
-    if (json_map.containsKey(constants.svg_position_key)) {
-      List<dynamic> svg_position_list = json_map[constants.svg_position_key];
-      if (svg_position_list.length != 2) {
-        throw ArgumentError(
-            "svg_position must have exactly two integers but instead it has ${svg_position_list.length}: ${svg_position_list}");
-      }
-      helix_builder.svg_position = Point<num>(svg_position_list[0], svg_position_list[1]);
     }
 
     if (json_map.containsKey(constants.max_offset_key)) {

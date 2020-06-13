@@ -74,8 +74,8 @@ _save_file_codenano(AppState state) async {
       helix_json[angle_key] = degrees == null? 0.0: util.to_radians(degrees);
     }
     // change "position" to "origin"
-    var pos = helix_json[constants.position3d_key];
-    helix_json.remove(constants.position3d_key);
+    var pos = helix_json[constants.position_key];
+    helix_json.remove(constants.position_key);
     helix_json['origin'] = pos;
   }
 

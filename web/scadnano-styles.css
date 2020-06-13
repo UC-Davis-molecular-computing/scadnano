@@ -392,6 +392,14 @@ html, body {
     stroke-width: 3;
 }
 
+.main-view-helix-major-tick-offset-text {
+    font-size: 8px;
+}
+
+.main-view-helix-major-tick-distance-text {
+    font-size: 6px;
+}
+
 .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
     stroke: black;
@@ -428,7 +436,7 @@ html, body {
 }
 
 .selected {
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 .disallowed {
@@ -485,13 +493,13 @@ html, body {
 .selectable.three-prime-end:hover,
 .selectable.insertion-line:hover,
 .selectable.deletion-cross:hover {
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 
 .selectable.crossover-curve:hover {
     stroke-dasharray: 0;
-    /*filter: url("#shadow");*/
+    filter: url("#shadow");
 }
 
 .crossover-curve {
