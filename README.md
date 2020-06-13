@@ -61,7 +61,7 @@ Please file bug reports and make feature requests as GitHub repository issues in
 or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
-Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) won't always advance at the same time. However, when a breaking change is made, this will increment the minor or major version numbers in both libraries (version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9).
+Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time. However, when a breaking change is made, this will increment the minor or major version numbers in both libraries (version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9).
 
 
 ## Reporting issues
@@ -280,7 +280,7 @@ Many of the operations attempt to keep things consistent when modifying a design
 
 ## Grid types
 
-Each is described by a 2D (*x*,*y*) coordinate system. In all cases, *x* increases moving right and *y* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *y* increases moving up)
+Each is described by a 2D (*h*,*v*) coordinate system. In all cases, *h* increases moving right in the side view and *v* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *v* increases moving up)
 
 The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
 
@@ -307,14 +307,14 @@ none grid:
 ## Relation of grid_position and position to side and main view display
 The main view and side views are 2D projections of a 3D object.
 The views display helices in the following way.
-Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if it is not specified explicitly in the .dna file.)
-The *x* and *y* coordinates are shown in the side view, with x increasing to the right and y increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
+Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
+The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
 
-In the main view, the horizontal direction is the *z* coordinate.
-The vertical direction, however, is not the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
+In the main view, the horizontal direction is the *x* coordinate.
+The vertical direction, however, is not exactly the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
 Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
-The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices.
-If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *x* coordinate, or they all have the same *y* coordinate),
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices (i.e., the side view distance; the *z* distance is ignored in this calculation).
+If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *z* coordinate, or they all have the same *y* coordinate),
 then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
 Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
 
