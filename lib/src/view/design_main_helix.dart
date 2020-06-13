@@ -51,7 +51,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
 
-    var x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+    var x_start = 0; // helix.min_offset * constants.BASE_WIDTH_SVG;
     var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
@@ -310,7 +310,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var dialog = Dialog(title: 'adjust helix grid position', items: [
       DialogNumber(label: 'h', value: grid_position.h),
       DialogNumber(label: 'v', value: grid_position.v),
-      DialogNumber(label: 'b', value: grid_position.b),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
@@ -318,9 +317,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     num h = (results[0] as DialogNumber).value;
     num v = (results[1] as DialogNumber).value;
-    num b = (results[2] as DialogNumber).value;
 
-    app.dispatch(actions.HelixGridPositionSet(helix: props.helix, grid_position: GridPosition(h, v, b)));
+    app.dispatch(actions.HelixGridPositionSet(helix: props.helix, grid_position: GridPosition(h, v)));
   }
 
   Future<void> dialog_helix_adjust_position() async {
@@ -399,7 +397,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     if (props.display_base_offsets_of_major_ticks) {
       for (int base in major_ticks) {
-        var x = base * constants.BASE_WIDTH_SVG;
+        var base_minus_min_offset = base - helix.min_offset;
+        var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
         var text_element = (Dom.text()
           ..className = 'main-view-helix-major-tick-offset-text'
           ..x = '$x'
@@ -486,7 +485,8 @@ Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance
   List<String> path_cmds_vert_major = [];
 
   for (int base = helix.min_offset; base <= helix.max_offset; base++) {
-    var x = base * constants.BASE_WIDTH_SVG;
+    var base_minus_min_offset = base - helix.min_offset;
+    var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
     var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
     path_cmds.add('M $x 0');
     path_cmds.add('v ${helix.svg_height()}');

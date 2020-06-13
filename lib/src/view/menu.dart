@@ -304,7 +304,7 @@ and the strand on the same helix with the opposite orientation.'''
               int font = int.parse(inputElement.value);
               props.dispatch(actions.SetModificationFontSize(font));
             }
-            ..value = 'Set Modification Font')(),
+            ..value = 'Modification Font Size')(),
         ),
       ),
       DropdownDivider({}),

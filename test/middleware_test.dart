@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
+import 'package:scadnano/src/constants.dart' as constants;
 
 import 'utils.dart';
 
@@ -12,9 +13,9 @@ main() {
   initializeComponentTests();
   group('helices_positions_set_based_on_crossovers', () {
     test('helices_angle', () {
-      DNADesign helices_angle = dna_design_from_string(r"""
+      DNADesign helices_angle = dna_design_from_string("""
         {
-          "version": "0.8.2",
+          "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
           "helices": [
             {"position": {"x": 0, "y": 0, "z": 0}, "major_ticks": [0, 10, 21, 31, 42, 52, 63], "max_offset": 64},
@@ -191,9 +192,9 @@ main() {
       Store<AppState> store = store_from_dna_design(helices_angle);
       store.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
 
-      DNADesign expected_design = dna_design_from_string(r"""
+      DNADesign expected_design = dna_design_from_string("""
         {
-          "version": "0.8.2",
+          "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
           "helices": [
             {

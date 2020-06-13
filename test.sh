@@ -9,10 +9,16 @@ else
 fi
 
 if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
+  echo "running   $PUB run build_runner test -- -P debug"
   $PUB run build_runner test -- -P debug
 elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
-  $PUB run build_runner test -- $2
+  echo "running   $PUB run build_runner test -- -t $2"
+  $PUB run build_runner test -- -t $2
+elif [ "$1" == "-n" ]; then
+  echo "running   $PUB run build_runner test -- -n $2"
+  $PUB run build_runner test -- -n $2
 elif [ "$1" == "-td" ] || [ "$1" == "-dt" ]; then
+  echo "running   $PUB run build_runner test -- $2 -P debug"
   $PUB run build_runner test -- $2 -P debug
 elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo
@@ -24,9 +30,11 @@ elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo "run as specified."
   echo
   echo "Options:"
-  echo "    -d, --debug    Runs tests on Chrome browser, so Chrome DevTools are available."
+  echo "    -n <test_names>  Runs test with specified name only. **Name must not have any spaces."
+  echo "    -d, --debug      Runs tests on Chrome browser, so Chrome DevTools are available."
   echo "    -t <filename>, --test <filename>    Runs build_runner test on <filename>."
   echo "    -td <filename>, -dt <filename>    Runs <filename> tests on Chrome browser, so Chrome DevTools are available."
 else
+  echo "running   $PUB run build_runner test"
   $PUB run build_runner test
 fi
