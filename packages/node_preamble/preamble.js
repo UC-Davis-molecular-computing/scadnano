@@ -43,7 +43,7 @@ try {
   }
 
   // Check if we're in Electron, with Node.js integration, and override if true.
-  if (dartNodeIsActuallyNode && dartNodePreambleSelf.process && dartNodePreambleSelf.versions && process.versions.hasOwnProperty('electron') && process.versions.hasOwnProperty('node')) {
+  if (dartNodePreambleSelf.process && dartNodePreambleSelf.process.versions && dartNodePreambleSelf.process.versions.hasOwnProperty('electron') && dartNodePreambleSelf.process.versions.hasOwnProperty('node')) {
     dartNodeIsActuallyNode = true;
   }
 } catch(e) {}

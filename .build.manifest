@@ -31,6 +31,7 @@ examples/2_staple_2_helix_origami_deletions_insertions_mods.py
 examples/2_staple_2_helix_origami_deletions_insertions_no_seq.py
 examples/3_helix_deletions_insertions.py
 examples/4_helix_grid_none.py
+examples/4_helix_min_offsets_nonzero.py
 examples/56_helix_origami_rectangle.py
 examples/64_helix_origami_rectangle.py
 examples/6_helix_6_col_origami_rectangle.py
@@ -77,6 +78,7 @@ examples/output_designs/2_staple_2_helix_origami_deletions_insertions_no_seq.dna
 examples/output_designs/32_helix_rectangle.dna
 examples/output_designs/3_helix_deletions_insertions.dna
 examples/output_designs/4_helix_grid_none.dna
+examples/output_designs/4_helix_min_offsets_nonzero.dna
 examples/output_designs/56_helix_origami_rectangle.dna
 examples/output_designs/64_helix_origami_rectangle.dna
 examples/output_designs/6_helix_6_col_origami_rectangle.dna
