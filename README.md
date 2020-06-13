@@ -305,7 +305,7 @@ none grid:
 
 
 ## Relation of grid_position and position to side and main view display
-The main view and side views are 2D projections of a 3D object.
+The main view and side views are 2D representations of a 3D object.
 The views display helices in the following way.
 Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
 The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
