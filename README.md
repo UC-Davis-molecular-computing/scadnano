@@ -280,7 +280,7 @@ Many of the operations attempt to keep things consistent when modifying a design
 
 ## Grid types
 
-Each is described by a 2D (*h*,*v*) coordinate system. In all cases, *h* increases moving right in the side view and *v* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coodinates* where *v* increases moving up)
+Each is described by a 2D (*h*,*v*) coordinate system. In all cases, *h* increases moving right in the side view and *v* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coordinates* where *v* increases moving up)
 
 The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
 
@@ -305,7 +305,7 @@ none grid:
 
 
 ## Relation of grid_position and position to side and main view display
-The main view and side views are 2D projections of a 3D object.
+The main view and side views are 2D representations of a 3D object.
 The views display helices in the following way.
 Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
 The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
@@ -359,6 +359,9 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **Undo/Redo:** 
     Undo or redo the last edit that was made to the design.
 
+  * **Pasted strands keep original color:**
+    If unchecked, then pasted strands will be given a new color as if they had been newly created. If checked, they keep the same color as the original.
+
   * **Inline insertions/deletions:**
     The "Inline I/D" button "inlines" insertions and deletions in the following way.
     Insertions and deletions are removed, and their domains have their lengths altered. 
@@ -385,18 +388,30 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **show DNA sequences:**
     Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
 
-  * **show DNA modifications:**
-    Shows any modifications to the DNA (e.g., biotin, fluorophore attachments). Currently only a string representation of the modification is shown, but in the future support is [planned](https://github.com/UC-Davis-molecular-computing/scadnano/issues/226) for showing images.
-
   * **show DNA base mismatches:**
     Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using either the web interface or the Python scripting library, it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
+
+  * **show modifications:**
+    Shows any modifications to the DNA (e.g., biotin, fluorophore attachments). Currently only a string representation of the modification is shown, but in the future support is [planned](https://github.com/UC-Davis-molecular-computing/scadnano/issues/226) for showing images.
+
+    * **Display modification connector:** 
+    This shows the modification slightly above or below the strand (depending whether the domain is forward or not) with a line connecting it to the strand. This makes it easier to see the underlying strand but distorts the actual relative positions of the modifications. If unchecked, the modification is drawn directly on the base/end it modifies, displaying their positions exactly where one would expect them to appear in the design.
+
+    * **Modification font size:**
+    The font size of the display text of the modification can be adjusted as needed.
+
+  * **Display major tick offsets:**
+  If checked, integer offsets are displayed just above the major tick marks. This can be on only the top helix, or on all helices.
+  
+  * **Display major tick widths:**
+  If checked, integer distances between adjacent major tick marks are displayed just above the center point between them. Since major tick marks are often used to indicate interesting domains/sub-domains of DNA strands, this can be used to quickly see the length of those domains. (But major tick marks are not explicitly tied to the Domains on Strands defined in the DNADesign.) This can be on only the top helix, or on all helices.
 
   * **auto-fit on loading new design:**
     When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
 
 
   * **display only selected helices:**
-    This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "streching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
+    This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "stretching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
 
 
 * Grid
@@ -509,7 +524,7 @@ There are different edit modes available, shown on the right side of the screen.
 ## Assigning DNA
 Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
 By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. 
-Disabling this allows one to create intential mismatches.
+Disabling this allows one to create intentional mismatches.
 
 It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. 
 However, be careful in automatically assigning DNA complements to strands bound to this one.
