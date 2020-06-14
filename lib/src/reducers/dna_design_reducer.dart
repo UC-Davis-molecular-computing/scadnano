@@ -13,9 +13,6 @@ import 'strands_reducer.dart';
 // reducer composition
 
 DNADesign dna_design_reducer(DNADesign dna_design, action) {
-//  if (action is actions.ErrorMessageSet) {
-//    dna_design = error_message_set_reducer(dna_design, action);
-//  } else
   if (dna_design != null) {
     dna_design = dna_design_composed_local_reducer(dna_design, action);
     dna_design = dna_design_whole_local_reducer(dna_design, action);

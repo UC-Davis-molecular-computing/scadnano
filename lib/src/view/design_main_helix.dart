@@ -40,6 +40,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   render() {
     Helix helix = props.helix;
 
+
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
@@ -258,14 +259,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         window.alert('major tick ${t} is less than minimum offset ${helix.min_offset}');
         return;
       }
-//      t = major_ticks.firstWhere((t) => t > helix.max_offset, orElse: () => null);
-//      if (t != null) {
-//        //XXX: we issue the warning here, but pass the full list in to the Action and let the reducer
-//        // handle the logic of cutting off at the max offset; this ensures different ticks can be used for
-//        // helices with different max offsets
-//        window.alert("major tick ${t} is greater than maximum offset ${helix.max_offset}, "
-//            "so I'm only going up to the major tick just before that");
-//      }
 
       // TODO: avoid global variable here if possible (move this logic to middleware)
       if (apply_to_all) {
@@ -448,18 +441,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 }
 
-//static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-//
 Point<num> helix_main_view_translation(Helix helix) {
   return helix.svg_position;
-  //FIXME: standardize this
-//  int view_order = helix.view_order;
-//  if (helix.position != null) {
-//    return Point<num>(
-//        helix.position.z * constants.BASE_WIDTH_SVG, helix.position.y * constants.DISTANCE_BETWEEN_HELICES_SVG);
-//  } else {
-//    return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * view_order);
-//  }
 }
 
 List<int> regularly_spaced_ticks(int distance, int start, int end) {

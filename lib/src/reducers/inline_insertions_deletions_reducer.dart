@@ -35,11 +35,11 @@ _inline_deletions_insertions_on_helix(
 
   // gather all mods on helix
   var deletions = [
-    for (var substrand in design.substrands_on_helix(helix_idx))
+    for (var substrand in design.domains_on_helix(helix_idx))
       for (var deletion in substrand.deletions) deletion
   ];
   var insertions = [
-    for (var substrand in design.substrands_on_helix(helix_idx))
+    for (var substrand in design.domains_on_helix(helix_idx))
       for (var insertion in substrand.insertions) insertion
   ];
 
@@ -94,7 +94,7 @@ _inline_deletions_insertions_on_helix(
   helices_new[helix_idx] = helix;
 
   // fix substrand start/end offsets
-  var substrands_both_directions = design.substrands_on_helix(helix_idx);
+  var substrands_both_directions = design.domains_on_helix(helix_idx);
   // go one direction at a time so we never have overlapping substrands
   var substrands_one_direction = {
     true: substrands_both_directions.where((ss) => ss.forward),

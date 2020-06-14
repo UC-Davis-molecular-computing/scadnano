@@ -59,7 +59,7 @@ int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> sel
   List<int> unselected_end_offsets_to_one_side = [];
   List<int> selected_end_offsets_to_one_side = [];
   List<Domain> other_substrands_same_dir_same_helix =
-      dna_design.substrands_on_helix(helix_idx).where((ss) => ss.forward == substrand.forward).toList();
+      dna_design.domains_on_helix(helix_idx).where((ss) => ss.forward == substrand.forward).toList();
   for (var ss in other_substrands_same_dir_same_helix) {
     for (int other_offset in [ss.start, ss.end - 1]) {
       if (highest && other_offset > end.offset_inclusive) {
