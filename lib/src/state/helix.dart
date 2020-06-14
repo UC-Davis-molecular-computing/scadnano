@@ -241,11 +241,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return suppress_indent && use_no_indent ? NoIndent(json_map) : json_map;
   }
 
-  /// Gets "center of base" (middle of square representing base) given helix idx and offset,
-  /// depending on whether strand is going forward or not. This is relative to the starting point of
-  /// the Helix.
+  /// Gets main view SVG position of "center of base" (middle of square representing base)
+  /// given helix idx and offset,  depending on whether strand is going forward or not.
+  /// This is relative to the starting point of the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
-    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this.svg_position.x;
+    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG;
     num y = constants.BASE_HEIGHT_SVG / 2 + this.svg_position.y;
     if (!forward) {
       y += 10;
@@ -253,14 +253,8 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return Point<num>(x, y);
   }
 
-  // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   int svg_x_to_offset(num x) {
-    var offset;
-//    if (browser.isFirefox) {
-//      offset = (x / constants.BASE_WIDTH_SVG).floor();
-//    } else {
-    offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
-//    }
+    var offset = (x / constants.BASE_WIDTH_SVG).floor();
     return offset;
   }
 
@@ -269,17 +263,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     var relative_y = (y - svg_position.y);
     return relative_y < 10;
   }
-
-//  bool has_nondefault_svg_position() {
-//    num eps = 0.00000001;
-//    num default_x = this.calculate_svg_position_from_position().x;
-//    num default_y = this.calculate_svg_position_from_position().y;
-//    num this_x = this.svg_position.x;
-//    num this_y = this.svg_position.y;
-//    num diff_x = (this_x - default_x).abs();
-//    num diff_y = (this_y - default_y).abs();
-//    return diff_x > eps && diff_y > eps;
-//  }
 
   bool has_max_offset() => this.max_offset != null;
 
@@ -330,10 +313,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return helix_builder;
   }
 
-  /// Transform to apply to an SVG element so that it will appear in the correct position relative to this
-  /// Helix.
-//  translate() => 'translate(${this.svg_position.x} ${this.svg_position.y})';
-
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
   num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
@@ -355,99 +334,5 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return [for (int t = min_offset; t <= max_offset; t += distance) t];
   }
 
-//  /// Number of bases between start and end offsets, inclusive, on this [Helix].
-//  /// Accounts for substrands with insertions and deletions on [Domain]s on this Helix, but not if they
-//  /// are inconsistent (on one [Domain] but not the other).
-//  int num_bases_between(int start, int end) {
-//    if (start > end) {
-//      int swap = start;
-//      start = end;
-//      end = swap;
-//    }
-//
-//    List<Domain> substrands_intersecting = [];
-//    for (var ss in this._substrands) {
-//      if (start < ss.end && ss.start <= end) {
-//        substrands_intersecting.add(ss);
-//      }
-//    }
-//
-//    Set<int> deletions_intersecting = {};
-//    Set<Tuple2<int, int>> insertions_intersecting = {};
-//    for (var ss in substrands_intersecting) {
-//      for (var deletion in ss.deletions) {
-//        if (start <= deletion && deletion <= end) {
-//          deletions_intersecting.add(deletion);
-//        }
-//      }
-//      for (var insertion in ss.insertions) {
-//        if (start <= insertion.item1 && insertion.item1 <= end) {
-//          insertions_intersecting.add(insertion);
-//        }
-//      }
-//    }
-//
-//    int total_insertion_length = 0;
-//    for (var insertion in insertions_intersecting) {
-//      total_insertion_length += insertion.item2;
-//    }
-//
-//    int dna_length = end - start + 1 - deletions_intersecting.length + total_insertion_length;
-//
-//    return dna_length;
-//  }
-//
-//  /// in radians
-//  double rotation_3p(int offset) {
-//    int num_bases;
-//    if (this._rotation_anchor < offset) {
-//      num_bases = this.num_bases_between(this._rotation_anchor, offset - 1);
-//    } else if (this._rotation_anchor > offset) {
-//      num_bases = -this.num_bases_between(offset + 1, this._rotation_anchor);
-//    } else {
-//      num_bases = 0;
-//    }
-//    num rad = (this._rotation + (2 * pi * num_bases / 10.5)) % (2 * pi);
-//    return rad;
-//  }
-//
-//  /// in radians;  3' rotation + 150 degrees
-//  double rotation_5p(int offset) => this.rotation_3p(offset) + (2 * pi * 150.0 / 360.0);
-
 }
 
-//class HelicesStore extends Store {
-//  List<Helix> _helices;
-//
-//  List<Helix> get helices => this._helices;
-//
-//  set helices(List<Helix> new_helices) {
-//    this._helices = new_helices;
-//    this.build_helices_map();
-//  }
-//
-//  Map<GridPosition, dynamic> _gp_to_helix;
-//
-//  Map<GridPosition, dynamic> get gp_to_helix => this._gp_to_helix;
-//
-//  HelicesStore() {
-//    this._helices = [];
-//    this.build_helices_map();
-//    this._handle_actions();
-//  }
-//
-//  build_helices_map() {
-//    this._gp_to_helix = {};
-//    for (var h in this.helices) {
-//      this._gp_to_helix[h.grid_position] = h;
-//    }
-//  }
-//
-//  _handle_actions() {
-//    this.triggerOnActionV2<SetHelixRotationActionParameters>(Actions.set_helix_rotation, (params) {
-//      Helix helix = this.helices[params.idx];
-////      helix.rotation = params.rotation;
-////      helix.rotation_anchor = params.anchor;
-//    });
-//  }
-//}
