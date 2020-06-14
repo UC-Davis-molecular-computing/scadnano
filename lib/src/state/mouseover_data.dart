@@ -55,7 +55,7 @@ abstract class MouseoverData
       int helix_idx = param.helix_idx;
       int offset = param.offset;
       bool forward = param.forward;
-      for (Substrand ss in dna_design.substrands_on_helix(helix_idx)) {
+      for (Substrand ss in dna_design.domains_on_helix(helix_idx)) {
         if (ss.is_domain()) {
           var bound_ss = ss as Domain;
           if (bound_ss.contains_offset(offset) && bound_ss.forward == forward) {

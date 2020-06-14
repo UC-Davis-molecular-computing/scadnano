@@ -552,13 +552,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   bool has_nondefault_max_offset(Helix helix) {
-    var ends = substrands_on_helix(helix.idx).map((ss) => ss.end);
+    var ends = domains_on_helix(helix.idx).map((ss) => ss.end);
     int max_end = ends.isEmpty ? 0 : ends.reduce(max);
     return helix.max_offset != max_end;
   }
 
   bool has_nondefault_min_offset(Helix helix) {
-    var starts = substrands_on_helix(helix.idx).map((ss) => ss.start);
+    var starts = domains_on_helix(helix.idx).map((ss) => ss.start);
     int min_start = starts.isEmpty ? null : starts.reduce(min);
     // if all offsets are nonnegative (or there are no substrands, i.e., min_start == null),
     // then default min_offset is 0; otherwise it is minimum offset
@@ -824,14 +824,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   /// Return set of substrands on the Helix with the given index.
-  BuiltList<Domain> substrands_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
+  BuiltList<Domain> domains_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
 
   /// Return set of substrands on the helices with the given helix_idxs.
-  BuiltList<Domain> substrands_on_helices(Iterable<int> helix_idxs) {
+  BuiltList<Domain> domains_on_helices(Iterable<int> helix_idxs) {
     ListBuilder<Domain> list_builder = ListBuilder<Domain>();
-
     for (var helix_idx in helix_idxs) {
-      list_builder.addAll(substrands_on_helix(helix_idx));
+      list_builder.addAll(domains_on_helix(helix_idx));
     }
     return list_builder.build();
   }

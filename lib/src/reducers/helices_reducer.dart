@@ -47,8 +47,9 @@ BuiltMap<int, Helix> helix_individual_reducer(
   Helix helix = helices[action.helix_idx];
   var new_helix = _helix_individual_reducers(helix, action);
   if (new_helix != helix) {
-    var helices_map = helices.toBuilder();
+    var helices_map = helices.toMap();
     helices_map[action.helix_idx] = new_helix;
+    helices_map = util.helices_assign_svg(helices_map, new_helix.grid);
     return helices_map.build();
   } else {
     return helices;
@@ -75,7 +76,10 @@ Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => h
 BuiltMap<int, Helix> helix_offset_change_all_reducer(
     BuiltMap<int, Helix> helices, actions.HelixOffsetChangeAll action) {
   Helix map_func(Helix helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset);
-  return helices.map_values(map_func);
+  var helices_after = helices.map_values(map_func);
+  var grid = helices.values.first.grid;
+  var helices_after_svg_adjusted = util.helices_assign_svg(helices_after.toMap(), grid);
+  return helices_after_svg_adjusted.build();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,28 +153,6 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
     max_offset = constants.default_max_offset;
   }
 
-//  num x = 0; //TODO: shift x by grid_position.b or position.z
-//  num y = 0;
-//  if (design.helices.isNotEmpty) {
-//    Helix prev_helix = design.helices.last;
-//    num prev_y = prev_helix.svg_position.y;
-//    num delta_y;
-//    if (design.grid.is_none()) {
-//      var prev_pos = prev_helix.position;
-//      var pos = action.position;
-//      delta_y = ((pos.distance_xy(prev_pos))) * constants.NM_TO_MAIN_VIEW_SVG_PIXELS;
-//    } else {
-//      var prev_grid_position = prev_helix.grid_position;
-//      var grid_position = action.grid_position;
-//      delta_y = prev_grid_position.distance_lattice(grid_position, design.grid) *
-//          constants.DISTANCE_BETWEEN_HELICES_SVG;
-//    }
-//    y = prev_y + delta_y;
-//  }
-//  Point<num> svg_position = Point<num>(x, y);
-
-  //TODO: re-process whole list
-
   Helix helix = Helix(
     idx: new_idx,
     grid: design.grid,
@@ -189,7 +171,7 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
 
 DNADesign helix_remove_dna_design_global_reducer(
     DNADesign design, AppState state, actions.HelixRemove action) {
-  Set<Domain> substrands_on_helix = design.substrands_on_helix(action.helix_idx).toSet();
+  Set<Domain> substrands_on_helix = design.domains_on_helix(action.helix_idx).toSet();
   var strands_with_substrands_removed =
       delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helix);
   // var strands_with_helix_indices_updated =
@@ -203,7 +185,7 @@ DNADesign helix_remove_dna_design_global_reducer(
 DNADesign helix_remove_all_selected_dna_design_global_reducer(
     DNADesign design, AppState state, actions.HelixRemoveAllSelected action) {
   var helix_idxs = state.ui_state.side_selected_helix_idxs;
-  Set<Domain> substrands_on_helices = design.substrands_on_helices(helix_idxs).toSet();
+  Set<Domain> substrands_on_helices = design.domains_on_helices(helix_idxs).toSet();
 
   var strands_with_substrands_removed =
       delete_reducer.remove_bound_substrands(design.strands, state, substrands_on_helices);
