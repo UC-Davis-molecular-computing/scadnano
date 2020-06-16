@@ -231,10 +231,11 @@ Helix.yaw will likely never be supported visually in the main or side views,
 but it is retained as a field for compatibility with other software for 3D visualization.
 Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, 
 with default value 0 meaning that the helix moves to the right as offsets increase.
-Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
+Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
+Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
-(Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
+(Each grid position is interpreted as a position from a constrained set of possible positions.)
 They are listed from top to bottom in the order they appear in the sequence 
 (unless the property *helices_view_order* is specified in the design to display them in a different order, 
 though currently this can only be done in the scripting library).
