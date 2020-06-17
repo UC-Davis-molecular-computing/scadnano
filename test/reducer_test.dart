@@ -570,12 +570,12 @@ main() {
   "version": "0.9.0",
   "grid": "square",
   "helices": [
-    {"grid_position": [0, 0]},
-    {"grid_position": [0, 1]},
-    {"grid_position": [0, 2]},
-    {"grid_position": [0, 3]},
-    {"grid_position": [0, 4]},
-    {"grid_position": [0, 5]}
+    {"grid_position": [0, 0], "max_offset": 100},
+    {"grid_position": [0, 1], "max_offset": 100},
+    {"grid_position": [0, 2], "max_offset": 100},
+    {"grid_position": [0, 3], "max_offset": 100},
+    {"grid_position": [0, 4], "max_offset": 100},
+    {"grid_position": [0, 5], "max_offset": 100}
   ],
   "strands": [
     {
@@ -5537,9 +5537,9 @@ main() {
       "grid": "square",
       "helices": [
         {"grid_position": [0, 0], "idx": 12},
-        {"grid_position": [0, 0], "idx": 13},
-        {"grid_position": [0, 0], "idx": 15},
-        {"grid_position": [0, 0], "idx": 17}
+        {"grid_position": [0, 1], "idx": 13},
+        {"grid_position": [0, 2], "idx": 15},
+        {"grid_position": [0, 3], "idx": 17}
       ],
       "helices_view_order": [12, 15, 17, 13],
       "strands": []

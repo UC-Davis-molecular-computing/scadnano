@@ -34,7 +34,7 @@ const int BASE_WIDTH_SVG = 10;
 const int BASE_HEIGHT_SVG = 10;
 
 const default_min_offset = 0;
-const default_max_offset = 256;
+const default_max_offset = 64;
 
 //const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 

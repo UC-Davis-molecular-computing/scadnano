@@ -506,10 +506,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     //
     for (var helix in helices.values) {
       var helix_json = util.unwrap_from_noindent(helix_jsons_map[helix.idx]);
-      if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
+      if (has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
-      if (helix.has_min_offset() && has_nondefault_min_offset(helix)) {
+      if (has_nondefault_min_offset(helix)) {
         helix_json[constants.min_offset_key] = helix.min_offset;
       }
     }
@@ -553,7 +553,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   bool has_nondefault_max_offset(Helix helix) {
     var ends = domains_on_helix(helix.idx).map((ss) => ss.end);
-    int max_end = ends.isEmpty ? 0 : ends.reduce(max);
+    int max_end = ends.isEmpty ? constants.default_max_offset : ends.reduce(max);
     return helix.max_offset != max_end;
   }
 
@@ -615,12 +615,13 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         throw IllegalDNADesignError(
             'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
       }
-      if (position_x_z_should_swap && grid_is_none) {
-        // prior to version 0.10.0, x and z had the opposite role
-        num swap = helix_builder.position_.x;
-        helix_builder.position_.x = helix_builder.position_.z;
-        helix_builder.position_.z = swap;
-      }
+      // don't want to do this while codenano has different version numbers
+//      if (position_x_z_should_swap && grid_is_none) {
+//        // prior to version 0.10.0, x and z had the opposite role
+//        num swap = helix_builder.position_.x;
+//        helix_builder.position_.x = helix_builder.position_.z;
+//        helix_builder.position_.z = swap;
+//      }
       helix_builders.add(helix_builder);
       idx++;
     }
@@ -716,7 +717,175 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   _check_legal_design() {
-//    TODO: implement this and give reasonable error messages
+    _check_helix_offsets();
+    _check_strands_reference_helices_legally();
+    _check_loopouts_not_consecutive_or_singletons_or_zero_length();
+    _check_strands_overlap_legally();
+    _check_grid_positions_disjoint();
+  }
+
+  _check_helix_offsets() {
+    for (var helix in helices.values) {
+      if (helix.min_offset != null && helix.max_offset != null && helix.min_offset >= helix.max_offset) {
+        var err_msg = 'for helix ${helix.idx}, '
+            'helix.min_offset = ${helix.min_offset} must be strictly less than '
+            'helix.max_offset = ${helix.max_offset}';
+        throw IllegalDNADesignError(err_msg);
+      }
+    }
+  }
+
+  _check_strands_reference_helices_legally() {
+    // ensure each strand refers to an existing helix
+    for (var strand in strands) {
+      _check_strand_references_legal_helices(strand);
+      _check_strand_has_legal_offsets_in_helices(strand);
+    }
+  }
+
+  _check_strand_references_legal_helices(Strand strand) {
+    for (var domain in strand.domains()) {
+      if (!helices.containsKey(domain.helix)) {
+        var err_msg = "domain ${domain} refers to nonexistent Helix index ${domain.helix}; "
+            "here is the list of valid helices: ${helices.keys.join(', ')}";
+        throw StrandError(strand, err_msg);
+      }
+    }
+  }
+
+  _check_strand_has_legal_offsets_in_helices(Strand strand) {
+    for (var domain in strand.domains()) {
+      var helix = helices[domain.helix];
+      if (domain.start < helix.min_offset) {
+        var err_msg = "domain ${domain} has start offset ${domain.start}, "
+            "beyond the beginning of "
+            "Helix ${domain.helix} that has min_offset = ${helix.min_offset}";
+        throw StrandError(strand, err_msg);
+      }
+      if (domain.end > helix.max_offset) {
+        var err_msg = "domain ${domain} has end offset ${domain.end}, "
+            "beyond the end of "
+            "Helix ${domain.helix} that has max_offset = ${helix.max_offset}";
+        throw StrandError(strand, err_msg);
+      }
+    }
+  }
+
+  _check_loopouts_not_consecutive_or_singletons_or_zero_length() {
+    for (var strand in strands) {
+      DNADesign._check_loopout_not_singleton(strand);
+      DNADesign._check_two_consecutive_loopouts(strand);
+      DNADesign._check_loopouts_length(strand);
+    }
+  }
+
+  static _check_loopout_not_singleton(Strand strand) {
+    if (strand.substrands.length == 1 && strand.first_domain().is_loopout()) {
+      throw StrandError(strand, 'strand cannot have a single Loopout as its only domain');
+    }
+  }
+
+  static _check_two_consecutive_loopouts(Strand strand) {
+    for (int i = 0; i < strand.substrands.length - 1; i++) {
+      var domain1 = strand.substrands[i];
+      var domain2 = strand.substrands[i + 1];
+      if (domain1.is_loopout() && domain2.is_loopout()) {
+        throw StrandError(strand, 'cannot have two consecutive Loopouts in a strand');
+      }
+    }
+  }
+
+  static _check_loopouts_length(Strand strand) {
+    for (var loopout in strand.loopouts()) {
+      if (loopout.loopout_length <= 0) {
+        throw StrandError(strand, 'loopout length must be positive but is ${loopout.loopout_length}');
+      }
+    }
+  }
+
+  _check_strands_overlap_legally() {
+    String err_msg(Domain domain1, Domain domain2, int h_idx) {
+      return "two domains overlap on helix ${h_idx}: "
+          "\n${domain1}\n  and\n${domain2}\n  but have the same direction";
+    }
+
+    // ensure that if two strands overlap on the same helix, they point in opposite directions
+    for (int helix_idx in helices.keys) {
+      var domains = this.domains_on_helix(helix_idx);
+      if (domains.length == 0) continue;
+
+      // check all consecutive domains on the same helix, sorted by start/end indices
+      List<Tuple3<int, bool, Domain>> offsets_data = [];
+      for (var domain in domains) {
+        offsets_data.add(Tuple3<int, bool, Domain>(domain.start, true, domain));
+        offsets_data.add(Tuple3<int, bool, Domain>(domain.end, false, domain));
+      }
+      offsets_data.sort((d1, d2) => d1.item1 - d2.item1);
+
+      List<Domain> current_domains = [];
+      for (var data in offsets_data) {
+        var offset = data.item1;
+        var is_start = data.item2;
+        var domain = data.item3;
+        if (is_start) {
+          if (current_domains.length >= 2) {
+            if (offset >= current_domains[1].end) {
+              current_domains.removeAt(1);
+            }
+          }
+          if (current_domains.length >= 1) {
+            if (offset >= current_domains[0].end) {
+              current_domains.removeAt(0);
+            }
+          }
+          current_domains.add(domain);
+
+          if (current_domains.length < 2) {
+            continue;
+          }
+
+          var domain0 = current_domains[0];
+          var domain1 = current_domains[1];
+          if (current_domains.length > 2) {
+            var domain2 = current_domains[2];
+            if (domain0.forward == domain1.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+            }
+            if (domain0.forward == domain2.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain2, helix_idx));
+            }
+            if (domain1.forward == domain2.forward) {
+              throw IllegalDNADesignError(err_msg(domain1, domain2, helix_idx));
+            }
+            throw AssertionError("since current_domains = ${current_domains} has at least three domains, "
+                "I expected to find a pair of illegally overlapping domains");
+          } else if (current_domains.length == 2) {
+            if (domain0.forward == domain1.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  _check_grid_positions_disjoint() {
+    if (!grid.is_none()) {
+      var idxs = helices.keys.toList();
+      var gps = {for (var idx in idxs) idx: helices[idx].grid_position};
+      for (int i=0; i<gps.length-1; i++) {
+        int idx1 = idxs[i];
+        var gp1 = gps[idx1];
+        for (int j=i+1; j<idxs.length; j++) {
+          int idx2 = idxs[j];
+          var gp2 = gps[idx2];
+          if (gp1 == gp2) {
+            throw IllegalDNADesignError('cannot use the same grid_position twice, but helices '
+                '${idx1} and ${idx2} both have grid_position ${gp1}');
+          }
+        }
+      }
+    }
   }
 
   String toString() =>
@@ -1085,7 +1254,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
       var max_offset =
-          substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+          substrands.isEmpty ? constants.default_max_offset : substrands.first.end;
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -1095,10 +1264,12 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
       var min_offset =
-          substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+          substrands.isEmpty ? constants.default_min_offset : substrands.first.start;
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }
+      // if there are strands with no offsets less than 1, we still want Helix.min_offset to be 0
+      // i.e., it can only be positive if the JSON explicitly declares that
       if (min_offset > 0) {
         min_offset = 0;
       }
