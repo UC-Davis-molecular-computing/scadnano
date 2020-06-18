@@ -129,28 +129,6 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
-//  Point<num> calculate_svg_position_from_position() {
-//    if (grid != Grid.none) {
-//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-////      return Point<num>(grid_position.b * constants.BASE_WIDTH_SVG,
-////          grid_position.v * constants.DISTANCE_BETWEEN_HELICES_SVG);
-//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-//    } else if (position != null) {
-//      var pos3d = position3d();
-//      // position z is main view x
-//      // SVG pixels in x direction = p.z in nm * (1/0.34 bp/nm) * (BASE_WIDTH_SVG pixels/bp)
-//      // SVG pixels in y direction =
-//      //   p.y in nm * (1/2.5 helix/nm)
-//      //   * (GridPosition.distance grid_point/helix)
-//      //   * (DISTANCE_BETWEEN_HELICES_SVG pixels/grid_point)
-//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-//      return util.position3d_to_main_view_svg(pos3d);
-//    } else {
-////      throw AssertionError('cannot have grid_position, position both null and call default_svg_position');
-//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-//    }
-//  }
-
   //TODO: should this be memoized?
   Position3D default_position() {
     num x = min_offset * constants.BASE_WIDTH_SVG;
@@ -245,7 +223,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// given helix idx and offset,  depending on whether strand is going forward or not.
   /// This is relative to the starting point of the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
-    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG;
+    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this.svg_position.x;
     num y = constants.BASE_HEIGHT_SVG / 2 + this.svg_position.y;
     if (!forward) {
       y += 10;
@@ -254,7 +232,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   }
 
   int svg_x_to_offset(num x) {
-    var offset = (x / constants.BASE_WIDTH_SVG).floor();
+    var offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
     return offset;
   }
 

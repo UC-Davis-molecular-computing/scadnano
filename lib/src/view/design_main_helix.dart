@@ -40,7 +40,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   render() {
     Helix helix = props.helix;
 
-
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
     var cy = constants.BASE_WIDTH_SVG;
@@ -49,11 +48,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     num width = helix.svg_width();
     num height = helix.svg_height();
 
+    num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+
+    var horz_line_paths = _horz_line_paths(helix);
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
-
-    var x_start = 0; // helix.min_offset * constants.BASE_WIDTH_SVG;
-    var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
 
@@ -78,12 +77,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..key = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
-          ..d = 'M $x_start 0 '
-              'H $x_end '
-              'M $x_start ${height / 2.0} '
-              'H $x_end '
-              'M $x_start $height '
-              'H $x_end'
+          ..d = horz_line_paths
           ..key = 'helix-horz-lines')(),
         (Dom.path()
           ..className = 'helix-lines helix-vert-minor-line'
@@ -99,7 +93,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         (Dom.rect()
 //          ..onClick = start_strand_create
           ..onPointerDown = start_strand_create
-          ..x = '0'
+          ..x = x_start
           ..y = '0'
           ..width = '$width'
           ..height = '$height'
@@ -384,13 +378,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     var y = constants.MAJOR_TICKS_OFFSET_TEXT_Y;
     var dx = constants.MAJOR_TICKS_OFFSET_TEXT_DX;
-    var dy = props.show_dna ?  -constants.BASE_HEIGHT_SVG : 0;
+    var dy = props.show_dna ? -constants.BASE_HEIGHT_SVG : 0;
 
     var offset_texts_elements = [];
 
     if (props.display_base_offsets_of_major_ticks) {
       for (int base in major_ticks) {
-        var base_minus_min_offset = base - helix.min_offset;
+        var base_minus_min_offset = base; // - helix.min_offset;
         var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
         var text_element = (Dom.text()
           ..className = 'main-view-helix-major-tick-offset-text'
@@ -432,13 +426,52 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       }
     }
 
-
     if (offset_texts_elements.isEmpty) {
       return null;
     } else {
       return (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
     }
   }
+
+
+}
+
+String _horz_line_paths(Helix helix) {
+  num width = helix.svg_width();
+  num height = helix.svg_height();
+  num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+  num x_end = x_start + width;
+
+  return 'M $x_start 0 '
+      'H $x_end '
+      'M $x_start ${height / 2.0} '
+      'H $x_end '
+      'M $x_start $height '
+      'H $x_end';
+}
+
+/// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
+Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
+  var major_tick_distance =
+  helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
+  Set<int> major_ticks = (helix.has_major_ticks()
+      ? helix.major_ticks
+      : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
+      .toSet();
+
+  List<String> path_cmds_vert_minor = [];
+  List<String> path_cmds_vert_major = [];
+
+  for (int base = helix.min_offset; base <= helix.max_offset; base++) {
+    var base_minus_min_offset = base; // - helix.min_offset;
+    var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
+    var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
+    path_cmds.add('M $x 0');
+    path_cmds.add('v ${helix.svg_height()}');
+    x += constants.BASE_WIDTH_SVG;
+  }
+
+  return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
 }
 
 Point<num> helix_main_view_translation(Helix helix) {
@@ -453,28 +486,4 @@ List<int> regularly_spaced_ticks(int distance, int start, int end) {
   } else {
     return [for (int offset in iter.range(start, end + 1, distance)) offset];
   }
-}
-
-/// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
-Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
-  var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
-  Set<int> major_ticks = (helix.has_major_ticks()
-          ? helix.major_ticks
-          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
-      .toSet();
-
-  List<String> path_cmds_vert_minor = [];
-  List<String> path_cmds_vert_major = [];
-
-  for (int base = helix.min_offset; base <= helix.max_offset; base++) {
-    var base_minus_min_offset = base - helix.min_offset;
-    var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
-    var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
-    path_cmds.add('M $x 0');
-    path_cmds.add('v ${helix.svg_height()}');
-    x += constants.BASE_WIDTH_SVG;
-  }
-
-  return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
 }
