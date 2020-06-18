@@ -61,8 +61,8 @@ const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 const double MAJOR_TICKS_OFFSET_TEXT_Y = -2;
 const double MAJOR_TICKS_OFFSET_TEXT_DX = -2;
 
-//const Grid default_grid = Grid.none;
-const Grid default_grid = Grid.square;
+const Grid default_grid = Grid.none;
+//const Grid default_grid = Grid.square;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';

@@ -284,6 +284,21 @@ Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in h
 /// If obj is a NoIndent, unwrap the object from it, otherwise return obj.
 dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
+/// Finds two indices of elements in list that repeat, returning null if all elements are distinct.
+Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
+  Map<T,int> elt_to_idx = {};
+  // should take time n log n; we don't do linear search for indices until we know which element repeats
+  for (int i2 = 0; i2 < list.length; i2++) {
+    T elt = list[i2];
+    int i1 = elt_to_idx[elt];
+    if (i1 != null) {
+      return Tuple2<int, int>(i1, i2);
+    }
+    elt_to_idx[elt] = i2;
+  }
+  return null;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points
 

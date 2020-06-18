@@ -628,6 +628,16 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     // view order of helices
     var helix_indices = [for (var helix_builder in helix_builders) helix_builder.idx];
+    // ensure no two helices have same idx
+    Tuple2<int,int> repeated_idxs = util.repeated_element_indices(helix_indices);
+    if (repeated_idxs != null) {
+      int i1 = repeated_idxs.item1;
+      int i2 = repeated_idxs.item2;
+      int helix_idx = helix_builders[i1].idx;
+      throw IllegalDNADesignError('helix idx values must be unique, '
+          'but two helices share idx = ${helix_idx}; they appear at positions ${i1} and ${i2} in the '
+          'list of helices.');
+    }
     List<int> helices_view_order = List<int>.from(
         util.get_value_with_default(json_map, constants.helices_view_order_key, helix_indices));
     if (helices_view_order.length != num_helices) {
