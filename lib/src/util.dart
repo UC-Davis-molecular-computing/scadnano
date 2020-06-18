@@ -269,7 +269,8 @@ num main_view_svg_x_of_helix(Helix helix, Grid grid) {
   if (grid.is_none()) {
     return helix.position3d().x * constants.NM_TO_MAIN_SVG_PIXELS;
   } else {
-    return helix.min_offset * constants.BASE_WIDTH_SVG;
+    return 0;
+//    return helix.min_offset * constants.BASE_WIDTH_SVG;
   }
 }
 
@@ -286,7 +287,7 @@ dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points
 
-/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
+/// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
 Helix get_closest_helix(MouseEvent event, Iterable<Helix> helices) {
   var svg_coord = round_point(svg_position_of_mouse_click(event));
 
