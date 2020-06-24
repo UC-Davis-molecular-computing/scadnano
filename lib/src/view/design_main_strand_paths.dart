@@ -224,6 +224,10 @@ Point<num> control_point_for_crossover_bezier_curve(
   return control;
 }
 
+// This was in an earlier version. It renders faster than drawing each domain and crossover/loopout
+// as a separate SVG object. However, then they are not separate objects and it makes responding to click
+// and other pointer events much more difficult. I'm keeping it here just in case but I doubt it will be
+// used again.
 //  _draw_strand_lines_single_path() {
 //    if (this.strand.substrands.length == 0) {
 //      return;
