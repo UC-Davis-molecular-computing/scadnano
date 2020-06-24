@@ -254,7 +254,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
-      helix_builder.major_ticks = ListBuilder<int>(List<int>.from(json_map[constants.major_ticks_key]));
+      var major_ticks_json = json_map[constants.major_ticks_key];
+      if (major_ticks_json != null) {
+        helix_builder.major_ticks = ListBuilder<int>(List<int>.from(major_ticks_json));
+      }
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
@@ -267,7 +270,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     }
 
     if (json_map.containsKey(constants.max_offset_key)) {
-      helix_builder.max_offset = json_map[constants.max_offset_key];
+      var max_offset_json = json_map[constants.max_offset_key];
+      if (max_offset_json != null) {
+        helix_builder.max_offset = json_map[constants.max_offset_key];
+      }
     }
 
     if (json_map.containsKey(constants.min_offset_key)) {
@@ -307,6 +313,4 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
         : default_major_tick_distance;
     return [for (int t = min_offset; t <= max_offset; t += distance) t];
   }
-
 }
-
