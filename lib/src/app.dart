@@ -259,8 +259,9 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     var file = files.first;
     var filename = file.name;
     var ext = p.extension(filename);
-    if (ext == '.dna') {
-      var confirm = app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
+    if (ext == '.dna' || ext == '.json') {
+      var confirm =
+          app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
 
       if (confirm) {
         FileReader file_reader = new FileReader();
@@ -272,7 +273,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
         file_reader.readAsText(file);
       }
     } else {
-      window.alert('scadnano does not support "${ext}" type files. Please drop a .dna file.');
+      window.alert('scadnano does not support "${ext}" type files. Please drop a .dna or .json file.');
     }
   });
 }
