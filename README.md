@@ -158,54 +158,9 @@ It is instructive to see how that example design is represented as a `.dna` file
 }
 ```
 
-Here is Python code that would produce this design using the 
-[scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
-
-```python
-import scadnano as sc
-import modifications as mod
+The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md#example) shows Python code that produces this design.
 
 
-def main():
-    # helices
-    helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
-
-    # left staple
-    stap_left_domain1 = sc.Domain(helix=1, forward=True, start=8, end=24)
-    stap_left_domain0 = sc.Domain(helix=0, forward=False, start=8, end=24)
-    stap_left = sc.Strand(domains=[stap_left_domain1, stap_left_domain0])
-
-    # right staple
-    stap_right_domain0 = sc.Domain(helix=0, forward=False, start=24, end=40)
-    stap_right_domain1 = sc.Domain(helix=1, forward=True, start=24, end=40)
-    stap_right = sc.Strand(domains=[stap_right_domain0, stap_right_domain1])
-    stap_right.set_modification_5p(mod.biotin_5p)
-
-    # scaffold
-    scaf_domain1_left = sc.Domain(helix=1, forward=False, start=8, end=24)
-    scaf_domain0 = sc.Domain(helix=0, forward=True, start=8, end=40)
-    loopout = sc.Loopout(length=3)
-    scaf_domain1_right = sc.Domain(helix=1, forward=False, start=24, end=40)
-    scaf = sc.Strand(domains=[scaf_domain1_left, scaf_domain0, loopout, scaf_domain1_right], is_scaffold=True)
-
-    # whole design
-    design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
-
-    # deletions and insertions added to design are added to both strands on a helix
-    design.add_deletion(helix=1, offset=20)
-    design.add_insertion(helix=0, offset=14, length=1)
-    design.add_insertion(helix=0, offset=26, length=2)
-
-    # also assigns complement to strands other than scaf bound to it
-    design.assign_dna(scaf, 'AACGT' * 18)
-
-    return design
-
-
-if __name__ == '__main__':
-    design = main()
-    design.write_scadnano_file(directory='output_designs')
-```
 
 Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. 
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
@@ -545,53 +500,6 @@ Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`
 
 
 
-## literate syntax with chained methods
-Recall this section of code from the example above:
-
-```python
-# helices
-helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
-
-# left staple
-stap_left_domain1 = sc.Domain(helix=1, forward=True, start=8, end=24)
-stap_left_domain0 = sc.Domain(helix=0, forward=False, start=8, end=24)
-stap_left = sc.Strand(domains=[stap_left_domain1, stap_left_domain0])
-
-# right staple
-stap_right_domain0 = sc.Domain(helix=0, forward=False, start=24, end=40)
-stap_right_domain1 = sc.Domain(helix=1, forward=True, start=24, end=40)
-stap_right = sc.Strand(domains=[stap_right_domain0, stap_right_domain1])
-stap_right.set_modification_5p(mod.biotin_5p)
-
-# scaffold
-scaf_domain1_left = sc.Domain(helix=1, forward=False, start=8, end=24)
-scaf_domain0 = sc.Domain(helix=0, forward=True, start=8, end=40)
-loopout = sc.Loopout(length=3)
-scaf_domain1_right = sc.Domain(helix=1, forward=False, start=24, end=40)
-scaf = sc.Strand(domains=[scaf_domain1_left, scaf_domain0, loopout, scaf_domain1_right], is_scaffold=True)
-
-# whole design
-design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
-```
-
-There is a shorter syntax using chained method calls. Instead of the above, create only the helices first, then create the DNADesign. Then strands can be added using a shorter syntax, to describe how to draw the strand starting at the 5' end and moving to the 3' end:
-
-```python
-# helices
-helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
-
-# whole design
-design = sc.DNADesign(helices=helices, strands=[], grid=sc.square)
-
-# left staple
-design.strand(1, 8).to(24).cross(0).to(8)
-
-# right staple
-design.strand(0, 40).to(24).cross(1).to(40).with_modification_5p(mod.biotin_5p)
-
-# scaffold
-design.strand(1, 24).to(8).cross(0).to(40).loopout(1, 3).to(24).as_scaffold()
-```
 
 
 
