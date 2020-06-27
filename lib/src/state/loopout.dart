@@ -11,11 +11,12 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'strand_part.dart';
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'loopout.g.dart';
 
 abstract class Loopout
-    with Selectable, BuiltJsonSerializable
+    with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
   factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx) => Loopout.from((b) => b
     ..loopout_length = loopout_length
@@ -42,8 +43,6 @@ abstract class Loopout
 
   @nullable
   String get strand_id;
-
-  BuiltMap<String, Object> get unused_fields;
 
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 

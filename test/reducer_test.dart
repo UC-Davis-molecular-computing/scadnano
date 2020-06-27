@@ -1801,7 +1801,7 @@ main() {
 
     Helix helix1 = two_helices_design.helices[1];
     num svg_y_helix_1 =
-        helix1.grid_position.v * constants.HELIX_DIAMETER_NM * constants.NM_TO_MAIN_SVG_PIXELS;
+        helix1.grid_position.v * constants.HELIX_DISTANCE_NM * constants.NM_TO_MAIN_SVG_PIXELS;
 
     Helix new_helix1 = helix1.rebuild((b) => b
       ..svg_position = Point(0, svg_y_helix_1)

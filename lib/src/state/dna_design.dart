@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
+import 'geometry.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -20,29 +21,34 @@ import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'dna_design.g.dart';
 
 //TODO: create mismatches field in DNADesign that can be accessed directly by DesignMainMismatches instead of
 // going through list of all Strands
 
-abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
+abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
   DNADesign._();
 
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
+    ..geometry.replace(Geometry())
     ..helices.replace({})
     ..strands.replace([])
     ..unused_fields = MapBuilder<String, Object>({}));
 
-  /****************************** end built_value boilerplate ******************************/
   @memoized
   int get hashCode;
+
+  /****************************** end built_value boilerplate ******************************/
 
   String get version;
 
   Grid get grid;
+
+  Geometry get geometry;
 
   @nullable
   int get major_tick_distance;
@@ -50,8 +56,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
-
-  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   bool get is_origami {
@@ -330,19 +334,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
 
-//  @memoized
-//  bool get helices_view_order_is_identity {
-//    for (var helix in helices.values) {
-//      if (helix.idx != helix.view_order) {
-//        return false;
-//      }
-//    }
-//    return true;
-//  }
-
-//  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-//  static _default_grid_position(int idx) => GridPosition(0, idx);
-
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {
     var map_builder = MapBuilder<GridPosition, Helix>();
@@ -489,6 +480,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     json_map[constants.grid_key] = this.grid.to_json();
 
+    if (!this.geometry.is_default()) {
+      json_map[constants.geometry_key] = this.geometry.to_json_serializable(suppress_indent: suppress_indent);
+    }
+
     if (this.major_tick_distance != null && this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
@@ -586,6 +581,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     dna_design_builder.unused_fields = util.unused_fields_map(json_map, constants.dna_design_keys);
 
+    Geometry geometry = util.get_value_with_default(json_map, constants.geometry_key, Geometry(),
+        transformer: (geometry_map) => Geometry.from_json(geometry_map),
+        legacy_keys: constants.legacy_geometry_keys);
+    dna_design_builder.geometry.replace(geometry);
+
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
     } else if (!dna_design_builder.grid.is_none()) {
@@ -629,7 +629,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     // view order of helices
     var helix_indices = [for (var helix_builder in helix_builders) helix_builder.idx];
     // ensure no two helices have same idx
-    Tuple2<int,int> repeated_idxs = util.repeated_element_indices(helix_indices);
+    Tuple2<int, int> repeated_idxs = util.repeated_element_indices(helix_indices);
     if (repeated_idxs != null) {
       int i1 = repeated_idxs.item1;
       int i2 = repeated_idxs.item2;
@@ -692,6 +692,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     var dna_design = dna_design_builder.build();
     dna_design._check_legal_design();
+
+//    print('dna_design: ${dna_design}');
+//    print('dna_design.geometry.to_json_serializable(): ${dna_design.geometry.to_json_serializable()}');
+//    print('dna_design.geometry.toJson(): ${dna_design.geometry.toJson()}');
 
     return dna_design;
   }
@@ -883,10 +887,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     if (!grid.is_none()) {
       var idxs = helices.keys.toList();
       var gps = {for (var idx in idxs) idx: helices[idx].grid_position};
-      for (int i=0; i<gps.length-1; i++) {
+      for (int i = 0; i < gps.length - 1; i++) {
         int idx1 = idxs[i];
         var gp1 = gps[idx1];
-        for (int j=i+1; j<idxs.length; j++) {
+        for (int j = i + 1; j < idxs.length; j++) {
           int idx2 = idxs[j];
           var gp2 = gps[idx2];
           if (gp1 == gp2) {
@@ -898,10 +902,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
   }
 
-  String toString() =>
-      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
-  helices=$helices, 
-  strands=$strands)""";
+//  String toString() =>
+//      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance,
+//  helices=$helices,
+//  strands=$strands)""";
 
   ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
@@ -1263,8 +1267,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset =
-          substrands.isEmpty ? constants.default_max_offset : substrands.first.end;
+      var max_offset = substrands.isEmpty ? constants.default_max_offset : substrands.first.end;
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -1273,8 +1276,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var min_offset =
-          substrands.isEmpty ? constants.default_min_offset : substrands.first.start;
+      var min_offset = substrands.isEmpty ? constants.default_min_offset : substrands.first.start;
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }

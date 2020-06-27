@@ -2,16 +2,17 @@ import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/serializers.dart';
-import 'package:scadnano/src/state/strand_part.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
+import '../serializers.dart';
+import 'strand_part.dart';
 import 'dna_end.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'domain.g.dart';
 
@@ -21,6 +22,9 @@ abstract class Insertion
   int get offset;
 
   int get length;
+
+  @memoized
+  int get hashCode;
 
   dynamic toJson() => [offset, length];
 
@@ -44,7 +48,7 @@ abstract class Insertion
 /// Domain that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix it is associated with.
 abstract class Domain
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UnusedFields
     implements Built<Domain, DomainBuilder>, Substrand {
   Domain._();
 
@@ -81,22 +85,8 @@ abstract class Domain
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
-      ..unused_fields = MapBuilder<String, Object>({}));
+      ..unused_fields.replace({}));
   }
-
-//  static void _initializeBuilder(DomainBuilder b) => b
-//    ..deletions.replace([])
-//    ..insertions.replace([])
-//    ..is_first = false
-//    ..is_last = false;
-
-//  static void _finalizeBuilder(void Function(DomainBuilder builder)) {
-//  static void _finalizeBuilder(DomainBuilder builder) {
-////    Domain bss = builder.build();
-////    Domain bss_interned = intern(bss);
-//    Domain bss_interned = build_interned(builder);
-//    builder.replace(bss_interned);
-//  }
 
   /******************************* end built_value boilerplate ************************************/
 
@@ -122,8 +112,6 @@ abstract class Domain
 
   @nullable
   String get strand_id;
-
-  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   int get hashCode;
@@ -199,6 +187,8 @@ abstract class Domain
     var insertions =
         parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
+    var unused_fields = util.unused_fields_map(json_map, constants.bound_substrand_keys);
+
     return DomainBuilder()
       ..forward = forward
       ..helix = helix
@@ -206,7 +196,7 @@ abstract class Domain
       ..end = end
       ..deletions = ListBuilder<int>(deletions)
       ..insertions = ListBuilder<Insertion>(insertions)
-      ..unused_fields = util.unused_fields_map(json_map, constants.bound_substrand_keys);
+      ..unused_fields = unused_fields;
   }
 
   static BuiltList<Insertion> parse_json_insertions(json_encoded_insertions) {

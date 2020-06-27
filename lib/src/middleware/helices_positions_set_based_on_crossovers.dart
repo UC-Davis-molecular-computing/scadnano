@@ -237,8 +237,8 @@ List<RollXY> _calculate_rolls_and_positions(
     var degrees_top = dna_design.helix_rotation_at(address_top, roll);
     // 0 is straight up, not right as in Cartesian rotation, so we have to convert
     var radians_top_cartesian = util.to_radians(degrees_top - 90);
-    var next_x = x + cos(radians_top_cartesian) * constants.HELIX_DIAMETER_NM;
-    var next_y = y + sin(radians_top_cartesian) * constants.HELIX_DIAMETER_NM;
+    var next_x = x + cos(radians_top_cartesian) * constants.HELIX_DISTANCE_NM;
+    var next_y = y + sin(radians_top_cartesian) * constants.HELIX_DISTANCE_NM;
 
     // now back to using our "0 is straight up" rotation coordinate system
     // first calculate angle that strand on bottom helix, at crossover's offset on bottom helix,

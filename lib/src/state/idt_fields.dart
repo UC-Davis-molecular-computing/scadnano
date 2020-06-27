@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
+import 'package:scadnano/src/state/unused_fields.dart';
 
 import '../constants.dart' as constants;
 import '../serializers.dart';
@@ -10,7 +11,9 @@ import 'package:built_value/built_value.dart';
 
 part 'idt_fields.g.dart';
 
-abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, IDTFieldsBuilder> {
+abstract class IDTFields
+    with BuiltJsonSerializable, UnusedFields
+    implements Built<IDTFields, IDTFieldsBuilder> {
   factory IDTFields(String name, String scale, String purification,
           {String plate = null, String well = null}) =>
       IDTFields.from((b) => b
@@ -43,8 +46,6 @@ abstract class IDTFields with BuiltJsonSerializable implements Built<IDTFields, 
 
   @memoized
   int get hashCode;
-
-  BuiltMap<String, Object> get unused_fields;
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {

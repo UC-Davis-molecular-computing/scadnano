@@ -18,10 +18,13 @@ import 'dna_design.dart';
 import 'domain.dart';
 import 'loopout.dart';
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'strand.g.dart';
 
-abstract class Strand with Selectable, BuiltJsonSerializable implements Built<Strand, StrandBuilder> {
+abstract class Strand
+    with Selectable, BuiltJsonSerializable, UnusedFields
+    implements Built<Strand, StrandBuilder> {
   Strand._();
 
   //FIXME: this is not pure since it consults util.color_cycler
@@ -125,9 +128,6 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   @nullable
   String get dna_sequence;
 
-  @memoized
-  int get hashCode;
-
   @nullable
   IDTFields get idt;
 
@@ -149,7 +149,8 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
-  BuiltMap<String, Object> get unused_fields;
+  @memoized
+  int get hashCode;
 
   /// Returns list of same length as substrands, indicating for each substrand,
   /// the internal modifications on that substrand.
@@ -268,10 +269,10 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
   static String id_from_data(int helix, int offset, bool forward) =>
       'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
-  String toString() {
-    var first_ss = this.first_domain();
-    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
-  }
+//  String toString() {
+//    var first_ss = this.first_domain();
+//    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
+//  }
 
   List<Domain> domains() => [for (var ss in this.substrands) if (ss.is_domain()) ss as Domain];
 
@@ -447,6 +448,16 @@ abstract class Strand with Selectable, BuiltJsonSerializable implements Built<St
 
     Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold, dna_sequence: dna_sequence)
         .rebuild((b) => b.unused_fields = unused_fields);
+
+//    print('first domain unused_fields type               = ${strand.first_domain().unused_fields.runtimeType}');
+//    print('first domain unused_fields                    = ${strand.first_domain().unused_fields}');
+//    print('first domain unused_fields.label type         = ${strand.first_domain().unused_fields['label'].runtimeType}');
+//    print('first domain unused_fields.label              = ${strand.first_domain().unused_fields['label']}');
+//    print('first domain unused_fields.sequence type      = ${strand.first_domain().unused_fields['sequence'].runtimeType}');
+//    print('first domain unused_fields.sequence           = ${strand.first_domain().unused_fields['sequence']}');
+//    print('first domain unused_fields.label.pool type    = ${(strand.first_domain().unused_fields['label'] as Map)['pool'].runtimeType}');
+//    print('first domain unused_fields.label.pool         = ${(strand.first_domain().unused_fields['label'] as Map)['pool']}');
+//    print('');
 
     if (json_map.containsKey(constants.idt_key)) {
       try {

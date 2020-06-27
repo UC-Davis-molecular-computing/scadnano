@@ -19,6 +19,7 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
 import 'package:tuple/tuple.dart';
+import 'package:quiver/iterables.dart' as quiver;
 
 import 'app.dart';
 import 'json_serializable.dart';
@@ -93,6 +94,20 @@ int color_hex_to_decimal_int(String hex) {
   int d = int.parse(hex, radix: 16);
   return d;
 }
+
+const EPSILON = 0.000000001;
+
+/// Tests if [x1] and [x2] are within [epsilon] of each other.
+bool are_close(double x1, double x2, [double epsilon = EPSILON]) => (x1 - x2).abs() < epsilon;
+
+/// Tests if [x1] and [x2] are within [epsilon] of each other.
+bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon = EPSILON]) => [
+      for (var pair in quiver.zip([x1s, x2s])) pair
+    ].every((pair) => are_close(pair[0], pair[1], epsilon));
+
+/// If [val] is close to an int, return that int, otherwise return the value.
+num to_int_if_close(double val, [double epsilon = EPSILON]) =>
+    are_close(val, val.roundToDouble()) ? val.round() : val;
 
 bool is_increasing<T extends Comparable>(Iterable<T> items) {
   T prev = null;
@@ -286,7 +301,7 @@ dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
 /// Finds two indices of elements in list that repeat, returning null if all elements are distinct.
 Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
-  Map<T,int> elt_to_idx = {};
+  Map<T, int> elt_to_idx = {};
   // should take time n log n; we don't do linear search for indices until we know which element repeats
   for (int i2 = 0; i2 < list.length; i2++) {
     T elt = list[i2];
@@ -663,23 +678,36 @@ dynamic get_value(Map<String, dynamic> map, String key, String name, {List<Strin
 }
 
 /// Tries to get value in map associated to [key], returning [default_value] if [key] is not present.
-/// If transformer is given and the key is found in the map, apply transformer to the associated value
+/// If [transformer] is given and the key is found in the map, apply [transformer] to the associated value
 /// and return it.
+/// If [key] is not present but one of [legacy_keys] is, then that value is used.
+/// If [legacy_transformer] is specified and a legacy key is used, then
+/// [legacy_transformer] is used instead of [transformer]/
 T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_value,
-    {T Function(U) transformer = null, List<String> legacy_keys = const []}) {
+    {T Function(U) transformer = null,
+    List<String> legacy_keys = const [],
+    T Function(U) legacy_transformer = null}) {
+  var value = null;
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
-        return map[legacy_key];
+        value = map[legacy_key];
+        if (legacy_transformer != null) {
+          return legacy_transformer(value);
+        }
+        break;
       }
     }
-    return default_value;
-  } else {
-    if (transformer == null) {
-      return map[key];
-    } else {
-      return transformer(map[key]);
+    if (value == null) {
+      return default_value;
     }
+  } else {
+    value = map[key];
+  }
+  if (transformer == null) {
+    return value;
+  } else {
+    return transformer(value);
   }
 }
 
