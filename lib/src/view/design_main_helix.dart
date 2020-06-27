@@ -6,12 +6,13 @@ import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/position3d.dart';
 
+import '../state/context_menu.dart';
+import '../state/dialog.dart';
+import '../state/geometry.dart';
+import '../state/grid.dart';
+import '../state/grid_position.dart';
+import '../state/position3d.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -33,16 +34,18 @@ mixin DesignMainHelixProps on UiProps {
   bool show_dna;
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
+  Geometry geometry;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
   render() {
     Helix helix = props.helix;
+    Geometry geometry = props.geometry;
 
     // for helix circles
-    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
-    var cy = constants.BASE_WIDTH_SVG;
+    var cx = -(2 * constants.BASE_WIDTH_SVG + geometry.distance_between_helices_main_svg / 2);
+    var cy = constants.BASE_HEIGHT_SVG;
 
     // for helix horizontal lines
     num width = helix.svg_width();
@@ -64,7 +67,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..id = helix_circle_id()
         ..cx = '$cx'
         ..cy = '$cy'
-        ..r = '${constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2.0}'
+        ..r = '${geometry.helix_radius_svg}'
         ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'

@@ -29,8 +29,8 @@ BuiltList<Strand> delete_all_reducer(
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
-    var substrands = Set<Domain>.from(ends.map((end) => state.dna_design.end_to_substrand[end]));
-    strands = remove_bound_substrands(strands, state, substrands);
+    var substrands = Set<Domain>.from(ends.map((end) => state.dna_design.end_to_domain[end]));
+    strands = remove_domains(strands, state, substrands);
   }
 
   return strands;
@@ -190,7 +190,7 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   return new_strands;
 }
 
-BuiltList<Strand> remove_bound_substrands(BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
+BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
@@ -207,7 +207,7 @@ BuiltList<Strand> remove_bound_substrands(BuiltList<Strand> strands, AppState st
   // remove crossovers one strand at a time
   for (var strand in strand_to_substrands.keys) {
     strands_to_remove.add(strand);
-    var split_strands = _remove_bound_substrands_from_strand(strand, strand_to_substrands[strand]);
+    var split_strands = _remove_domains_from_strand(strand, strand_to_substrands[strand]);
     strands_to_add.addAll(split_strands);
   }
 
@@ -220,7 +220,7 @@ BuiltList<Strand> remove_bound_substrands(BuiltList<Strand> strands, AppState st
 }
 
 // Splits one strand into many by removing Domains
-List<Strand> _remove_bound_substrands_from_strand(Strand strand, Set<Domain> substrands_to_remove) {
+List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> substrands_to_remove) {
   // partition substrands of Strand that are separated by a Domain
   List<Substrand> substrands = [];
   List<List<Substrand>> substrands_list = [substrands];

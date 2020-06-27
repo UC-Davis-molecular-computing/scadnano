@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/grid.dart';
 import 'pure_component.dart';
@@ -26,6 +27,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
+  Geometry geometry;
 }
 
 
@@ -40,6 +42,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) || !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
+          ..geometry = props.geometry
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance

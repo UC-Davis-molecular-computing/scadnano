@@ -3,6 +3,7 @@
 
 import 'dart:math';
 
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:test/test.dart';
 
 import 'dart:convert';
@@ -210,7 +211,8 @@ main() {
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
     final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
-    var correct_helices = util.helices_assign_svg({correct_helix.idx: correct_helix}, Grid.square);
+    var geometry = state.dna_design.geometry;
+    var correct_helices = util.helices_assign_svg(geometry, {correct_helix.idx: correct_helix}, Grid.square);
     expect(state.dna_design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
@@ -1799,9 +1801,11 @@ main() {
 
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design]));
 
+    Geometry geometry = two_helices_design.geometry;
+
     Helix helix1 = two_helices_design.helices[1];
     num svg_y_helix_1 =
-        helix1.grid_position.v * constants.HELIX_DISTANCE_NM * constants.NM_TO_MAIN_SVG_PIXELS;
+        helix1.grid_position.v * geometry.distance_between_helices_main_svg;
 
     Helix new_helix1 = helix1.rebuild((b) => b
       ..svg_position = Point(0, svg_y_helix_1)
@@ -5393,11 +5397,12 @@ main() {
     AppState state = app_state_from_dna_design(no_grid_two_helices_design);
     // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
+    Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(10, 60) * constants.NM_TO_MAIN_SVG_PIXELS;
-    Point<num> svg_position1 = Point<num>(20 * constants.NM_TO_MAIN_SVG_PIXELS,
-        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * constants.NM_TO_MAIN_SVG_PIXELS);
+    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_main_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_main_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..svg_position = svg_position0);
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position = svg_position1);
@@ -5413,12 +5418,13 @@ main() {
     // helix 0 old position: Position3D(x: 10, y: 60, z: 30);
     // helix 0 new position: Position3D(x: 40, y: 30, z: 130);
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
+    Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(40, 30) * constants.NM_TO_MAIN_SVG_PIXELS;
-    Point<num> svg_position1 = Point<num>(20 * constants.NM_TO_MAIN_SVG_PIXELS,
-        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * constants.NM_TO_MAIN_SVG_PIXELS);
+    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_main_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_main_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5441,13 +5447,14 @@ main() {
     // helix 1 old position: Position3D(x: 20, y: 80, z: 50);
     // helix 0 new position: Position3D(x: 200, y: 160, z: 10);
     // helix 1 new position: Position3D(x: 300, y: 280, z: 500);
+    Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(200, 160) * constants.NM_TO_MAIN_SVG_PIXELS;
-    Point<num> svg_position1 = Point<num>(300 * constants.NM_TO_MAIN_SVG_PIXELS,
-        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * constants.NM_TO_MAIN_SVG_PIXELS);
+    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_main_svg_pixels;
+    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_main_svg_pixels,
+        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_main_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)
@@ -5483,7 +5490,8 @@ main() {
     expected_helices[0] = expected_helix;
 
     var built_expected_helices = expected_helices.build().toMap();
-    built_expected_helices = util.helices_assign_svg(built_expected_helices, Grid.square);
+    var geometry = two_helices_design.geometry;
+    built_expected_helices = util.helices_assign_svg(geometry, built_expected_helices, Grid.square);
 
     AppState expected_state = state.rebuild((b) => b
       ..dna_design.helices.replace(built_expected_helices)

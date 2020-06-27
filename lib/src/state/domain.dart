@@ -66,6 +66,7 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
+      Object label = null,
       bool is_first = false,
       bool is_last = false}) {
     if (deletions == null) {
@@ -81,12 +82,16 @@ abstract class Domain
       ..end = end
       ..deletions.replace(deletions)
       ..insertions.replace(insertions)
+      ..label = label
       ..dna_sequence = dna_sequence
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
       ..unused_fields.replace({}));
   }
+
+  @memoized
+  int get hashCode;
 
   /******************************* end built_value boilerplate ************************************/
 
@@ -106,15 +111,16 @@ abstract class Domain
 
   bool get is_last;
 
+  @nullable
+  @BuiltValueField(serialize: false)
+  Object get label;
+
   // properties below here not stored in JSON, but computed from containing Strand
   @nullable
   String get dna_sequence;
 
   @nullable
   String get strand_id;
-
-  @memoized
-  int get hashCode;
 
   @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
@@ -171,6 +177,10 @@ abstract class Domain
           .map((insertion) => insertion.to_json_serializable(suppress_indent: suppress_indent)));
     }
 
+    if (label != null) {
+      json_map[constants.label_key] = label;
+    }
+
     json_map.addAll(unused_fields.toMap());
 
     return suppress_indent ? NoIndent(json_map) : json_map;
@@ -187,7 +197,9 @@ abstract class Domain
     var insertions =
         parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
 
-    var unused_fields = util.unused_fields_map(json_map, constants.bound_substrand_keys);
+    Object label = util.get_value_with_null_default(json_map, constants.label_key);
+
+    var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 
     return DomainBuilder()
       ..forward = forward
@@ -196,6 +208,7 @@ abstract class Domain
       ..end = end
       ..deletions = ListBuilder<int>(deletions)
       ..insertions = ListBuilder<Insertion>(insertions)
+      ..label = label
       ..unused_fields = unused_fields;
   }
 

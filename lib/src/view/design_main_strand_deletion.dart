@@ -18,7 +18,7 @@ UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMain
 
 @Props()
 mixin DesignMainStrandDeletionPropsMixin on UiProps {
-  Domain substrand;
+  Domain domain;
   int deletion;
   Helix helix;
   BuiltSet<EditModeChoice> edit_modes;
@@ -31,10 +31,10 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     with PureComponent, EditModeQueryable<DesignMainStrandDeletionProps> {
   @override
   render() {
-    Domain substrand = props.substrand;
+    Domain domain = props.domain;
     int deletion_offset = props.deletion;
 
-    Point<num> pos = props.helix.svg_base_pos(deletion_offset, substrand.forward);
+    Point<num> pos = props.helix.svg_base_pos(deletion_offset, domain.forward);
 
     // deletion
     var width = 0.8 * constants.BASE_WIDTH_SVG;
@@ -48,8 +48,8 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     num background_x = pos.x - background_width / 2;
     num background_y = pos.y - background_height / 2;
 
-    String key = 'deletion-H${substrand.helix}-${deletion_offset}';
-    String key_background = 'deletion-background-H${substrand.helix}-${deletion_offset}';
+    String key = 'deletion-H${domain.helix}-${deletion_offset}';
+    String key_background = 'deletion-background-H${domain.helix}-${deletion_offset}';
     return [
       (Dom.rect()
         ..className = 'deletion-background'
@@ -59,7 +59,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..height = background_height
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
 //            remove_deletion();
           }
         })
@@ -70,7 +70,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..d = path_cmds
         ..onClick = ((_) {
           if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(domain: props.substrand, offset: props.deletion));
+            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
 //            remove_deletion();
           }
         })

@@ -28,14 +28,17 @@ abstract class Strand
   Strand._();
 
   //FIXME: this is not pure since it consults util.color_cycler
-  factory Strand(Iterable<Substrand> substrands,
-      {Color color = null,
-      String dna_sequence = null,
-      IDTFields idt = null,
-      bool is_scaffold = false,
-      Modification5Prime modification_5p = null,
-      Modification3Prime modification_3p = null,
-      Map<int, ModificationInternal> modifications_int = const {}}) {
+  factory Strand(
+    Iterable<Substrand> substrands, {
+    Color color = null,
+    String dna_sequence = null,
+    IDTFields idt = null,
+    bool is_scaffold = false,
+    Modification5Prime modification_5p = null,
+    Modification3Prime modification_3p = null,
+    Map<int, ModificationInternal> modifications_int = const {},
+    Object label = null,
+  }) {
     if (color == null) {
       color = is_scaffold ? util.scaffold_color : util.color_cycler.next();
     }
@@ -49,6 +52,7 @@ abstract class Strand
       ..modification_3p = modification_3p?.toBuilder()
       ..modifications_int.replace(modifications_int)
       ..is_scaffold = is_scaffold
+      ..label = label
       ..unused_fields = MapBuilder<String, Object>({}));
 
     strand = strand.initialize();
@@ -146,6 +150,10 @@ abstract class Strand
   // updated somehow.
 //  @BuiltValueField(compare: false)
   Color get color;
+
+  @nullable
+  @BuiltValueField(serialize: false)
+  Object get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
@@ -332,6 +340,10 @@ abstract class Strand
       json_map[constants.modifications_int_key] = suppress_indent ? NoIndent(mods_map) : mods_map;
     }
 
+    if (label != null) {
+      json_map[constants.label_key] = label;
+    }
+
     return json_map;
   }
 
@@ -385,7 +397,7 @@ abstract class Strand
     // need to parse all Domains before Loopouts,
     // because prev and next Domains need to be referenced by Loopouts
     // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated before assigning.
-    Map<int, Domain> bound_substrands = {};
+    Map<int, Domain> domains = {};
     int start_idx_ss = 0;
     for (int i = 0; i < substrand_jsons.length; i++) {
       var substrand_json = substrand_jsons[i];
@@ -398,7 +410,7 @@ abstract class Strand
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
         end_idx_ss = start_idx_ss + dna_length;
-        bound_substrands[i] = ssb.build();
+        domains[i] = ssb.build();
       } else {
         int loopout_length = substrand_json[constants.loopout_key];
         end_idx_ss = start_idx_ss + loopout_length;
@@ -420,12 +432,12 @@ abstract class Strand
 
     List<Substrand> substrands = [];
     for (int i = 0; i < substrand_jsons.length; i++) {
-      if (bound_substrands.containsKey(i)) {
-        substrands.add(bound_substrands[i]);
+      if (domains.containsKey(i)) {
+        substrands.add(domains[i]);
       } else if (loopouts.containsKey(i)) {
         substrands.add(loopouts[i]);
       } else {
-        throw AssertionError('one of bound_substrands or loopouts must contain index i=${i}');
+        throw AssertionError('one of domains or loopouts must contain index i=${i}');
       }
     }
 
@@ -444,10 +456,17 @@ abstract class Strand
       is_scaffold = json_map[constants.is_scaffold_key];
     }
 
+    Object label = util.get_value_with_null_default(json_map, constants.label_key);
+
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
 
-    Strand strand = Strand(substrands, color: color, is_scaffold: is_scaffold, dna_sequence: dna_sequence)
-        .rebuild((b) => b.unused_fields = unused_fields);
+    Strand strand = Strand(
+      substrands,
+      color: color,
+      is_scaffold: is_scaffold,
+      dna_sequence: dna_sequence,
+      label: label,
+    ).rebuild((b) => b.unused_fields = unused_fields);
 
 //    print('first domain unused_fields type               = ${strand.first_domain().unused_fields.runtimeType}');
 //    print('first domain unused_fields                    = ${strand.first_domain().unused_fields}');
@@ -490,7 +509,7 @@ abstract class Strand
     throw AssertionError('should not be reachable');
   }
 
-  Domain last_bound_substrand() {
+  Domain last_domain() {
     for (int i = substrands.length - 1; i >= 0; i--) {
       if (this.substrands[i] is Domain) {
         return this.substrands[i] as Domain;
@@ -536,7 +555,7 @@ abstract class Strand
     }
   }
 
-  DNAEnd get dnaend_3p => last_bound_substrand().dnaend_3p;
+  DNAEnd get dnaend_3p => last_domain().dnaend_3p;
 
   DNAEnd get dnaend_5p => first_domain().dnaend_5p;
 
@@ -555,7 +574,7 @@ abstract class Strand
   }
 
   bool _ligatable_3p_to_5p_of(Strand other) {
-    Domain last_ss_this = last_bound_substrand();
+    Domain last_ss_this = last_domain();
     Domain first_ss_other = other.first_domain();
 
     return last_ss_this.forward == first_ss_other.forward &&
@@ -565,7 +584,7 @@ abstract class Strand
 
   bool _ligatable_5p_to_3p_of(Strand other) {
     Domain first_ss_this = first_domain();
-    Domain last_ss_other = other.last_bound_substrand();
+    Domain last_ss_other = other.last_domain();
 
     return first_ss_this.forward == last_ss_other.forward &&
         first_ss_this.helix == last_ss_other.helix &&
@@ -575,7 +594,7 @@ abstract class Strand
   /// Name to use when exporting this Strand.
   String export_name() {
     Domain first_ss = first_domain();
-    Domain last_ss = last_bound_substrand();
+    Domain last_ss = last_domain();
     String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
   }

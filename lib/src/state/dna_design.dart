@@ -157,11 +157,11 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   }
 
   @memoized
-  BuiltMap<String, Domain> get bound_substrands_by_id {
+  BuiltMap<String, Domain> get domains_by_id {
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        builder[bound_substrand.id()] = bound_substrand;
+      for (var domain in strand.domains()) {
+        builder[domain.id()] = domain;
       }
     }
     return builder.build();
@@ -193,9 +193,9 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        builder[bound_substrand.dnaend_start.id()] = bound_substrand.dnaend_start;
-        builder[bound_substrand.dnaend_end.id()] = bound_substrand.dnaend_end;
+      for (var domain in strand.domains()) {
+        builder[domain.dnaend_start.id()] = domain.dnaend_start;
+        builder[domain.dnaend_end.id()] = domain.dnaend_end;
       }
     }
     return builder.build();
@@ -225,9 +225,9 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        var end = bound_substrand.dnaend_5p;
-        if (!bound_substrand.is_first) {
+      for (var domain in strand.domains()) {
+        var end = domain.dnaend_5p;
+        if (!domain.is_first) {
           builder[end.id()] = end;
         }
       }
@@ -239,9 +239,9 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        var end = bound_substrand.dnaend_3p;
-        if (!bound_substrand.is_last) {
+      for (var domain in strand.domains()) {
+        var end = domain.dnaend_3p;
+        if (!domain.is_last) {
           builder[end.id()] = end;
         }
       }
@@ -266,25 +266,25 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     var substrand_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
-        for (Domain bound_ss in strand.domains()) {
-          substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
+        for (Domain domain in strand.domains()) {
+          substrand_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
         }
       }
     }
-    var substrand_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
+    var domain_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
     substrand_mismatches_map_builder.build().forEach((bound_ss, mismatches) {
-      substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
+      domain_mismatches_builtmap_builder[bound_ss] = mismatches.build();
     });
-    return substrand_mismatches_builtmap_builder.build();
+    return domain_mismatches_builtmap_builder.build();
   }
 
   @memoized
-  BuiltMap<DNAEnd, Domain> get end_to_substrand {
+  BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
-      for (var substrand in strand.domains()) {
-        end_to_substrand_builder[substrand.dnaend_3p] = substrand;
-        end_to_substrand_builder[substrand.dnaend_5p] = substrand;
+      for (var domain in strand.domains()) {
+        end_to_substrand_builder[domain.dnaend_3p] = domain;
+        end_to_substrand_builder[domain.dnaend_5p] = domain;
       }
     }
     return end_to_substrand_builder.build();
@@ -324,7 +324,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
 
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
 
-  Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
+  Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_domain[end]];
 
   @memoized
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
@@ -378,7 +378,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   BuiltMap<Address, Strand> get address_3p_to_strand {
     var map = Map<Address, Strand>();
     for (var strand in strands) {
-      var ss = strand.last_bound_substrand();
+      var ss = strand.last_domain();
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_3p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
@@ -420,14 +420,14 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
               dna_end_top = substrand_top.dnaend_5p;
 
               helix_idx_bot = address_3p.helix_idx;
-              substrand_bot = strand_3p.last_bound_substrand();
+              substrand_bot = strand_3p.last_domain();
               dna_end_bot = substrand_bot.dnaend_3p;
             } else {
               // 3' end is on top, 5' is on bottom
               helix_idx_top = address_3p.helix_idx;
               address_top = address_3p;
               forward_top = !forward;
-              substrand_top = strand_3p.last_bound_substrand();
+              substrand_top = strand_3p.last_domain();
               dna_end_top = substrand_top.dnaend_3p;
 
               helix_idx_bot = address_5p.helix_idx;
@@ -673,7 +673,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(helices, dna_design_builder.grid);
+    helices = util.helices_assign_svg(geometry, helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -1330,7 +1330,7 @@ class IllegalDNADesignError implements Exception {
 class StrandError extends IllegalDNADesignError {
   StrandError(Strand strand, String the_cause) : super(the_cause) {
     var first_substrand = strand.first_domain();
-    var last_substrand = strand.last_bound_substrand();
+    var last_substrand = strand.last_domain();
 
     var msg = '\n'
         'strand length        =  ${strand.dna_length()}\n'

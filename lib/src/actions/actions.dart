@@ -32,7 +32,6 @@ import 'package:scadnano/src/state/strands_move.dart';
 //import '../state/select_mode_state.dart';
 //import '../state/helix.dart';
 //import '../state/strand.dart';
-//import '../state/bound_substrand.dart';
 //import '../state/loopout.dart';
 import '../state/edit_mode.dart';
 import '../serializers.dart';

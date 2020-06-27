@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/crossover.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:tuple/tuple.dart';
@@ -224,9 +225,13 @@ class RollXY {
 List<RollXY> _calculate_rolls_and_positions(
     DNADesign dna_design, List<Helix> helices, List<Tuple2<Address, Address>> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
+
+  Geometry geometry = dna_design.geometry;
+
   double x = helices[0].position3d().x;
   double y = helices[0].position3d().y;
   List<RollXY> rollxys = [RollXY(roll: first_roll, x: x, y: y)];
+
   for (int i = 0; i < addresses.length; i++) {
     var address_top = addresses[i].item1;
     var address_bot = addresses[i].item2;
@@ -237,8 +242,8 @@ List<RollXY> _calculate_rolls_and_positions(
     var degrees_top = dna_design.helix_rotation_at(address_top, roll);
     // 0 is straight up, not right as in Cartesian rotation, so we have to convert
     var radians_top_cartesian = util.to_radians(degrees_top - 90);
-    var next_x = x + cos(radians_top_cartesian) * constants.HELIX_DISTANCE_NM;
-    var next_y = y + sin(radians_top_cartesian) * constants.HELIX_DISTANCE_NM;
+    var next_x = x + cos(radians_top_cartesian) * geometry.distance_between_helices_nm;
+    var next_y = y + sin(radians_top_cartesian) * geometry.distance_between_helices_nm;
 
     // now back to using our "0 is straight up" rotation coordinate system
     // first calculate angle that strand on bottom helix, at crossover's offset on bottom helix,

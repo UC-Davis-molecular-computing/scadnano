@@ -26,6 +26,7 @@ import 'json_serializable.dart';
 import 'state/crossover.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
+import 'state/geometry.dart';
 import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
@@ -236,7 +237,7 @@ Version get_version(String version_str) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
+Map<int, Helix> helices_assign_svg(Geometry geometry, Map<int, Helix> helices, Grid grid,
     [BuiltSet<int> selected_helix_idxs = null]) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -254,19 +255,19 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
 
   var prev_helix = null;
   for (var helix in selected_helices_sorted_by_view_order) {
-    num x = main_view_svg_x_of_helix(helix, grid);
-    num y = main_view_svg_y_of_helix(helix, grid);
+    num x = main_view_svg_x_of_helix(geometry, helix, grid);
+    num y = main_view_svg_y_of_helix(geometry, helix, grid);
     if (prev_helix != null) {
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = pos.distance_zy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
+        delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_main_svg_pixels;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
         delta_y = prev_grid_position.distance_lattice(grid_position, grid) *
-            constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
+            geometry.distance_between_helices_main_svg;
       }
       y = prev_y + delta_y;
     }
@@ -280,17 +281,17 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
   return new_helices;
 }
 
-num main_view_svg_x_of_helix(Helix helix, Grid grid) {
+num main_view_svg_x_of_helix(Geometry geometry, Helix helix, Grid grid) {
   if (grid.is_none()) {
-    return helix.position3d().x * constants.NM_TO_MAIN_SVG_PIXELS;
+    return helix.position3d().x * geometry.nm_to_main_svg_pixels;
   } else {
     return 0;
 //    return helix.min_offset * constants.BASE_WIDTH_SVG;
   }
 }
 
-num main_view_svg_y_of_helix(Helix helix, Grid grid) =>
-    helix.position3d().y * constants.NM_TO_MAIN_SVG_PIXELS;
+num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) =>
+    helix.position3d().y * geometry.nm_to_main_svg_pixels;
 
 num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
 
@@ -635,9 +636,9 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
   return position3d;
 }
 
-Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
-    (position.x / 0.34) * constants.BASE_WIDTH_SVG,
-    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG);
+Point<num> position3d_to_main_view_svg(Geometry geometry, Position3D position) => Point<num>(
+    position.x * geometry.nm_to_main_svg_pixels,
+    (position.y / geometry.distance_between_helices_nm) * geometry.distance_between_helices_main_svg);
 
 Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
     position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
@@ -909,10 +910,10 @@ num to_radians(num degrees) => degrees * 2 * pi / 360;
 //  return rotation;
 //}
 
-num rotation_between_helices(Helix helix, Helix helix_other, bool forward) {
+num rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geometry geometry) {
   num rotation = helix.angle_to(helix_other);
   if (!forward) {
-    rotation = (rotation - 150) % 360;
+    rotation = (rotation - geometry.minor_groove_angle) % 360;
   }
 
   return rotation;

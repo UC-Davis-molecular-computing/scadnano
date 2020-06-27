@@ -5,7 +5,7 @@ import 'package:scadnano/src/state/dna_design.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
-/// Ensures that actions on insertions and deletions happen in pairs on adjacent bound substrands.
+/// Ensures that actions on insertions and deletions happen in pairs on adjacent domains.
 insertion_deletion_pairing_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.InsertionOrDeletionAction) {
     Domain paired_substrand =
