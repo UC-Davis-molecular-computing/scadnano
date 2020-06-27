@@ -61,6 +61,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int view_order = null,
     GridPosition grid_position = null,
     num roll = constants.default_helix_roll,
+    num pitch = constants.default_helix_pitch,
+    num yaw = constants.default_helix_yaw,
     int min_offset = 0,
     int max_offset = constants.default_max_offset,
     Position3D position = null,
@@ -77,9 +79,11 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..position_ = position?.toBuilder()
       ..svg_position = svg_position
       ..roll = roll
+      ..pitch = pitch
+      ..yaw = yaw
       ..min_offset = min_offset
       ..max_offset = max_offset
-      ..unused_fields = MapBuilder<String, Object>({}));
+      ..unused_fields.replace({}));
   }
 
   /// unique identifier of used helix; also index indicating order to show
