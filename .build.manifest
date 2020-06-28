@@ -951,5 +951,4 @@ packages/w_common/src/test_fixtures/sass/_test_package_import.scss
 pandoc.css
 react_dnd_imports.js
 scadnano-styles.css
-scadnano.py
 splitpane.js
