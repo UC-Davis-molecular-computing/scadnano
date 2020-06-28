@@ -46,7 +46,7 @@ main() {
   test('read in color specified as decimal', () {
     // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
     // 0066cc hex is 26316 decimal
-    String json_str = r"""
+    String json_str = r'''
     { 
       "grid": "square",
       "helices": [{"grid_position": [0,0]}],
@@ -57,7 +57,7 @@ main() {
         } 
       ] 
     }
-    """;
+    ''';
     DNADesign dna_design = DNADesign.from_json(jsonDecode(json_str));
     Strand strand = dna_design.strands.first;
     Color color = strand.color;
@@ -68,7 +68,7 @@ main() {
   test('position_specified_with_origin_keyword', () {
     // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
     // 0066cc hex is 26316 decimal
-    String json_str = r"""
+    String json_str = r'''
     { 
       "grid": "none",
       "helices": [{
@@ -86,7 +86,7 @@ main() {
         } 
       ] 
     }
-    """;
+    ''';
     /*
     d = sc.DNADesign.from_scadnano_json_str(json_str)
     expected_position = sc.Position3D(1,2,3,4,5,6)
@@ -102,9 +102,9 @@ main() {
   test('position specified no origin keyword', () {
     // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
     // 0066cc hex is 26316 decimal
-    String json_str = r"""
+    String json_str = r'''
     { 
-      "version": "0.9.0",
+      "version": "''' + constants.CURRENT_VERSION + r'''",
       "grid": "none",
       "helices": [{
         "position": { 
@@ -123,7 +123,7 @@ main() {
         } 
       ] 
     }
-    """;
+    ''';
     /*
     d = sc.DNADesign.from_scadnano_json_str(json_str)
     expected_position = sc.Position3D(1,2,3,4,5,6)
@@ -139,9 +139,9 @@ main() {
   test('position specified with origin keyword directly in Helix', () {
     // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
     // 0066cc hex is 26316 decimal
-    String json_str = r"""
+    String json_str = r'''
     { 
-      "version": "0.9.0",
+      "version": "''' + constants.CURRENT_VERSION + r'''",
       "grid": "none",
       "helices": [{ 
           "origin": { "x": 1, "y": 2, "z": 3}, 
@@ -156,7 +156,7 @@ main() {
         } 
       ] 
     }
-    """;
+    ''';
     /*
     d = sc.DNADesign.from_scadnano_json_str(json_str)
     expected_position = sc.Position3D(1,2,3,4,5,6)
@@ -172,9 +172,9 @@ main() {
   test('position specified without origin keyword directly in Helix', () {
     // addresses https://github.com/UC-Davis-molecular-computing/scadnano/issues/271
     // 0066cc hex is 26316 decimal
-    String json_str = r"""
+    String json_str = r'''
     { 
-      "version": "0.9.0",
+      "version": "''' + constants.CURRENT_VERSION + r'''",
       "grid": "none",
       "helices": [{ 
           "x": 1, 
@@ -191,7 +191,7 @@ main() {
         } 
       ] 
     }
-    """;
+    ''';
     /*
     d = sc.DNADesign.from_scadnano_json_str(json_str)
     expected_position = sc.Position3D(1,2,3,4,5,6)
@@ -228,9 +228,9 @@ main() {
     expect(state.dna_design.helices, correct_helices);
   });
 
-  String simple_strand = r"""
+  String simple_strand = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -243,7 +243,7 @@ main() {
     }
   ]
 } 
-  """;
+  ''';
   DNADesign dna_design_simple_strand = DNADesign.from_json(jsonDecode(simple_strand));
 
   //     before
@@ -254,9 +254,9 @@ main() {
   //     0        8              24
   // 0   [------> [--------------->
   test('test add nick on substrand', () {
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -274,7 +274,7 @@ main() {
     }
   ]
 } 
-  """;
+  ''';
     var state = app_state_from_dna_design(dna_design_simple_strand);
 
     Domain substrand = dna_design_simple_strand.strands[0].substrands[0] as Domain;
@@ -292,9 +292,9 @@ main() {
   //     0        8        16      24
   // 0   [------> [------> [------->
   test('test add two nicks on substrand', () {
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -317,7 +317,7 @@ main() {
     }
   ]
 } 
-  """;
+  ''';
     AppState state = app_state_from_dna_design(dna_design_simple_strand);
 
     Domain nicked_substrand1 = dna_design_simple_strand.strands[0].substrands[0] as Domain;
@@ -333,9 +333,9 @@ main() {
   // 0   [------- ------->
   //     <------- -------]
   //     TTTGGGCC AAACCCGG
-  String smaller_design_h0_json = r"""
+  String smaller_design_h0_json = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -355,7 +355,7 @@ main() {
     }
   ]
 } 
-  """;
+  ''';
   DNADesign small_design_h0 = DNADesign.from_json(jsonDecode(smaller_design_h0_json));
 
   //     ACGTACGA AACCGGTA
@@ -363,9 +363,9 @@ main() {
   //     <------- -------]
   //     TTTGGGCC AAACCCGG
   test('test add nick small_design_h0 forward', () {
-    String content_after = """
+    String content_after = '''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -391,7 +391,7 @@ main() {
     }
   ]
 } 
-    """;
+    ''';
 
     AppState state = app_state_from_dna_design(small_design_h0);
 
@@ -408,9 +408,9 @@ main() {
   //     <------] <------]
   //     TTTGGGCC AAACCCGG
   test('test add nick small_design_h0 reverse', () {
-    String content_after = """
+    String content_after = '''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]}
@@ -436,7 +436,7 @@ main() {
     }
   ]
 } 
-    """;
+    ''';
     AppState state = app_state_from_dna_design(small_design_h0);
 
     Domain nicked_substrand = small_design_h0.strands[1].substrands[0] as Domain;
@@ -465,9 +465,9 @@ main() {
 
 // 5   [------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- ------->
 //     <------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------- -------]
-  String six_helix_rectangle_json = r"""
+  String six_helix_rectangle_json = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -540,7 +540,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign six_helix_rectangle = DNADesign.from_json(jsonDecode(six_helix_rectangle_json));
 
 //     0        8        16       24       32       40       48       56       64       72       80       88       96
@@ -568,9 +568,9 @@ main() {
     Domain h5_reverse = six_helix_rectangle.strands[11].substrands[0];
     state = app_state_reducer(state, Nick(domain: h5_reverse, offset: 48));
 
-    String h5_after_nick_json = r"""
+    String h5_after_nick_json = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "max_offset": 100},
@@ -593,7 +593,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h5_after_nick1 = DNADesign.from_json(jsonDecode(h5_after_nick_json));
     Strand h5_96_reverse = h5_after_nick1.strands[0];
     Strand h5_48_reverse = h5_after_nick1.strands[1];
@@ -604,9 +604,9 @@ main() {
     // design.add_nick(helix=0, offset=40, forward=False)
     Domain h0_reverse = six_helix_rectangle.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(domain: h0_reverse, offset: 40));
-    String h0_after_nick_json = r"""
+    String h0_after_nick_json = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square", 
   "helices": [ 
     {"grid_position": [0, 0]}, 
@@ -629,7 +629,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h0_after_nick2 = DNADesign.from_json(jsonDecode(h0_after_nick_json));
     Strand h0_96_reverse = h0_after_nick2.strands[0];
     Strand h0_40_reverse = h0_after_nick2.strands[1];
@@ -639,9 +639,9 @@ main() {
     // design.add_nick(helix=0, offset=72, forward=False)
     Domain h0_reverse_for_nick3 = h0_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(domain: h0_reverse_for_nick3, offset: 72));
-    String h0_after_nick3_json = r"""
+    String h0_after_nick3_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -657,7 +657,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h0_after_nick3 = DNADesign.from_json(jsonDecode(h0_after_nick3_json));
     Strand h0_40_72_reverse = h0_after_nick3.strands[0];
     Strand h0_72_96_reverse = h0_after_nick3.strands[1];
@@ -666,9 +666,9 @@ main() {
     // design.add_nick(helix=2, offset=40, forward=False)
     Domain h2_reverse_for_nick4 = six_helix_rectangle.strands[5].substrands[0];
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick4, offset: 40));
-    String h2_after_nick4_json = r"""
+    String h2_after_nick4_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -684,7 +684,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h2_after_nick4 = DNADesign.from_json(jsonDecode(h2_after_nick4_json));
     Strand h2_00_40_reverse = h2_after_nick4.strands[0];
     Strand h2_40_96_reverse = h2_after_nick4.strands[1];
@@ -693,9 +693,9 @@ main() {
     // design.add_nick(helix=2, offset=72, forward=False)
     Domain h2_reverse_for_nick5 = h2_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(domain: h2_reverse_for_nick5, offset: 72));
-    String h2_after_nick5_json = r"""
+    String h2_after_nick5_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -711,7 +711,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h2_after_nick5 = DNADesign.from_json(jsonDecode(h2_after_nick5_json));
     Strand h2_40_72_reverse = h2_after_nick5.strands[0];
     Strand h2_72_96_reverse = h2_after_nick5.strands[1];
@@ -720,9 +720,9 @@ main() {
     // design.add_nick(helix=4, offset=40, forward=False)
     Domain h4_reverse_for_nick6 = six_helix_rectangle.strands[9].substrands[0];
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick6, offset: 40));
-    String h4_after_nick6_json = r"""
+    String h4_after_nick6_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -738,7 +738,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h4_after_nick6 = DNADesign.from_json(jsonDecode(h4_after_nick6_json));
     Strand h4_00_40_reverse = h4_after_nick6.strands[0];
     Strand h4_40_96_reverse = h4_after_nick6.strands[1];
@@ -747,9 +747,9 @@ main() {
     // design.add_nick(helix=4, offset=72, forward=False)
     Domain h4_reverse_for_nick7 = h4_40_96_reverse.substrands[0];
     state = app_state_reducer(state, Nick(domain: h4_reverse_for_nick7, offset: 72));
-    String h4_after_nick7_json = r"""
+    String h4_after_nick7_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -765,7 +765,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h4_after_nick7 = DNADesign.from_json(jsonDecode(h4_after_nick7_json));
     Strand h4_40_72_reverse = h4_after_nick7.strands[0];
     Strand h4_72_96_reverse = h4_after_nick7.strands[1];
@@ -774,9 +774,9 @@ main() {
     // design.add_nick(helix=1, offset=24, forward=True)
     Domain h1_forward_for_nick8 = six_helix_rectangle.strands[2].substrands[0];
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick8, offset: 24));
-    String h1_after_nick8_json = r"""
+    String h1_after_nick8_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -792,7 +792,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h1_after_nick8 = DNADesign.from_json(jsonDecode(h1_after_nick8_json));
     Strand h1_00_24_forward = h1_after_nick8.strands[0];
     Strand h1_24_96_forward = h1_after_nick8.strands[1];
@@ -801,9 +801,9 @@ main() {
     // design.add_nick(helix=1, offset=56, forward=True)
     Domain h1_forward_for_nick9 = h1_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(domain: h1_forward_for_nick9, offset: 56));
-    String h1_after_nick9_json = r"""
+    String h1_after_nick9_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -819,7 +819,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h1_after_nick9 = DNADesign.from_json(jsonDecode(h1_after_nick9_json));
     Strand h1_24_56_forward = h1_after_nick9.strands[0];
     Strand h1_56_96_forward = h1_after_nick9.strands[1];
@@ -828,9 +828,9 @@ main() {
     // design.add_nick(helix=3, offset=24, forward=True)
     Domain h3_forward_for_nick10 = six_helix_rectangle.strands[6].substrands[0];
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick10, offset: 24));
-    String h3_after_nick10_json = r"""
+    String h3_after_nick10_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -846,7 +846,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h3_after_nick10 = DNADesign.from_json(jsonDecode(h3_after_nick10_json));
     Strand h3_00_24_forward = h3_after_nick10.strands[0];
     Strand h3_24_96_forward = h3_after_nick10.strands[1];
@@ -855,9 +855,9 @@ main() {
     // design.add_nick(helix=3, offset=56, forward=True)
     Domain h3_forward_for_nick11 = h3_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(domain: h3_forward_for_nick11, offset: 56));
-    String h3_after_nick11_json = r"""
+    String h3_after_nick11_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -873,7 +873,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h3_after_nick11 = DNADesign.from_json(jsonDecode(h3_after_nick11_json));
     Strand h3_24_56_forward = h3_after_nick11.strands[0];
     Strand h3_56_96_forward = h3_after_nick11.strands[1];
@@ -882,9 +882,9 @@ main() {
     // design.add_nick(helix=5, offset=24, forward=True)
     Domain h5_forward_for_nick12 = six_helix_rectangle.strands[10].substrands[0];
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick12, offset: 24));
-    String h5_after_nick12_json = r"""
+    String h5_after_nick12_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -900,7 +900,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h5_after_nick12 = DNADesign.from_json(jsonDecode(h5_after_nick12_json));
     Strand h5_00_24_forward = h5_after_nick12.strands[0];
     Strand h5_24_96_forward = h5_after_nick12.strands[1];
@@ -909,9 +909,9 @@ main() {
     // design.add_nick(helix=5, offset=56, forward=True)
     Domain h5_forward_for_nick13 = h5_24_96_forward.substrands[0];
     state = app_state_reducer(state, Nick(domain: h5_forward_for_nick13, offset: 56));
-    String h5_after_nick13_json = r"""
+    String h5_after_nick13_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2]}, {"grid_position": [0, 3]}, {"grid_position": [0, 4]}, {"grid_position": [0, 5]} ],
   "strands": [
@@ -927,16 +927,16 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign h5_after_nick13 = DNADesign.from_json(jsonDecode(h5_after_nick13_json));
     Strand h5_24_56_forward = h5_after_nick13.strands[0];
     Strand h5_56_96_forward = h5_after_nick13.strands[1];
     expect(recolor_strands(state.dna_design.strands).contains(h5_24_56_forward), true);
     expect(recolor_strands(state.dna_design.strands).contains(h5_56_96_forward), true);
 
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0",
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -1074,7 +1074,7 @@ main() {
     }
   ]
  }
-    """;
+    ''';
 
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
@@ -1085,9 +1085,9 @@ main() {
   //     0            16               32
   // 0  [-------------X--------------->
   //    <-------------X----------------]
-  String simple_helix_with_deletion_json = r"""
+  String simple_helix_with_deletion_json = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
@@ -1103,7 +1103,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign simple_helix_with_deletion_design =
       DNADesign.from_json(jsonDecode(simple_helix_with_deletion_json));
   //     0     8      16      24        32
@@ -1116,9 +1116,9 @@ main() {
     Domain strand_to_nick_2 = simple_helix_with_deletion_design.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(domain: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0", "grid": "square", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", 
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
@@ -1143,7 +1143,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
 
@@ -1153,9 +1153,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(domain: strand_to_nick4, offset: 24));
 
-    content_after = r"""
+    content_after = r'''
  {
-  "version": "0.9.0", 
+  "version": "''' + constants.CURRENT_VERSION + r'''", 
   "grid": "square",
   "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
@@ -1191,7 +1191,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
   });
@@ -1201,9 +1201,9 @@ main() {
   //     0            16               32
   // 0  [-------------I--------------->
   //    <-------------I----------------]
-  String simple_helix_with_insertion_json = r"""
+  String simple_helix_with_insertion_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1217,7 +1217,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign simple_helix_with_insertion_design =
       DNADesign.from_json(jsonDecode(simple_helix_with_insertion_json));
   //     0     8      16      24        32
@@ -1230,9 +1230,9 @@ main() {
     Domain strand_to_nick_2 = simple_helix_with_insertion_design.strands[1].substrands[0];
     state = app_state_reducer(state, Nick(domain: strand_to_nick_1, offset: 8));
     state = app_state_reducer(state, Nick(domain: strand_to_nick_2, offset: 8));
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1256,7 +1256,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
 
@@ -1266,9 +1266,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: strand_to_nick3, offset: 24));
     state = app_state_reducer(state, Nick(domain: strand_to_nick4, offset: 24));
 
-    content_after = r"""
+    content_after = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -1302,7 +1302,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
   });
@@ -1326,9 +1326,9 @@ main() {
   //  ----------------->        /
   // 2  <----------------------
   //    TTTTAAAAGGGGCCCC
-  String simple_strand_json = r"""
+  String simple_strand_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -1348,7 +1348,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign simple_strand_dna_design = DNADesign.from_json(jsonDecode(simple_strand_json));
   //
   //     0            16
@@ -1377,9 +1377,9 @@ main() {
     state = app_state_reducer(state, Nick(domain: nick1_target, offset: 8));
     state = app_state_reducer(state, Nick(domain: nick2_target, offset: 8));
 
-    String content_after = r"""
+    String content_after = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATT",
@@ -1411,7 +1411,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign expected_dna_design = DNADesign.from_json(jsonDecode(content_after));
     expect_strands_equal(state.dna_design.strands, expected_dna_design.strands);
   });
@@ -1419,9 +1419,9 @@ main() {
   //   0       8       16
   // 0 [------>[------->
   //   AGTCAGTC AATTCCGG
-  String two_strands_forward_json = r"""
+  String two_strands_forward_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTC",
@@ -1437,15 +1437,15 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign two_strands_forward = DNADesign.from_json(jsonDecode(two_strands_forward_json));
 
   //   0               16
   // 0 [--------------->
   //   AGTCAGTCAATTCCGG
-  String ligate_two_strands_forward_json = r"""
+  String ligate_two_strands_forward_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1455,7 +1455,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign ligate_two_strands_forward = DNADesign.from_json(jsonDecode(ligate_two_strands_forward_json));
   test("ligate two strands forward using 5p end", () {
     AppState state = app_state_from_dna_design(two_strands_forward);
@@ -1477,9 +1477,9 @@ main() {
   //   0       8       16
   // 0 <------] <-------]
   //   GGCCTTAA CTGACTGA
-  String two_strands_reverse_json = r"""
+  String two_strands_reverse_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AATTCCGG",
@@ -1495,15 +1495,15 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign two_strands_reverse = DNADesign.from_json(jsonDecode(two_strands_reverse_json));
 
   //   0               16
   // 0 <---------------]
   //   GGCCTTAACTGACTGA
-  String ligate_two_strands_reverse_json = r"""
+  String ligate_two_strands_reverse_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAATTCCGG",
@@ -1513,7 +1513,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign ligate_two_strands_reverse = DNADesign.from_json(jsonDecode(ligate_two_strands_reverse_json));
   test("ligate two strands reverse using 5p end", () {
     AppState state = app_state_from_dna_design(two_strands_reverse);
@@ -1539,9 +1539,10 @@ main() {
   //
   // 1 [------------------->
   //   <-------------------]
-  String two_helices_json = r"""
+  String two_helices_json = '''
  {
-  "version": "0.9.0", 
+  "version": "${constants.CURRENT_VERSION}",''' +
+      r''' 
   "grid": "square", 
   "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
@@ -1567,7 +1568,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign two_helices_design = DNADesign.from_json(jsonDecode(two_helices_json));
 
   //   0                  16
@@ -1659,9 +1660,9 @@ main() {
   //  \
   // 1 -------------------->
   //   <-------------------]
-  String two_helices_join_inner_strands_json = r"""
+  String two_helices_join_inner_strands_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -1681,7 +1682,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign two_helices_join_inner_strands =
       DNADesign.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
@@ -1743,9 +1744,9 @@ main() {
     AppState state = app_state_from_dna_design(two_helices_design);
     state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
 
-    String two_helices_helix_add_json = r"""
+    String two_helices_helix_add_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
   "strands": [
     {
       "domains": [
@@ -1769,7 +1770,7 @@ main() {
     }
   ]
  }
-    """;
+    ''';
     DNADesign two_helices_helix_add_design = DNADesign.from_json(jsonDecode(two_helices_helix_add_json));
     AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
     two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
@@ -1850,9 +1851,9 @@ main() {
     // 1  [-------------->
     //    <--------------]
     //    TTAAGGCCTTAAGGCC
-    String expected_json = r"""
+    String expected_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 1], "idx": 1} ],
       "strands": [
         {
           "sequence": "CCGGAATTCCGGAATT",
@@ -1868,7 +1869,7 @@ main() {
         }
       ]
     }
-  """;
+  ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..undo_redo.undo_stack.add(simple_strand_dna_design)
@@ -1912,9 +1913,9 @@ main() {
     //    [-------------->
     // 2  <--------------]
     //    TTTTAAAAGGGGCCCC
-    String expected_json = r"""
+    String expected_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 2], "idx": 2} ],
       "strands": [
         {
           "sequence": "CCCCGGGGAAAATTTT",
@@ -1930,7 +1931,7 @@ main() {
         }
       ]
     }
-  """;
+  ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..undo_redo.undo_stack.add(simple_strand_dna_design)
@@ -1952,9 +1953,9 @@ main() {
   //
   // 4 [------------------->
   //   <-------------------]
-  String two_helices_with_helix_idx_gap_json = r"""
+  String two_helices_with_helix_idx_gap_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
   "strands": [
     {
       "domains": [
@@ -1978,7 +1979,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign two_helices_with_helix_idx_gap_design =
       DNADesign.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
   test('add new helix be one higher than max id', () {
@@ -1989,9 +1990,9 @@ main() {
 
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_with_helix_idx_gap_design]));
-    String expected_json = r"""
+    String expected_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4}, {"grid_position": [0, 2], "idx": 5, "max_offset": 16}],
       "strands": [
         {
           "domains": [
@@ -2015,7 +2016,7 @@ main() {
         }
       ]
     }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
       ..undo_redo.replace(expected_undo_redo)
@@ -2027,9 +2028,9 @@ main() {
   //     0               16
   // 0   [--------------->
   //     <---------------]
-  String simple_helix_no_seq_json = r"""
+  String simple_helix_no_seq_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2043,7 +2044,7 @@ main() {
   }
 ]
 }
-""";
+''';
   DNADesign simple_helix_no_seq_design = DNADesign.from_json(jsonDecode(simple_helix_no_seq_json));
   test('Testing DNAEndsMoveStart', () {
     AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
@@ -2090,9 +2091,9 @@ main() {
     //     0   3            16
     // 0       [----------->
     //     <---------------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2106,7 +2107,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
@@ -2141,9 +2142,9 @@ main() {
     //     0   3 4         15 16
     // 0   [--->
     //     <---------------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2157,7 +2158,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
@@ -2192,9 +2193,9 @@ main() {
     //     0   3 4         15 16
     // 0   [--------------->
     //     <--]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2208,7 +2209,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
@@ -2243,9 +2244,9 @@ main() {
     //     0   3 4         15 16
     // 0   [--------------->
     //         <-----------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2259,7 +2260,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
@@ -2303,9 +2304,9 @@ main() {
     //     0   3            16
     // 0       [----------->
     //         <-----------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2319,7 +2320,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
     AppState expected_state = app_state_from_dna_design(expected_design).rebuild((b) => b
@@ -2374,9 +2375,9 @@ main() {
     // 0       [----------->
     //     <------]
     //            4  5
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2390,7 +2391,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.dna_design]));
@@ -2446,9 +2447,9 @@ main() {
     // 0       [----------->
     //     <------]
     //            4  5
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2462,7 +2463,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.dna_design]));
@@ -2547,9 +2548,9 @@ main() {
     // 0       [----------->
     //     <------]
     //            4  5
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
 "strands": [
   {
     "domains": [
@@ -2563,7 +2564,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.dna_design]));
@@ -2597,9 +2598,9 @@ main() {
   //     0    4      10 11   16
   // 0        [------>
   //          <------]
-  String simple_helix_no_seq_smaller_json = r"""
+  String simple_helix_no_seq_smaller_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2613,7 +2614,7 @@ main() {
   }
 ]
 }
-""";
+''';
   DNADesign simple_helix_no_seq_smaller_design =
       DNADesign.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
   test('Dragging end less than helix min offset (see issue #77)', () {
@@ -2640,9 +2641,9 @@ main() {
     //     0    4      10 11   16
     // 0   [----------->
     //          <------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2656,7 +2657,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
@@ -2695,9 +2696,9 @@ main() {
     //     0    4      10 11   15 16
     // 0        [-------------->
     //          <------]
-    String expected_json = r"""
+    String expected_json = r'''
 {
-"version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
+"version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16}],
 "strands": [
   {
     "domains": [
@@ -2711,7 +2712,7 @@ main() {
   }
 ]
 }
-    """;
+    ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
@@ -2815,9 +2816,9 @@ main() {
     //    <-------------[----------------]
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
-    String expected_json = r"""
+    String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -2831,7 +2832,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
 
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
@@ -2868,9 +2869,9 @@ main() {
     //    <-------------[----------------]
     actual_state = app_state_reducer(actual_state, DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
 
-    String expected_json = r"""
+    String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "domains": [
@@ -2884,7 +2885,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_insertion_design));
@@ -3162,10 +3163,9 @@ main() {
       state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
       state = app_state_reducer(state, SaveDNAFile());
 
-      String two_helices_helix_add_json = """
+      String two_helices_helix_add_json = r'''
  {
-  "version": "${constants.CURRENT_VERSION}",""" +
-          r"""
+  "version": "''' + constants.CURRENT_VERSION + r'''",
   "grid": "square", 
   "helices": [ 
     {"grid_position": [0, 0]}, 
@@ -3195,7 +3195,7 @@ main() {
     }
   ]
  }
-    """;
+    ''';
       DNADesign two_helices_helix_add_design = DNADesign.from_json(jsonDecode(two_helices_helix_add_json));
       AppState two_helices_helix_add_state = app_state_from_dna_design(two_helices_helix_add_design);
       two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
@@ -3230,10 +3230,9 @@ main() {
     });
 
     test('load_and_save_design_with_unused_fields', () {
-      var json_before = """
+      var json_before = r'''
       {
-        "version": "${constants.CURRENT_VERSION}",""" +
-          r"""
+        "version": "''' + constants.CURRENT_VERSION + r'''",
         "grid": "square",
         "extra_dna_design_field": {
           "foo_field": "foo",
@@ -3334,7 +3333,7 @@ main() {
           }
         }
       }
-      """;
+      ''';
       AppState state = app_state_from_dna_design(two_helices_design);
 
       String filename = 'two_helicies_with_unused_fields.dna';
@@ -3483,9 +3482,9 @@ main() {
     //                       |
     // 1 [--------------------
     //   <-------------------]
-    String two_helices_crossover_json = r"""
+    String two_helices_crossover_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -3505,7 +3504,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign two_helices_crossover_design = DNADesign.from_json(jsonDecode(two_helices_crossover_json));
     test('HelixRollSetAtOther', () {
       AppState state = app_state_from_dna_design(two_helices_crossover_design);
@@ -3708,9 +3707,9 @@ main() {
   // 0 [--------------- -   | A
   //   <--------------- -   | T
   //   TCAGTCAGTCAGTCAG  \_/  T
-  String simple_loopout_json = r"""
+  String simple_loopout_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -3722,7 +3721,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
   DNADesign simple_loopout_design = DNADesign.from_json(jsonDecode(simple_loopout_json));
 
   group('DeleteAllSelected tests:', () {
@@ -3847,9 +3846,9 @@ main() {
       //  ----------------->
       // 2  <--------------]            3rd strand
       //    TTTTAAAAGGGGCCCC
-      String expected_json = r"""
+      String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]},{"grid_position": [0, 1]}, {"grid_position": [0, 2]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTCCCGGAATTCCGGAATTAAAATTTTCCCCGGGG",
@@ -3874,7 +3873,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
       DNADesign expected = DNADesign.from_json(jsonDecode(expected_json));
 
       expect_dna_design_equal(state.dna_design, expected);
@@ -3904,9 +3903,9 @@ main() {
       // 0 [-------------->
       //   <--------------]
       //   TCAGTCAGTCAGTCAG
-      String expected_json = r"""
+      String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
   "strands": [
     {
       "sequence": "AGTCAGTCAGTCAGTC",
@@ -3922,7 +3921,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
       DNADesign expected = DNADesign.from_json(jsonDecode(expected_json));
 
       expect_dna_design_equal(state.dna_design, expected);
@@ -4062,9 +4061,9 @@ main() {
       // No change.
       state = app_state_reducer(state, HelixOffsetChange(helix_idx: 2, min_offset: 0, max_offset: 16));
 
-      String expected_json = r"""
+      String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ 
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 60},
     {"grid_position": [0, 1], "max_offset": 70},
     {"grid_position": [0, 2] }
@@ -4088,7 +4087,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -4098,9 +4097,9 @@ main() {
     AppState state = app_state_from_dna_design(simple_strand_dna_design);
     state = app_state_reducer(state, HelixOffsetChangeAll(min_offset: 0, max_offset: 50));
 
-    String expected_json = r"""
+    String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ 
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ 
     {"grid_position": [0, 0], "max_offset": 50},
     {"grid_position": [0, 1], "max_offset": 50},
     {"grid_position": [0, 2], "max_offset": 50 }
@@ -4124,7 +4123,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
     DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
     expect_dna_design_equal(state.dna_design, expected_design);
   });
@@ -4143,9 +4142,9 @@ main() {
       // test changing loopout length to 5
       Loopout loopout = simple_loopout_design.strands.first.loopouts().first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 5));
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4157,16 +4156,16 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
 
       // test changing loopout length to 3
       loopout = state.dna_design.strands.first.loopouts().first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 3));
-      expected_json = r"""
+      expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4178,7 +4177,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -4196,9 +4195,9 @@ main() {
       // test changing loopout length to 0
       Loopout loopout = simple_loopout_design.strands.first.loopouts().first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 0));
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
           {
             "sequence": "AGTCAGTCAGTCAGTCAATTGACTGACTGACTGACT",
@@ -4209,7 +4208,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -4230,9 +4229,9 @@ main() {
       Crossover crossover = state.dna_design.strands[1].crossovers.first;
       state = app_state_reducer(state, ConvertCrossoverToLoopout(crossover, 4));
 
-      String expected_json = r"""
+      String expected_json = r'''
  {
-  "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
+  "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]} ],
   "strands": [
     {
       "domains": [
@@ -4253,7 +4252,7 @@ main() {
     }
   ]
  }
-  """;
+  ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -4264,12 +4263,12 @@ main() {
     //
     // 0
     //
-    String one_empty_helix_json = r"""
+    String one_empty_helix_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "max_offset": 16} ],
       "strands": []
     }
-    """;
+    ''';
     DNADesign one_empty_helix_design = DNADesign.from_json(jsonDecode(one_empty_helix_json));
     AppState state = app_state_from_dna_design(one_empty_helix_design);
 
@@ -4417,9 +4416,9 @@ main() {
     //  \
     // 1 -------------------->
     //   <-------------------]   strand2
-    String two_helices_with_empty_offsets_json = r"""
+    String two_helices_with_empty_offsets_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32},
         {"grid_position": [0, 1], "max_offset": 32}
       ],
@@ -4442,7 +4441,7 @@ main() {
         }
       ]
     }
-    """;
+    ''';
     DNADesign two_helices_with_empty_offsets =
         DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_json));
     AppState state = app_state_from_dna_design(two_helices_with_empty_offsets);
@@ -4557,9 +4556,9 @@ main() {
       //                          <-------------------]
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove));
 
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4582,7 +4581,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
 
       expect_dna_design_equal(state.dna_design, expected_design);
@@ -4655,9 +4654,9 @@ main() {
 
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove));
 
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [
           {"grid_position": [0, 0], "max_offset": 32},
           {"grid_position": [0, 1], "max_offset": 32}
         ],
@@ -4685,7 +4684,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
 
       expect_dna_design_equal(state.dna_design, expected_design);
@@ -4694,9 +4693,9 @@ main() {
       expect(state.ui_state.selectables_store.selected_items, BuiltList<Selectable>());
     });
 
-    String two_helices_with_empty_offsets_non_sequential_idx_json = r"""
+    String two_helices_with_empty_offsets_non_sequential_idx_json = r'''
     {
-      "version": "0.9.0", "grid": "square", "helices": [
+      "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [
         {"grid_position": [0, 0], "max_offset": 32, "idx": 3},
         {"grid_position": [0, 1], "max_offset": 32, "idx": 4}
       ],
@@ -4719,7 +4718,7 @@ main() {
         }
       ]
     }
-    """;
+    ''';
     DNADesign two_helices_with_empty_offsets_non_sequential_idx_design =
         DNADesign.from_json(jsonDecode(two_helices_with_empty_offsets_non_sequential_idx_json));
     AppState two_helicies_with_empty_offset_non_sequential_idx_state =
@@ -4958,9 +4957,9 @@ main() {
     });
   });
 
-  String simple_helix_json = r"""
+  String simple_helix_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -4976,7 +4975,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
   DNADesign simple_helix_design = DNADesign.from_json(jsonDecode(simple_helix_json));
   group('Assign/remove dna test: ', () {
     test('AssignDNA', () {
@@ -5022,9 +5021,9 @@ main() {
       // 0   [-------------->
       //     <--------------]
       //     GCTCCCCGACAACCTA
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "sequence": "AACGTACGATGCATCC",
@@ -5040,7 +5039,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect(state.dna_design, expected_design);
     });
@@ -5076,9 +5075,9 @@ main() {
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1));
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5092,7 +5091,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -5117,9 +5116,9 @@ main() {
         ),
       );
 
-      String expected_json = r"""
+      String expected_json = r'''
         {
-          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5133,7 +5132,7 @@ main() {
             }
           ]
         }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -5155,9 +5154,9 @@ main() {
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1));
-      String expected_json = r"""
+      String expected_json = r'''
       {
-        "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
+        "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}],
         "strands": [
           {
             "domains": [
@@ -5171,7 +5170,7 @@ main() {
           }
         ]
       }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -5197,9 +5196,9 @@ main() {
           insertion: insertion,
         ),
       );
-      String expected_json = r"""
+      String expected_json = r'''
         {
-          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5213,7 +5212,7 @@ main() {
             }
           ]
         }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -5236,9 +5235,9 @@ main() {
           offset: 16,
         ),
       );
-      String expected_json = r"""
+      String expected_json = r'''
         {
-          "version": "0.9.0", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
+          "version": "''' + constants.CURRENT_VERSION + r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]} ],
           "strands": [
             {
               "domains": [
@@ -5252,7 +5251,7 @@ main() {
             }
           ]
         }
-      """;
+      ''';
       DNADesign expected_design = DNADesign.from_json(jsonDecode(expected_json));
       expect_dna_design_equal(state.dna_design, expected_design);
     });
@@ -5265,9 +5264,9 @@ main() {
   //
   // 1 [------------------->
   //   <-------------------]
-  String no_grid_two_helices_json = r"""
+  String no_grid_two_helices_json = r'''
           {
-            "version": "0.9.0",
+            "version": "''' + constants.CURRENT_VERSION + r'''",
             "grid": "none",
             "helices": [
               {
@@ -5300,7 +5299,7 @@ main() {
               }
             ]
           }
-      """;
+      ''';
   DNADesign no_grid_two_helices_design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
 
   group('Grid change tests: ', () {
@@ -5540,7 +5539,7 @@ main() {
   });
 
   group('Test DNADesign view order functions: (see issue #240)', () {
-    String out_of_order_json = r"""
+    String out_of_order_json = r'''
     {
       "version": "0.3.0",
       "grid": "square",
@@ -5553,7 +5552,7 @@ main() {
       "helices_view_order": [12, 15, 17, 13],
       "strands": []
     }
-    """;
+    ''';
     DNADesign out_of_order_design = DNADesign.from_json(json.decode(out_of_order_json));
     test('helices_view_order', () {
       BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
@@ -5600,7 +5599,7 @@ main() {
     // 7  <-----------------
     //    Cy3  B      Cy3
 
-    String many_helices_modification_json = r"""
+    String many_helices_modification_json = r'''
     {
       "version": "0.6.7",
       "major_tick_distance": 8,
@@ -5658,7 +5657,7 @@ main() {
         }
       ]
     }
-    """;
+    ''';
     DNADesign many_helices_modification_design =
         DNADesign.from_json(json.decode(many_helices_modification_json));
     AppState initial_state = app_state_from_dna_design(many_helices_modification_design);
@@ -5700,7 +5699,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -5764,7 +5763,7 @@ main() {
               }
             ]
           }
-        """))).rebuild((b) => b
+        '''))).rebuild((b) => b
         ..undo_redo.undo_stack.add(many_helices_modification_design)
         ..ui_state.changed_since_last_save = true);
 
@@ -5808,7 +5807,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
+      expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -5879,7 +5878,7 @@ main() {
               }
             ]
           }
-        """))).rebuild((b) => b
+        '''))).rebuild((b) => b
         ..undo_redo.undo_stack.addAll([many_helices_modification_design, state.dna_design])
         ..ui_state.changed_since_last_save = true);
 
@@ -5896,7 +5895,7 @@ main() {
       //    |  <----------------------------------------------loopout length 3
       //    |      Cy3    B
       // 1  ----------------->
-      DNADesign modifications_loopout = DNADesign.from_json(json.decode(r"""
+      DNADesign modifications_loopout = DNADesign.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -5932,14 +5931,14 @@ main() {
               }
             ]
           }
-        """));
+        '''));
       AppState initial_state = app_state_from_dna_design(modifications_loopout);
       // 0  <----------------]
       //       B     Cy3
       //
       //           Cy3    B
       // 1  [---------------->
-      AppState expected_state = expected_state_from_json_string(r"""
+      AppState expected_state = expected_state_from_json_string(r'''
         {
           "version": "0.7.0",
           "grid": "square",
@@ -5981,7 +5980,7 @@ main() {
             }
           ]
         }
-      """, modifications_loopout);
+      ''', modifications_loopout);
 
       AppState state = initial_state;
       state = app_state_reducer(
@@ -6005,7 +6004,7 @@ main() {
       // 5
       // 6
       // 7
-      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
+      AppState expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6021,7 +6020,7 @@ main() {
             ],
             "strands": []
           }
-        """))).rebuild((b) => b
+        '''))).rebuild((b) => b
         ..undo_redo.undo_stack.add(many_helices_modification_design)
         ..ui_state.changed_since_last_save = true
         ..ui_state
@@ -6073,7 +6072,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      var expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r"""
+      var expected_state = app_state_from_dna_design(DNADesign.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6138,7 +6137,7 @@ main() {
               }
             ]
           }
-        """))).rebuild((b) => b
+        '''))).rebuild((b) => b
         ..undo_redo.undo_stack.add(many_helices_modification_design)
         ..ui_state.changed_since_last_save = true);
 
@@ -6181,7 +6180,7 @@ main() {
     //
     // 7  <----------------]
     //    Cy3  B      Cy3
-    DNADesign many_helices_modifications_split = DNADesign.from_json(json.decode(r"""
+    DNADesign many_helices_modifications_split = DNADesign.from_json(json.decode(r'''
         {
           "version": "0.7.0",
           "grid": "square",
@@ -6292,7 +6291,7 @@ main() {
             }
           ]
         }
-      """));
+      '''));
     AppState initial_state = app_state_from_dna_design(many_helices_modifications_split);
     DNAEnd end_3p_H4 =
         many_helices_modifications_split.ends_3p_strand_by_id['end-3p-substrand-H4-10-16-forward'];
@@ -6338,7 +6337,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r"""
+      var expected_state = expected_state_from_json_string(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6442,7 +6441,7 @@ main() {
               }
             ]
           }
-        """, many_helices_modifications_split);
+        ''', many_helices_modifications_split);
 
       AppState state = initial_state;
       state = app_state_reducer(
@@ -6485,7 +6484,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r"""
+      var expected_state = expected_state_from_json_string(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6588,7 +6587,7 @@ main() {
               }
             ]
           }
-        """, many_helices_modifications_split);
+        ''', many_helices_modifications_split);
 
       AppState state = initial_state;
       state = app_state_reducer(state, Ligate(dna_end: end_5p_H4));
@@ -6629,7 +6628,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r"""
+      var expected_state = expected_state_from_json_string(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6740,7 +6739,7 @@ main() {
               }
             ]
           }
-        """, many_helices_modifications_split);
+        ''', many_helices_modifications_split);
 
       AppState state = initial_state;
       DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
@@ -6787,7 +6786,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r"""
+      var expected_state = expected_state_from_json_string(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6898,7 +6897,7 @@ main() {
               }
             ]
           }
-        """, many_helices_modifications_split);
+        ''', many_helices_modifications_split);
 
       AppState state = initial_state;
 
@@ -6965,7 +6964,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r"""
+      var expected_state = expected_state_from_json_string(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -7100,7 +7099,7 @@ main() {
               }
             ]
           }
-        """, many_helices_modifications_split);
+        ''', many_helices_modifications_split);
 
       AppState state = initial_state;
 
