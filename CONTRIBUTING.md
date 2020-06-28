@@ -177,6 +177,8 @@ So the steps are:
     ```
     The latter command uploads to PyPI, and requires permissions to be set up; see https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
 
+    The file created will be placed in the dist/ subfolder, but this folder is not tracked by git, so the file does not need to be added.
+
 
 
 ## Styleguide
