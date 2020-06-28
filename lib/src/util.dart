@@ -147,14 +147,6 @@ make_dart_function_available_to_js(String js_function_name, Function dart_func) 
 @JS()
 external void set_allow_pan(bool allow);
 
-/// Should only be called once at the start of the program
-Future<DNADesign> dna_design_from_url(String url) async {
-  String content = await get_text_file_content(url);
-  Map<String, dynamic> parsed_json = jsonDecode(content);
-  DNADesign dna_design = DNADesign.from_json(parsed_json);
-  return dna_design;
-}
-
 Future<String> get_text_file_content(String url) async =>
     await HttpRequest.getString(url).then((content) => content);
 
@@ -237,8 +229,8 @@ Version get_version(String version_str) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Geometry geometry, Map<int, Helix> helices, Grid grid,
-    [BuiltSet<int> selected_helix_idxs = null]) {
+Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<int, Helix> helices, Grid grid,
+    {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
@@ -272,7 +264,9 @@ Map<int, Helix> helices_assign_svg(Geometry geometry, Map<int, Helix> helices, G
       y = prev_y + delta_y;
     }
     prev_y = y;
-    helix = helix.rebuild((b) => b..svg_position = Point<num>(x, y));
+    helix = helix.rebuild((b) => b
+      ..svg_position_ = Point<num>(x, y)
+      ..invert_y_axis = invert_y_axis);
     prev_helix = helix;
 
     new_helices[helix.idx] = helix;
@@ -290,8 +284,10 @@ num main_view_svg_x_of_helix(Geometry geometry, Helix helix, Grid grid) {
   }
 }
 
-num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) =>
-    helix.position3d().y * geometry.nm_to_main_svg_pixels;
+num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) {
+  num y = helix.position3d().y * geometry.nm_to_main_svg_pixels;
+  return y;
+}
 
 num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
 

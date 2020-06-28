@@ -49,7 +49,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..display_base_offsets_of_major_ticks_only_first_helix =
         state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
     ..display_major_tick_widths = state.ui_state.display_major_tick_widths
-    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices),
+    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
+    ..invert_y_axis = state.ui_state.invert_y_axis),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -75,6 +76,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
+  bool invert_y_axis;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -364,10 +366,21 @@ looking at before changing the script.'''
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
         ..tooltip =
-            '''Check this so that, only selected helices in the side view are displayed in the main view.'''
+            '''Only selected helices in the side view are displayed in the main view.'''
         ..name = 'display-only-selected-helices'
         ..onChange = (_) {
           props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
+        })(),
+      (MenuBoolean()
+        ..value = props.invert_y_axis
+        ..display = 'Invert y-axis'
+        ..tooltip =
+            '''In both the side and main view, invert the y-axis. If this is checked, then use 
+            Cartesian coordinates where increasing y moves up. If unchecked, then "screen coordinates" 
+            are used, where increasing y moves down.'''
+        ..name = 'invert-y-axis'
+        ..onChange = (_) {
+          props.dispatch(actions.InvertYAxisSet(invert_y_axis: !props.invert_y_axis));
         })(),
       //XXX: let's keep this commented out until we need it
       // (Dom.span()

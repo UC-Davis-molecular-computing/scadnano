@@ -7,6 +7,8 @@ import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:over_react/components.dart' as over_react_components;
+
 
 import '../state/app_state.dart';
 import 'design.dart';
@@ -98,9 +100,11 @@ class View {
   render(AppState state) {
 //    this.update_showing_editor();
 
+    var store = app.store;
+
     react_dom.render(
-      ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = store)(
           ConnectedMenu()(),
         ),
       ),
@@ -112,8 +116,8 @@ class View {
 //    react_dom.render((EditMode()..store = app.state.edit_mode_store)(), this.edit_mode_element);
 
     react_dom.render(
-      ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = store)(
           ConnectedEditMode()(),
         ),
       ),
@@ -121,8 +125,8 @@ class View {
     );
 
     react_dom.render(
-      ErrorBoundary()(
-        (ReduxProvider()..store = app.store)(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = store)(
           ConnectedSelectMode()(),
         ),
       ),

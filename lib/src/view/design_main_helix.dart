@@ -45,7 +45,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + geometry.distance_between_helices_main_svg / 2);
-    var cy = constants.BASE_HEIGHT_SVG;
+    var cy = helix.svg_height() / 2.0;
 
     // for helix horizontal lines
     num width = helix.svg_width();
@@ -432,11 +432,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (offset_texts_elements.isEmpty) {
       return null;
     } else {
-      return (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
+      return (Dom.g()
+        ..className = 'major-tick-offsets-group'
+        ..key = 'major-tick-offsets-group')(offset_texts_elements);
     }
   }
-
-
 }
 
 String _horz_line_paths(Helix helix) {
@@ -456,10 +456,10 @@ String _horz_line_paths(Helix helix) {
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
 Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
   var major_tick_distance =
-  helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
+      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
   Set<int> major_ticks = (helix.has_major_ticks()
-      ? helix.major_ticks
-      : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
+          ? helix.major_ticks
+          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
       .toSet();
 
   List<String> path_cmds_vert_minor = [];

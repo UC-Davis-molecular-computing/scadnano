@@ -564,7 +564,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     }
   }
 
-  static DNADesign from_json(Map<String, dynamic> json_map) {
+  static DNADesign from_json(Map<String, dynamic> json_map, [bool invert_y_axis=false]) {
     if (json_map == null) return null;
 
     var dna_design_builder = DNADesignBuilder();
@@ -607,6 +607,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
       if (helix_builder.idx == null) {
         helix_builder.idx = idx;
       }
+      helix_builder.invert_y_axis = invert_y_axis;
       helix_builder.grid = dna_design_builder.grid;
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDNADesignError(
@@ -673,7 +674,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, helices, dna_design_builder.grid);
+    helices = util.helices_assign_svg(geometry, invert_y_axis, helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
     // modifications in whole design

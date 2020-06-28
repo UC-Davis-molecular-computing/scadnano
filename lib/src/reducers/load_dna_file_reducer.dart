@@ -19,7 +19,8 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
 
   try {
     map = jsonDecode(action.content);
-    dna_design_new = DNADesign.from_json(map);
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    dna_design_new = DNADesign.from_json(map, invert_y_axis);
   } on IllegalDNADesignError catch (error, stack_trace) {
     error_message = ''
         '**********************'

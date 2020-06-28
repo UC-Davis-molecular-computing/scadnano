@@ -64,7 +64,7 @@ main() {
             ]
           }
       """;
-    DNADesign design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json));
+    DNADesign design = DNADesign.from_json(jsonDecode(no_grid_two_helices_json), false);
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned

@@ -20,6 +20,7 @@ mixin DesignMainStrandModificationDomainProps on UiProps {
   Modification modification;
   bool display_connector;
   int font_size;
+  bool invert_y;
 }
 
 
@@ -48,7 +49,8 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _end_connector(Point<num> pos, bool forward) {
-    double y_del_small = (forward ? -Y_DELTA_MOD : Y_DELTA_MOD) / 4.0;
+    num y_delta = Y_DELTA_MOD;
+    double y_del_small = (forward ? -y_delta : y_delta) / 4.0;
     double x = -X_DELTA_MOD;
     return (Dom.polyline()
       ..fill = 'none'
@@ -64,7 +66,8 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _internal_connector(Point<num> pos, bool forward) {
-    double y_del_small = (forward ? -Y_DELTA_MOD : Y_DELTA_MOD).toDouble();
+    num y_delta = Y_DELTA_MOD;
+    double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     return (Dom.line()
       ..stroke = 'black'
       ..strokeWidth = 2
@@ -76,7 +79,8 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
-    double y_del_small = (forward ? -1.1 * Y_DELTA_MOD : Y_DELTA_MOD).toDouble();
+    num y_delta = Y_DELTA_MOD;
+    double y_del_small = (forward ? -1.1 * y_delta : y_delta).toDouble();
     int font_size = props.font_size;
     String baseline = forward ? 'baseline' : 'hanging';
     if (!display_connector) {
@@ -92,5 +96,7 @@ class DesignMainStrandModificationDomainComponent
   }
 }
 
+//num y_delta_mod(Helix helix) => 1.8 * helix.svg_height() / 2.0;
+//num y_delta_mod(Helix helix) => constants.BASE_HEIGHT_SVG * 1.8;
 const Y_DELTA_MOD = constants.BASE_HEIGHT_SVG * 1.8;
 const X_DELTA_MOD = constants.BASE_WIDTH_SVG / 3.0;

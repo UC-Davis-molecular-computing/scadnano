@@ -31,7 +31,6 @@ import 'middleware/local_storage.dart';
 import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
-import 'constants.dart' as constants;
 import 'dna_sequence_constants.dart';
 
 //import 'test.dart';
@@ -50,8 +49,8 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-  print("m13p7249 unrotated: ${DNASequencePredefined.dna_sequence_by_name('M13p7249', 0)}");
   print("m13p7249 rotated 5587: ${DNASequencePredefined.dna_sequence_by_name('M13p7249')}");
+  print("m13p7249 unrotated: ${DNASequencePredefined.dna_sequence_by_name('M13p7249', 0)}");
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -100,13 +99,7 @@ class App {
   }
 
   initialize_model() async {
-    AppState state;
-    String error_message = constants.NO_DNA_DESIGN_MESSAGE;
-
-    state = (DEFAULT_AppStateBuilder
-          ..error_message = error_message
-          ..editor_content = '')
-        .build();
+    AppState state = DEFAULT_AppState;
 
     if (USE_REDUX_DEV_TOOLS) {
       var middleware_plus = all_middleware + [overReactReduxDevToolsMiddleware];

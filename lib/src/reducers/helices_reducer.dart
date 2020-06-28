@@ -26,6 +26,10 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
+      set_app_ui_state_storables_set_helices_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertYAxisSet>(
+      invert_y_axis_set_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGridPositionSet>(
       helix_grid_position_set_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixPositionSet>(helix_position_set_reducer),
@@ -53,7 +57,8 @@ BuiltMap<int, Helix> helix_individual_reducer(
     var helices_map = helices.toMap();
     helices_map[action.helix_idx] = new_helix;
     Geometry geometry = app_state.dna_design.geometry;
-    helices_map = util.helices_assign_svg(geometry, helices_map, new_helix.grid);
+    bool invert_y_axis = app_state.ui_state.invert_y_axis;
+    helices_map = util.helices_assign_svg(geometry, invert_y_axis, helices_map, new_helix.grid);
     return helices_map.build();
   } else {
     return helices;
@@ -83,7 +88,9 @@ BuiltMap<int, Helix> helix_offset_change_all_reducer(
   var helices_after = helices.map_values(map_func);
   var grid = helices.values.first.grid;
   var geometry = app_state.dna_design.geometry;
-  var helices_after_svg_adjusted = util.helices_assign_svg(geometry, helices_after.toMap(), grid);
+  bool invert_y_axis = app_state.ui_state.invert_y_axis;
+  var helices_after_svg_adjusted =
+      util.helices_assign_svg(geometry, invert_y_axis, helices_after.toMap(), grid);
   return helices_after_svg_adjusted.build();
 }
 
@@ -141,7 +148,7 @@ BuiltMap<int, Helix> helix_roll_set_at_other_reducer(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helix add/remove
 
-DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd action) {
+DNADesign helix_add_dna_design_reducer(DNADesign design, AppState state, actions.HelixAdd action) {
   int max_idx_current;
   int new_idx;
   int min_offset;
@@ -171,7 +178,8 @@ DNADesign helix_add_dna_design_local_reducer(DNADesign design, actions.HelixAdd 
   Map<int, Helix> helices = design.helices.toMap();
   helices[helix.idx] = helix;
   var geometry = design.geometry;
-  helices = util.helices_assign_svg(geometry, helices, design.grid);
+  bool invert_y_axis = state.ui_state.invert_y_axis;
+  helices = util.helices_assign_svg(geometry, invert_y_axis, helices, design.grid);
 
   return design.rebuild((d) => d..helices.replace(helices));
 }
@@ -185,7 +193,8 @@ DNADesign helix_remove_dna_design_global_reducer(
   //     change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_domains(design.helices, action);
   var geometry = state.dna_design.geometry;
-  var new_helices_list = util.helices_assign_svg(geometry, new_helices.toMap(), design.grid);
+  bool invert_y_axis = state.ui_state.invert_y_axis;
+  var new_helices_list = util.helices_assign_svg(geometry, invert_y_axis, new_helices.toMap(), design.grid);
   return design
       .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
 }
@@ -200,7 +209,8 @@ DNADesign helix_remove_all_selected_dna_design_global_reducer(
 
   var new_helices = remove_helices_assuming_no_domains(design.helices, helix_idxs);
   var geometry = state.dna_design.geometry;
-  var new_helices_list = util.helices_assign_svg(geometry, new_helices.toMap(), design.grid);
+  bool invert_y_axis = state.ui_state.invert_y_axis;
+  var new_helices_list = util.helices_assign_svg(geometry, invert_y_axis, new_helices.toMap(), design.grid);
   return design
       .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
 }
@@ -296,13 +306,28 @@ BuiltMap<int, Helix> helix_grid_change_reducer(BuiltMap<int, Helix> helices, act
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// invert y axis
+BuiltMap<int, Helix> invert_y_axis_set_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.InvertYAxisSet action) {
+  var new_helices = reassign_svg_positions(state.dna_design.geometry, action.invert_y_axis, helices, null);
+  return new_helices;
+}
+
+// This is needed when the whole AppUIStateStorables is set, since it also changes invert_y_axis
+BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
+  var new_helices =
+      reassign_svg_positions(state.dna_design.geometry, action.storables.invert_y_axis, helices, null);
+  return new_helices;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change helix position
 
 Helix helix_individual_grid_position_set_reducer(Helix helix, actions.HelixGridPositionSet action) =>
     helix.rebuild((b) => b
       ..position_ = null
-      ..grid_position.replace(action.grid_position)
-      ..svg_position = null);
+      ..grid_position.replace(action.grid_position));
 
 BuiltMap<int, Helix> helix_grid_position_set_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixGridPositionSet action) {
@@ -312,7 +337,8 @@ BuiltMap<int, Helix> helix_grid_position_set_reducer(
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
-    new_helices = _reassign_svg_positions(state.dna_design.geometry, new_helices, null);
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    new_helices = reassign_svg_positions(state.dna_design.geometry, invert_y_axis, new_helices, null);
     return new_helices;
   } else {
     return helices;
@@ -322,8 +348,7 @@ BuiltMap<int, Helix> helix_grid_position_set_reducer(
 Helix helix_individual_position_set_reducer(Helix helix, actions.HelixPositionSet action) =>
     helix.rebuild((b) => b
       ..position_.replace(action.position)
-      ..grid_position = null
-      ..svg_position = null);
+      ..grid_position = null);
 
 BuiltMap<int, Helix> helix_position_set_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixPositionSet action) {
@@ -334,7 +359,8 @@ BuiltMap<int, Helix> helix_position_set_reducer(
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
     var geometry = state.dna_design.geometry;
-    new_helices = _reassign_svg_positions(geometry, new_helices, null);
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    new_helices = reassign_svg_positions(geometry, invert_y_axis, new_helices, null);
     return new_helices;
   } else {
     return helices;
@@ -344,14 +370,15 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated)
 
-BuiltMap<int, Helix> _reassign_svg_positions(
-    Geometry geometry, BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
+BuiltMap<int, Helix> reassign_svg_positions(
+    Geometry geometry, bool invert_y_axis, BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
   if (helices.length == 0) {
     return helices;
   }
   Grid grid = helices.values.first.grid;
   Map<int, Helix> helices_map = helices.toMap();
-  helices_map = util.helices_assign_svg(geometry, helices_map, grid, selected_helix_idxs);
+  helices_map = util.helices_assign_svg(geometry, invert_y_axis, helices_map, grid,
+      selected_helix_idxs: selected_helix_idxs);
   return BuiltMap<int, Helix>(helices_map);
 }
 
@@ -360,7 +387,8 @@ BuiltMap<int, Helix> helix_select_helices_reducer(
   var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
   if (state.ui_state.only_display_selected_helices) {
     var geometry = state.dna_design.geometry;
-    return _reassign_svg_positions(geometry, helices, selected_helix_idxs);
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    return reassign_svg_positions(geometry, invert_y_axis, helices, selected_helix_idxs);
   } else {
     return helices;
   }
@@ -371,7 +399,8 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
   var selected_helix_idxs =
       helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
   if (state.ui_state.only_display_selected_helices) {
-    return _reassign_svg_positions(state.dna_design.geometry, helices, selected_helix_idxs);
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    return reassign_svg_positions(state.dna_design.geometry, invert_y_axis, helices, selected_helix_idxs);
   } else {
     return helices;
   }
@@ -380,7 +409,8 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
 BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsClear action) {
   if (state.ui_state.only_display_selected_helices) {
-    return _reassign_svg_positions(state.dna_design.geometry, helices, BuiltSet<int>());
+    bool invert_y_axis = state.ui_state.invert_y_axis;
+    return reassign_svg_positions(state.dna_design.geometry, invert_y_axis, helices, BuiltSet<int>());
   } else {
     return helices;
   }
@@ -388,11 +418,12 @@ BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
 
 BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetOnlyDisplaySelectedHelices action) {
+  bool invert_y_axis = state.ui_state.invert_y_axis;
   if (action.show) {
-    return _reassign_svg_positions(
-        state.dna_design.geometry, helices, state.ui_state.side_selected_helix_idxs);
+    return reassign_svg_positions(
+        state.dna_design.geometry, invert_y_axis, helices, state.ui_state.side_selected_helix_idxs);
   } else {
     var all_helix_idxs = BuiltSet<int>(state.dna_design.helices.keys);
-    return _reassign_svg_positions(state.dna_design.geometry, helices, all_helix_idxs);
+    return reassign_svg_positions(state.dna_design.geometry, invert_y_axis, helices, all_helix_idxs);
   }
 }

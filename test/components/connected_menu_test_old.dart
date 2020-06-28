@@ -50,7 +50,7 @@ String two_helices_json = r"""
   ]
  }
   """;
-DNADesign two_helices_design = DNADesign.from_json(jsonDecode(two_helices_json));
+DNADesign two_helices_design = DNADesign.from_json(jsonDecode(two_helices_json), false);
 
 main() {
   utils.initializeComponentTests();

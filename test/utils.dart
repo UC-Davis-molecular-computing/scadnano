@@ -23,6 +23,7 @@ void initializeComponentTests() {
 }
 
 Store<AppState> testStore;
+
 void initializeTestStore(AppState state) {
   addTearDown(() {
     testStore = null;
@@ -47,6 +48,7 @@ AppState app_state_from_dna_design(DNADesign dna_design) {
   var state = (DEFAULT_AppStateBuilder
         ..dna_design.replace(dna_design)
         ..ui_state.replace(ui_state)
+        ..error_message = ''
         ..editor_content = '')
       .build();
   return state;
@@ -85,7 +87,7 @@ void expect_strands_equal(BuiltList<Strand> actual_strands, BuiltList<Strand> ex
 
   // Check hashing for potential quick comparison.
   if (actual_recolored_strands.hashCode != expected_recolored_strands.hashCode) {
-    expect(actual_recolored_strands.length == expected_recolored_strands.length, true);
+    expect(actual_recolored_strands.length, expected_recolored_strands.length);
     for (Strand strand in expected_recolored_strands) {
       expect(actual_recolored_strands.contains(strand), true);
     }

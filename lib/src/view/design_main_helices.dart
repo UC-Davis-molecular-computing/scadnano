@@ -10,9 +10,7 @@ import '../state/helix.dart';
 
 part 'design_main_helices.over_react.g.dart';
 
-
 UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
-
 
 mixin DesignMainHelicesProps on UiProps {
   BuiltMap<int, Helix> helices;
@@ -30,7 +28,6 @@ mixin DesignMainHelicesProps on UiProps {
   Geometry geometry;
 }
 
-
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
   @override
   render() {
@@ -38,8 +35,13 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
     bool only_display_selected_helices = props.only_display_selected_helices;
 
     var children = [];
+    int first_helix_view_order = 0;
+    if (props.helices.isNotEmpty && props.helices[0].invert_y_axis) {
+      first_helix_view_order = props.helices.length - 1;
+    }
     for (Helix helix in props.helices.values) {
-      if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) || !only_display_selected_helices) {
+      if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
+          !only_display_selected_helices) {
         children.add((DesignMainHelix()
           ..helix = helix
           ..geometry = props.geometry
@@ -48,8 +50,11 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid
           ..show_dna = props.show_dna
-          ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks && (!props.display_base_offsets_of_major_ticks_only_first_helix || helix.view_order == 0)
-          ..display_major_tick_widths = props.display_major_tick_widths && (props.display_major_tick_widths_all_helices || helix.view_order == 0)
+          ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
+              (!props.display_base_offsets_of_major_ticks_only_first_helix ||
+                  helix.view_order == first_helix_view_order)
+          ..display_major_tick_widths = props.display_major_tick_widths &&
+              (props.display_major_tick_widths_all_helices || helix.view_order == first_helix_view_order)
           ..key = helix.toString())());
       }
     }

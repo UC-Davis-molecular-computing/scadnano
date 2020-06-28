@@ -66,6 +66,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool warn_on_change_strand_dna_assign_default;
   bool modification_display_connector;
   int modification_font_size;
+  bool invert_y;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
