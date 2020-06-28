@@ -257,14 +257,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   bool svg_y_is_forward(num y) {
     var relative_y = (y - svg_position.y).abs();
-//    print('y              = ${y}');
-//    print('svg_position.y = ${svg_position.y}');
-//    print('relative_y     = ${relative_y}');
-//    print('**********************');
     return relative_y < 10;
   }
-
-  //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines in main view
 
   static HelixBuilder from_json(Map<String, dynamic> json_map) {
     var helix_builder = HelixBuilder();

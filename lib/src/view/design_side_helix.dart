@@ -39,7 +39,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
   @override
   render() {
 //    print('rendering side helix ${props.helix.idx}');
-    MouseoverData mouseover_data = this.props.mouseover_data;
+    MouseoverData mouseover_data = props.mouseover_data;
 //    print('  mouseover_data: $mouseover_data');
 
     Helix helix = props.helix;
