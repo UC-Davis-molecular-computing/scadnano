@@ -163,7 +163,7 @@ util.Box helix_to_box(Helix helix) {
   //FIXME: this is making boxes that are not far enough apart
   var position3d = helix.position3d();
   num x, y, width, height;
-  var svg_pos = util.position3d_to_side_view_svg(position3d);
+  var svg_pos = util.position3d_to_side_view_svg(position3d, helix.invert_y_axis);
   x = svg_pos.x - constants.HELIX_RADIUS_SIDE_PIXELS;
   y = svg_pos.y - constants.HELIX_RADIUS_SIDE_PIXELS;
   height = width = constants.HELIX_RADIUS_SIDE_PIXELS * 2.0;

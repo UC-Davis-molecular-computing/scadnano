@@ -186,11 +186,11 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
 }
 
 /// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid,
+GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y,
     {Point<num> mouse_pos = null, MouseEvent event = null}) {
   SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
-  var grid_pos = side_view_svg_to_grid(grid, svg_pos);
+  var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y);
   return grid_pos;
 }
 
@@ -475,7 +475,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
-Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y) {
   num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   Point<num> point;
   if (grid == Grid.square) {
@@ -487,6 +487,9 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid) {
   } else {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
+  }
+  if (invert_y) {
+    point = Point<num>(point.x, -point.y);
   }
   return point * 2 * radius;
 }
@@ -564,7 +567,7 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
   num z = svg_coord.x / (2 * radius);
@@ -615,20 +618,23 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord,
       throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
   }
+  if (invert_y) {
+    v = -v;
+  }
   return GridPosition(h, v);
 }
 
 GridPosition position3d_to_grid(Position3D position, Grid grid) {
 //  Point<num> svg_coord = position3d_to_main_view_svg(position);
-  Point<num> svg_coord = position3d_to_side_view_svg(position);
-  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord);
+  Point<num> svg_coord = position3d_to_side_view_svg(position, false);
+  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord, false);
   return grid_position;
 }
 
 Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
 //  GridPosition grid_position = side_view_svg_to_grid(grid_position, svg_coord);
-  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid);
-  Position3D position3d = svg_side_view_to_position3d(svg_coord);
+  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid, false);
+  Position3D position3d = svg_side_view_to_position3d(svg_coord, false);
   return position3d;
 }
 
@@ -636,14 +642,16 @@ Point<num> position3d_to_main_view_svg(Geometry geometry, Position3D position) =
     position.x * geometry.nm_to_main_svg_pixels,
     (position.y / geometry.distance_between_helices_nm) * geometry.distance_between_helices_main_svg);
 
-Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
-    position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
-    position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5);
+Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y) => Point<num>(
+      position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
+      position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
+    );
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos) => Position3D(
-    z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
-    y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
-    x: 0);
+Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y) => Position3D(
+      z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+      y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
+      x: 0,
+    );
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
 /// from browser import window

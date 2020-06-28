@@ -606,7 +606,8 @@ class DesignViewComponent {
     assert(!(mouse_pos == null && event == null));
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
       if (!app.state.dna_design.grid.is_none()) {
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid,
+        bool invert_y = app.state.ui_state.invert_y_axis;
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, invert_y,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));

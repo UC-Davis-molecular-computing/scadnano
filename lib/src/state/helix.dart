@@ -145,11 +145,11 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
-  //TODO: should this be memoized?
-  Position3D default_position() {
+  @memoized
+  Position3D get default_position {
     num x = min_offset * constants.BASE_WIDTH_SVG;
-    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..x = x);
+    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_y_axis);
+    Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_y_axis).rebuild((b) => b..x = x);
     return position3d;
   }
 
@@ -163,7 +163,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (position_ != null) {
       return position_;
     }
-    return default_position();
+    return default_position;
   }
 
   /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
@@ -316,7 +316,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
-  num svg_height() => constants.BASE_HEIGHT_SVG * 2 ; //(invert_y_axis ? -2 : 2);
+  num svg_height() => constants.BASE_HEIGHT_SVG * 2; //(invert_y_axis ? -2 : 2);
 
   int num_bases() => this.max_offset - this.min_offset;
 

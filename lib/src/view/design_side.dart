@@ -33,7 +33,8 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
         ..edit_modes = state.ui_state.edit_modes
         ..grid = state.dna_design.grid
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
-        ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor;
+        ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor
+        ..invert_y = state.ui_state.invert_y_axis;
     }
   },
 )(DesignSide);
@@ -49,6 +50,7 @@ mixin DesignSideProps on UiProps {
   Point<num> mouse_svg_pos;
   Grid grid;
   GridPosition grid_position_mouse_cursor;
+  bool invert_y;
 }
 
 class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
@@ -92,6 +94,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
       if (should_display_potential_helix)
         (DesignSidePotentialHelix()
           ..grid = this.props.grid
+          ..invert_y = props.invert_y
           ..grid_position = props.grid_position_mouse_cursor
           ..mouse_svg_pos = props.mouse_svg_pos
           ..key = 'potential-helix')(),
