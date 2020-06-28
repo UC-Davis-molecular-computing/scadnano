@@ -130,15 +130,54 @@ webdev serve --release
 (TODO): Add common errors here.
 
 
-## Pushing to the Repository
+## Pushing to the repository and documenting changes
 
 Make sure you pull changes from the repository and resolve any
 conflicts before pushing to the `dev` branch. All local commits
 should be push to the `dev` branch.
 
-Pull request can be made from `dev` to `master`, but make sure that
+Pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that
 `dev` is working before merging to `master` as all changes to `master`
 are automatically built and deployed to https://scadnano.org.
+
+We have an automated release system (through a GitHub action) that automatically creates release notes.
+
+Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
+
+However, commit descriptions (in GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li).
+
+So make sure that everything people should see in the automatically generated release notes is included in the commit message.
+
+Users can read the description by clicking on the link to the commit or the pull request, but anything is put there, then the commit message should say something like "click on commit/PR for more details".
+
+See here for an example: https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.9.3
+
+So the steps are:
+
+1. Commit changes to the `dev` branch. There will typically be several of these. Despite GitHub's suggestions to keep commit messages short and put longer text in descriptions, because only the commit message is included in the release notes, it's okay to put more detail (but very long stuff should go in the description, or possibly documentation such as the README.md file).
+
+2. One of the changes committed should change the version number. This is a string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`
+    - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/constants.dart
+    - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
+
+3. Ensure all unit tests pass.
+
+4. In the Python repo, ensure that the documentation is generated without errors. From the subfolder `doc`, run the command `make html`, ensure there are no errors, and inspect the documentation it generates in the folder `build`.
+
+5. Create a PR to merge changes from dev into master and then do the merge.)
+
+6. Once the PR changes are merged, a release will be automatically created here: https://github.com/UC-Davis-molecular-computing/scadnano/releases or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented, with the commit message (but not description) included in the release notes.
+
+7. Change the title and tag  to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into master, or else the release (which defaults to `latest`) will be overwritten.
+
+8. In the Python repo, update the PyPI package by running the following two commands from the root of the repo, replacing `scadnano-0.9.3.tar.gz` with the appropriate version number:
+    ```
+    $ python setup.py sdist
+    $ twine upload dist/scadnano-0.9.3.tar.gz
+    ```
+    The latter command uploads to PyPI, and requires permissions to be set up; see https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
+
+
 
 ## Styleguide
 
@@ -148,3 +187,4 @@ and extensions. Visual Studio Code offers an [extension](https://dartcode.org/)
 and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
 The line length should be configured to 110, as the style guide limit of 80
 is a bit too restrictive.
+
