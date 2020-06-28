@@ -4,6 +4,9 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
+const String CURRENT_VERSION = "0.9.3"; 
+const String INITIAL_VERSION = "0.1.0";
+
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded.\n'
     'Try loading an example by selecting File --> Load example,\n'
@@ -22,10 +25,6 @@ final KEY_CODE_TOGGLE_SELECT_MAC = KEY_CODE_COMMAND_MAC;
 const KEY_CODE_SELECT = KeyCode.SHIFT;
 const KEY_CODE_TOGGLE_SELECT = KeyCode.CTRL;
 const KEY_CODE_LOOPOUT_CONVERT = KeyCode.L;
-
-const String INITIAL_VERSION = "0.1.0";
-
-const String CURRENT_VERSION = "0.9.2";
 
 const String DNA_BASE_WILDCARD = '?';
 
