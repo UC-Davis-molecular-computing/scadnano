@@ -11,11 +11,12 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'strand_part.dart';
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'loopout.g.dart';
 
 abstract class Loopout
-    with Selectable, BuiltJsonSerializable
+    with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
   factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx) => Loopout.from((b) => b
     ..loopout_length = loopout_length
@@ -29,9 +30,16 @@ abstract class Loopout
 
   static Serializer<Loopout> get serializer => _$loopoutSerializer;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   int get loopout_length;
+
+  @nullable
+  @BuiltValueField(serialize: false)
+  Object get label;
 
   int get prev_domain_idx;
 
@@ -42,8 +50,6 @@ abstract class Loopout
 
   @nullable
   String get strand_id;
-
-  BuiltMap<String, Object> get unused_fields;
 
   Loopout set_dna_sequence(String seq) => rebuild((loopout) => loopout..dna_sequence = seq);
 
@@ -56,22 +62,24 @@ abstract class Loopout
   String id() => 'loopout-${prev_domain_idx + 1}-${strand_id}';
 
   int dna_length() => this.loopout_length;
-  
-  @memoized
-  int get hashCode;
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Loopout';
     int loopout_length = util.get_value(json_map, constants.loopout_key, name);
+    Object label = util.get_value_with_null_default(json_map, constants.label_key);
     return LoopoutBuilder()
       ..loopout_length = loopout_length
+      ..label = label
       ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
   }
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, Object> json_map = {
-      constants.loopout_key: this.loopout_length,
+      constants.loopout_key: loopout_length,
     };
+    if (label != null) {
+      json_map[constants.label_key] = label;
+    }
     json_map.addAll(unused_fields.toMap());
     return suppress_indent ? NoIndent(json_map) : json_map;
   }

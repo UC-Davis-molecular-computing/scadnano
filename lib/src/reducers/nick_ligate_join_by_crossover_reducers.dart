@@ -109,7 +109,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
   DNAEnd dna_end_clicked = action.dna_end;
-  Domain substrand = state.dna_design.end_to_substrand[dna_end_clicked];
+  Domain substrand = state.dna_design.end_to_domain[dna_end_clicked];
   Strand strand = state.dna_design.substrand_to_strand[substrand];
   int helix = substrand.helix;
   bool forward = substrand.forward;

@@ -16,7 +16,9 @@ const OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION = false;
 
 final DEFAULT_SelectModeStateBuilder = SelectModeStateBuilder()
   ..modes = SetBuilder<SelectModeChoice>(
-      SelectModeChoice.strand_parts.asList() + [SelectModeChoice.staple, SelectModeChoice.scaffold]);
+    [SelectModeChoice.strand, SelectModeChoice.staple, SelectModeChoice.scaffold]
+//      SelectModeChoice.strand_parts.asList() + [SelectModeChoice.staple, SelectModeChoice.scaffold]
+  );
 
 abstract class SelectModeState implements Built<SelectModeState, SelectModeStateBuilder> {
   SelectModeState._();

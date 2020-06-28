@@ -3,7 +3,7 @@ First off, thanks for taking the time to contribute!
 
 The following is a set of guidelines for contributing to scadnano.
 These are mostly guidelines, not rules. Use your best judgement, and
-feel free to prose changes to this doucment in a pull request.
+feel free to prose changes to this document in a pull request.
 
 ## What should I know before I get started?
 
@@ -138,7 +138,7 @@ should be push to the `dev` branch.
 
 Pull request can be made from `dev` to `master`, but make sure that
 `dev` is working before merging to `master` as all changes to `master`
-are automatically built and deployed to [scadnano.org](scadnano.org).
+are automatically built and deployed to https://scadnano.org.
 
 ## Styleguide
 
@@ -146,5 +146,5 @@ Follow the [Dart style guide](https://dart.dev/guides/language/effective-dart/st
 which should come along in most IDEs in the form of plugins
 and extensions. Visual Studio Code offers an [extension](https://dartcode.org/)
 and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
-The line length should be configued to 110, as the style guide limit of 80
+The line length should be configured to 110, as the style guide limit of 80
 is a bit too restrictive.

@@ -110,6 +110,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
       (DesignMainHelices()
         ..helices = props.dna_design.helices
         ..grid = props.grid
+        ..geometry = props.dna_design.geometry
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs

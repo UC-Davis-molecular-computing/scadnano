@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
+import 'geometry.dart';
 import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
@@ -20,29 +21,34 @@ import 'grid.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
+import 'unused_fields.dart';
 
 part 'dna_design.g.dart';
 
 //TODO: create mismatches field in DNADesign that can be accessed directly by DesignMainMismatches instead of
 // going through list of all Strands
 
-abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
+abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
   DNADesign._();
 
   factory DNADesign([void Function(DNADesignBuilder) updates]) => _$DNADesign((d) => d
     ..version = constants.CURRENT_VERSION
     ..grid = Grid.square
+    ..geometry.replace(Geometry())
     ..helices.replace({})
     ..strands.replace([])
     ..unused_fields = MapBuilder<String, Object>({}));
 
-  /****************************** end built_value boilerplate ******************************/
   @memoized
   int get hashCode;
+
+  /****************************** end built_value boilerplate ******************************/
 
   String get version;
 
   Grid get grid;
+
+  Geometry get geometry;
 
   @nullable
   int get major_tick_distance;
@@ -50,8 +56,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
-
-  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   bool get is_origami {
@@ -153,11 +157,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   @memoized
-  BuiltMap<String, Domain> get bound_substrands_by_id {
+  BuiltMap<String, Domain> get domains_by_id {
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        builder[bound_substrand.id()] = bound_substrand;
+      for (var domain in strand.domains()) {
+        builder[domain.id()] = domain;
       }
     }
     return builder.build();
@@ -189,9 +193,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        builder[bound_substrand.dnaend_start.id()] = bound_substrand.dnaend_start;
-        builder[bound_substrand.dnaend_end.id()] = bound_substrand.dnaend_end;
+      for (var domain in strand.domains()) {
+        builder[domain.dnaend_start.id()] = domain.dnaend_start;
+        builder[domain.dnaend_end.id()] = domain.dnaend_end;
       }
     }
     return builder.build();
@@ -221,9 +225,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        var end = bound_substrand.dnaend_5p;
-        if (!bound_substrand.is_first) {
+      for (var domain in strand.domains()) {
+        var end = domain.dnaend_5p;
+        if (!domain.is_first) {
           builder[end.id()] = end;
         }
       }
@@ -235,9 +239,9 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var bound_substrand in strand.domains()) {
-        var end = bound_substrand.dnaend_3p;
-        if (!bound_substrand.is_last) {
+      for (var domain in strand.domains()) {
+        var end = domain.dnaend_3p;
+        if (!domain.is_last) {
           builder[end.id()] = end;
         }
       }
@@ -262,25 +266,25 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     var substrand_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
-        for (Domain bound_ss in strand.domains()) {
-          substrand_mismatches_map_builder[bound_ss] = this._find_mismatches_on_substrand(bound_ss);
+        for (Domain domain in strand.domains()) {
+          substrand_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
         }
       }
     }
-    var substrand_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
+    var domain_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
     substrand_mismatches_map_builder.build().forEach((bound_ss, mismatches) {
-      substrand_mismatches_builtmap_builder[bound_ss] = mismatches.build();
+      domain_mismatches_builtmap_builder[bound_ss] = mismatches.build();
     });
-    return substrand_mismatches_builtmap_builder.build();
+    return domain_mismatches_builtmap_builder.build();
   }
 
   @memoized
-  BuiltMap<DNAEnd, Domain> get end_to_substrand {
+  BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
-      for (var substrand in strand.domains()) {
-        end_to_substrand_builder[substrand.dnaend_3p] = substrand;
-        end_to_substrand_builder[substrand.dnaend_5p] = substrand;
+      for (var domain in strand.domains()) {
+        end_to_substrand_builder[domain.dnaend_3p] = domain;
+        end_to_substrand_builder[domain.dnaend_5p] = domain;
       }
     }
     return end_to_substrand_builder.build();
@@ -320,7 +324,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   Strand loopout_to_strand(Loopout loopout) => substrand_to_strand[loopout];
 
-  Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_substrand[end]];
+  Strand end_to_strand(DNAEnd end) => substrand_to_strand[end_to_domain[end]];
 
   @memoized
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
@@ -329,19 +333,6 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands {
     return construct_helix_idx_to_substrands_map(strands, helix_idxs);
   }
-
-//  @memoized
-//  bool get helices_view_order_is_identity {
-//    for (var helix in helices.values) {
-//      if (helix.idx != helix.view_order) {
-//        return false;
-//      }
-//    }
-//    return true;
-//  }
-
-//  static _default_svg_position(int idx) => Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * idx);
-//  static _default_grid_position(int idx) => GridPosition(0, idx);
 
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {
@@ -387,7 +378,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   BuiltMap<Address, Strand> get address_3p_to_strand {
     var map = Map<Address, Strand>();
     for (var strand in strands) {
-      var ss = strand.last_bound_substrand();
+      var ss = strand.last_domain();
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_3p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
@@ -429,14 +420,14 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
               dna_end_top = substrand_top.dnaend_5p;
 
               helix_idx_bot = address_3p.helix_idx;
-              substrand_bot = strand_3p.last_bound_substrand();
+              substrand_bot = strand_3p.last_domain();
               dna_end_bot = substrand_bot.dnaend_3p;
             } else {
               // 3' end is on top, 5' is on bottom
               helix_idx_top = address_3p.helix_idx;
               address_top = address_3p;
               forward_top = !forward;
-              substrand_top = strand_3p.last_bound_substrand();
+              substrand_top = strand_3p.last_domain();
               dna_end_top = substrand_top.dnaend_3p;
 
               helix_idx_bot = address_5p.helix_idx;
@@ -489,6 +480,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     json_map[constants.grid_key] = this.grid.to_json();
 
+    if (!this.geometry.is_default()) {
+      json_map[constants.geometry_key] = this.geometry.to_json_serializable(suppress_indent: suppress_indent);
+    }
+
     if (this.major_tick_distance != null && this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
@@ -506,10 +501,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     //
     for (var helix in helices.values) {
       var helix_json = util.unwrap_from_noindent(helix_jsons_map[helix.idx]);
-      if (helix.has_max_offset() && has_nondefault_max_offset(helix)) {
+      if (has_nondefault_max_offset(helix)) {
         helix_json[constants.max_offset_key] = helix.max_offset;
       }
-      if (helix.has_min_offset() && has_nondefault_min_offset(helix)) {
+      if (has_nondefault_min_offset(helix)) {
         helix_json[constants.min_offset_key] = helix.min_offset;
       }
     }
@@ -553,7 +548,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
   bool has_nondefault_max_offset(Helix helix) {
     var ends = domains_on_helix(helix.idx).map((ss) => ss.end);
-    int max_end = ends.isEmpty ? 0 : ends.reduce(max);
+    int max_end = ends.isEmpty ? constants.default_max_offset : ends.reduce(max);
     return helix.max_offset != max_end;
   }
 
@@ -569,7 +564,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     }
   }
 
-  static DNADesign from_json(Map<String, dynamic> json_map) {
+  static DNADesign from_json(Map<String, dynamic> json_map, [bool invert_y_axis=false]) {
     if (json_map == null) return null;
 
     var dna_design_builder = DNADesignBuilder();
@@ -585,6 +580,11 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     bool grid_is_none = dna_design_builder.grid == Grid.none;
 
     dna_design_builder.unused_fields = util.unused_fields_map(json_map, constants.dna_design_keys);
+
+    Geometry geometry = util.get_value_with_default(json_map, constants.geometry_key, Geometry(),
+        transformer: (geometry_map) => Geometry.from_json(geometry_map),
+        legacy_keys: constants.legacy_geometry_keys);
+    dna_design_builder.geometry.replace(geometry);
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
@@ -607,6 +607,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
       if (helix_builder.idx == null) {
         helix_builder.idx = idx;
       }
+      helix_builder.invert_y_axis = invert_y_axis;
       helix_builder.grid = dna_design_builder.grid;
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDNADesignError(
@@ -615,18 +616,29 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
         throw IllegalDNADesignError(
             'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
       }
-      if (position_x_z_should_swap && grid_is_none) {
-        // prior to version 0.10.0, x and z had the opposite role
-        num swap = helix_builder.position_.x;
-        helix_builder.position_.x = helix_builder.position_.z;
-        helix_builder.position_.z = swap;
-      }
+      // don't want to do this while codenano has different version numbers
+//      if (position_x_z_should_swap && grid_is_none) {
+//        // prior to version 0.10.0, x and z had the opposite role
+//        num swap = helix_builder.position_.x;
+//        helix_builder.position_.x = helix_builder.position_.z;
+//        helix_builder.position_.z = swap;
+//      }
       helix_builders.add(helix_builder);
       idx++;
     }
 
     // view order of helices
     var helix_indices = [for (var helix_builder in helix_builders) helix_builder.idx];
+    // ensure no two helices have same idx
+    Tuple2<int, int> repeated_idxs = util.repeated_element_indices(helix_indices);
+    if (repeated_idxs != null) {
+      int i1 = repeated_idxs.item1;
+      int i2 = repeated_idxs.item2;
+      int helix_idx = helix_builders[i1].idx;
+      throw IllegalDNADesignError('helix idx values must be unique, '
+          'but two helices share idx = ${helix_idx}; they appear at positions ${i1} and ${i2} in the '
+          'list of helices.');
+    }
     List<int> helices_view_order = List<int>.from(
         util.get_value_with_default(json_map, constants.helices_view_order_key, helix_indices));
     if (helices_view_order.length != num_helices) {
@@ -662,7 +674,7 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(helices, dna_design_builder.grid);
+    helices = util.helices_assign_svg(geometry, invert_y_axis, helices, dna_design_builder.grid);
     dna_design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -681,6 +693,10 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
 
     var dna_design = dna_design_builder.build();
     dna_design._check_legal_design();
+
+//    print('dna_design: ${dna_design}');
+//    print('dna_design.geometry.to_json_serializable(): ${dna_design.geometry.to_json_serializable()}');
+//    print('dna_design.geometry.toJson(): ${dna_design.geometry.toJson()}');
 
     return dna_design;
   }
@@ -716,13 +732,181 @@ abstract class DNADesign implements Built<DNADesign, DNADesignBuilder>, JSONSeri
   }
 
   _check_legal_design() {
-//    TODO: implement this and give reasonable error messages
+    _check_helix_offsets();
+    _check_strands_reference_helices_legally();
+    _check_loopouts_not_consecutive_or_singletons_or_zero_length();
+    _check_strands_overlap_legally();
+    _check_grid_positions_disjoint();
   }
 
-  String toString() =>
-      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance, 
-  helices=$helices, 
-  strands=$strands)""";
+  _check_helix_offsets() {
+    for (var helix in helices.values) {
+      if (helix.min_offset != null && helix.max_offset != null && helix.min_offset >= helix.max_offset) {
+        var err_msg = 'for helix ${helix.idx}, '
+            'helix.min_offset = ${helix.min_offset} must be strictly less than '
+            'helix.max_offset = ${helix.max_offset}';
+        throw IllegalDNADesignError(err_msg);
+      }
+    }
+  }
+
+  _check_strands_reference_helices_legally() {
+    // ensure each strand refers to an existing helix
+    for (var strand in strands) {
+      _check_strand_references_legal_helices(strand);
+      _check_strand_has_legal_offsets_in_helices(strand);
+    }
+  }
+
+  _check_strand_references_legal_helices(Strand strand) {
+    for (var domain in strand.domains()) {
+      if (!helices.containsKey(domain.helix)) {
+        var err_msg = "domain ${domain} refers to nonexistent Helix index ${domain.helix}; "
+            "here is the list of valid helices: ${helices.keys.join(', ')}";
+        throw StrandError(strand, err_msg);
+      }
+    }
+  }
+
+  _check_strand_has_legal_offsets_in_helices(Strand strand) {
+    for (var domain in strand.domains()) {
+      var helix = helices[domain.helix];
+      if (domain.start < helix.min_offset) {
+        var err_msg = "domain ${domain} has start offset ${domain.start}, "
+            "beyond the beginning of "
+            "Helix ${domain.helix} that has min_offset = ${helix.min_offset}";
+        throw StrandError(strand, err_msg);
+      }
+      if (domain.end > helix.max_offset) {
+        var err_msg = "domain ${domain} has end offset ${domain.end}, "
+            "beyond the end of "
+            "Helix ${domain.helix} that has max_offset = ${helix.max_offset}";
+        throw StrandError(strand, err_msg);
+      }
+    }
+  }
+
+  _check_loopouts_not_consecutive_or_singletons_or_zero_length() {
+    for (var strand in strands) {
+      DNADesign._check_loopout_not_singleton(strand);
+      DNADesign._check_two_consecutive_loopouts(strand);
+      DNADesign._check_loopouts_length(strand);
+    }
+  }
+
+  static _check_loopout_not_singleton(Strand strand) {
+    if (strand.substrands.length == 1 && strand.first_domain().is_loopout()) {
+      throw StrandError(strand, 'strand cannot have a single Loopout as its only domain');
+    }
+  }
+
+  static _check_two_consecutive_loopouts(Strand strand) {
+    for (int i = 0; i < strand.substrands.length - 1; i++) {
+      var domain1 = strand.substrands[i];
+      var domain2 = strand.substrands[i + 1];
+      if (domain1.is_loopout() && domain2.is_loopout()) {
+        throw StrandError(strand, 'cannot have two consecutive Loopouts in a strand');
+      }
+    }
+  }
+
+  static _check_loopouts_length(Strand strand) {
+    for (var loopout in strand.loopouts()) {
+      if (loopout.loopout_length <= 0) {
+        throw StrandError(strand, 'loopout length must be positive but is ${loopout.loopout_length}');
+      }
+    }
+  }
+
+  _check_strands_overlap_legally() {
+    String err_msg(Domain domain1, Domain domain2, int h_idx) {
+      return "two domains overlap on helix ${h_idx}: "
+          "\n${domain1}\n  and\n${domain2}\n  but have the same direction";
+    }
+
+    // ensure that if two strands overlap on the same helix, they point in opposite directions
+    for (int helix_idx in helices.keys) {
+      var domains = this.domains_on_helix(helix_idx);
+      if (domains.length == 0) continue;
+
+      // check all consecutive domains on the same helix, sorted by start/end indices
+      List<Tuple3<int, bool, Domain>> offsets_data = [];
+      for (var domain in domains) {
+        offsets_data.add(Tuple3<int, bool, Domain>(domain.start, true, domain));
+        offsets_data.add(Tuple3<int, bool, Domain>(domain.end, false, domain));
+      }
+      offsets_data.sort((d1, d2) => d1.item1 - d2.item1);
+
+      List<Domain> current_domains = [];
+      for (var data in offsets_data) {
+        var offset = data.item1;
+        var is_start = data.item2;
+        var domain = data.item3;
+        if (is_start) {
+          if (current_domains.length >= 2) {
+            if (offset >= current_domains[1].end) {
+              current_domains.removeAt(1);
+            }
+          }
+          if (current_domains.length >= 1) {
+            if (offset >= current_domains[0].end) {
+              current_domains.removeAt(0);
+            }
+          }
+          current_domains.add(domain);
+
+          if (current_domains.length < 2) {
+            continue;
+          }
+
+          var domain0 = current_domains[0];
+          var domain1 = current_domains[1];
+          if (current_domains.length > 2) {
+            var domain2 = current_domains[2];
+            if (domain0.forward == domain1.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+            }
+            if (domain0.forward == domain2.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain2, helix_idx));
+            }
+            if (domain1.forward == domain2.forward) {
+              throw IllegalDNADesignError(err_msg(domain1, domain2, helix_idx));
+            }
+            throw AssertionError("since current_domains = ${current_domains} has at least three domains, "
+                "I expected to find a pair of illegally overlapping domains");
+          } else if (current_domains.length == 2) {
+            if (domain0.forward == domain1.forward) {
+              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  _check_grid_positions_disjoint() {
+    if (!grid.is_none()) {
+      var idxs = helices.keys.toList();
+      var gps = {for (var idx in idxs) idx: helices[idx].grid_position};
+      for (int i = 0; i < gps.length - 1; i++) {
+        int idx1 = idxs[i];
+        var gp1 = gps[idx1];
+        for (int j = i + 1; j < idxs.length; j++) {
+          int idx2 = idxs[j];
+          var gp2 = gps[idx2];
+          if (gp1 == gp2) {
+            throw IllegalDNADesignError('cannot use the same grid_position twice, but helices '
+                '${idx1} and ${idx2} both have grid_position ${gp1}');
+          }
+        }
+      }
+    }
+  }
+
+//  String toString() =>
+//      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance,
+//  helices=$helices,
+//  strands=$strands)""";
 
   ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
@@ -1084,8 +1268,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset =
-          substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
+      var max_offset = substrands.isEmpty ? constants.default_max_offset : substrands.first.end;
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
@@ -1094,11 +1277,12 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.min_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var min_offset =
-          substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
+      var min_offset = substrands.isEmpty ? constants.default_min_offset : substrands.first.start;
       for (var substrand in substrands) {
         min_offset = min(min_offset, substrand.start);
       }
+      // if there are strands with no offsets less than 1, we still want Helix.min_offset to be 0
+      // i.e., it can only be positive if the JSON explicitly declares that
       if (min_offset > 0) {
         min_offset = 0;
       }
@@ -1147,7 +1331,7 @@ class IllegalDNADesignError implements Exception {
 class StrandError extends IllegalDNADesignError {
   StrandError(Strand strand, String the_cause) : super(the_cause) {
     var first_substrand = strand.first_domain();
-    var last_substrand = strand.last_bound_substrand();
+    var last_substrand = strand.last_domain();
 
     var msg = '\n'
         'strand length        =  ${strand.dna_length()}\n'

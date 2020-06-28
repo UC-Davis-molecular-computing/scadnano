@@ -18,14 +18,11 @@ UiFactory<EditModeProps> ConnectedEditMode = connect<AppState, EditModeProps>(
   forwardRef: true,
 )(EditMode);
 
-
 UiFactory<EditModeProps> EditMode = _$EditMode;
-
 
 mixin EditModeProps on UiProps {
   BuiltSet<EditModeChoice> modes;
 }
-
 
 class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMixin {
   @override

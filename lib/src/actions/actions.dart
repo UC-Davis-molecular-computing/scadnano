@@ -32,7 +32,6 @@ import 'package:scadnano/src/state/strands_move.dart';
 //import '../state/select_mode_state.dart';
 //import '../state/helix.dart';
 //import '../state/strand.dart';
-//import '../state/bound_substrand.dart';
 //import '../state/loopout.dart';
 import '../state/edit_mode.dart';
 import '../serializers.dart';
@@ -400,65 +399,84 @@ abstract class SetShowEditor
 }
 
 abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
-    with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix, SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
+    with
+        BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
+            SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
   bool get show;
 
-  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(bool show) => SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from((b) => b..show = show);
+  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(bool show) =>
+      SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from([void Function(SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder) updates]) = _$SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix;
+  factory SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix.from(
+          [void Function(SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder) updates]) =
+      _$SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix;
 
   SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix._();
 
-  static Serializer<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix> get serializer => _$setDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixSerializer;
+  static Serializer<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix> get serializer =>
+      _$setDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixSerializer;
 }
 
 abstract class SetDisplayBaseOffsetsOfMajorTicks
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetDisplayBaseOffsetsOfMajorTicks, SetDisplayBaseOffsetsOfMajorTicksBuilder> {
+    implements
+        AppUIStateStorableAction,
+        Built<SetDisplayBaseOffsetsOfMajorTicks, SetDisplayBaseOffsetsOfMajorTicksBuilder> {
   bool get show;
 
-  factory SetDisplayBaseOffsetsOfMajorTicks(bool show) => SetDisplayBaseOffsetsOfMajorTicks.from((b) => b..show = show);
+  factory SetDisplayBaseOffsetsOfMajorTicks(bool show) =>
+      SetDisplayBaseOffsetsOfMajorTicks.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayBaseOffsetsOfMajorTicks.from([void Function(SetDisplayBaseOffsetsOfMajorTicksBuilder) updates]) = _$SetDisplayBaseOffsetsOfMajorTicks;
+  factory SetDisplayBaseOffsetsOfMajorTicks.from(
+          [void Function(SetDisplayBaseOffsetsOfMajorTicksBuilder) updates]) =
+      _$SetDisplayBaseOffsetsOfMajorTicks;
 
   SetDisplayBaseOffsetsOfMajorTicks._();
 
-  static Serializer<SetDisplayBaseOffsetsOfMajorTicks> get serializer => _$setDisplayBaseOffsetsOfMajorTicksSerializer;
+  static Serializer<SetDisplayBaseOffsetsOfMajorTicks> get serializer =>
+      _$setDisplayBaseOffsetsOfMajorTicksSerializer;
 }
 
 abstract class SetDisplayMajorTickWidthsAllHelices
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidthsAllHelices, SetDisplayMajorTickWidthsAllHelicesBuilder> {
+    implements
+        AppUIStateStorableAction,
+        Built<SetDisplayMajorTickWidthsAllHelices, SetDisplayMajorTickWidthsAllHelicesBuilder> {
   bool get show;
 
-  factory SetDisplayMajorTickWidthsAllHelices(bool show) => SetDisplayMajorTickWidthsAllHelices.from((b) => b..show = show);
+  factory SetDisplayMajorTickWidthsAllHelices(bool show) =>
+      SetDisplayMajorTickWidthsAllHelices.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayMajorTickWidthsAllHelices.from([void Function(SetDisplayMajorTickWidthsAllHelicesBuilder) updates]) = _$SetDisplayMajorTickWidthsAllHelices;
+  factory SetDisplayMajorTickWidthsAllHelices.from(
+          [void Function(SetDisplayMajorTickWidthsAllHelicesBuilder) updates]) =
+      _$SetDisplayMajorTickWidthsAllHelices;
 
   SetDisplayMajorTickWidthsAllHelices._();
 
-  static Serializer<SetDisplayMajorTickWidthsAllHelices> get serializer => _$setDisplayMajorTickWidthsAllHelicesSerializer;
+  static Serializer<SetDisplayMajorTickWidthsAllHelices> get serializer =>
+      _$setDisplayMajorTickWidthsAllHelicesSerializer;
 }
 
 abstract class SetDisplayMajorTickWidths
-  with BuiltJsonSerializable
-  implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder>
-{
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder> {
   bool get show;
 
   factory SetDisplayMajorTickWidths(bool show) => SetDisplayMajorTickWidths.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayMajorTickWidths.from([void Function(SetDisplayMajorTickWidthsBuilder) updates]) = _$SetDisplayMajorTickWidths;
+  factory SetDisplayMajorTickWidths.from([void Function(SetDisplayMajorTickWidthsBuilder) updates]) =
+      _$SetDisplayMajorTickWidths;
 
   SetDisplayMajorTickWidths._();
 
   static Serializer<SetDisplayMajorTickWidths> get serializer => _$setDisplayMajorTickWidthsSerializer;
-
 }
 
 abstract class SetOnlyDisplaySelectedHelices
@@ -481,6 +499,26 @@ abstract class SetOnlyDisplaySelectedHelices
   static Serializer<SetOnlyDisplaySelectedHelices> get serializer =>
       _$setOnlyDisplaySelectedHelicesSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// invert y-axis
+
+abstract class InvertYAxisSet
+    with BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        SvgPngCacheInvalidatingAction,
+        Built<InvertYAxisSet, InvertYAxisSetBuilder> {
+  bool get invert_y_axis;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InvertYAxisSet({bool invert_y_axis}) = _$InvertYAxisSet._;
+
+  InvertYAxisSet._();
+
+  static Serializer<InvertYAxisSet> get serializer => _$invertYAxisSetSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 

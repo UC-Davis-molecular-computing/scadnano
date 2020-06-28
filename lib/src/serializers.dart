@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:convert' as convert;
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
@@ -14,6 +15,7 @@ import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
 import 'state/example_dna_designs.dart';
 import 'state/export_dna_format.dart';
+import 'state/geometry.dart';
 import 'state/modification.dart';
 import 'state/potential_crossover.dart';
 import 'state/potential_vertical_crossover.dart';
@@ -59,6 +61,7 @@ part 'serializers.g.dart';
   Helix,
   Domain,
   Strand,
+  Geometry,
   Crossover,
   DNAEnd,
   IDTFields,
@@ -183,6 +186,7 @@ part 'serializers.g.dart';
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
+  InvertYAxisSet,
   SetModificationDisplayConnector,
   SetModificationFontSize,
   HelicesPositionsSetBasedOnCrossovers,
@@ -268,3 +272,23 @@ class ColorSerializer implements PrimitiveSerializer<Color> {
     return Color.hex(color_hex);
   }
 }
+
+//class UnusedFieldsSerializer implements PrimitiveSerializer<Color> {
+//  final bool structured = false;
+//  @override
+//  final Iterable<Type> types = new BuiltList<Type>([convert._JsonMap]);
+//  @override
+//  final String wireName = '_JsonMap';
+//
+//  @override
+//  Object serialize(Serializers serializers, Color color, {FullType specifiedType: FullType.unspecified}) {
+//    return color.toHexColor().toCssString();
+//  }
+//
+//  @override
+//  Color deserialize(Serializers serializers, Object serialized,
+//      {FullType specifiedType: FullType.unspecified}) {
+//    String color_hex = serialized as String;
+//    return Color.hex(color_hex);
+//  }
+//}

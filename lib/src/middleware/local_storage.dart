@@ -59,24 +59,27 @@ restore(Storable storable) {
   try {
     _restore(storable);
   } catch (e, stackTrace) {
-    print(
-        'ERROR: loading ${storable} from localStorage, encountered this error:\n${e.toString()}\n\nstack trace:\n\n${stackTrace}');
+    print('ERROR: loading ${storable} from localStorage, encountered this error:'
+        '\n${e.toString()}'
+        '\n\nstack trace:'
+        '\n\n${stackTrace}');
   }
 }
 
 _restore(Storable storable) {
   String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
   if (window.localStorage.containsKey(storable_key)) {
-    var value = window.localStorage[storable_key];
+    var json_str = window.localStorage[storable_key];
 
     actions.Action action = null;
 
     if (storable == Storable.dna_design) {
       // TODO(benlee12): Ugly because this forces dna to be loaded before the app
       // state because the filename could be overwritten.
-      action = actions.LoadDNAFile(content: value, filename: null);
+      action = actions.LoadDNAFile(content: json_str, filename: null);
     } else if (storable == Storable.app_ui_state_storables) {
-      AppUIStateStorable storables = standard_serializers.deserializeWith(AppUIStateStorable.serializer, json.decode(window.localStorage[storable_key]));
+      var storable_json_map = json.decode(json_str);
+      AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
       action = actions.SetAppUIStateStorable(storables);
       // TODO(benlee12): Ugly because this forces dna to be loaded before the app
       // state because the filename could be overwritten.

@@ -6,12 +6,13 @@ import 'package:quiver/iterables.dart' as iter;
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/position3d.dart';
 
+import '../state/context_menu.dart';
+import '../state/dialog.dart';
+import '../state/geometry.dart';
+import '../state/grid.dart';
+import '../state/grid_position.dart';
+import '../state/position3d.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -33,27 +34,28 @@ mixin DesignMainHelixProps on UiProps {
   bool show_dna;
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
+  Geometry geometry;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
   render() {
     Helix helix = props.helix;
-
+    Geometry geometry = props.geometry;
 
     // for helix circles
-    var cx = -(2 * constants.BASE_WIDTH_SVG + constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2);
-    var cy = constants.BASE_WIDTH_SVG;
+    var cx = -(2 * constants.BASE_WIDTH_SVG + geometry.distance_between_helices_main_svg / 2);
+    var cy = helix.svg_height() / 2.0;
 
     // for helix horizontal lines
     num width = helix.svg_width();
     num height = helix.svg_height();
 
+    num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+
+    var horz_line_paths = _horz_line_paths(helix);
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
-
-    var x_start = 0; // helix.min_offset * constants.BASE_WIDTH_SVG;
-    var x_end = x_start + width;
 
     Point<num> translation = helix_main_view_translation(helix);
 
@@ -65,7 +67,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..id = helix_circle_id()
         ..cx = '$cx'
         ..cy = '$cy'
-        ..r = '${constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG / 2.0}'
+        ..r = '${geometry.helix_radius_svg}'
         ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.text()
         ..className = 'main-view-helix-text'
@@ -78,12 +80,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..key = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
-          ..d = 'M $x_start 0 '
-              'H $x_end '
-              'M $x_start ${height / 2.0} '
-              'H $x_end '
-              'M $x_start $height '
-              'H $x_end'
+          ..d = horz_line_paths
           ..key = 'helix-horz-lines')(),
         (Dom.path()
           ..className = 'helix-lines helix-vert-minor-line'
@@ -99,7 +96,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         (Dom.rect()
 //          ..onClick = start_strand_create
           ..onPointerDown = start_strand_create
-          ..x = '0'
+          ..x = x_start
           ..y = '0'
           ..width = '$width'
           ..height = '$height'
@@ -384,13 +381,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     var y = constants.MAJOR_TICKS_OFFSET_TEXT_Y;
     var dx = constants.MAJOR_TICKS_OFFSET_TEXT_DX;
-    var dy = props.show_dna ?  -constants.BASE_HEIGHT_SVG : 0;
+    var dy = props.show_dna ? -constants.BASE_HEIGHT_SVG : 0;
 
     var offset_texts_elements = [];
 
     if (props.display_base_offsets_of_major_ticks) {
       for (int base in major_ticks) {
-        var base_minus_min_offset = base - helix.min_offset;
+        var base_minus_min_offset = base; // - helix.min_offset;
         var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
         var text_element = (Dom.text()
           ..className = 'main-view-helix-major-tick-offset-text'
@@ -432,27 +429,28 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       }
     }
 
-
     if (offset_texts_elements.isEmpty) {
       return null;
     } else {
-      return (Dom.g()..key = 'major-tick-offsets-group')(offset_texts_elements);
+      return (Dom.g()
+        ..className = 'major-tick-offsets-group'
+        ..key = 'major-tick-offsets-group')(offset_texts_elements);
     }
   }
 }
 
-Point<num> helix_main_view_translation(Helix helix) {
-  return helix.svg_position;
-}
+String _horz_line_paths(Helix helix) {
+  num width = helix.svg_width();
+  num height = helix.svg_height();
+  num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+  num x_end = x_start + width;
 
-List<int> regularly_spaced_ticks(int distance, int start, int end) {
-  if (distance == null || distance == 0) {
-    return [];
-  } else if (distance < 0) {
-    throw ArgumentError('distance between major ticks must be positive');
-  } else {
-    return [for (int offset in iter.range(start, end + 1, distance)) offset];
-  }
+  return 'M $x_start 0 '
+      'H $x_end '
+      'M $x_start ${height / 2.0} '
+      'H $x_end '
+      'M $x_start $height '
+      'H $x_end';
 }
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
@@ -468,7 +466,7 @@ Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance
   List<String> path_cmds_vert_major = [];
 
   for (int base = helix.min_offset; base <= helix.max_offset; base++) {
-    var base_minus_min_offset = base - helix.min_offset;
+    var base_minus_min_offset = base; // - helix.min_offset;
     var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
     var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
     path_cmds.add('M $x 0');
@@ -477,4 +475,18 @@ Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance
   }
 
   return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
+}
+
+Point<num> helix_main_view_translation(Helix helix) {
+  return helix.svg_position;
+}
+
+List<int> regularly_spaced_ticks(int distance, int start, int end) {
+  if (distance == null || distance == 0) {
+    return [];
+  } else if (distance < 0) {
+    throw ArgumentError('distance between major ticks must be positive');
+  } else {
+    return [for (int offset in iter.range(start, end + 1, distance)) offset];
+  }
 }

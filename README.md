@@ -158,54 +158,9 @@ It is instructive to see how that example design is represented as a `.dna` file
 }
 ```
 
-Here is Python code that would produce this design using the 
-[scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
-
-```python
-import scadnano as sc
-import modifications as mod
+The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md#example) shows Python code that produces this design.
 
 
-def main():
-    # helices
-    helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
-
-    # left staple
-    stap_left_domain1 = sc.Domain(helix=1, forward=True, start=8, end=24)
-    stap_left_domain0 = sc.Domain(helix=0, forward=False, start=8, end=24)
-    stap_left = sc.Strand(domains=[stap_left_domain1, stap_left_domain0])
-
-    # right staple
-    stap_right_domain0 = sc.Domain(helix=0, forward=False, start=24, end=40)
-    stap_right_domain1 = sc.Domain(helix=1, forward=True, start=24, end=40)
-    stap_right = sc.Strand(domains=[stap_right_domain0, stap_right_domain1])
-    stap_right.set_modification_5p(mod.biotin_5p)
-
-    # scaffold
-    scaf_domain1_left = sc.Domain(helix=1, forward=False, start=8, end=24)
-    scaf_domain0 = sc.Domain(helix=0, forward=True, start=8, end=40)
-    loopout = sc.Loopout(length=3)
-    scaf_domain1_right = sc.Domain(helix=1, forward=False, start=24, end=40)
-    scaf = sc.Strand(domains=[scaf_domain1_left, scaf_domain0, loopout, scaf_domain1_right], is_scaffold=True)
-
-    # whole design
-    design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
-
-    # deletions and insertions added to design are added to both strands on a helix
-    design.add_deletion(helix=1, offset=20)
-    design.add_insertion(helix=0, offset=14, length=1)
-    design.add_insertion(helix=0, offset=26, length=2)
-
-    # also assigns complement to strands other than scaf bound to it
-    design.assign_dna(scaf, 'AACGT' * 18)
-
-    return design
-
-
-if __name__ == '__main__':
-    design = main()
-    design.write_scadnano_file(directory='output_designs')
-```
 
 Although it is not necessary to deal directly with the above JSON data, it is worthwhile to understand the data model it represents. 
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
@@ -231,10 +186,11 @@ Helix.yaw will likely never be supported visually in the main or side views,
 but it is retained as a field for compatibility with other software for 3D visualization.
 Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, 
 with default value 0 meaning that the helix moves to the right as offsets increase.
-Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side view. Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
+Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
+Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
-(Each grid position is essentially interpreted as a position with *pitch* = *roll* = *yaw* = 0.)
+(Each grid position is interpreted as a position from a constrained set of possible positions.)
 They are listed from top to bottom in the order they appear in the sequence 
 (unless the property *helices_view_order* is specified in the design to display them in a different order, 
 though currently this can only be done in the scripting library).
@@ -540,6 +496,11 @@ Upon subsequently assigning a DNA sequence to *s3*, the complementary portions o
 Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`, if it already exists and is about to be overwritten with a different base.
 
 [TODO: make a figure showing this]
+
+
+
+
+
 
 
 

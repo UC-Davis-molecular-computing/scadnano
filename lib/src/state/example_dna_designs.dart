@@ -6,10 +6,10 @@ import '../serializers.dart';
 
 part 'example_dna_designs.g.dart';
 
-final DEFAULT_example_dna_designs = ExampleDNADesigns(
-  directory: 'examples/output_designs',
-  selected_idx: -1,
-  filenames: [
+final DEFAULT_example_dna_designs_builder = ExampleDNADesignsBuilder()
+  ..directory = 'examples/output_designs'
+  ..selected_idx = -1
+  ..filenames = [
     'empty',
     '2_staple_2_helix_origami_deletions_insertions_mods',
     '6_helix_origami_rectangle',
@@ -17,8 +17,9 @@ final DEFAULT_example_dna_designs = ExampleDNADesigns(
     '16_helix_origami_rectangle_no_twist',
     '16_helix_origami_rectangle',
     '16_helix_origami_rectangle_idt',
-  ].toBuiltList(),
-);
+  ].toBuiltList().toBuilder();
+
+final DEFAULT_example_dna_designs = DEFAULT_example_dna_designs_builder.build();
 
 abstract class ExampleDNADesigns
     with BuiltJsonSerializable

@@ -34,7 +34,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     }
 
     Domain first_ss = props.strand.first_domain();
-    Domain last_ss = props.strand.last_bound_substrand();
+    Domain last_ss = props.strand.last_domain();
     DNAEnd end_5p = first_ss.dnaend_5p;
     DNAEnd end_3p = last_ss.dnaend_3p;
     //XXX: need to switch 3' and 5' if delta_forward is true
@@ -72,22 +72,22 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         helices_view_order: props.helices_view_order,
         helices_view_order_inverse: props.helices_view_order_inverse);
 
-    List<Domain> bound_substrands = strand_moved.domains();
-    Domain substrand = bound_substrands.first;
+    List<Domain> domains = strand_moved.domains();
+    Domain substrand = domains.first;
 
     var helix = props.helices[substrand.helix];
     var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
-    for (int i = 0; i < bound_substrands.length; i++) {
+    for (int i = 0; i < domains.length; i++) {
       // substrand line
       var end_svg = helix.svg_base_pos(substrand.offset_3p, substrand.forward);
       path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
       // crossover/loopout line/arc
-      if (i < bound_substrands.length - 1) {
+      if (i < domains.length - 1) {
         var old_substrand = substrand;
-        substrand = bound_substrands[i + 1];
+        substrand = domains[i + 1];
         helix = props.helices[substrand.helix];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
         var control = control_point_for_crossover_bezier_curve(old_substrand, substrand, props.helices);

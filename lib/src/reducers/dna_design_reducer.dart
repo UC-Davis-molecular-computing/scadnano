@@ -53,13 +53,13 @@ DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState stat
 // whole: operate on the whole DNADesign
 // local: don't need the whole AppState
 Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
-  TypedReducer<DNADesign, actions.HelixAdd>(helix_add_dna_design_local_reducer),
   TypedReducer<DNADesign, actions.InlineInsertionsDeletions>(inline_insertions_deletions_reducer),
 ]);
 
 // whole: operate on the whole DNADesign
 // global: need the whole AppState
 GlobalReducer<DNADesign, AppState> dna_design_whole_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<DNADesign, AppState, actions.HelixAdd>(helix_add_dna_design_reducer),
   TypedGlobalReducer<DNADesign, AppState, actions.HelixRemove>(helix_remove_dna_design_global_reducer),
   TypedGlobalReducer<DNADesign, AppState, actions.HelixRemoveAllSelected>(
       helix_remove_all_selected_dna_design_global_reducer),

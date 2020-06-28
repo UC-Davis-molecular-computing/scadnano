@@ -42,7 +42,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     }
 
     if (props.strand.modification_3p != null) {
-      var ss = props.strand.last_bound_substrand();
+      var ss = props.strand.last_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(ss.helix)) {
         Helix helix_3p = props.helices[ss.helix];
         modifications.add((DesignMainStrandModificationDomain()

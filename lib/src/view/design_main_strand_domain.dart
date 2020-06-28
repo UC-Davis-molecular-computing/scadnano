@@ -120,4 +120,5 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
 tooltip_text(Domain domain) => '${domain.forward ? 'forward' : 'reverse'} domain:\n'
     '    helix=${domain.helix}\n'
     '    start=${domain.start}\n'
-    '    end=${domain.end}';
+    '    end=${domain.end}' +
+    (domain.label == null? "": "\n    label=${domain.label.toString()}");

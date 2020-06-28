@@ -7,6 +7,7 @@ import '../json_serializable.dart';
 import '../serializers.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'unused_fields.dart';
 
 part 'modification.g.dart';
 
@@ -54,7 +55,7 @@ abstract class Modification {
 }
 
 abstract class Modification5Prime
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UnusedFields
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
       {String display_text,
@@ -76,8 +77,6 @@ abstract class Modification5Prime
   String get id;
 
   String get idt_text;
-
-  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   int get hashCode;
@@ -107,7 +106,7 @@ abstract class Modification5Prime
 }
 
 abstract class Modification3Prime
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UnusedFields
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
       {String display_text,
@@ -129,8 +128,6 @@ abstract class Modification3Prime
   String get id;
 
   String get idt_text;
-
-  BuiltMap<String, Object> get unused_fields;
 
   @memoized
   int get hashCode;
@@ -160,7 +157,7 @@ abstract class Modification3Prime
 }
 
 abstract class ModificationInternal
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UnusedFields
     implements Built<ModificationInternal, ModificationInternalBuilder>, Modification {
   factory ModificationInternal.from([void Function(ModificationInternalBuilder) updates]) =
       _$ModificationInternal;
@@ -189,8 +186,6 @@ abstract class ModificationInternal
 
   @nullable
   BuiltSet<String> get allowed_bases;
-
-  BuiltMap<String, Object> get unused_fields;
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 

@@ -22,12 +22,13 @@ BuiltList<MouseoverData> mouseover_data_update_reducer(
 }
 
 BuiltList<MouseoverData> helix_rotation_set_at_other_mouseover_reducer(
-    BuiltList<MouseoverData> mouseover_datas, AppState model, actions.HelixRollSetAtOther action) {
-  Helix helix = model.dna_design.helices[action.helix_idx];
-  Helix helix_other = model.dna_design.helices[action.helix_other_idx];
-  num rotation = util.rotation_between_helices(helix, helix_other, action.forward);
+    BuiltList<MouseoverData> mouseover_datas, AppState state, actions.HelixRollSetAtOther action) {
+  Helix helix = state.dna_design.helices[action.helix_idx];
+  Helix helix_other = state.dna_design.helices[action.helix_other_idx];
+  var geometry = state.dna_design.geometry;
+  num rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
   return _update_mouseover_datas_with_helix_rotation(
-    model: model,
+    model: state,
     helix_idx: action.helix_idx,
     rotation: rotation,
     rotation_anchor: action.anchor,

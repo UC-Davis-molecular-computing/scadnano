@@ -34,7 +34,7 @@ mixin DesignMainDNASequenceProps on UiProps {
   bool only_display_selected_helices;
 }
 
-bool should_draw_bound_ss(
+bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
@@ -47,9 +47,9 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     for (int i = 0; i < this.props.strand.substrands.length; i++) {
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_domain()) {
-        if (should_draw_bound_ss(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
+        if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
           var bound_ss = substrand as Domain;
-          dna_sequence_elts.add(this._dna_sequence_on_bound_substrand(bound_ss));
+          dna_sequence_elts.add(this._dna_sequence_on_domain(bound_ss));
           for (var insertion in bound_ss.insertions) {
             int offset = insertion.offset;
             int length = insertion.length;
@@ -62,8 +62,8 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         var loopout = substrand as Loopout;
         Domain prev_ss = this.props.strand.substrands[i - 1];
         Domain next_ss = this.props.strand.substrands[i + 1];
-        if (should_draw_bound_ss(prev_ss, side_selected_helix_idxs, props.only_display_selected_helices) &&
-            should_draw_bound_ss(next_ss, side_selected_helix_idxs, props.only_display_selected_helices)) {
+        if (should_draw_domain(prev_ss, side_selected_helix_idxs, props.only_display_selected_helices) &&
+            should_draw_domain(next_ss, side_selected_helix_idxs, props.only_display_selected_helices)) {
           dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
         }
       }
@@ -73,25 +73,25 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
   static const classname_dna_sequence = 'dna-seq';
 
-  ReactElement _dna_sequence_on_bound_substrand(Domain substrand) {
-    var seq_to_draw = substrand.dna_sequence_deletions_insertions_to_spaces();
+  ReactElement _dna_sequence_on_domain(Domain domain) {
+    var seq_to_draw = domain.dna_sequence_deletions_insertions_to_spaces();
 
     var rotate_degrees = 0;
-    int offset = substrand.offset_5p;
-    var helix = props.helices[substrand.helix];
-    Point<num> pos = helix.svg_base_pos(offset, substrand.forward);
+    int offset = domain.offset_5p;
+    var helix = props.helices[domain.helix];
+    Point<num> pos = helix.svg_base_pos(offset, domain.forward);
     var rotate_x = pos.x;
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
     var x_adjust = -constants.BASE_WIDTH_SVG * 0.32;
-    if (!substrand.forward) {
+    if (!domain.forward) {
       rotate_degrees = 180;
     }
     var dy = -constants.BASE_HEIGHT_SVG * 0.25;
-    var text_length = constants.BASE_WIDTH_SVG * (substrand.visual_length - 0.342);
-    var id = 'dna-bound-substrand-H${substrand.helix}-S${substrand.start}-E${substrand.end}-'
-        '${substrand.forward ? 'forward' : 'reverse'}';
+    var text_length = constants.BASE_WIDTH_SVG * (domain.visual_length - 0.342);
+    var id = 'dna-bound-substrand-H${domain.helix}-S${domain.start}-E${domain.end}-'
+        '${domain.forward ? 'forward' : 'reverse'}';
 
     return (Dom.text()
 //      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())

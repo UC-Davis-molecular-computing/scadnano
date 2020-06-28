@@ -10,6 +10,8 @@ import 'package:js/js.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
+import 'package:over_react/components.dart' as over_react_components;
+
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
@@ -437,7 +439,7 @@ class DesignViewComponent {
       this.error_message_component.render(state.error_message);
 
       react_dom.render(
-        ErrorBoundary()(
+        over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             ConnectedDesignDialogForm()(),
           ),
@@ -483,7 +485,7 @@ class DesignViewComponent {
       }
 
       react_dom.render(
-        ErrorBoundary()(
+        over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)((ReduxProvider()
             ..store = app.store_selection_box
             ..context = app.context_selection_box)(
@@ -509,7 +511,7 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        ErrorBoundary()(
+        over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             ConnectedDesignFooter()(),
           ),
@@ -518,7 +520,7 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        ErrorBoundary()(
+        over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             ConnectedDesignContextMenu()(),
           ),
@@ -527,7 +529,7 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        ErrorBoundary()(
+        over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             ConnectedDesignDialogForm()(),
           ),

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano/src/state/unused_fields.dart';
 
 import '../json_serializable.dart';
 import '../serializers.dart';
@@ -36,7 +37,7 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
 }
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
-abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBuilder> {
+abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<Helix, HelixBuilder> {
   Helix._() {
     if (grid_position == null && position_ == null) {
       throw ArgumentError('exactly one of Helix.grid_position and Helix.position should be null, '
@@ -60,8 +61,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     int view_order = null,
     GridPosition grid_position = null,
     num roll = constants.default_helix_roll,
+    num pitch = constants.default_helix_pitch,
+    num yaw = constants.default_helix_yaw,
     int min_offset = 0,
     int max_offset = constants.default_max_offset,
+    bool invert_y_axis = false,
     Position3D position = null,
     Point<num> svg_position = null,
   }) {
@@ -74,11 +78,14 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
-      ..svg_position = svg_position
+      ..svg_position_ = svg_position
       ..roll = roll
+      ..pitch = pitch
+      ..yaw = yaw
+      ..invert_y_axis = invert_y_axis
       ..min_offset = min_offset
       ..max_offset = max_offset
-      ..unused_fields = MapBuilder<String, Object>({}));
+      ..unused_fields.replace({}));
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -95,23 +102,29 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   @nullable
   GridPosition get grid_position;
 
-  @memoized
-  int get hashCode;
-
   /// SVG position of upper-left corner (main view). This is only 2D.
   /// There is a position object that can be stored in the JSON, but this is used only for 3D visualization,
   /// which is currently unsupported in scadnano. If we want to support it in the future, we can store that
   /// position in Helix as well, but svg_position will always be 2D.
   @nullable
-  Point<num> get svg_position;
+  Point<num> get svg_position_;
+
+  Point<num> get svg_position =>
+      invert_y_axis ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;
 
   Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid);
 
-  /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset.
+  /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
   double get roll;
+
+  /// rotation in plane of main view (x-y)
+  double get pitch;
+
+  /// rotation in and out of main view screen (x-z)
+  double get yaw;
 
   /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix. i.e. EXCLUSIVE.
   int get max_offset;
@@ -119,37 +132,18 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
 
+  bool get invert_y_axis;
+
   @nullable
   int get major_tick_distance;
 
   @nullable
   BuiltList<int> get major_ticks;
 
-  BuiltMap<String, Object> get unused_fields;
+  @memoized
+  int get hashCode;
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
-
-//  Point<num> calculate_svg_position_from_position() {
-//    if (grid != Grid.none) {
-//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-////      return Point<num>(grid_position.b * constants.BASE_WIDTH_SVG,
-////          grid_position.v * constants.DISTANCE_BETWEEN_HELICES_SVG);
-//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-//    } else if (position != null) {
-//      var pos3d = position3d();
-//      // position z is main view x
-//      // SVG pixels in x direction = p.z in nm * (1/0.34 bp/nm) * (BASE_WIDTH_SVG pixels/bp)
-//      // SVG pixels in y direction =
-//      //   p.y in nm * (1/2.5 helix/nm)
-//      //   * (GridPosition.distance grid_point/helix)
-//      //   * (DISTANCE_BETWEEN_HELICES_SVG pixels/grid_point)
-//      //FIXME: need to know positions of helices above this one in view order to know vertical offset
-//      return util.position3d_to_main_view_svg(pos3d);
-//    } else {
-////      throw AssertionError('cannot have grid_position, position both null and call default_svg_position');
-//      return Point<num>(0, constants.DISTANCE_BETWEEN_HELICES_SVG * this.view_order);
-//    }
-//  }
 
   //TODO: should this be memoized?
   Position3D default_position() {
@@ -161,17 +155,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   bool has_grid_position() => this.grid_position != null;
 
-  /// More like "has *assigned* SVG position"; if not one is calculated from grid_position or position
-//  bool has_svg_position() => this.svg_position_ != null;
-
   bool has_position() => this.position_ != null;
-
-//  @override
-//  String toString() =>
-//      super.toString().replaceFirst(r'helix=[+-]?\d+(\.\d+)?', 'helix=${util.to_degrees(rotation)}');
-
-//  @memoized
-//  Point<num> get svg_position => svg_position_ ?? calculate_svg_position_from_position();
 
   /// Gets 3D position (in "SVG coordinates" for the x,y,z) of Helix (offset 0).
   /// If [null], then [grid_position] must be non-[null], and it is auto-calculated from that.
@@ -192,27 +176,37 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     return util.to_degrees(angle_radians);
   }
 
-  bool has_major_tick_distance() => major_tick_distance != null;
+  bool has_default_roll() => util.are_close(roll, constants.default_helix_roll);
 
-  bool has_major_ticks() => major_ticks != null;
+  bool has_default_pitch() => util.are_close(pitch, constants.default_helix_pitch);
 
-  bool has_nondefault_roll() => (roll - constants.default_helix_roll).abs() > 0.0001;
+  bool has_default_yaw() => util.are_close(yaw, constants.default_helix_yaw);
 
-  bool has_nondefault_major_tick_distance() => major_tick_distance != null;
+  bool has_default_major_tick_distance() => major_tick_distance == null;
 
-  bool has_nondefault_major_ticks() => major_ticks != null;
+  bool has_default_major_ticks() => major_ticks == null;
+
+  bool has_major_tick_distance() => !has_default_major_tick_distance();
+
+  bool has_major_ticks() => !has_default_major_ticks();
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
 
     // if we have major ticks or position, it's harder to read Helix on one line,
     // so don't wrap it in NoIndent, but still wrap longer sub-objects in them
-    bool use_no_indent = !(has_nondefault_major_ticks() || has_position());
+    bool use_no_indent = has_default_major_ticks() && !has_position();
 
-    if (has_nondefault_roll()) {
-      // round if close to an integer
-      num roll_rounded = (roll - roll.round()) < 0.0000001 ? roll.round() : roll;
-      json_map[constants.roll_key] = roll_rounded;
+    if (!has_default_roll()) {
+      json_map[constants.roll_key] = util.to_int_if_close(roll);
+    }
+
+    if (!has_default_pitch()) {
+      json_map[constants.pitch_key] = util.to_int_if_close(pitch);
+    }
+
+    if (!has_default_yaw()) {
+      json_map[constants.yaw_key] = util.to_int_if_close(yaw);
     }
 
     if (has_grid_position()) {
@@ -225,13 +219,13 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
       json_map[constants.position_key] = suppress_indent && !use_no_indent ? NoIndent(pos) : pos;
     }
 
-    if (has_nondefault_major_tick_distance()) {
+    if (!has_default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = major_tick_distance;
     }
 
     json_map.addAll(unused_fields.toMap());
 
-    if (has_nondefault_major_ticks()) {
+    if (!has_default_major_ticks()) {
       var ticks = this.major_ticks.toList();
       json_map[constants.major_ticks_key] = suppress_indent && !use_no_indent ? NoIndent(ticks) : ticks;
     }
@@ -245,8 +239,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   /// given helix idx and offset,  depending on whether strand is going forward or not.
   /// This is relative to the starting point of the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
-    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG;
-    num y = constants.BASE_HEIGHT_SVG / 2 + this.svg_position.y;
+    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this.svg_position.x;
+    // svg_height is height of whole helix, including both forward and reverse strand
+    // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
+    num y = svg_height() / 4.0 + this.svg_position.y;
     if (!forward) {
       y += 10;
     }
@@ -254,19 +250,19 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
   }
 
   int svg_x_to_offset(num x) {
-    var offset = (x / constants.BASE_WIDTH_SVG).floor();
+    var offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
     return offset;
   }
 
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   bool svg_y_is_forward(num y) {
-    var relative_y = (y - svg_position.y);
+    var relative_y = (y - svg_position.y).abs();
+//    print('y              = ${y}');
+//    print('svg_position.y = ${svg_position.y}');
+//    print('relative_y     = ${relative_y}');
+//    print('**********************');
     return relative_y < 10;
   }
-
-  bool has_max_offset() => this.max_offset != null;
-
-  bool has_min_offset() => this.min_offset != null;
 
   //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines in main view
 
@@ -280,7 +276,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
-      helix_builder.major_ticks = ListBuilder<int>(List<int>.from(json_map[constants.major_ticks_key]));
+      var major_ticks_json = json_map[constants.major_ticks_key];
+      if (major_ticks_json != null) {
+        helix_builder.major_ticks = ListBuilder<int>(List<int>.from(major_ticks_json));
+      }
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
@@ -293,7 +292,10 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     }
 
     if (json_map.containsKey(constants.max_offset_key)) {
-      helix_builder.max_offset = json_map[constants.max_offset_key];
+      var max_offset_json = json_map[constants.max_offset_key];
+      if (max_offset_json != null) {
+        helix_builder.max_offset = json_map[constants.max_offset_key];
+      }
     }
 
     if (json_map.containsKey(constants.min_offset_key)) {
@@ -307,6 +309,11 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
     helix_builder.roll =
         util.get_value_with_default(json_map, constants.roll_key, constants.default_helix_roll);
 
+    helix_builder.pitch =
+        util.get_value_with_default(json_map, constants.pitch_key, constants.default_helix_pitch);
+
+    helix_builder.yaw = util.get_value_with_default(json_map, constants.yaw_key, constants.default_helix_yaw);
+
     Position3D position = Position3D.get_position_from_helix_json_map(json_map);
     helix_builder.position_ = position?.toBuilder();
 
@@ -315,7 +322,7 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
-  num svg_height() => 2 * constants.BASE_HEIGHT_SVG;
+  num svg_height() => constants.BASE_HEIGHT_SVG * 2 ; //(invert_y_axis ? -2 : 2);
 
   int num_bases() => this.max_offset - this.min_offset;
 
@@ -333,6 +340,4 @@ abstract class Helix with BuiltJsonSerializable implements Built<Helix, HelixBui
         : default_major_tick_distance;
     return [for (int t = min_offset; t <= max_offset; t += distance) t];
   }
-
 }
-

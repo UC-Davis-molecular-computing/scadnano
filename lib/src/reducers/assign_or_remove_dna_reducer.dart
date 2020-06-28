@@ -59,8 +59,7 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
     for (int i = 0; i < strands_builder.length; i++) {
       Strand other_strand = strands_builder[i];
       // note that possibly strand==other_strand; it might bind to itself at some point and we want to
-      // allow a partial assignment to one substrand to automatically assign the complement to the
-      // bound substrand.
+      // allow a partial assignment to one substrand to automatically assign the complement to the domain.
       // However, if there are no wildcards in the assigned sequence we can safely skip strand.
       if (strand == other_strand && !strand.dna_sequence.contains(constants.DNA_BASE_WILDCARD)) {
         continue;

@@ -19,12 +19,14 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/view/design.dart';
 import 'package:tuple/tuple.dart';
+import 'package:quiver/iterables.dart' as quiver;
 
 import 'app.dart';
 import 'json_serializable.dart';
 import 'state/crossover.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
+import 'state/geometry.dart';
 import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
@@ -94,6 +96,20 @@ int color_hex_to_decimal_int(String hex) {
   return d;
 }
 
+const EPSILON = 0.000000001;
+
+/// Tests if [x1] and [x2] are within [epsilon] of each other.
+bool are_close(double x1, double x2, [double epsilon = EPSILON]) => (x1 - x2).abs() < epsilon;
+
+/// Tests if [x1] and [x2] are within [epsilon] of each other.
+bool are_all_close(Iterable<double> x1s, Iterable<double> x2s, [double epsilon = EPSILON]) => [
+      for (var pair in quiver.zip([x1s, x2s])) pair
+    ].every((pair) => are_close(pair[0], pair[1], epsilon));
+
+/// If [val] is close to an int, return that int, otherwise return the value.
+num to_int_if_close(double val, [double epsilon = EPSILON]) =>
+    are_close(val, val.roundToDouble()) ? val.round() : val;
+
 bool is_increasing<T extends Comparable>(Iterable<T> items) {
   T prev = null;
   for (T val in items) {
@@ -130,14 +146,6 @@ make_dart_function_available_to_js(String js_function_name, Function dart_func) 
 
 @JS()
 external void set_allow_pan(bool allow);
-
-/// Should only be called once at the start of the program
-Future<DNADesign> dna_design_from_url(String url) async {
-  String content = await get_text_file_content(url);
-  Map<String, dynamic> parsed_json = jsonDecode(content);
-  DNADesign dna_design = DNADesign.from_json(parsed_json);
-  return dna_design;
-}
 
 Future<String> get_text_file_content(String url) async =>
     await HttpRequest.getString(url).then((content) => content);
@@ -221,8 +229,8 @@ Version get_version(String version_str) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
-    [BuiltSet<int> selected_helix_idxs = null]) {
+Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<int, Helix> helices, Grid grid,
+    {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
@@ -239,24 +247,26 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
 
   var prev_helix = null;
   for (var helix in selected_helices_sorted_by_view_order) {
-    num x = main_view_svg_x_of_helix(helix, grid);
-    num y = main_view_svg_y_of_helix(helix, grid);
+    num x = main_view_svg_x_of_helix(geometry, helix, grid);
+    num y = main_view_svg_y_of_helix(geometry, helix, grid);
     if (prev_helix != null) {
       num delta_y;
       if (grid.is_none()) {
         var prev_pos = prev_helix.position_;
         var pos = helix.position_;
-        delta_y = pos.distance_zy(prev_pos) * constants.NM_TO_MAIN_SVG_PIXELS;
+        delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_main_svg_pixels;
       } else {
         var prev_grid_position = prev_helix.grid_position;
         var grid_position = helix.grid_position;
         delta_y = prev_grid_position.distance_lattice(grid_position, grid) *
-            constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG;
+            geometry.distance_between_helices_main_svg;
       }
       y = prev_y + delta_y;
     }
     prev_y = y;
-    helix = helix.rebuild((b) => b..svg_position = Point<num>(x, y));
+    helix = helix.rebuild((b) => b
+      ..svg_position_ = Point<num>(x, y)
+      ..invert_y_axis = invert_y_axis);
     prev_helix = helix;
 
     new_helices[helix.idx] = helix;
@@ -265,16 +275,19 @@ Map<int, Helix> helices_assign_svg(Map<int, Helix> helices, Grid grid,
   return new_helices;
 }
 
-num main_view_svg_x_of_helix(Helix helix, Grid grid) {
+num main_view_svg_x_of_helix(Geometry geometry, Helix helix, Grid grid) {
   if (grid.is_none()) {
-    return helix.position3d().x * constants.NM_TO_MAIN_SVG_PIXELS;
+    return helix.position3d().x * geometry.nm_to_main_svg_pixels;
   } else {
-    return helix.min_offset * constants.BASE_WIDTH_SVG;
+    return 0;
+//    return helix.min_offset * constants.BASE_WIDTH_SVG;
   }
 }
 
-num main_view_svg_y_of_helix(Helix helix, Grid grid) =>
-    helix.position3d().y * constants.NM_TO_MAIN_SVG_PIXELS;
+num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) {
+  num y = helix.position3d().y * geometry.nm_to_main_svg_pixels;
+  return y;
+}
 
 num norm_l2(num x, num y) => sqrt(pow(x, 2) + pow(y, 2));
 
@@ -283,10 +296,25 @@ Map<int, Helix> helices_list_to_map(List<Helix> helices) => {for (var helix in h
 /// If obj is a NoIndent, unwrap the object from it, otherwise return obj.
 dynamic unwrap_from_noindent(dynamic obj) => obj is NoIndent ? obj.value : obj;
 
+/// Finds two indices of elements in list that repeat, returning null if all elements are distinct.
+Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
+  Map<T, int> elt_to_idx = {};
+  // should take time n log n; we don't do linear search for indices until we know which element repeats
+  for (int i2 = 0; i2 < list.length; i2++) {
+    T elt = list[i2];
+    int i1 = elt_to_idx[elt];
+    if (i1 != null) {
+      return Tuple2<int, int>(i1, i2);
+    }
+    elt_to_idx[elt] = i2;
+  }
+  return null;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points
 
-/// Return helix where click event occured, or the closest (e.g. if click was on a crossover).
+/// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
 Helix get_closest_helix(MouseEvent event, Iterable<Helix> helices) {
   var svg_coord = round_point(svg_position_of_mouse_click(event));
 
@@ -604,9 +632,9 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
   return position3d;
 }
 
-Point<num> position3d_to_main_view_svg(Position3D position) => Point<num>(
-    (position.x / 0.34) * constants.BASE_WIDTH_SVG,
-    (position.y / 2.5) * constants.DISTANCE_BETWEEN_HELICES_MAIN_SVG);
+Point<num> position3d_to_main_view_svg(Geometry geometry, Position3D position) => Point<num>(
+    position.x * geometry.nm_to_main_svg_pixels,
+    (position.y / geometry.distance_between_helices_nm) * geometry.distance_between_helices_main_svg);
 
 Point<num> position3d_to_side_view_svg(Position3D position) => Point<num>(
     position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
@@ -647,23 +675,36 @@ dynamic get_value(Map<String, dynamic> map, String key, String name, {List<Strin
 }
 
 /// Tries to get value in map associated to [key], returning [default_value] if [key] is not present.
-/// If transformer is given and the key is found in the map, apply transformer to the associated value
+/// If [transformer] is given and the key is found in the map, apply [transformer] to the associated value
 /// and return it.
+/// If [key] is not present but one of [legacy_keys] is, then that value is used.
+/// If [legacy_transformer] is specified and a legacy key is used, then
+/// [legacy_transformer] is used instead of [transformer]/
 T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_value,
-    {T Function(U) transformer = null, List<String> legacy_keys = const []}) {
+    {T Function(U) transformer = null,
+    List<String> legacy_keys = const [],
+    T Function(U) legacy_transformer = null}) {
+  var value = null;
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
-        return map[legacy_key];
+        value = map[legacy_key];
+        if (legacy_transformer != null) {
+          return legacy_transformer(value);
+        }
+        break;
       }
     }
-    return default_value;
-  } else {
-    if (transformer == null) {
-      return map[key];
-    } else {
-      return transformer(map[key]);
+    if (value == null) {
+      return default_value;
     }
+  } else {
+    value = map[key];
+  }
+  if (transformer == null) {
+    return value;
+  } else {
+    return transformer(value);
   }
 }
 
@@ -865,10 +906,10 @@ num to_radians(num degrees) => degrees * 2 * pi / 360;
 //  return rotation;
 //}
 
-num rotation_between_helices(Helix helix, Helix helix_other, bool forward) {
+num rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geometry geometry) {
   num rotation = helix.angle_to(helix_other);
   if (!forward) {
-    rotation = (rotation - 150) % 360;
+    rotation = (rotation - geometry.minor_groove_angle) % 360;
   }
 
   return rotation;

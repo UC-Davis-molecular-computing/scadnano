@@ -4,20 +4,24 @@ import 'package:built_value/serializer.dart';
 import 'dna_design.dart';
 import 'app_ui_state.dart';
 import 'undo_redo.dart';
+import '../constants.dart' as constants;
 
 part 'app_state.g.dart';
 
 final DEFAULT_AppStateBuilder = AppStateBuilder()
   ..ui_state = DEFAULT_AppUIStateBuilder
-  ..error_message = ""
+  ..error_message = constants.NO_DNA_DESIGN_MESSAGE
+  ..dna_design = null
   ..editor_content = ""
   ..undo_redo = DEFAULT_UndoRedoBuilder;
+
+final DEFAULT_AppState = DEFAULT_AppStateBuilder.build();
 
 abstract class AppState implements Built<AppState, AppStateBuilder> {
   AppState._();
 
   factory AppState([void Function(AppStateBuilder) updates]) =>
-      _$AppState((m) => m..replace(DEFAULT_AppStateBuilder.build()));
+      _$AppState((m) => m..replace(DEFAULT_AppState));
 
   static Serializer<AppState> get serializer => _$appStateSerializer;
 
