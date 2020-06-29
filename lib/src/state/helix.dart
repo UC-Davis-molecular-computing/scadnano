@@ -320,14 +320,17 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   int num_bases() => this.max_offset - this.min_offset;
 
-  /// Calculates full list of major tick marks, whether using [DNADesign.default_major_tick_distance],
+  /// Calculates full list of major tick marks, in sorted order,
+  /// whether using [DNADesign.default_major_tick_distance],
   /// [Helix.major_tick_distance], or [Helix.major_ticks].
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance], which overrides
   /// [DNADesign.default_major_tick_distance].
   List<int> calculate_major_ticks(int default_major_tick_distance) {
     if (major_ticks != null) {
-      return major_ticks.toList();
+      var sorted_ticks = major_ticks.toList();
+      sorted_ticks.sort();
+      return sorted_ticks;
     }
     int distance = major_tick_distance != null && major_tick_distance > 0
         ? major_tick_distance

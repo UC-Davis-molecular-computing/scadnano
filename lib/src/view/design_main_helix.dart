@@ -91,7 +91,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
-      major_tick_offsets_svg_group(),
+      if (props.display_base_offsets_of_major_ticks)
+        _major_tick_offsets_svg_group(),
+      if (props.display_major_tick_widths)
+        _major_tick_widths_svg_group(),
       if (props.strand_create_enabled)
         (Dom.rect()
 //          ..onClick = start_strand_create
@@ -369,73 +372,71 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     ];
   }
 
-  dynamic major_tick_offsets_svg_group() {
+  final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
+
+  _major_tick_offsets_svg_group() {
     var helix = props.helix;
+    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    var major_tick_distance =
-        helix.has_major_tick_distance() ? helix.major_tick_distance : props.design_major_tick_distance;
-    Set<int> major_ticks = (helix.has_major_ticks()
-            ? helix.major_ticks
-            : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
-        .toSet();
-
-    var y = constants.MAJOR_TICKS_OFFSET_TEXT_Y;
-    var dx = constants.MAJOR_TICKS_OFFSET_TEXT_DX;
-    var dy = props.show_dna ? -constants.BASE_HEIGHT_SVG : 0;
+    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
     var offset_texts_elements = [];
+    for (int offset in major_ticks) {
+      var x = (offset + 0.5) * constants.BASE_WIDTH_SVG;
+//      Point<num> pos = helix.svg_base_pos(offset, true);
+//      num x = pos.x;
+      var text_element = (Dom.text()
+        ..className = 'main-view-helix-major-tick-offset-text'
+        ..x = '$x'
+        ..y = '$y'
+        ..dominantBaseline = 'baseline'
+        ..textAnchor = 'middle'
+        ..key = 'main-view-helix-major-tick-offset-$x')(offset);
 
-    if (props.display_base_offsets_of_major_ticks) {
-      for (int base in major_ticks) {
-        var base_minus_min_offset = base; // - helix.min_offset;
-        var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
-        var text_element = (Dom.text()
-          ..className = 'main-view-helix-major-tick-offset-text'
-          ..x = '$x'
-          ..y = '$y'
-          ..dx = '$dx'
-          ..dy = '$dy'
-          ..key = 'main-view-helix-major-tick-offset-$x')(base);
-
-        offset_texts_elements.add(text_element);
-      }
+      offset_texts_elements.add(text_element);
     }
 
-    if (props.display_major_tick_widths) {
-      var major_ticks_sorted = major_ticks.toList()..sort();
-      Map<num, int> map_offset_to_distance = {};
+    return (Dom.g()
+      ..className = 'major-tick-offsets-group'
+      ..key = 'major-tick-offsets-group')(offset_texts_elements);
+  }
 
-      for (var i = 0, j = 1; j < major_ticks_sorted.length; i++, j++) {
-        var left_base_offset = major_ticks_sorted[i];
-        var right_base_offset = major_ticks_sorted[j];
-        var distance = right_base_offset - left_base_offset;
-        var offset = (right_base_offset + left_base_offset) / 2;
+  _major_tick_widths_svg_group() {
+    var helix = props.helix;
+    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
 
-        map_offset_to_distance[offset] = distance;
-      }
+    num y = helix.svg_height() +
+        DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
+        (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
-      for (var entry in map_offset_to_distance.entries) {
-        var base = entry.key;
-        var distance = entry.value;
-        var x = base * constants.BASE_WIDTH_SVG;
-        var text_element = (Dom.text()
-          ..className = 'main-view-helix-major-tick-distance-text'
-          ..x = '$x'
-          ..y = '$y'
-          ..dx = '$dx'
-          ..dy = '$dy'
-          ..key = 'main-view-helix-major-tick-distance-$x')(distance);
-        offset_texts_elements.addAll([text_element]);
-      }
+    var offset_texts_elements = [];
+    Map<num, int> map_offset_to_distance = {};
+    for (var i = 0; i + 1 < major_ticks.length; i++) {
+      var left_base_offset = major_ticks[i];
+      var right_base_offset = major_ticks[i + 1];
+      var distance = right_base_offset - left_base_offset;
+      var offset = (right_base_offset + left_base_offset) / 2;
+
+      map_offset_to_distance[offset] = distance;
     }
 
-    if (offset_texts_elements.isEmpty) {
-      return null;
-    } else {
-      return (Dom.g()
-        ..className = 'major-tick-offsets-group'
-        ..key = 'major-tick-offsets-group')(offset_texts_elements);
+    for (var entry in map_offset_to_distance.entries) {
+      var base = entry.key;
+      var distance = entry.value;
+      var x = base * constants.BASE_WIDTH_SVG;
+      var text_element = (Dom.text()
+        ..className = 'main-view-helix-major-tick-distance-text'
+        ..x = '$x'
+        ..y = '$y'
+        ..dominantBaseline = 'hanging'
+        ..textAnchor = 'middle'
+        ..key = 'main-view-helix-major-tick-distance-$x')(distance);
+      offset_texts_elements.addAll([text_element]);
     }
+
+    return (Dom.g()
+      ..className = 'major-tick-widths-group'
+      ..key = 'major-tick-widths-group')(offset_texts_elements);
   }
 }
 

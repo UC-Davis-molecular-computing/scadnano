@@ -59,9 +59,6 @@ const int BASE_HEIGHT_SVG = 10;
 
 const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 
-const double MAJOR_TICKS_OFFSET_TEXT_Y = -2;
-const double MAJOR_TICKS_OFFSET_TEXT_DX = -2;
-
 const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
