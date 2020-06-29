@@ -518,7 +518,7 @@ cadnano provides *autostaple* and *autobreak* utilities for quickly creating a l
 However, there are fewer than a dozen different *types* of staples in the sense that once these types of staples exist in the design, all others can be created by copy/pasting them.
 We have found that the autostaple and autobreak tools are largely unnecessary in scadnano,
 since scadnano allows one to copy and paste strands (unlike cadnano), 
-encouraging a less opinionated method of creating large designs rapidly.
+encouraging a more free-form method of creating large designs rapidly.
 
 Recursive copy/pasting speeds up this process even further.
 For instance, to create a vertical "column" of 32 staples in a 32-helix rectangle, one would create 2 types of staples (plus some special cases near the top/bottom), copy/paste them to make 4, copy/paste *those* to make 8, then 16, and finally 32 staples. 
