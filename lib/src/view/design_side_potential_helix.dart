@@ -20,6 +20,7 @@ mixin DesignSidePotentialHelixProps on UiProps {
   Grid grid;
   GridPosition grid_position;
   Point<num> mouse_svg_pos;
+  bool invert_y;
 }
 
 
@@ -43,12 +44,12 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
 //      if (grid == Grid.honeycomb && !grid_position.in_honeycomb_lattice()) {
 //        allowed_grid_position = false;
 //      }
-      svg_ideal_pos = util.side_view_grid_to_svg(props.grid_position, props.grid);
+      svg_ideal_pos = util.side_view_grid_to_svg(props.grid_position, props.grid, props.invert_y);
     }
 
     String tooltip = '';
     if (props.grid.is_none()) {
-      Position3D pos = util.svg_side_view_to_position3d(props.mouse_svg_pos);
+      Position3D pos = util.svg_side_view_to_position3d(props.mouse_svg_pos, props.invert_y);
       tooltip = '${pos.x.toStringAsFixed(2)}, ${pos.y.toStringAsFixed(2)}';
     } else {
       var pos = props.grid_position;
@@ -71,7 +72,7 @@ class DesignSidePotentialHelixComponent extends UiComponent2<DesignSidePotential
     // unlike DesignSideHelix, no need to check edit_mode here since PotentialHelix only displayed when
     // edit mode has helix on
     if (props.grid.is_none()) {
-      Position3D position = util.svg_side_view_to_position3d(props.mouse_svg_pos);
+      Position3D position = util.svg_side_view_to_position3d(props.mouse_svg_pos, props.invert_y);
       app.dispatch(actions.HelixAdd(position: position));
     } else {
 //      if (props.grid != Grid.honeycomb || props.grid_position.in_honeycomb_lattice()) {

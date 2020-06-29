@@ -4,7 +4,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.9.3"; 
+const String CURRENT_VERSION = "0.9.3-1";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
@@ -58,9 +58,6 @@ const int BASE_HEIGHT_SVG = 10;
 //// unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
 
 const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
-
-const double MAJOR_TICKS_OFFSET_TEXT_Y = -2;
-const double MAJOR_TICKS_OFFSET_TEXT_DX = -2;
 
 const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;

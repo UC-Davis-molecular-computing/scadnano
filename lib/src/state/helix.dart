@@ -145,11 +145,11 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
-  //TODO: should this be memoized?
-  Position3D default_position() {
+  @memoized
+  Position3D get default_position {
     num x = min_offset * constants.BASE_WIDTH_SVG;
-    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos).rebuild((b) => b..x = x);
+    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_y_axis);
+    Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_y_axis).rebuild((b) => b..x = x);
     return position3d;
   }
 
@@ -163,7 +163,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (position_ != null) {
       return position_;
     }
-    return default_position();
+    return default_position;
   }
 
   /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
@@ -257,14 +257,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   // Don't know why but Firefox knows about the SVG translation already so no need to correct for it.
   bool svg_y_is_forward(num y) {
     var relative_y = (y - svg_position.y).abs();
-//    print('y              = ${y}');
-//    print('svg_position.y = ${svg_position.y}');
-//    print('relative_y     = ${relative_y}');
-//    print('**********************');
     return relative_y < 10;
   }
-
-  //TODO: if Helix.max_offset key is missing in JSON, it causes an exception when drawing Helix lines in main view
 
   static HelixBuilder from_json(Map<String, dynamic> json_map) {
     var helix_builder = HelixBuilder();
@@ -322,22 +316,28 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
-  num svg_height() => constants.BASE_HEIGHT_SVG * 2 ; //(invert_y_axis ? -2 : 2);
+  num svg_height() => constants.BASE_HEIGHT_SVG * 2; //(invert_y_axis ? -2 : 2);
 
   int num_bases() => this.max_offset - this.min_offset;
 
-  /// Calculates full list of major tick marks, whether using [DNADesign.default_major_tick_distance],
+  /// Calculates full list of major tick marks, in sorted order,
+  /// whether using [DNADesign.default_major_tick_distance],
   /// [Helix.major_tick_distance], or [Helix.major_ticks].
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance], which overrides
   /// [DNADesign.default_major_tick_distance].
   List<int> calculate_major_ticks(int default_major_tick_distance) {
     if (major_ticks != null) {
-      return major_ticks.toList();
+      var sorted_ticks = major_ticks.toList();
+      sorted_ticks.sort();
+      return sorted_ticks;
     }
     int distance = major_tick_distance != null && major_tick_distance > 0
         ? major_tick_distance
         : default_major_tick_distance;
+    if (distance <= 0) {
+      return [];
+    }
     return [for (int t = min_offset; t <= max_offset; t += distance) t];
   }
 }

@@ -18,6 +18,7 @@ class Grid extends EnumClass {
   static const Grid none = _$none;
 
   static BuiltSet<Grid> get values => _$values;
+
   static Grid valueOf(String name) => _$valueOf(name);
 
   String to_json() => name;
@@ -26,6 +27,13 @@ class Grid extends EnumClass {
 
   static Serializer<Grid> get serializer => _$gridSerializer;
 
-  int default_major_tick_distance() => this == Grid.hex || this == Grid.honeycomb ? 7 : 8;
+  int default_major_tick_distance() {
+    if (this == Grid.hex || this == Grid.honeycomb) {
+      return 7;
+    } else if (this == Grid.square) {
+      return 8;
+    } else if (this == Grid.none) {
+      return 0;
+    }
+  }
 }
-

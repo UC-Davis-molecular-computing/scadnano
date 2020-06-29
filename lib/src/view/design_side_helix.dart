@@ -39,7 +39,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
   @override
   render() {
 //    print('rendering side helix ${props.helix.idx}');
-    MouseoverData mouseover_data = this.props.mouseover_data;
+    MouseoverData mouseover_data = props.mouseover_data;
 //    print('  mouseover_data: $mouseover_data');
 
     Helix helix = props.helix;
@@ -103,7 +103,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     }
 
     Position3D pos3d = helix.position3d();
-    Point<num> center = util.position3d_to_side_view_svg(pos3d);
+    Point<num> center = util.position3d_to_side_view_svg(pos3d, helix.invert_y_axis);
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }

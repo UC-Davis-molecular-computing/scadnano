@@ -39,6 +39,12 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     ..strands.replace([])
     ..unused_fields = MapBuilder<String, Object>({}));
 
+  static void _finalizeBuilder(DNADesignBuilder b) {
+    if (b.major_tick_distance == null) {
+      b.major_tick_distance = b.grid.default_major_tick_distance();
+    }
+  }
+
   @memoized
   int get hashCode;
 
@@ -50,7 +56,6 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
 
   Geometry get geometry;
 
-  @nullable
   int get major_tick_distance;
 
   BuiltMap<int, Helix> get helices;
@@ -484,7 +489,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
       json_map[constants.geometry_key] = this.geometry.to_json_serializable(suppress_indent: suppress_indent);
     }
 
-    if (this.major_tick_distance != null && this.major_tick_distance != grid.default_major_tick_distance()) {
+    if (this.major_tick_distance != grid.default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = this.major_tick_distance;
     }
 
@@ -564,7 +569,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     }
   }
 
-  static DNADesign from_json(Map<String, dynamic> json_map, [bool invert_y_axis=false]) {
+  static DNADesign from_json(Map<String, dynamic> json_map, [bool invert_y_axis = false]) {
     if (json_map == null) return null;
 
     var dna_design_builder = DNADesignBuilder();
@@ -588,12 +593,8 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
       dna_design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
-    } else if (!dna_design_builder.grid.is_none()) {
-      if (dna_design_builder.grid == Grid.hex || dna_design_builder.grid == Grid.honeycomb) {
-        dna_design_builder.major_tick_distance = 7;
-      } else {
-        dna_design_builder.major_tick_distance = 8;
-      }
+    } else {
+      dna_design_builder.major_tick_distance = dna_design_builder.grid.default_major_tick_distance();
     }
 
     List<HelixBuilder> helix_builders = [];

@@ -211,7 +211,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
         ..display = 'Pasted Strands Keep Original Color'
-        ..tooltip = '''If checked, when copying and pasting a strand, the color is preserved.
+        ..tooltip = '''\
+If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..name = 'strand-paste-keep-color'
         ..onChange = (_) {
@@ -225,8 +226,10 @@ If unchecked, then a new color is generated.'''
         ..display = 'Inline Insertions/Deletions'
         ..disabled = !props.design_has_insertions_or_deletions
         ..tooltip = ''
-            '''Click this to remove insertions and deletions from the design and replace them with domains
-whose lengths correspond to the true strand length. Also moves major tick marks on helices.''')(),
+            '''
+Remove insertions and deletions from the design and replace them with domains
+whose lengths correspond to the true strand length. Also moves major tick 
+marks on helices so that they are adjacent to the same bases as before.''')(),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = (_) {
@@ -234,14 +237,17 @@ whose lengths correspond to the true strand length. Also moves major tick marks 
         }
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.grid != Grid.none
-        ..tooltip = '''The grid must be set to none to enable this.
+        ..tooltip = '''\
+The grid must be set to none to enable this.
 
-Select some crossovers and some helices. If no helices are selected, then all helices are processed. At 
-most one crossover between pairs of adjacent (in view order) helices can be selected. If a pair of adjacent 
-helices has no crossover selected, it is assumed to be the first crossover.  
+Select some crossovers and some helices. If no helices are selected, then all
+helices are processed. At most one crossover between pairs of adjacent (in 
+view order) helices can be selected. If a pair of adjacent helices has no 
+crossover selected, it is assumed to be the first crossover.  
 
-New grid coordinates are calculated based on the crossovers to ensure that each pair of adjacent helices
-has crossover angles that point the backbone angles directly at the adjoining helix.''')(),
+New grid coordinates are calculated based on the crossovers to ensure that each 
+pair of adjacent helices has crossover angles that point the backbone angles 
+directly at the adjoining helix.''')(),
     );
   }
 
@@ -254,9 +260,10 @@ has crossover angles that point the backbone angles directly at the adjoining he
       (MenuBoolean()
         ..value = props.show_dna
         ..display = 'Show DNA Sequences'
-        ..tooltip = '''Check to show DNA sequences that have been assigned to strands.
-In a large design, this can slow down the performance of panning and
-zooming navigation, so uncheck it to speed up navigation.'''
+        ..tooltip = '''\
+Show DNA sequences that have been assigned to strands. In a large design, this
+can slow down the performance of panning and zooming navigation, so uncheck it
+to speed up navigation.'''
         ..name = 'show-dna'
         ..onChange = (_) {
           props.dispatch(actions.ShowDNASet(!props.show_dna));
@@ -264,8 +271,9 @@ zooming navigation, so uncheck it to speed up navigation.'''
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA Base Mismatches'
-        ..tooltip = '''Check to show mismatches between DNA assigned to one strand
-and the strand on the same helix with the opposite orientation.'''
+        ..tooltip = '''\
+Show mismatches between DNA assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
         ..name = 'show-mismatches'
         ..onChange = (_) {
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
@@ -313,7 +321,7 @@ and the strand on the same helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = props.display_base_offsets_of_major_ticks
         ..display = 'Display Major Tick Offsets'
-        ..tooltip = '''Check to display the integer base offset above major ticks.'''
+        ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
         ..onChange = (_) {
           props.dispatch(
               actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
@@ -322,7 +330,7 @@ and the strand on the same helix with the opposite orientation.'''
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.display_base_offsets_of_major_ticks
         ..display = '... On All Helices'
-        ..tooltip = '''Check to display the integer base offset above major tick for all helices.'''
+        ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
         ..onChange = (_) {
           props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
               !props.display_base_offsets_of_major_ticks_only_first_helix));
@@ -331,7 +339,8 @@ and the strand on the same helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = props.display_major_tick_widths
         ..display = 'Display Major Tick Widths'
-        ..tooltip = '''Check to display the space between major ticks.'''
+        ..tooltip =
+            'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange = (_) {
           props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths));
         })(),
@@ -339,7 +348,7 @@ and the strand on the same helix with the opposite orientation.'''
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
         ..display = '...On All Helices'
-        ..tooltip = '''Check to display the space between major ticks for all helices.'''
+        ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
         ..onChange = (_) {
           props.dispatch(
               actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices));
@@ -348,16 +357,16 @@ and the strand on the same helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = props.autofit
         ..display = 'Auto-fit On Loading New Design'
-        ..tooltip = '''Check this so that, when loading a new design, the side and main views will be
-translated to show the lowest-index helix in the upper-left. otherwise, after
-loading the design, you may not be able to see it because it is translated off
-the screen.
+        ..tooltip = '''\
+When loading a new design, the side and main views will be translated to show 
+the lowest-index helix in the upper-left. otherwise, after loading the design, 
+you may not be able to see it because it is translated off the screen.
 
-You may want to uncheck this when working on a design with the scripting library.
-in that case, when repeatedly re-running the script to modify the design and then
-re-loading it, it is preferable to keep the design centered at the same location
-you had before, in order to be able to see the same part of the design you were
-looking at before changing the script.'''
+You may want to uncheck this when working on a design with the scripting 
+library. In that case, when repeatedly re-running the script to modify the 
+design and then re-loading it, it is preferable to keep the design centered 
+at the same location you had before, in order to be able to see the same part 
+of the design you were looking at before changing the script.'''
         ..name = 'center-on-load'
         ..onChange = (_) {
           props.dispatch(actions.AutofitSet(autofit: !props.autofit));
@@ -365,8 +374,7 @@ looking at before changing the script.'''
       (MenuBoolean()
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
-        ..tooltip =
-            '''Only selected helices in the side view are displayed in the main view.'''
+        ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
         ..onChange = (_) {
           props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
@@ -374,10 +382,10 @@ looking at before changing the script.'''
       (MenuBoolean()
         ..value = props.invert_y_axis
         ..display = 'Invert y-axis'
-        ..tooltip =
-            '''In both the side and main view, invert the y-axis. If this is checked, then use 
-            Cartesian coordinates where increasing y moves up. If unchecked, then "screen coordinates" 
-            are used, where increasing y moves down.'''
+        ..tooltip = '''\
+In both the side and main view, invert the y-axis. If this is checked, then use 
+Cartesian coordinates where increasing y moves up. If unchecked, then use 
+"screen coordinates", where increasing y moves down.'''
         ..name = 'invert-y-axis'
         ..onChange = (_) {
           props.dispatch(actions.InvertYAxisSet(invert_y_axis: !props.invert_y_axis));
