@@ -39,6 +39,12 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     ..strands.replace([])
     ..unused_fields = MapBuilder<String, Object>({}));
 
+  static void _finalizeBuilder(DNADesignBuilder b) {
+    if (b.major_tick_distance == null) {
+      b.major_tick_distance = b.grid.default_major_tick_distance();
+    }
+  }
+
   @memoized
   int get hashCode;
 
