@@ -335,6 +335,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int distance = major_tick_distance != null && major_tick_distance > 0
         ? major_tick_distance
         : default_major_tick_distance;
+    if (distance <= 0) {
+      return [];
+    }
     return [for (int t = min_offset; t <= max_offset; t += distance) t];
   }
 }
