@@ -328,7 +328,7 @@ Setting length to a positive integer converts to a loopout and setting a length 
     We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
     e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
-    *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
+
 
   * **Set helix coordinates based on crossovers:**
     scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the *none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
@@ -342,7 +342,7 @@ Setting length to a positive integer converts to a loopout and setting a length 
 * View
 
   * **show DNA sequences:**
-    Shows any DNA sequences that have been assigned to the strands. For large designs (e.g., DNA origami using a > 7000-base scaffold), it can take a long time to render the DNA and slow down panning and zooming. Thus, it is recommended to uncheck this option most of the time unless actually inspecting the DNA sequences. Hopefully implementing [this feature request](https://github.com/UC-Davis-molecular-computing/scadnano/issues/30) will reduce the rendering time.
+    Shows any DNA sequences that have been assigned to the strands. 
 
   * **show DNA base mismatches:**
     Shows DNA base pair mismatches. When assigning DNA sequences, the default is to assign a specified DNA sequence to one strand and to automatically assign the complement to any strands bound to it, which would result in no mismatches. However, using either the web interface or the Python scripting library, it is possible to manually assign DNA sequences independently to strands without automatically assigning the complement to bound strands. This allows intentional mismatches to be placed in the design.
@@ -451,6 +451,8 @@ There are different edit modes available, shown on the right side of the screen.
   The Python scripting library lets one specify insertions/deletions on one bound domain but not the other, 
   but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
   (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
+
+  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
 
 * **(b)ackbone:**
   This shows information in the side view about the roll of the helix when the pointer is over an offset of that helix in the main view, 
