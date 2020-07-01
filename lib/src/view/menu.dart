@@ -317,8 +317,8 @@ helix with the opposite orientation.'''
         ..value = props.display_of_major_ticks_offsets
         ..display = 'Display Major Tick Offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..onChange = ((_) => props
-            .dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
