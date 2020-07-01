@@ -18,6 +18,7 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import '../constants.dart' as constants;
 
 part 'app_ui_state.g.dart';
 
@@ -79,7 +80,7 @@ abstract class AppUIStateStorable
     b.show_mismatches = true;
     b.show_editor = false;
     b.only_display_selected_helices = false;
-    b.modification_font_size = 12;
+    b.modification_font_size = constants.default_modification_font_size;
     b.modification_display_connector = true;
     b.strand_paste_keep_color = true;
     b.display_base_offsets_of_major_ticks = true;

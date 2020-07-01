@@ -335,9 +335,9 @@ abstract class ShowModificationsSet
 abstract class SetModificationFontSize
     with BuiltJsonSerializable
     implements AppUIStateStorableAction, Built<SetModificationFontSize, SetModificationFontSizeBuilder> {
-  int get font;
+  num get font;
 
-  factory SetModificationFontSize(int font) => SetModificationFontSize.from((b) => b..font = font);
+  factory SetModificationFontSize(num font) => SetModificationFontSize.from((b) => b..font = font);
 
   /************************ begin BuiltValue boilerplate ************************/
   factory SetModificationFontSize.from([void Function(SetModificationFontSizeBuilder) updates]) =

@@ -62,6 +62,8 @@ const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
+const default_modification_font_size = 12;
+
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';
 const js_function_name_setup_svg_panzoom = 'setup_svg_panzoom';

@@ -11,6 +11,7 @@ import 'package:scadnano/src/state/example_dna_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/select_mode.dart';
+import 'package:scadnano/src/view/menu_number.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 import 'package:scadnano/src/view/react_bootstrap.dart';
 import 'package:scadnano/src/constants.dart' as constants;
@@ -291,32 +292,19 @@ helix with the opposite orientation.'''
         ..value = props.modification_display_connector
         ..hide = !props.show_modifications
         ..display = 'Display Modification Connector'
-        ..tooltip = '''Check to display DNA modification connectors.'''
+        ..tooltip = 'Check to display DNA modification connectors.'
         ..name = 'modifications-display-connector-span'
         ..onChange = (_) {
           props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
         })(),
-      (Dom.span()
-        ..title = '''Adjust modification font size.'''
-        ..className = 'modifications-font-size-span menu-item'
-        ..style = props.show_modifications ? {'display': 'block'} : {'display': 'none'})(
-        (Dom.label())(
-          (Dom.input()
-            ..style = {'marginRight': '1em', 'width': '4em'}
-            ..type = 'number'
-            ..min = '1'
-            ..id = 'modifications-font-size-number-input'
-            ..defaultValue = props.modification_font_size)(),
-          (Dom.input()
-            ..type = 'submit'
-            ..onClick = (_) {
-              InputElement inputElement = document.getElementById('modifications-font-size-number-input');
-              int font = int.parse(inputElement.value);
-              props.dispatch(actions.SetModificationFontSize(font));
-            }
-            ..value = 'Modification Font Size')(),
-        ),
-      ),
+      (MenuNumber()
+        ..display = 'Modification font size'
+        ..default_value = props.modification_font_size
+        ..hide = !props.show_modifications
+        ..tooltip = 'Adjust to change the font size of text display for modifications.'
+        ..on_new_value = (num font_size) {
+          props.dispatch(actions.SetModificationFontSize(font_size));
+        })(),
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.display_base_offsets_of_major_ticks

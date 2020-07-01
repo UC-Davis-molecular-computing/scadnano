@@ -95,7 +95,7 @@ bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => 
 bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) =>
     action.show;
 
-int modification_font_size_reducer(int _, actions.SetModificationFontSize action) => action.font;
+num modification_font_size_reducer(num _, actions.SetModificationFontSize action) => action.font;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
@@ -173,7 +173,7 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
       ..modification_display_connector =
           TypedReducer<bool, actions.SetModificationDisplayConnector>(modification_display_connector_reducer)(
               storables.modification_display_connector, action)
-      ..modification_font_size = TypedReducer<int, actions.SetModificationFontSize>(modification_font_size_reducer)(
+      ..modification_font_size = TypedReducer<num, actions.SetModificationFontSize>(modification_font_size_reducer)(
           storables.modification_font_size, action)
       ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
           storables.show_mismatches, action)
