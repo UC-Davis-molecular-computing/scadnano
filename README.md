@@ -299,7 +299,9 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **Load example:** Some pre-made example designs can be loaded.
 
   * **Open:**
-  Loads a `.dna` file from your local computer. Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+  Loads a `.dna` file from your local computer. (The extension `.json` is also recognized.) Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+
+    Another way to load a `.dna` file is to click and drag it onto the scadnano web interface from your local file system.
 
   * **Save:**
   Saves the current design in a `.dna` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).

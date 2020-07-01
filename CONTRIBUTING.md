@@ -130,11 +130,19 @@ webdev serve --release
 (TODO): Add common errors here.
 
 
+## General recipe for adding features
+The use of React and Redux is intended to reduce the number of bugs. For many typical features one would want to add, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order.)
+
+- TODO fill this in
+
+TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added.
+
+
 ## Pushing to the repository and documenting changes
 
+All local commits should be push to the `dev` branch.
 Make sure you pull changes from the repository and resolve any
-conflicts before pushing to the `dev` branch. All local commits
-should be push to the `dev` branch.
+conflicts before pushing to the `dev` branch. 
 
 Pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that
 `dev` is working before merging to `master` as all changes to `master`
@@ -144,7 +152,7 @@ We have an automated release system (through a GitHub action) that automatically
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
 
-However, commit descriptions (in GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li).
+However, commit descriptions are not shown in the release notes. In GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li.
 
 So make sure that everything people should see in the automatically generated release notes is included in the commit message.
 

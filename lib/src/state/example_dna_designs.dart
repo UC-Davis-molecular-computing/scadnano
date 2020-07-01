@@ -6,40 +6,31 @@ import '../serializers.dart';
 
 part 'example_dna_designs.g.dart';
 
-final DEFAULT_example_dna_designs_builder = ExampleDNADesignsBuilder()
-  ..directory = 'examples/output_designs'
-  ..selected_idx = -1
-  ..filenames = [
-    'empty',
-    '2_staple_2_helix_origami_deletions_insertions_mods',
-    '6_helix_origami_rectangle',
-    '6_helix_bundle_honeycomb',
-    '16_helix_origami_rectangle_no_twist',
-    '16_helix_origami_rectangle',
-    '16_helix_origami_rectangle_idt',
-  ].toBuiltList().toBuilder();
-
+final DEFAULT_example_dna_designs_builder = ExampleDNADesignsBuilder();
 final DEFAULT_example_dna_designs = DEFAULT_example_dna_designs_builder.build();
 
 abstract class ExampleDNADesigns
     with BuiltJsonSerializable
     implements Built<ExampleDNADesigns, ExampleDNADesignsBuilder> {
-  factory ExampleDNADesigns.from([void Function(ExampleDNADesignsBuilder) updates]) = _$ExampleDNADesigns;
-
-  ExampleDNADesigns._();
-
-  static Serializer<ExampleDNADesigns> get serializer => _$exampleDNADesignsSerializer;
-
-  factory ExampleDNADesigns({BuiltList<String> filenames, String directory, int selected_idx}) =
-      _$ExampleDNADesigns._;
-
-  /************************ end BuiltValue boilerplate ************************/
+  String get directory;
 
   BuiltList<String> get filenames;
 
-  String get directory;
-
   int get selected_idx;
+
+  static void _initializeBuilder(ExampleDNADesignsBuilder b) {
+    b.directory = 'examples/output_designs';
+    b.filenames = ListBuilder<String>([
+      'empty',
+      '2_staple_2_helix_origami_deletions_insertions_mods',
+      '6_helix_origami_rectangle',
+      '6_helix_bundle_honeycomb',
+      '16_helix_origami_rectangle_no_twist',
+      '16_helix_origami_rectangle',
+      '16_helix_origami_rectangle_idt',
+    ]);
+    b.selected_idx = -1;
+  }
 
   bool get example_is_selected => selected_idx >= 0;
 
@@ -54,4 +45,17 @@ abstract class ExampleDNADesigns
 
   /// url of currently selected file
   String get url => selected_full_filename;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ExampleDNADesigns.from([void Function(ExampleDNADesignsBuilder) updates]) = _$ExampleDNADesigns;
+
+  ExampleDNADesigns._();
+
+  static Serializer<ExampleDNADesigns> get serializer => _$exampleDNADesignsSerializer;
+
+  factory ExampleDNADesigns({BuiltList<String> filenames, String directory, int selected_idx}) =
+      _$ExampleDNADesigns._;
+
+  @memoized
+  int get hashCode;
 }

@@ -22,32 +22,7 @@ import 'strands_move.dart';
 part 'app_ui_state.g.dart';
 
 final DEFAULT_AppUIStateStorableBuilder = AppUIStateStorableBuilder();
-
-final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
-  ..loaded_script_filename = default_script_filename()
-  ..mouseover_datas.replace([])
-  ..selection_box_displayed_main = false
-  ..selection_box_displayed_side = false
-  ..selectables_store = SelectablesStoreBuilder()
-  ..side_selected_helix_idxs.replace([])
-  ..drawing_potential_crossover = false
-  ..moving_dna_ends = false
-  ..changed_since_last_save = false
-  ..side_view_grid_position_mouse_cursor = null
-  ..side_view_position_mouse_cursor = null
-  ..strands_move = null
-  ..context_menu = null
-  ..dialog = null
-  ..strand_creation = null
-  ..helix_change_apply_to_all = false
-  ..example_dna_designs = DEFAULT_example_dna_designs_builder
-  ..assign_complement_to_bound_strands_default = true
-  ..warn_on_change_strand_dna_assign_default = true
-  ..dna_sequence_png_uri = null
-  ..disable_png_cache_until_action_completes = null
-  ..is_zoom_above_threshold = false
-  ..storables = DEFAULT_AppUIStateStorableBuilder;
-
+final DEFAULT_AppUIStateBuilder = AppUIStateBuilder();
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 final DEFAULT_AppUIStateStorable = DEFAULT_AppUIStateStorableBuilder.build();
 
@@ -89,6 +64,8 @@ abstract class AppUIStateStorable
 
   String get loaded_filename;
 
+  String get loaded_script_filename;
+
   bool get invert_y_axis;
 
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
@@ -109,8 +86,9 @@ abstract class AppUIStateStorable
     b.display_base_offsets_of_major_ticks_only_first_helix = true;
     b.display_major_tick_widths = false;
     b.display_major_tick_widths_all_helices = false;
-    b.loaded_filename = default_filename();
     b.invert_y_axis = false;
+    b.loaded_filename = default_filename();
+    b.loaded_script_filename = default_script_filename();
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -125,46 +103,14 @@ abstract class AppUIStateStorable
 }
 
 abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState, AppUIStateBuilder> {
-  AppUIState._();
-
-  factory AppUIState.from_dna_design(DNADesign design) {
-    var selectables_store = SelectablesStore();
-    return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
-  }
-
-  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
-      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
-
-  static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
-
-  /************************ end BuiltValue boilerplate ************************/
-  @memoized
-  int get hashCode;
-
   /// For selected objects in main view
   SelectablesStore get selectables_store;
 
   /// Special case for helices, which can always be selected, but only in the side view.
   BuiltSet<int> get side_selected_helix_idxs;
 
-  String get loaded_filename => storables.loaded_filename;
-
-  String get loaded_script_filename;
-
   @nullable
   StrandsMove get strands_move;
-
-  bool get show_dna => storables.show_dna;
-
-  bool get show_modifications => storables.show_modifications;
-
-  bool get show_mismatches => storables.show_mismatches;
-
-  bool get show_editor => storables.show_editor;
-
-  bool get autofit => storables.autofit;
-
-  bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
   bool get drawing_potential_crossover;
 
@@ -179,8 +125,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   bool get helix_change_apply_to_all;
-
-  bool get invert_y_axis => storables.invert_y_axis;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
@@ -197,10 +141,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   @nullable // null when mouse outside of side view or helix edit mode not enabled
   Point<num> get side_view_position_mouse_cursor;
-
-  SelectModeState get select_mode_state => storables.select_mode_state;
-
-  BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
   @nullable
   ContextMenu get context_menu;
@@ -239,6 +179,71 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get display_major_tick_widths_all_helices => storables.display_major_tick_widths_all_helices;
 
   AppUIStateStorable get storables;
+
+  /*********** below getters delegate to storables ********************/
+
+  String get loaded_filename => storables.loaded_filename;
+
+  String get loaded_script_filename => storables.loaded_script_filename;
+
+  bool get show_dna => storables.show_dna;
+
+  bool get show_modifications => storables.show_modifications;
+
+  bool get show_mismatches => storables.show_mismatches;
+
+  bool get show_editor => storables.show_editor;
+
+  bool get autofit => storables.autofit;
+
+  bool get strand_paste_keep_color => storables.strand_paste_keep_color;
+
+  bool get invert_y_axis => storables.invert_y_axis;
+
+  SelectModeState get select_mode_state => storables.select_mode_state;
+
+  BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
+
+  static void _initializeBuilder(AppUIStateBuilder b) {
+    b.mouseover_datas.replace([]);
+    b.selection_box_displayed_main = false;
+    b.selection_box_displayed_side = false;
+    b.selectables_store = SelectablesStoreBuilder();
+    b.side_selected_helix_idxs.replace([]);
+    b.drawing_potential_crossover = false;
+    b.moving_dna_ends = false;
+    b.changed_since_last_save = false;
+    b.side_view_grid_position_mouse_cursor = null;
+    b.side_view_position_mouse_cursor = null;
+    b.strands_move = null;
+    b.context_menu = null;
+    b.dialog = null;
+    b.strand_creation = null;
+    b.helix_change_apply_to_all = false;
+    b.example_dna_designs = DEFAULT_example_dna_designs_builder;
+    b.assign_complement_to_bound_strands_default = true;
+    b.warn_on_change_strand_dna_assign_default = true;
+    b.dna_sequence_png_uri = null;
+    b.disable_png_cache_until_action_completes = null;
+    b.is_zoom_above_threshold = false;
+    b.storables = DEFAULT_AppUIStateStorableBuilder;
+  }
+
+  /************************ begin BuiltValue boilerplate ************************/
+  @memoized
+  int get hashCode;
+
+  AppUIState._();
+
+  factory AppUIState.from_dna_design(DNADesign design) {
+    var selectables_store = SelectablesStore();
+    return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
+  }
+
+  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
+      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
+
+  static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

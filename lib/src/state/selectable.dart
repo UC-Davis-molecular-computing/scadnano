@@ -14,20 +14,16 @@ import 'strand.dart';
 
 part 'selectable.g.dart';
 
-final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder()..selected_items.replace([]);
+final DEFAULT_SelectablesStoreBuilder = SelectablesStoreBuilder();
 
 abstract class SelectablesStore
     with BuiltJsonSerializable
     implements Built<SelectablesStore, SelectablesStoreBuilder> {
-  SelectablesStore._();
-
-  factory SelectablesStore([void Function(SelectablesStoreBuilder) updates]) = _$SelectablesStore;
-
-  static Serializer<SelectablesStore> get serializer => _$selectablesStoreSerializer;
-
-  /************************ end BuiltValue boilerplate ************************/
-
   BuiltSet<Selectable> get selected_items;
+
+  static void _initializeBuilder(SelectablesStoreBuilder b) {
+    b.selected_items = SetBuilder<Selectable>([]);
+  }
 
   @memoized
   BuiltSet<Strand> get selected_strands => BuiltSet<Strand>.from(selected_items.where((s) => s is Strand));
@@ -44,9 +40,6 @@ abstract class SelectablesStore
   bool get isNotEmpty => selected_items.isNotEmpty;
 
   bool selected(Selectable selectable) => selected_items.contains(selectable);
-
-  @memoized
-  int get hashCode;
 
   /// adds [selectable] to selected items. If only=true, deselects all other items.
   SelectablesStore select(Selectable selectable, {bool only = false}) {
@@ -99,6 +92,16 @@ abstract class SelectablesStore
     }
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
+
+  /************************ begin BuiltValue boilerplate ************************/
+  SelectablesStore._();
+
+  factory SelectablesStore([void Function(SelectablesStoreBuilder) updates]) = _$SelectablesStore;
+
+  static Serializer<SelectablesStore> get serializer => _$selectablesStoreSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /// Represents a part of the Model that represents a part of the View that is Selectable.
