@@ -112,16 +112,20 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       grid_menu(),
       export_menu(),
       help_menu(),
+//      dummy_button(),
+    );
+  }
+
+  dummy_button() {
+    return Button(
       //XXX: I like to keep this button around to simulate random things that require user interaction
-      // Button(
-      //   {
-      //     'variant': 'light',
-      //     'onClick': (_) {
-      //       window.alert('Dummy!');
-      //     }
-      //   },
-      //   'Dummy',
-      // ),
+      {
+        'variant': 'light',
+        'onClick': (_) {
+          window.alert('Dummy!');
+        }
+      },
+      'Dummy',
     );
   }
 
@@ -203,9 +207,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..keyboard_shortcut = 'Ctrl+C'
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped);
-        }
+        ..on_click =
+            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
         ..keyboard_shortcut = 'Ctrl+V')(),
       DropdownDivider({}),
@@ -221,9 +224,7 @@ If unchecked, then a new color is generated.'''
         })(),
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.InlineInsertionsDeletions());
-        }
+        ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
         ..display = 'Inline Insertions/Deletions'
         ..disabled = !props.design_has_insertions_or_deletions
         ..tooltip = ''
@@ -233,9 +234,7 @@ whose lengths correspond to the true strand length. Also moves major tick
 marks on helices so that they are adjacent to the same bases as before.''')(),
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
-        }
+        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
         ..disabled = props.grid != Grid.none
         ..tooltip = '''\
@@ -253,11 +252,21 @@ directly at the adjoining helix.''')(),
   }
 
   view_menu() {
-    return NavDropdown(
-      {
-        'title': 'View',
-        'id': 'view-nav-dropdown',
-      },
+    var elts = [
+      ...view_menu_show_dna(),
+      ...view_menu_mods(),
+      ...view_menu_display_major_tick_offsets(),
+      ...view_menu_display_major_tick_widths(),
+      ...view_menu_misc()
+    ];
+    return NavDropdown({
+      'title': 'View',
+      'id': 'view-nav-dropdown',
+    }, elts);
+  }
+
+  List view_menu_show_dna() {
+    return [
       (MenuBoolean()
         ..value = props.show_dna
         ..display = 'Show DNA Sequences'
@@ -266,9 +275,8 @@ Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
         ..name = 'show-dna'
-        ..onChange = (_) {
-          props.dispatch(actions.ShowDNASet(!props.show_dna));
-        })(),
+        ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
+        ..key = 'show-dna')(),
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA Base Mismatches'
@@ -278,25 +286,30 @@ helix with the opposite orientation.'''
         ..name = 'show-mismatches'
         ..onChange = (_) {
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
-        })(),
-      DropdownDivider({}),
+        }
+        ..key = 'show-mismatches')(),
+      DropdownDivider({'key': 'divider-show-dna'}),
+    ];
+  }
+
+  List view_menu_mods() {
+    return [
       (MenuBoolean()
         ..value = props.show_modifications
         ..display = 'Show Modifications'
-        ..tooltip = '''Check to show DNA modifications (e.g., biotins, fluorophores).'''
+        ..tooltip = 'Check to show DNA modifications (e.g., biotins, fluorophores).'
         ..name = 'show-modifications-span'
-        ..onChange = (_) {
-          props.dispatch(actions.ShowModificationsSet(!props.show_modifications));
-        })(),
+        ..onChange = ((_) => props.dispatch(actions.ShowModificationsSet(!props.show_modifications)))
+        ..key = 'show-mods')(),
       (MenuBoolean()
         ..value = props.modification_display_connector
         ..hide = !props.show_modifications
         ..display = 'Display Modification Connector'
         ..tooltip = 'Check to display DNA modification connectors.'
         ..name = 'modifications-display-connector-span'
-        ..onChange = (_) {
-          props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector));
-        })(),
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
+        ..key = 'display-mod-connector')(),
       (MenuNumber()
         ..display = 'Modification font size'
         ..default_value = props.modification_font_size
@@ -304,44 +317,57 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of text display for modifications.'
         ..on_new_value = (num font_size) {
           props.dispatch(actions.SetModificationFontSize(font_size));
-        })(),
-      DropdownDivider({}),
+        }
+        ..key = 'mod-font-size')(),
+      DropdownDivider({'key': 'divider-mods'}),
+    ];
+  }
+
+  List view_menu_display_major_tick_offsets() {
+    return [
       (MenuBoolean()
         ..value = props.display_base_offsets_of_major_ticks
         ..display = 'Display Major Tick Offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
-        ..onChange = (_) {
-          props.dispatch(
-              actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks));
-        })(),
+        ..onChange = ((_) => props
+            .dispatch(actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks)))
+        ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.display_base_offsets_of_major_ticks
         ..display = '... On All Helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..onChange = (_) {
-          props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-              !props.display_base_offsets_of_major_ticks_only_first_helix));
-        })(),
-      DropdownDivider({}),
+        ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+            !props.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..key = 'display-major-tick-offsets-on-all-helices')(),
+      DropdownDivider({'key': 'divider-major-tick-offsets'}),
+    ];
+  }
+
+  List view_menu_display_major_tick_widths() {
+    return [
       (MenuBoolean()
         ..value = props.display_major_tick_widths
         ..display = 'Display Major Tick Widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
-        ..onChange = (_) {
-          props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths));
-        })(),
+        ..onChange =
+            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+        ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
         ..display = '...On All Helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..onChange = (_) {
-          props.dispatch(
-              actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices));
-        })(),
-      DropdownDivider({}),
+        ..onChange = ((_) => props.dispatch(
+            actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
+        ..key = 'display-major-tick-widths-on-all-helices')(),
+      DropdownDivider({'key': 'divider-major-tick-widths'}),
+    ];
+  }
+
+  List<ReactElement> view_menu_misc() {
+    return [
       (MenuBoolean()
         ..value = props.autofit
         ..display = 'Auto-fit On Loading New Design'
@@ -356,17 +382,16 @@ design and then re-loading it, it is preferable to keep the design centered
 at the same location you had before, in order to be able to see the same part 
 of the design you were looking at before changing the script.'''
         ..name = 'center-on-load'
-        ..onChange = (_) {
-          props.dispatch(actions.AutofitSet(autofit: !props.autofit));
-        })(),
+        ..onChange = ((_) => props.dispatch(actions.AutofitSet(autofit: !props.autofit)))
+        ..key = 'autofit-on-loading-new-design')(),
       (MenuBoolean()
         ..value = props.only_display_selected_helices
         ..display = 'Display only selected helices'
         ..tooltip = 'Only helices selected in the side view are displayed in the main view.'
         ..name = 'display-only-selected-helices'
-        ..onChange = (_) {
-          props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices));
-        })(),
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
+        ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
         ..value = props.invert_y_axis
         ..display = 'Invert y-axis'
@@ -375,24 +400,9 @@ In both the side and main view, invert the y-axis. If this is checked, then use
 Cartesian coordinates where increasing y moves up. If unchecked, then use 
 "screen coordinates", where increasing y moves down.'''
         ..name = 'invert-y-axis'
-        ..onChange = (_) {
-          props.dispatch(actions.InvertYAxisSet(invert_y_axis: !props.invert_y_axis));
-        })(),
-      //XXX: let's keep this commented out until we need it
-      // (Dom.span()
-      //   ..key = 'show-editor menu-item'
-      //   ..className = 'show-editor-span')(
-      //   (Dom.label()..key = 'show-editor-label')(
-      //     (Dom.input()
-      //       ..checked = show_editor
-      //       ..onChange = (_) {
-      //         app.state.main_view_ui_model.show_editor_store.set_show_editor(!show_editor);
-      //       }
-      //       ..type = 'checkbox')(),
-      //     'show editor',
-      //   ),
-      // ),
-    );
+        ..onChange = ((_) => props.dispatch(actions.InvertYAxisSet(invert_y_axis: !props.invert_y_axis)))
+        ..key = 'invert-y-axis')(),
+    ];
   }
 
   grid_menu() {
@@ -408,9 +418,7 @@ Cartesian coordinates where increasing y moves up. If unchecked, then use
               'active': grid == props.grid,
               'disabled': grid == props.grid,
               'key': grid.toString(),
-              'onClick': (ev) {
-                props.dispatch(actions.GridChange(grid: grid));
-              },
+              'onClick': ((ev) => props.dispatch(actions.GridChange(grid: grid))),
             },
             grid.toString(),
           )
@@ -425,19 +433,13 @@ Cartesian coordinates where increasing y moves up. If unchecked, then use
         'id': 'export-nav-dropdown',
       },
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side));
-        }
+        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
         ..display = 'SVG Side View')(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main));
-        }
+        ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
         ..display = 'SVG Main View')(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          app.disable_keyboard_shortcuts_while(export_dna);
-        }
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..display = 'DNA Sequences')(),
     );
   }
