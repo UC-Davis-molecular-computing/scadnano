@@ -8,7 +8,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
@@ -242,16 +242,20 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
   drop_zone.onDrop.listen((event) {
     event.stopPropagation();
     event.preventDefault();
+
     var files = event.dataTransfer.files;
+    if (files.isEmpty) {
+      return;
+    }
 
     if (files.length > 1) {
-      window.alert('More than one file dropped! Please drop only one .dna file.');
+      window.alert('More than one file dropped! Please drop only one .dna or .json file.');
       return;
     }
 
     var file = files.first;
     var filename = file.name;
-    var ext = p.extension(filename);
+    var ext = path.extension(filename);
     if (ext == '.dna' || ext == '.json') {
       var confirm =
           app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');

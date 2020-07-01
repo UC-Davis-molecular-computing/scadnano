@@ -45,8 +45,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
         app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
         app.state.ui_state.selectables_store.selected_items.isNotEmpty)
     ..modification_font_size = state.ui_state.modification_font_size
+    ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
+    ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
     ..modification_display_connector = state.ui_state.modification_display_connector
-    ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
+    ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
     ..display_base_offsets_of_major_ticks_only_first_helix =
         state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
     ..display_major_tick_widths = state.ui_state.display_major_tick_widths
@@ -61,7 +63,9 @@ UiFactory<MenuProps> Menu = _$Menu;
 mixin MenuPropsMixin on UiProps {
   bool show_dna;
   bool show_modifications;
-  int modification_font_size;
+  num modification_font_size;
+  num major_tick_offset_font_size;
+  num major_tick_width_font_size;
   bool modification_display_connector;
   bool show_mismatches;
   bool strand_paste_keep_color;
@@ -73,7 +77,7 @@ mixin MenuPropsMixin on UiProps {
   bool undo_stack_empty;
   bool redo_stack_empty;
   bool enable_copy;
-  bool display_base_offsets_of_major_ticks;
+  bool display_of_major_ticks_offsets;
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
@@ -238,9 +242,13 @@ directly at the adjoining helix.''')(),
   view_menu() {
     var elts = [
       ...view_menu_show_dna(),
+      DropdownDivider({'key': 'divider-show-dna'}),
       ...view_menu_mods(),
+      DropdownDivider({'key': 'divider-mods'}),
       ...view_menu_display_major_tick_offsets(),
+      DropdownDivider({'key': 'divider-major-tick-offsets'}),
       ...view_menu_display_major_tick_widths(),
+      DropdownDivider({'key': 'divider-major-tick-widths'}),
       ...view_menu_misc()
     ];
     return NavDropdown({
@@ -272,7 +280,6 @@ helix with the opposite orientation.'''
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
         ..key = 'show-mismatches')(),
-      DropdownDivider({'key': 'divider-show-dna'}),
     ];
   }
 
@@ -299,32 +306,35 @@ helix with the opposite orientation.'''
         ..default_value = props.modification_font_size
         ..hide = !props.show_modifications
         ..tooltip = 'Adjust to change the font size of text display for modifications.'
-        ..on_new_value = (num font_size) {
-          props.dispatch(actions.SetModificationFontSize(font_size));
-        }
+        ..on_new_value = ((num font_size) => props.dispatch(actions.ModificationFontSizeSet(font_size)))
         ..key = 'mod-font-size')(),
-      DropdownDivider({'key': 'divider-mods'}),
     ];
   }
 
   List view_menu_display_major_tick_offsets() {
     return [
       (MenuBoolean()
-        ..value = props.display_base_offsets_of_major_ticks
+        ..value = props.display_of_major_ticks_offsets
         ..display = 'Display Major Tick Offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
         ..onChange = ((_) => props
-            .dispatch(actions.SetDisplayBaseOffsetsOfMajorTicks(!props.display_base_offsets_of_major_ticks)))
+            .dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
         ..key = 'display-major-tick-offsets')(),
       (MenuBoolean()
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
-        ..hide = !props.display_base_offsets_of_major_ticks
+        ..hide = !props.display_of_major_ticks_offsets
         ..display = '... On All Helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
         ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
             !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
-      DropdownDivider({'key': 'divider-major-tick-offsets'}),
+      (MenuNumber()
+        ..display = 'Major tick offset font size'
+        ..default_value = props.major_tick_offset_font_size
+        ..hide = !props.display_of_major_ticks_offsets
+        ..tooltip = 'Adjust to change the font size of major tick offsets.'
+        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickOffsetFontSizeSet(font_size)))
+        ..key = 'major-tick-offset-font-size')(),
     ];
   }
 
@@ -346,7 +356,13 @@ helix with the opposite orientation.'''
         ..onChange = ((_) => props.dispatch(
             actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
         ..key = 'display-major-tick-widths-on-all-helices')(),
-      DropdownDivider({'key': 'divider-major-tick-widths'}),
+      (MenuNumber()
+        ..display = 'Major tick width font size'
+        ..default_value = props.major_tick_width_font_size
+        ..hide = !props.display_major_tick_widths
+        ..tooltip = 'Adjust to change the font size of major tick offsets.'
+        ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
+        ..key = 'major-tick-width-font-size')(),
     ];
   }
 

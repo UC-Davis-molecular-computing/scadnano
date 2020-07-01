@@ -332,20 +332,57 @@ abstract class ShowModificationsSet
   static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
 }
 
-abstract class SetModificationFontSize
+abstract class ModificationFontSizeSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetModificationFontSize, SetModificationFontSizeBuilder> {
-  num get font;
+    implements AppUIStateStorableAction, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
+  num get font_size;
 
-  factory SetModificationFontSize(num font) => SetModificationFontSize.from((b) => b..font = font);
+  factory ModificationFontSizeSet(num font_size) =>
+      ModificationFontSizeSet.from((b) => b..font_size = font_size);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetModificationFontSize.from([void Function(SetModificationFontSizeBuilder) updates]) =
-      _$SetModificationFontSize;
+  factory ModificationFontSizeSet.from([void Function(ModificationFontSizeSetBuilder) updates]) =
+      _$ModificationFontSizeSet;
 
-  SetModificationFontSize._();
+  ModificationFontSizeSet._();
 
-  static Serializer<SetModificationFontSize> get serializer => _$setModificationFontSizeSerializer;
+  static Serializer<ModificationFontSizeSet> get serializer => _$modificationFontSizeSetSerializer;
+}
+
+abstract class MajorTickOffsetFontSizeSet
+    with BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
+  num get font_size;
+
+  factory MajorTickOffsetFontSizeSet(num font_size) =>
+      MajorTickOffsetFontSizeSet.from((b) => b..font_size = font_size);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MajorTickOffsetFontSizeSet.from([void Function(MajorTickOffsetFontSizeSetBuilder) updates]) =
+      _$MajorTickOffsetFontSizeSet;
+
+  MajorTickOffsetFontSizeSet._();
+
+  static Serializer<MajorTickOffsetFontSizeSet> get serializer => _$majorTickOffsetFontSizeSetSerializer;
+}
+
+abstract class MajorTickWidthFontSizeSet
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
+  num get font_size;
+
+  factory MajorTickWidthFontSizeSet(num font_size) =>
+      MajorTickWidthFontSizeSet.from((b) => b..font_size = font_size);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory MajorTickWidthFontSizeSet.from([void Function(MajorTickWidthFontSizeSetBuilder) updates]) =
+      _$MajorTickWidthFontSizeSet;
+
+  MajorTickWidthFontSizeSet._();
+
+  static Serializer<MajorTickWidthFontSizeSet> get serializer => _$majorTickWidthFontSizeSetSerializer;
 }
 
 abstract class SetModificationDisplayConnector
@@ -421,25 +458,22 @@ abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
       _$setDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixSerializer;
 }
 
-abstract class SetDisplayBaseOffsetsOfMajorTicks
+abstract class DisplayMajorTicksOffsetsSet
     with BuiltJsonSerializable
     implements
         AppUIStateStorableAction,
-        Built<SetDisplayBaseOffsetsOfMajorTicks, SetDisplayBaseOffsetsOfMajorTicksBuilder> {
+        Built<DisplayMajorTicksOffsetsSet, DisplayMajorTicksOffsetsSetBuilder> {
   bool get show;
 
-  factory SetDisplayBaseOffsetsOfMajorTicks(bool show) =>
-      SetDisplayBaseOffsetsOfMajorTicks.from((b) => b..show = show);
+  factory DisplayMajorTicksOffsetsSet(bool show) => DisplayMajorTicksOffsetsSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SetDisplayBaseOffsetsOfMajorTicks.from(
-          [void Function(SetDisplayBaseOffsetsOfMajorTicksBuilder) updates]) =
-      _$SetDisplayBaseOffsetsOfMajorTicks;
+  factory DisplayMajorTicksOffsetsSet.from([void Function(DisplayMajorTicksOffsetsSetBuilder) updates]) =
+      _$DisplayMajorTicksOffsetsSet;
 
-  SetDisplayBaseOffsetsOfMajorTicks._();
+  DisplayMajorTicksOffsetsSet._();
 
-  static Serializer<SetDisplayBaseOffsetsOfMajorTicks> get serializer =>
-      _$setDisplayBaseOffsetsOfMajorTicksSerializer;
+  static Serializer<DisplayMajorTicksOffsetsSet> get serializer => _$displayMajorTicksOffsetsSetSerializer;
 }
 
 abstract class SetDisplayMajorTickWidthsAllHelices

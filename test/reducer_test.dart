@@ -3068,9 +3068,9 @@ main() {
 
     test('Test_SetDisplayBaseOffsetsOfMajorTicks', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, SetDisplayBaseOffsetsOfMajorTicks(true));
+      AppState final_state = app_state_reducer(initial_state, DisplayMajorTicksOffsetsSet(true));
       expect(final_state.ui_state.display_base_offsets_of_major_ticks, true);
-      final_state = app_state_reducer(final_state, SetDisplayBaseOffsetsOfMajorTicks(false));
+      final_state = app_state_reducer(final_state, DisplayMajorTicksOffsetsSet(false));
       expect(final_state.ui_state.display_base_offsets_of_major_ticks, false);
     });
 
@@ -3101,7 +3101,7 @@ main() {
 
     test('Test_SetModificationFontSize', () {
       AppState initial_state = app_state_from_dna_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, SetModificationFontSize(45));
+      AppState final_state = app_state_reducer(initial_state, ModificationFontSizeSet(45));
       expect(final_state.ui_state.modification_font_size, 45);
     });
 

@@ -44,6 +44,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..grid = state.dna_design.grid
         ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
+        ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
+        ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
         ..has_error = state.has_error()
         ..edit_modes = state.ui_state.edit_modes
         ..strands_move = state.ui_state.strands_move
@@ -57,7 +59,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-        ..display_base_offsets_of_major_ticks_only_first_helix = state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+        ..display_base_offsets_of_major_ticks_only_first_helix =
+            state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices);
     }
@@ -80,6 +83,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_mismatches;
   bool show_dna;
   int design_major_tick_distance;
+  num major_tick_offset_font_size;
+  num major_tick_width_font_size;
   bool drawing_potential_crossover;
   String dna_sequence_png_uri;
   Action disable_png_cache_until_action_completes;
@@ -111,6 +116,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..helices = props.dna_design.helices
         ..grid = props.grid
         ..geometry = props.dna_design.geometry
+        ..major_tick_offset_font_size = props.major_tick_offset_font_size
+        ..major_tick_width_font_size = props.major_tick_width_font_size
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
         ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
@@ -118,7 +125,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
         ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
-        ..display_base_offsets_of_major_ticks_only_first_helix = props.display_base_offsets_of_major_ticks_only_first_helix
+        ..display_base_offsets_of_major_ticks_only_first_helix =
+            props.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = props.display_major_tick_widths
         ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
         ..key = 'helices')(),

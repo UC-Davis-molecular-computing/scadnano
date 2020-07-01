@@ -49,7 +49,11 @@ abstract class AppUIStateStorable
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
 
-  int get modification_font_size;
+  num get modification_font_size;
+
+  num get major_tick_offset_font_size;
+
+  num get major_tick_width_font_size;
 
   bool get modification_display_connector;
 
@@ -81,6 +85,8 @@ abstract class AppUIStateStorable
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.modification_font_size = constants.default_modification_font_size;
+    b.major_tick_offset_font_size = constants.default_major_tick_offset_font_size;
+    b.major_tick_width_font_size = constants.default_major_tick_width_font_size;
     b.modification_display_connector = true;
     b.strand_paste_keep_color = true;
     b.display_base_offsets_of_major_ticks = true;
@@ -166,7 +172,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices => storables.only_display_selected_helices;
 
-  int get modification_font_size => storables.modification_font_size;
+  num get modification_font_size => storables.modification_font_size;
 
   bool get modification_display_connector => storables.modification_display_connector;
 
@@ -200,6 +206,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
   bool get invert_y_axis => storables.invert_y_axis;
+
+  num get major_tick_offset_font_size => storables.major_tick_offset_font_size;
+  num get major_tick_width_font_size => storables.major_tick_width_font_size;
 
   SelectModeState get select_mode_state => storables.select_mode_state;
 

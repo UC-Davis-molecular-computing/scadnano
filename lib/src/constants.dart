@@ -63,6 +63,8 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
+const default_major_tick_offset_font_size = 12;
+const default_major_tick_width_font_size = 8;
 
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';
