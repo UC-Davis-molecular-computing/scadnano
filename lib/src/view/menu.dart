@@ -136,42 +136,30 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         'id': 'file-nav-dropdown',
       },
       (MenuDropdownItem()
-        ..on_click = (_) {
-          app.disable_keyboard_shortcuts_while(load_example_dialog);
-        }
+        ..on_click = ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
         ..display = '📄 Load example')(),
       (MenuFormFile()
         ..id = 'open-form-file'
         ..accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",")
-        ..onChange = (e) {
-          request_load_file_from_file_chooser(e.target, scadnano_file_loaded);
-        }
+        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
         ..display = '📂 Open...'
         ..keyboard_shortcut = 'Ctrl+O')(),
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.SaveDNAFile());
-        }
+        ..on_click = ((_) => props.dispatch(actions.SaveDNAFile()))
         ..display = '💾 Save...'
         ..keyboard_shortcut = 'Ctrl+S')(),
       DropdownDivider({}),
       (MenuFormFile()
         ..id = 'import-cadnano-form-file'
         ..accept = '.json'
-        ..onChange = (e) {
-          request_load_file_from_file_chooser(e.target, cadnano_file_loaded);
-        }
+        ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2')(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.ExportCadnanoFile());
-        }
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
         ..display = 'Export cadnano v2')(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.ExportCodenanoFile());
-        }
+        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
         ..display = 'Export codenano')(),
     );
   }
@@ -183,16 +171,12 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         'id': 'edit-nav-dropdown',
       },
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.Undo());
-        }
+        ..on_click = ((_) => props.dispatch(actions.Undo()))
         ..display = 'Undo'
         ..keyboard_shortcut = 'Ctrl+Z'
         ..disabled = props.undo_stack_empty)(),
       (MenuDropdownItem()
-        ..on_click = (_) {
-          props.dispatch(actions.Redo());
-        }
+        ..on_click = ((_) => props.dispatch(actions.Redo()))
         ..display = 'Redo'
         ..keyboard_shortcut = 'Ctrl+Shift+Z'
         ..disabled = props.redo_stack_empty)(),
