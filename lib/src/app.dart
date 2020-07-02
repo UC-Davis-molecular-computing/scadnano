@@ -84,7 +84,7 @@ class App {
     } else {
       warn_wrong_browser();
       react.setClientConfiguration();
-      await initialize_model();
+      await initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
@@ -98,7 +98,7 @@ class App {
     }
   }
 
-  initialize_model() async {
+  initialize_state() async {
     AppState state = DEFAULT_AppState;
 
     if (USE_REDUX_DEV_TOOLS) {
