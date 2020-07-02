@@ -412,7 +412,7 @@ Cartesian coordinates where increasing y moves up. If unchecked, then use
         'id': 'grid-nav-dropdown',
       },
       [
-        for (var grid in grid_options)
+        for (var grid in Grid.values)
           DropdownItem(
             {
               'active': grid == props.grid,
@@ -489,8 +489,6 @@ Cartesian coordinates where increasing y moves up. If unchecked, then use
       ),
     );
   }
-
-  final List<Grid> grid_options = [Grid.square, Grid.honeycomb, Grid.hex, Grid.none];
 
   Future<void> export_dna() async {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html

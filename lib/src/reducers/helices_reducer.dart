@@ -297,7 +297,9 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     }
     if (action.grid.is_none() && helix.position_ == null) {
       helices_builder[i].grid_position = null;
-      helices_builder[i].position_ = util.grid_to_position3d(helix.grid_position, action.grid).toBuilder();
+      //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
+      // if given the none grid)
+      helices_builder[i].position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
     }
   }
 

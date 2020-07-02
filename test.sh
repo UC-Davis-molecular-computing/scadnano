@@ -9,17 +9,29 @@ else
 fi
 
 if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
-  echo "running"
-  echo "    $PUB run build_runner test -- -P debug"
-  $PUB run build_runner test -- -P debug
+  if [ "$2" == "-n" ]; then
+    echo "running"
+    echo "    $PUB run build_runner test -- -n $3 -P debug"
+    $PUB run build_runner test -- -n $3 -P debug
+  else
+    echo "running"
+    echo "    $PUB run build_runner test -- -P debug"
+    $PUB run build_runner test -- -P debug
+  fi
 elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
   echo "running"
   echo "    $PUB run build_runner test -- -t $2"
   $PUB run build_runner test -- -t $2
 elif [ "$1" == "-n" ]; then
-  echo "running"
-  echo "    $PUB run build_runner test -- -n $2"
-  $PUB run build_runner test -- -n $2
+  if [ "$3" == "-d" ]; then
+    echo "running"
+    echo "    $PUB run build_runner test -- -n $2 -P debug"
+    $PUB run build_runner test -- -n $2 -P debug
+  else
+    echo "running"
+    echo "    $PUB run build_runner test -- -n $2"
+    $PUB run build_runner test -- -n $2
+  fi
 elif [ "$1" == "-td" ] || [ "$1" == "-dt" ]; then
   echo "running"
   echo "    $PUB run build_runner test -- $2 -P debug"
@@ -34,8 +46,8 @@ elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo "run as specified."
   echo
   echo "Options:"
-  echo "    -n <test_names>  Runs test with specified name only. **Name must not have any spaces."
-  echo "    -d, --debug      Runs tests on Chrome browser, so Chrome DevTools are available."
+  echo "    -n <test_names>  Runs test with specified name only. **Name must not have any spaces. Can be comined with -d."
+  echo "    -d, --debug      Runs tests on Chrome browser, so Chrome DevTools are available. Can be comined with -n."
   echo "    -t <filename>, --test <filename>    Runs build_runner test on <filename>."
   echo "    -td <filename>, -dt <filename>    Runs <filename> tests on Chrome browser, so Chrome DevTools are available."
 else
