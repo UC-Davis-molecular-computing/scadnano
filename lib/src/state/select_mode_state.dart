@@ -14,23 +14,16 @@ part 'select_mode_state.g.dart';
 //const OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION = true;
 const OPTIMIZE_SELECTABLE_CSS_CLASS_MODIFICATION = false;
 
-final DEFAULT_SelectModeStateBuilder = SelectModeStateBuilder()
-  ..modes = SetBuilder<SelectModeChoice>(
-    [SelectModeChoice.strand, SelectModeChoice.staple, SelectModeChoice.scaffold]
-//      SelectModeChoice.strand_parts.asList() + [SelectModeChoice.staple, SelectModeChoice.scaffold]
-  );
+final DEFAULT_SelectModeStateBuilder = SelectModeStateBuilder();
+final DEFAULT_SelectModeState = DEFAULT_SelectModeStateBuilder.build();
 
 abstract class SelectModeState implements Built<SelectModeState, SelectModeStateBuilder> {
-  SelectModeState._();
-
-  factory SelectModeState([void Function(SelectModeStateBuilder) updates]) =>
-      _$SelectModeState((s) => s..replace(DEFAULT_SelectModeStateBuilder.build()));
-
-  static Serializer<SelectModeState> get serializer => _$selectModeStateSerializer;
-
-  /************************ begin BuiltValue boilerplate ************************/
-
   BuiltSet<SelectModeChoice> get modes;
+
+  static void _initializeBuilder(SelectModeStateBuilder b) {
+    b.modes = SetBuilder<SelectModeChoice>(
+        [SelectModeChoice.strand, SelectModeChoice.staple, SelectModeChoice.scaffold]);
+  }
 
   bool is_selectable(Selectable selectable) => modes.contains(selectable.select_mode());
 
@@ -55,9 +48,6 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
     List<String> modes = jsonDecode(json_str);
     return SelectModeState((s) => s..modes = SetBuilder<SelectModeChoice>(modes));
   }
-
-  @memoized
-  int get hashCode;
 
   //XXX: on the CSS selectors, this is doing a side-effect end-run around the Model-View-Update cycle.
   // ThIs is for efficiency; otherwise we'd need to wastefully re-render all strands
@@ -116,4 +106,16 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
       }
     }
   }
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  SelectModeState._();
+
+  factory SelectModeState([void Function(SelectModeStateBuilder) updates]) =>
+      _$SelectModeState((s) => s..replace(DEFAULT_SelectModeStateBuilder.build()));
+
+  static Serializer<SelectModeState> get serializer => _$selectModeStateSerializer;
+
+  @memoized
+  int get hashCode;
 }

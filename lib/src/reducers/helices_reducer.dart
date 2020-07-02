@@ -22,10 +22,10 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
-  TypedReducer<BuiltMap<int, Helix>, actions.GridChange>(helix_grid_change_reducer),
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
       set_app_ui_state_storables_set_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertYAxisSet>(
@@ -285,7 +285,8 @@ _count_less_than(Iterable<int> list, int x) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change, so helix must change positions
 
-BuiltMap<int, Helix> helix_grid_change_reducer(BuiltMap<int, Helix> helices, actions.GridChange action) {
+BuiltMap<int, Helix> helix_grid_change_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.GridChange action) {
   Map<int, HelixBuilder> helices_builder = helices.toMap().map_values((h) => h.toBuilder());
   for (int i in helices.keys) {
     Helix helix = helices[i];
@@ -296,12 +297,16 @@ BuiltMap<int, Helix> helix_grid_change_reducer(BuiltMap<int, Helix> helices, act
     }
     if (action.grid.is_none() && helix.position_ == null) {
       helices_builder[i].grid_position = null;
+      //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
+      // if given the none grid)
       helices_builder[i].position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
     }
   }
 
   BuiltMap<int, Helix> new_helices =
       {for (var helix in helices_builder.values) helix.idx: helix.build()}.build();
+  new_helices =
+      reassign_svg_positions(state.dna_design.geometry, state.ui_state.invert_y_axis, new_helices, null);
   return new_helices;
 }
 

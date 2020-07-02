@@ -18,97 +18,106 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import '../constants.dart' as constants;
 
 part 'app_ui_state.g.dart';
 
-final DEFAULT_AppUIStateStorableBuilder = AppUIStateStorableBuilder()
-  ..edit_modes.replace([EditModeChoice.select])
-  ..select_mode_state = DEFAULT_SelectModeStateBuilder
-  ..loaded_filename = default_filename()
-  ..show_dna = false
-  ..show_modifications = true
-  ..show_editor = false
-  ..show_mismatches = true
-  ..strand_paste_keep_color = true
-  ..autofit = true
-  ..invert_y_axis = false
-  ..only_display_selected_helices = false
-  ..modification_font_size = 12
-  ..modification_display_connector = true
-  ..display_base_offsets_of_major_ticks = false
-  ..display_base_offsets_of_major_ticks_only_first_helix = true
-  ..display_major_tick_widths = false
-  ..display_major_tick_widths_all_helices = false;
-
-final DEFAULT_AppUIStateBuilder = AppUIStateBuilder()
-  ..loaded_script_filename = default_script_filename()
-  ..mouseover_datas.replace([])
-  ..selection_box_displayed_main = false
-  ..selection_box_displayed_side = false
-  ..selectables_store = SelectablesStoreBuilder()
-  ..side_selected_helix_idxs.replace([])
-  ..drawing_potential_crossover = false
-  ..moving_dna_ends = false
-  ..changed_since_last_save = false
-  ..side_view_grid_position_mouse_cursor = null
-  ..side_view_position_mouse_cursor = null
-  ..strands_move = null
-  ..context_menu = null
-  ..dialog = null
-  ..strand_creation = null
-  ..helix_change_apply_to_all = false
-  ..example_dna_designs = DEFAULT_example_dna_designs_builder
-  ..assign_complement_to_bound_strands_default = true
-  ..warn_on_change_strand_dna_assign_default = true
-  ..dna_sequence_png_uri = null
-  ..disable_png_cache_until_action_completes = null
-  ..is_zoom_above_threshold = false
-  ..storables = DEFAULT_AppUIStateStorableBuilder;
-
+final DEFAULT_AppUIStateStorableBuilder = AppUIStateStorableBuilder();
+final DEFAULT_AppUIStateBuilder = AppUIStateBuilder();
 final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
 final DEFAULT_AppUIStateStorable = DEFAULT_AppUIStateStorableBuilder.build();
 
-abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState, AppUIStateBuilder> {
-  AppUIState._();
+/// This is the portion of AppUIState that gets written into localStorage.
+abstract class AppUIStateStorable
+    with BuiltJsonSerializable
+    implements Built<AppUIStateStorable, AppUIStateStorableBuilder> {
+  SelectModeState get select_mode_state;
 
-  factory AppUIState.from_dna_design(DNADesign design) {
-    var selectables_store = SelectablesStore();
-    return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
+  BuiltSet<EditModeChoice> get edit_modes;
+
+  bool get autofit;
+
+  bool get show_dna;
+
+  bool get show_modifications;
+
+  bool get show_mismatches;
+
+  bool get show_editor;
+
+  /// True if only selected helices in the side view should be displayed in the
+  /// main view. False means all helices should be drawn.
+  bool get only_display_selected_helices;
+
+  num get modification_font_size;
+
+  num get major_tick_offset_font_size;
+
+  num get major_tick_width_font_size;
+
+  bool get modification_display_connector;
+
+  bool get strand_paste_keep_color;
+
+  bool get display_base_offsets_of_major_ticks;
+
+  bool get display_base_offsets_of_major_ticks_only_first_helix;
+
+  bool get display_major_tick_widths;
+
+  bool get display_major_tick_widths_all_helices;
+
+  String get loaded_filename;
+
+  String get loaded_script_filename;
+
+  bool get invert_y_axis;
+
+  static void _initializeBuilder(AppUIStateStorableBuilder b) {
+    // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
+    // then they will be populated with a default value instead of raising an exception.
+    b.edit_modes = SetBuilder<EditModeChoice>([EditModeChoice.select]);
+    b.select_mode_state = DEFAULT_SelectModeStateBuilder;
+    b.autofit = true;
+    b.show_dna = false;
+    b.show_modifications = true;
+    b.show_mismatches = true;
+    b.show_editor = false;
+    b.only_display_selected_helices = false;
+    b.modification_font_size = constants.default_modification_font_size;
+    b.major_tick_offset_font_size = constants.default_major_tick_offset_font_size;
+    b.major_tick_width_font_size = constants.default_major_tick_width_font_size;
+    b.modification_display_connector = true;
+    b.strand_paste_keep_color = true;
+    b.display_base_offsets_of_major_ticks = true;
+    b.display_base_offsets_of_major_ticks_only_first_helix = true;
+    b.display_major_tick_widths = false;
+    b.display_major_tick_widths_all_helices = false;
+    b.invert_y_axis = false;
+    b.loaded_filename = default_filename();
+    b.loaded_script_filename = default_script_filename();
   }
 
-  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
-      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AppUIStateStorable(bool modification_display_connector) =>
+      AppUIStateStorable.from((b) => b..modification_display_connector = modification_display_connector);
 
-  static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
+  factory AppUIStateStorable.from([void Function(AppUIStateStorableBuilder) updates]) = _$AppUIStateStorable;
 
-  /************************ end BuiltValue boilerplate ************************/
-  @memoized
-  int get hashCode;
+  AppUIStateStorable._();
 
+  static Serializer<AppUIStateStorable> get serializer => _$appUIStateStorableSerializer;
+}
+
+abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState, AppUIStateBuilder> {
   /// For selected objects in main view
   SelectablesStore get selectables_store;
 
   /// Special case for helices, which can always be selected, but only in the side view.
   BuiltSet<int> get side_selected_helix_idxs;
 
-  String get loaded_filename => storables.loaded_filename;
-
-  String get loaded_script_filename;
-
   @nullable
   StrandsMove get strands_move;
-
-  bool get show_dna => storables.show_dna;
-
-  bool get show_modifications => storables.show_modifications;
-
-  bool get show_mismatches => storables.show_mismatches;
-
-  bool get show_editor => storables.show_editor;
-
-  bool get autofit => storables.autofit;
-
-  bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
   bool get drawing_potential_crossover;
 
@@ -123,8 +132,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   bool get helix_change_apply_to_all;
-
-  bool get invert_y_axis => storables.invert_y_axis;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
@@ -141,10 +148,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   @nullable // null when mouse outside of side view or helix edit mode not enabled
   Point<num> get side_view_position_mouse_cursor;
-
-  SelectModeState get select_mode_state => storables.select_mode_state;
-
-  BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
   @nullable
   ContextMenu get context_menu;
@@ -169,7 +172,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices => storables.only_display_selected_helices;
 
-  int get modification_font_size => storables.modification_font_size;
+  num get modification_font_size => storables.modification_font_size;
 
   bool get modification_display_connector => storables.modification_display_connector;
 
@@ -183,116 +186,74 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get display_major_tick_widths_all_helices => storables.display_major_tick_widths_all_helices;
 
   AppUIStateStorable get storables;
-}
 
-/// This is the portion of AppUIState that gets written into localStorage.
-abstract class AppUIStateStorable
-    with BuiltJsonSerializable
-    implements Built<AppUIStateStorable, AppUIStateStorableBuilder> {
-  SelectModeState get select_mode_state;
+  /*********** below getters delegate to storables ********************/
 
-  BuiltSet<EditModeChoice> get edit_modes;
+  String get loaded_filename => storables.loaded_filename;
 
-  bool get autofit;
+  String get loaded_script_filename => storables.loaded_script_filename;
 
-  bool get show_dna;
+  bool get show_dna => storables.show_dna;
 
-  bool get show_modifications;
+  bool get show_modifications => storables.show_modifications;
 
-  bool get show_mismatches;
+  bool get show_mismatches => storables.show_mismatches;
 
-  bool get show_editor;
+  bool get show_editor => storables.show_editor;
 
-  /// True if only selected helices in the side view should be displayed in the
-  /// main view. False means all helices should be drawn.
-  bool get only_display_selected_helices;
+  bool get autofit => storables.autofit;
 
-  int get modification_font_size;
+  bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
-  bool get modification_display_connector;
+  bool get invert_y_axis => storables.invert_y_axis;
 
-  bool get strand_paste_keep_color;
+  num get major_tick_offset_font_size => storables.major_tick_offset_font_size;
+  num get major_tick_width_font_size => storables.major_tick_width_font_size;
 
-  bool get display_base_offsets_of_major_ticks;
+  SelectModeState get select_mode_state => storables.select_mode_state;
 
-  bool get display_base_offsets_of_major_ticks_only_first_helix;
+  BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
-  bool get display_major_tick_widths;
-
-  bool get display_major_tick_widths_all_helices;
-
-  String get loaded_filename;
-
-  bool get invert_y_axis;
-
-  static void _finalizeBuilder(AppUIStateStorableBuilder b) {
-    // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
-    // then they will be populated with a default value instead of raising an exception.
-    if (b.select_mode_state == null || b.select_mode_state.modes.isEmpty) {
-      b.select_mode_state = DEFAULT_AppUIStateStorableBuilder.select_mode_state;
-    }
-    if (b.edit_modes == null || b.edit_modes.isEmpty) {
-      b.edit_modes = DEFAULT_AppUIStateStorableBuilder.edit_modes;
-    }
-    if (b.autofit == null) {
-      b.autofit = DEFAULT_AppUIStateStorableBuilder.autofit;
-    }
-    if (b.show_dna == null) {
-      b.show_dna = DEFAULT_AppUIStateStorableBuilder.show_dna;
-    }
-    if (b.show_modifications == null) {
-      b.show_modifications = DEFAULT_AppUIStateStorableBuilder.show_modifications;
-    }
-    if (b.show_mismatches == null) {
-      b.show_mismatches = DEFAULT_AppUIStateStorableBuilder.show_mismatches;
-    }
-    if (b.show_editor == null) {
-      b.show_editor = DEFAULT_AppUIStateStorableBuilder.show_editor;
-    }
-    if (b.only_display_selected_helices == null) {
-      b.only_display_selected_helices = DEFAULT_AppUIStateStorableBuilder.only_display_selected_helices;
-    }
-    if (b.modification_font_size == null) {
-      b.modification_font_size = DEFAULT_AppUIStateStorableBuilder.modification_font_size;
-    }
-    if (b.modification_display_connector == null) {
-      b.modification_display_connector = DEFAULT_AppUIStateStorableBuilder.modification_display_connector;
-    }
-    if (b.strand_paste_keep_color == null) {
-      b.strand_paste_keep_color = DEFAULT_AppUIStateStorableBuilder.strand_paste_keep_color;
-    }
-    if (b.display_base_offsets_of_major_ticks == null) {
-      b.display_base_offsets_of_major_ticks =
-          DEFAULT_AppUIStateStorableBuilder.display_base_offsets_of_major_ticks;
-    }
-    if (b.display_base_offsets_of_major_ticks_only_first_helix == null) {
-      b.display_base_offsets_of_major_ticks_only_first_helix =
-          DEFAULT_AppUIStateStorableBuilder.display_base_offsets_of_major_ticks_only_first_helix;
-    }
-    if (b.display_major_tick_widths == null) {
-      b.display_major_tick_widths = DEFAULT_AppUIStateStorableBuilder.display_major_tick_widths;
-    }
-    if (b.display_major_tick_widths_all_helices == null) {
-      b.display_major_tick_widths_all_helices =
-          DEFAULT_AppUIStateStorableBuilder.display_major_tick_widths_all_helices;
-    }
-    if (b.loaded_filename == null) {
-      b.loaded_filename = DEFAULT_AppUIStateStorableBuilder.loaded_filename;
-    }
-    if (b.invert_y_axis == null) {
-      b.invert_y_axis = DEFAULT_AppUIStateStorableBuilder.invert_y_axis;
-    }
+  static void _initializeBuilder(AppUIStateBuilder b) {
+    b.mouseover_datas.replace([]);
+    b.selection_box_displayed_main = false;
+    b.selection_box_displayed_side = false;
+    b.selectables_store = SelectablesStoreBuilder();
+    b.side_selected_helix_idxs.replace([]);
+    b.drawing_potential_crossover = false;
+    b.moving_dna_ends = false;
+    b.changed_since_last_save = false;
+    b.side_view_grid_position_mouse_cursor = null;
+    b.side_view_position_mouse_cursor = null;
+    b.strands_move = null;
+    b.context_menu = null;
+    b.dialog = null;
+    b.strand_creation = null;
+    b.helix_change_apply_to_all = false;
+    b.example_dna_designs = DEFAULT_example_dna_designs_builder;
+    b.assign_complement_to_bound_strands_default = true;
+    b.warn_on_change_strand_dna_assign_default = true;
+    b.dna_sequence_png_uri = null;
+    b.disable_png_cache_until_action_completes = null;
+    b.is_zoom_above_threshold = false;
+    b.storables = DEFAULT_AppUIStateStorableBuilder;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory AppUIStateStorable(bool modification_display_connector) =>
-      AppUIStateStorable.from((b) => b..modification_display_connector = modification_display_connector);
+  @memoized
+  int get hashCode;
 
-  factory AppUIStateStorable.from([void Function(AppUIStateStorableBuilder) updates]) = _$AppUIStateStorable;
+  AppUIState._();
 
-  AppUIStateStorable._();
+  factory AppUIState.from_dna_design(DNADesign design) {
+    var selectables_store = SelectablesStore();
+    return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
+  }
 
-  static Serializer<AppUIStateStorable> get serializer => _$appUIStateStorableSerializer;
+  factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
+      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
+
+  static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 }
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';

@@ -21,26 +21,26 @@ class MenuBooleanComponent extends UiComponent2<MenuBooleanProps> {
 
   @override
   render() {
+    if (props.hide) {
+      return null;
+    }
+
     var name = props.name;
     name ??= props.display.toLowerCase().replaceAll(' ', '-');
 
-    if (!props.hide) {
-      return (Dom.span()
-        ..className = 'menu-item'
-        ..id = '${name}-span'
-        ..style = {'display': 'block'})(
-        (Dom.label()..title = props.tooltip)(
-            (Dom.input()
-              ..style = {'marginRight': '1em'}
-              ..checked = props.value
-              ..onChange = props.onChange
-              // TODO(benlee12): Add unit tests that use this.
-              // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
-              ..type = 'checkbox')(),
-            props.display),
-      );
-    } else {
-      return null;
-    }
+    return (Dom.span()
+      ..className = 'menu-item menu-item-bool-input'
+      ..id = '${name}-span'
+      ..style = {'display': 'block'})(
+      (Dom.label()..title = props.tooltip)(
+          (Dom.input()
+            ..style = {'marginRight': '1em'}
+            ..checked = props.value
+            ..onChange = props.onChange
+            // TODO(benlee12): Add unit tests that use this.
+            // ..addTestId('scadnano.MenuComponent.MenuBooleanComponent.input.${name}')
+            ..type = 'checkbox')(),
+          props.display),
+    );
   }
 }

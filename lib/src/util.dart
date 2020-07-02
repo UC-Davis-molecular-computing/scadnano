@@ -276,12 +276,8 @@ Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<in
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix, Grid grid) {
-  if (grid.is_none()) {
-    return helix.position3d().x * geometry.nm_to_main_svg_pixels;
-  } else {
-    return 0;
-//    return helix.min_offset * constants.BASE_WIDTH_SVG;
-  }
+  num x = helix.position3d().x * geometry.nm_to_main_svg_pixels;
+  return x;
 }
 
 num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) {

@@ -130,11 +130,45 @@ webdev serve --release
 (TODO): Add common errors here.
 
 
+## General recipe for adding features
+The use of React and Redux is intended to reduce the number of bugs, by a clean separation of 
+
+- **state:** What is the current state of the program, including not only the DNADesign, but all other aspects such as UI state. This is represented by an instance of AppState.
+
+- **view:** What does the visual interface look like, as a function of the model.
+
+- **update:** How should the model change in response to something, most typically the user interfacing with the view. There are other reasons to update, for example
+
+For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
+
+- **create Action class**: In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. 
+
+  If this is data that will be stored in localStorage (this is the case for most view options, such as checkboxes to control whether DNA/modifications/etc. are visible, font sizes, etc.), then this Action must implement `AppUIStateStorableAction`.
+
+- **create view component for interaction**: The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`.
+
+- **if necessary, add new data fields the app state**: In many instances, particularly "UI state" (aspects of the state that control how things look, but are not stored in the DNADesign), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`.
+
+  If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.dna_design` is persisted in localStorage, but that is handled separately.
+
+- **create reducer for updating state in response to Action**: TODO This is the code that takes as input the old state and the Action and produces the new state. The top-level reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally this is not modified directly. Through a series of composition, all reducers are called indirectly when `app_state_reducer` is called. 
+
+  The most straightforward way to add a new reducer to this composition is to find a "sibling" reducer, i.e., a reducer modifying a field that is another field in the same class where you just added a field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`, so for guidance we can look and see what is the reducer for any other field in `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer` in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
+
+  Not all reducers follow the same pattern as this. Some only need to access the data they are modifying, which we call "local" reducers. Sometimes not even that: when changing `app.state.ui_state.storables.modification_font_size` to a new value, it doesn't matter what the old value is, so even though it is a parameter in the reducer: 
+  ```dart
+  num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action) => action.font_size;
+  ```
+  its name is `_` to emphasize that it doesn't need to be read. Other reducers, for example `strands_move`, require access to other parts of the `AppState`, so they are "global" reducers.
+
+TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added.
+
+
 ## Pushing to the repository and documenting changes
 
+All local commits should be push to the `dev` branch.
 Make sure you pull changes from the repository and resolve any
-conflicts before pushing to the `dev` branch. All local commits
-should be push to the `dev` branch.
+conflicts before pushing to the `dev` branch. 
 
 Pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that
 `dev` is working before merging to `master` as all changes to `master`
@@ -144,7 +178,7 @@ We have an automated release system (through a GitHub action) that automatically
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
 
-However, commit descriptions (in GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li).
+However, commit descriptions are not shown in the release notes. In GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li.
 
 So make sure that everything people should see in the automatically generated release notes is included in the commit message.
 

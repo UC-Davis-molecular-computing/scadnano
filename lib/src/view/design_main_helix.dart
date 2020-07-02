@@ -29,6 +29,8 @@ mixin DesignMainHelixProps on UiProps {
   int view_order;
   bool strand_create_enabled;
   int design_major_tick_distance;
+  num major_tick_offset_font_size;
+  num major_tick_width_font_size;
   Grid grid;
   bool helix_change_apply_to_all;
   bool show_dna;
@@ -389,6 +391,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..className = 'main-view-helix-major-tick-offset-text'
         ..x = '$x'
         ..y = '$y'
+        ..fontSize = '${props.major_tick_offset_font_size}'
         ..dominantBaseline = 'baseline'
         ..textAnchor = 'middle'
         ..key = 'main-view-helix-major-tick-offset-$x')(offset);
@@ -428,6 +431,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
         ..y = '$y'
+        ..fontSize = '${props.major_tick_width_font_size}'
         ..dominantBaseline = 'hanging'
         ..textAnchor = 'middle'
         ..key = 'main-view-helix-major-tick-distance-$x')(distance);

@@ -17,6 +17,8 @@ mixin DesignMainHelicesProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   bool strand_create_enabled;
   int design_major_tick_distance;
+  num major_tick_offset_font_size;
+  num major_tick_width_font_size;
   bool only_display_selected_helices;
   Grid grid;
   bool helix_change_apply_to_all;
@@ -45,6 +47,8 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
         children.add((DesignMainHelix()
           ..helix = helix
           ..geometry = props.geometry
+          ..major_tick_offset_font_size = props.major_tick_offset_font_size
+          ..major_tick_width_font_size = props.major_tick_width_font_size
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance
