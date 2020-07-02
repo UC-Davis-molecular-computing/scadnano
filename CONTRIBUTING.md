@@ -99,6 +99,8 @@ The high-level overview of the way we use the React, Redux, and built libraries 
 
 One idea that has developed recently gives a powerful conceptual framework for implementing GUIs in a way that is more robust to bugs than previous approaches. It's not always given a name, but when it is, it is known alternately as [The Elm Architecture](https://guide.elm-lang.org/architecture/) or [Model-View-Update](https://thomasbandt.com/model-view-update). React and Redux together give an implementation of this idea, though they use slightly different terminology: Redux uses "state" to refer to what others would call "model", and it uses the term "reducer" for code that implements the "update" in Elm and Model-View-Update.
 
+Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea.
+
 The basic idea is that the entire application can be thought of as consisting of three parts:
 
 1. **State:** 
@@ -311,7 +313,9 @@ So the steps are:
 
 Follow the [Dart style guide](https://dart.dev/guides/language/effective-dart/style)
 which should come along in most IDEs in the form of plugins
-and extensions. Visual Studio Code offers an [extension](https://dartcode.org/)
+and extensions. 
+One exception we make is that variable, function, and method names use `snake_case` instead of `camelCase`.
+Visual Studio Code offers an [extension](https://dartcode.org/)
 and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
 The line length should be configured to 110, as the style guide limit of 80
 is a bit too restrictive.

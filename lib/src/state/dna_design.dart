@@ -1335,13 +1335,13 @@ class StrandError extends IllegalDNADesignError {
     var last_substrand = strand.last_domain();
 
     var msg = '\n'
-        'strand length        =  ${strand.dna_length()}\n'
-        'DNA length           =  ${strand.dna_sequence.length}\n'
-        'DNA sequence         =  ${strand.dna_sequence}'
-        "strand 5' helix      =  ${first_substrand.helix}\n"
-        "strand 5' end offset =  ${first_substrand.offset_5p}\n"
-        "strand 3' helix      =  ${last_substrand.helix}\n"
-        "strand 3' end offset =  ${last_substrand.offset_3p}\n";
+        '  strand length        =  ${strand.dna_length()}\n'
+        '  DNA sequence length  =  ${strand.dna_sequence?.length}\n'
+        '  DNA sequence         =  ${strand.dna_sequence}\n'
+        "  strand 5' helix      =  ${first_substrand.helix}\n"
+        "  strand 5' end offset =  ${first_substrand.offset_5p}\n"
+        "  strand 3' helix      =  ${last_substrand.helix}\n"
+        "  strand 3' end offset =  ${last_substrand.offset_3p}\n";
 
     this.cause += msg;
   }
