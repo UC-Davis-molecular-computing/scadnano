@@ -5,7 +5,7 @@ import 'dart:html';
 
 import 'package:js/js.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
-import 'package:over_react/over_react.dart';
+import 'package:path/path.dart' as path;
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/components.dart' as over_react_components;
 
@@ -64,6 +64,8 @@ class View {
   bool currently_showing_editor;
 
   View(this.root_element) {
+    setup_file_drag_and_drop_listener(root_element);
+
     currently_showing_editor = app.state.ui_state.show_editor;
 
     this.root_element.children.add(menu_element);
@@ -79,8 +81,6 @@ class View {
     this.right_side_panes_container_element.children.add(DivElement()
       ..id = 'modes-buttons'
       ..children = [edit_mode_element, modes_separator, select_mode_element]);
-//    this.nonmenu_panes_container_element.children.add(edit_mode_element);
-//    this.nonmenu_panes_container_element.children.add(select_mode_element);
 
     this.design_view = DesignViewComponent(design_element);
 
@@ -161,4 +161,48 @@ class View {
 //      this.editor_view.render();
 //    }
 //  }
+}
+
+
+setup_file_drag_and_drop_listener(Element drop_zone) {
+  drop_zone.onDragOver.listen((event) {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  });
+
+  drop_zone.onDrop.listen((event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    var files = event.dataTransfer.files;
+    if (files.isEmpty) {
+      return;
+    }
+
+    if (files.length > 1) {
+      window.alert('More than one file dropped! Please drop only one .dna or .json file.');
+      return;
+    }
+
+    var file = files.first;
+    var filename = file.name;
+    var ext = path.extension(filename);
+    if (ext == '.dna' || ext == '.json') {
+      var confirm =
+          app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
+
+      if (confirm) {
+        FileReader file_reader = new FileReader();
+        //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
+        // and what is done in file_loaded should be another Action.
+        file_reader.onLoad.listen((_) => scadnano_file_loaded(file_reader, filename));
+        var err_msg = "error reading file: ${file_reader.error.toString()}";
+        file_reader.onError.listen((_) => window.alert(err_msg));
+        file_reader.readAsText(file);
+      }
+    } else {
+      window.alert('scadnano does not support "${ext}" type files. Please drop a .dna or .json file.');
+    }
+  });
 }
