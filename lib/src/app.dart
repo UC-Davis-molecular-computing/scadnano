@@ -8,7 +8,6 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
-import 'package:path/path.dart' as path;
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
@@ -16,7 +15,6 @@ import 'package:over_react/over_react.dart' as react;
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
-import 'package:scadnano/src/view/menu.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
@@ -75,30 +73,26 @@ class App {
   // when user-interacting dialog is open, disable keyboard shortcuts
   bool keyboard_shortcuts_enabled = true;
 
-  /// Undo/Redo stacks
-  UndoRedo undo_redo = UndoRedo();
-
   start() async {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
     } else {
       warn_wrong_browser();
       react.setClientConfiguration();
-      await initialize_model();
+      initialize_state();
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
-      this.setup_warning_before_unload();
+      setup_warning_before_unload();
       make_dart_functions_available_to_js(state);
       DivElement app_root_element = querySelector('#top-container');
-      setup_file_drag_and_drop_listener(app_root_element);
       this.view = View(app_root_element);
       this.view.render(state);
     }
   }
 
-  initialize_model() async {
+  initialize_state() {
     AppState state = DEFAULT_AppState;
 
     if (USE_REDUX_DEV_TOOLS) {
@@ -152,7 +146,7 @@ class App {
 
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((Event event) {
-      if (this.undo_redo.undo_stack.isNotEmpty) {
+      if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
         BeforeUnloadEvent e = event;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }
@@ -228,49 +222,6 @@ setup_save_open_dna_file_keyboard_listeners() {
       event.preventDefault();
       // TODO(benlee12): maybe this is slightly hacky.
       document.getElementById('open-form-file').click();
-    }
-  });
-}
-
-setup_file_drag_and_drop_listener(Element drop_zone) {
-  drop_zone.onDragOver.listen((event) {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-  });
-
-  drop_zone.onDrop.listen((event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    var files = event.dataTransfer.files;
-    if (files.isEmpty) {
-      return;
-    }
-
-    if (files.length > 1) {
-      window.alert('More than one file dropped! Please drop only one .dna or .json file.');
-      return;
-    }
-
-    var file = files.first;
-    var filename = file.name;
-    var ext = path.extension(filename);
-    if (ext == '.dna' || ext == '.json') {
-      var confirm =
-          app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
-
-      if (confirm) {
-        FileReader file_reader = new FileReader();
-        //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
-        // and what is done in file_loaded should be another Action.
-        file_reader.onLoad.listen((_) => scadnano_file_loaded(file_reader, filename));
-        var err_msg = "error reading file: ${file_reader.error.toString()}";
-        file_reader.onError.listen((_) => window.alert(err_msg));
-        file_reader.readAsText(file);
-      }
-    } else {
-      window.alert('scadnano does not support "${ext}" type files. Please drop a .dna or .json file.');
     }
   });
 }

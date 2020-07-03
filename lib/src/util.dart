@@ -817,7 +817,14 @@ String blob_type_to_string(BlobType blob_type) {
   throw AssertionError(ASSERTION_ERROR_MESSAGE);
 }
 
-save_file(String default_filename, var content, {BlobType blob_type = BlobType.text}) async {
+/// [and_then] is a callback to do if the file save dialog is not canceled and no other error occurs.
+/// Currenly, it doesn't do much good, because it is called whether the user cancels or not. But if someday
+/// we get around the issues described here:
+///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/282
+///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/292
+/// then it will be nice to have it happen only if the save is successful.
+save_file(String default_filename, var content,
+    {BlobType blob_type = BlobType.text, void Function() and_then = null}) async {
   try {
     String blob_type_string = blob_type_to_string(blob_type);
     Blob blob = new Blob([content], blob_type_string);
@@ -829,20 +836,17 @@ save_file(String default_filename, var content, {BlobType blob_type = BlobType.t
     if (browser.isFirefox) {
       document.body.children.add(link);
     }
-    //TODO: this await is my attempt to block until the user has selected a file, but it doesn't work.
-    // The code keeps executing while they pick their file. Figure out how to detect if they picked a file
-    // or cancelled. If they cancelled then we should act as though nothing happened (in particular do not
-    // send an Action indicating that the file was saved.
-    // consider using one of these libraries if possible:
-    //  https://github.com/jimmywarting/StreamSaver.js
-    //  https://github.com/eligrey/FileSaver.js
-    await link.click();
+    //It's tough to detect if the user cancels, or what filename they chose. See
+    // https://github.com/UC-Davis-molecular-computing/scadnano/issues/282
+    // https://github.com/UC-Davis-molecular-computing/scadnano/issues/292
+    link.click();
 
     if (browser.isFirefox) {
       link.remove();
     }
 
     Url.revokeObjectUrl(url);
+    and_then();
   } on Exception catch (e, stackTrace) {
     _alert_error_saving(e, stackTrace);
   } on Error catch (e, stackTrace) {

@@ -6,11 +6,13 @@ UiFactory<MenuBooleanProps> MenuBoolean = _$MenuBoolean;
 
 mixin MenuBooleanPropsMixin on UiProps {
   bool value;
-  bool hide;
   String tooltip;
   String display;
-  String name;
   dynamic Function(SyntheticFormEvent) onChange;
+
+  // optional
+  String name;
+  bool hide;
 }
 
 class MenuBooleanProps = UiProps with MenuBooleanPropsMixin;

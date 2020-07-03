@@ -73,6 +73,8 @@ abstract class AppUIStateStorable
 
   bool get invert_y_axis;
 
+  bool get warn_on_exit_if_unsaved;
+
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -93,9 +95,10 @@ abstract class AppUIStateStorable
     b.display_base_offsets_of_major_ticks_only_first_helix = true;
     b.display_major_tick_widths = false;
     b.display_major_tick_widths_all_helices = false;
-    b.invert_y_axis = false;
     b.loaded_filename = default_filename();
     b.loaded_script_filename = default_script_filename();
+    b.invert_y_axis = false;
+    b.warn_on_exit_if_unsaved = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -205,14 +208,17 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
-  bool get invert_y_axis => storables.invert_y_axis;
-
   num get major_tick_offset_font_size => storables.major_tick_offset_font_size;
+
   num get major_tick_width_font_size => storables.major_tick_width_font_size;
 
   SelectModeState get select_mode_state => storables.select_mode_state;
 
   BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
+
+  bool get invert_y_axis => storables.invert_y_axis;
+
+  bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);

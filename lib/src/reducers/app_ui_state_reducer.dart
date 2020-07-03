@@ -105,6 +105,8 @@ bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action
 
 bool invert_y_axis_reducer(bool _, actions.InvertYAxisSet action) => action.invert_y_axis;
 
+bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
+
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
 
@@ -189,13 +191,14 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
           storables.show_mismatches, action)
       ..invert_y_axis =
           TypedReducer<bool, actions.InvertYAxisSet>(invert_y_axis_reducer)(storables.invert_y_axis, action)
-      ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(
-          storables.strand_paste_keep_color, action)
+      ..warn_on_exit_if_unsaved =
+          TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
+              storables.warn_on_exit_if_unsaved, action)
+      ..strand_paste_keep_color =
+          TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
       ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
-      ..show_editor =
-          TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
-      ..display_base_offsets_of_major_ticks =
-          TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
+      ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
+      ..display_base_offsets_of_major_ticks = TypedReducer<bool, actions.DisplayMajorTicksOffsetsSet>(display_base_offsets_of_major_ticks_reducer)(storables.display_base_offsets_of_major_ticks, action)
       ..display_base_offsets_of_major_ticks_only_first_helix = TypedReducer<bool, actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix>(display_base_offsets_of_major_ticks_only_first_helix_reducer)(storables.display_base_offsets_of_major_ticks_only_first_helix, action)
       ..display_major_tick_widths = TypedReducer<bool, actions.SetDisplayMajorTickWidths>(display_major_tick_widths_reducer)(storables.display_major_tick_widths, action)
       ..display_major_tick_widths_all_helices = TypedReducer<bool, actions.SetDisplayMajorTickWidthsAllHelices>(display_major_tick_widths_all_helices_reducer)(storables.display_major_tick_widths_all_helices, action)
