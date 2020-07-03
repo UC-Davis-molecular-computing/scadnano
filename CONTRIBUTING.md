@@ -283,6 +283,8 @@ For many typical features one would want to add that involve changing some aspec
   ```
   its name is `_` to emphasize that it doesn't need to be read. Other reducers, for example `strands_move`, require access to other parts of the `AppState`, so they are "global" reducers.
 
+- **add view code to display the new state**: If this involved adding a new piece of state, then presumably it influences the view in some way. Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
+
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
