@@ -144,6 +144,10 @@ class App {
     }
   }
 
+  dispatch_async(Action action) async {
+    dispatch(action);
+  }
+
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((Event event) {
       if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {

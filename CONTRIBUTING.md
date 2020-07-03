@@ -303,9 +303,26 @@ TODO: add link to a more detailed tutorial walking through the steps above showi
 
 ## Pushing to the repository and documenting changes
 
-All local commits should be push to the `dev` branch. More advanced features, for example something that takes days to implement, and might involve potentially breaking other features, should be pushed to a separate branch specific to that feature, which is then merged into `dev`. Make sure you pull changes from the repository and resolve any conflicts before pushing to the `dev` branch. 
+Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch.
 
-Pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+For any more change that is made, follow these steps:
+
+1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description. For example, *"problem with loading gridless design"* is a bad title. A better title is *"loading gridless design with negative x coordinates throws exception"*.
+
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
+
+3. If it is about fixing a bug, add tests to reproduce the bug before working on fixing it.
+
+
+4. If it is about implementing a feature, add tests to test the feature.
+
+5. Work entirely in that branch to fix the issue.
+
+6. Run unit tests and ensure they pass.
+
+7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
+
+Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 

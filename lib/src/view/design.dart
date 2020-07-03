@@ -497,15 +497,21 @@ class DesignViewComponent {
 
       react_dom.render(
         DesignMainErrorBoundary()(
-          (ReduxProvider()..store = app.store)((ReduxProvider()
-            ..store = app.store_selection_box
-            ..context = app.context_selection_box)((ReduxProvider()
-            ..store = app.store_potential_crossover
-            ..context = app.context_potential_crossover)((ReduxProvider()
-            ..store = app.store_dna_ends_move
-            ..context = app.context_dna_ends_move)(
-            ConnectedDesignMain()(),
-          )))),
+          (ReduxProvider()..store = app.store)(
+            (ReduxProvider()
+              ..store = app.store_selection_box
+              ..context = app.context_selection_box)(
+              (ReduxProvider()
+                ..store = app.store_potential_crossover
+                ..context = app.context_potential_crossover)(
+                (ReduxProvider()
+                  ..store = app.store_dna_ends_move
+                  ..context = app.context_dna_ends_move)(
+                  ConnectedDesignMain()(),
+                ),
+              ),
+            ),
+          ),
         ),
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
