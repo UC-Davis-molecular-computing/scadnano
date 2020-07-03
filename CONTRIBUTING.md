@@ -285,6 +285,14 @@ For many typical features one would want to add that involve changing some aspec
 
 - **add view code to display the new state**: If this involved adding a new piece of state, then presumably it influences the view in some way. Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
 
+  In our example, the components (starting from the bottom) that need the `modification_font_size` property are
+
+  `DesignMainStrandModificationDomain` &rarr; `DesignMainStrandModifications` &rarr; `DesignMainStrand` &rarr; `DesignMainStrands` &rarr; `DesignMain`
+
+  Since DesignMain is a connected component, at the top of the file we can see how `DesignMainStrandsProps.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
+
+  The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it to `DesignMainStrandModificationDomain`, which needs it directly. However, in our experience, the way OverReact and OverReactRedux and currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass properties down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
+
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
