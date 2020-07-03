@@ -24,10 +24,8 @@ save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next)
 _save_file(AppState state) async {
   String content = json_encode(state.dna_design);
   String default_filename = state.ui_state.loaded_filename;
-  util.save_file(default_filename, content);
-  change_tab_title(false);
+  util.save_file(default_filename, content, and_then: () => change_tab_title(false));
 }
-
 
 // puts * in front of filename in tab title if unsaved changes are present
 change_tab_title(bool changed_since_last_save) {
