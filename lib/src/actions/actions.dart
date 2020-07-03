@@ -554,6 +554,24 @@ abstract class InvertYAxisSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// warn on exit if unsaved
+
+abstract class WarnOnExitIfUnsavedSet
+    with BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
+  bool get warn;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory WarnOnExitIfUnsavedSet({bool warn}) = _$WarnOnExitIfUnsavedSet._;
+
+  WarnOnExitIfUnsavedSet._();
+
+  static Serializer<WarnOnExitIfUnsavedSet> get serializer => _$warnOnExitIfUnsavedSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Save/load files
 
 abstract class SaveDNAFile

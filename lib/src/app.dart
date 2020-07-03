@@ -73,9 +73,6 @@ class App {
   // when user-interacting dialog is open, disable keyboard shortcuts
   bool keyboard_shortcuts_enabled = true;
 
-  /// Undo/Redo stacks
-  UndoRedo undo_redo = UndoRedo();
-
   start() async {
     if (RUN_TEST_CODE_INSTEAD_OF_APP) {
       await test_stuff();
@@ -149,7 +146,7 @@ class App {
 
   setup_warning_before_unload() {
     window.onBeforeUnload.listen((Event event) {
-      if (this.undo_redo.undo_stack.isNotEmpty) {
+      if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
         BeforeUnloadEvent e = event;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
       }

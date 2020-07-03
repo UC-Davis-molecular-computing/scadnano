@@ -53,7 +53,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
         state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
     ..display_major_tick_widths = state.ui_state.display_major_tick_widths
     ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-    ..invert_y_axis = state.ui_state.invert_y_axis),
+    ..invert_y_axis = state.ui_state.invert_y_axis
+    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -82,6 +83,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
   bool invert_y_axis;
+  bool warn_on_exit_if_unsaved;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -153,6 +155,15 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..on_click = ((_) => props.dispatch(actions.SaveDNAFile()))
         ..display = '💾 Save...'
         ..keyboard_shortcut = 'Ctrl+S')(),
+      (MenuBoolean()
+        ..value = props.warn_on_exit_if_unsaved
+        ..display = 'Warn on exit if unsaved'
+        ..tooltip = '''\
+If checked, before attempting to close or refresh the page, if the design has 
+changed since it was last saved, a warning dialog is displayed to ask if you
+really want to exit without saving.'''
+        ..onChange =
+            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved))))(),
       DropdownDivider({}),
       (MenuFormFile()
         ..id = 'import-cadnano-form-file'
@@ -207,9 +218,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..name = 'strand-paste-keep-color'
-        ..onChange = (_) {
-          props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color));
-        })(),
+        ..onChange =
+            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))

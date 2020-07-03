@@ -53,7 +53,7 @@ mixin DesignMainStrandsProps on UiProps {
   bool warn_on_change_strand_dna_assign_default;
   bool only_display_selected_helices;
   bool modification_display_connector;
-  int modification_font_size;
+  num modification_font_size;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {

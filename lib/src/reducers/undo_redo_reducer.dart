@@ -19,12 +19,12 @@ Reducer<AppState> undoable_action_reducer = combineReducers([
   TypedReducer<AppState, actions.UndoableAction>(undoable_action_typed_reducer),
 ]);
 
-AppState undo_reducer(AppState model, actions.Undo action) {
-  UndoRedo undo_redo = model.undo_redo;
+AppState undo_reducer(AppState state, actions.Undo action) {
+  UndoRedo undo_redo = state.undo_redo;
   if (undo_redo.undo_stack.isEmpty) {
-    return model;
+    return state;
   } else {
-    DNADesign dna_design_curr = model.dna_design;
+    DNADesign dna_design_curr = state.dna_design;
     ListBuilder<DNADesign> undo_stack = undo_redo.undo_stack.toBuilder();
     ListBuilder<DNADesign> redo_stack = undo_redo.redo_stack.toBuilder();
 
@@ -33,8 +33,8 @@ AppState undo_reducer(AppState model, actions.Undo action) {
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
-    AppState new_model = model.rebuild((m) => m
-      ..ui_state.replace(model.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
+    AppState new_model = state.rebuild((m) => m
+      ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
       ..dna_design.replace(dna_design_prev)
       ..undo_redo.replace(undo_redo.rebuild((u) => u
         ..undo_stack = undo_stack
@@ -44,12 +44,12 @@ AppState undo_reducer(AppState model, actions.Undo action) {
   }
 }
 
-AppState redo_reducer(AppState model, actions.Redo action) {
-  UndoRedo undo_redo = model.undo_redo;
+AppState redo_reducer(AppState state, actions.Redo action) {
+  UndoRedo undo_redo = state.undo_redo;
   if (undo_redo.redo_stack.isEmpty) {
-    return model;
+    return state;
   } else {
-    DNADesign dna_design_curr = model.dna_design;
+    DNADesign dna_design_curr = state.dna_design;
     ListBuilder<DNADesign> undo_stack = undo_redo.undo_stack.toBuilder();
     ListBuilder<DNADesign> redo_stack = undo_redo.redo_stack.toBuilder();
 
@@ -58,8 +58,8 @@ AppState redo_reducer(AppState model, actions.Redo action) {
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
-    AppState new_model = model.rebuild((m) => m
-      ..ui_state.replace(model.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
+    AppState new_model = state.rebuild((m) => m
+      ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
       ..dna_design.replace(dna_design_next)
       ..undo_redo.replace(undo_redo.rebuild((u) => u
         ..undo_stack = undo_stack
@@ -69,11 +69,11 @@ AppState redo_reducer(AppState model, actions.Redo action) {
   }
 }
 
-AppState undo_redo_clear_reducer(AppState model, actions.UndoRedoClear action) =>
-    model.rebuild((m) => m..undo_redo.replace(UndoRedo()));
+AppState undo_redo_clear_reducer(AppState state, actions.UndoRedoClear action) =>
+    state.rebuild((m) => m..undo_redo.replace(UndoRedo()));
 
-AppState undoable_action_typed_reducer(AppState model, actions.UndoableAction action) =>
-  model.rebuild((m) => m
-    ..undo_redo.replace(model.undo_redo.rebuild((u) => u
-      ..undo_stack.add(model.dna_design)
+AppState undoable_action_typed_reducer(AppState state, actions.UndoableAction action) =>
+  state.rebuild((m) => m
+    ..undo_redo.replace(state.undo_redo.rebuild((u) => u
+      ..undo_stack.add(state.dna_design)
       ..redo_stack.clear())));
