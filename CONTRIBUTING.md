@@ -9,7 +9,7 @@ Use your best judgement, and feel free to propose changes to this document in a 
 ### Dart
 
 scadnano is written in [Dart](https://dart.dev/). You will need to
-[get the Dark SDK](https://dart.dev/get-dart) to develop.
+[get the Dart SDK](https://dart.dev/get-dart) to develop.
 
 ### Packages
 
