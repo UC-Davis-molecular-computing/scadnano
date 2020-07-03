@@ -71,23 +71,6 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
 
       send_error(escaped_error_message);
       return null;
-
-      return
-//        (Dom.div()
-//        ..key = 'ohnoes'
-//        ..addTestId('ErrorBoundary.unrecoverableErrorInnerHtmlContainerNode'))(
-          (Dom.foreignObject()
-            ..x = "0"
-            ..y = "0"
-            ..width = "100%"
-            ..height = "100%")(
-        (Dom.div()..className = 'error-message')(
-          (Dom.pre()..className = 'error-pre')(
-            escaped_error_message,
-          ),
-        ),
-      );
-//      );
     }
     return (RecoverableErrorBoundary()
       ..addTestId('RecoverableErrorBoundary')
