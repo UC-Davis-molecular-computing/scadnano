@@ -60,7 +60,7 @@ Unfortunately, only built_value and built_collection are Dart libraries. React a
 ### Immutability
 The objects implementing what is called *state* below are immutable, and we use the built_value and built_collection libraries to maintain immutability and get some nice features (such as automatic equality comparison, automatic JSON serialization). When an object is immutable, no changes can be made to it. When you think you want to change an object, what you really want to do is to make a new object that is just like the old object, except in the place(s) you want to change.
 
-This seems as though it would be very memory expensive, but implemented correctly, it's fairly efficient. For example, if you have a large object tree and want to change out subtree of it, then most of the old subtrees can be shared with the new one. The only objects that need to change are those representing nodes between the changed subtree and the root.
+This seems as though it would be very memory expensive, but implemented correctly, it's fairly efficient. For example, if you have a large object tree and want to change one subtree of it, then most of the old subtrees can be shared with the new one. The only objects that need to change are those representing nodes between the changed subtree and the root.
 
 Unfortunately, built_value is implemented in a way that requires quite a bit of boilerplate code to express fairly simple objects. For example, we need an object representing an "action" (actions are described below) that changes the Boolean value of one UI setting (namely whether copy/pasted strands keep the same color in the new strand, or generate a new color). 
 
@@ -94,14 +94,28 @@ As you can see, there's quite a bit of boilerplate code, not only below the comm
 
 Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 10-15 seconds minimum, and often more like 30-60 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
 
-### Model-View-Update architecture of scadnano
+### unidirectional data flow architecture of scadnano
 The high-level overview of the way we use the React, Redux, and built libraries is as follows. Graphical user interfaces (GUIs) with lots of user interaction are notoriously difficult to reason about. It's very easy to write a small GUI application with a couple of buttons and a couple of text fields, and to convince yourself that scaling it up to a large application will be as straightforward as scaling up a large non-GUI program. But it's not, for a variety of reasons. It's a bit difficult to describe in one sentence why, but anyone who has written a large GUI application, without some sort of guiding principle beyond "just write more code to make it work" will know exactly what is meant by this.
 
-One idea that has developed recently gives a powerful conceptual framework for implementing GUIs in a way that is more robust to bugs than previous approaches. It's not always given a name, but when it is, it is known alternately as [The Elm Architecture](https://guide.elm-lang.org/architecture/) or [Model-View-Update](https://thomasbandt.com/model-view-update). React and Redux together give an implementation of this idea, though they use slightly different terminology: Redux uses "state" to refer to what others would call "model", and it uses the term "reducer" for code that implements the "update" in Elm and Model-View-Update.
+One idea that has developed recently gives a powerful conceptual framework for implementing GUIs in a way that is more robust to bugs than previous approaches. It's not always given a name, but when it is, it is known alternately as [The Elm Architecture](https://guide.elm-lang.org/architecture/) or [Model-View-Update](https://thomasbandt.com/model-view-update), or [unidirectional data flow](https://redux.js.org/basics/data-flow). React and Redux together give an implementation of this idea, though they use slightly different terminology: Redux uses "state" to refer to what others would call "model", and it uses the term "reducer" for code that implements the "update" in Elm and Model-View-Update.
 
 Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea.
 
 The basic idea is that the entire application can be thought of as consisting of three parts:
+
+1. **State**, all the information needed for the application.
+
+2. **View**, a function that takes the state as input and produces HTML code (i.e., a view that the user can see on the screen) as output.
+
+3. **Update**, a function that modifies the state.
+
+The idea of *unidirectional data flow* is that information flow goes like this: 
+
+state &rarr; view &rarr; update &rarr; state
+
+and never in the reverse direction. In other words, view is a function of the state (i.e., the state directly influences the view, but nothing in the view every directly influences the state), user interaction with the view (and some other asynchronous events such as files loading) cause an update (but update code never modifies the view directly), and updating alters the state (which is in turn what triggers the view to be re-rendered).
+
+We get into more detail below.
 
 1. **State:** 
     This is a single immutable Dart object that contains (nearly) all the information needed by the application in order to run. Because it should be immutable, we encode the state (and all of its constituent objects) using the built_value and built_collection libraries.
@@ -121,8 +135,8 @@ The basic idea is that the entire application can be thought of as consisting of
 
     If the app were pure React/Redux, the entire view itself would be a single React component, which contains only other React components. Because of the current use of libraries such as [svg-pan-zoom](https://github.com/ariutta/svg-pan-zoom) that are not React, the top-level view is implemented manually in Dart (using the `dart:html` package), but some nodes in the view tree are React components, and those subtrees implement the pure React/Redux ideas.
 
-3. **Reducers:**
-    Reducers are how the state changes. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll. A state change could also be initiated by something like an asynchronous network event or a file loading.
+3. **Reducers (a.k.a. update):**
+    Reducers are how the state updates in response user interaction (or more general interaction with the "environment", e.g., files loading or HTTP requests arriving). Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll. A state change could also be initiated by something like an asynchronous network event or a file loading.
 
     The key idea is that the code that detects the user interaction (or more generally, interaction from some source outside the app) does not simply reach into the state and change it. Instead, this is where Redux comes in. It uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. Rather than modifying the state, an *Action* object is created describing the change that is supposed to happen. This object is given to Redux (by calling a function called `dispatch`), which in turn calls the *reducer*, which is a function taking as input the old state and the action, and returning the new state.
 
