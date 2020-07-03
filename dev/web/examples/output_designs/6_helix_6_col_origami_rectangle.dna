@@ -1,0 +1,178 @@
+{
+  "version": "0.9.0",
+  "grid": "square",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"grid_position": [0, 2]},
+    {"grid_position": [0, 3]},
+    {"grid_position": [0, 4]},
+    {"grid_position": [0, 5]}
+  ],
+  "strands": [
+    {
+      "color": "#0066cc",
+      "sequence": "TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCT",
+      "domains": [
+        {"helix": 5, "forward": false, "start": 0, "end": 48},
+        {"helix": 4, "forward": true, "start": 0, "end": 48},
+        {"helix": 3, "forward": false, "start": 0, "end": 48},
+        {"helix": 2, "forward": true, "start": 0, "end": 48},
+        {"helix": 1, "forward": false, "start": 0, "end": 48},
+        {"helix": 0, "forward": true, "start": 0, "end": 96},
+        {"helix": 1, "forward": false, "start": 48, "end": 96},
+        {"helix": 2, "forward": true, "start": 48, "end": 96},
+        {"helix": 3, "forward": false, "start": 48, "end": 96},
+        {"helix": 4, "forward": true, "start": 48, "end": 96},
+        {"helix": 5, "forward": false, "start": 48, "end": 96}
+      ],
+      "is_scaffold": true
+    },
+    {
+      "color": "#333333",
+      "sequence": "CGAGATAGGGTTGAGTAATCAAAAGAATAGCC",
+      "domains": [
+        {"helix": 1, "forward": true, "start": 0, "end": 16},
+        {"helix": 0, "forward": false, "start": 0, "end": 16}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "CGATGGCCCACTACGTAAACCGTCTATCAGGG",
+      "domains": [
+        {"helix": 3, "forward": true, "start": 0, "end": 16},
+        {"helix": 2, "forward": false, "start": 0, "end": 16}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "TAGAGCTTGACGGGGAAAGGGAGCCCCCGATT",
+      "domains": [
+        {"helix": 5, "forward": true, "start": 0, "end": 16},
+        {"helix": 4, "forward": false, "start": 0, "end": 16}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GCAAGCGGTCCACGCTCCCTGAGAGAGTTGCA",
+      "domains": [
+        {"helix": 0, "forward": false, "start": 80, "end": 96},
+        {"helix": 1, "forward": true, "start": 80, "end": 96}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CGGTTTGCGTATTGGGAACGCGCGGGGAGAGG",
+      "domains": [
+        {"helix": 2, "forward": false, "start": 80, "end": 96},
+        {"helix": 3, "forward": true, "start": 80, "end": 96}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "ACTCACATTAATTGCGCCTAATGAGTGAGCTA",
+      "domains": [
+        {"helix": 4, "forward": false, "start": 80, "end": 96},
+        {"helix": 5, "forward": true, "start": 80, "end": 96}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "CCAGCAGGCGAAAATCCTGTTTGATGGTGGTT",
+      "domains": [
+        {"helix": 0, "forward": false, "start": 40, "end": 72}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "TGGACTCCACAAGAGTCCACTATTCGGGCAAC",
+      "domains": [
+        {"helix": 2, "forward": false, "start": 32, "end": 40},
+        {"helix": 1, "forward": true, "start": 32, "end": 56}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "AGCTGATTCTTTTCACCAGTGAGAAAAGAACG",
+      "domains": [
+        {"helix": 1, "forward": true, "start": 56, "end": 64},
+        {"helix": 2, "forward": false, "start": 40, "end": 64}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GTAAAGCACAAGTTTTTTGGGGTCCCTGTCGT",
+      "domains": [
+        {"helix": 4, "forward": false, "start": 32, "end": 40},
+        {"helix": 3, "forward": true, "start": 32, "end": 56}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "GCCAGCTGCTTTCCAGTCGGGAAAGAGGTGCC",
+      "domains": [
+        {"helix": 3, "forward": true, "start": 56, "end": 64},
+        {"helix": 4, "forward": false, "start": 40, "end": 64}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GAACGTGGCGAGAAAGGAAGGGAAAGCCGGAA",
+      "domains": [
+        {"helix": 5, "forward": true, "start": 24, "end": 56}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "CCGAAATCGGCAAAATCCCTTATAGTTGTTCC",
+      "domains": [
+        {"helix": 0, "forward": false, "start": 16, "end": 40},
+        {"helix": 1, "forward": true, "start": 16, "end": 24}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "AGTTTGGAAACGTCAAAGGGCGAAGAACCATC",
+      "domains": [
+        {"helix": 1, "forward": true, "start": 24, "end": 32},
+        {"helix": 2, "forward": false, "start": 16, "end": 32},
+        {"helix": 3, "forward": true, "start": 16, "end": 24}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "ACCCAAATCTAAATCGGAACCCTAAAGCCGGC",
+      "domains": [
+        {"helix": 3, "forward": true, "start": 24, "end": 32},
+        {"helix": 4, "forward": false, "start": 16, "end": 32},
+        {"helix": 5, "forward": true, "start": 16, "end": 24}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "GCATAAAGTGTAAAGCCTGGGGTGTTGCGCTC",
+      "domains": [
+        {"helix": 5, "forward": true, "start": 56, "end": 80},
+        {"helix": 4, "forward": false, "start": 72, "end": 80}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "TGGTTTTTGCCCTTCACCGCCTGGGGTTTGCC",
+      "domains": [
+        {"helix": 2, "forward": false, "start": 64, "end": 72},
+        {"helix": 1, "forward": true, "start": 64, "end": 80},
+        {"helix": 0, "forward": false, "start": 72, "end": 80}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "ACTGCCCGCATTAATGAATCGGCCCGCCAGGG",
+      "domains": [
+        {"helix": 4, "forward": false, "start": 64, "end": 72},
+        {"helix": 3, "forward": true, "start": 64, "end": 80},
+        {"helix": 2, "forward": false, "start": 72, "end": 80}
+      ]
+    }
+  ]
+}

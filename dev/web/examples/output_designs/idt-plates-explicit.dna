@@ -1,0 +1,1891 @@
+{
+  "version": "0.9.0",
+  "grid": "square",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]}
+  ],
+  "strands": [
+    {
+      "color": "#32b86c",
+      "sequence": "CTATTATAGTTTTACCCTGA",
+      "idt": {"name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 0, "end": 10},
+        {"helix": 1, "forward": false, "start": 0, "end": 10}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "CAGAAGCAAAAAATCAGGTC",
+      "idt": {"name": "staple2", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 10, "end": 20},
+        {"helix": 1, "forward": false, "start": 10, "end": 20}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "GCGGATTGCACATAAATCAA",
+      "idt": {"name": "staple3", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 20, "end": 30},
+        {"helix": 1, "forward": false, "start": 20, "end": 30}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "TCAAAAAGATCGAGAATGAC",
+      "idt": {"name": "staple4", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 30, "end": 40},
+        {"helix": 1, "forward": false, "start": 30, "end": 40}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "TAAGAGGAAGGTTCAGAAAA",
+      "idt": {"name": "staple5", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 40, "end": 50},
+        {"helix": 1, "forward": false, "start": 40, "end": 50}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CCCGAAAGACGCTTTAAACA",
+      "idt": {"name": "staple6", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 50, "end": 60},
+        {"helix": 1, "forward": false, "start": 50, "end": 60}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TTCAAATATCCCCCTCAAAT",
+      "idt": {"name": "staple7", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 60, "end": 70},
+        {"helix": 1, "forward": false, "start": 60, "end": 70}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "GCGTTTTAATTCATTGAATC",
+      "idt": {"name": "staple8", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 70, "end": 80},
+        {"helix": 1, "forward": false, "start": 70, "end": 80}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "TCGAGCTTCATCATAAATAT",
+      "idt": {"name": "staple9", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 80, "end": 90},
+        {"helix": 1, "forward": false, "start": 80, "end": 90}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "AAGCGAACCATGCGGAATCG",
+      "idt": {"name": "staple10", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 90, "end": 100},
+        {"helix": 1, "forward": false, "start": 90, "end": 100}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "GACCGGAAGCCGTCCAATAC",
+      "idt": {"name": "staple11", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 100, "end": 110},
+        {"helix": 1, "forward": false, "start": 100, "end": 110}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AAACTCCAACGACTGGATAG",
+      "idt": {"name": "staple12", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 110, "end": 120},
+        {"helix": 1, "forward": false, "start": 110, "end": 120}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "AGGTCAGGATAAAATGTTTA",
+      "idt": {"name": "staple13", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 120, "end": 130},
+        {"helix": 1, "forward": false, "start": 120, "end": 130}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "TAGAGAGTACGGGTAATAGT",
+      "idt": {"name": "staple14", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 130, "end": 140},
+        {"helix": 1, "forward": false, "start": 130, "end": 140}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "CTTTAATTGCTTGCCAGAGG",
+      "idt": {"name": "staple15", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 140, "end": 150},
+        {"helix": 1, "forward": false, "start": 140, "end": 150}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "TCCTTTTGATAAAAGAAGTT",
+      "idt": {"name": "staple16", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 150, "end": 160},
+        {"helix": 1, "forward": false, "start": 150, "end": 160}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "AAGAGGTCATAGGCTTTTGC",
+      "idt": {"name": "staple17", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 160, "end": 170},
+        {"helix": 1, "forward": false, "start": 160, "end": 170}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "TTTTGCGGATAAATAGCGAG",
+      "idt": {"name": "staple18", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 170, "end": 180},
+        {"helix": 1, "forward": false, "start": 170, "end": 180}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "GGCTTAGAGCATAAAAACCA",
+      "idt": {"name": "staple19", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 180, "end": 190},
+        {"helix": 1, "forward": false, "start": 180, "end": 190}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TTAATTGCTGCCAGACGACG",
+      "idt": {"name": "staple20", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 190, "end": 200},
+        {"helix": 1, "forward": false, "start": 190, "end": 200}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "AATATAATGCCCCTCGTTTA",
+      "idt": {"name": "staple21", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 200, "end": 210},
+        {"helix": 1, "forward": false, "start": 200, "end": 210}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "TGTAGCTCAAACTATCATAA",
+      "idt": {"name": "staple22", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 210, "end": 220},
+        {"helix": 1, "forward": false, "start": 210, "end": 220}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "CATGTTTTAATAAGAGCAAC",
+      "idt": {"name": "staple23", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 220, "end": 230},
+        {"helix": 1, "forward": false, "start": 220, "end": 230}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "ATATGCAACTCGAGGCATAG",
+      "idt": {"name": "staple24", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 230, "end": 240},
+        {"helix": 1, "forward": false, "start": 230, "end": 240}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AAAGTACGGTAAAGGAATTA",
+      "idt": {"name": "staple25", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 240, "end": 250},
+        {"helix": 1, "forward": false, "start": 240, "end": 250}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GTCTGGAAGTCATAACGCCA",
+      "idt": {"name": "staple26", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 250, "end": 260},
+        {"helix": 1, "forward": false, "start": 250, "end": 260}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "TTCATTCCATAATGCAGATA",
+      "idt": {"name": "staple27", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 260, "end": 270},
+        {"helix": 1, "forward": false, "start": 260, "end": 270}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "ATAACAGTTGACATTCAACT",
+      "idt": {"name": "staple28", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 270, "end": 280},
+        {"helix": 1, "forward": false, "start": 270, "end": 280}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "ATTCCCAATTTAGGAATACC",
+      "idt": {"name": "staple29", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 280, "end": 290},
+        {"helix": 1, "forward": false, "start": 280, "end": 290}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "CTGCGAACGAAGTTGAGATT",
+      "idt": {"name": "staple30", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 290, "end": 300},
+        {"helix": 1, "forward": false, "start": 290, "end": 300}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GTAGATTTAGAAGATTCATC",
+      "idt": {"name": "staple31", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 300, "end": 310},
+        {"helix": 1, "forward": false, "start": 300, "end": 310}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "TTTGACCATTTACAGGTAGA",
+      "idt": {"name": "staple32", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 310, "end": 320},
+        {"helix": 1, "forward": false, "start": 310, "end": 320}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "AGATACATTTACAACATTAT",
+      "idt": {"name": "staple33", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 320, "end": 330},
+        {"helix": 1, "forward": false, "start": 320, "end": 330}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "CGCAAATGGTAACTAACGGA",
+      "idt": {"name": "staple34", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 330, "end": 340},
+        {"helix": 1, "forward": false, "start": 330, "end": 340}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "CAATAACCTGTAATAAAACG",
+      "idt": {"name": "staple35", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 340, "end": 350},
+        {"helix": 1, "forward": false, "start": 340, "end": 350}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "TTTAGCTATAAAATCTACGT",
+      "idt": {"name": "staple36", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 350, "end": 360},
+        {"helix": 1, "forward": false, "start": 350, "end": 360}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TTTTCATTTGTTGGGAAGAA",
+      "idt": {"name": "staple37", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 360, "end": 370},
+        {"helix": 1, "forward": false, "start": 360, "end": 370}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "GGGCGCGAGCAGTCAGGACG",
+      "idt": {"name": "staple38", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 370, "end": 380},
+        {"helix": 1, "forward": false, "start": 370, "end": 380}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "TGAAAAGGTGTCATTATACC",
+      "idt": {"name": "staple39", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 380, "end": 390},
+        {"helix": 1, "forward": false, "start": 380, "end": 390}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "GCATCAATTCAAGAACTGGC",
+      "idt": {"name": "staple40", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 390, "end": 400},
+        {"helix": 1, "forward": false, "start": 390, "end": 400}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TACTAATAGTATGCGATTTT",
+      "idt": {"name": "staple41", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 400, "end": 410},
+        {"helix": 1, "forward": false, "start": 400, "end": 410}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "AGTAGCATTAGAATTACCTT",
+      "idt": {"name": "staple42", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 410, "end": 420},
+        {"helix": 1, "forward": false, "start": 410, "end": 420}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "ACATCCAATATAATCATTGT",
+      "idt": {"name": "staple43", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 420, "end": 430},
+        {"helix": 1, "forward": false, "start": 420, "end": 430}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "AATCATACAGATTTCAACTT",
+      "idt": {"name": "staple44", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 430, "end": 440},
+        {"helix": 1, "forward": false, "start": 430, "end": 440}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "GCAAGGCAAAAGATGGTTTA",
+      "idt": {"name": "staple45", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 440, "end": 450},
+        {"helix": 1, "forward": false, "start": 440, "end": 450}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "GAATTAGCAAATTGGGCTTG",
+      "idt": {"name": "staple46", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 450, "end": 460},
+        {"helix": 1, "forward": false, "start": 450, "end": 460}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "AATTAAGCAACGAGTAGTAA",
+      "idt": {"name": "staple47", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 460, "end": 470},
+        {"helix": 1, "forward": false, "start": 460, "end": 470}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "TAAAGCCTCAAACACCAGAA",
+      "idt": {"name": "staple48", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 470, "end": 480},
+        {"helix": 1, "forward": false, "start": 470, "end": 480}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GAGCATAAAGCCTGACGAGA",
+      "idt": {"name": "staple49", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 480, "end": 490},
+        {"helix": 1, "forward": false, "start": 480, "end": 490}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "CTAAATCGGTTAAGGCTTGC",
+      "idt": {"name": "staple50", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 490, "end": 500},
+        {"helix": 1, "forward": false, "start": 490, "end": 500}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "TGTACCAAAAATTCAGTGAA",
+      "idt": {"name": "staple51", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 500, "end": 510},
+        {"helix": 1, "forward": false, "start": 500, "end": 510}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "ACATTATGACAAAGCTGCTC",
+      "idt": {"name": "staple52", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 510, "end": 520},
+        {"helix": 1, "forward": false, "start": 510, "end": 520}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "CCTGTAATACTCAACGTAAC",
+      "idt": {"name": "staple53", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 520, "end": 530},
+        {"helix": 1, "forward": false, "start": 520, "end": 530}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TTTTGCGGGAATTACCCAAA",
+      "idt": {"name": "staple54", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 530, "end": 540},
+        {"helix": 1, "forward": false, "start": 530, "end": 540}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "GAAGCCTTTACCGGATATTC",
+      "idt": {"name": "staple55", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 540, "end": 550},
+        {"helix": 1, "forward": false, "start": 540, "end": 550}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "TTTCAACGCATTGACAAGAA",
+      "idt": {"name": "staple56", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 550, "end": 560},
+        {"helix": 1, "forward": false, "start": 550, "end": 560}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "AGGATAAAAAAAGAGTAATC",
+      "idt": {"name": "staple57", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 560, "end": 570},
+        {"helix": 1, "forward": false, "start": 560, "end": 570}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "TTTTTAGAACGACCTTCATC",
+      "idt": {"name": "staple58", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 570, "end": 580},
+        {"helix": 1, "forward": false, "start": 570, "end": 580}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "CCTCATATATTAGGCTGGCT",
+      "idt": {"name": "staple59", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 580, "end": 590},
+        {"helix": 1, "forward": false, "start": 580, "end": 590}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "TTTAAATGCAACCAGGCGCA",
+      "idt": {"name": "staple60", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 590, "end": 600},
+        {"helix": 1, "forward": false, "start": 590, "end": 600}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "ATGCCTGAGTCGGTGTACAG",
+      "idt": {"name": "staple61", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 600, "end": 610},
+        {"helix": 1, "forward": false, "start": 600, "end": 610}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "AATGTGTAGGGACAGATGAA",
+      "idt": {"name": "staple62", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 610, "end": 620},
+        {"helix": 1, "forward": false, "start": 610, "end": 620}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TAAAGATTCATTTGAAAGAG",
+      "idt": {"name": "staple63", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 620, "end": 630},
+        {"helix": 1, "forward": false, "start": 620, "end": 630}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AAAGGGTGAGACTGACCAAC",
+      "idt": {"name": "staple64", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 630, "end": 640},
+        {"helix": 1, "forward": false, "start": 630, "end": 640}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "AAAGGCCGGAAGGGAACCGA",
+      "idt": {"name": "staple65", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 640, "end": 650},
+        {"helix": 1, "forward": false, "start": 640, "end": 650}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "GACAGTCAAAGTCAATCATA",
+      "idt": {"name": "staple66", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 650, "end": 660},
+        {"helix": 1, "forward": false, "start": 650, "end": 660}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TCACCATCAAGGCGCAGACG",
+      "idt": {"name": "staple67", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 660, "end": 670},
+        {"helix": 1, "forward": false, "start": 660, "end": 670}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "TATGATATTCGCCGGAACGA",
+      "idt": {"name": "staple68", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 670, "end": 680},
+        {"helix": 1, "forward": false, "start": 670, "end": 680}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "AACCGTTCTAATGTTACTTA",
+      "idt": {"name": "staple69", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 680, "end": 690},
+        {"helix": 1, "forward": false, "start": 680, "end": 690}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GCTGATAAATGACCTGCTCC",
+      "idt": {"name": "staple70", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 690, "end": 700},
+        {"helix": 1, "forward": false, "start": 690, "end": 700}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "TAATGCCGGACGAAATCCGC",
+      "idt": {"name": "staple71", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 700, "end": 710},
+        {"helix": 1, "forward": false, "start": 700, "end": 710}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "GAGGGTAGCTTAAATTGTGT",
+      "idt": {"name": "staple72", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 710, "end": 720},
+        {"helix": 1, "forward": false, "start": 710, "end": 720}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "ATTTTTGAGACATCGCCTGA",
+      "idt": {"name": "staple73", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 720, "end": 730},
+        {"helix": 1, "forward": false, "start": 720, "end": 730}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "GATCTACAAAAGATTTGTAT",
+      "idt": {"name": "staple74", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 730, "end": 740},
+        {"helix": 1, "forward": false, "start": 730, "end": 740}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GGCTATCAGGAGTACAACGG",
+      "idt": {"name": "staple75", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 740, "end": 750},
+        {"helix": 1, "forward": false, "start": 740, "end": 750}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TCATTGCCTGCGCGAAACAA",
+      "idt": {"name": "staple76", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 750, "end": 760},
+        {"helix": 1, "forward": false, "start": 750, "end": 760}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AGAGTCTGGATTATACCAAG",
+      "idt": {"name": "staple77", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 760, "end": 770},
+        {"helix": 1, "forward": false, "start": 760, "end": 770}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GCAAACAAGACCCCCAGCGA",
+      "idt": {"name": "staple78", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 770, "end": 780},
+        {"helix": 1, "forward": false, "start": 770, "end": 780}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "GAATCGATGATCATCTTTGA",
+      "idt": {"name": "staple79", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 780, "end": 790},
+        {"helix": 1, "forward": false, "start": 780, "end": 790}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "ACGGTAATCGACTAAAACAC",
+      "idt": {"name": "staple80", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 790, "end": 800},
+        {"helix": 1, "forward": false, "start": 790, "end": 800}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "TAAAACTAGCAAAAGAATAC",
+      "idt": {"name": "staple81", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 800, "end": 810},
+        {"helix": 1, "forward": false, "start": 800, "end": 810}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "ATGTCAATCACGAAAGAGGC",
+      "idt": {"name": "staple82", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 810, "end": 820},
+        {"helix": 1, "forward": false, "start": 810, "end": 820}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "TATGTACCCCCAACCTAAAA",
+      "idt": {"name": "staple83", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 820, "end": 830},
+        {"helix": 1, "forward": false, "start": 820, "end": 830}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "GGTTGATAATACGAAGGCAC",
+      "idt": {"name": "staple84", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 830, "end": 840},
+        {"helix": 1, "forward": false, "start": 830, "end": 840}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "CAGAAAAGCCTAATGCCACT",
+      "idt": {"name": "staple85", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 840, "end": 850},
+        {"helix": 1, "forward": false, "start": 840, "end": 850}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "CCAAAAACAGGTAAAATACG",
+      "idt": {"name": "staple86", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 850, "end": 860},
+        {"helix": 1, "forward": false, "start": 850, "end": 860}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "GAAGATTGTACATTAAACGG",
+      "idt": {"name": "staple87", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 860, "end": 870},
+        {"helix": 1, "forward": false, "start": 860, "end": 870}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "TAAGCAAATAAGGAAGTTTC",
+      "idt": {"name": "staple88", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 870, "end": 880},
+        {"helix": 1, "forward": false, "start": 870, "end": 880}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TTTAAATTGTCTTTTTCATG",
+      "idt": {"name": "staple89", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 880, "end": 890},
+        {"helix": 1, "forward": false, "start": 880, "end": 890}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AAACGTTAATGGACTAAAGA",
+      "idt": {"name": "staple90", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 890, "end": 900},
+        {"helix": 1, "forward": false, "start": 890, "end": 900}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "ATTTTGTTAAGAGGCTTTGA",
+      "idt": {"name": "staple91", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 900, "end": 910},
+        {"helix": 1, "forward": false, "start": 900, "end": 910}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "AATTCGCATTAACGGCTACA",
+      "idt": {"name": "staple92", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 910, "end": 920},
+        {"helix": 1, "forward": false, "start": 910, "end": 920}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "AAATTTTTGTCGAGGGTAGC",
+      "idt": {"name": "staple93", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 920, "end": 930},
+        {"helix": 1, "forward": false, "start": 920, "end": 930}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "TAAATCAGCTAGCATCGGAA",
+      "idt": {"name": "staple94", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 930, "end": 940},
+        {"helix": 1, "forward": false, "start": 930, "end": 940}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "CATTTTTTAAAGCGAAAGAC",
+      "idt": {"name": "staple95", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 940, "end": 950},
+        {"helix": 1, "forward": false, "start": 940, "end": 950}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "CCAATAGGAACACCCTCAGC",
+      "idt": {"name": "staple96", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 950, "end": 960},
+        {"helix": 1, "forward": false, "start": 950, "end": 960}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CGCCATCAAAGCGGGATCGT",
+      "idt": {"name": "staple97", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 960, "end": 970},
+        {"helix": 1, "forward": false, "start": 960, "end": 970}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "AATAATTCGCGGCCGCTTTT",
+      "idt": {"name": "staple98", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 970, "end": 980},
+        {"helix": 1, "forward": false, "start": 970, "end": 980}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "GTCTGGCCTTGGGAGTTAAA",
+      "idt": {"name": "staple99", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 980, "end": 990},
+        {"helix": 1, "forward": false, "start": 980, "end": 990}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "CCTGTAGCCAGAGGCTTGCA",
+      "idt": {"name": "staple100", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 990, "end": 1000},
+        {"helix": 1, "forward": false, "start": 990, "end": 1000}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GCTTTCATCATTCGGTCGCT",
+      "idt": {"name": "staple101", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1000, "end": 1010},
+        {"helix": 1, "forward": false, "start": 1000, "end": 1010}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "ACATTAAATGAACCGATATA",
+      "idt": {"name": "staple102", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1010, "end": 1020},
+        {"helix": 1, "forward": false, "start": 1010, "end": 1020}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "TGAGCGAGTAGCCCACGCAT",
+      "idt": {"name": "staple103", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1020, "end": 1030},
+        {"helix": 1, "forward": false, "start": 1020, "end": 1030}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "ACAACCCGTCAACAACCATC",
+      "idt": {"name": "staple104", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1030, "end": 1040},
+        {"helix": 1, "forward": false, "start": 1030, "end": 1040}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "GGATTCTCCGCGACAATGAC",
+      "idt": {"name": "staple105", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1040, "end": 1050},
+        {"helix": 1, "forward": false, "start": 1040, "end": 1050}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TGGGAACAAAATAGTTGCGC",
+      "idt": {"name": "staple106", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1050, "end": 1060},
+        {"helix": 1, "forward": false, "start": 1050, "end": 1060}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "CGGCGGATTGCTTGATACCG",
+      "idt": {"name": "staple107", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1060, "end": 1070},
+        {"helix": 1, "forward": false, "start": 1060, "end": 1070}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "ACCGTAATGGTCTTAAACAG",
+      "idt": {"name": "staple108", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1070, "end": 1080},
+        {"helix": 1, "forward": false, "start": 1070, "end": 1080}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GATAGGTCACGAGGTGAATT",
+      "idt": {"name": "staple109", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1080, "end": 1090},
+        {"helix": 1, "forward": false, "start": 1080, "end": 1090}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "GTTGGTGTAGGCTTGCTTTC",
+      "idt": {"name": "staple110", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1090, "end": 1100},
+        {"helix": 1, "forward": false, "start": 1090, "end": 1100}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "ATGGGCGCATCGGTTTATCA",
+      "idt": {"name": "staple111", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1100, "end": 1110},
+        {"helix": 1, "forward": false, "start": 1100, "end": 1110}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "CGTAACCGTGTTAATTGTAT",
+      "idt": {"name": "staple112", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1110, "end": 1120},
+        {"helix": 1, "forward": false, "start": 1110, "end": 1120}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "CATCTGCCAGAAAGGAGCCT",
+      "idt": {"name": "staple113", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1120, "end": 1130},
+        {"helix": 1, "forward": false, "start": 1120, "end": 1130}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "TTTGAGGGGAAAAGGCTCCA",
+      "idt": {"name": "staple114", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1130, "end": 1140},
+        {"helix": 1, "forward": false, "start": 1130, "end": 1140}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "CGACGACAGTTCTCCAAAAA",
+      "idt": {"name": "staple115", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1140, "end": 1150},
+        {"helix": 1, "forward": false, "start": 1140, "end": 1150}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "ATCGGCCTCAACGTTGAAAA",
+      "idt": {"name": "staple116", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1150, "end": 1160},
+        {"helix": 1, "forward": false, "start": 1150, "end": 1160}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GGAAGATCGCTAATTTTTTC",
+      "idt": {"name": "staple117", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1160, "end": 1170},
+        {"helix": 1, "forward": false, "start": 1160, "end": 1170}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "ACTCCAGCCATTGCGAATAA",
+      "idt": {"name": "staple118", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1170, "end": 1180},
+        {"helix": 1, "forward": false, "start": 1170, "end": 1180}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "GCTTTCCGGCACTAAAGGAA",
+      "idt": {"name": "staple119", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1180, "end": 1190},
+        {"helix": 1, "forward": false, "start": 1180, "end": 1190}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "ACCGCTTCTGGAAAGGAACA",
+      "idt": {"name": "staple120", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H3"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1190, "end": 1200},
+        {"helix": 1, "forward": false, "start": 1190, "end": 1200}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "GTGCCGGAAAAGTGAGAATA",
+      "idt": {"name": "staple121", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1200, "end": 1210},
+        {"helix": 1, "forward": false, "start": 1200, "end": 1210}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "CCAGGCAAAGGTTTCAGCGG",
+      "idt": {"name": "staple122", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1210, "end": 1220},
+        {"helix": 1, "forward": false, "start": 1210, "end": 1220}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CGCCATTCGCACTTTCAACA",
+      "idt": {"name": "staple123", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1220, "end": 1230},
+        {"helix": 1, "forward": false, "start": 1220, "end": 1230}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "CATTCAGGCTTTGCTAAACA",
+      "idt": {"name": "staple124", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1230, "end": 1240},
+        {"helix": 1, "forward": false, "start": 1230, "end": 1240}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "GCGCAACTGTGTATGGGATT",
+      "idt": {"name": "staple125", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1240, "end": 1250},
+        {"helix": 1, "forward": false, "start": 1240, "end": 1250}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "TGGGAAGGGCTGAATTTTCT",
+      "idt": {"name": "staple126", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1250, "end": 1260},
+        {"helix": 1, "forward": false, "start": 1250, "end": 1260}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GATCGGTGCGCGTTAGTAAA",
+      "idt": {"name": "staple127", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1260, "end": 1270},
+        {"helix": 1, "forward": false, "start": 1260, "end": 1270}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "GGCCTCTTCGTCTTTCCAGA",
+      "idt": {"name": "staple128", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H4"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1270, "end": 1280},
+        {"helix": 1, "forward": false, "start": 1270, "end": 1280}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "CTATTACGCCAGTTTTGTCG",
+      "idt": {"name": "staple129", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1280, "end": 1290},
+        {"helix": 1, "forward": false, "start": 1280, "end": 1290}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "AGCTGGCGAAAACGATCTAA",
+      "idt": {"name": "staple130", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1290, "end": 1300},
+        {"helix": 1, "forward": false, "start": 1290, "end": 1300}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "AGGGGGATGTTAGTTAGCGT",
+      "idt": {"name": "staple131", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1300, "end": 1310},
+        {"helix": 1, "forward": false, "start": 1300, "end": 1310}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "GCTGCAAGGCACAGCCCTCA",
+      "idt": {"name": "staple132", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1310, "end": 1320},
+        {"helix": 1, "forward": false, "start": 1310, "end": 1320}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "GATTAAGTTGCATTCCACAG",
+      "idt": {"name": "staple133", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1320, "end": 1330},
+        {"helix": 1, "forward": false, "start": 1320, "end": 1330}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "GGTAACGCCAACGCCTGTAG",
+      "idt": {"name": "staple134", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1330, "end": 1340},
+        {"helix": 1, "forward": false, "start": 1330, "end": 1340}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GGGTTTTCCCACAAACTACA",
+      "idt": {"name": "staple135", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1340, "end": 1350},
+        {"helix": 1, "forward": false, "start": 1340, "end": 1350}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "AGTCACGACGCGTCACCAGT",
+      "idt": {"name": "staple136", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H5"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1350, "end": 1360},
+        {"helix": 1, "forward": false, "start": 1350, "end": 1360}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TTGTAAAACGCACTGAGTTT",
+      "idt": {"name": "staple137", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1360, "end": 1370},
+        {"helix": 1, "forward": false, "start": 1360, "end": 1370}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "ACGGCCAGTGTGTACCGTAA",
+      "idt": {"name": "staple138", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1370, "end": 1380},
+        {"helix": 1, "forward": false, "start": 1370, "end": 1380}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "CCAAGCTTGCTAGGAACCCA",
+      "idt": {"name": "staple139", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1380, "end": 1390},
+        {"helix": 1, "forward": false, "start": 1380, "end": 1390}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "ATGCCTGCAGGCAAGCCCAA",
+      "idt": {"name": "staple140", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1390, "end": 1400},
+        {"helix": 1, "forward": false, "start": 1390, "end": 1400}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "GTCGACTCTATTCAGGGATA",
+      "idt": {"name": "staple141", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1400, "end": 1410},
+        {"helix": 1, "forward": false, "start": 1400, "end": 1410}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "GAGGATCCCCCACCCTCATT",
+      "idt": {"name": "staple142", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1410, "end": 1420},
+        {"helix": 1, "forward": false, "start": 1410, "end": 1420}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GGGTACCGAGTCAGAGCCAC",
+      "idt": {"name": "staple143", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1420, "end": 1430},
+        {"helix": 1, "forward": false, "start": 1420, "end": 1430}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "CTCGAATTCGACCGCCACCC",
+      "idt": {"name": "staple144", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H6"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1430, "end": 1440},
+        {"helix": 1, "forward": false, "start": 1430, "end": 1440}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TAATCATGGTCACCCTCAGA",
+      "idt": {"name": "staple145", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1440, "end": 1450},
+        {"helix": 1, "forward": false, "start": 1440, "end": 1450}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "CATAGCTGTTTCAGAACCGC",
+      "idt": {"name": "staple146", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1450, "end": 1460},
+        {"helix": 1, "forward": false, "start": 1450, "end": 1460}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "TCCTGTGTGAACCGCCACCC",
+      "idt": {"name": "staple147", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1460, "end": 1470},
+        {"helix": 1, "forward": false, "start": 1460, "end": 1470}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "AATTGTTATCGAGGTTTAGT",
+      "idt": {"name": "staple148", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1470, "end": 1480},
+        {"helix": 1, "forward": false, "start": 1470, "end": 1480}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CGCTCACAATCCGTACTCAG",
+      "idt": {"name": "staple149", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1480, "end": 1490},
+        {"helix": 1, "forward": false, "start": 1480, "end": 1490}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TCCACACAACAGGTGTATCA",
+      "idt": {"name": "staple150", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1490, "end": 1500},
+        {"helix": 1, "forward": false, "start": 1490, "end": 1500}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "ATACGAGCCGAGCCCGGAAT",
+      "idt": {"name": "staple151", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1500, "end": 1510},
+        {"helix": 1, "forward": false, "start": 1500, "end": 1510}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "GAAGCATAAAATATAAGTAT",
+      "idt": {"name": "staple152", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H7"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1510, "end": 1520},
+        {"helix": 1, "forward": false, "start": 1510, "end": 1520}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GTGTAAAGCCGAGAGGGTTG",
+      "idt": {"name": "staple153", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1520, "end": 1530},
+        {"helix": 1, "forward": false, "start": 1520, "end": 1530}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TGGGGTGCCTAAGTGCCGTC",
+      "idt": {"name": "staple154", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1530, "end": 1540},
+        {"helix": 1, "forward": false, "start": 1530, "end": 1540}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "AATGAGTGAGCCAGGCGGAT",
+      "idt": {"name": "staple155", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1540, "end": 1550},
+        {"helix": 1, "forward": false, "start": 1540, "end": 1550}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "CTAACTCACATTGCTCAGTA",
+      "idt": {"name": "staple156", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1550, "end": 1560},
+        {"helix": 1, "forward": false, "start": 1550, "end": 1560}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "TTAATTGCGTTAGCGGGGTT",
+      "idt": {"name": "staple157", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1560, "end": 1570},
+        {"helix": 1, "forward": false, "start": 1560, "end": 1570}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "TGCGCTCACTGGATTAGGAT",
+      "idt": {"name": "staple158", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1570, "end": 1580},
+        {"helix": 1, "forward": false, "start": 1570, "end": 1580}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "GCCCGCTTTCCTCAAGAGAA",
+      "idt": {"name": "staple159", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1580, "end": 1590},
+        {"helix": 1, "forward": false, "start": 1580, "end": 1590}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "CAGTCGGGAAGCTGAGACTC",
+      "idt": {"name": "staple160", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H8"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1590, "end": 1600},
+        {"helix": 1, "forward": false, "start": 1590, "end": 1600}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "ACCTGTCGTGGTATTAAGAG",
+      "idt": {"name": "staple161", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1600, "end": 1610},
+        {"helix": 1, "forward": false, "start": 1600, "end": 1610}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "CCAGCTGCATAAACATGAAA",
+      "idt": {"name": "staple162", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1610, "end": 1620},
+        {"helix": 1, "forward": false, "start": 1610, "end": 1620}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TAATGAATCGTATTATTCTG",
+      "idt": {"name": "staple163", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1620, "end": 1630},
+        {"helix": 1, "forward": false, "start": 1620, "end": 1630}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "GCCAACGCGCTTTCGGAACC",
+      "idt": {"name": "staple164", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1630, "end": 1640},
+        {"helix": 1, "forward": false, "start": 1630, "end": 1640}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "GGGGAGAGGCCCCCTGCCTA",
+      "idt": {"name": "staple165", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1640, "end": 1650},
+        {"helix": 1, "forward": false, "start": 1640, "end": 1650}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "GGTTTGCGTACAGTTAATGC",
+      "idt": {"name": "staple166", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1650, "end": 1660},
+        {"helix": 1, "forward": false, "start": 1650, "end": 1660}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TTGGGCGCCACCCGTATAAA",
+      "idt": {"name": "staple167", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1660, "end": 1670},
+        {"helix": 1, "forward": false, "start": 1660, "end": 1670}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "GGGTGGTTTTAGTAACAGTG",
+      "idt": {"name": "staple168", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H9"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1670, "end": 1680},
+        {"helix": 1, "forward": false, "start": 1670, "end": 1680}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "TCTTTTCACCCAGTGCCTTG",
+      "idt": {"name": "staple169", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1680, "end": 1690},
+        {"helix": 1, "forward": false, "start": 1680, "end": 1690}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "AGTGAGACGGTTAACGGGGT",
+      "idt": {"name": "staple170", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1690, "end": 1700},
+        {"helix": 1, "forward": false, "start": 1690, "end": 1700}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "GCAACAGCTGGTAATAAGTT",
+      "idt": {"name": "staple171", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1700, "end": 1710},
+        {"helix": 1, "forward": false, "start": 1700, "end": 1710}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "ATTGCCCTTCGAGTGTACTG",
+      "idt": {"name": "staple172", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1710, "end": 1720},
+        {"helix": 1, "forward": false, "start": 1710, "end": 1720}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "ACCGCCTGGCGATGATACAG",
+      "idt": {"name": "staple173", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1720, "end": 1730},
+        {"helix": 1, "forward": false, "start": 1720, "end": 1730}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "CCTGAGAGAGCATGGCTTTT",
+      "idt": {"name": "staple174", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1730, "end": 1740},
+        {"helix": 1, "forward": false, "start": 1730, "end": 1740}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "TTGCAGCAAGAAGCGTCATA",
+      "idt": {"name": "staple175", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1740, "end": 1750},
+        {"helix": 1, "forward": false, "start": 1740, "end": 1750}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "CGGTCCACGCCCGTTCCAGT",
+      "idt": {"name": "staple176", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H10"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1750, "end": 1760},
+        {"helix": 1, "forward": false, "start": 1750, "end": 1760}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "TGGTTTGCCCTCTGAATTTA",
+      "idt": {"name": "staple177", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1760, "end": 1770},
+        {"helix": 1, "forward": false, "start": 1760, "end": 1770}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "CAGCAGGCGAAAGCGCAGTC",
+      "idt": {"name": "staple178", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1770, "end": 1780},
+        {"helix": 1, "forward": false, "start": 1770, "end": 1780}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "AAATCCTGTTCCAGAATGGA",
+      "idt": {"name": "staple179", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1780, "end": 1790},
+        {"helix": 1, "forward": false, "start": 1780, "end": 1790}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "TGATGGTGGTCTCATTAAAG",
+      "idt": {"name": "staple180", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1790, "end": 1800},
+        {"helix": 1, "forward": false, "start": 1790, "end": 1800}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "TCCGAAATCGCAAATAAATC",
+      "idt": {"name": "staple181", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1800, "end": 1810},
+        {"helix": 1, "forward": false, "start": 1800, "end": 1810}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "GCAAAATCCCTATTCACAAA",
+      "idt": {"name": "staple182", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1810, "end": 1820},
+        {"helix": 1, "forward": false, "start": 1810, "end": 1820}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "TTATAAATCATTGGCCTTGA",
+      "idt": {"name": "staple183", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1820, "end": 1830},
+        {"helix": 1, "forward": false, "start": 1820, "end": 1830}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "AAAGAATAGCGGTCAGACGA",
+      "idt": {"name": "staple184", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H11"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1830, "end": 1840},
+        {"helix": 1, "forward": false, "start": 1830, "end": 1840}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "CCGAGATAGGGGTTGAGGCA",
+      "idt": {"name": "staple185", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1840, "end": 1850},
+        {"helix": 1, "forward": false, "start": 1840, "end": 1850}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "GTTGAGTGTTATTGACAGGA",
+      "idt": {"name": "staple186", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1850, "end": 1860},
+        {"helix": 1, "forward": false, "start": 1850, "end": 1860}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GTTCCAGTTTCGCCGCCAGC",
+      "idt": {"name": "staple187", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1860, "end": 1870},
+        {"helix": 1, "forward": false, "start": 1860, "end": 1870}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "GGAACAAGAGCCACCAGAGC",
+      "idt": {"name": "staple188", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1870, "end": 1880},
+        {"helix": 1, "forward": false, "start": 1870, "end": 1880}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "TCCACTATTAACCAGAACCA",
+      "idt": {"name": "staple189", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1880, "end": 1890},
+        {"helix": 1, "forward": false, "start": 1880, "end": 1890}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "AAGAACGTGGCAGAGCCGCC",
+      "idt": {"name": "staple190", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1890, "end": 1900},
+        {"helix": 1, "forward": false, "start": 1890, "end": 1900}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "ACTCCAACGTCCACCACCCT",
+      "idt": {"name": "staple191", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1900, "end": 1910},
+        {"helix": 1, "forward": false, "start": 1900, "end": 1910}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "CAAAGGGCGAACCCTCAGAG",
+      "idt": {"name": "staple192", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H12"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1910, "end": 1920},
+        {"helix": 1, "forward": false, "start": 1910, "end": 1920}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "AAAACCGTCTCAGAACCGCC",
+      "idt": {"name": "staple193", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1920, "end": 1930},
+        {"helix": 1, "forward": false, "start": 1920, "end": 1930}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "ATCAGGGCGACCGCCACCCT",
+      "idt": {"name": "staple194", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1930, "end": 1940},
+        {"helix": 1, "forward": false, "start": 1930, "end": 1940}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "TGGCCCACTATCCCTCAGAG",
+      "idt": {"name": "staple195", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1940, "end": 1950},
+        {"helix": 1, "forward": false, "start": 1940, "end": 1950}
+      ]
+    },
+    {
+      "color": "#32b86c",
+      "sequence": "CGTGAACCATCGGAACCGCC",
+      "idt": {"name": "staple196", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1950, "end": 1960},
+        {"helix": 1, "forward": false, "start": 1950, "end": 1960}
+      ]
+    },
+    {
+      "color": "#333333",
+      "sequence": "CACCCAAATCGAGCCACCAC",
+      "idt": {"name": "staple197", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1960, "end": 1970},
+        {"helix": 1, "forward": false, "start": 1960, "end": 1970}
+      ]
+    },
+    {
+      "color": "#320096",
+      "sequence": "AAGTTTTTTGACCGGAACCA",
+      "idt": {"name": "staple198", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1970, "end": 1980},
+        {"helix": 1, "forward": false, "start": 1970, "end": 1980}
+      ]
+    },
+    {
+      "color": "#03b6a2",
+      "sequence": "GGGTCGAGGTAATCAAAATC",
+      "idt": {"name": "staple199", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1980, "end": 1990},
+        {"helix": 1, "forward": false, "start": 1980, "end": 1990}
+      ]
+    },
+    {
+      "color": "#7300de",
+      "sequence": "GCCGTAAAGCATCTTTTCAT",
+      "idt": {"name": "staple200", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H1"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 1990, "end": 2000},
+        {"helix": 1, "forward": false, "start": 1990, "end": 2000}
+      ]
+    },
+    {
+      "color": "#aaaa00",
+      "sequence": "ACTAAATCGGAGCGTTTGCC",
+      "idt": {"name": "staple201", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2000, "end": 2010},
+        {"helix": 1, "forward": false, "start": 2000, "end": 2010}
+      ]
+    },
+    {
+      "color": "#b8056c",
+      "sequence": "AACCCTAAAGCCCCCTTATT",
+      "idt": {"name": "staple202", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2010, "end": 2020},
+        {"helix": 1, "forward": false, "start": 2010, "end": 2020}
+      ]
+    },
+    {
+      "color": "#007200",
+      "sequence": "GGAGCCCCCGTCGGTCATAG",
+      "idt": {"name": "staple203", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2020, "end": 2030},
+        {"helix": 1, "forward": false, "start": 2020, "end": 2030}
+      ]
+    },
+    {
+      "color": "#cc0000",
+      "sequence": "ATTTAGAGCTATCGGCATTT",
+      "idt": {"name": "staple204", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2030, "end": 2040},
+        {"helix": 1, "forward": false, "start": 2030, "end": 2040}
+      ]
+    },
+    {
+      "color": "#f7931e",
+      "sequence": "TGACGGGGAAGCGCGTTTTC",
+      "idt": {"name": "staple205", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2040, "end": 2050},
+        {"helix": 1, "forward": false, "start": 2040, "end": 2050}
+      ]
+    },
+    {
+      "color": "#f74308",
+      "sequence": "AGCCGGCGAATCAGACTGTA",
+      "idt": {"name": "staple206", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2050, "end": 2060},
+        {"helix": 1, "forward": false, "start": 2050, "end": 2060}
+      ]
+    },
+    {
+      "color": "#57bb00",
+      "sequence": "CGTGGCGAGAGCCTTTAGCG",
+      "idt": {"name": "staple207", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2060, "end": 2070},
+        {"helix": 1, "forward": false, "start": 2060, "end": 2070}
+      ]
+    },
+    {
+      "color": "#888888",
+      "sequence": "AAGGAAGGGAAATCAAGTTT",
+      "idt": {"name": "staple208", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H2"},
+      "domains": [
+        {"helix": 0, "forward": true, "start": 2070, "end": 2080},
+        {"helix": 1, "forward": false, "start": 2070, "end": 2080}
+      ]
+    },
+    {
+      "color": "#0066cc",
+      "sequence": "TCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGACCCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGTGGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGGATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGAAAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAAGCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATTGTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGCAAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGTGCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAACGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACAGGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACGTTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTACCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTATCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCATTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACCGATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGAATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACTCGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATTCAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGTCTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAATAGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCCGCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGTCTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCTCAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCAGTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCAAGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATGCGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATGGAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGAGTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAAGTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTCCCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCACCTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTTTAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACAAAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGGTTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTGAGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTTCTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTCAAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTTTCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTGGTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCGGTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTGATT",
+      "domains": [
+        {"helix": 0, "forward": false, "start": 0, "end": 2080},
+        {"helix": 1, "forward": true, "start": 0, "end": 2080}
+      ],
+      "is_scaffold": true
+    }
+  ]
+}

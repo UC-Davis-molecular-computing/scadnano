@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "helices": [
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"grid_position": [0, 2]},
+    {"grid_position": [0, 3]},
+    {"grid_position": [0, 4]},
+    {"grid_position": [0, 5]},
+    {"grid_position": [0, 6]},
+    {"grid_position": [0, 7]},
+    {"grid_position": [0, 8]},
+    {"grid_position": [0, 9]},
+    {"grid_position": [0, 10]}
+  ],
+  "strands": [
+    {
+      "color": "#0066cc",
+      "domains": [
+        {"helix": 10, "forward": true, "start": 0, "end": 112},
+        {"helix": 9, "forward": false, "start": 0, "end": 112},
+        {"helix": 8, "forward": true, "start": 0, "end": 112},
+        {"helix": 7, "forward": false, "start": 0, "end": 112},
+        {"helix": 6, "forward": true, "start": 0, "end": 112},
+        {"helix": 5, "forward": false, "start": 0, "end": 112},
+        {"helix": 4, "forward": true, "start": 0, "end": 112},
+        {"helix": 3, "forward": false, "start": 0, "end": 112},
+        {"helix": 2, "forward": true, "start": 0, "end": 112},
+        {"helix": 1, "forward": false, "start": 0, "end": 112},
+        {"helix": 0, "forward": true, "start": 0, "end": 112},
+        {"loopout": 33}
+      ],
+      "is_scaffold": true
+    }
+  ]
+}
