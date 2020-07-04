@@ -7,6 +7,7 @@ import 'package:scadnano/src/state/unused_fields.dart';
 
 import '../json_serializable.dart';
 import '../serializers.dart';
+import 'geometry.dart';
 import 'grid.dart';
 import 'strand.dart';
 import 'grid_position.dart';
@@ -58,6 +59,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   factory Helix({
     int idx,
     Grid grid,
+    Geometry geometry,
     int view_order = null,
     GridPosition grid_position = null,
     num roll = constants.default_helix_roll,
@@ -75,6 +77,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return Helix.from((b) => b
       ..idx = idx
       ..view_order = view_order
+      ..geometry = geometry?.toBuilder()
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
@@ -97,6 +100,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   int get view_order;
 
   Grid get grid;
+
+  Geometry get geometry;
 
   /// position within square/hex/honeycomb integer grid (side view)
   @nullable
@@ -147,7 +152,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   @memoized
   Position3D get default_position {
-    num x = min_offset * constants.BASE_WIDTH_SVG;
+    num x = min_offset * geometry.rise_per_base_pair;
     Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_y_axis);
     Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_y_axis).rebuild((b) => b..x = x);
     return position3d;
@@ -239,7 +244,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// given helix idx and offset,  depending on whether strand is going forward or not.
   /// This is relative to the starting point of the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
-    num x = constants.BASE_WIDTH_SVG / 2 + offset * constants.BASE_WIDTH_SVG + this.svg_position.x;
+    num x = constants.BASE_WIDTH_SVG / 2.0 + offset * constants.BASE_WIDTH_SVG; // + this.svg_position.x;
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
     num y = svg_height() / 4.0 + this.svg_position.y;

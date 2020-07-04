@@ -169,6 +169,7 @@ DNADesign helix_add_dna_design_reducer(DNADesign design, AppState state, actions
   Helix helix = Helix(
     idx: new_idx,
     grid: design.grid,
+    geometry: design.geometry,
     grid_position: action.grid_position,
     position: action.position,
     min_offset: min_offset,
@@ -177,9 +178,8 @@ DNADesign helix_add_dna_design_reducer(DNADesign design, AppState state, actions
   );
   Map<int, Helix> helices = design.helices.toMap();
   helices[helix.idx] = helix;
-  var geometry = design.geometry;
   bool invert_y_axis = state.ui_state.invert_y_axis;
-  helices = util.helices_assign_svg(geometry, invert_y_axis, helices, design.grid);
+  helices = util.helices_assign_svg(design.geometry, invert_y_axis, helices, design.grid);
 
   return design.rebuild((d) => d..helices.replace(helices));
 }

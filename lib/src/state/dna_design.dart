@@ -610,6 +610,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
       }
       helix_builder.invert_y_axis = invert_y_axis;
       helix_builder.grid = dna_design_builder.grid;
+      helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDNADesignError(
             'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
