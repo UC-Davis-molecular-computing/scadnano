@@ -4,7 +4,9 @@ import 'package:over_react/src/component/error_boundary.dart';
 import 'package:over_react/src/component/error_boundary_api.dart';
 import 'package:over_react/src/component/error_boundary_recoverable.dart';
 
+import '../app.dart';
 import '../constants.dart' as constants;
+import '../actions/actions.dart' as actions;
 
 part 'design_main_error_boundary.over_react.g.dart';
 
@@ -67,22 +69,8 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
           //  )
           ;
 
-      return
-//        (Dom.div()
-//        ..key = 'ohnoes'
-//        ..addTestId('ErrorBoundary.unrecoverableErrorInnerHtmlContainerNode'))(
-          (Dom.foreignObject()
-            ..x = "0"
-            ..y = "0"
-            ..width = "100%"
-            ..height = "100%")(
-        (Dom.div()..className = 'error-message')(
-          (Dom.pre()..className = 'error-pre')(
-            escaped_error_message,
-          ),
-        ),
-      );
-//      );
+      send_error(escaped_error_message);
+      return null;
     }
     return (RecoverableErrorBoundary()
       ..addTestId('RecoverableErrorBoundary')
@@ -127,4 +115,9 @@ class DesignMainErrorBoundaryComponent<T extends DesignMainErrorBoundaryProps,
 
     (props.logger ?? Logger(_loggerName)).severe(message, error, info.dartStackTrace);
   }
+}
+
+send_error(String escaped_error_message) async{
+  app.dispatch(actions.ErrorMessageSet(escaped_error_message));
+  app.view.design_view.render(app.state);
 }

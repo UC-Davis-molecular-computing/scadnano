@@ -8,16 +8,14 @@ import 'package:react/react.dart' as react;
 import 'package:react/react_client.dart';
 
 import '../state/context_menu.dart';
-import '../state/dialog.dart';
 import '../state/geometry.dart';
 import '../state/grid.dart';
-import '../state/grid_position.dart';
-import '../state/position3d.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'helix_context_menu.dart';
 import 'pure_component.dart';
 
 part 'design_main_helix.over_react.g.dart';
@@ -47,13 +45,11 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     // for helix circles
     var cx = -(2 * constants.BASE_WIDTH_SVG + geometry.distance_between_helices_main_svg / 2);
-    var cy = helix.svg_height() / 2.0;
+    var cy = helix.svg_position.y + helix.svg_height() / 2.0;
 
     // for helix horizontal lines
     num width = helix.svg_width();
     num height = helix.svg_height();
-
-    num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
 
     var horz_line_paths = _horz_line_paths(helix);
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
@@ -61,9 +57,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     Point<num> translation = helix_main_view_translation(helix);
 
-    return (Dom.g()
-      ..className = 'helix-main-view'
-      ..transform = 'translate(${translation.x} ${translation.y})')([
+    return (Dom.g()..className = 'helix-main-view')([
       (Dom.circle()
         ..className = 'main-view-helix-circle'
         ..id = helix_circle_id()
@@ -79,6 +73,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.g()
         ..className = 'helix-lines-group'
+//        ..transform = 'translate(${translation.x} ${translation.y})'
         ..key = 'helix-lines-group')(
         (Dom.path()
           ..className = 'helix-lines helix-horz-line'
@@ -101,8 +96,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         (Dom.rect()
 //          ..onClick = start_strand_create
           ..onPointerDown = start_strand_create
-          ..x = x_start
-          ..y = '0'
+          ..x = helix.svg_position.x
+          ..y = helix.svg_position.y
           ..width = '$width'
           ..height = '$height'
           ..className = 'helix-invisible-rect'
@@ -126,6 +121,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var elt = querySelector('#${id}');
       elt.removeEventListener('contextmenu', on_context_menu);
     }
+    super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
@@ -133,7 +129,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     if (!event.shiftKey) {
       event.preventDefault();
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_helix(props.helix).build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
+              position: event.page)));
     }
   }
 
@@ -145,234 +143,9 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
   }
 
-  helix_adjust_length() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
-  }
-
-  helix_adjust_major_tick_marks() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
-  }
-
-  helix_adjust_roll() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_roll);
-  }
-
-  helix_adjust_position() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_position);
-  }
-
-  helix_adjust_grid_position() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_grid_position);
-  }
-
-  Future<void> dialog_helix_adjust_length() async {
-    Helix helix = props.helix;
-    int helix_idx = helix.idx;
-
-    var dialog = Dialog(title: 'adjust helix length', items: [
-      DialogNumber(label: 'minimum', value: helix.min_offset),
-      DialogNumber(label: 'maximum', value: helix.max_offset),
-      DialogCheckbox(label: 'apply to all helices', value: props.helix_change_apply_to_all),
-    ]);
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    int min_offset = (results[0] as DialogNumber).value;
-    int max_offset = (results[1] as DialogNumber).value;
-    bool apply_to_all = (results[2] as DialogCheckbox).value;
-
-    if (min_offset >= max_offset) {
-      window.alert('minimum offset ${min_offset} must be strictly less than maximum offset, '
-          'but maximum offset is ${max_offset}');
-      return;
-    }
-
-    if (apply_to_all) {
-      app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
-    } else {
-      app.dispatch(
-          actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
-    }
-  }
-
-  Future<void> dialog_helix_adjust_roll() async {
-    Helix helix = props.helix;
-    int helix_idx = helix.idx;
-
-    var dialog = Dialog(title: 'adjust helix roll (degrees)', items: [
-      DialogFloatingNumber(label: 'roll', value: helix.roll),
-    ]);
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    double roll = (results[0] as DialogFloatingNumber).value;
-    roll = roll % 360;
-
-    app.dispatch(actions.HelixRollSet(helix_idx: helix_idx, roll: roll));
-  }
-
-  Future<void> dialog_helix_adjust_major_tick_marks() async {
-    Helix helix = props.helix;
-    int helix_idx = helix.idx;
-    Grid grid = props.grid;
-
-    var dialog = Dialog(title: 'adjust helix tick marks', items: [
-      DialogCheckbox(label: 'regular spacing', value: helix.major_tick_distance != null),
-      DialogNumber(
-          label: 'regular distance', value: helix.major_tick_distance ?? grid.default_major_tick_distance()),
-      DialogText(
-          label: 'varying major tick distances (space-separated)',
-          value: helix.major_ticks == null ? '' : util.deltas(helix.major_ticks).join(' ')),
-      DialogCheckbox(label: 'apply to all', value: props.helix_change_apply_to_all),
-    ], disable_when_on: {
-      2: 0
-    }, disable_when_off: {
-      1: 0
-    });
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    bool use_major_tick_distance = (results[0] as DialogCheckbox).value;
-    int major_tick_distance = (results[1] as DialogNumber).value;
-    List<String> major_ticks_str =
-        (results[2] as DialogText).value.trim().split(' ').where((token) => token.isNotEmpty).toList();
-    bool apply_to_all = (results[3] as DialogCheckbox).value;
-
-    List<int> major_ticks = [];
-    if (!use_major_tick_distance && major_ticks_str.isNotEmpty) {
-      for (var major_tick_str in major_ticks_str) {
-        int major_tick = int.tryParse(major_tick_str);
-        if (major_tick == null) {
-          window.alert('"${major_tick_str}" is not a valid integer');
-          return;
-        } else if (major_tick <= 0 && major_ticks.isNotEmpty) {
-          window.alert('non-positive value ${major_tick} can only be used if it is the first element '
-              'in the list, specifying where the first tick should be; all others must be positive offsets '
-              'from the previous tick mark');
-          return;
-        } else {
-          major_ticks.add(major_tick + (major_ticks.isEmpty ? 0 : major_ticks.last));
-        }
-      }
-
-      int t = major_ticks.firstWhere((t) => t < helix.min_offset, orElse: () => null);
-      if (t != null) {
-        window.alert('major tick ${t} is less than minimum offset ${helix.min_offset}');
-        return;
-      }
-
-      // TODO: avoid global variable here if possible (move this logic to middleware)
-      if (apply_to_all) {
-        for (var other_helix in app.state.dna_design.helices.values) {
-          t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
-          if (t != null) {
-            window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
-            return;
-          }
-        }
-//        for (var other_helix in app.state.dna_design.helices.values) {
-//          t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
-//          if (t != null) {
-//            window.alert("major tick ${t} is greater than maximum offset ${other_helix.max_offset}, "
-//                "so I'm only going up to the major tick just before that");
-//          }
-//        }
-      }
-    }
-
-    actions.Action action;
-    if (apply_to_all) {
-      if (use_major_tick_distance) {
-        action = actions.HelixMajorTickDistanceChangeAll(major_tick_distance: major_tick_distance);
-      } else {
-        action = actions.HelixMajorTicksChangeAll(major_ticks: major_ticks.toBuiltList());
-      }
-    } else {
-      if (use_major_tick_distance) {
-        action = actions.HelixMajorTickDistanceChange(
-            helix_idx: helix_idx, major_tick_distance: major_tick_distance);
-      } else {
-        action = actions.HelixMajorTicksChange(helix_idx: helix_idx, major_ticks: major_ticks.toBuiltList());
-      }
-    }
-    app.dispatch(action);
-  }
-
-  Future<void> dialog_helix_adjust_grid_position() async {
-    var grid_position = props.helix.grid_position ?? GridPosition(0, 0);
-
-    var dialog = Dialog(title: 'adjust helix grid position', items: [
-      DialogNumber(label: 'h', value: grid_position.h),
-      DialogNumber(label: 'v', value: grid_position.v),
-    ]);
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    num h = (results[0] as DialogNumber).value;
-    num v = (results[1] as DialogNumber).value;
-
-    app.dispatch(actions.HelixGridPositionSet(helix: props.helix, grid_position: GridPosition(h, v)));
-  }
-
-  Future<void> dialog_helix_adjust_position() async {
-    var position = props.helix.position ?? Position3D();
-
-    var dialog = Dialog(title: 'adjust helix position', items: [
-      DialogFloatingNumber(label: 'x', value: position.x),
-      DialogFloatingNumber(label: 'y', value: position.y),
-      DialogFloatingNumber(label: 'z', value: position.z),
-    ]);
-
-    List<DialogItem> results = await util.dialog(dialog);
-    if (results == null) return;
-
-    num x = (results[0] as DialogFloatingNumber).value;
-    num y = (results[1] as DialogFloatingNumber).value;
-    num z = (results[2] as DialogFloatingNumber).value;
-
-    // TODO: (check validity)
-    app.dispatch(actions.HelixPositionSet(
-        helix_idx: props.helix.idx,
-        position: Position3D(
-          x: x,
-          y: y,
-          z: z,
-        )));
-  }
-
   String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
-
-  List<ContextMenuItem> context_menu_helix(Helix helix) {
-    ContextMenuItem context_menu_item_adjust_position = (props.helix.grid == Grid.none)
-        ? ContextMenuItem(
-            title: 'adjust position',
-            on_click: helix_adjust_position,
-          )
-        : ContextMenuItem(
-            title: 'adjust grid position',
-            on_click: helix_adjust_grid_position,
-          );
-
-    return [
-      ContextMenuItem(
-        title: 'adjust length',
-        on_click: helix_adjust_length,
-      ),
-      ContextMenuItem(
-        title: 'adjust tick marks',
-        on_click: helix_adjust_major_tick_marks,
-      ),
-      ContextMenuItem(
-        title: 'adjust roll',
-        on_click: helix_adjust_roll,
-      ),
-      context_menu_item_adjust_position,
-    ];
-  }
 
   final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
 
@@ -408,7 +181,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var helix = props.helix;
     List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    num y = helix.svg_height() +
+    num y = helix.svg_position.y +
+        helix.svg_height() +
         DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
         (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
@@ -426,7 +200,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     for (var entry in map_offset_to_distance.entries) {
       var base = entry.key;
       var distance = entry.value;
-      var x = base * constants.BASE_WIDTH_SVG;
+
+      var x = helix.svg_position.x + base * constants.BASE_WIDTH_SVG;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
@@ -447,14 +222,17 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 String _horz_line_paths(Helix helix) {
   num width = helix.svg_width();
   num height = helix.svg_height();
-  num x_start = helix.min_offset * constants.BASE_WIDTH_SVG;
+  num x_start = helix.svg_position.x;
   num x_end = x_start + width;
+  num y_start = helix.svg_position.y;
+  num y_mid = y_start + height / 2.0;
+  num y_end = y_start + height;
 
-  return 'M $x_start 0 '
+  return 'M $x_start $y_start '
       'H $x_end '
-      'M $x_start ${height / 2.0} '
+      'M $x_start $y_mid '
       'H $x_end '
-      'M $x_start $height '
+      'M $x_start $y_end '
       'H $x_end';
 }
 
@@ -470,11 +248,13 @@ Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance
   List<String> path_cmds_vert_minor = [];
   List<String> path_cmds_vert_major = [];
 
+  num y = helix.svg_position.y;
+
   for (int base = helix.min_offset; base <= helix.max_offset; base++) {
     var base_minus_min_offset = base; // - helix.min_offset;
     var x = base_minus_min_offset * constants.BASE_WIDTH_SVG;
     var path_cmds = major_ticks.contains(base) ? path_cmds_vert_major : path_cmds_vert_minor;
-    path_cmds.add('M $x 0');
+    path_cmds.add('M $x $y');
     path_cmds.add('v ${helix.svg_height()}');
     x += constants.BASE_WIDTH_SVG;
   }

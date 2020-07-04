@@ -8,7 +8,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 
 > <ins>scadnano: A browser-based, scriptable tool for designing DNA nanostructures</ins>.  
   David Doty, Benjamin L Lee, and Tristan Stérin.  
-  DNA 2020: *Proceedings of the 26th International Conference on DNA Computing and Molecular Programming*
+  DNA 2020: *Proceedings of the 26th International Conference on DNA Computing and Molecular Programming*  
   [ [paper](https://arxiv.org/abs/2005.11841) | [BibTeX](https://web.cs.ucdavis.edu/~doty/papers/scadnano.bib) ]
 
 ## Table of contents
@@ -61,7 +61,9 @@ Please file bug reports and make feature requests as GitHub repository issues in
 or the
 [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
-Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time. However, when a breaking change is made, this will increment the minor or major version numbers in both libraries (version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9).
+Early versions of this project didn't have well-defined versions. However, we will try to announce breaking changes (and possibly new features) under the [GitHub releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases). The version numbers in this web interface repo and the [Python library repo](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases) won't always advance at the same time.
+
+Following [semantic versioning](https://semver.org/), version numbers are major.minor.patch, i.e., version 0.9.2 has minor version number 9. Prior to version 1.0.0, when a breaking change is made, this will increment the minor version (for example, going from 0.9.4 to 0.10.0). After version 1.0.0, breaking changes will increment the major version.
 
 
 ## Reporting issues
@@ -95,6 +97,21 @@ so repeatedly saving the file will change its name every time.
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
+
+
+## Stable and development versions
+
+- stable: https://scadnano.org
+- dev: https://scadnano.org/dev
+
+The scadnano stable version matches what is on the [master branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano).
+The scadnano dev version matches what is on the [dev branch of the web interface code repository](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev).
+
+
+Releases of the stable version are explained on the [releases page](https://github.com/UC-Davis-molecular-computing/scadnano/releases).
+When [issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues) are handled in a release, they are closed at the time the changes make their way to the master branch.
+If an issue is handled in the dev branch, the issue remains open, but you will see a comment that looks something like this: 
+"*dave-doty added a commit that referenced this issue 17 hours ago @dave-doty make width of File menu just enough to fit all entries on one line; fixes #339*". These comments can help you decide if you want to use the latest version of scadnano (https://scadnano.org/dev), which has fixed an issue, before it makes its way to the stable version (https://scadnano.org).
 
 
 

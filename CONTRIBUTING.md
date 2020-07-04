@@ -296,16 +296,35 @@ For many typical features one would want to add that involve changing some aspec
 
   Since DesignMain is a connected component, at the top of the file we can see how `DesignMainStrandsProps.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
 
-  The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it to `DesignMainStrandModificationDomain`, which needs it directly. However, in our experience, the way OverReact and OverReactRedux and currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass properties down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
+  The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly.
+  
+  However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass properties down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
 
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
 ## Pushing to the repository and documenting changes
 
-All local commits should be push to the `dev` branch. More advanced features, for example something that takes days to implement, and might involve potentially breaking other features, should be pushed to a separate branch specific to that feature, which is then merged into `dev`. Make sure you pull changes from the repository and resolve any conflicts before pushing to the `dev` branch. 
+Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch.
 
-Pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+For any more significant change that is made (e.g., closing an issue, adding a new feature), follow these steps:
+
+1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description. For example, *"problem with loading gridless design"* is a bad title. A better title is *"loading gridless design with negative x coordinates throws exception"*.
+
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
+
+3. If it is about fixing a bug, add tests to reproduce the bug before working on fixing it.
+
+
+4. If it is about implementing a feature, add tests to test the feature.
+
+5. Work entirely in that branch to fix the issue.
+
+6. Run unit tests and ensure they pass.
+
+7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
+
+Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 
@@ -313,7 +332,9 @@ Although the GitHub web interface abbreviates long commit messages, the full com
 
 However, commit descriptions are not shown in the release notes. In GitHub desktop these are two separate fields; on the command line they appear to be indicated by two separate usages of the `-m` flag: https://stackoverflow.com/questions/16122234/how-to-commit-a-change-with-both-message-and-description-from-the-command-li.
 
-So make sure that everything people should see in the automatically generated release notes is included in the commit message. GitHub lets you [automatically close](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords) an issue by putting a phrase such as "closes #14". Although the release notes will link to the issue that was closed, they [will not describe it in any other way](https://github.com/marvinpinto/actions/issues/34). So it is important, for the sake of having readable release notes, to describe briefly the issue that was closed in the commit message. (One simple way to do this is to copy/paste the title of the issue into the commit message.)
+So make sure that everything people should see in the automatically generated release notes is included in the commit message. GitHub lets you [automatically close](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords) an issue by putting a phrase such as "closes #14". Although the release notes will link to the issue that was closed, they [will not describe it in any other way](https://github.com/marvinpinto/actions/issues/34). So it is important, for the sake of having readable release notes, to describe briefly the issue that was closed in the commit message.
+
+One simple way to do this is to copy/paste the title of the issue into the commit message. For this reason, issue titles should be stated in terms of what change should happen to handle an issue. For example, instead of the title being *"helices are displayed at the wrong y-coordinate in the honeycomb grid"*, a better issue title is *"display helices at the proper y-coordinate in the honeycomb grid"*. That way, when the issue is fixed in a commit, that title can simply be copied and pasted as the description of what was done for the commit message. (But you should still add "fixes #<issue_number>" in the commit message.)
 
 Users can read the description by clicking on the link to the commit or the pull request, but anything is put there, then the commit message should say something like "click on commit/PR for more details".
 

@@ -28,6 +28,7 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
     } else {
       return DesignSide()
         ..helices = state.dna_design.helices
+        ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
         ..edit_modes = state.ui_state.edit_modes
@@ -51,6 +52,7 @@ mixin DesignSideProps on UiProps {
   Grid grid;
   GridPosition grid_position_mouse_cursor;
   bool invert_y;
+  bool helix_change_apply_to_all;
 }
 
 class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
@@ -76,6 +78,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
 //        (ConnectedDesignSideHelix()
           ..helix = helix
           ..grid = props.grid
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..edit_modes = props.edit_modes
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
           ..selected = helix_idxs_selected.contains(helix.idx)

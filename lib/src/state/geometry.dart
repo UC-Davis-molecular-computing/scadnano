@@ -43,7 +43,7 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
 
   /************************ end BuiltValue boilerplate ************************/
 
-  /// What is this?
+  /// Distance in nanometers between two adjacent base pairs along the length of a DNA double helix.
   double get rise_per_base_pair;
 
   /// Radius of a DNA helix in nanometers.

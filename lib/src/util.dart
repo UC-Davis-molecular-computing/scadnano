@@ -265,6 +265,7 @@ Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<in
     }
     prev_y = y;
     helix = helix.rebuild((b) => b
+      ..geometry.replace(geometry)
       ..svg_position_ = Point<num>(x, y)
       ..invert_y_axis = invert_y_axis);
     prev_helix = helix;

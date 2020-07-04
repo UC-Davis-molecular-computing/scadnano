@@ -20,11 +20,6 @@ DNADesign dna_design_reducer(DNADesign dna_design, action) {
   return dna_design;
 }
 
-// This isn't strictly necessary, but it would be nice for debugging if, whenever there is an error,
-// the DNADesign in the Model is null.
-//DNADesign error_message_set_reducer(DNADesign dna_design, actions.ErrorMessageSet action) =>
-//    action.error_message == null || action.error_message.length == 0 ? dna_design : null;
-
 DNADesign dna_design_global_reducer(DNADesign dna_design, AppState state, action) {
   dna_design = dna_design_composed_global_reducer(dna_design, state, action);
   dna_design = dna_design_whole_global_reducer(dna_design, state, action);
@@ -53,8 +48,14 @@ DNADesign dna_design_composed_global_reducer(DNADesign dna_design, AppState stat
 // whole: operate on the whole DNADesign
 // local: don't need the whole AppState
 Reducer<DNADesign> dna_design_whole_local_reducer = combineReducers([
+  TypedReducer<DNADesign, actions.ErrorMessageSet>(dna_design_error_message_set_reducer),
   TypedReducer<DNADesign, actions.InlineInsertionsDeletions>(inline_insertions_deletions_reducer),
 ]);
+
+// This isn't strictly necessary, but it would be nice for debugging if, whenever there is an error,
+// the DNADesign in the Model is null.
+DNADesign dna_design_error_message_set_reducer(DNADesign dna_design, actions.ErrorMessageSet action) =>
+    action.error_message == null || action.error_message.length == 0 ? dna_design : null;
 
 // whole: operate on the whole DNADesign
 // global: need the whole AppState
