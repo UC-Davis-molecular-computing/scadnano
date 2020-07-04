@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/position3d.dart';
@@ -14,6 +15,7 @@ import 'design_side_rotation.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
+import 'helix_context_menu.dart';
 import 'pure_component.dart';
 
 part 'design_side_helix.over_react.g.dart';
@@ -30,6 +32,7 @@ mixin DesignSideHelixProps on UiProps {
   Helix helix;
   bool selected;
   bool mouse_is_over;
+  bool helix_change_apply_to_all;
   MouseoverData mouseover_data;
   BuiltSet<EditModeChoice> edit_modes;
   Grid grid;
@@ -77,10 +80,12 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..className = classname_circle
         ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
         ..onClick = ((e) => this._handle_click(e, helix))
+        ..id = helix_circle_id()
         ..key = 'circle')(Dom.svgTitle()(tooltip)),
       (Dom.text()
             ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'font-size': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
+            ..id = helix_text_id()
             ..onClick = ((e) => this._handle_click(e, helix))
             ..key = 'text')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
@@ -106,6 +111,38 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     Point<num> center = util.position3d_to_side_view_svg(pos3d, helix.invert_y_axis);
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
+  }
+
+  String helix_circle_id() => 'side-view-helix-circle-${props.helix.idx}';
+
+  String helix_text_id() => 'side-view-helix-text-${props.helix.idx}';
+
+  // needed for capturing right-click events with React:
+  // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
+  @override
+  componentDidMount() {
+    for (var id in [helix_circle_id(), helix_text_id()]) {
+      var elt = querySelector('#${id}');
+      elt.addEventListener('contextmenu', on_context_menu);
+    }
+  }
+
+  @override
+  componentWillUnmount() {
+    for (var id in [helix_circle_id(), helix_text_id()]) {
+      var elt = querySelector('#${id}');
+      elt.removeEventListener('contextmenu', on_context_menu);
+    }
+    super.componentWillUnmount();
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(), position: event.page)));
+    }
   }
 
   _handle_click(SyntheticMouseEvent event, Helix helix) {

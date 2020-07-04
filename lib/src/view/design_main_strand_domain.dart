@@ -103,6 +103,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   componentWillUnmount() {
     var element = querySelector('#${props.domain.id()}');
     element.removeEventListener('contextmenu', on_context_menu);
+    super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {
