@@ -17,6 +17,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Reporting issues](#reporting-issues)
 * [Tutorial](#tutorial)
 * [**WARNING: Save your work**](#warning-save-your-work)
+* [Stable and development versions](#stable-and-development-versions)
 * [Terminology](#terminology)
 * [Grid types](#grid-types)
 * [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)

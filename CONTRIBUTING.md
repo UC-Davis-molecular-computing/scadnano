@@ -324,7 +324,11 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
 
+8. After merging, it will say that the branch you just merged from can be safely deleted. Delete it.
+
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+
+In this case, even though it will say "the dev branch can be safely deleted", **do not delete the dev branch**.
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 
