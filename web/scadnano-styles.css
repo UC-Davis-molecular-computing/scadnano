@@ -674,6 +674,11 @@ html, body {
     color: rgba(0,0,0, 0.5);
 }
 
+/* File checkmarks appear on one line */
+#file-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
 /* View checkmarks appear on one line */
 #view-nav-dropdown + .dropdown-menu label {
     white-space: nowrap;
