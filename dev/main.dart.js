@@ -15375,7 +15375,7 @@ if(d0==null)return c2
 t=new N.el()
 s=u.N
 r=u.z
-q=H.k(E.fS(d0,"version","0.9.4",C.t,c2,c2,s,r))
+q=H.k(E.fS(d0,"version","0.9.6",C.t,c2,c2,s,r))
 t.gbK().b=q
 E.af0(t.gbK().b).ab(0,E.af0("0.9.0"))
 q=u.m
@@ -37381,7 +37381,7 @@ gES:function(){var t=this.e,s=u.S
 return J.dj(t.ga5(t),new N.Qe(),s).bg(0,H.eS(P.ye(),s))},
 gEU:function(){var t=this.e,s=u.S
 return J.dj(t.ga5(t),new N.Qf(),s).bg(0,H.eS(P.a4W(),s))},
-dG:function(a5){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b=this,a="major_tick_distance",a0=u.N,a1=u.z,a2=P.an(["version","0.9.4"],a0,a1),a3=b.r,a4=H.B(a3)
+dG:function(a5){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b=this,a="major_tick_distance",a0=u.N,a1=u.z,a2=P.an(["version","0.9.6"],a0,a1),a3=b.r,a4=H.B(a3)
 a2.a2(0,S.d5(a3.b,a3.a,a4.c,a4.Q[1]))
 a4=b.b
 a2.u(0,"grid",a4.a)
