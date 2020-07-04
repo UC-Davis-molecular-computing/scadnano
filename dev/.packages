@@ -49,7 +49,6 @@ matcher:packages/matcher/
 memoize:packages/memoize/
 meta:packages/meta/
 mime:packages/mime/
-multi_server_socket:packages/multi_server_socket/
 node_interop:packages/node_interop/
 node_io:packages/node_io/
 node_preamble:packages/node_preamble/

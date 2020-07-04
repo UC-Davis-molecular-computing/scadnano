@@ -107,7 +107,6 @@ examples/output_designs/many_helices_modifications.dna
 examples/output_designs/proposal.dna
 examples/output_designs/sst-motif-3_2.dna
 examples/output_designs/sst-motif-4_1.dna
-examples/output_designs/two_helices_with_unused_fields.dna
 examples/proposal.py
 examples/run_all_examples.py
 examples/sst-motif-3_2.py
@@ -218,7 +217,6 @@ external-libs/pyodide/webencodings.js
 external-libs/pyodide/webworker.js
 external-libs/pyodide/webworker_dev.js
 external-libs/react-bootstrap.js
-external-libs/react-color.min.js
 external-libs/react-dnd/ReactDnD.js
 external-libs/react-dnd/ReactDnD.min.js
 external-libs/react-dnd/ReactDnDHTML5Backend.js
