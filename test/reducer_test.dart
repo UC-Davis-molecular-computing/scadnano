@@ -210,14 +210,15 @@ main() {
     expect(actual_position, expected_position);
   });
 
-  test('should add a helix in response to HelixAdd', () {
+  test('should_add_helix_in_response_to_HelixAdd', () {
     var state = util.default_state();
     final grid_position = new GridPosition(5, 10);
 
     state = app_state_reducer(state, new HelixAdd(grid_position: grid_position));
 
-    final correct_helix = new Helix(grid_position: grid_position, idx: 0, grid: Grid.square);
     var geometry = state.dna_design.geometry;
+    final correct_helix =
+        new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
     var correct_helices =
         util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, Grid.square);
     expect(state.dna_design.helices, BuiltMap<int, Helix>(correct_helices));
@@ -6214,10 +6215,9 @@ main() {
 
       expect_app_state_equal(state, expected_state);
     },
-        skip:
-            'DD: I had trouble understanding what the above test is testing. Individual domains supposedly '
-                'cannot be selected, so I was not clear on what it means to send an Action to Select a '
-                'single domain.');
+        skip: 'DD: I had trouble understanding what the above test is testing. Individual domains supposedly '
+            'cannot be selected, so I was not clear on what it means to send an Action to Select a '
+            'single domain.');
 
     test('nick', () {
       // nick at helix 6 offset 0
