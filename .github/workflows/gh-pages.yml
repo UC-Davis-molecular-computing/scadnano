@@ -11,6 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: gh-pages-repo
+      
+          
+
       - name: Setup Dart SDK Step 1
         run: sudo apt-get update
       - name: Setup Dart SDK Step 2
@@ -23,18 +30,19 @@ jobs:
         run: sudo apt-get update
       - name: Setup Dart SDK Step 6
         run: sudo apt-get -y install dart
-      - uses: actions/checkout@v1
       - name: Install dependencies
         run: PATH="$PATH:/usr/lib/dart/bin" pub get
         
       - name: Install webdev
         run: PATH="$PATH:/usr/lib/dart/bin" pub global activate webdev
 
-      - name: Build
-        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build
+
+      - name: Build into gh-pages repo
+        run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo
+      
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: gh-pages-repo
