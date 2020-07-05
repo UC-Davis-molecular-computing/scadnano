@@ -486,11 +486,13 @@ class DesignViewComponent {
 
       react_dom.render(
         over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)((ReduxProvider()
-            ..store = app.store_selection_box
-            ..context = app.context_selection_box)(
-            ConnectedDesignSide()(),
-          )),
+          (ReduxProvider()..store = app.store)(
+            (ReduxProvider()
+              ..store = app.store_selection_box
+              ..context = app.context_selection_box)(
+              ConnectedDesignSide()(),
+            ),
+          ),
         ),
         querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
       );
