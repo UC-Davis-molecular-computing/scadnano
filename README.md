@@ -550,3 +550,4 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
