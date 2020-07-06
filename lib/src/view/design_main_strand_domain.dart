@@ -118,7 +118,9 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   }
 }
 
-tooltip_text(Domain domain) => '${domain.forward ? 'forward' : 'reverse'} domain:\n'
+tooltip_text(Domain domain) => ''
+    '${domain.forward ? 'forward' : 'reverse'} domain:\n'
+    '    length=${domain.dna_length()}\n'
     '    helix=${domain.helix}\n'
     '    start=${domain.start}\n'
     '    end=${domain.end}' +
