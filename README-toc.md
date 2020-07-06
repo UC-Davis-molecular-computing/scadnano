@@ -14,3 +14,4 @@
   * [Assigning DNA](#assigning-dna)
   * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
   * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+  * [Performance tips](#performance-tips)
