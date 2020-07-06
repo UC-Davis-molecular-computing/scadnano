@@ -7,6 +7,7 @@ environment:
   sdk: ^2.6.0
 
 dependencies:
+  analyzer: '>= 0.39.10 < 0.39.12'
   spreadsheet_decoder: ^1.1.0
   smart_dialogs: ^2.1.2
   dialog: ^0.7.0
