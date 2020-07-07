@@ -423,6 +423,8 @@ There are different edit modes available, shown on the right side of the screen.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
   To unselect all selected objects, press the Esc key.
 
+  **Note:** On a Mac, the delete key has the meaning of backspace, which in most browsers will try to go to the previous page. To delete an item on a Mac, press fn+delete.
+
   The following are the types of objects that can be selected in the main view.
 
   - **5' end (strand), 3' end (strand):**
