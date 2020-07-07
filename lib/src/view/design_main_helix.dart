@@ -110,17 +110,21 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.addEventListener('contextmenu', on_context_menu);
+    if (props.show_helix_circles) {
+      for (var id in [helix_circle_id(), helix_text_id()]) {
+        var elt = querySelector('#${id}');
+        elt.addEventListener('contextmenu', on_context_menu);
+      }
     }
   }
 
   @override
   componentWillUnmount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.removeEventListener('contextmenu', on_context_menu);
+    if (props.show_helix_circles) {
+      for (var id in [helix_circle_id(), helix_text_id()]) {
+        var elt = querySelector('#${id}');
+        elt.removeEventListener('contextmenu', on_context_menu);
+      }
     }
     super.componentWillUnmount();
   }
