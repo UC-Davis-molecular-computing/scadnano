@@ -53,6 +53,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna
+        ..show_helix_circles = state.ui_state.show_helix_circles_main_view
         ..design_major_tick_distance = state.dna_design.major_tick_distance
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
@@ -95,6 +96,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
+  bool show_helix_circles;
 }
 
 @Props()
@@ -124,6 +126,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
+        ..show_helix_circles = props.show_helix_circles
         ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
         ..display_base_offsets_of_major_ticks_only_first_helix =
             props.display_base_offsets_of_major_ticks_only_first_helix

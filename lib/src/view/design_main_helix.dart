@@ -35,6 +35,7 @@ mixin DesignMainHelixProps on UiProps {
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   Geometry geometry;
+  bool show_helix_circles;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -55,22 +56,22 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
 
-    Point<num> translation = helix_main_view_translation(helix);
-
     return (Dom.g()..className = 'helix-main-view')([
-      (Dom.circle()
-        ..className = 'main-view-helix-circle'
-        ..id = helix_circle_id()
-        ..cx = '$cx'
-        ..cy = '$cy'
-        ..r = '${geometry.helix_radius_svg}'
-        ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
-      (Dom.text()
-        ..className = 'main-view-helix-text'
-        ..id = helix_text_id()
-        ..x = '$cx'
-        ..y = '$cy'
-        ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
+      if (props.show_helix_circles)
+        (Dom.circle()
+          ..className = 'main-view-helix-circle'
+          ..id = helix_circle_id()
+          ..cx = '$cx'
+          ..cy = '$cy'
+          ..r = '${geometry.helix_radius_svg}'
+          ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
+      if (props.show_helix_circles)
+        (Dom.text()
+          ..className = 'main-view-helix-text'
+          ..id = helix_text_id()
+          ..x = '$cx'
+          ..y = '$cy'
+          ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.g()
         ..className = 'helix-lines-group'
 //        ..transform = 'translate(${translation.x} ${translation.y})'

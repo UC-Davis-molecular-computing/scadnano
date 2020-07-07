@@ -1966,6 +1966,22 @@ abstract class AutofitSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide helix circles/text in main view
+
+abstract class ShowHelixCirclesMainViewSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowHelixCirclesMainViewSet, ShowHelixCirclesMainViewSetBuilder> {
+  bool get show_helix_circles_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowHelixCirclesMainViewSet({bool show_helix_circles_main_view}) = _$ShowHelixCirclesMainViewSet._;
+
+  ShowHelixCirclesMainViewSet._();
+
+  static Serializer<ShowHelixCirclesMainViewSet> get serializer => _$showHelixCirclesMainViewSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png
 
 abstract class LoadDnaSequenceImageUri
