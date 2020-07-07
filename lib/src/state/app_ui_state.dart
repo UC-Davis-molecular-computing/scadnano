@@ -75,6 +75,8 @@ abstract class AppUIStateStorable
 
   bool get warn_on_exit_if_unsaved;
 
+  bool get show_helix_circles_main_view;
+
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -99,6 +101,7 @@ abstract class AppUIStateStorable
     b.loaded_script_filename = default_script_filename();
     b.invert_y_axis = false;
     b.warn_on_exit_if_unsaved = true;
+    b.show_helix_circles_main_view = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -219,6 +222,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get invert_y_axis => storables.invert_y_axis;
 
   bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
+
+  bool get show_helix_circles_main_view => storables.show_helix_circles_main_view;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);

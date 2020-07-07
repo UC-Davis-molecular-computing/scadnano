@@ -28,6 +28,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
   Geometry geometry;
+  bool show_helix_circles;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -54,6 +55,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid
           ..show_dna = props.show_dna
+          ..show_helix_circles = props.show_helix_circles
           ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
               (!props.display_base_offsets_of_major_ticks_only_first_helix ||
                   helix.view_order == first_helix_view_order)

@@ -617,7 +617,7 @@ Color parse_json_color(Object json_obj) {
           '${json_obj.runtimeType}:\n${json_obj}');
     }
   } on Exception {
-    print("'WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
+    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
     return RgbColor.name('black');
   }
 }
