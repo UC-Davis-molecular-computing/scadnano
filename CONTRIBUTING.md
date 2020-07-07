@@ -384,3 +384,4 @@ and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
 The line length should be configured to 110, as the style guide limit of 80
 is a bit too restrictive.
 
+We also follow the [OverReact style guide](https://github.com/Workiva/over_react#component-formatting), in particular, using trailing commas so that dartfmt (Dart's formatting tool) lines up the components nicely.

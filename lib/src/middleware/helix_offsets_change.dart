@@ -27,7 +27,7 @@ helix_change_offsets_middleware(Store<AppState> store, dynamic action, NextDispa
       }
     }
   } else if (action is actions.HelixOffsetChangeAll) {
-    var design = store.state.dna_design;
+    DNADesign design = store.state.dna_design;
     for (int helix_idx in design.helices.keys) {
       var domains_on_helix = design.domains_on_helix(helix_idx);
       bool helix_has_domains = domains_on_helix.isNotEmpty;
