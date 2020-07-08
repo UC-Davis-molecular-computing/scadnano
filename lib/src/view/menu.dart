@@ -55,8 +55,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
     ..invert_y_axis = state.ui_state.invert_y_axis
     ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
-    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved)
-    ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view,
+    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
+    ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view),
   // Used for component test.
   forwardRef: true,
 )(Menu);

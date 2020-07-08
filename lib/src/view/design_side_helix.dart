@@ -62,7 +62,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     // of idx, which is useful for making figures in the documentation showing how the grids work
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
     bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
-    bool SHOW__INDEX_AND_COORDINATES = props.show_grid_coordinates;
     var temp_text_for_help_doc_figure_making;
 
     String tooltip;
@@ -94,13 +93,13 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
               ? temp_text_for_help_doc_figure_making
               : props.helix.idx.toString(),
           Dom.svgTitle()(tooltip)),
-      (Dom.text()
+      if (props.show_grid_coordinates)
+        (Dom.text()
             ..style = {'font-size': 10}
             ..dominantBaseline = 'text-before-edge'
             ..textAnchor = 'middle'
-            ..y = '10'
-            ..key = 'text')(
-          SHOW__INDEX_AND_COORDINATES ? temp_text_for_help_doc_figure_making : "",),
+            ..y = constants.HELIX_RADIUS_SIDE_PIXELS/2
+            ..key = 'text')(temp_text_for_help_doc_figure_making),
           (Dom.svgTitle()(tooltip)),
     ];
 

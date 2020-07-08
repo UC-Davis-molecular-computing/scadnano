@@ -104,7 +104,7 @@ abstract class AppUIStateStorable
     b.invert_y_axis = false;
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
-    b.show_grid_coordinates_side_view = true;
+    b.show_grid_coordinates_side_view = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
