@@ -110,6 +110,9 @@ bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet acti
 bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainViewSet action) =>
     action.show_helix_circles_main_view;
 
+bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
+    action.show_grid_coordinates_side_view;
+
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
 
@@ -200,6 +203,9 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
       ..show_helix_circles_main_view =
           TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(
               storables.show_helix_circles_main_view, action)
+      ..show_grid_coordinates_side_view =
+          TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(
+              storables.show_grid_coordinates_side_view, action)
       ..strand_paste_keep_color =
           TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
       ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)

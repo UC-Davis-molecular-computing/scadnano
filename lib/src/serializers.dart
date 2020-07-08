@@ -41,6 +41,7 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
   SelectModeToggle,
   SelectModesSet,

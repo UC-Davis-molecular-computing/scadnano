@@ -33,6 +33,7 @@ mixin DesignSideHelixProps on UiProps {
   bool selected;
   bool mouse_is_over;
   bool helix_change_apply_to_all;
+  bool show_grid_coordinates;
   MouseoverData mouseover_data;
   BuiltSet<EditModeChoice> edit_modes;
   Grid grid;
@@ -62,17 +63,18 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
     bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
     var temp_text_for_help_doc_figure_making;
+    String grid_position_str;
 
     String tooltip;
     if (props.grid.is_none()) {
       var pos = props.helix.position3d();
       int precision = constants.NUM_DIGITS_PRECISION_POSITION_DISPLAYED;
       tooltip = '${pos.x.toStringAsFixed(precision)}, ${pos.y.toStringAsFixed(precision)}';
-      temp_text_for_help_doc_figure_making = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
+      grid_position_str = '${pos.x.toStringAsFixed(1)},${pos.y.toStringAsFixed(1)}';
     } else {
       var pos = props.helix.grid_position;
       tooltip = '${pos.h}, ${pos.v}';
-      temp_text_for_help_doc_figure_making = tooltip.replaceAll(' ', '');
+      grid_position_str = tooltip.replaceAll(' ', '');
     }
 
     var children = [
@@ -89,9 +91,17 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
             ..onClick = ((e) => this._handle_click(e, helix))
             ..key = 'text')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
-              ? temp_text_for_help_doc_figure_making
+              ? grid_position_str
               : props.helix.idx.toString(),
           Dom.svgTitle()(tooltip)),
+      if (props.show_grid_coordinates)
+        (Dom.text()
+            ..style = {'font-size': 10}
+            ..dominantBaseline = 'text-before-edge'
+            ..textAnchor = 'middle'
+            ..y = constants.HELIX_RADIUS_SIDE_PIXELS/2
+            ..key = 'text')(grid_position_str),
+          (Dom.svgTitle()(tooltip)),
     ];
 
 //    print('checking mouseover data');
