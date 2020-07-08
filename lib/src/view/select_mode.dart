@@ -42,9 +42,19 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
             
   @override
   render() {
+    var first_button = (Dom.button()
+      ..onClick = ((_) => props.dispatch(actions.SelectModesSet(SelectModeChoice.ends)))
+      ..className = 'mode-button ' +
+          (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
+              ? 'select-mode-button-selected'
+              : 'select-mode-button-unselected')
+      ..addTestId('scadnano.SelectModeComponent.button.all_ends')
+      ..key = 'all-ends')('all ends');
+
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
-    return [
+    var buttons = [
       (Dom.label()..key = 'label')('Select:'),
+      first_button,
       ...[
         for (var mode in modes)
           (Dom.button()
@@ -57,5 +67,6 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
             ..key = mode.display_name())(mode.display_name())
       ],
     ];
+    return buttons;
   }
 }

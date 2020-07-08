@@ -31,9 +31,9 @@ class SelectModeChoice extends EnumClass {
     } else if (this == end_3p_strand) {
       return "3' strand";
     } else if (this == end_5p_substrand) {
-      return "5' (other)";
+      return "5' domain";
     } else if (this == end_3p_substrand) {
-      return "3' (other)";
+      return "3' domain";
     } else {
       return super.toString();
     }
