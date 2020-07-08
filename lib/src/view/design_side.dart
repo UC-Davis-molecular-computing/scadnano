@@ -35,6 +35,7 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
         ..grid = state.dna_design.grid
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
         ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor
+        ..show_grid_coordinates = state.ui_state.show_grid_coordinates_side_view
         ..invert_y = state.ui_state.invert_y_axis;
     }
   },
@@ -53,6 +54,7 @@ mixin DesignSideProps on UiProps {
   GridPosition grid_position_mouse_cursor;
   bool invert_y;
   bool helix_change_apply_to_all;
+  bool show_grid_coordinates;
 }
 
 class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
@@ -81,6 +83,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..edit_modes = props.edit_modes
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
+          ..show_grid_coordinates = props.show_grid_coordinates
           ..selected = helix_idxs_selected.contains(helix.idx)
           ..mouseover_data = helix_idx_to_mouseover_data[helix.idx]
           ..key = '${helix.position_ == null ? helix.grid_position : helix.position_}')()

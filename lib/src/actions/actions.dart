@@ -1982,6 +1982,22 @@ abstract class ShowHelixCirclesMainViewSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide grid coordinates in side view
+
+abstract class ShowGridCoordinatesSideViewSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
+  bool get show_grid_coordinates_side_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowGridCoordinatesSideViewSet({bool show_grid_coordinates_side_view}) = _$ShowGridCoordinatesSideViewSet._;
+
+  ShowGridCoordinatesSideViewSet._();
+
+  static Serializer<ShowGridCoordinatesSideViewSet> get serializer => _$showGridCoordinatesSideViewSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png
 
 abstract class LoadDnaSequenceImageUri
