@@ -268,7 +268,7 @@ abstract class SelectModeToggle
 
 abstract class SelectModesSet
     with BuiltJsonSerializable
-    implements Action, Built<SelectModesSet, SelectModesSetBuilder> {
+    implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -558,9 +558,7 @@ abstract class InvertYAxisSet
 
 abstract class WarnOnExitIfUnsavedSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
+    implements AppUIStateStorableAction, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -587,7 +585,7 @@ abstract class SaveDNAFile
 
 abstract class LoadDNAFile
     with BuiltJsonSerializable, DNADesignChangingAction
-    implements Built<LoadDNAFile, LoadDNAFileBuilder> {
+    implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   // set to null when getting file from another source such as localStorage
@@ -1096,6 +1094,34 @@ abstract class HelixMajorTickDistanceChangeAll
       _$helixMajorTickDistanceChangeAllSerializer;
 }
 
+abstract class HelixMajorTickStartChange
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixMajorTickStartChange, HelixMajorTickStartChangeBuilder> {
+  int get helix_idx;
+
+  int get major_tick_start;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickStartChange({int helix_idx, int major_tick_start}) = _$HelixMajorTickStartChange._;
+
+  HelixMajorTickStartChange._();
+
+  static Serializer<HelixMajorTickStartChange> get serializer => _$helixMajorTickStartChangeSerializer;
+}
+
+abstract class HelixMajorTickStartChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMajorTickStartChangeAll, HelixMajorTickStartChangeAllBuilder> {
+  int get major_tick_start;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickStartChangeAll({int major_tick_start}) = _$HelixMajorTickStartChangeAll._;
+
+  HelixMajorTickStartChangeAll._();
+
+  static Serializer<HelixMajorTickStartChangeAll> get serializer => _$helixMajorTickStartChangeAllSerializer;
+}
+
 abstract class HelixMajorTicksChange
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixMajorTicksChange, HelixMajorTicksChangeBuilder> {
@@ -1122,6 +1148,45 @@ abstract class HelixMajorTicksChangeAll
   HelixMajorTicksChangeAll._();
 
   static Serializer<HelixMajorTicksChangeAll> get serializer => _$helixMajorTicksChangeAllSerializer;
+}
+
+// For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
+abstract class HelixMajorTickPeriodicDistancesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        HelixIndividualAction,
+        Built<HelixMajorTickPeriodicDistancesChange, HelixMajorTickPeriodicDistancesChangeBuilder> {
+  int get helix_idx;
+
+  BuiltList<int> get major_tick_periodic_distances;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickPeriodicDistancesChange(
+      {int helix_idx,
+      BuiltList<int> major_tick_periodic_distances}) = _$HelixMajorTickPeriodicDistancesChange._;
+
+  HelixMajorTickPeriodicDistancesChange._();
+
+  static Serializer<HelixMajorTickPeriodicDistancesChange> get serializer =>
+      _$helixMajorTickPeriodicDistancesChangeSerializer;
+}
+
+// For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
+abstract class HelixMajorTickPeriodicDistancesChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        Action,
+        Built<HelixMajorTickPeriodicDistancesChangeAll, HelixMajorTickPeriodicDistancesChangeAllBuilder> {
+  BuiltList<int> get major_tick_periodic_distances;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickPeriodicDistancesChangeAll({BuiltList<int> major_tick_periodic_distances}) =
+      _$HelixMajorTickPeriodicDistancesChangeAll._;
+
+  HelixMajorTickPeriodicDistancesChangeAll._();
+
+  static Serializer<HelixMajorTickPeriodicDistancesChangeAll> get serializer =>
+      _$helixMajorTickPeriodicDistancesChangeAllSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

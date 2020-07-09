@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/unused_fields.dart';
 
@@ -54,6 +55,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   factory Helix.from([void Function(HelixBuilder) updates]) = _$Helix;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   factory Helix({
@@ -66,6 +70,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     num pitch = constants.default_helix_pitch,
     num yaw = constants.default_helix_yaw,
     int min_offset = 0,
+    int major_tick_start = null,
     int max_offset = constants.default_max_offset,
     bool invert_y_axis = false,
     Position3D position = null,
@@ -73,6 +78,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   }) {
     if (view_order == null) {
       view_order = idx;
+    }
+    if (major_tick_start == null) {
+      major_tick_start = min_offset;
     }
     return Helix.from((b) => b
       ..idx = idx
@@ -88,6 +96,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..invert_y_axis = invert_y_axis
       ..min_offset = min_offset
       ..max_offset = max_offset
+      ..major_tick_start = major_tick_start
       ..unused_fields.replace({}));
   }
 
@@ -139,14 +148,17 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   bool get invert_y_axis;
 
-  @nullable
-  int get major_tick_distance;
+  // If regular or periodic distances are used, this is the starting offset
+  int get major_tick_start;
+
+  // major_tick_distance
+  BuiltList<int> get major_tick_periodic_distances;
+
+  int get major_tick_distance =>
+      major_tick_periodic_distances.length != 1 ? null : major_tick_periodic_distances.first;
 
   @nullable
   BuiltList<int> get major_ticks;
-
-  @memoized
-  int get hashCode;
 
   GridPosition default_grid_position() => GridPosition(0, this.idx);
 
@@ -189,11 +201,18 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   bool has_default_major_tick_distance() => major_tick_distance == null;
 
+  bool has_default_major_tick_periodic_distances() => major_tick_periodic_distances.isEmpty;
+
+  bool has_default_major_tick_start() => major_tick_start == min_offset;
+
   bool has_default_major_ticks() => major_ticks == null;
 
   bool has_major_tick_distance() => !has_default_major_tick_distance();
 
   bool has_major_ticks() => !has_default_major_ticks();
+
+  bool has_major_tick_periodic_distances() =>
+      major_tick_periodic_distances != null && major_tick_periodic_distances.length >= 2;
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
@@ -226,6 +245,16 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     if (!has_default_major_tick_distance()) {
       json_map[constants.major_tick_distance_key] = major_tick_distance;
+    }
+
+    if (!has_default_major_tick_start()) {
+      json_map[constants.major_tick_start_key] = major_tick_start;
+    }
+
+    if (has_major_tick_periodic_distances()) {
+      var distances = major_tick_periodic_distances.toList();
+      json_map[constants.major_tick_periodic_distances_key] =
+          suppress_indent && !use_no_indent ? NoIndent(distances) : distances;
     }
 
     json_map.addAll(unused_fields.toMap());
@@ -271,7 +300,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     helix_builder.unused_fields = util.unused_fields_map(json_map, constants.helix_keys);
 
     if (json_map.containsKey(constants.major_tick_distance_key)) {
-      helix_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
+      int major_tick_distance = json_map[constants.major_tick_distance_key];
+      helix_builder.major_tick_periodic_distances = ListBuilder<int>([major_tick_distance]);
     }
 
     if (json_map.containsKey(constants.major_ticks_key)) {
@@ -279,6 +309,12 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       if (major_ticks_json != null) {
         helix_builder.major_ticks = ListBuilder<int>(List<int>.from(major_ticks_json));
       }
+    }
+
+    if (json_map.containsKey(constants.major_tick_periodic_distances_key)) {
+      var major_tick_periodic_distances_json = json_map[constants.major_tick_periodic_distances_key];
+      helix_builder.major_tick_periodic_distances =
+          ListBuilder<int>(List<int>.from(major_tick_periodic_distances_json));
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
@@ -297,21 +333,27 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       }
     }
 
-    if (json_map.containsKey(constants.min_offset_key)) {
-      helix_builder.min_offset = json_map[constants.min_offset_key];
-    }
-
-    if (json_map.containsKey(constants.idx_on_helix_key)) {
-      helix_builder.idx = json_map[constants.idx_on_helix_key];
-    }
-
+    // XXX: many of these fields are not nullable. But they are allowed to be null in the builder,
+    // before we call build(). We communicate to the DNADesign that they need to be populated with
+    // defaults by allowing them to be null here. These are for fields where the default requires
+    // knowledge of the whole design (e.g., min and max offset are based on offsets of Domains on
+    // the helix).
+    helix_builder.min_offset = util.get_value_with_null_default(json_map, constants.min_offset_key);
+    helix_builder.major_tick_start =
+        util.get_value_with_null_default(json_map, constants.major_tick_start_key);
+    helix_builder.idx = util.get_value_with_null_default(json_map, constants.idx_on_helix_key);
     helix_builder.roll =
         util.get_value_with_default(json_map, constants.roll_key, constants.default_helix_roll);
-
     helix_builder.pitch =
         util.get_value_with_default(json_map, constants.pitch_key, constants.default_helix_pitch);
-
     helix_builder.yaw = util.get_value_with_default(json_map, constants.yaw_key, constants.default_helix_yaw);
+
+    if (json_map.containsKey(constants.major_tick_distance_key) &&
+        json_map.containsKey(constants.major_tick_periodic_distances_key)) {
+      throw IllegalDNADesignError('helix ${helix_builder.idx ?? ""} has both keys '
+          '${constants.major_tick_distance_key} and '
+          '${constants.major_tick_periodic_distances_key}. At most one is allow to be specified.');
+    }
 
     Position3D position = Position3D.get_position_from_helix_json_map(json_map);
     helix_builder.position_ = position?.toBuilder();
@@ -332,17 +374,27 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// overrides [Helix.major_tick_distance], which overrides
   /// [DNADesign.default_major_tick_distance].
   List<int> calculate_major_ticks(int default_major_tick_distance) {
-    if (major_ticks != null) {
+    List<int> ticks = [];
+    if (has_major_ticks()) {
       var sorted_ticks = major_ticks.toList();
       sorted_ticks.sort();
-      return sorted_ticks;
+      ticks = sorted_ticks;
+    } else if (has_major_tick_periodic_distances()) {
+      int distance_idx = -1;
+      int distance = null;
+      for (int tick = major_tick_start; tick <= max_offset; tick += distance) {
+        distance_idx = (distance_idx + 1) % major_tick_periodic_distances.length;
+        distance = major_tick_periodic_distances[distance_idx];
+        ticks.add(tick);
+      }
+    } else {
+      int distance = major_tick_distance != null && major_tick_distance > 0
+          ? major_tick_distance
+          : default_major_tick_distance;
+      if (distance > 0) {
+        ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
+      }
     }
-    int distance = major_tick_distance != null && major_tick_distance > 0
-        ? major_tick_distance
-        : default_major_tick_distance;
-    if (distance <= 0) {
-      return [];
-    }
-    return [for (int t = min_offset; t <= max_offset; t += distance) t];
+    return ticks;
   }
 }

@@ -177,10 +177,12 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
     var mod_5p_cur = i == 0 ? mod_5p : null;
     var mod_3p_cur = i == substrands_list.length - 1 ? mod_3p : null;
 
+    var color = strand.color; //i==0?strand.color:null;
     var new_strand = Strand(substrands,
         dna_sequence: dna_sequence,
         idt: idt,
         is_scaffold: is_scaffold,
+        color: color,
         modification_5p: mod_5p_cur,
         modification_3p: mod_3p_cur,
         modifications_int: mods_int);

@@ -23,23 +23,19 @@ UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModePro
   forwardRef: true,
 )(SelectMode);
 
-
 UiFactory<SelectModeProps> SelectMode = _$SelectMode;
 
-
-mixin SelectModePropsMixin on UiProps  {
+mixin SelectModePropsMixin on UiProps {
   SelectModeState select_mode_state;
   bool is_origami;
 }
 
-
 class SelectModeProps = UiProps with SelectModePropsMixin, ConnectPropsMixin;
 
+class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCounterMixin {
+  @override
+  get consumedProps => propsMeta.forMixins({SelectModePropsMixin});
 
-class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCounterMixin {              
-              @override
-              get consumedProps => propsMeta.forMixins({SelectModePropsMixin});
-            
   @override
   render() {
     var first_button = (Dom.button()
