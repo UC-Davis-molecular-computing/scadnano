@@ -243,12 +243,13 @@ String _horz_line_paths(Helix helix) {
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
 Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
-  var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
-  Set<int> major_ticks = (helix.has_major_ticks()
-          ? helix.major_ticks
-          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
-      .toSet();
+  List<int> major_ticks = helix.calculate_major_ticks(design_major_tick_distance);
+//  var major_tick_distance =
+//      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
+//  Set<int> major_ticks = (helix.has_major_ticks()
+//          ? helix.major_ticks
+//          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
+//      .toSet();
 
   List<String> path_cmds_vert_minor = [];
   List<String> path_cmds_vert_major = [];

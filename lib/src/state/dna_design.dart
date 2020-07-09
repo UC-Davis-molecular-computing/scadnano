@@ -1289,6 +1289,9 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
         min_offset = 0;
       }
       helix_builder.min_offset = min_offset;
+      if (helix_builder.major_tick_start == null) {
+        helix_builder.major_tick_start = min_offset;
+      }
     }
   }
 }

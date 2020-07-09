@@ -58,19 +58,23 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
 
       // disable if checkbox in disable_when_off to which this maps is false
       if (props.dialog.disable_when_off.containsKey(component_idx)) {
-        int check_idx = props.dialog.disable_when_off[component_idx];
-        DialogCheckbox check = state.responses[check_idx];
-        if (check.value == false) {
-          disabled = true;
+        BuiltList<int> check_idxs = props.dialog.disable_when_off[component_idx];
+        for (int check_idx in check_idxs) {
+          DialogCheckbox check = state.responses[check_idx];
+          if (check.value == false) {
+            disabled = true;
+          }
         }
       }
 
       // disable if checkbox in disable_when_on to which this maps is true
       if (props.dialog.disable_when_on.containsKey(component_idx)) {
-        int check_idx = props.dialog.disable_when_on[component_idx];
-        DialogCheckbox check = state.responses[check_idx];
-        if (check.value == true) {
-          disabled = true;
+        BuiltList<int> check_idxs = props.dialog.disable_when_on[component_idx];
+        for (int check_idx in check_idxs) {
+          DialogCheckbox check = state.responses[check_idx];
+          if (check.value == true) {
+            disabled = true;
+          }
         }
       }
 
@@ -128,6 +132,20 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             bool new_checked = e.target.checked;
             DialogCheckbox response = state.responses[dialog_item_idx];
             new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_checked);
+
+            // see if this is mutually exclusive with any checkbox that's checked; if so, uncheck it
+            for (var mutually_exclusive_group in props.dialog.mutually_exclusive_checkbox_groups) {
+              if (mutually_exclusive_group.contains(dialog_item_idx)) {
+                for (int other_idx in mutually_exclusive_group) {
+                  if (other_idx != dialog_item_idx) {
+                    DialogCheckbox other_response = state.responses[other_idx];
+                    if (other_response.value == true) {
+                      new_responses[other_idx] = other_response.rebuild((b) => b.value = false);
+                    }
+                  }
+                }
+              }
+            }
             setState(newState()..responses = new_responses.build());
           })(),
         item.label,

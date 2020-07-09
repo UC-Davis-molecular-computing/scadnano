@@ -19,19 +19,36 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   factory Dialog(
       {String title,
       Iterable<DialogItem> items,
-      Map<int, int> disable_when_on = null,
-      Map<int, int> disable_when_off = null}) {
+      Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = null,
+      Map<int, Iterable<int>> disable_when_on = null,
+      Map<int, Iterable<int>> disable_when_off = null}) {
     if (disable_when_on == null) {
       disable_when_on = {};
     }
     if (disable_when_off == null) {
       disable_when_off = {};
     }
+    if (mutually_exclusive_checkbox_groups == null) {
+      mutually_exclusive_checkbox_groups = [];
+    }
+    List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
+      for (var group in mutually_exclusive_checkbox_groups)
+        BuiltList<int>(group)
+    ];
+    Map<int, BuiltList<int>> disable_when_on_half_built = {
+      for (var idx in disable_when_on.keys)
+        idx: BuiltList<int>(disable_when_on[idx])
+    };
+    Map<int, BuiltList<int>> disable_when_off_half_built = {
+      for (var idx in disable_when_off.keys)
+        idx: BuiltList<int>(disable_when_off[idx])
+    };
     return Dialog.from((b) => b
       ..title = title
       ..items.replace(items)
-      ..disable_when_on.replace(disable_when_on)
-      ..disable_when_off.replace(disable_when_off));
+      ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
+      ..disable_when_on.replace(disable_when_on_half_built)
+      ..disable_when_off.replace(disable_when_off_half_built));
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -40,15 +57,19 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   BuiltList<DialogItem> get items;
 
-  // if disable_when_on[i] = j, then
+  // if i,j are both in a sublist within this list, then they must be indices of DialogCheckboxes,
+  // and whenever one is switched on, the others will turn off.
+  BuiltList<BuiltList<int>> get mutually_exclusive_checkbox_groups;
+
+  // if disable_when_on[i] contains j, then
   // when DialogCheckbox at index j (starting at 0 in items) is checked,
   // the DialogItem at index i should be disabled
-  BuiltMap<int, int> get disable_when_on;
+  BuiltMap<int, BuiltList<int>> get disable_when_on;
 
-  // if disable_when_on[i] = j, then
+  // if disable_when_on[i] contains j, then
   // when DialogCheckbox at index j (starting at 0 in items) is unchecked,
   // the DialogItem at index i should be disabled
-  BuiltMap<int, int> get disable_when_off;
+  BuiltMap<int, BuiltList<int>> get disable_when_off;
 
   @nullable
   @BuiltValueField(serialize: false, compare: false)
