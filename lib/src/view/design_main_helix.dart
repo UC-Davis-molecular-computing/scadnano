@@ -155,10 +155,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
 
   _major_tick_offsets_svg_group() {
-    var helix = props.helix;
-    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
+    List<int> major_ticks = props.helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
+//    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
+
+    num y = props.helix.svg_position.y -
+        (DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
+        (props.show_dna ? constants.BASE_HEIGHT_SVG : 0));
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
@@ -183,11 +186,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   _major_tick_widths_svg_group() {
-    var helix = props.helix;
-    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
+    List<int> major_ticks = props.helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    num y = helix.svg_position.y +
-        helix.svg_height() +
+    num y = props.helix.svg_position.y +
+        props.helix.svg_height() +
         DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
         (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
@@ -206,7 +208,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var base = entry.key;
       var distance = entry.value;
 
-      var x = helix.svg_position.x + base * constants.BASE_WIDTH_SVG;
+      var x = props.helix.svg_position.x + base * constants.BASE_WIDTH_SVG;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
