@@ -427,11 +427,11 @@ There are different edit modes available, shown on the right side of the screen.
 
   The following are the types of objects that can be selected in the main view.
 
-  - **5' end (strand), 3' end (strand):**
+  - **5' strand, 3' strand:**
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
 
-  - **5' end (other), 3' end (other):**
-    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
+  - **5' domain, 3' domain:**
+    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. For example, deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
 
   - **crossover, loopout:**
     Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
