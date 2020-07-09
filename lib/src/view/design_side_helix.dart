@@ -62,7 +62,6 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     // of idx, which is useful for making figures in the documentation showing how the grids work
 //    bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = true;
     bool SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX = false;
-    var temp_text_for_help_doc_figure_making;
     String grid_position_str;
 
     String tooltip;
@@ -83,25 +82,25 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
         ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
         ..onClick = ((e) => this._handle_click(e, helix))
         ..id = helix_circle_id()
-        ..key = 'circle')(Dom.svgTitle()(tooltip)),
+        ..key = 'circle')((Dom.svgTitle()..key='circle-tooltip')(tooltip)),
       (Dom.text()
-            ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'font-size': 20} : {}
+            ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
             ..id = helix_text_id()
             ..onClick = ((e) => this._handle_click(e, helix))
-            ..key = 'text')(
+            ..key = 'text-idx')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
               ? grid_position_str
               : props.helix.idx.toString(),
-          Dom.svgTitle()(tooltip)),
+          (Dom.svgTitle()..key='text-idx-tooltip')(tooltip)),
       if (props.show_grid_coordinates)
         (Dom.text()
-            ..style = {'font-size': 10}
+            ..fontSize = 10
             ..dominantBaseline = 'text-before-edge'
             ..textAnchor = 'middle'
             ..y = constants.HELIX_RADIUS_SIDE_PIXELS/2
-            ..key = 'text')(grid_position_str),
-          (Dom.svgTitle()(tooltip)),
+            ..key = 'text-grid-position')(grid_position_str),
+          ((Dom.svgTitle()..key='text-grid-position-tooltip')(tooltip)),
     ];
 
 //    print('checking mouseover data');

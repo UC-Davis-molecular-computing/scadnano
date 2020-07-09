@@ -585,7 +585,7 @@ abstract class SaveDNAFile
 
 abstract class LoadDNAFile
     with BuiltJsonSerializable, DNADesignChangingAction
-    implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
+    implements Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   // set to null when getting file from another source such as localStorage
@@ -2051,15 +2051,19 @@ abstract class ShowHelixCirclesMainViewSet
 
 abstract class ShowGridCoordinatesSideViewSet
     with BuiltJsonSerializable
-    implements Action, Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
+    implements
+        AppUIStateStorableAction,
+        Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
   bool get show_grid_coordinates_side_view;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowGridCoordinatesSideViewSet({bool show_grid_coordinates_side_view}) = _$ShowGridCoordinatesSideViewSet._;
+  factory ShowGridCoordinatesSideViewSet({bool show_grid_coordinates_side_view}) =
+      _$ShowGridCoordinatesSideViewSet._;
 
   ShowGridCoordinatesSideViewSet._();
 
-  static Serializer<ShowGridCoordinatesSideViewSet> get serializer => _$showGridCoordinatesSideViewSetSerializer;
+  static Serializer<ShowGridCoordinatesSideViewSet> get serializer =>
+      _$showGridCoordinatesSideViewSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
