@@ -41,6 +41,7 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  SaveDNADesignInLocalStorageSet,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
   SelectModeToggle,
