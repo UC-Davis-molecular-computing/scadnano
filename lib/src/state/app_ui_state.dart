@@ -79,6 +79,8 @@ abstract class AppUIStateStorable
 
   bool get show_grid_coordinates_side_view;
 
+  bool get save_dna_in_local_storage;
+
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -105,6 +107,7 @@ abstract class AppUIStateStorable
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_grid_coordinates_side_view = false;
+    b.save_dna_in_local_storage = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -229,6 +232,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_helix_circles_main_view => storables.show_helix_circles_main_view;
 
   bool get show_grid_coordinates_side_view => storables.show_grid_coordinates_side_view;
+
+  bool get save_dna_in_local_storage => storables.save_dna_in_local_storage;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);
