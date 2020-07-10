@@ -15495,7 +15495,7 @@ if(d1==null)return c2
 t=new N.eo()
 s=u.N
 r=u.z
-q=H.l(E.fX(d1,"version","0.9.6",C.r,c2,c2,s,r))
+q=H.l(E.fX(d1,"version","0.9.7",C.r,c2,c2,s,r))
 t.gbK().b=q
 E.aga(t.gbK().b).ac(0,E.aga("0.9.0"))
 q=u.o
@@ -37945,7 +37945,7 @@ gFb:function(){var t=this.e,s=u.S
 return J.dm(t.ga5(t),new N.QT(),s).bh(0,H.el(P.yy(),s))},
 gFd:function(){var t=this.e,s=u.S
 return J.dm(t.ga5(t),new N.QU(),s).bh(0,H.el(P.Ok(),s))},
-dG:function(a7){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0=this,a1="major_tick_distance",a2=u.N,a3=u.z,a4=P.ar(["version","0.9.6"],a2,a3),a5=a0.r,a6=H.C(a5)
+dG:function(a7){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0=this,a1="major_tick_distance",a2=u.N,a3=u.z,a4=P.ar(["version","0.9.7"],a2,a3),a5=a0.r,a6=H.C(a5)
 a4.a4(0,S.d8(a5.b,a5.a,a6.c,a6.Q[1]))
 a6=a0.b
 a4.u(0,"grid",a6.a)
