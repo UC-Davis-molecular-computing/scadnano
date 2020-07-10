@@ -32,7 +32,7 @@ const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 save(AppState state, Storable storable) {
   String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
   String value_string;
-  if ((storable == Storable.dna_design) && (state.ui_state.save_dna_in_local_storage)) {
+  if ((storable == Storable.dna_design) && (state.ui_state.save_dna_design_in_local_storage)) {
     var dna_design = state.dna_design;
     value_string = json_encode(dna_design);
   } else if (storable == Storable.app_ui_state_storables) {
@@ -41,8 +41,6 @@ save(AppState state, Storable storable) {
 
   if (value_string != null)
     window.localStorage[storable_key] = value_string;
-  //else
-    //window.localStorage.remove(storable_key);
 }
 
 String side_pane_width() {

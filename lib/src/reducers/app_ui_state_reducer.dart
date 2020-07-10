@@ -113,8 +113,8 @@ bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainVi
 bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
     action.show_grid_coordinates_side_view;
 
-bool save_dna_in_local_storage_reducer(bool _, actions.SaveDNAInLocalStorageSet action) =>
-    action.save_dna_in_local_storage;
+bool save_dna_design_in_local_storage_reducer(bool _, actions.SaveDNADesignInLocalStorageSet action) =>
+    action.save_dna_design_in_local_storage;
 
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
@@ -209,9 +209,9 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
       ..show_grid_coordinates_side_view =
           TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(
               storables.show_grid_coordinates_side_view, action)
-      ..save_dna_in_local_storage =
-          TypedReducer<bool, actions.SaveDNAInLocalStorageSet>(save_dna_in_local_storage_reducer)(
-              storables.save_dna_in_local_storage, action)
+      ..save_dna_design_in_local_storage =
+          TypedReducer<bool, actions.SaveDNADesignInLocalStorageSet>(save_dna_design_in_local_storage_reducer)(
+              storables.save_dna_design_in_local_storage, action)
       ..strand_paste_keep_color =
           TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
       ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)

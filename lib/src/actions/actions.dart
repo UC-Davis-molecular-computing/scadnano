@@ -2069,17 +2069,17 @@ abstract class ShowGridCoordinatesSideViewSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add option to not save DNADesign in localStorage on every edit
 
-abstract class SaveDNAInLocalStorageSet
+abstract class SaveDNADesignInLocalStorageSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SaveDNAInLocalStorageSet, SaveDNAInLocalStorageSetBuilder> {
-  bool get save_dna_in_local_storage;
+    implements AppUIStateStorableAction, Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
+  bool get save_dna_design_in_local_storage;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SaveDNAInLocalStorageSet({bool save_dna_in_local_storage}) = _$SaveDNAInLocalStorageSet._;
+  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) = _$SaveDNADesignInLocalStorageSet._;
 
-  SaveDNAInLocalStorageSet._();
+  SaveDNADesignInLocalStorageSet._();
 
-  static Serializer<SaveDNAInLocalStorageSet> get serializer => _$saveDNAInLocalStorageSetSerializer;
+  static Serializer<SaveDNADesignInLocalStorageSet> get serializer => _$saveDNADesignInLocalStorageSetSerializer;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png

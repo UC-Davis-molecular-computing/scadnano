@@ -57,7 +57,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
     ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
     ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..save_dna_in_local_storage = state.ui_state.save_dna_in_local_storage),
+    ..save_dna_design_in_local_storage = state.ui_state.save_dna_design_in_local_storage),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -89,7 +89,7 @@ mixin MenuPropsMixin on UiProps {
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
-  bool save_dna_in_local_storage;
+  bool save_dna_design_in_local_storage;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -184,14 +184,14 @@ really want to exit without saving.'''
         ..display = 'Export codenano')(),
       DropdownDivider({}),
       (MenuBoolean()
-        ..value = props.save_dna_in_local_storage
-        ..display = 'Save DNA Design in localStorage'
+        ..value = props.save_dna_design_in_local_storage
+        ..display = 'Save Design in localStorage'
         ..tooltip = '''\
-Saves DNADesign in localStorage on every edit. Disabling this minimizes the time needed to render large strands.'''
-        ..name = 'save-dna-in-local-storage'
-        ..onChange = ((_) => props.dispatch(actions.SaveDNAInLocalStorageSet(
-            save_dna_in_local_storage: !props.save_dna_in_local_storage)))
-        ..key = 'save-dna-in-local-storage')(),
+Saves designs in localStorage on every edit. Disabling this minimizes the time needed to render large designs.'''
+        ..name = 'save-dna-design-in-local-storage'
+        ..onChange = ((_) => props.dispatch(actions.SaveDNADesignInLocalStorageSet(
+            save_dna_design_in_local_storage: !props.save_dna_design_in_local_storage)))
+        ..key = 'save-dna-design-in-local-storage')(),
     );
   }
 
