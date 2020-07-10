@@ -11,6 +11,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
+import 'package:platform_detect/platform_detect.dart';
 
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
@@ -329,7 +330,8 @@ class DesignViewComponent {
         !ev.altKey &&
         EditModeChoice.key_code_to_mode.keys.contains(key)) {
       app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
-    } else if (key == KeyCode.DELETE) {
+    } else if (key == KeyCode.DELETE || (operatingSystem.isMac && key == KeyCode.BACKSPACE)) {
+      ev.preventDefault(); // ensure backspace doesn't go to previous page
       if (app.state.ui_state.selectables_store.isNotEmpty) {
         app.dispatch(actions.DeleteAllSelected());
       } else if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
@@ -486,11 +488,13 @@ class DesignViewComponent {
 
       react_dom.render(
         over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)((ReduxProvider()
-            ..store = app.store_selection_box
-            ..context = app.context_selection_box)(
-            ConnectedDesignSide()(),
-          )),
+          (ReduxProvider()..store = app.store)(
+            (ReduxProvider()
+              ..store = app.store_selection_box
+              ..context = app.context_selection_box)(
+              ConnectedDesignSide()(),
+            ),
+          ),
         ),
         querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
       );

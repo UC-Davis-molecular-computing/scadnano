@@ -601,18 +601,23 @@ abstract class Strand
 }
 
 Color parse_json_color(Object json_obj) {
-  if (json_obj is Map) {
-    int r = json_obj['r'];
-    int g = json_obj['g'];
-    int b = json_obj['b'];
-    return RgbColor(r, g, b);
-  } else if (json_obj is String) {
-    return HexColor(json_obj);
-  } else if (json_obj is int) {
-    String hex_str = util.color_decimal_int_to_hex(json_obj);
-    return HexColor(hex_str);
-  } else {
-    throw ArgumentError('JSON object representing color must be a Map or String, but instead it is a '
-        '${json_obj.runtimeType}:\n${json_obj}');
+  try {
+    if (json_obj is Map) {
+      int r = json_obj['r'];
+      int g = json_obj['g'];
+      int b = json_obj['b'];
+      return RgbColor(r, g, b);
+    } else if (json_obj is String) {
+      return HexColor(json_obj);
+    } else if (json_obj is int) {
+      String hex_str = util.color_decimal_int_to_hex(json_obj);
+      return HexColor(hex_str);
+    } else {
+      throw ArgumentError.value('JSON object representing color must be a Map or String, but instead it is a '
+          '${json_obj.runtimeType}:\n${json_obj}');
+    }
+  } on Exception {
+    print("WARNING: I couldn't understand the color specification ${json_obj}, so I'm substituting black.");
+    return RgbColor.name('black');
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
@@ -28,6 +30,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
   Geometry geometry;
+  bool show_helix_circles;
 }
 
 class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
@@ -38,8 +41,11 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
 
     var children = [];
     int first_helix_view_order = 0;
-    if (props.helices.isNotEmpty && props.helices[0].invert_y_axis) {
-      first_helix_view_order = props.helices.length - 1;
+    if (props.helices.isNotEmpty) {
+      int min_helix_idx = props.helices.keys.reduce(min);
+      if (props.helices[min_helix_idx].invert_y_axis) {
+        first_helix_view_order = props.helices.length - 1;
+      }
     }
     for (Helix helix in props.helices.values) {
       if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
@@ -54,12 +60,13 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid
           ..show_dna = props.show_dna
+          ..show_helix_circles = props.show_helix_circles
           ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
               (!props.display_base_offsets_of_major_ticks_only_first_helix ||
                   helix.view_order == first_helix_view_order)
           ..display_major_tick_widths = props.display_major_tick_widths &&
               (props.display_major_tick_widths_all_helices || helix.view_order == first_helix_view_order)
-          ..key = helix.toString())());
+          ..key = helix.idx.toString())());
       }
     }
 

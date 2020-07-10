@@ -315,10 +315,10 @@ Future<void> ask_for_assign_dna_sequence(
     DialogCheckbox(
         label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
   ], disable_when_on: {
-    0: 1
+    0: [1]
   }, disable_when_off: {
-    2: 1,
-    3: 1
+    2: [1],
+    3: [1],
   });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;

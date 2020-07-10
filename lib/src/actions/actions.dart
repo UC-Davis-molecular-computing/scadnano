@@ -268,7 +268,7 @@ abstract class SelectModeToggle
 
 abstract class SelectModesSet
     with BuiltJsonSerializable
-    implements Action, Built<SelectModesSet, SelectModesSetBuilder> {
+    implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -558,9 +558,7 @@ abstract class InvertYAxisSet
 
 abstract class WarnOnExitIfUnsavedSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
+    implements AppUIStateStorableAction, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1096,6 +1094,34 @@ abstract class HelixMajorTickDistanceChangeAll
       _$helixMajorTickDistanceChangeAllSerializer;
 }
 
+abstract class HelixMajorTickStartChange
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixMajorTickStartChange, HelixMajorTickStartChangeBuilder> {
+  int get helix_idx;
+
+  int get major_tick_start;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickStartChange({int helix_idx, int major_tick_start}) = _$HelixMajorTickStartChange._;
+
+  HelixMajorTickStartChange._();
+
+  static Serializer<HelixMajorTickStartChange> get serializer => _$helixMajorTickStartChangeSerializer;
+}
+
+abstract class HelixMajorTickStartChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMajorTickStartChangeAll, HelixMajorTickStartChangeAllBuilder> {
+  int get major_tick_start;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickStartChangeAll({int major_tick_start}) = _$HelixMajorTickStartChangeAll._;
+
+  HelixMajorTickStartChangeAll._();
+
+  static Serializer<HelixMajorTickStartChangeAll> get serializer => _$helixMajorTickStartChangeAllSerializer;
+}
+
 abstract class HelixMajorTicksChange
     with BuiltJsonSerializable, UndoableAction
     implements HelixIndividualAction, Built<HelixMajorTicksChange, HelixMajorTicksChangeBuilder> {
@@ -1122,6 +1148,45 @@ abstract class HelixMajorTicksChangeAll
   HelixMajorTicksChangeAll._();
 
   static Serializer<HelixMajorTicksChangeAll> get serializer => _$helixMajorTicksChangeAllSerializer;
+}
+
+// For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
+abstract class HelixMajorTickPeriodicDistancesChange
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        HelixIndividualAction,
+        Built<HelixMajorTickPeriodicDistancesChange, HelixMajorTickPeriodicDistancesChangeBuilder> {
+  int get helix_idx;
+
+  BuiltList<int> get major_tick_periodic_distances;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickPeriodicDistancesChange(
+      {int helix_idx,
+      BuiltList<int> major_tick_periodic_distances}) = _$HelixMajorTickPeriodicDistancesChange._;
+
+  HelixMajorTickPeriodicDistancesChange._();
+
+  static Serializer<HelixMajorTickPeriodicDistancesChange> get serializer =>
+      _$helixMajorTickPeriodicDistancesChangeSerializer;
+}
+
+// For simplicity this action also changes major_tick_start, which is paired with major_tick_distances
+abstract class HelixMajorTickPeriodicDistancesChangeAll
+    with BuiltJsonSerializable, UndoableAction
+    implements
+        Action,
+        Built<HelixMajorTickPeriodicDistancesChangeAll, HelixMajorTickPeriodicDistancesChangeAllBuilder> {
+  BuiltList<int> get major_tick_periodic_distances;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMajorTickPeriodicDistancesChangeAll({BuiltList<int> major_tick_periodic_distances}) =
+      _$HelixMajorTickPeriodicDistancesChangeAll._;
+
+  HelixMajorTickPeriodicDistancesChangeAll._();
+
+  static Serializer<HelixMajorTickPeriodicDistancesChangeAll> get serializer =>
+      _$helixMajorTickPeriodicDistancesChangeAllSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1965,6 +2030,57 @@ abstract class AutofitSet
   static Serializer<AutofitSet> get serializer => _$autofitSetSerializer;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide helix circles/text in main view
+
+abstract class ShowHelixCirclesMainViewSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowHelixCirclesMainViewSet, ShowHelixCirclesMainViewSetBuilder> {
+  bool get show_helix_circles_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowHelixCirclesMainViewSet({bool show_helix_circles_main_view}) = _$ShowHelixCirclesMainViewSet._;
+
+  ShowHelixCirclesMainViewSet._();
+
+  static Serializer<ShowHelixCirclesMainViewSet> get serializer => _$showHelixCirclesMainViewSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide grid coordinates in side view
+
+abstract class ShowGridCoordinatesSideViewSet
+    with BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
+  bool get show_grid_coordinates_side_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowGridCoordinatesSideViewSet({bool show_grid_coordinates_side_view}) =
+      _$ShowGridCoordinatesSideViewSet._;
+
+  ShowGridCoordinatesSideViewSet._();
+
+  static Serializer<ShowGridCoordinatesSideViewSet> get serializer =>
+      _$showGridCoordinatesSideViewSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// add option to not save DNADesign in localStorage on every edit
+
+abstract class SaveDNADesignInLocalStorageSet
+    with BuiltJsonSerializable
+    implements AppUIStateStorableAction, Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
+  bool get save_dna_design_in_local_storage;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) = _$SaveDNADesignInLocalStorageSet._;
+
+  SaveDNADesignInLocalStorageSet._();
+
+  static Serializer<SaveDNADesignInLocalStorageSet> get serializer => _$saveDNADesignInLocalStorageSetSerializer;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png
 

@@ -4,7 +4,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.9.6";
+const String CURRENT_VERSION = "0.9.7";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
@@ -118,6 +118,8 @@ const grid_key = 'grid';
 const geometry_key = 'geometry';
 const legacy_geometry_keys = ['parameters'];
 const major_tick_distance_key = 'major_tick_distance';
+const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
+const major_tick_start_key = 'major_tick_start';
 const major_ticks_key = 'major_ticks';
 const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
@@ -168,6 +170,8 @@ const position_key = 'position';
 const legacy_position_keys = ['origin']; //XXX: we aren't check for this currently
 const helix_major_ticks_key = 'major_ticks';
 const helix_major_tick_distance_key = 'major_tick_distance';
+const helix_major_tick_start_key = 'major_tick_start';
+const helix_major_tick_periodic_distances_key = 'major_tick_periodic_distances';
 final helix_keys = [
       idx_on_helix_key,
       max_offset_key,
@@ -180,6 +184,8 @@ final helix_keys = [
       position_key,
       helix_major_ticks_key,
       helix_major_tick_distance_key,
+      helix_major_tick_start_key,
+      helix_major_tick_periodic_distances_key,
     ] +
     legacy_position_keys;
 // Cannot have List concatenation in const expressions.

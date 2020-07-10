@@ -22,6 +22,10 @@ Reducer<BuiltMap<int, Helix>> helices_local_reducer = combineReducers([
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickDistanceChangeAll>(
       helix_major_tick_distance_change_all_reducer),
   TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTicksChangeAll>(helix_major_ticks_change_all_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickStartChangeAll>(
+      helix_major_tick_start_change_all_reducer),
+  TypedReducer<BuiltMap<int, Helix>, actions.HelixMajorTickPeriodicDistancesChangeAll>(
+      helix_major_tick_periodic_distances_change_all_reducer),
 ]);
 
 GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGlobalReducers([
@@ -68,6 +72,9 @@ BuiltMap<int, Helix> helix_individual_reducer(
 Reducer<Helix> _helix_individual_reducers = combineReducers([
   TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
+  TypedReducer<Helix, actions.HelixMajorTickPeriodicDistancesChange>(
+      helix_major_tick_periodic_distances_change_reducer),
+  TypedReducer<Helix, actions.HelixMajorTickStartChange>(helix_major_tick_start_change_reducer),
   TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
   TypedReducer<Helix, actions.HelixRollSet>(helix_roll_set_reducer),
 ]);
@@ -105,19 +112,43 @@ BuiltMap<int, Helix> helix_major_ticks_change_all_reducer(
         BuiltMap<int, Helix> helices, actions.HelixMajorTicksChangeAll action) =>
     helices.map_values((helix) => _change_major_ticks_one_helix(helix, action.major_ticks));
 
+BuiltMap<int, Helix> helix_major_tick_start_change_all_reducer(
+        BuiltMap<int, Helix> helices, actions.HelixMajorTickStartChangeAll action) =>
+    helices.map_values((helix) => _change_major_tick_start_one_helix(helix, action.major_tick_start));
+
+BuiltMap<int, Helix> helix_major_tick_periodic_distances_change_all_reducer(
+        BuiltMap<int, Helix> helices, actions.HelixMajorTickPeriodicDistancesChangeAll action) =>
+    helices.map_values((helix) =>
+        _change_major_tick_periodic_distances_one_helix(helix, action.major_tick_periodic_distances));
+
 Helix helix_major_tick_distance_change_reducer(Helix helix, actions.HelixMajorTickDistanceChange action) =>
     _change_major_tick_distance_one_helix(helix, action.major_tick_distance);
+
+Helix helix_major_tick_periodic_distances_change_reducer(
+        Helix helix, actions.HelixMajorTickPeriodicDistancesChange action) =>
+    _change_major_tick_periodic_distances_one_helix(helix, action.major_tick_periodic_distances);
+
+Helix helix_major_tick_start_change_reducer(Helix helix, actions.HelixMajorTickStartChange action) =>
+    _change_major_tick_start_one_helix(helix, action.major_tick_start);
 
 Helix helix_major_ticks_change_reducer(Helix helix, actions.HelixMajorTicksChange action) =>
     _change_major_ticks_one_helix(helix, action.major_ticks);
 
 Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) => helix.rebuild((b) => b
-  ..major_tick_distance = major_tick_distance
+  ..major_tick_periodic_distances.replace([major_tick_distance])
   ..major_ticks = null);
 
-Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) => helix.rebuild((b) => b
-  ..major_ticks.replace(major_ticks)
-  ..major_tick_distance = null);
+Helix _change_major_tick_start_one_helix(Helix helix, int major_tick_start) =>
+    helix.rebuild((b) => b..major_tick_start = major_tick_start);
+
+Helix _change_major_tick_periodic_distances_one_helix(
+        Helix helix, Iterable<int> major_tick_periodic_distances) =>
+    helix.rebuild((b) => b
+      ..major_tick_periodic_distances.replace(major_tick_periodic_distances)
+      ..major_ticks = null);
+
+Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) =>
+    helix.rebuild((b) => b..major_ticks.replace(major_ticks)..major_tick_periodic_distances.replace([]));
 
 Helix helix_roll_set_reducer(Helix helix, actions.HelixRollSet action) =>
     helix.rebuild((h) => h..roll = action.roll);

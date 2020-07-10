@@ -23,28 +23,34 @@ UiFactory<SelectModeProps> ConnectedSelectMode = connect<AppState, SelectModePro
   forwardRef: true,
 )(SelectMode);
 
-
 UiFactory<SelectModeProps> SelectMode = _$SelectMode;
 
-
-mixin SelectModePropsMixin on UiProps  {
+mixin SelectModePropsMixin on UiProps {
   SelectModeState select_mode_state;
   bool is_origami;
 }
 
-
 class SelectModeProps = UiProps with SelectModePropsMixin, ConnectPropsMixin;
 
+class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCounterMixin {
+  @override
+  get consumedProps => propsMeta.forMixins({SelectModePropsMixin});
 
-class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCounterMixin {              
-              @override
-              get consumedProps => propsMeta.forMixins({SelectModePropsMixin});
-            
   @override
   render() {
+    var first_button = (Dom.button()
+      ..onClick = ((_) => props.dispatch(actions.SelectModesSet(SelectModeChoice.ends)))
+      ..className = 'mode-button ' +
+          (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
+              ? 'select-mode-button-selected'
+              : 'select-mode-button-unselected')
+      ..addTestId('scadnano.SelectModeComponent.button.all_ends')
+      ..key = 'all-ends')('all ends');
+
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
-    return [
+    var buttons = [
       (Dom.label()..key = 'label')('Select:'),
+      first_button,
       ...[
         for (var mode in modes)
           (Dom.button()
@@ -57,5 +63,6 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
             ..key = mode.display_name())(mode.display_name())
       ],
     ];
+    return buttons;
   }
 }

@@ -4,6 +4,7 @@
   * [Reporting issues](#reporting-issues)
   * [Tutorial](#tutorial)
   * [**WARNING: Save your work**](#warning-save-your-work)
+  * [Stable and development versions](#stable-and-development-versions)
   * [Terminology](#terminology)
   * [Grid types](#grid-types)
   * [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)
@@ -13,3 +14,4 @@
   * [Assigning DNA](#assigning-dna)
   * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
   * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+  * [Performance tips](#performance-tips)

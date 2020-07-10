@@ -41,6 +41,9 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  SaveDNADesignInLocalStorageSet,
+  ShowGridCoordinatesSideViewSet,
+  ShowHelixCirclesMainViewSet,
   SelectModeToggle,
   SelectModesSet,
   SelectionBox,
@@ -111,6 +114,10 @@ part 'serializers.g.dart';
   HelixMajorTickDistanceChangeAll,
   HelixMajorTicksChange,
   HelixMajorTicksChangeAll,
+  HelixMajorTickPeriodicDistancesChange,
+  HelixMajorTickPeriodicDistancesChangeAll,
+  HelixMajorTickStartChange,
+  HelixMajorTickStartChangeAll,
   HelixRollSet,
   HelixRollSetAtOther,
   Nick,

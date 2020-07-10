@@ -258,7 +258,7 @@ As described above, the use of React and Redux is intended to reduce the number 
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding `with BuiltJsonSerializable`. Read more about [mixins](https://dart.dev/guides/language/language-tour#adding-features-to-a-class-mixins).
 
-For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
+For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
 
 - **create Action class**: In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. 
 
@@ -272,11 +272,11 @@ For many typical features one would want to add that involve changing some aspec
 
   Any Action modifying the DNADesign should implement `UndoableAction`. This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DNADesignChangingAction`, but that is more general. For instance, it is called when a new DNADesign is loaded from a file, which changes the DNADesign, but is not an undo-able action.)
 
-- **create view component for interaction**: The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`.
-
 - **if necessary, add new data fields the app state**: In many instances, particularly "UI state" (aspects of the state that control how things look, but are not stored in the DNADesign), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`.
 
   If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.dna_design` is persisted in localStorage, but that is handled separately.
+
+- **create view component for interaction**: The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`.
 
 - **create reducer for updating state in response to Action**: This is the code that takes as input the old state and the Action and produces the new state. The top-level reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally this is not modified directly. Through a series of composition, all reducers are called indirectly when `app_state_reducer` is called. 
 
@@ -299,6 +299,16 @@ For many typical features one would want to add that involve changing some aspec
   The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly.
   
   However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass properties down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
+
+- **add middleware if necessary:** The above description of state, view, and reducers in React/Redux describes an ideal situation in which every reducer and every view is a pure function, dependent only on the state (and also action for reducers), taking no other data as input and affecting no other part of the memory (i.e., having no *side-effects*). Of course, sometimes programs need to break this, having side-effects such as saving files, or taking other inputs (for example, some parts of the view may not have enough data to check whether an action is legal to dispatch). 
+
+  This is where middleware comes in. It takes care of essentially those parts of the logic that don't fit into the state &rarr; view &rarr; reducer &rarr; state loop. Examples include storing data to localStorage, saving a file to disk, loading a file from disk, checking whether an action is legal (for example, `strand_create_middleware_middleware` doesn't create a new strand if the position is occupied). Another use is to dispatch a second action in response to the first action. One example is `reselect_moved_strands_middleware`, which, after a set of selected strands have been moved, ensures that they remain selected. (Due to the immutability of the state, the moved strands are not the same objects as the old strands. It is the responsibility of this middleware to clear the set of selected strands, which no longer exist, and select the newly created strands that represent the moved versions of the previous strands.)
+
+  Much of scadnano was designed before this framework was used, so you'll sometimes see the use of global variables in view code (instead of accessing only the React props), or side effects. In general these are not good practice and should be changed eventually.
+
+  On each action dispatch, the middleware executes *before* the reducer is called. All middleware should at some point call `next(action)` to let the subsequent middleware, and reducer, proceed. But sometimes the point of the middleware is to stop the action (e.g., if the action is invalid somehow); in this case, it makes sense not to call `next(action)` and let the action "die".
+
+  *Note:* You need to remember to add the middleware function to the list in the file lib/src/middleware/all_middleware.dart, or it won't be called. Remember also to call `next(action)` (unless you actually want to stop the Action from going through).
 
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
@@ -324,7 +334,11 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
 
+8. After merging, it will say that the branch you just merged from can be safely deleted. Delete it.
+
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
+
+In this case, even though it will say "the dev branch can be safely deleted", **do not delete the dev branch**.
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 
@@ -380,3 +394,4 @@ and WebStorm offers a [plugin](https://plugins.jetbrains.com/plugin/6351-dart).
 The line length should be configured to 110, as the style guide limit of 80
 is a bit too restrictive.
 
+We also follow the [OverReact style guide](https://github.com/Workiva/over_react#component-formatting), in particular, using trailing commas so that dartfmt (Dart's formatting tool) lines up the components nicely.

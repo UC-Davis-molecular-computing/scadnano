@@ -27,9 +27,10 @@ helix_change_offsets_middleware(Store<AppState> store, dynamic action, NextDispa
       }
     }
   } else if (action is actions.HelixOffsetChangeAll) {
-    var design = store.state.dna_design;
-    for (int helix_idx=0; helix_idx< store.state.dna_design.helices.length; helix_idx++) {
-      bool helix_has_domains = design.domains_on_helix(helix_idx).isNotEmpty;
+    DNADesign design = store.state.dna_design;
+    for (int helix_idx in design.helices.keys) {
+      var domains_on_helix = design.domains_on_helix(helix_idx);
+      bool helix_has_domains = domains_on_helix.isNotEmpty;
       if (action.min_offset != null && helix_has_domains) {
         int min_offset_of_strand = store.state.dna_design.min_offset_of_strands_at(helix_idx);
         if (action.min_offset > min_offset_of_strand) {

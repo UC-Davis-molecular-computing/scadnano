@@ -35,6 +35,7 @@ mixin DesignMainHelixProps on UiProps {
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   Geometry geometry;
+  bool show_helix_circles;
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
@@ -55,22 +56,22 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     var vert_line_paths = _vert_line_paths(helix, props.design_major_tick_distance);
     int idx = helix.idx;
 
-    Point<num> translation = helix_main_view_translation(helix);
-
     return (Dom.g()..className = 'helix-main-view')([
-      (Dom.circle()
-        ..className = 'main-view-helix-circle'
-        ..id = helix_circle_id()
-        ..cx = '$cx'
-        ..cy = '$cy'
-        ..r = '${geometry.helix_radius_svg}'
-        ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
-      (Dom.text()
-        ..className = 'main-view-helix-text'
-        ..id = helix_text_id()
-        ..x = '$cx'
-        ..y = '$cy'
-        ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
+      if (props.show_helix_circles)
+        (Dom.circle()
+          ..className = 'main-view-helix-circle'
+          ..id = helix_circle_id()
+          ..cx = '$cx'
+          ..cy = '$cy'
+          ..r = '${geometry.helix_radius_svg}'
+          ..key = 'main-view-helix-circle')(), //Dom.svgTitle()(tooltip_helix_length_adjust)),
+      if (props.show_helix_circles)
+        (Dom.text()
+          ..className = 'main-view-helix-text'
+          ..id = helix_text_id()
+          ..x = '$cx'
+          ..y = '$cy'
+          ..key = 'main-view-helix-text')('$idx'), //, Dom.svgTitle()(tooltip_helix_length_adjust)),
       (Dom.g()
         ..className = 'helix-lines-group'
 //        ..transform = 'translate(${translation.x} ${translation.y})'
@@ -109,17 +110,21 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.addEventListener('contextmenu', on_context_menu);
+    if (props.show_helix_circles) {
+      for (var id in [helix_circle_id(), helix_text_id()]) {
+        var elt = querySelector('#${id}');
+        elt.addEventListener('contextmenu', on_context_menu);
+      }
     }
   }
 
   @override
   componentWillUnmount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.removeEventListener('contextmenu', on_context_menu);
+    if (props.show_helix_circles) {
+      for (var id in [helix_circle_id(), helix_text_id()]) {
+        var elt = querySelector('#${id}');
+        elt.removeEventListener('contextmenu', on_context_menu);
+      }
     }
     super.componentWillUnmount();
   }
@@ -150,10 +155,13 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   final num DISTANCE_OFFSET_DISPLAY_FROM_HELIX = 3;
 
   _major_tick_offsets_svg_group() {
-    var helix = props.helix;
-    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
+    List<int> major_ticks = props.helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
+//    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
+
+    num y = props.helix.svg_position.y -
+        (DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
+        (props.show_dna ? constants.BASE_HEIGHT_SVG : 0));
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
@@ -178,11 +186,10 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   }
 
   _major_tick_widths_svg_group() {
-    var helix = props.helix;
-    List<int> major_ticks = helix.calculate_major_ticks(props.design_major_tick_distance);
+    List<int> major_ticks = props.helix.calculate_major_ticks(props.design_major_tick_distance);
 
-    num y = helix.svg_position.y +
-        helix.svg_height() +
+    num y = props.helix.svg_position.y +
+        props.helix.svg_height() +
         DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
         (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
@@ -201,7 +208,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       var base = entry.key;
       var distance = entry.value;
 
-      var x = helix.svg_position.x + base * constants.BASE_WIDTH_SVG;
+      var x = props.helix.svg_position.x + base * constants.BASE_WIDTH_SVG;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-distance-text'
         ..x = '$x'
@@ -238,12 +245,13 @@ String _horz_line_paths(Helix helix) {
 
 /// Return Map {'minor': thin_lines, 'major': thick_lines} to paths describing minor and major vertical lines.
 Map<String, String> _vert_line_paths(Helix helix, int design_major_tick_distance) {
-  var major_tick_distance =
-      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
-  Set<int> major_ticks = (helix.has_major_ticks()
-          ? helix.major_ticks
-          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
-      .toSet();
+  List<int> major_ticks = helix.calculate_major_ticks(design_major_tick_distance);
+//  var major_tick_distance =
+//      helix.has_major_tick_distance() ? helix.major_tick_distance : design_major_tick_distance;
+//  Set<int> major_ticks = (helix.has_major_ticks()
+//          ? helix.major_ticks
+//          : regularly_spaced_ticks(major_tick_distance, helix.min_offset, helix.max_offset))
+//      .toSet();
 
   List<String> path_cmds_vert_minor = [];
   List<String> path_cmds_vert_major = [];

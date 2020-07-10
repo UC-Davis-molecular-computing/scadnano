@@ -54,7 +54,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..display_major_tick_widths = state.ui_state.display_major_tick_widths
     ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
     ..invert_y_axis = state.ui_state.invert_y_axis
-    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved),
+    ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
+    ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
+    ..save_dna_design_in_local_storage = state.ui_state.save_dna_design_in_local_storage),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -84,6 +87,9 @@ mixin MenuPropsMixin on UiProps {
   bool display_major_tick_widths_all_helices;
   bool invert_y_axis;
   bool warn_on_exit_if_unsaved;
+  bool show_helix_circles_main_view;
+  bool show_grid_coordinates_side_view;
+  bool save_dna_design_in_local_storage;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -176,6 +182,16 @@ really want to exit without saving.'''
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
         ..display = 'Export codenano')(),
+      DropdownDivider({}),
+      (MenuBoolean()
+        ..value = props.save_dna_design_in_local_storage
+        ..display = 'Save Design in localStorage'
+        ..tooltip = '''\
+Saves designs in localStorage on every edit. Disabling this minimizes the time needed to render large designs.'''
+        ..name = 'save-dna-design-in-local-storage'
+        ..onChange = ((_) => props.dispatch(actions.SaveDNADesignInLocalStorageSet(
+            save_dna_design_in_local_storage: !props.save_dna_design_in_local_storage)))
+        ..key = 'save-dna-design-in-local-storage')(),
     );
   }
 
@@ -406,12 +422,31 @@ of the design you were looking at before changing the script.'''
         ..value = props.invert_y_axis
         ..display = 'Invert y-axis'
         ..tooltip = '''\
-In both the side and main view, invert the y-axis. If this is checked, then use 
-Cartesian coordinates where increasing y moves up. If unchecked, then use 
+In both the side and main view, invert the y-axis. If this is checked, then use
+Cartesian coordinates where increasing y moves up. If unchecked, then use
 "screen coordinates", where increasing y moves down.'''
         ..name = 'invert-y-axis'
         ..onChange = ((_) => props.dispatch(actions.InvertYAxisSet(invert_y_axis: !props.invert_y_axis)))
         ..key = 'invert-y-axis')(),
+      (MenuBoolean()
+        ..value = props.show_helix_circles_main_view
+        ..display = 'Show main view Helix circles/idx'
+        ..tooltip = '''\
+Shows helix circles and idx's in main view. You may want to hide them for
+designs that have overlapping non-parallel helices.'''
+        ..name = 'show-helix-circles-main-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
+            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
+        ..key = 'show-helix-circles-main-view')(),
+        (MenuBoolean()
+        ..value = props.show_grid_coordinates_side_view
+        ..display = 'Show grid coordinates in side view'
+        ..tooltip = '''\
+Shows grid coordinates in the side view under the helix index.'''
+        ..name = 'show-grid-coordinates-side-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..key = 'show-grid-coordinates-side-view')(),
     ];
   }
 

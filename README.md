@@ -1,3 +1,4 @@
+
 # scadnano
 
 [scadnano](http://scadnano.org) 
@@ -17,6 +18,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Reporting issues](#reporting-issues)
 * [Tutorial](#tutorial)
 * [**WARNING: Save your work**](#warning-save-your-work)
+* [Stable and development versions](#stable-and-development-versions)
 * [Terminology](#terminology)
 * [Grid types](#grid-types)
 * [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)
@@ -26,6 +28,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Performance tips](#performance-tips)
 
 ## Overview
 
@@ -420,13 +423,15 @@ There are different edit modes available, shown on the right side of the screen.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
   To unselect all selected objects, press the Esc key.
 
+  **Note:** On a Mac, the delete key has the meaning of backspace, which in most browsers will try to go to the previous page. To delete an item on a Mac, press fn+delete.
+
   The following are the types of objects that can be selected in the main view.
 
-  - **5' end (strand), 3' end (strand):**
+  - **5' strand, 3' strand:**
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
 
-  - **5' end (other), 3' end (other):**
-    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
+  - **5' domain, 3' domain:**
+    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. For example, deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
 
   - **crossover, loopout:**
     Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
@@ -548,3 +553,7 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+# Performance tips
+There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this and save only infrequently.
