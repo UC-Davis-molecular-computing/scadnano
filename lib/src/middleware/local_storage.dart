@@ -39,8 +39,7 @@ save(AppState state, Storable storable) {
     value_string = jsonEncode(standard_serializers.serialize(state.ui_state.storables));
   }
 
-  if (value_string != null)
-    window.localStorage[storable_key] = value_string;
+  if (value_string != null) window.localStorage[storable_key] = value_string;
 }
 
 String side_pane_width() {
@@ -101,8 +100,11 @@ save_async(AppState state, Iterable<Storable> storables) async {
   }
 }
 
+save_storable_async(AppState state, Storable storable) async {
+  save(state, storable);
+}
+
 local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  var state_before = store.state;
   next(action);
   var state_after = store.state;
   if (action is actions.AppUIStateStorableAction) {
@@ -110,5 +112,9 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
   }
   if (action is actions.StorableAction) {
     save_async(state_after, action.storables());
+  }
+  // if user selects to save DNADesign on every edit, we should save even before they've made an edit
+  if (action is actions.SaveDNADesignInLocalStorageSet && action.save_dna_design_in_local_storage) {
+    save_storable_async(state_after, Storable.dna_design);
   }
 }
