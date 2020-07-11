@@ -263,7 +263,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           on_click: set_color,
         ),
         ContextMenuItem(
-          title: 'mirror horizontally',
+          title: 'reflect horizontally',
           on_click: () => mirror(true, false),
           tooltip: '''\
 replace strand(s) with horizontal mirror image, 
@@ -279,7 +279,7 @@ after:
 ''',
         ),
         ContextMenuItem(
-          title: 'mirror horizontally (reverse vertical polarity)',
+          title: 'reflect horizontally (reverse vertical polarity)',
           on_click: () => mirror(true, true),
           tooltip: '''\
 replace strand(s) with horizontal mirror image, 
@@ -295,7 +295,7 @@ after:
 ''',
         ),
         ContextMenuItem(
-          title: 'mirror vertically',
+          title: 'reflect vertically',
           on_click: () => mirror(false, false),
           tooltip: '''\
 replace strand(s) with vertical mirror image, 
@@ -309,7 +309,7 @@ after:
 ''',
         ),
         ContextMenuItem(
-          title: 'mirror vertically (reverse vertical polarity)',
+          title: 'reflect vertically (reverse vertical polarity)',
           on_click: () => mirror(false, true),
           tooltip: '''\
 replace strand(s) with vertical mirror image, 

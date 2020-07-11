@@ -7,7 +7,6 @@ import 'package:built_collection/built_collection.dart';
 import '../state/substrand.dart';
 import '../app.dart';
 import '../state/domain.dart';
-import '../state/helix.dart';
 import '../state/dna_design.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
