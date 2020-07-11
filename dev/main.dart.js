@@ -45378,10 +45378,10 @@ if(a.b!=null)C.a.n(t,B.dL(r.gFJ(),"remove DNA",q))
 s=H.d(a.d)?"set as non-scaffold":"set as scaffold"
 C.a.n(t,B.dL(r.gul(),s,q))
 C.a.n(t,B.dL(r.gui(),"set color",q))
-C.a.n(t,B.dL(new M.RN(r),"mirror horizontally","replace strand(s) with horizontal mirror image, \nwithout reversing polarity \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\nafter:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\n"))
-C.a.n(t,B.dL(new M.RO(r),"mirror horizontally (reverse vertical polarity)","replace strand(s) with horizontal mirror image, \nwith polarity reversed \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\nafter:\n  strand's 5' end on helix 1\n  strand's 3' end on helix 0\n"))
-C.a.n(t,B.dL(new M.RP(r),"mirror vertically","replace strand(s) with vertical mirror image, \nwithout reversing polarity \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end is on a helix below that of the strand's 3' end\nafter:\n  strand's 5' end is still on a helix below that of the strand's 3' end\n"))
-C.a.n(t,B.dL(new M.RQ(r),"mirror vertically (reverse vertical polarity)","replace strand(s) with vertical mirror image, \nwith polarity reversed \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end is on a helix below that of the strand's 3' end\nafter:\n  strand's 5' end is now on a helix above that of the strand's 3' end\n"))
+C.a.n(t,B.dL(new M.RN(r),"reflect horizontally","replace strand(s) with horizontal mirror image, \nwithout reversing polarity \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\nafter:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\n"))
+C.a.n(t,B.dL(new M.RO(r),"reflect horizontally (reverse vertical polarity)","replace strand(s) with horizontal mirror image, \nwith polarity reversed \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end on helix 0\n  strand's 3' end on helix 1\nafter:\n  strand's 5' end on helix 1\n  strand's 3' end on helix 0\n"))
+C.a.n(t,B.dL(new M.RP(r),"reflect vertically","replace strand(s) with vertical mirror image, \nwithout reversing polarity \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end is on a helix below that of the strand's 3' end\nafter:\n  strand's 5' end is still on a helix below that of the strand's 3' end\n"))
+C.a.n(t,B.dL(new M.RQ(r),"reflect vertically (reverse vertical polarity)","replace strand(s) with vertical mirror image, \nwith polarity reversed \"vertically\"\n\nFor example,\nbefore:\n  strand's 5' end is on a helix below that of the strand's 3' end\nafter:\n  strand's 5' end is now on a helix above that of the strand's 3' end\n"))
 return t}}
 M.RM.prototype={
 $0:function(){var t=this.a,s=t.m.gar(),r=t.m
