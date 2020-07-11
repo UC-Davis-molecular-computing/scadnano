@@ -2,9 +2,9 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
+import 'modification.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
 import 'idt_fields.dart';

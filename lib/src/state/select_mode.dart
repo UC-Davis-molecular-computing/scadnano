@@ -100,4 +100,13 @@ class SelectModeChoice extends EnumClass {
     end_3p_substrand,
   ]);
 
+  static final BuiltList<SelectModeChoice> ends_on_origami = BuiltList<SelectModeChoice>([
+    end_5p_strand,
+    end_3p_strand,
+    end_5p_substrand,
+    end_3p_substrand,
+    scaffold,
+    staple,
+  ]);
+
 }

@@ -27,6 +27,7 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
+  TypedReducer<BuiltList<Strand>, actions.ReplaceStrands>(replace_strands_reducer),
 //  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
@@ -42,6 +43,16 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
       join_strands_by_crossover_reducer),
 ]);
+
+BuiltList<Strand> replace_strands_reducer(
+    BuiltList<Strand> strands, actions.ReplaceStrands action) {
+  var strands_builder = strands.toBuilder();
+  for (int idx in action.new_strands.keys) {
+    var new_strand = action.new_strands[idx];
+    strands_builder[idx] = new_strand;
+  }
+  return strands_builder.build();
+}
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
 // action may not have the strand itself
