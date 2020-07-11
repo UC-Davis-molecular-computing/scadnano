@@ -1394,6 +1394,41 @@ abstract class JoinStrandsByCrossover
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// mirror image Strands
+
+abstract class StrandsMirror
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsMirror, StrandsMirrorBuilder> {
+  BuiltList<Strand> get strands;
+
+  bool get horizontal;
+
+  bool get reverse_polarity;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsMirror({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
+      _$StrandsMirror._;
+
+  StrandsMirror._();
+
+  static Serializer<StrandsMirror> get serializer => _$strandsMirrorSerializer;
+}
+
+abstract class ReplaceStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<ReplaceStrands, ReplaceStrandsBuilder> {
+  // maps index of old strand to new strand
+  BuiltMap<int, Strand> get new_strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ReplaceStrands({BuiltMap<int, Strand> new_strands}) = _$ReplaceStrands._;
+
+  ReplaceStrands._();
+
+  static Serializer<ReplaceStrands> get serializer => _$replaceStrandsSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create new Strand with a single Domain with no deletions or insertions
 
 abstract class StrandCreateStart
@@ -2071,15 +2106,19 @@ abstract class ShowGridCoordinatesSideViewSet
 
 abstract class SaveDNADesignInLocalStorageSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
+    implements
+        AppUIStateStorableAction,
+        Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
   bool get save_dna_design_in_local_storage;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) = _$SaveDNADesignInLocalStorageSet._;
+  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) =
+      _$SaveDNADesignInLocalStorageSet._;
 
   SaveDNADesignInLocalStorageSet._();
 
-  static Serializer<SaveDNADesignInLocalStorageSet> get serializer => _$saveDNADesignInLocalStorageSetSerializer;
+  static Serializer<SaveDNADesignInLocalStorageSet> get serializer =>
+      _$saveDNADesignInLocalStorageSetSerializer;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png

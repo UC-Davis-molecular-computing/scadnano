@@ -119,6 +119,10 @@ class App {
     return return_value;
   }
 
+  dispatch_async(Action action) async {
+    dispatch(action);
+  }
+
   dispatch(Action action) {
     // dispatch most to normal store, but fast-repeated actions only go to optimized stores
     if (!(action is FastAction)) {

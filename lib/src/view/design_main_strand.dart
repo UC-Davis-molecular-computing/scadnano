@@ -218,6 +218,24 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         () => ask_for_color(props.strand, props.selectables_store.selected_strands));
   }
 
+  mirror(bool horizontal, bool reverse_polarity) {
+    var selected_strands = props.selectables_store.selected_strands;
+    List<Strand> strands;
+    if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == props.strand) {
+      // set for single strand if nothing is selected, or exactly this strand is selected
+      strands = [props.strand];
+    } else {
+      // if this strand is not selected, change it anyway along with all selected strands
+      if (!selected_strands.contains(props.strand)) {
+        strands = selected_strands.rebuild((b) => b.add(props.strand)).toList();
+      } else {
+        strands = selected_strands.toList();
+      }
+    }
+    app.dispatch(actions.StrandsMirror(
+        strands: strands.build(), horizontal: horizontal, reverse_polarity: reverse_polarity));
+  }
+
   set_scaffold() {
     Strand strand = props.strand;
     var selected_strands = props.selectables_store.selected_strands;
@@ -243,6 +261,66 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ContextMenuItem(
           title: 'set color',
           on_click: set_color,
+        ),
+        ContextMenuItem(
+          title: 'mirror horizontally',
+          on_click: () => mirror(true, false),
+          tooltip: '''\
+replace strand(s) with horizontal mirror image, 
+without reversing polarity "vertically"
+
+For example,
+before:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1
+after:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1\
+''',
+        ),
+        ContextMenuItem(
+          title: 'mirror horizontally (reverse vertical polarity)',
+          on_click: () => mirror(true, true),
+          tooltip: '''\
+replace strand(s) with horizontal mirror image, 
+with polarity reversed "vertically"
+
+For example,
+before:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1
+after:
+  strand's 5' end on helix 1
+  strand's 3' end on helix 0\
+''',
+        ),
+        ContextMenuItem(
+          title: 'mirror vertically',
+          on_click: () => mirror(false, false),
+          tooltip: '''\
+replace strand(s) with vertical mirror image, 
+without reversing polarity "vertically"
+
+For example,
+before:
+  strand's 5' end is on a helix below that of the strand's 3' end
+after:
+  strand's 5' end is still on a helix below that of the strand's 3' end\
+''',
+        ),
+        ContextMenuItem(
+          title: 'mirror vertically (reverse vertical polarity)',
+          on_click: () => mirror(false, true),
+          tooltip: '''\
+replace strand(s) with vertical mirror image, 
+with polarity reversed "vertically"
+
+For example,
+before:
+  strand's 5' end is on a helix below that of the strand's 3' end
+after:
+  strand's 5' end is now on a helix above that of the strand's 3' end\
+''',
         ),
       ];
 }
@@ -280,7 +358,7 @@ String tooltip_text(Strand strand) =>
     "    length=${strand.dna_length()}\n" +
     "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
-    (strand.label == null? "": "    label: ${strand.label.toString()}\n") +
+    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";

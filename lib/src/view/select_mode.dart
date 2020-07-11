@@ -38,8 +38,9 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
 
   @override
   render() {
+    var ends_modes = props.is_origami ? SelectModeChoice.ends_on_origami : SelectModeChoice.ends;
     var first_button = (Dom.button()
-      ..onClick = ((_) => props.dispatch(actions.SelectModesSet(SelectModeChoice.ends)))
+      ..onClick = ((_) => props.dispatch(actions.SelectModesSet(ends_modes.toBuiltList())))
       ..className = 'mode-button ' +
           (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
               ? 'select-mode-button-selected'
