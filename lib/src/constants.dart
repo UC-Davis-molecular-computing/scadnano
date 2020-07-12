@@ -31,7 +31,8 @@ const String DNA_BASE_WILDCARD = '?';
 const default_min_offset = 0;
 const default_max_offset = 64;
 
-//const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
+const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
+const scadnano_css_stylesheet_name = r'scadnano-styles.css';
 
 const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
 

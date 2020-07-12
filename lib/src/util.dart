@@ -792,6 +792,17 @@ Point<num> current_pan(bool is_main) {
 
 num current_zoom(bool is_main) => is_main ? current_zoom_main_js() : current_zoom_side_js();
 
+CssStyleSheet get_scadnano_stylesheet() {
+  for (var stylesheet in document.styleSheets) {
+    if (stylesheet.href.contains(constants.scadnano_css_stylesheet_name)) {
+      return stylesheet;
+    }
+  }
+  throw AssertionError('cannot find stylesheet containing "${constants.scadnano_css_stylesheet_name}" '
+      'in its href\nlist of stylesheet hrefs:\n'
+      '${[for (var sheet in document.styleSheets) sheet.href].join("\n")}');
+}
+
 /// Indicates if loopout between two given strands is a hairpin.
 bool is_hairpin(Domain prev_ss, Domain next_ss) {
   bool is_hairpin = prev_ss.helix == next_ss.helix &&

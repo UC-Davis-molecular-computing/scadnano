@@ -4,6 +4,7 @@ import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
 
 import 'assign_dna.dart';
 import 'check_mirror_strands_legal.dart';
+import 'edit_select_mode_change.dart';
 import 'example_dna_design_selected.dart';
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
@@ -47,4 +48,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   adjust_grid_position_middleware,
   invalidate_png_middleware,
   check_mirror_strands_legal_middleware,
+  edit_select_mode_change_middleware,
 ]);

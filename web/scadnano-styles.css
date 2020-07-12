@@ -392,13 +392,8 @@ html, body {
     stroke-width: 3;
 }
 
-/*.main-view-helix-major-tick-offset-text {*/
-/*    font-size: 8px;*/
-/*}*/
-
-/*.main-view-helix-major-tick-distance-text {*/
-/*    font-size: 6px;*/
-/*}*/
+/*******************************************************************************/
+/* begin formatting of Strand elements when selected/selectable/not selectable */
 
 .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
@@ -435,10 +430,6 @@ html, body {
     fill: none;
 }
 
-.selected {
-    filter: url("#shadow");
-}
-
 .disallowed {
     stroke: lightgray;
 }
@@ -446,6 +437,10 @@ html, body {
 .disallowed-end {
     stroke: lightgray;
     fill: lightgray;
+}
+
+.selected {
+    filter: url("#shadow");
 }
 
 .selected.side-view-helix-circle {
@@ -485,22 +480,23 @@ html, body {
     stroke: hotpink;
 }
 
-.selectable.strand:hover,
-.selectable.loopout-line:hover,
-.selectable.five-prime-end-first-substrand:hover,
-.selectable.three-prime-end-last-substrand:hover,
-.selectable.five-prime-end:hover,
-.selectable.three-prime-end:hover,
-.selectable.insertion-line:hover,
-.selectable.deletion-cross:hover {
-    filter: url("#shadow");
-}
+/*.selectable.strand:hover,*/
+/*.selectable.loopout-line:hover,*/
+/*.selectable.crossover-curve:hover,*/
+/*.selectable.five-prime-end-first-substrand:hover,*/
+/*.selectable.three-prime-end-last-substrand:hover,*/
+/*.selectable.five-prime-end:hover,*/
+/*.selectable.three-prime-end:hover,*/
+/*.selectable.insertion-line:hover,*/
+/*.selectable.deletion-cross:hover {*/
+/*    filter: url("#shadow");*/
+/*}*/
 
 
-.selectable.crossover-curve:hover {
-    stroke-dasharray: 0;
-    filter: url("#shadow");
-}
+
+/* end formatting of Strand elements when selected/selectable/not selectable */
+/*****************************************************************************/
+
 
 .crossover-curve {
     stroke-width: 4;

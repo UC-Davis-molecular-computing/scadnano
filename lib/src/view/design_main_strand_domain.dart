@@ -19,13 +19,6 @@ import 'design_main_strand.dart';
 
 part 'design_main_strand_domain.over_react.g.dart';
 
-//UiFactory<DesignMainDomainProps> ConnectedDesignMainDomain =
-//    connect<AppState, DesignMainDomainProps>(mapStateToPropsWithOwnProps: (state, props) {
-//  return DesignMainDomain()
-//    ..helix = state.dna_design.helices[props.substrand.helix]
-//    ..edit_modes = state.ui_state.edit_modes;
-//})(DesignMainDomain);
-
 @Factory()
 UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 
