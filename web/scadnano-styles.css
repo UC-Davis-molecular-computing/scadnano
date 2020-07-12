@@ -56,7 +56,7 @@ html, body {
     cursor: col-resize;
 }
 
-#right-side-panes-container {
+#design-and-modes-buttons-container {
     display: flex;
     height: 100%;
     width: 100%;
