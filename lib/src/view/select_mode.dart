@@ -2,7 +2,6 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
 
-import '../app.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../state/select_mode.dart';
@@ -50,13 +49,13 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
       ..key = 'all-ends')('all ends');
 
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
-    var elts = [
+    var buttons = [
       (Dom.label()..key = 'label')('Select:'),
       first_button,
       ...[
         for (var mode in modes)
           (Dom.button()
-            ..onClick = ((_) => app.dispatch(actions.SelectModeToggle(mode)))
+            ..onClick = ((_) => props.dispatch(actions.SelectModeToggle(mode)))
             ..className = 'mode-button ' +
                 (props.select_mode_state.modes.contains(mode)
                     ? 'select-mode-button-selected'
@@ -65,6 +64,6 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
             ..key = mode.display_name())(mode.display_name())
       ],
     ];
-    return (Dom.div()..id = 'select-mode')(elts);
+    return buttons;
   }
 }

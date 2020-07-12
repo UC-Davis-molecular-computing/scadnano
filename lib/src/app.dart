@@ -20,6 +20,7 @@ import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
+import 'state/undo_redo.dart';
 import 'reducers/selection_reducer.dart';
 import 'view/design.dart';
 import 'view/view.dart';
