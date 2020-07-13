@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/context_menu.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
@@ -51,7 +52,6 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Helix prev_helix;
   Helix next_helix;
   bool selected;
-  bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
   BuiltMap<int, Helix> helices;
 }
@@ -77,12 +77,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
-    var classname = 'domain-line loopout-line';
+    var classname = constants.css_selector_loopout;
     if (props.selected) {
-      classname += ' selected';
-    }
-    if (props.selectable) {
-      classname += ' selectable';
+      classname += ' ' + constants.css_selector_selected;
     }
 
     if (show_mouseover_rect && mouse_hover) {
@@ -281,12 +278,12 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
         }
       })
       ..onPointerDown = ((ev) {
-        if (select_mode && props.selectable) {
+        if (select_mode) {
           props.loopout.handle_selection_mouse_down(ev.nativeEvent);
         }
       })
       ..onPointerUp = ((ev) {
-        if (select_mode && props.selectable) {
+        if (select_mode) {
           props.loopout.handle_selection_mouse_up(ev.nativeEvent);
         }
       })

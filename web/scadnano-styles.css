@@ -417,14 +417,7 @@ html, body {
     pointer-events: all;
 }
 
-.selectable.five-prime-end:hover,
-.selectable.three-prime-end:hover {
-    stroke: black;
-    stroke-width: 0.5px;
-    visibility: visible;
-}
-
-.domain-line {
+.domain-line, .loopout-curve {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
@@ -471,23 +464,55 @@ html, body {
 }
 
 .selected.crossover-curve,
-.selected.loopout-line,
-.selected.insertion-line,
+.selected.loopout-curve,
+.selected.insertion-curve,
 .selected .crossover-curve,
-.selected .loopout-line,
-.selected .insertion-line,
+.selected .loopout-curve,
+.selected .insertion-curve,
 .selected .domain-line {
     stroke: hotpink;
 }
 
+/*******************************************************************************/
+/* these start empty but are used by middleware to alter CSS rules dynamically */
+/* XXX: it is important to have exactly one class selector per rule */
+/* The Dart code that checks this does it by equality of selector text */
+.five-prime-end:hover {}
+.three-prime-end:hover {}
+/*stroke: black;*/
+/*stroke-width: 0.5px;*/
+/*visibility: visible;*/
+
+.strand:hover {}
+.loopout-curve:hover {}
+.crossover-curve:hover {}
+.five-prime-end-first-substrand:hover {}
+.three-prime-end-last-substrand:hover {}
+.five-prime-end:hover {}
+.three-prime-end:hover {}
+.insertion-curve:hover {}
+.deletion-cross:hover {}
+/*filter: url("#shadow");*/
+
+/* end these start empty but are used by middleware to alter CSS rules dynamically */
+/***********************************************************************************/
+
+
+/*.selectable.five-prime-end:hover,*/
+/*.selectable.three-prime-end:hover {*/
+/*    stroke: black;*/
+/*    stroke-width: 0.5px;*/
+/*    visibility: visible;*/
+/*}*/
+
 /*.selectable.strand:hover,*/
-/*.selectable.loopout-line:hover,*/
+/*.selectable.loopout-curve:hover,*/
 /*.selectable.crossover-curve:hover,*/
 /*.selectable.five-prime-end-first-substrand:hover,*/
 /*.selectable.three-prime-end-last-substrand:hover,*/
 /*.selectable.five-prime-end:hover,*/
 /*.selectable.three-prime-end:hover,*/
-/*.selectable.insertion-line:hover,*/
+/*.selectable.insertion-curve:hover,*/
 /*.selectable.deletion-cross:hover {*/
 /*    filter: url("#shadow");*/
 /*}*/
@@ -500,7 +525,6 @@ html, body {
 
 .crossover-curve {
     stroke-width: 4;
-    /*stroke-dasharray: 2;*/
     stroke-opacity: 0.3;
     fill: none;
 }
@@ -526,7 +550,7 @@ html, body {
     pointer-events: none;
 }
 
-.insertion-line {
+.insertion-curve {
     stroke-width: 2.5px;
     fill: none;
 }

@@ -3051,33 +3051,33 @@ main() {
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
           app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
 
-      SelectModeState expected_modes = SelectModeState().set_modes([SelectModeChoice.end_5p_substrand]);
+      SelectModeState expected_modes = SelectModeState().set_modes([SelectModeChoice.end_5p_domain]);
       expect(final_state.ui_state.select_mode_state, expected_modes);
     });
 
     test('test SelectModeToggle to toggle on', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
-          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_substrand));
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_domain));
 
-      SelectModeState expected_modes = modes.add_mode(SelectModeChoice.end_3p_substrand);
+      SelectModeState expected_modes = modes.add_mode(SelectModeChoice.end_3p_domain);
       expect(final_state.ui_state.select_mode_state, expected_modes);
     });
 
     test('test SelectModeToggle to turn strand on', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
@@ -3089,7 +3089,7 @@ main() {
 
     test('test SelectModeToggle to turn crossover on', () {
       SelectModeState modes = SelectModeState().set_modes(
-          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
@@ -3102,7 +3102,7 @@ main() {
 
     test('test SelectModeToggle to turn loopout on', () {
       SelectModeState modes = SelectModeState().set_modes(
-          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 

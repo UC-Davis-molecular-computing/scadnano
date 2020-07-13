@@ -55,13 +55,13 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
       if (substrand_is_first) {
         return SelectModeChoice.end_5p_strand;
       } else {
-        return SelectModeChoice.end_5p_substrand;
+        return SelectModeChoice.end_5p_domain;
       }
     } else {
       if (substrand_is_last) {
         return SelectModeChoice.end_3p_strand;
       } else {
-        return SelectModeChoice.end_3p_substrand;
+        return SelectModeChoice.end_3p_domain;
       }
     }
   }

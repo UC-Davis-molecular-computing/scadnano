@@ -17,27 +17,9 @@ import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 
 part 'design_main_strand_crossover.over_react.g.dart';
-
-//UiFactory<DesignMainStrandCrossoverProps> ConnectedDesignMainStrandCrossover =
-//    connect<AppState, DesignMainStrandCrossoverProps>(
-//  mapStateToPropsWithOwnProps: (state, props) {
-//    int prev_idx = props.crossover.prev_substrand_idx;
-//    int next_idx = props.crossover.next_substrand_idx;
-//    var prev_ss = props.strand.substrands[prev_idx];
-//    var next_ss = props.strand.substrands[next_idx];
-//    bool selected = state.ui_state.selectables_store.selected(props.crossover);
-//    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.crossover);
-//
-//    return DesignMainStrandCrossover()
-//      ..selected = selected
-//      ..selectable = selectable
-//      ..prev_substrand = prev_ss
-//      ..next_substrand = next_ss
-//      ..edit_modes = state.ui_state.edit_modes;
-//  },
-//)(DesignMainStrandCrossover);
 
 @Factory()
 UiFactory<DesignMainStrandCrossoverProps> DesignMainStrandCrossover = _$DesignMainStrandCrossover;
@@ -50,7 +32,6 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Domain prev_domain;
   Domain next_domain;
   bool selected;
-  bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
   BuiltMap<int, Helix> helices;
 }
@@ -80,12 +61,9 @@ class DesignMainStrandCrossoverComponent
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
-    var classname_this_curve = 'crossover-curve';
+    var classname_this_curve = constants.css_selector_crossover;
     if (props.selected) {
-      classname_this_curve += ' selected';
-    }
-    if (props.selectable) {
-      classname_this_curve += ' selectable';
+      classname_this_curve += ' ' + constants.css_selector_selected;
     }
 
     var path = crossover_path_description(prev_substrand, next_substrand, props.helices);
@@ -115,12 +93,12 @@ class DesignMainStrandCrossoverComponent
             }
           })
           ..onPointerDown = ((ev) {
-            if (select_mode && props.selectable) {
+            if (select_mode) {
               props.crossover.handle_selection_mouse_down(ev.nativeEvent);
             }
           })
           ..onPointerUp = ((ev) {
-            if (select_mode && props.selectable) {
+            if (select_mode) {
               props.crossover.handle_selection_mouse_up(ev.nativeEvent);
             }
           })

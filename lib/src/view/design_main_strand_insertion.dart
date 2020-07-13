@@ -80,7 +80,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 //  String key = 'insertion-H${substrand.helix}-${offset}';
     ReactElement insertion_path = (Dom.path()
       ..onClick = ((_) => change_insertion_length())
-      ..className = 'insertion-line'
+      ..className = constants.css_selector_insertion
       ..stroke = color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = 'M $x0 $y0 '

@@ -105,18 +105,15 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             String key = is_5p
                 ? "5'-end-$i${substrand.is_first ? '-is_first' : ''}"
                 : "3'-end-$i${substrand.is_last ? '-is_last' : ''}";
-            bool selected = props.selectables_store.selected(end);
+            bool end_selected = props.selectables_store.selected(end);
             ends.add((DesignMainDNAEnd()
               ..substrand = substrand
               ..is_5p = is_5p
               ..color = strand.color
               ..helix = helix
-              ..selected = selected
-              ..selectable = props.select_mode_state.is_selectable(end) &&
-                  props.edit_modes.contains(EditModeChoice.select) &&
-                  props.origami_type_is_selectable
+              ..selected = end_selected
               ..edit_modes = props.edit_modes
-              ..moving_this_dna_end = props.moving_dna_ends && selected
+              ..moving_this_dna_end = props.moving_dna_ends && end_selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
               ..key = key)());
             is_5p = false;
@@ -137,9 +134,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..helices = props.helices
             ..color = strand.color
             ..selected = props.selectables_store.selected(substrand)
-            ..selectable = props.select_mode_state.is_selectable(substrand) &&
-                props.edit_modes.contains(EditModeChoice.select) &&
-                props.origami_type_is_selectable
             ..edit_modes = props.edit_modes
             ..prev_domain = prev_dom
             ..next_domain = next_dom
@@ -167,9 +161,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..strand = strand
           ..helices = props.helices
           ..selected = props.selectables_store.selected(crossover)
-          ..selectable = props.select_mode_state.is_selectable(crossover) &&
-              props.edit_modes.contains(EditModeChoice.select) &&
-              props.origami_type_is_selectable
           ..edit_modes = props.edit_modes
           ..prev_domain = prev_ss
           ..next_domain = next_ss

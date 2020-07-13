@@ -28,7 +28,6 @@ Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
   DNAEnd end = props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
   return DesignMainDNAEnd()
     ..selected = state.ui_state.selectables_store.selected(end)
-    ..selectable = state.ui_state.select_mode_state.is_selectable(end)
     ..helix = state.dna_design.helices[props.substrand.helix]
     ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
     ..edit_modes = state.ui_state.edit_modes
@@ -49,7 +48,6 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
 
   Helix helix;
   bool selected;
-  bool selectable;
   BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
@@ -68,15 +66,23 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
 
   @override
   render() {
-    var classname = '${props.is_5p ? 'five' : 'three'}-prime-end' +
-        (is_first && props.is_5p ? '-first-substrand' : '') +
-        (is_last && !props.is_5p ? '-last-substrand' : '');
+    var classname;
+    if (props.is_5p) {
+      if (is_first && props.is_5p) {
+        classname = constants.css_selector_end_5p_strand;
+      } else {
+        classname = constants.css_selector_end_5p_domain;
+      }
+    } else {
+      if (is_last && !props.is_5p) {
+        classname = constants.css_selector_end_3p_strand;
+      } else {
+        classname = constants.css_selector_end_3p_domain;
+      }
+    }
 
     if (props.selected) {
-      classname += ' selected';
-    }
-    if (props.selectable) {
-      classname += ' selectable';
+      classname += ' ' + constants.css_selector_selected;
     }
 
     //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
@@ -119,19 +125,19 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     // select end
-    if (select_mode && props.selectable) {
+    if (select_mode) {
       MouseEvent event = event_synthetic.nativeEvent;
       dna_end.handle_selection_mouse_down(event);
     }
 
     // set up drag detection for moving DNA ends
-    if (select_mode && props.selectable) {
+    if (select_mode) {
       app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
     }
   }
 
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
-    if (select_mode && props.selectable) {
+    if (select_mode) {
       MouseEvent event = event_synthetic.nativeEvent;
       dna_end.handle_selection_mouse_up(event);
     }
