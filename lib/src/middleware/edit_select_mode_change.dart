@@ -7,16 +7,9 @@ import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/dna_design.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
 
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
-
-const strand_classname = '.strand';
-const staple_classname = '.staple';
-const scaffold_classname = '.scaffold';
-
-//const crossover_classname = '.crossover-curve';
 
 const selectable_css_style_non_domain_end = {'filter': 'url("#shadow")'};
 const selectable_css_style_domain_end = {
@@ -33,7 +26,7 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
       action is actions.EditModeToggle ||
       action is actions.SelectModesSet ||
       action is actions.SelectModeToggle ||
-      action is actions.LoadDNAFile) {
+      action is actions.SetAppUIStateStorable) {
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
     var design = store.state.dna_design;
@@ -113,48 +106,3 @@ CssStyleRule style_rule_with_selector(CssStyleSheet stylesheet, String classname
   }
   throw AssertionError('cannot find CSS style rule matching classname ${classname}');
 }
-
-//int index_of_style_rule_with_selector(CssStyleSheet styleSheet, String classname) {
-//  int index = -1;
-//  for (int i = 0; i < styleSheet.cssRules.length; i++) {
-//    CssRule rule = styleSheet.cssRules[i];
-//    if (rule is CssStyleRule && rule.selectorText == classname) {
-//      index = i;
-//      break;
-//    }
-//  }
-//  return index;
-//}
-
-//bool select_strand_turning_on(SelectModeState select_mode_state, actions.SelectModeToggle action) =>
-//    !select_mode_state.modes.contains(SelectModeChoice.strand) &&
-//        action.select_mode_choice == SelectModeChoice.strand;
-//
-//bool select_strand_turning_off(SelectModeState select_mode_state, actions.SelectModeToggle action) =>
-//    select_mode_state.modes.contains(SelectModeChoice.strand) &&
-//        (action.select_mode_choice == SelectModeChoice.strand || // either strand turning off on its own
-//            action.select_mode_choice == SelectModeChoice.loopout || // or going to be turned off by one of these
-//            action.select_mode_choice == SelectModeChoice.crossover ||
-//            action.select_mode_choice == SelectModeChoice.end_5p_strand ||
-//            action.select_mode_choice == SelectModeChoice.end_3p_strand ||
-//            action.select_mode_choice == SelectModeChoice.end_5p_substrand ||
-//            action.select_mode_choice == SelectModeChoice.end_3p_substrand);
-
-//bool origami_type_is_selectable(Strand strand) {
-//  if (!props.is_origami) {
-//    return true;
-//  }
-//  if (strand.is_scaffold) {
-//    return props.select_mode_state.modes.contains(SelectModeChoice.scaffold);
-//  } else {
-//    return props.select_mode_state.modes.contains(SelectModeChoice.staple);
-//  }
-//}
-//
-//bool strand_is_selectable(Strand strand) {
-//  if (!(props.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-//      props.edit_modes.contains(EditModeChoice.select))) {
-//    return false;
-//  }
-//  return origami_type_is_selectable(strand);
-//}
