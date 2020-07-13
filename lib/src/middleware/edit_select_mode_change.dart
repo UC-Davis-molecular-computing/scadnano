@@ -32,7 +32,8 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
   if (action is actions.EditModesSet ||
       action is actions.EditModeToggle ||
       action is actions.SelectModesSet ||
-      action is actions.SelectModeToggle) {
+      action is actions.SelectModeToggle ||
+      action is actions.LoadDNAFile) {
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
     var design = store.state.dna_design;
