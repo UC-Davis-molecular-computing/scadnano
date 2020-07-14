@@ -105,7 +105,7 @@ SelectablesStore selections_adjust_reducer(
 
   List<Selectable> overlapping_now_select_mode_enabled = [];
   for (var obj in overlapping_now) {
-    if (state.ui_state.select_mode_state.is_selectable(obj, is_origami: is_origami)) {
+    if (state.ui_state.select_mode_state.is_selectable(obj)) {
       overlapping_now_select_mode_enabled.add(obj);
     }
   }
