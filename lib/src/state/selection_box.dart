@@ -27,12 +27,16 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   static Serializer<SelectionBox> get serializer => _$selectionBoxSerializer;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   Point<num> get start; // starting coordinate of drag
   Point<num> get current; // current coordinate of drag
   bool get toggle; // toggle if Ctrl pressed, otherwise selecting
   bool get is_main; // in main view or side view?
+
   bool get selecting => !toggle;
 
   num get x => min(start.x, current.x);
@@ -43,12 +47,9 @@ abstract class SelectionBox with BuiltJsonSerializable implements Built<Selectio
 
   num get height => (start.y - current.y).abs();
 
-  @memoized
-  int get hashCode;
-
   static const DECIMAL_PLACES = 1;
 
-  static rectToString(Rect bbox) => ''
+  static rect_to_string(Rect bbox) => ''
       '${bbox.x.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.y.toStringAsFixed(DECIMAL_PLACES)} '
       '${bbox.width.toStringAsFixed(DECIMAL_PLACES)} '
