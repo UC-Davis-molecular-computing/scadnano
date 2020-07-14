@@ -229,7 +229,7 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
 ]);
 
 SelectionBox selection_box_create_reducer(SelectionBox _, actions.SelectionBoxCreate action) =>
-    SelectionBox(action.point, action.toggle, action.is_main, action.is_origami);
+    SelectionBox(action.point, action.toggle, action.is_main);
 
 SelectionBox selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>
