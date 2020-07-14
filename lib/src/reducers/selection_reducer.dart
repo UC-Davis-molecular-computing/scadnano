@@ -16,13 +16,39 @@ import '../constants.dart' as constants;
 import '../state/selectable.dart';
 import 'util_reducer.dart';
 
+SelectablesStore selectables_store_reducer(SelectablesStore selectables_store, AppState state, action) {
+  selectables_store = selectables_store_local_reducer(selectables_store, action);
+  selectables_store = selectables_store_global_reducer(selectables_store, state, action);
+  return selectables_store;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables global reducer
 
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<SelectablesStore, AppState, actions.Select>(select_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
 ]);
+
+SelectablesStore select_reducer(SelectablesStore selectables_store, AppState state, actions.Select action) {
+  Selectable item = action.selectable;
+  if (!state.ui_state.select_mode_state.modes.contains(item.select_mode())) {
+    // if this type of item is not selectable, do nothing
+    return selectables_store;
+  }
+  bool toggle = action.toggle;
+  if (action.only) {
+    selectables_store = selectables_store.select(item, only: true);
+  } else {
+    if (toggle) {
+      selectables_store = selectables_store.toggle(item);
+    } else {
+      selectables_store = selectables_store.select(item);
+    }
+  }
+  return selectables_store;
+}
 
 SelectablesStore select_all_selectables_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
@@ -79,7 +105,7 @@ SelectablesStore selections_adjust_reducer(
 
   List<Selectable> overlapping_now_select_mode_enabled = [];
   for (var obj in overlapping_now) {
-    if (state.ui_state.select_mode_state.is_selectable(obj)) {
+    if (state.ui_state.select_mode_state.is_selectable(obj, is_origami: is_origami)) {
       overlapping_now_select_mode_enabled.add(obj);
     }
   }
@@ -92,8 +118,7 @@ SelectablesStore selections_adjust_reducer(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables local reducer
 
-Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
-  TypedReducer<SelectablesStore, actions.Select>(select_reducer),
+Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
   TypedReducer<SelectablesStore, actions.DNADesignChangingAction>(dna_design_changing_action_reducer),
@@ -105,21 +130,6 @@ Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
 SelectablesStore dna_design_changing_action_reducer(
         SelectablesStore selectables_store, actions.DNADesignChangingAction action) =>
     action is actions.HelicesPositionsSetBasedOnCrossovers ? selectables_store : selectables_store.clear();
-
-SelectablesStore select_reducer(SelectablesStore selectables_store, actions.Select action) {
-  Selectable item = action.selectable;
-  bool toggle = action.toggle;
-  if (action.only) {
-    selectables_store = selectables_store.select(item, only: true);
-  } else {
-    if (toggle) {
-      selectables_store = selectables_store.toggle(item);
-    } else {
-      selectables_store = selectables_store.select(item);
-    }
-  }
-  return selectables_store;
-}
 
 SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
     selectables_store.select_all(action.selectables, only: action.only);
@@ -219,7 +229,7 @@ Reducer<SelectionBox> selection_box_reducer = combineReducers([
 ]);
 
 SelectionBox selection_box_create_reducer(SelectionBox _, actions.SelectionBoxCreate action) =>
-    SelectionBox(action.point, action.toggle, action.is_main);
+    SelectionBox(action.point, action.toggle, action.is_main, action.is_origami);
 
 SelectionBox selection_box_size_changed_reducer(
         SelectionBox selection_box, actions.SelectionBoxSizeChange action) =>

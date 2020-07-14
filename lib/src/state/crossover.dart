@@ -27,9 +27,9 @@ abstract class Crossover
 
   static Serializer<Crossover> get serializer => _$crossoverSerializer;
 
-  /************************ end BuiltValue boilerplate ************************/
   @memoized
   int get hashCode;
+  /************************ end BuiltValue boilerplate ************************/
 
   int get prev_domain_idx;
 
