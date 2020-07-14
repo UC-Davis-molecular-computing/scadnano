@@ -60,28 +60,30 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     with PureComponent, EditModeQueryable<DesignMainStrandProps> {
   @override
   render() {
-    Strand strand = props.strand;
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
 
-    if (strand.substrands.length == 0) {
+    if (props.strand.substrands.length == 0) {
       return null;
     }
 
     var classname = constants.css_selector_strand;
     if (selected) {
-      classname += ' ${constants.css_selector_selected}';
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
     }
 
     return (Dom.g()
-      ..id = strand.id()
+      ..id = props.strand.id()
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
 //      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
       ..className = classname)([
 //        (ConnectedDesignMainStrandPaths()
       (DesignMainStrandPaths()
-        ..strand = strand
+        ..strand = props.strand
         ..key = 'strand-paths'
         ..helices = props.helices
         ..context_menu_strand = context_menu_strand
@@ -92,8 +94,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..only_display_selected_helices = props.only_display_selected_helices)(),
-      _insertions(strand, side_selected_helix_idxs, strand.color),
-      _deletions(strand, side_selected_helix_idxs),
+      _insertions(props.strand, side_selected_helix_idxs, props.strand.color),
+      _deletions(props.strand, side_selected_helix_idxs),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand

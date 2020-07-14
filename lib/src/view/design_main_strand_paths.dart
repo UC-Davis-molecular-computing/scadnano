@@ -111,6 +111,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..is_5p = is_5p
               ..color = strand.color
               ..helix = helix
+              ..is_scaffold = props.strand.is_scaffold
               ..selected = end_selected
               ..edit_modes = props.edit_modes
               ..moving_this_dna_end = props.moving_dna_ends && end_selected

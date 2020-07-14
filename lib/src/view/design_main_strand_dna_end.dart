@@ -45,6 +45,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   Domain substrand;
   Color color;
   bool is_5p;
+  bool is_scaffold;
 
   Helix helix;
   bool selected;
@@ -83,6 +84,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
 
     if (props.selected) {
       classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
     }
 
     //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,

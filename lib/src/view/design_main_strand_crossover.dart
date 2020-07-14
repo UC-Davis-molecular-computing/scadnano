@@ -61,9 +61,12 @@ class DesignMainStrandCrossoverComponent
     bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
-    var classname_this_curve = constants.css_selector_crossover;
+    var classname = constants.css_selector_crossover;
     if (props.selected) {
-      classname_this_curve += ' ' + constants.css_selector_selected;
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
     }
 
     var path = crossover_path_description(prev_substrand, next_substrand, props.helices);
@@ -79,7 +82,7 @@ class DesignMainStrandCrossoverComponent
     return (Dom.path()
           ..d = path
           ..stroke = color
-          ..className = classname_this_curve
+          ..className = classname
           ..onMouseEnter = (ev) {
             setState(newState()..mouse_hover = true);
             if (show_mouseover_rect) {

@@ -81,6 +81,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (props.selected) {
       classname += ' ' + constants.css_selector_selected;
     }
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
+    }
 
     if (show_mouseover_rect && mouse_hover) {
       update_mouseover_loopout();

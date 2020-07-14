@@ -66,7 +66,10 @@ SelectablesStore selections_adjust_reducer(
   // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
   // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
 
-  Set<SvgElement> elts_overlapping = util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).toSet();
+  bool is_origami = state.dna_design.is_origami;
+  var select_modes = state.ui_state.select_mode_state.modes;
+  Set<SvgElement> elts_overlapping =
+      util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
 
   var selectable_by_id = state.dna_design.selectable_by_id;
   List<Selectable> overlapping_now = [

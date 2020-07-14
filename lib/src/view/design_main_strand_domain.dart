@@ -15,7 +15,6 @@ import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 import '../state/context_menu.dart';
-import 'design_main_strand.dart';
 
 part 'design_main_strand_domain.over_react.g.dart';
 

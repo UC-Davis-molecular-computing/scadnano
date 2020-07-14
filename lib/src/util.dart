@@ -35,6 +35,7 @@ import 'state/dna_design.dart';
 import 'constants.dart' as constants;
 import 'state/domain.dart';
 import 'state/position3d.dart';
+import 'state/select_mode.dart';
 import 'state/selectable.dart';
 import 'state/selection_box.dart';
 import 'state/strand.dart';
@@ -1172,20 +1173,25 @@ bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num 
       overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
 }
 
-// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
-  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
-}
+//// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
+//List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
+//  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
+//}
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<SvgElement> enclosure_list_in_elt(String classname, Rect select_box_bbox) {
-  return generalized_intersection_list_in_elt(classname, select_box_bbox, interval_contained);
+List<SvgElement> enclosure_list_in_elt(
+    String classname, Rect select_box_bbox, Iterable<SelectModeChoice> select_modes, bool is_origami) {
+  return generalized_intersection_list_in_elt(
+      classname, select_box_bbox, select_modes, is_origami, interval_contained);
 }
 
-generalized_intersection_list_in_elt(
-    String classname, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+generalized_intersection_list_in_elt(String classname, Rect select_box_bbox,
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
   List<SvgElement> elts_intersecting = [];
-  List<Element> selectable_elts = querySelectorAll('.selectable');
+
+//  List<Element> selectable_elts = querySelectorAll('.selectable');
+  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+
   for (GraphicsElement elt in selectable_elts) {
     Rect elt_bbox = elt.getBBox();
 //    util.transform_rect_svg_to_mouse_coord_main_view(elt_bbox);
@@ -1194,6 +1200,40 @@ generalized_intersection_list_in_elt(
     }
   }
   return elts_intersecting;
+}
+
+List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
+  List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
+    for (var mode in select_modes)
+      if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
+  ];
+  if (select_modes_not_scaffold_or_staple.isEmpty) {
+    return [];
+  }
+
+  List<String> selectors = [];
+  if (is_origami &&
+      (!select_modes.contains(SelectModeChoice.scaffold) ||
+          !select_modes.contains(SelectModeChoice.staple))) {
+    if (select_modes.contains(SelectModeChoice.scaffold)) {
+      for (var mode in select_modes_not_scaffold_or_staple) {
+        selectors.add('.${SelectModeChoice.scaffold.css_selector()}.${mode.css_selector()}');
+      }
+    } else if (select_modes.contains(SelectModeChoice.staple)) {
+      for (var mode in select_modes) {
+        selectors.add(':not(.${SelectModeChoice.scaffold.css_selector()}).${mode.css_selector()}');
+      }
+    }
+  } else {
+    // not origami, but origami and both scaffold and staples are selectable, just select anything
+    // with the correct mode. Otherwise use the more complex logic above to pick apart between
+    // parts marked as scaffold versus those that are not.
+    for (var mode in select_modes_not_scaffold_or_staple) {
+      selectors.add('.${mode.css_selector()}');
+    }
+  }
+  List<Element> selectable_elts = querySelectorAll(selectors.join(', '));
+  return selectable_elts;
 }
 
 bool bboxes_intersect_generalized(
