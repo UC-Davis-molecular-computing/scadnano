@@ -2,9 +2,9 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
-import 'modification.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
 import 'idt_fields.dart';
@@ -260,7 +260,7 @@ abstract class Strand
     Set<Crossover> ret = {};
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is Domain && substrands[i + 1] is Domain) {
-        ret.add(Crossover(i, i + 1, id(), is_scaffold));
+        ret.add(Crossover(i, i + 1, id()));
       }
     }
 
@@ -394,11 +394,6 @@ abstract class Strand
     var substrand_jsons = util.get_value(json_map, constants.substrands_key, 'Strand',
         legacy_keys: constants.legacy_substrands_keys);
 
-    bool is_scaffold = false;
-    if (json_map.containsKey(constants.is_scaffold_key)) {
-      is_scaffold = json_map[constants.is_scaffold_key];
-    }
-
     // need to parse all Domains before Loopouts,
     // because prev and next Domains need to be referenced by Loopouts
     // Also, no DNA sequence parsing yet because we want all the lengths of Substrands calculated before assigning.
@@ -414,7 +409,6 @@ abstract class Strand
         ssb.is_last = (i == substrand_jsons.length - 1);
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
-        ssb.is_scaffold=is_scaffold;
         end_idx_ss = start_idx_ss + dna_length;
         domains[i] = ssb.build();
       } else {
@@ -432,7 +426,6 @@ abstract class Strand
         LoopoutBuilder lb = Loopout.from_json(substrand_json);
         lb.prev_domain_idx = i - 1;
         lb.next_domain_idx = i + 1;
-        lb.is_scaffold = is_scaffold;
         loopouts[i] = lb.build();
       }
     }
@@ -457,6 +450,11 @@ abstract class Strand
     var color = json_map.containsKey(constants.color_key)
         ? parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
+
+    bool is_scaffold = false;
+    if (json_map.containsKey(constants.is_scaffold_key)) {
+      is_scaffold = json_map[constants.is_scaffold_key];
+    }
 
     Object label = util.get_value_with_null_default(json_map, constants.label_key);
 

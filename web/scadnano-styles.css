@@ -56,7 +56,7 @@ html, body {
     cursor: col-resize;
 }
 
-#design-and-modes-buttons-container {
+#right-side-panes-container {
     display: flex;
     height: 100%;
     width: 100%;
@@ -392,8 +392,13 @@ html, body {
     stroke-width: 3;
 }
 
-/*******************************************************************************/
-/* begin formatting of Strand elements when selected/selectable/not selectable */
+/*.main-view-helix-major-tick-offset-text {*/
+/*    font-size: 8px;*/
+/*}*/
+
+/*.main-view-helix-major-tick-distance-text {*/
+/*    font-size: 6px;*/
+/*}*/
 
 .five-prime-end-first-substrand,
 .three-prime-end-last-substrand {
@@ -417,10 +422,21 @@ html, body {
     pointer-events: all;
 }
 
-.domain-line, .loopout-curve {
+.selectable.five-prime-end:hover,
+.selectable.three-prime-end:hover {
+    stroke: black;
+    stroke-width: 0.5px;
+    visibility: visible;
+}
+
+.domain-line {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
+}
+
+.selected {
+    filter: url("#shadow");
 }
 
 .disallowed {
@@ -430,10 +446,6 @@ html, body {
 .disallowed-end {
     stroke: lightgray;
     fill: lightgray;
-}
-
-.selected {
-    filter: url("#shadow");
 }
 
 .selected.side-view-helix-circle {
@@ -464,36 +476,35 @@ html, body {
 }
 
 .selected.crossover-curve,
-.selected.loopout-curve,
-.selected.insertion-curve,
+.selected.loopout-line,
+.selected.insertion-line,
 .selected .crossover-curve,
-.selected .loopout-curve,
-.selected .insertion-curve,
+.selected .loopout-line,
+.selected .insertion-line,
 .selected .domain-line {
     stroke: hotpink;
 }
 
-
-/*.selectable.strand:hover,*/
-/*.selectable.loopout-curve:hover,*/
-/*.selectable.crossover-curve:hover,*/
-/*.selectable.five-prime-end-first-substrand:hover,*/
-/*.selectable.three-prime-end-last-substrand:hover,*/
-/*.selectable.five-prime-end:hover,*/
-/*.selectable.three-prime-end:hover,*/
-/*.selectable.insertion-curve:hover,*/
-/*.selectable.deletion-cross:hover {*/
-/*    filter: url("#shadow");*/
-/*}*/
+.selectable.strand:hover,
+.selectable.loopout-line:hover,
+.selectable.five-prime-end-first-substrand:hover,
+.selectable.three-prime-end-last-substrand:hover,
+.selectable.five-prime-end:hover,
+.selectable.three-prime-end:hover,
+.selectable.insertion-line:hover,
+.selectable.deletion-cross:hover {
+    filter: url("#shadow");
+}
 
 
-
-/* end formatting of Strand elements when selected/selectable/not selectable */
-/*****************************************************************************/
-
+.selectable.crossover-curve:hover {
+    stroke-dasharray: 0;
+    filter: url("#shadow");
+}
 
 .crossover-curve {
     stroke-width: 4;
+    /*stroke-dasharray: 2;*/
     stroke-opacity: 0.3;
     fill: none;
 }
@@ -519,7 +530,7 @@ html, body {
     pointer-events: none;
 }
 
-.insertion-curve {
+.insertion-line {
     stroke-width: 2.5px;
     fill: none;
 }

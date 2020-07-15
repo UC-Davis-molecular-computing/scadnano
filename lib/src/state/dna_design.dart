@@ -737,7 +737,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     _check_helix_offsets();
     _check_strands_reference_helices_legally();
     _check_loopouts_not_consecutive_or_singletons_or_zero_length();
-    check_strands_overlap_legally();
+    _check_strands_overlap_legally();
     _check_grid_positions_disjoint();
   }
 
@@ -820,7 +820,7 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
     }
   }
 
-  check_strands_overlap_legally() {
+  _check_strands_overlap_legally() {
     String err_msg(Domain domain1, Domain domain2, int h_idx) {
       return "two domains overlap on helix ${h_idx}: "
           "\n${domain1}\n  and\n${domain2}\n  but have the same direction";

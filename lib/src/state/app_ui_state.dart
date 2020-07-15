@@ -89,7 +89,7 @@ abstract class AppUIStateStorable
     b.autofit = true;
     b.show_dna = false;
     b.show_modifications = true;
-    b.show_mismatches = false;
+    b.show_mismatches = true;
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.modification_font_size = constants.default_modification_font_size;

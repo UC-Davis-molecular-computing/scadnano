@@ -31,6 +31,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
   ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
+  ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, action))
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
@@ -284,13 +285,12 @@ Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePosition
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) => ui_state.rebuild((u) => u
-  ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, state, action))
   ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
   ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
   ..side_selected_helix_idxs
       .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action))
-);
+  ..selectables_store.replace(selectables_store_global_reducer(ui_state.selectables_store, state, action)));
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

@@ -3,8 +3,6 @@ import 'package:scadnano/src/middleware/adjust_grid_position.dart';
 import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
 
 import 'assign_dna.dart';
-import 'check_mirror_strands_legal.dart';
-import 'edit_select_mode_change.dart';
 import 'example_dna_design_selected.dart';
 import 'export_dna_sequences.dart';
 import 'dna_ends_move_start.dart';
@@ -13,7 +11,6 @@ import 'helix_hide_all.dart';
 import 'helix_offsets_change.dart';
 import 'insertion_deletion_pairing.dart';
 import 'load_file.dart';
-import 'mode_sensitive_actions_filter.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_strands.dart';
 import 'save_file.dart';
@@ -27,7 +24,6 @@ import 'invalidate_png.dart';
 import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
-  mode_sensitive_actions_filter_middleware,
   local_storage_middleware,
   export_svg_middleware,
   save_file_middleware,
@@ -49,6 +45,4 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   insertion_deletion_pairing_middleware,
   adjust_grid_position_middleware,
   invalidate_png_middleware,
-  check_mirror_strands_legal_middleware,
-  edit_select_mode_change_middleware,
 ]);

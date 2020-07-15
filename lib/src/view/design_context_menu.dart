@@ -14,11 +14,14 @@ UiFactory<DesignContextMenuProps> ConnectedDesignContextMenu =
   return DesignContextMenu()..context_menu = state.ui_state.context_menu;
 })(DesignContextMenu);
 
+
 UiFactory<DesignContextMenuProps> DesignContextMenu = _$DesignContextMenu;
+
 
 mixin DesignContextMenuProps on UiProps {
   ContextMenu context_menu;
 }
+
 
 class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> with PureComponent {
   @override
@@ -36,7 +39,6 @@ class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> wi
       })((Dom.ul()..className = 'context-menu-list')([
       for (var item in props.context_menu.items)
         (Dom.li()
-          ..title = item.tooltip ?? ""
           ..onClick = ((_) {
             app.dispatch(actions.ContextMenuHide());
             item.on_click();

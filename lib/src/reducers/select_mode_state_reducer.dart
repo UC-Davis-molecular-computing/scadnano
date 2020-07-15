@@ -35,3 +35,23 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
 
 SelectModeState set_select_modes_reducer(SelectModeState state, actions.SelectModesSet action) =>
     state.set_modes(action.select_mode_choices);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// some changes to edit mode imply we should change select mode
+// (e.g., need strand select mode to pick a Strand to assign DNA)
+
+SelectModeState edit_mode_toggle_changes_select_mode_reducer(
+    SelectModeState state, actions.EditModeToggle action) {
+//  if (action.mode == EditModeChoice.assign_dna) {
+//    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
+//  }
+  return state;
+}
+
+SelectModeState edit_modes_set_changes_select_mode_reducer(
+    SelectModeState state, actions.EditModesSet action) {
+//  if (action.edit_modes.contains(EditModeChoice.assign_dna)) {
+//    state = state.add_mode(SelectModeChoice.strand).remove_modes(SelectModeChoice.strand_parts);
+//  }
+  return state;
+}
