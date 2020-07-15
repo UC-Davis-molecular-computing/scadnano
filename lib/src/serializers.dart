@@ -46,6 +46,7 @@ part 'serializers.g.dart';
   ShowHelixCirclesMainViewSet,
   SelectModeToggle,
   SelectModesSet,
+  SelectModesAdd,
   SelectionBox,
   ShowDNASet,
   ShowModificationsSet,
