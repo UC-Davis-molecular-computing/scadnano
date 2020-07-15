@@ -4,13 +4,10 @@ import '../actions/actions.dart' as actions;
 import '../state/select_mode.dart';
 import '../state/select_mode_state.dart';
 
-//SelectModeState select_mode_state_reducer([SelectModeState state, action])
 Reducer<SelectModeState> select_mode_state_reducer = combineReducers<SelectModeState>([
   TypedReducer<SelectModeState, actions.SelectModeToggle>(toggle_select_mode_reducer),
   TypedReducer<SelectModeState, actions.SelectModesSet>(set_select_modes_reducer),
   TypedReducer<SelectModeState, actions.SelectModesAdd>(add_select_modes_reducer),
-//  TypedReducer<SelectModeState, actions.EditModeToggle>(edit_mode_toggle_changes_select_mode_reducer),
-//  TypedReducer<SelectModeState, actions.EditModesSet>(edit_modes_set_changes_select_mode_reducer),
 ]);
 
 SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.SelectModeToggle action) {
@@ -55,4 +52,3 @@ SelectModeState add_select_modes_reducer(SelectModeState state, actions.SelectMo
   }
   return new_state;
 }
-

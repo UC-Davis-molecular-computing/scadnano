@@ -22,9 +22,6 @@ abstract class ContextMenu
 
   factory ContextMenu({BuiltList<ContextMenuItem> items, Point<num> position}) = _$ContextMenu._;
 
-  @memoized
-  int get hashCode;
-
   /************************ end BuiltValue boilerplate ************************/
 
   BuiltList<ContextMenuItem> get items;
@@ -41,18 +38,15 @@ abstract class ContextMenuItem
 
   static Serializer<ContextMenuItem> get serializer => _$contextMenuItemSerializer;
 
-  factory ContextMenuItem({String title, Callback on_click, String tooltip}) = _$ContextMenuItem._;
-
-  @memoized
-  int get hashCode;
+  factory ContextMenuItem({String title, Callback on_click}) = _$ContextMenuItem._;
 
   /************************ end BuiltValue boilerplate ************************/
 
   String get title;
 
+  @memoized
+  int get hashCode;
+
   @BuiltValueField(serialize: false, compare: false)
   Callback get on_click;
-
-  @nullable
-  String get tooltip;
 }

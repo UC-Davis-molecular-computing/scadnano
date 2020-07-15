@@ -31,8 +31,7 @@ const String DNA_BASE_WILDCARD = '?';
 const default_min_offset = 0;
 const default_max_offset = 64;
 
-const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
-const scadnano_css_stylesheet_name = r'scadnano-styles.css';
+//const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 
 const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
 
@@ -300,24 +299,3 @@ const num ZOOM_THRESHOLD = 1;
 // Backend
 const export_url = 'https://dna.hamilton.ie/scadnano-backend/scadnano_to_cadnano_v2';
 const import_url = 'https://dna.hamilton.ie/scadnano-backend/cadnano_v2_to_scadnano';
-
-
-/////////////////////////////////////////////////////////////
-// CSS selector classnames
-
-const css_selector_strand = 'strand';
-const css_selector_scaffold = 'scaffold';
-const css_selector_staple = 'staple';
-const css_selector_domain = 'domain-line';
-const css_selector_crossover = 'crossover-curve';
-const css_selector_loopout = 'loopout-curve';
-const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
-const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
-const css_selector_end_5p_domain = 'five-prime-end';
-const css_selector_end_3p_domain = 'three-prime-end';
-
-const css_selector_insertion = 'insertion-curve';
-const css_selector_deletion = 'deletion-cross';
-const css_selector_selected = 'selected';
-
-

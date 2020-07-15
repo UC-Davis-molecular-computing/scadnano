@@ -325,6 +325,7 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 3. If it is about fixing a bug, add tests to reproduce the bug before working on fixing it.
 
+
 4. If it is about implementing a feature, add tests to test the feature.
 
 5. Work entirely in that branch to fix the issue.
@@ -334,8 +335,6 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
 
 8. After merging, it will say that the branch you just merged from can be safely deleted. Delete it.
-
-9. Locally, remember to switch back to the `dev` branch and pull it to get these changes.
 
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
 

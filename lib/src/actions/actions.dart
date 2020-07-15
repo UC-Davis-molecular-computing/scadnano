@@ -1367,26 +1367,6 @@ abstract class ConvertCrossoverToLoopout
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// dumb action issued by domain since it doesn't know current edit mode;
-// mode_sensitive_actions_filter_middleware figures out which one to turn it into
-
-//NickOrInsertionOrDeletionAdd
-abstract class NickOrInsertionOrDeletionAdd
-    with BuiltJsonSerializable
-    implements Action, Built<NickOrInsertionOrDeletionAdd, NickOrInsertionOrDeletionAddBuilder> {
-  Domain get domain;
-
-  int get offset;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory NickOrInsertionOrDeletionAdd({Domain domain, int offset}) = _$NickOrInsertionOrDeletionAdd._;
-
-  NickOrInsertionOrDeletionAdd._();
-
-  static Serializer<NickOrInsertionOrDeletionAdd> get serializer => _$nickOrInsertionOrDeletionAddSerializer;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // nick/join
 
 abstract class Nick with BuiltJsonSerializable, UndoableAction implements Built<Nick, NickBuilder> {
@@ -1413,29 +1393,6 @@ abstract class Ligate with BuiltJsonSerializable, UndoableAction implements Buil
   static Serializer<Ligate> get serializer => _$ligateSerializer;
 }
 
-abstract class DNAEndClicked
-    with BuiltJsonSerializable
-    implements Action, Built<DNAEndClicked, DNAEndClickedBuilder> {
-  DNAEnd get dna_end;
-
-  PotentialCrossover get potential_crossover;
-
-  bool get is_first;
-
-  bool get is_last;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory DNAEndClicked(
-      {DNAEnd dna_end,
-      PotentialCrossover potential_crossover,
-      bool is_first,
-      bool is_last}) = _$DNAEndClicked._;
-
-  DNAEndClicked._();
-
-  static Serializer<DNAEndClicked> get serializer => _$dNAEndClickedSerializer;
-}
-
 abstract class JoinStrandsByCrossover
     with BuiltJsonSerializable, UndoableAction
     implements Built<JoinStrandsByCrossover, JoinStrandsByCrossoverBuilder> {
@@ -1450,41 +1407,6 @@ abstract class JoinStrandsByCrossover
   JoinStrandsByCrossover._();
 
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// mirror image Strands
-
-abstract class StrandsMirror
-    with BuiltJsonSerializable
-    implements Action, Built<StrandsMirror, StrandsMirrorBuilder> {
-  BuiltList<Strand> get strands;
-
-  bool get horizontal;
-
-  bool get reverse_polarity;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMirror({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
-      _$StrandsMirror._;
-
-  StrandsMirror._();
-
-  static Serializer<StrandsMirror> get serializer => _$strandsMirrorSerializer;
-}
-
-abstract class ReplaceStrands
-    with BuiltJsonSerializable, UndoableAction
-    implements Built<ReplaceStrands, ReplaceStrandsBuilder> {
-  // maps index of old strand to new strand
-  BuiltMap<int, Strand> get new_strands;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory ReplaceStrands({BuiltMap<int, Strand> new_strands}) = _$ReplaceStrands._;
-
-  ReplaceStrands._();
-
-  static Serializer<ReplaceStrands> get serializer => _$replaceStrandsSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2165,19 +2087,15 @@ abstract class ShowGridCoordinatesSideViewSet
 
 abstract class SaveDNADesignInLocalStorageSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
+    implements AppUIStateStorableAction, Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
   bool get save_dna_design_in_local_storage;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) =
-      _$SaveDNADesignInLocalStorageSet._;
+  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) = _$SaveDNADesignInLocalStorageSet._;
 
   SaveDNADesignInLocalStorageSet._();
 
-  static Serializer<SaveDNADesignInLocalStorageSet> get serializer =>
-      _$saveDNADesignInLocalStorageSetSerializer;
+  static Serializer<SaveDNADesignInLocalStorageSet> get serializer => _$saveDNADesignInLocalStorageSetSerializer;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png

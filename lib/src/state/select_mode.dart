@@ -2,8 +2,6 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../constants.dart' as constants;
-
 part 'select_mode.g.dart';
 
 class SelectModeChoice extends EnumClass {
@@ -13,8 +11,8 @@ class SelectModeChoice extends EnumClass {
 
   static const SelectModeChoice end_5p_strand = _$end_5p_strand;
   static const SelectModeChoice end_3p_strand = _$end_3p_strand;
-  static const SelectModeChoice end_5p_domain = _$end_5p_substrand;
-  static const SelectModeChoice end_3p_domain = _$end_3p_substrand;
+  static const SelectModeChoice end_5p_substrand = _$end_5p_substrand;
+  static const SelectModeChoice end_3p_substrand = _$end_3p_substrand;
   static const SelectModeChoice crossover = _$crossover;
   static const SelectModeChoice loopout = _$loopout;
   static const SelectModeChoice strand = _$strand;
@@ -32,9 +30,9 @@ class SelectModeChoice extends EnumClass {
       return "5' strand";
     } else if (this == end_3p_strand) {
       return "3' strand";
-    } else if (this == end_5p_domain) {
+    } else if (this == end_5p_substrand) {
       return "5' domain";
-    } else if (this == end_3p_domain) {
+    } else if (this == end_3p_substrand) {
       return "3' domain";
     } else {
       return super.toString();
@@ -49,7 +47,7 @@ class SelectModeChoice extends EnumClass {
 //  static const end_5p_substrand = SelectModeChoice._("5' (other)", 'five-prime-end');
 //  static const end_3p_substrand = SelectModeChoice._("3' (other)", 'three-prime-end');
 //  static const crossover = SelectModeChoice._('crossover', 'crossover-curve');
-//  static const loopout = SelectModeChoice._('loopout', 'loopout-curve');
+//  static const loopout = SelectModeChoice._('loopout', 'loopout-line');
 //  static const strand = SelectModeChoice._('strand', 'strand');
 //  static const scaffold = SelectModeChoice._('scaffold', 'scaffold');
 //  static const staple = SelectModeChoice._('staple', 'staple');
@@ -57,23 +55,23 @@ class SelectModeChoice extends EnumClass {
   String css_selector() {
     switch (this) {
       case end_5p_strand:
-        return constants.css_selector_end_5p_strand;
+        return 'five-prime-end-first-substrand';
       case end_3p_strand:
-        return constants.css_selector_end_3p_strand;
-      case end_5p_domain:
-        return constants.css_selector_end_5p_domain;
-      case end_3p_domain:
-        return constants.css_selector_end_3p_domain;
+        return 'three-prime-end-last-substrand';
+      case end_5p_substrand:
+        return 'five-prime-end';
+      case end_3p_substrand:
+        return 'three-prime-end';
       case crossover:
-        return constants.css_selector_crossover;
+        return 'crossover-curve';
       case loopout:
-        return constants.css_selector_loopout;
+        return 'loopout-line';
       case strand:
-        return constants.css_selector_strand;
+        return 'strand';
       case scaffold:
-        return constants.css_selector_scaffold;
+        return 'scaffold';
       case staple:
-        return constants.css_selector_staple;
+        return 'staple';
     }
     throw AssertionError('should not be reachable; unknown SelectModeChoice used: ${this}');
   }
@@ -89,8 +87,8 @@ class SelectModeChoice extends EnumClass {
   static final BuiltList<SelectModeChoice> strand_parts = BuiltList<SelectModeChoice>([
     end_5p_strand,
     end_3p_strand,
-    end_5p_domain,
-    end_3p_domain,
+    end_5p_substrand,
+    end_3p_substrand,
     crossover,
     loopout,
   ]);
@@ -98,17 +96,8 @@ class SelectModeChoice extends EnumClass {
   static final BuiltList<SelectModeChoice> ends = BuiltList<SelectModeChoice>([
     end_5p_strand,
     end_3p_strand,
-    end_5p_domain,
-    end_3p_domain,
-  ]);
-
-  static final BuiltList<SelectModeChoice> ends_on_origami = BuiltList<SelectModeChoice>([
-    end_5p_strand,
-    end_3p_strand,
-    end_5p_domain,
-    end_3p_domain,
-    scaffold,
-    staple,
+    end_5p_substrand,
+    end_3p_substrand,
   ]);
 
 }

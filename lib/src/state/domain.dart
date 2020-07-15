@@ -23,6 +23,9 @@ abstract class Insertion
 
   int get length;
 
+  @memoized
+  int get hashCode;
+
   dynamic toJson() => [offset, length];
 
   dynamic to_json_serializable({bool suppress_indent = false}) => toJson();
@@ -39,10 +42,6 @@ abstract class Insertion
   Insertion._();
 
   static Serializer<Insertion> get serializer => _$insertionSerializer;
-
-  @memoized
-  int get hashCode;
-
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
@@ -67,7 +66,6 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
-  bool is_scaffold,
       Object label = null,
       bool is_first = false,
       bool is_last = false}) {
@@ -89,7 +87,6 @@ abstract class Domain
       ..strand_id = strand_id
       ..is_first = is_first
       ..is_last = is_last
-      ..is_scaffold = is_scaffold
       ..unused_fields.replace({}));
   }
 
@@ -114,8 +111,6 @@ abstract class Domain
 
   bool get is_last;
 
-  bool get is_scaffold;
-
   @nullable
   @BuiltValueField(serialize: false)
   Object get label;
@@ -136,7 +131,6 @@ abstract class Domain
       is_5p: forward,
       is_start: true,
       offset: start,
-      is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
       substrand_id: id());
@@ -146,7 +140,6 @@ abstract class Domain
       is_5p: !forward,
       is_start: false,
       offset: end,
-      is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
       substrand_id: id());
