@@ -1270,7 +1270,15 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
     if (helix_builder.max_offset == null) {
       var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var max_offset = substrands.isEmpty ? constants.default_max_offset : substrands.first.end;
+      var greatest_max_offset = 0;
+      for (var strand in strands){
+        for(var substrand in strand.substrands){
+        if((substrand.dna_length() + substrands.first.start) > greatest_max_offset){
+          greatest_max_offset = substrand.dna_length() + substrands.first.start;
+          }
+        }
+      }
+      var max_offset = greatest_max_offset;
       for (var substrand in substrands) {
         max_offset = max(max_offset, substrand.end);
       }
