@@ -6,6 +6,7 @@ import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../state/select_mode.dart';
 import '../state/select_mode_state.dart';
+import '../app.dart';
 
 part 'select_mode.over_react.g.dart';
 
@@ -39,7 +40,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
   @override
   render() {
     var first_button = (Dom.button()
-      ..onClick = ((_) => props.dispatch(actions.SelectModesAdd(select_modes_to_add: SelectModeChoice.ends)))
+      ..onClick = ((_) => app.dispatch(actions.SelectModesAdd(select_modes_to_add: SelectModeChoice.ends)))
       ..className = 'mode-button ' +
           (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
               ? 'select-mode-button-selected'
