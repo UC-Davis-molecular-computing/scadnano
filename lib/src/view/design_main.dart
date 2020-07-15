@@ -103,7 +103,7 @@ mixin DesignMainPropsMixin on UiProps {
 class DesignMainProps = UiProps with EditModePropsMixin, DesignMainPropsMixin;
 
 @Component2()
-class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQueryable<DesignMainProps> {
+class DesignMainComponent extends UiComponent2<DesignMainProps> {
   @override
   get consumedProps => propsMeta.forMixins({DesignMainPropsMixin});
 
@@ -141,7 +141,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
           ..key = 'mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
-      if (pencil_mode && !props.drawing_potential_crossover)
+      if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..helices = props.dna_design.helices
@@ -172,7 +172,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> with EditModeQue
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
-      if (backbone_mode)
+      if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.dna_design.helices
           ..key = 'mouseover-rect')(),
