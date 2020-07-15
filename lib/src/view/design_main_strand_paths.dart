@@ -87,7 +87,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             substrand.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         draw_prev_dom = draw_domain;
         if (draw_domain) {
-//          paths.add((ConnectedDesignMainDomain()
           paths.add((DesignMainDomain()
             ..domain = substrand
             ..strand = props.strand
@@ -99,7 +98,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand_tooltip = props.strand_tooltip
             ..key = "bound-substrand-$i")());
 
-//        ends.add((ConnectedDesignMainDNAEnd()
           bool is_5p = true;
           for (DNAEnd end in [substrand.dnaend_5p, substrand.dnaend_3p]) {
             String key = is_5p
@@ -107,7 +105,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
                 : "3'-end-$i${substrand.is_last ? '-is_last' : ''}";
             bool end_selected = props.selectables_store.selected(end);
             ends.add((DesignMainDNAEnd()
-              ..substrand = substrand
+              ..domain = substrand
               ..is_5p = is_5p
               ..color = strand.color
               ..helix = helix
@@ -128,7 +126,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         bool draw_next_dom = should_draw_domain(
             next_dom.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_prev_dom && draw_next_dom) {
-//          paths.add((ConnectedDesignMainLoopout()
           paths.add((DesignMainLoopout()
             ..loopout = substrand
             ..strand = strand
@@ -156,13 +153,12 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
       if (draw_prev_ss && draw_next_ss) {
         var crossover = strand.crossovers[idx_crossover++];
 
-//        paths.add((ConnectedDesignMainStrandCrossover()
         paths.add((DesignMainStrandCrossover()
           ..crossover = crossover
           ..strand = strand
           ..helices = props.helices
           ..selected = props.selectables_store.selected(crossover)
-          ..edit_modes = props.edit_modes
+//          ..edit_modes = props.edit_modes
           ..prev_domain = prev_ss
           ..next_domain = next_ss
           ..key = 'crossover-paths-${idx_crossover - 1}')());

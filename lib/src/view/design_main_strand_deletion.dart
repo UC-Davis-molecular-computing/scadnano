@@ -21,14 +21,13 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
   Domain domain;
   int deletion;
   Helix helix;
-  BuiltSet<EditModeChoice> edit_modes;
 }
 
-class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin, EditModePropsMixin;
+class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
 
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponent, EditModeQueryable<DesignMainStrandDeletionProps> {
+    with PureComponent {
   @override
   render() {
     Domain domain = props.domain;
@@ -57,37 +56,17 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..y = background_y
         ..width = background_width
         ..height = background_height
-        ..onClick = ((_) {
-          if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
-//            remove_deletion();
-          }
-        })
+        ..onClick =
+            ((_) => app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion)))
         ..key = key_background)(),
       (Dom.path()
         ..className = 'deletion-cross'
         ..fill = 'none'
         ..d = path_cmds
-        ..onClick = ((_) {
-          if (deletion_mode) {
-            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
-//            remove_deletion();
-          }
-        })
+        ..onClick =
+            ((_) => app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion)))
         ..id = key
         ..key = key)()
     ];
   }
-
-//  remove_deletion() {
-//    var paired_substrand = props.find_paired_substrand(props.substrand, props.deletion);
-//    if (paired_substrand != null && paired_substrand.deletions.contains(props.deletion)) {
-//      app.dispatch(actions.BatchAction([
-//        actions.DeletionRemove(substrand: props.substrand, offset: props.deletion),
-//        actions.DeletionRemove(substrand: paired_substrand, offset: props.deletion),
-//      ]));
-//    } else {
-//      app.dispatch(actions.DeletionRemove(substrand: props.substrand, offset: props.deletion));
-//    }
-//  }
 }

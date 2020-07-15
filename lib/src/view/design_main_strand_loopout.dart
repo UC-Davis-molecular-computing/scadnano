@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/context_menu.dart';
 
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
+import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
@@ -66,7 +67,7 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponent, EditModeQueryable<DesignMainLoopoutProps> {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -74,7 +75,6 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
   render() {
     Color color = props.color;
 
-    bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
     var classname = constants.css_selector_loopout;
@@ -85,7 +85,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    if (show_mouseover_rect && mouse_hover) {
+    if (mouse_hover) {
       update_mouseover_loopout();
     }
 
@@ -166,7 +166,17 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ];
 
   update_mouseover_loopout() {
-    //FIXME: implement this
+    Domain prev_domain = props.prev_domain;
+    Domain next_domain = props.next_domain;
+    List<MouseoverParams> param_list = [];
+    for (var dom in [prev_domain, next_domain]) {
+      int helix_idx = dom == prev_domain ? prev_domain.helix : next_domain.helix;
+      int offset = dom == prev_domain ? dom.offset_3p : dom.offset_5p;
+      bool forward = dom.forward;
+      param_list.add(MouseoverParams(helix_idx, offset, forward));
+    }
+
+    app.dispatch(actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>(param_list)));
   }
 
   loopout_length_change() async {
@@ -270,26 +280,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ..d = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}'
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
-        if (backbone_mode) {
-          update_mouseover_loopout();
-        }
+        update_mouseover_loopout();
       }
       ..onMouseLeave = ((_) {
         setState(newState()..mouse_hover = false);
-        if (backbone_mode) {
-          update_mouseover_loopout();
-        }
+        update_mouseover_loopout();
       })
-      ..onPointerDown = ((ev) {
-        if (select_mode) {
-          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (select_mode) {
-          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
+      ..onPointerDown = ((ev) => props.loopout.handle_selection_mouse_down(ev.nativeEvent))
+      ..onPointerUp = ((ev) => props.loopout.handle_selection_mouse_up(ev.nativeEvent))
       ..key = id
       ..id = id)(Dom.svgTitle()(tooltip));
   }

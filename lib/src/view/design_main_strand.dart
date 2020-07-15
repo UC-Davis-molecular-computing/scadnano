@@ -41,7 +41,6 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool selected;
   BuiltMap<int, Helix> helices;
   SelectablesStore selectables_store;
-  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool show_modifications;
   bool moving_dna_ends;
@@ -53,11 +52,10 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool invert_y;
 }
 
-class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
+class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
-    with PureComponent, EditModeQueryable<DesignMainStrandProps> {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -89,7 +87,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..selectables_store = props.selectables_store
-        ..edit_modes = props.edit_modes
         ..strand_tooltip = tooltip_text(props.strand)
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
@@ -112,17 +109,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
       // select/deselect
       MouseEvent event = event_syn.nativeEvent;
-//      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode) {
-        props.strand.handle_selection_mouse_down(event);
-      }
+      props.strand.handle_selection_mouse_down(event);
 
       // set up drag detection for moving DNA ends
-//      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode) {
-        var address = util.get_closest_address(event, props.helices.values);
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
-      }
+      var address = util.get_closest_address(event, props.helices.values);
+      app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
     }
   }
 
@@ -135,9 +126,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // But it also achieves something we don't want.
       // See also commented out checks in handle_click_down.
 //      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode) {
-        props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
-      }
+      props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
     }
   }
 
@@ -156,7 +145,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..substrand = domain
             ..helix = helix
             ..color = color
-            ..edit_modes = props.edit_modes
             ..id = id
             ..key = id)());
         }
@@ -177,7 +165,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           deletions.add((DesignMainStrandDeletion()
             ..domain = substrand
             ..deletion = deletion
-            ..edit_modes = props.edit_modes
             ..helix = helix
             ..key = id)());
         }

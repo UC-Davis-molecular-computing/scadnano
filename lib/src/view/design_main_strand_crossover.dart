@@ -32,11 +32,10 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Domain prev_domain;
   Domain next_domain;
   bool selected;
-  BuiltSet<EditModeChoice> edit_modes;
   BuiltMap<int, Helix> helices;
 }
 
-class DesignMainStrandCrossoverProps = UiProps with DesignMainStrandCrossoverPropsMixin, EditModePropsMixin;
+class DesignMainStrandCrossoverProps = UiProps with DesignMainStrandCrossoverPropsMixin;
 
 @State()
 mixin DesignMainStrandCrossoverState on UiState {
@@ -47,7 +46,7 @@ mixin DesignMainStrandCrossoverState on UiState {
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponent, EditModeQueryable<DesignMainStrandCrossoverProps> {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -58,7 +57,6 @@ class DesignMainStrandCrossoverComponent
     Domain prev_substrand = props.prev_domain;
     Domain next_substrand = props.next_domain;
 
-    bool show_mouseover_rect = backbone_mode;
     bool mouse_hover = state.mouse_hover;
 
     var classname = constants.css_selector_crossover;
@@ -73,7 +71,7 @@ class DesignMainStrandCrossoverComponent
     var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 
-    if (show_mouseover_rect && mouse_hover) {
+    if (mouse_hover) {
       update_mouseover_crossover();
     }
 
@@ -85,26 +83,14 @@ class DesignMainStrandCrossoverComponent
           ..className = classname
           ..onMouseEnter = (ev) {
             setState(newState()..mouse_hover = true);
-            if (show_mouseover_rect) {
-              update_mouseover_crossover();
-            }
+            update_mouseover_crossover();
           }
           ..onMouseLeave = ((_) {
             setState(newState()..mouse_hover = false);
-            if (show_mouseover_rect) {
-              mouse_leave_update_mouseover();
-            }
+            mouse_leave_update_mouseover();
           })
-          ..onPointerDown = ((ev) {
-            if (select_mode) {
-              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-            }
-          })
-          ..onPointerUp = ((ev) {
-            if (select_mode) {
-              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
-            }
-          })
+          ..onPointerDown = ((ev) => props.crossover.handle_selection_mouse_down(ev.nativeEvent))
+          ..onPointerUp = ((ev) => props.crossover.handle_selection_mouse_up(ev.nativeEvent))
           ..id = id
           ..key = id)(
 //        Dom.svgTitle()(tooltip)
@@ -115,12 +101,14 @@ class DesignMainStrandCrossoverComponent
   componentDidMount() {
     var element = querySelector('#${props.crossover.id()}');
     element.addEventListener('contextmenu', on_context_menu);
+    super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
     var element = querySelector('#${props.crossover.id()}');
     element.removeEventListener('contextmenu', on_context_menu);
+    super.componentWillUnmount();
   }
 
   on_context_menu(Event ev) {

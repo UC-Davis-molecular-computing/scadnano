@@ -1351,6 +1351,26 @@ abstract class ConvertCrossoverToLoopout
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// dumb action issued by domain since it doesn't know current edit mode;
+// mode_sensitive_actions_filter_middleware figures out which one to turn it into
+
+//NickOrInsertionOrDeletionAdd
+abstract class NickOrInsertionOrDeletionAdd
+    with BuiltJsonSerializable
+    implements Action, Built<NickOrInsertionOrDeletionAdd, NickOrInsertionOrDeletionAddBuilder> {
+  Domain get domain;
+
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory NickOrInsertionOrDeletionAdd({Domain domain, int offset}) = _$NickOrInsertionOrDeletionAdd._;
+
+  NickOrInsertionOrDeletionAdd._();
+
+  static Serializer<NickOrInsertionOrDeletionAdd> get serializer => _$nickOrInsertionOrDeletionAddSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // nick/join
 
 abstract class Nick with BuiltJsonSerializable, UndoableAction implements Built<Nick, NickBuilder> {
@@ -1375,6 +1395,29 @@ abstract class Ligate with BuiltJsonSerializable, UndoableAction implements Buil
   Ligate._();
 
   static Serializer<Ligate> get serializer => _$ligateSerializer;
+}
+
+abstract class DNAEndClicked
+    with BuiltJsonSerializable
+    implements Action, Built<DNAEndClicked, DNAEndClickedBuilder> {
+  DNAEnd get dna_end;
+
+  PotentialCrossover get potential_crossover;
+
+  bool get is_first;
+
+  bool get is_last;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DNAEndClicked(
+      {DNAEnd dna_end,
+      PotentialCrossover potential_crossover,
+      bool is_first,
+      bool is_last}) = _$DNAEndClicked._;
+
+  DNAEndClicked._();
+
+  static Serializer<DNAEndClicked> get serializer => _$dNAEndClickedSerializer;
 }
 
 abstract class JoinStrandsByCrossover

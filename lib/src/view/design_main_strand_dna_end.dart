@@ -25,10 +25,10 @@ import 'pure_component.dart';
 part 'design_main_strand_dna_end.over_react.g.dart';
 
 Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
-  DNAEnd end = props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
+  DNAEnd end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
   return DesignMainDNAEnd()
     ..selected = state.ui_state.selectables_store.selected(end)
-    ..helix = state.dna_design.helices[props.substrand.helix]
+    ..helix = state.dna_design.helices[props.domain.helix]
     ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
     ..edit_modes = state.ui_state.edit_modes
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
@@ -42,14 +42,13 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
-  Domain substrand;
+  Domain domain;
   Color color;
   bool is_5p;
   bool is_scaffold;
 
   Helix helix;
   bool selected;
-  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
@@ -57,13 +56,12 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
 class DesignMainDNAEndProps = UiProps with EditModePropsMixin, DesignMainDNAEndPropsMixin;
 
 @Component2()
-class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
-    with PureComponent, EditModeQueryable<DesignMainDNAEndProps> {
-  DNAEnd get dna_end => props.is_5p ? props.substrand.dnaend_5p : props.substrand.dnaend_3p;
+class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
+  DNAEnd get dna_end => props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
 
-  bool get is_first => props.substrand.is_first && props.is_5p;
+  bool get is_first => props.domain.is_first && props.is_5p;
 
-  bool get is_last => props.substrand.is_last && !props.is_5p;
+  bool get is_last => props.domain.is_last && !props.is_5p;
 
   @override
   render() {
@@ -92,7 +90,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
     //XXX: need to listen to onPointerDown instead of onMouseDown for when draggable is enabled,
     // which it is when Shift or Ctrl (or Meta) keys are pressed
     // see here: https://github.com/marcojakob/dart-dnd/issues/27
-    Domain substrand = this.props.substrand;
+    Domain substrand = this.props.domain;
     DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
     var helix = app.state.dna_design.helices[substrand.helix];
     var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
@@ -129,22 +127,16 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     // select end
-    if (select_mode) {
-      MouseEvent event = event_synthetic.nativeEvent;
-      dna_end.handle_selection_mouse_down(event);
-    }
+    MouseEvent event = event_synthetic.nativeEvent;
+    dna_end.handle_selection_mouse_down(event);
 
     // set up drag detection for moving DNA ends
-    if (select_mode) {
-      app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
-    }
+    app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
   }
 
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
-    if (select_mode) {
-      MouseEvent event = event_synthetic.nativeEvent;
-      dna_end.handle_selection_mouse_up(event);
-    }
+    MouseEvent event = event_synthetic.nativeEvent;
+    dna_end.handle_selection_mouse_up(event);
   }
 
   handle_end_click_ligate_or_potential_crossover(SyntheticMouseEvent event) {
@@ -152,34 +144,50 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps>
       return;
     }
 
-    if (pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
-      int offset = props.is_5p ? props.substrand.offset_5p : props.substrand.offset_3p;
-      Point<num> start_point = props.helix.svg_base_pos(offset, props.substrand.forward);
+    if (is_first || is_last) {
+      int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
+      Point<num> start_point = props.helix.svg_base_pos(offset, props.domain.forward);
       var potential_crossover = PotentialCrossover(
         helix_idx: props.helix.idx,
-        forward: props.substrand.forward,
+        forward: props.domain.forward,
         offset: offset,
         color: props.color.toHexColor().toCssString(),
         dna_end_first_click: dna_end,
         start_point: start_point,
         current_point: start_point,
       );
-      app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
-    } else if (pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
-      PotentialCrossover potential_crossover = app.store_potential_crossover.state;
-      if (props.is_5p == potential_crossover.dna_end_first_click.is_5p) {
-        // can only connect opposite type ends with crossover
-        return;
-      }
-      //FIXME: can we avoid this global variable access? probably not since there's multiple stores
-      app.dispatch(actions.PotentialCrossoverRemove());
-      if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
-          (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {
-        app.dispatch(actions.JoinStrandsByCrossover(
-            dna_end_first_click: potential_crossover.dna_end_first_click, dna_end_second_click: dna_end));
-      }
-    } else if (ligate_mode && (is_first || is_last)) {
-      app.dispatch(actions.Ligate(dna_end: dna_end));
+      app.dispatch(actions.DNAEndClicked(
+          dna_end: dna_end, potential_crossover: potential_crossover, is_first: is_first, is_last: is_last));
     }
+
+//    if (pencil_mode && !props.drawing_potential_crossover && (is_first || is_last)) {
+//      int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
+//      Point<num> start_point = props.helix.svg_base_pos(offset, props.domain.forward);
+//      var potential_crossover = PotentialCrossover(
+//        helix_idx: props.helix.idx,
+//        forward: props.domain.forward,
+//        offset: offset,
+//        color: props.color.toHexColor().toCssString(),
+//        dna_end_first_click: dna_end,
+//        start_point: start_point,
+//        current_point: start_point,
+//      );
+//      app.dispatch(actions.PotentialCrossoverCreate(potential_crossover: potential_crossover));
+//    } else if (pencil_mode && props.drawing_potential_crossover && (is_first || is_last)) {
+//      PotentialCrossover potential_crossover = app.store_potential_crossover.state;
+//      if (props.is_5p == potential_crossover.dna_end_first_click.is_5p) {
+//        // can only connect opposite type ends with crossover
+//        return;
+//      }
+//      //FIXME: can we avoid this global variable access? probably not since there's multiple stores
+//      app.dispatch(actions.PotentialCrossoverRemove());
+//      if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
+//          (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {
+//        app.dispatch(actions.JoinStrandsByCrossover(
+//            dna_end_first_click: potential_crossover.dna_end_first_click, dna_end_second_click: dna_end));
+//      }
+//    } else if (ligate_mode && (is_first || is_last)) {
+//      app.dispatch(actions.Ligate(dna_end: dna_end));
+//    }
   }
 }

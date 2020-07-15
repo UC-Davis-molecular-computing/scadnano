@@ -27,7 +27,6 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Color color;
   String dna_sequence;
 
-  BuiltSet<EditModeChoice> edit_modes;
   Helix helix;
   String strand_tooltip;
   Strand strand;
@@ -37,8 +36,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
 class DesignMainDomainProps = UiProps with EditModePropsMixin, DesignMainDomainPropsMixin;
 
 @Component2()
-class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
-    with PureComponent, EditModeQueryable<DesignMainDomainProps> {
+class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponent {
   @override
   render() {
     Domain domain = props.domain;
@@ -60,27 +58,16 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
-    if (nick_mode || insertion_mode || deletion_mode) {
-      var domain = props.domain;
-      MouseEvent event = event_syn.nativeEvent;
-      var address = util.get_address_on_helix(event, props.helix);
-      int offset = address.offset;
+    var domain = props.domain;
+    MouseEvent event = event_syn.nativeEvent;
+    var address = util.get_address_on_helix(event, props.helix);
+    int offset = address.offset;
 
-      if (offset <= domain.start || offset >= domain.end) {
-        return; // cannot have nick/insertion/deletion on end
-      }
-
-      if (nick_mode) {
-        if (offset <= domain.start + 1 || offset >= domain.end - 1) {
-          return; // need remaining substrands to be length at least 2
-        }
-        app.dispatch(actions.Nick(domain: domain, offset: offset));
-      } else if (insertion_mode) {
-        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
-      } else if (deletion_mode) {
-        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
-      }
+    if (offset <= domain.start || offset >= domain.end) {
+      return; // cannot have nick/insertion/deletion on end
     }
+
+    app.dispatch(actions.NickOrInsertionOrDeletionAdd(domain: domain, offset: offset));
   }
 
   // needed for capturing right-click events with React:
@@ -110,10 +97,11 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   }
 }
 
-tooltip_text(Domain domain) => ''
-    '${domain.forward ? 'forward' : 'reverse'} domain:\n'
-    '    length=${domain.dna_length()}\n'
-    '    helix=${domain.helix}\n'
-    '    start=${domain.start}\n'
-    '    end=${domain.end}' +
-    (domain.label == null? "": "\n    label=${domain.label.toString()}");
+tooltip_text(Domain domain) =>
+    ''
+        '${domain.forward ? 'forward' : 'reverse'} domain:\n'
+        '    length=${domain.dna_length()}\n'
+        '    helix=${domain.helix}\n'
+        '    start=${domain.start}\n'
+        '    end=${domain.end}' +
+    (domain.label == null ? "" : "\n    label=${domain.label.toString()}");

@@ -3,6 +3,7 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
@@ -31,9 +32,31 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
 ]);
 
+// is item currently selectable, given all the information about select modes, whether it's part of
+// a staple or scaffold, whether the design is an origami?
+currently_selectable(AppState state, Selectable item) {
+  var edit_modes = state.ui_state.edit_modes;
+  var select_modes = state.ui_state.select_mode_state.modes;
+  if (!edit_modes.contains(EditModeChoice.select)) {
+    return false;
+  }
+  if (!select_modes.contains(item.select_mode())) {
+    return false;
+  }
+  if (state.dna_design.is_origami) {
+    if (item.is_scaffold && !select_modes.contains(SelectModeChoice.scaffold)) {
+      return false;
+    }
+    if (!item.is_scaffold && !select_modes.contains(SelectModeChoice.staple)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 SelectablesStore select_reducer(SelectablesStore selectables_store, AppState state, actions.Select action) {
   Selectable item = action.selectable;
-  if (!state.ui_state.select_mode_state.modes.contains(item.select_mode())) {
+  if (!currently_selectable(state, item)) {
     // if this type of item is not selectable, do nothing
     return selectables_store;
   }
