@@ -7319,8 +7319,7 @@ main() {
 }
 
 AppState make_ends_selectable(AppState actual_state) {
-  var ends_modes = SelectModeChoice.ends_on_origami;
-  var end_select_mode_action = SelectModesSet(ends_modes.toBuiltList());
+  var end_select_mode_action = SelectModesAdd(modes: SelectModeChoice.ends);
   actual_state = app_state_reducer(actual_state, end_select_mode_action);
   return actual_state;
 }
