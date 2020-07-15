@@ -250,6 +250,21 @@ abstract class EditModesSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Select modes
 
+// adds new select modes, but does not undo any others
+abstract class SelectModesAdd
+    with BuiltJsonSerializable
+    implements Action, Built<SelectModesAdd, SelectModesAddBuilder> {
+  BuiltList<SelectModeChoice> get select_modes_to_add;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectModesAdd({BuiltList<SelectModeChoice> select_modes_to_add}) = _$SelectModesAdd._;
+
+  SelectModesAdd._();
+
+  static Serializer<SelectModesAdd> get serializer => _$selectModesAddSerializer;
+}
+
+// flips a single select mode on or off
 abstract class SelectModeToggle
     with BuiltJsonSerializable
     implements AppUIStateStorableAction, Built<SelectModeToggle, SelectModeToggleBuilder> {
@@ -266,6 +281,7 @@ abstract class SelectModeToggle
   static Serializer<SelectModeToggle> get serializer => _$selectModeToggleSerializer;
 }
 
+// sets select modes to be exactly this set
 abstract class SelectModesSet
     with BuiltJsonSerializable
     implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
