@@ -3,7 +3,6 @@ import 'dart:svg';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 
 import 'package:scadnano/src/state/selectable.dart';
@@ -17,61 +16,13 @@ import '../constants.dart' as constants;
 import '../state/selectable.dart';
 import 'util_reducer.dart';
 
-SelectablesStore selectables_store_reducer(SelectablesStore selectables_store, AppState state, action) {
-  selectables_store = selectables_store_local_reducer(selectables_store, action);
-  selectables_store = selectables_store_global_reducer(selectables_store, state, action);
-  return selectables_store;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables global reducer
 
 GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<SelectablesStore, AppState, actions.Select>(select_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectionsAdjust>(selections_adjust_reducer),
   TypedGlobalReducer<SelectablesStore, AppState, actions.SelectAllSelectable>(select_all_selectables_reducer),
 ]);
-
-// is item currently selectable, given all the information about select modes, whether it's part of
-// a staple or scaffold, whether the design is an origami?
-currently_selectable(AppState state, Selectable item) {
-  var edit_modes = state.ui_state.edit_modes;
-  var select_modes = state.ui_state.select_mode_state.modes;
-  if (!edit_modes.contains(EditModeChoice.select)) {
-    return false;
-  }
-  if (!select_modes.contains(item.select_mode())) {
-    return false;
-  }
-  if (state.dna_design.is_origami) {
-    if (item.is_scaffold && !select_modes.contains(SelectModeChoice.scaffold)) {
-      return false;
-    }
-    if (!item.is_scaffold && !select_modes.contains(SelectModeChoice.staple)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-SelectablesStore select_reducer(SelectablesStore selectables_store, AppState state, actions.Select action) {
-  Selectable item = action.selectable;
-  if (!currently_selectable(state, item)) {
-    // if this type of item is not selectable, do nothing
-    return selectables_store;
-  }
-  bool toggle = action.toggle;
-  if (action.only) {
-    selectables_store = selectables_store.select(item, only: true);
-  } else {
-    if (toggle) {
-      selectables_store = selectables_store.toggle(item);
-    } else {
-      selectables_store = selectables_store.select(item);
-    }
-  }
-  return selectables_store;
-}
 
 SelectablesStore select_all_selectables_reducer(
     SelectablesStore selectables_store, AppState state, actions.SelectAllSelectable action) {
@@ -89,8 +40,8 @@ SelectablesStore select_all_selectables_reducer(
       if (modes.contains(SelectModeChoice.crossover)) selected.addAll(strand.crossovers);
       if (modes.contains(SelectModeChoice.end_5p_strand)) selected.add(strand.dnaend_5p);
       if (modes.contains(SelectModeChoice.end_3p_strand)) selected.add(strand.dnaend_3p);
-      if (modes.contains(SelectModeChoice.end_5p_domain)) selected.addAll(strand.ends_5p_not_first());
-      if (modes.contains(SelectModeChoice.end_3p_domain)) selected.addAll(strand.ends_3p_not_last());
+      if (modes.contains(SelectModeChoice.end_5p_substrand)) selected.addAll(strand.ends_5p_not_first());
+      if (modes.contains(SelectModeChoice.end_3p_substrand)) selected.addAll(strand.ends_3p_not_last());
     }
   }
 
@@ -115,10 +66,7 @@ SelectablesStore selections_adjust_reducer(
   // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
   // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
 
-  bool is_origami = state.dna_design.is_origami;
-  var select_modes = state.ui_state.select_mode_state.modes;
-  Set<SvgElement> elts_overlapping =
-      util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
+  Set<SvgElement> elts_overlapping = util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox).toSet();
 
   var selectable_by_id = state.dna_design.selectable_by_id;
   List<Selectable> overlapping_now = [
@@ -141,7 +89,8 @@ SelectablesStore selections_adjust_reducer(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // selectables local reducer
 
-Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
+Reducer<SelectablesStore> selectables_store_reducer = combineReducers([
+  TypedReducer<SelectablesStore, actions.Select>(select_reducer),
   TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
   TypedReducer<SelectablesStore, actions.DNADesignChangingAction>(dna_design_changing_action_reducer),
@@ -153,6 +102,21 @@ Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
 SelectablesStore dna_design_changing_action_reducer(
         SelectablesStore selectables_store, actions.DNADesignChangingAction action) =>
     action is actions.HelicesPositionsSetBasedOnCrossovers ? selectables_store : selectables_store.clear();
+
+SelectablesStore select_reducer(SelectablesStore selectables_store, actions.Select action) {
+  Selectable item = action.selectable;
+  bool toggle = action.toggle;
+  if (action.only) {
+    selectables_store = selectables_store.select(item, only: true);
+  } else {
+    if (toggle) {
+      selectables_store = selectables_store.toggle(item);
+    } else {
+      selectables_store = selectables_store.select(item);
+    }
+  }
+  return selectables_store;
+}
 
 SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
     selectables_store.select_all(action.selectables, only: action.only);

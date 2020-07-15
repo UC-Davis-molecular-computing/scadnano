@@ -8,7 +8,7 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/components.dart' as over_react_components;
-import 'package:scadnano/src/view/edit_and_select_modes.dart';
+
 
 import '../state/app_state.dart';
 import 'design.dart';
@@ -36,8 +36,7 @@ const EDIT_MODE_ID = 'edit-mode';
 const SELECT_MODE_ID = 'select-mode';
 const DESIGN_ID = 'design-pane';
 const EDITOR_ID = 'editor-pane';
-const DESIGN_AND_MODES_BUTTONS_CONTAINER_ID = 'design-and-modes-buttons-container';
-const EDIT_AND_SELECT_MODES_ID = 'modes-buttons';
+const RIGHT_SIDE_PANES_CONTAINER_ID = 'right-side-panes-container';
 
 const FIXED_VERTICAL_SEPARATOR = 'fixed-vertical-separator';
 const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
@@ -49,14 +48,15 @@ const FIXED_HORIZONTAL_SEPARATOR = 'fixed-horizontal-separator';
 class View {
   final DivElement root_element;
 
-  DivElement design_and_modes_buttons_container_element = DivElement()
-    ..attributes = {'id': DESIGN_AND_MODES_BUTTONS_CONTAINER_ID};
-  DivElement edit_and_select_modes_element = DivElement()..attributes = {'id': EDIT_AND_SELECT_MODES_ID};
+  DivElement right_side_panes_container_element = DivElement()..attributes = {'id': RIGHT_SIDE_PANES_CONTAINER_ID};
   DivElement menu_element = DivElement()..attributes = {'id': MENU_ID};
   DivElement design_element = DivElement()..attributes = {'id': DESIGN_ID};
   DivElement design_editor_separator = DivElement()
     ..attributes = {'id': 'design-editor-separator', 'class': 'draggable-separator'};
   DivElement editor_element = DivElement()..attributes = {'id': EDITOR_ID};
+
+  DivElement edit_mode_element = DivElement()..attributes = {'id': EDIT_MODE_ID};
+  DivElement select_mode_element = DivElement()..attributes = {'id': SELECT_MODE_ID};
 
   DesignViewComponent design_view;
   EditorViewComponent editor_view;
@@ -71,18 +71,35 @@ class View {
     this.root_element.children.add(menu_element);
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
-    this.root_element.children.add(this.design_and_modes_buttons_container_element);
+    this.root_element.children.add(this.right_side_panes_container_element);
 
-    this.design_and_modes_buttons_container_element.children.add(design_element);
+    this.right_side_panes_container_element.children.add(design_element);
     var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};
-    this.design_and_modes_buttons_container_element.children.add(design_mode_separator);
+    this.right_side_panes_container_element.children.add(design_mode_separator);
 
-    this.design_and_modes_buttons_container_element.children.add(edit_and_select_modes_element);
+    var modes_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
+    this.right_side_panes_container_element.children.add(DivElement()
+      ..id = 'modes-buttons'
+      ..children = [edit_mode_element, modes_separator, select_mode_element]);
 
     this.design_view = DesignViewComponent(design_element);
+
+    // IF(DEBUGING-SVG-PNG-CACHING)
+    // var canvas = CanvasElement()..id = "canvas-dev";
+    // this.root_element.children.add(canvas);
+    // var img = ImageElement()..id = "img-dev";
+    // this.root_element.children.add(img);
+
+//    this.editor_view = EditorViewComponent(editor_element);
+
+//    setup_splits(app.state.show_editor);
+//    this.state.listen((_) => this.render());
+//    this.render();
   }
 
   render(AppState state) {
+//    this.update_showing_editor();
+
     var store = app.store;
 
     react_dom.render(
@@ -96,22 +113,39 @@ class View {
 
     this.design_view.render(state);
 
+//    react_dom.render((EditMode()..store = app.state.edit_mode_store)(), this.edit_mode_element);
+
     react_dom.render(
       over_react_components.ErrorBoundary()(
         (ReduxProvider()..store = store)(
-          ConnectedEditAndSelectModes()(),
+          ConnectedEditMode()(),
         ),
       ),
-      this.edit_and_select_modes_element,
+      this.edit_mode_element,
+    );
+
+    react_dom.render(
+      over_react_components.ErrorBoundary()(
+        (ReduxProvider()..store = store)(
+          ConnectedSelectMode()(),
+        ),
+      ),
+      this.select_mode_element,
     );
 
     util.fit_and_center();
+
+//    react_dom.render(
+//        (SelectMode()..select_mode_state = app.state.select_mode_store)(), this.select_mode_element);
+
+//    if (app.state.show_editor) {
+//      this.editor_view.render();
+//    }
   }
 
 //  update_showing_editor() {
-//    //TODO: Firefox won't let editor pane shrink (when pan separator is dragged) to hide text;
-//    // Chrome puts a scrollbar at the bottom when that happens and lets the editor pane shrink
-//    // arbitrarily (which is the desired behavior)
+//    //TODO: Firefox won't let editor pane shrink (when pan separater is dragged) to hide text; Chrome puts a scrollbar
+//    // at the bottom when that happens and lets the editor pane shrink arbitrarily (which is the desired behavior)
 //
 //    if (!this.currently_showing_editor && app.state.show_editor) {
 //      this.nonmenu_panes_container_element.children.add(design_editor_separator);
@@ -128,6 +162,7 @@ class View {
 //    }
 //  }
 }
+
 
 setup_file_drag_and_drop_listener(Element drop_zone) {
   drop_zone.onDragOver.listen((event) {
@@ -146,20 +181,20 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
     }
 
     if (files.length > 1) {
-      window.alert('More than one file dropped! Please drop only one .sc, .dna, or .json file.');
+      window.alert('More than one file dropped! Please drop only one .dna or .json file.');
       return;
     }
 
     var file = files.first;
     var filename = file.name;
     var ext = path.extension(filename);
-    if (ext == '.dna' || ext == '.json' || ext == '.sc') {
+    if (ext == '.dna' || ext == '.json') {
       var confirm =
           app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
 
       if (confirm) {
         FileReader file_reader = new FileReader();
-        //XXX: Technically to be clean Redux (or Elm architecture), this should be an Action,
+        //XXX: Technically to be clean Flux (or Elm architecture), this should be an Action,
         // and what is done in file_loaded should be another Action.
         file_reader.onLoad.listen((_) => scadnano_file_loaded(file_reader, filename));
         var err_msg = "error reading file: ${file_reader.error.toString()}";
@@ -167,7 +202,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
         file_reader.readAsText(file);
       }
     } else {
-      window.alert('scadnano does not support "${ext}" type files. Please drop a .sc, .dna, or .json file.');
+      window.alert('scadnano does not support "${ext}" type files. Please drop a .dna or .json file.');
     }
   });
 }

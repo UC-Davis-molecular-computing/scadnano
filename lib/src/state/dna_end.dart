@@ -14,16 +14,14 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
           bool is_start,
           bool substrand_is_first,
           bool substrand_is_last,
-          String substrand_id,
-          bool is_scaffold}) =>
+          String substrand_id}) =>
       DNAEnd.from((b) => b
         ..offset = offset
         ..is_5p = is_5p
         ..is_start = is_start
         ..substrand_is_first = substrand_is_first
         ..substrand_is_last = substrand_is_last
-        ..substrand_id = substrand_id
-        ..is_scaffold = is_scaffold);
+        ..substrand_id = substrand_id);
 
   factory DNAEnd.from([void Function(DNAEndBuilder) updates]) = _$DNAEnd;
 
@@ -57,13 +55,13 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
       if (substrand_is_first) {
         return SelectModeChoice.end_5p_strand;
       } else {
-        return SelectModeChoice.end_5p_domain;
+        return SelectModeChoice.end_5p_substrand;
       }
     } else {
       if (substrand_is_last) {
         return SelectModeChoice.end_3p_strand;
       } else {
-        return SelectModeChoice.end_3p_domain;
+        return SelectModeChoice.end_3p_substrand;
       }
     }
   }

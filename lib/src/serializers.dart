@@ -41,8 +41,6 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
-  StrandsMirror,
-  ReplaceStrands,
   SaveDNADesignInLocalStorageSet,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
@@ -122,10 +120,8 @@ part 'serializers.g.dart';
   HelixMajorTickStartChangeAll,
   HelixRollSet,
   HelixRollSetAtOther,
-  NickOrInsertionOrDeletionAdd,
   Nick,
   Ligate,
-  DNAEndClicked,
   JoinStrandsByCrossover,
   PotentialVerticalCrossover,
   PotentialCrossover,

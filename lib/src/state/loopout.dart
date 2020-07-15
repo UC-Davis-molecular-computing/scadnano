@@ -18,11 +18,10 @@ part 'loopout.g.dart';
 abstract class Loopout
     with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
-  factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx, bool is_scaffold) => Loopout.from((b) => b
+  factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx) => Loopout.from((b) => b
     ..loopout_length = loopout_length
     ..prev_domain_idx = prev_domain_idx
     ..next_domain_idx = next_domain_idx
-    ..is_scaffold = is_scaffold
     ..unused_fields = MapBuilder<String, Object>({}));
 
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
