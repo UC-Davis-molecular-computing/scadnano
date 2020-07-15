@@ -1,3 +1,7 @@
+echo "type"
+echo "  ./test.sh -h"
+echo "to display options"
+
 #TODO: don't know how to prevent this check from printing error message to the screen in case pub isn't found
 if type pub > /dev/null; then
   PUB=pub
@@ -46,8 +50,9 @@ elif [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   echo "run as specified."
   echo
   echo "Options:"
-  echo "    -n <test_names>  Runs test with specified name only. **Name must not have any spaces. Can be comined with -d."
-  echo "    -d, --debug      Runs tests on Chrome browser, so Chrome DevTools are available. Can be comined with -n."
+  echo "    -h              Displays this help message."
+  echo "    -n <test_name>  Runs test with specified name only. **Name must not have any spaces. Currently doesn't work to combine with -d."
+  echo "    -d, --debug      Runs tests on Chrome browser, so Chrome DevTools are available. Currently doesn't work to combine with -n."
   echo "    -t <filename>, --test <filename>    Runs build_runner test on <filename>."
   echo "    -td <filename>, -dt <filename>    Runs <filename> tests on Chrome browser, so Chrome DevTools are available."
 else

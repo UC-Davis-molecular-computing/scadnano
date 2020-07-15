@@ -42,14 +42,7 @@ save(AppState state, Storable storable) {
   if (value_string != null) window.localStorage[storable_key] = value_string;
 }
 
-String side_pane_width() {
-  String key = _LOCAL_STORAGE_PREFIX + 'side_pane_width';
-  if (window.localStorage.containsKey(key)) {
-    return window.localStorage[key];
-  } else {
-    return null;
-  }
-}
+String side_pane_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'side_pane_width'];
 
 restore(Storable storable) {
   try {

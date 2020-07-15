@@ -25,6 +25,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
       forward: forward,
       start: start,
       end: nick_offset,
+      is_scaffold: domain_to_remove.is_scaffold,
       deletions: domain_to_remove.deletions.where((d) => d < nick_offset),
       insertions: domain_to_remove.insertions.where((i) => i.offset < nick_offset));
   Domain domain_right = Domain(
@@ -32,6 +33,7 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
       forward: forward,
       start: nick_offset,
       end: end,
+      is_scaffold: domain_to_remove.is_scaffold,
       deletions: domain_to_remove.deletions.where((d) => d >= nick_offset),
       insertions: domain_to_remove.insertions.where((i) => i.offset >= nick_offset));
 
@@ -172,6 +174,7 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
       forward: forward,
       start: ss_left.start,
       end: ss_right.end,
+      is_scaffold: strand_5p.is_scaffold || strand_3p.is_scaffold,
       deletions: ss_left.deletions + ss_right.deletions,
       insertions: ss_left.insertions + ss_right.insertions,
       is_first: ss_3p.is_first,

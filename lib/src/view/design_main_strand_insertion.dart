@@ -19,8 +19,7 @@ import 'pure_component.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
-typedef Tuple2<Insertion, Domain> PairedInsertionFinder(
-    Insertion insertion, Domain substrand);
+typedef Tuple2<Insertion, Domain> PairedInsertionFinder(Insertion insertion, Domain substrand);
 
 @Factory()
 UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMainStrandInsertion;
@@ -32,14 +31,13 @@ mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Color color;
   Helix helix;
   String id;
-  BuiltSet<EditModeChoice> edit_modes;
 }
 
-class DesignMainStrandInsertionProps = UiProps with EditModePropsMixin, DesignMainStrandInsertionPropsMixin;
+class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
 
 @Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponent, EditModeQueryable<DesignMainStrandInsertionProps> {
+    with PureComponent {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);
@@ -80,7 +78,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 //  String key = 'insertion-H${substrand.helix}-${offset}';
     ReactElement insertion_path = (Dom.path()
       ..onClick = ((_) => change_insertion_length())
-      ..className = 'insertion-line'
+      ..className = constants.css_selector_insertion
       ..stroke = color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = 'M $x0 $y0 '
@@ -156,11 +154,8 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..y = background_y
       ..width = background_width
       ..height = background_height
-      ..onClick = ((_) {
-        if (insertion_mode) {
-          app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion));
-        }
-      })
+      ..onClick =
+          ((_) => app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion)))
       ..key = key_background)();
   }
 
