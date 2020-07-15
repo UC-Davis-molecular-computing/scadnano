@@ -112,6 +112,8 @@ mixin Selectable {
   /// Subclasses must define this to be able to be selectively selected.
   SelectModeChoice select_mode();
 
+  bool get is_scaffold;
+
   //XXX: Previously the type of event was SyntheticMouseEvent, but now we have a pointer event since
   // the Dart dnd library intercepts and prevent mouse events. Luckily that event has the
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
@@ -123,14 +125,6 @@ mixin Selectable {
       // add to selection on mouse down
       app.dispatch(actions.Select(this, toggle: false));
     }
-//    if (event.ctrlKey || event.metaKey) {
-//      app.dispatch(actions.Select(this, toggle: true, only: false));
-//    } else if (event.shiftKey) {
-//      // add to selection on mouse down
-//      app.dispatch(actions.Select(this, toggle: false, only: false));
-//    } else {
-//      app.dispatch(actions.Select(this, toggle: false, only: true));
-//    }
   }
 
   // We choose to use the mouse up event to deselect other selections. Otherwise it is difficult to select
