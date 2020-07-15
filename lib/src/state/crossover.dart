@@ -15,11 +15,12 @@ abstract class Crossover
     implements Built<Crossover, CrossoverBuilder>, Linker, StrandPart {
 //  factory Crossover(Domain prev_substrand, Domain next_substrand) =>
 //      Crossover.from((b) => b..prev_substrand.replace(prev_substrand)..next_substrand.replace(next_substrand));
-  factory Crossover(int prev_domain_idx, int next_domain_idx, String strand_id) =>
+  factory Crossover(int prev_domain_idx, int next_domain_idx, String strand_id, bool is_scaffold) =>
       Crossover.from((b) => b
         ..prev_domain_idx = prev_domain_idx
         ..next_domain_idx = next_domain_idx
-        ..strand_id = strand_id);
+        ..strand_id = strand_id
+        ..is_scaffold = is_scaffold);
 
   factory Crossover.from([void Function(CrossoverBuilder) updates]) = _$Crossover;
 
@@ -27,9 +28,9 @@ abstract class Crossover
 
   static Serializer<Crossover> get serializer => _$crossoverSerializer;
 
-  /************************ end BuiltValue boilerplate ************************/
   @memoized
   int get hashCode;
+  /************************ end BuiltValue boilerplate ************************/
 
   int get prev_domain_idx;
 

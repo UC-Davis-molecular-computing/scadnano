@@ -35,8 +35,8 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   bool ends_selectable() =>
       modes.contains(SelectModeChoice.end_3p_strand) ||
       modes.contains(SelectModeChoice.end_5p_strand) ||
-      modes.contains(SelectModeChoice.end_3p_substrand) ||
-      modes.contains(SelectModeChoice.end_5p_substrand);
+      modes.contains(SelectModeChoice.end_3p_domain) ||
+      modes.contains(SelectModeChoice.end_5p_domain);
 
   String to_json() {
     List<String> lst = [for (var mode in modes) mode.name];

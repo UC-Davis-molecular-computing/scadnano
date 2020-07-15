@@ -1,0 +1,135 @@
+import 'dart:html';
+
+import 'package:built_collection/src/set.dart';
+import 'package:redux/redux.dart';
+
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/select_mode.dart';
+
+import '../actions/actions.dart' as actions;
+import '../util.dart' as util;
+
+const selectable_css_style_non_domain_end = {
+  'filter': 'url("#shadow")',
+};
+
+const selectable_css_style_domain_end = {
+  'filter': 'url("#shadow")',
+  'stroke': 'black',
+  'stroke-width': '0.5px',
+  'visibility': 'visible',
+};
+
+edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher next) {
+  next(action);
+  if (action is actions.EditModesSet ||
+      action is actions.EditModeToggle ||
+      action is actions.SelectModesSet ||
+      action is actions.SelectModeToggle ||
+      action is actions.SetAppUIStateStorable) {
+    var select_modes = store.state.ui_state.select_mode_state.modes;
+    var edit_modes = store.state.ui_state.edit_modes;
+    var design = store.state.dna_design;
+    bool is_origami = store.state.dna_design.is_origami;
+    set_selectables_css_style_rules(design, edit_modes, select_modes, is_origami);
+  }
+}
+
+set_selectables_css_style_rules(DNADesign design, BuiltSet<EditModeChoice> edit_modes,
+    BuiltSet<SelectModeChoice> select_modes, bool is_origami) {
+  bool edit_mode_is_select = edit_modes.contains(EditModeChoice.select);
+  bool scaffold_parts_selectable =
+      edit_mode_is_select && (design.is_origami && select_modes.contains(SelectModeChoice.scaffold));
+  bool staple_parts_selectable =
+      edit_mode_is_select && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
+  bool all_parts_selectable =
+      edit_mode_is_select && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
+
+  for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
+    set_strand_part_selectable_css_style_rules(select_modes,
+        all_parts_selectable: all_parts_selectable,
+        staple_parts_selectable: staple_parts_selectable,
+        scaffold_parts_selectable: scaffold_parts_selectable,
+        select_mode_choice: select_mode_choice,
+        is_origami: is_origami);
+  }
+}
+
+set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_modes,
+    {bool all_parts_selectable,
+    bool staple_parts_selectable,
+    bool scaffold_parts_selectable,
+    SelectModeChoice select_mode_choice,
+    bool is_origami}) {
+  bool select_mode_contains_part = select_modes.contains(select_mode_choice);
+  var selectable_css_style_this_choice = SelectModeChoice.ends.contains(select_mode_choice)
+      ? selectable_css_style_domain_end
+      : selectable_css_style_non_domain_end;
+
+  var all_strand_selector = '.${select_mode_choice.css_selector()}:hover';
+  var staple_only_selector =
+      ':not(.${SelectModeChoice.scaffold.css_selector()}).${select_mode_choice.css_selector()}:hover';
+  var scaffold_selector =
+      '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
+
+  if (!select_mode_contains_part) {
+    css_class_remove_style(all_strand_selector);
+    css_class_remove_style(staple_only_selector);
+    css_class_remove_style(scaffold_selector);
+  } else if (!is_origami || all_parts_selectable) {
+    css_class_set_style(all_strand_selector, selectable_css_style_this_choice);
+    css_class_set_style(staple_only_selector, selectable_css_style_this_choice);
+    css_class_set_style(scaffold_selector, selectable_css_style_this_choice);
+  } else if (scaffold_parts_selectable) {
+    css_class_remove_style(all_strand_selector);
+    css_class_remove_style(staple_only_selector);
+    css_class_set_style(scaffold_selector, selectable_css_style_this_choice);
+  } else if (staple_parts_selectable) {
+    css_class_remove_style(all_strand_selector);
+    css_class_set_style(staple_only_selector, selectable_css_style_this_choice);
+    css_class_remove_style(scaffold_selector);
+  } else {
+    css_class_remove_style(all_strand_selector);
+    css_class_remove_style(staple_only_selector);
+    css_class_remove_style(scaffold_selector);
+  }
+}
+
+css_class_set_style(String selector, Map<String, String> new_style_map) {
+  var stylesheet = util.get_scadnano_stylesheet();
+  var rule = style_rule_with_selector(stylesheet, selector);
+  if (rule == null) {
+    int new_index = stylesheet.insertRule(selector + ' {}');
+    rule = stylesheet.cssRules[new_index];
+  }
+  var style = rule.style;
+  for (var style_key in new_style_map.keys) {
+    var style_val = new_style_map[style_key];
+    style.setProperty(style_key, style_val);
+  }
+}
+
+css_class_remove_style(String selector) {
+  var stylesheet = util.get_scadnano_stylesheet();
+  int idx = style_rule_index_with_selector(stylesheet, selector);
+  if (idx != null) {
+    stylesheet.removeRule(idx);
+  }
+}
+
+CssStyleRule style_rule_with_selector(CssStyleSheet stylesheet, String selector) {
+  int idx = style_rule_index_with_selector(stylesheet, selector);
+  return idx == null ? null : stylesheet.cssRules[idx];
+}
+
+int style_rule_index_with_selector(CssStyleSheet stylesheet, String selector) {
+  for (int i = 0; i < stylesheet.cssRules.length; i++) {
+    CssRule rule = stylesheet.cssRules[i];
+    if (rule is CssStyleRule && rule.selectorText == selector) {
+      return i;
+    }
+  }
+  return null;
+}

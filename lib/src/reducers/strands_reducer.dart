@@ -27,6 +27,7 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
   TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
+  TypedReducer<BuiltList<Strand>, actions.ReplaceStrands>(replace_strands_reducer),
 //  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
@@ -42,6 +43,15 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
       join_strands_by_crossover_reducer),
 ]);
+
+BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
+  var strands_builder = strands.toBuilder();
+  for (int idx in action.new_strands.keys) {
+    var new_strand = action.new_strands[idx];
+    strands_builder[idx] = new_strand;
+  }
+  return strands_builder.build();
+}
 
 // takes a part of a strand and looks up the strand it's in by strand_id, then applies reducer to strand
 // action may not have the strand itself
@@ -253,10 +263,9 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
       strand.rebuild((b) => b..substrands.replace(substrands)), records);
 }
 
-List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) =>
-    substrand.deletions
-        .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
-        .toList();
+List<int> get_remaining_deletions(Domain substrand, int new_offset, DNAEnd dnaend) => substrand.deletions
+    .where((d) => (substrand.dnaend_start == dnaend ? new_offset < d : new_offset > d))
+    .toList();
 
 List<Insertion> get_remaining_insertions(Domain substrand, int new_offset, DNAEnd dnaend) =>
     substrand.insertions
@@ -303,8 +312,14 @@ BuiltList<Strand> strand_create(
   }
 
   Domain substrand = Domain(
-      helix: helix_idx, forward: forward, start: start, end: end, is_first: true, is_last: true);
-  Strand strand = Strand([substrand], color: action.color);
+      helix: helix_idx,
+      forward: forward,
+      start: start,
+      end: end,
+      is_first: true,
+      is_last: true,
+      is_scaffold: false);
+  Strand strand = Strand([substrand], color: action.color, is_scaffold: false);
   var new_strands = strands.rebuild((s) => s..add(strand));
 
   return new_strands;

@@ -2831,7 +2831,8 @@ main() {
     expect_app_state_equal(actual_state, expected_state);
   });
 
-  test('test selected dna ends after undoing DNAEndMove (see issue #83)', () {
+  // https://github.com/UC-Davis-molecular-computing/scadnano/issues/83#issuecomment-569432526
+  test('test_selected_dna_ends_after_undoing_DNAEndMove_see_issue_83)', () {
     AppState initial_state = app_state_from_dna_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
@@ -2844,6 +2845,9 @@ main() {
       helix: helix0,
     );
     AppState actual_state = initial_state;
+
+    // Put end select mode on
+    actual_state = make_ends_selectable(actual_state);
 
     // Select
     actual_state = app_state_reducer(actual_state, Select(dna_end, toggle: false, only: false));
@@ -3051,33 +3055,33 @@ main() {
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
           app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_strand));
 
-      SelectModeState expected_modes = SelectModeState().set_modes([SelectModeChoice.end_5p_substrand]);
+      SelectModeState expected_modes = SelectModeState().set_modes([SelectModeChoice.end_5p_domain]);
       expect(final_state.ui_state.select_mode_state, expected_modes);
     });
 
     test('test SelectModeToggle to toggle on', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
       AppState final_state =
-          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_substrand));
+          app_state_reducer(initial_state, SelectModeToggle(SelectModeChoice.end_3p_domain));
 
-      SelectModeState expected_modes = modes.add_mode(SelectModeChoice.end_3p_substrand);
+      SelectModeState expected_modes = modes.add_mode(SelectModeChoice.end_3p_domain);
       expect(final_state.ui_state.select_mode_state, expected_modes);
     });
 
     test('test SelectModeToggle to turn strand on', () {
       SelectModeState modes =
-          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand]);
+          SelectModeState().set_modes([SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
@@ -3089,7 +3093,7 @@ main() {
 
     test('test SelectModeToggle to turn crossover on', () {
       SelectModeState modes = SelectModeState().set_modes(
-          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
@@ -3102,7 +3106,7 @@ main() {
 
     test('test SelectModeToggle to turn loopout on', () {
       SelectModeState modes = SelectModeState().set_modes(
-          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_substrand, SelectModeChoice.scaffold]);
+          [SelectModeChoice.end_3p_strand, SelectModeChoice.end_5p_domain, SelectModeChoice.scaffold]);
       AppState initial_state = app_state_from_dna_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.select_mode_state.replace(modes));
 
@@ -3698,7 +3702,7 @@ main() {
     });
   });
 
-  group('Selectables tests: ', () {
+  group('Selectables ends tests: ', () {
     //   0                  16
     //
     // 0 [------------------->
@@ -3710,7 +3714,8 @@ main() {
     DNAEnd h0_forward_3p = two_helices_design.strands.first.dnaend_3p;
     DNAEnd h1_forward_3p = two_helices_design.strands[1].dnaend_3p;
     DNAEnd h1_reverse_5p = two_helices_design.strands.last.dnaend_5p;
-    test('Select an end', () {
+    state = make_ends_selectable(state);
+    test('select_an_end', () {
       //   0                  16
       //
       // 0 [------------------->  <--  select this 3p end
@@ -3781,7 +3786,7 @@ main() {
     DNAEnd h0_reverse_5p = two_helices_design.strands.first.dnaend_5p;
 
     BuiltList<Selectable> selectables = [h0_forward_3p, h1_forward_3p, h1_reverse_5p].toBuiltList();
-    test('SelectAll with `only = false`', () {
+    test('SelectAll ends with `only = false`', () {
       state = app_state_reducer(state, Select(h0_reverse_5p, toggle: false, only: false));
       // Setting up state for next test by selecting an end:
       //   0                  16
@@ -3800,7 +3805,7 @@ main() {
       expect(local_state.ui_state.selectables_store.selected_items, expected_selectables);
     });
 
-    test('SelectAll with `only = true`', () {
+    test('SelectAll ends with `only = true`', () {
       state = app_state_reducer(state, Select(h0_reverse_5p, toggle: false, only: false));
       // Setting up state for next test by selecting an end:
       //   0                  16
@@ -4436,6 +4441,7 @@ main() {
       end: end,
       deletions: [],
       insertions: [],
+      is_scaffold: false,
       dna_sequence: null,
       is_first: true,
       is_last: true,
@@ -7310,4 +7316,11 @@ main() {
       expect_app_state_equal(state, expected_state);
     });
   });
+}
+
+AppState make_ends_selectable(AppState actual_state) {
+  var ends_modes = SelectModeChoice.ends_on_origami;
+  var end_select_mode_action = SelectModesSet(ends_modes.toBuiltList());
+  actual_state = app_state_reducer(actual_state, end_select_mode_action);
+  return actual_state;
 }

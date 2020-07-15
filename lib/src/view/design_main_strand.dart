@@ -28,19 +28,6 @@ import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
-//UiFactory<_$DesignMainStrandProps> ConnectedDesignMainStrand = connect<AppState, DesignMainStrandProps>(
-//  mapStateToPropsWithOwnProps: (state, props) {
-//    bool selected = state.ui_state.selectables_store.selected(props.strand);
-//    bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand);
-//    return DesignMainStrand()
-//      ..selected = selected
-//      ..selectable = selectable
-//      ..select_mode = state.ui_state.edit_modes.contains(EditModeChoice.select)
-//      ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-//      ..assign_dna_mode_enabled = state.ui_state.edit_modes.contains(EditModeChoice.assign_dna);
-//  },
-//)(DesignMainStrand);
-
 @Factory()
 UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 
@@ -52,16 +39,12 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool only_display_selected_helices;
 
   bool selected;
-  bool selectable;
   BuiltMap<int, Helix> helices;
   SelectablesStore selectables_store;
-  SelectModeState select_mode_state;
-  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool show_modifications;
   bool moving_dna_ends;
   bool currently_moving;
-  bool origami_type_is_selectable;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool modification_display_connector;
@@ -69,53 +52,47 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool invert_y;
 }
 
-class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, EditModePropsMixin;
+class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
-    with PureComponent, EditModeQueryable<DesignMainStrandProps> {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
-    Strand strand = props.strand;
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
-    bool selectable = props.selectable;
 
-    if (strand.substrands.length == 0) {
+    if (props.strand.substrands.length == 0) {
       return null;
     }
 
-    var classname = 'strand';
-    if (selectable) {
-      classname += ' selectable';
+    var classname = constants.css_selector_strand;
+    if (selected) {
+      classname += ' ' + constants.css_selector_selected;
     }
-    if (selectable && selected) {
-      classname += ' selected';
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
     }
 
     return (Dom.g()
-      ..id = strand.id()
+      ..id = props.strand.id()
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
-//      ..onContextMenu = strand_content_menu
+//      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
       ..className = classname)([
 //        (ConnectedDesignMainStrandPaths()
       (DesignMainStrandPaths()
-        ..strand = strand
+        ..strand = props.strand
         ..key = 'strand-paths'
         ..helices = props.helices
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..selectables_store = props.selectables_store
-        ..select_mode_state = props.select_mode_state
-        ..edit_modes = props.edit_modes
         ..strand_tooltip = tooltip_text(props.strand)
-        ..origami_type_is_selectable = props.origami_type_is_selectable
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..only_display_selected_helices = props.only_display_selected_helices)(),
-      _insertions(strand, side_selected_helix_idxs, strand.color),
-      _deletions(strand, side_selected_helix_idxs),
+      _insertions(props.strand, side_selected_helix_idxs, props.strand.color),
+      _deletions(props.strand, side_selected_helix_idxs),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -132,17 +109,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
       // select/deselect
       MouseEvent event = event_syn.nativeEvent;
-//      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode && props.selectable) {
-        props.strand.handle_selection_mouse_down(event);
-      }
+      props.strand.handle_selection_mouse_down(event);
 
       // set up drag detection for moving DNA ends
-//      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode && props.selectable) {
-        var address = util.get_closest_address(event, props.helices.values);
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
-      }
+      var address = util.get_closest_address(event, props.helices.values);
+      app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
     }
   }
 
@@ -155,9 +126,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // But it also achieves something we don't want.
       // See also commented out checks in handle_click_down.
 //      if (select_mode && props.selectable && !props.currently_moving) {
-      if (select_mode && props.selectable) {
-        props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
-      }
+      props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
     }
   }
 
@@ -176,7 +145,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..substrand = domain
             ..helix = helix
             ..color = color
-            ..edit_modes = props.edit_modes
             ..id = id
             ..key = id)());
         }
@@ -197,7 +165,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           deletions.add((DesignMainStrandDeletion()
             ..domain = substrand
             ..deletion = deletion
-            ..edit_modes = props.edit_modes
             ..helix = helix
             ..key = id)());
         }
@@ -216,6 +183,24 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   set_color() {
     app.disable_keyboard_shortcuts_while(
         () => ask_for_color(props.strand, props.selectables_store.selected_strands));
+  }
+
+  mirror(bool horizontal, bool reverse_polarity) {
+    var selected_strands = props.selectables_store.selected_strands;
+    List<Strand> strands;
+    if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == props.strand) {
+      // set for single strand if nothing is selected, or exactly this strand is selected
+      strands = [props.strand];
+    } else {
+      // if this strand is not selected, change it anyway along with all selected strands
+      if (!selected_strands.contains(props.strand)) {
+        strands = selected_strands.rebuild((b) => b.add(props.strand)).toList();
+      } else {
+        strands = selected_strands.toList();
+      }
+    }
+    app.dispatch(actions.StrandsMirror(
+        strands: strands.build(), horizontal: horizontal, reverse_polarity: reverse_polarity));
   }
 
   set_scaffold() {
@@ -243,6 +228,66 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ContextMenuItem(
           title: 'set color',
           on_click: set_color,
+        ),
+        ContextMenuItem(
+          title: 'reflect horizontally',
+          on_click: () => mirror(true, false),
+          tooltip: '''\
+replace strand(s) with horizontal mirror image, 
+without reversing polarity "vertically"
+
+For example,
+before:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1
+after:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1\
+''',
+        ),
+        ContextMenuItem(
+          title: 'reflect horizontally (reverse vertical polarity)',
+          on_click: () => mirror(true, true),
+          tooltip: '''\
+replace strand(s) with horizontal mirror image, 
+with polarity reversed "vertically"
+
+For example,
+before:
+  strand's 5' end on helix 0
+  strand's 3' end on helix 1
+after:
+  strand's 5' end on helix 1
+  strand's 3' end on helix 0\
+''',
+        ),
+        ContextMenuItem(
+          title: 'reflect vertically',
+          on_click: () => mirror(false, false),
+          tooltip: '''\
+replace strand(s) with vertical mirror image, 
+without reversing polarity "vertically"
+
+For example,
+before:
+  strand's 5' end is on a helix below that of the strand's 3' end
+after:
+  strand's 5' end is still on a helix below that of the strand's 3' end\
+''',
+        ),
+        ContextMenuItem(
+          title: 'reflect vertically (reverse vertical polarity)',
+          on_click: () => mirror(false, true),
+          tooltip: '''\
+replace strand(s) with vertical mirror image, 
+with polarity reversed "vertically"
+
+For example,
+before:
+  strand's 5' end is on a helix below that of the strand's 3' end
+after:
+  strand's 5' end is now on a helix above that of the strand's 3' end\
+''',
         ),
       ];
 }
@@ -280,7 +325,7 @@ String tooltip_text(Strand strand) =>
     "    length=${strand.dna_length()}\n" +
     "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
-    (strand.label == null? "": "    label: ${strand.label.toString()}\n") +
+    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
