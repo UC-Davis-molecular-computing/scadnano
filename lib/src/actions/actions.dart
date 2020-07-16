@@ -266,6 +266,19 @@ abstract class SelectModeToggle
   static Serializer<SelectModeToggle> get serializer => _$selectModeToggleSerializer;
 }
 
+abstract class SelectModesAdd
+    with BuiltJsonSerializable
+    implements Action, Built<SelectModesAdd, SelectModesAddBuilder> {
+  BuiltList<SelectModeChoice> get modes;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectModesAdd({BuiltList<SelectModeChoice> modes}) = _$SelectModesAdd._;
+
+  SelectModesAdd._();
+
+  static Serializer<SelectModesAdd> get serializer => _$selectModesAddSerializer;
+}
+
 abstract class SelectModesSet
     with BuiltJsonSerializable
     implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
