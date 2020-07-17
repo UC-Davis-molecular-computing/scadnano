@@ -16,7 +16,6 @@ import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
-import 'pure_component.dart';
 
 part 'design_side_helix.over_react.g.dart';
 
@@ -39,7 +38,7 @@ mixin DesignSideHelixProps on UiProps {
   Grid grid;
 }
 
-class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
+class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponentMixin {
   @override
   render() {
 //    print('rendering side helix ${props.helix.idx}');

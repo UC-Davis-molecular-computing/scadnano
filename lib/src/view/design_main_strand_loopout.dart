@@ -20,7 +20,6 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
 import '../actions/actions.dart' as actions;
-import 'pure_component.dart';
 import 'edit_mode_queryable.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
@@ -67,7 +66,7 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponent {
+    with PureComponentMixin {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 

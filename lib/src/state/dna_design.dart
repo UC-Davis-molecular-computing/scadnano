@@ -25,9 +25,6 @@ import 'unused_fields.dart';
 
 part 'dna_design.g.dart';
 
-//TODO: create mismatches field in DNADesign that can be accessed directly by DesignMainMismatches instead of
-// going through list of all Strands
-
 abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesignBuilder>, JSONSerializable {
   DNADesign._();
 

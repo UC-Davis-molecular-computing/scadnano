@@ -24,7 +24,6 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
-import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
@@ -55,7 +54,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponentMixin {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;

@@ -6,7 +6,6 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/grid.dart';
-import 'pure_component.dart';
 import 'design_main_helix.dart';
 import '../state/helix.dart';
 
@@ -33,7 +32,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool show_helix_circles;
 }
 
-class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
+class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponentMixin {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;

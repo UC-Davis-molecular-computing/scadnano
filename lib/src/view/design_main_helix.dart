@@ -16,7 +16,6 @@ import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
-import 'pure_component.dart';
 
 part 'design_main_helix.over_react.g.dart';
 
@@ -38,7 +37,7 @@ mixin DesignMainHelixProps on UiProps {
   bool show_helix_circles;
 }
 
-class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
+class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponentMixin {
   @override
   render() {
     Helix helix = props.helix;

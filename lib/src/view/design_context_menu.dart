@@ -3,7 +3,6 @@ import 'package:over_react/over_react_redux.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/view/pure_component.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 
@@ -20,7 +19,7 @@ mixin DesignContextMenuProps on UiProps {
   ContextMenu context_menu;
 }
 
-class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> with PureComponent {
+class DesignContextMenuComponent extends UiComponent2<DesignContextMenuProps> with PureComponentMixin {
   @override
   render() {
     if (props.context_menu == null) {

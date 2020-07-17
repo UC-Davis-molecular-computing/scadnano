@@ -15,7 +15,6 @@ import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import 'design_main_strand_loopout.dart';
 import 'edit_mode_queryable.dart';
-import 'pure_component.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
@@ -37,7 +36,7 @@ class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPro
 
 @Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponent {
+    with PureComponentMixin {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);

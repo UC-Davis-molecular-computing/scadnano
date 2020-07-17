@@ -7,7 +7,6 @@ import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/view/edit_mode_queryable.dart';
-import 'package:scadnano/src/view/pure_component.dart';
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
@@ -46,7 +45,7 @@ mixin DesignMainStrandCrossoverState on UiState {
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponent {
+    with PureComponentMixin {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 

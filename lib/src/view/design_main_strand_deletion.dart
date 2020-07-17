@@ -9,7 +9,6 @@ import '../app.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
-import 'pure_component.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';
 
@@ -27,7 +26,7 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponent {
+    with PureComponentMixin {
   @override
   render() {
     Domain domain = props.domain;
