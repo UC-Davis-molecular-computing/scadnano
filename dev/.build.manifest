@@ -940,6 +940,7 @@ packages/react/react_with_addons.js
 packages/react/react_with_react_dom_prod.js
 packages/scadnano/src/.gitignore
 packages/scadnano/src/actions/.gitignore
+packages/scadnano/src/middleware/.gitignore
 packages/scadnano/src/state/.gitignore
 packages/test/dart.js
 packages/test/src/runner/browser/static/default.html.tpl
