@@ -553,11 +553,20 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
 
   bool has_nondefault_max_offset(Helix helix) {
     var ends = domains_on_helix(helix.idx).map((ss) => ss.end);
+    var starts = domains_on_helix(helix.idx).map((ss) => ss.start);
     int max_end = 0;
+    int greatest_end_val = 0;
+    for (var strand in strands){
+          for(var substrand in strand.substrands){
+            if((substrand.dna_length() + starts.first) > greatest_end_val){
+              greatest_end_val = substrand.dna_length() + starts.first;
+            }
+          }  
+        }
     if(ends.isEmpty){
       max_end = constants.default_max_offset;
-    }else if(helix.max_offset == constants.default_max_offset){
-      max_end = helix.max_offset;
+    }else if(helix.max_offset == greatest_end_val){
+      max_end = greatest_end_val;
     }else{
       max_end = ends.reduce(max);
     }
