@@ -37,7 +37,7 @@ Press the button next to the word "Load" at the top (in Chrome the button says "
 
 ![](images/load_file_button.png)
 
-Choose the file you downloaded. The design should look similar to the first screenshot in the tutorial.
+Choose the file you downloaded. (Alternatively, you can drag the file from your file browser onto the open scadnano page in your web browser.) The design should look similar to the first screenshot in the tutorial.
 
 
 ## Load empty design
