@@ -552,24 +552,8 @@ abstract class DNADesign with UnusedFields implements Built<DNADesign, DNADesign
   }
 
   bool has_nondefault_max_offset(Helix helix) {
-    var ends = domains_on_helix(helix.idx).map((ss) => ss.end);
-    int max_end = 0;
-    int greatest_end_val = 0;
-    for (var strand in strands){
-          for(var domain in strand.domains()){
-            if((domain.end > greatest_end_val)){
-              greatest_end_val = domain.end;
-            }
-          }  
-        }
-    if(ends.isEmpty){
-      max_end = constants.default_max_offset;
-    }else if(helix.max_offset == greatest_end_val){
-      max_end = greatest_end_val;
-    }else{
-      max_end = ends.reduce(max);
-    }
-    return helix.max_offset != max_end;
+    int default_max_end = calculate_default_max_offset(strands);
+    return helix.max_offset != default_max_end;
   }
 
   bool has_nondefault_min_offset(Helix helix) {
@@ -1284,25 +1268,7 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
     HelixBuilder helix_builder = helix_builders[idx];
 
     if (helix_builder.max_offset == null) {
-      var substrands = helix_idx_to_substrands[helix_builder.idx];
-      var greatest_max_offset = 0;
-      if(substrands.isEmpty){
-        greatest_max_offset = constants.default_max_offset;
-      }
-      else{
-        for (var strand in strands) {
-          for (var domain in strand.domains()){
-            if(domain.end > greatest_max_offset){
-              greatest_max_offset = domain.end;
-            }
-          }
-        }
-      }
-      var max_offset = greatest_max_offset;
-      for (var substrand in substrands) {
-        max_offset = max(max_offset, substrand.end);
-      }
-      helix_builder.max_offset = max_offset;
+      helix_builder.max_offset = calculate_default_max_offset(strands);
     }
 
     if (helix_builder.min_offset == null) {
@@ -1322,6 +1288,24 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
       }
     }
   }
+}
+
+int calculate_default_max_offset(Iterable<Strand> strands) {
+  int greatest_max_offset;
+  if(strands.isEmpty){
+    greatest_max_offset = constants.default_max_offset;
+  }
+  else{
+    greatest_max_offset = strands.first.first_domain().end;
+    for (var strand in strands) {
+      for (var domain in strand.domains()){
+        if(domain.end > greatest_max_offset){
+          greatest_max_offset = domain.end;
+        }
+      }
+    }
+  }
+  return greatest_max_offset;
 }
 
 class Mismatch {
