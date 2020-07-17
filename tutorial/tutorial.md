@@ -397,7 +397,7 @@ Next, put a Python file named `add_deletions_to_24_helix_rectangle.py` in the sa
 import scadnano as sc
 
 def main():
-    design = sc.DNADesign.from_file('24_helix_rectangle.dna')
+    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.dna')
     return design
 
 if __name__ == '__main__':
@@ -413,7 +413,7 @@ We can simply loop over the helices and the offsets we need to do this. The thre
 import scadnano as sc
 
 def main():
-    design = sc.DNADesign.from_file('24_helix_rectangle.dna')
+    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.dna')
     for helix in range(24):                     ###
         for offset in range(27, 294, 48):       ###
             design.add_deletion(helix, offset)  ###
