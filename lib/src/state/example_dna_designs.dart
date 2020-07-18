@@ -28,6 +28,7 @@ abstract class ExampleDNADesigns
       '16_helix_origami_rectangle_no_twist',
       '16_helix_origami_rectangle',
       '16_helix_origami_rectangle_idt',
+      'very_large_origami',
     ]);
     b.selected_idx = -1;
   }

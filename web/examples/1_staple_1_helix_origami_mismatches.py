@@ -3,8 +3,8 @@ import scadnano as sc
 
 def main():
     length = 10
-    stap_ss = sc.Domain(0, sc.forward, 0, length)
-    scaf_ss = sc.Domain(0, sc.reverse, 0, length)
+    stap_ss = sc.Domain(0, True, 0, length)
+    scaf_ss = sc.Domain(0, False, 0, length)
     stap = sc.Strand([stap_ss])
     scaf = sc.Strand([scaf_ss], color=sc.default_scaffold_color)
     strands = [stap, scaf]

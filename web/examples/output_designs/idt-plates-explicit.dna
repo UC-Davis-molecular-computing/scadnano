@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.9",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -7,7 +7,7 @@
   ],
   "strands": [
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "CTATTATAGTTTTACCCTGA",
       "idt": {"name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1"},
       "domains": [
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "CAGAAGCAAAAAATCAGGTC",
       "idt": {"name": "staple2", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B1"},
       "domains": [
@@ -25,7 +25,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "GCGGATTGCACATAAATCAA",
       "idt": {"name": "staple3", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C1"},
       "domains": [
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "TCAAAAAGATCGAGAATGAC",
       "idt": {"name": "staple4", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D1"},
       "domains": [
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "TAAGAGGAAGGTTCAGAAAA",
       "idt": {"name": "staple5", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E1"},
       "domains": [
@@ -52,7 +52,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "CCCGAAAGACGCTTTAAACA",
       "idt": {"name": "staple6", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F1"},
       "domains": [
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TTCAAATATCCCCCTCAAAT",
       "idt": {"name": "staple7", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G1"},
       "domains": [
@@ -70,7 +70,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "GCGTTTTAATTCATTGAATC",
       "idt": {"name": "staple8", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H1"},
       "domains": [
@@ -79,7 +79,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "TCGAGCTTCATCATAAATAT",
       "idt": {"name": "staple9", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A2"},
       "domains": [
@@ -88,7 +88,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "AAGCGAACCATGCGGAATCG",
       "idt": {"name": "staple10", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B2"},
       "domains": [
@@ -97,7 +97,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "GACCGGAAGCCGTCCAATAC",
       "idt": {"name": "staple11", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C2"},
       "domains": [
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AAACTCCAACGACTGGATAG",
       "idt": {"name": "staple12", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D2"},
       "domains": [
@@ -115,7 +115,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "AGGTCAGGATAAAATGTTTA",
       "idt": {"name": "staple13", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E2"},
       "domains": [
@@ -124,7 +124,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "TAGAGAGTACGGGTAATAGT",
       "idt": {"name": "staple14", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F2"},
       "domains": [
@@ -133,7 +133,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "CTTTAATTGCTTGCCAGAGG",
       "idt": {"name": "staple15", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G2"},
       "domains": [
@@ -142,7 +142,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "TCCTTTTGATAAAAGAAGTT",
       "idt": {"name": "staple16", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H2"},
       "domains": [
@@ -151,7 +151,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "AAGAGGTCATAGGCTTTTGC",
       "idt": {"name": "staple17", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A3"},
       "domains": [
@@ -160,7 +160,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "TTTTGCGGATAAATAGCGAG",
       "idt": {"name": "staple18", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B3"},
       "domains": [
@@ -169,7 +169,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "GGCTTAGAGCATAAAAACCA",
       "idt": {"name": "staple19", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C3"},
       "domains": [
@@ -178,7 +178,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TTAATTGCTGCCAGACGACG",
       "idt": {"name": "staple20", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D3"},
       "domains": [
@@ -187,7 +187,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "AATATAATGCCCCTCGTTTA",
       "idt": {"name": "staple21", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E3"},
       "domains": [
@@ -196,7 +196,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "TGTAGCTCAAACTATCATAA",
       "idt": {"name": "staple22", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F3"},
       "domains": [
@@ -205,7 +205,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "CATGTTTTAATAAGAGCAAC",
       "idt": {"name": "staple23", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G3"},
       "domains": [
@@ -214,7 +214,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "ATATGCAACTCGAGGCATAG",
       "idt": {"name": "staple24", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H3"},
       "domains": [
@@ -223,7 +223,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AAAGTACGGTAAAGGAATTA",
       "idt": {"name": "staple25", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A4"},
       "domains": [
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "GTCTGGAAGTCATAACGCCA",
       "idt": {"name": "staple26", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B4"},
       "domains": [
@@ -241,7 +241,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "TTCATTCCATAATGCAGATA",
       "idt": {"name": "staple27", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C4"},
       "domains": [
@@ -250,7 +250,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "ATAACAGTTGACATTCAACT",
       "idt": {"name": "staple28", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D4"},
       "domains": [
@@ -259,7 +259,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "ATTCCCAATTTAGGAATACC",
       "idt": {"name": "staple29", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E4"},
       "domains": [
@@ -268,7 +268,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "CTGCGAACGAAGTTGAGATT",
       "idt": {"name": "staple30", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F4"},
       "domains": [
@@ -277,7 +277,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GTAGATTTAGAAGATTCATC",
       "idt": {"name": "staple31", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G4"},
       "domains": [
@@ -286,7 +286,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "TTTGACCATTTACAGGTAGA",
       "idt": {"name": "staple32", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H4"},
       "domains": [
@@ -295,7 +295,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "AGATACATTTACAACATTAT",
       "idt": {"name": "staple33", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A5"},
       "domains": [
@@ -304,7 +304,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "CGCAAATGGTAACTAACGGA",
       "idt": {"name": "staple34", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B5"},
       "domains": [
@@ -313,7 +313,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "CAATAACCTGTAATAAAACG",
       "idt": {"name": "staple35", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C5"},
       "domains": [
@@ -322,7 +322,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "TTTAGCTATAAAATCTACGT",
       "idt": {"name": "staple36", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D5"},
       "domains": [
@@ -331,7 +331,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TTTTCATTTGTTGGGAAGAA",
       "idt": {"name": "staple37", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E5"},
       "domains": [
@@ -340,7 +340,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "GGGCGCGAGCAGTCAGGACG",
       "idt": {"name": "staple38", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F5"},
       "domains": [
@@ -349,7 +349,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "TGAAAAGGTGTCATTATACC",
       "idt": {"name": "staple39", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G5"},
       "domains": [
@@ -358,7 +358,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "GCATCAATTCAAGAACTGGC",
       "idt": {"name": "staple40", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H5"},
       "domains": [
@@ -367,7 +367,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TACTAATAGTATGCGATTTT",
       "idt": {"name": "staple41", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A6"},
       "domains": [
@@ -376,7 +376,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "AGTAGCATTAGAATTACCTT",
       "idt": {"name": "staple42", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B6"},
       "domains": [
@@ -385,7 +385,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "ACATCCAATATAATCATTGT",
       "idt": {"name": "staple43", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C6"},
       "domains": [
@@ -394,7 +394,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "AATCATACAGATTTCAACTT",
       "idt": {"name": "staple44", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D6"},
       "domains": [
@@ -403,7 +403,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "GCAAGGCAAAAGATGGTTTA",
       "idt": {"name": "staple45", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E6"},
       "domains": [
@@ -412,7 +412,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "GAATTAGCAAATTGGGCTTG",
       "idt": {"name": "staple46", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F6"},
       "domains": [
@@ -421,7 +421,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "AATTAAGCAACGAGTAGTAA",
       "idt": {"name": "staple47", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G6"},
       "domains": [
@@ -430,7 +430,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "TAAAGCCTCAAACACCAGAA",
       "idt": {"name": "staple48", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H6"},
       "domains": [
@@ -439,7 +439,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GAGCATAAAGCCTGACGAGA",
       "idt": {"name": "staple49", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A7"},
       "domains": [
@@ -448,7 +448,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "CTAAATCGGTTAAGGCTTGC",
       "idt": {"name": "staple50", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B7"},
       "domains": [
@@ -457,7 +457,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "TGTACCAAAAATTCAGTGAA",
       "idt": {"name": "staple51", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C7"},
       "domains": [
@@ -466,7 +466,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "ACATTATGACAAAGCTGCTC",
       "idt": {"name": "staple52", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D7"},
       "domains": [
@@ -475,7 +475,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "CCTGTAATACTCAACGTAAC",
       "idt": {"name": "staple53", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E7"},
       "domains": [
@@ -484,7 +484,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TTTTGCGGGAATTACCCAAA",
       "idt": {"name": "staple54", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F7"},
       "domains": [
@@ -493,7 +493,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "GAAGCCTTTACCGGATATTC",
       "idt": {"name": "staple55", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G7"},
       "domains": [
@@ -502,7 +502,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "TTTCAACGCATTGACAAGAA",
       "idt": {"name": "staple56", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H7"},
       "domains": [
@@ -511,7 +511,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "AGGATAAAAAAAGAGTAATC",
       "idt": {"name": "staple57", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A8"},
       "domains": [
@@ -520,7 +520,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "TTTTTAGAACGACCTTCATC",
       "idt": {"name": "staple58", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B8"},
       "domains": [
@@ -529,7 +529,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "CCTCATATATTAGGCTGGCT",
       "idt": {"name": "staple59", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C8"},
       "domains": [
@@ -538,7 +538,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "TTTAAATGCAACCAGGCGCA",
       "idt": {"name": "staple60", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D8"},
       "domains": [
@@ -547,7 +547,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "ATGCCTGAGTCGGTGTACAG",
       "idt": {"name": "staple61", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E8"},
       "domains": [
@@ -556,7 +556,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "AATGTGTAGGGACAGATGAA",
       "idt": {"name": "staple62", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F8"},
       "domains": [
@@ -565,7 +565,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TAAAGATTCATTTGAAAGAG",
       "idt": {"name": "staple63", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G8"},
       "domains": [
@@ -574,7 +574,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AAAGGGTGAGACTGACCAAC",
       "idt": {"name": "staple64", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H8"},
       "domains": [
@@ -583,7 +583,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "AAAGGCCGGAAGGGAACCGA",
       "idt": {"name": "staple65", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A9"},
       "domains": [
@@ -592,7 +592,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "GACAGTCAAAGTCAATCATA",
       "idt": {"name": "staple66", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B9"},
       "domains": [
@@ -601,7 +601,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TCACCATCAAGGCGCAGACG",
       "idt": {"name": "staple67", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C9"},
       "domains": [
@@ -610,7 +610,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "TATGATATTCGCCGGAACGA",
       "idt": {"name": "staple68", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D9"},
       "domains": [
@@ -619,7 +619,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "AACCGTTCTAATGTTACTTA",
       "idt": {"name": "staple69", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E9"},
       "domains": [
@@ -628,7 +628,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GCTGATAAATGACCTGCTCC",
       "idt": {"name": "staple70", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F9"},
       "domains": [
@@ -637,7 +637,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "TAATGCCGGACGAAATCCGC",
       "idt": {"name": "staple71", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G9"},
       "domains": [
@@ -646,7 +646,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "GAGGGTAGCTTAAATTGTGT",
       "idt": {"name": "staple72", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H9"},
       "domains": [
@@ -655,7 +655,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "ATTTTTGAGACATCGCCTGA",
       "idt": {"name": "staple73", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A10"},
       "domains": [
@@ -664,7 +664,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "GATCTACAAAAGATTTGTAT",
       "idt": {"name": "staple74", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B10"},
       "domains": [
@@ -673,7 +673,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GGCTATCAGGAGTACAACGG",
       "idt": {"name": "staple75", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C10"},
       "domains": [
@@ -682,7 +682,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TCATTGCCTGCGCGAAACAA",
       "idt": {"name": "staple76", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D10"},
       "domains": [
@@ -691,7 +691,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AGAGTCTGGATTATACCAAG",
       "idt": {"name": "staple77", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E10"},
       "domains": [
@@ -700,7 +700,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "GCAAACAAGACCCCCAGCGA",
       "idt": {"name": "staple78", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F10"},
       "domains": [
@@ -709,7 +709,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "GAATCGATGATCATCTTTGA",
       "idt": {"name": "staple79", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G10"},
       "domains": [
@@ -718,7 +718,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "ACGGTAATCGACTAAAACAC",
       "idt": {"name": "staple80", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H10"},
       "domains": [
@@ -727,7 +727,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "TAAAACTAGCAAAAGAATAC",
       "idt": {"name": "staple81", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A11"},
       "domains": [
@@ -736,7 +736,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "ATGTCAATCACGAAAGAGGC",
       "idt": {"name": "staple82", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B11"},
       "domains": [
@@ -745,7 +745,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "TATGTACCCCCAACCTAAAA",
       "idt": {"name": "staple83", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C11"},
       "domains": [
@@ -754,7 +754,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "GGTTGATAATACGAAGGCAC",
       "idt": {"name": "staple84", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D11"},
       "domains": [
@@ -763,7 +763,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "CAGAAAAGCCTAATGCCACT",
       "idt": {"name": "staple85", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E11"},
       "domains": [
@@ -772,7 +772,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "CCAAAAACAGGTAAAATACG",
       "idt": {"name": "staple86", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F11"},
       "domains": [
@@ -781,7 +781,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "GAAGATTGTACATTAAACGG",
       "idt": {"name": "staple87", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G11"},
       "domains": [
@@ -790,7 +790,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "TAAGCAAATAAGGAAGTTTC",
       "idt": {"name": "staple88", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H11"},
       "domains": [
@@ -799,7 +799,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TTTAAATTGTCTTTTTCATG",
       "idt": {"name": "staple89", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A12"},
       "domains": [
@@ -808,7 +808,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AAACGTTAATGGACTAAAGA",
       "idt": {"name": "staple90", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "B12"},
       "domains": [
@@ -817,7 +817,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "ATTTTGTTAAGAGGCTTTGA",
       "idt": {"name": "staple91", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "C12"},
       "domains": [
@@ -826,7 +826,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "AATTCGCATTAACGGCTACA",
       "idt": {"name": "staple92", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "D12"},
       "domains": [
@@ -835,7 +835,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "AAATTTTTGTCGAGGGTAGC",
       "idt": {"name": "staple93", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "E12"},
       "domains": [
@@ -844,7 +844,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "TAAATCAGCTAGCATCGGAA",
       "idt": {"name": "staple94", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "F12"},
       "domains": [
@@ -853,7 +853,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "CATTTTTTAAAGCGAAAGAC",
       "idt": {"name": "staple95", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "G12"},
       "domains": [
@@ -862,7 +862,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "CCAATAGGAACACCCTCAGC",
       "idt": {"name": "staple96", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "H12"},
       "domains": [
@@ -871,7 +871,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "CGCCATCAAAGCGGGATCGT",
       "idt": {"name": "staple97", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A1"},
       "domains": [
@@ -880,7 +880,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "AATAATTCGCGGCCGCTTTT",
       "idt": {"name": "staple98", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B1"},
       "domains": [
@@ -889,7 +889,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "GTCTGGCCTTGGGAGTTAAA",
       "idt": {"name": "staple99", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C1"},
       "domains": [
@@ -898,7 +898,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "CCTGTAGCCAGAGGCTTGCA",
       "idt": {"name": "staple100", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D1"},
       "domains": [
@@ -907,7 +907,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GCTTTCATCATTCGGTCGCT",
       "idt": {"name": "staple101", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E1"},
       "domains": [
@@ -916,7 +916,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "ACATTAAATGAACCGATATA",
       "idt": {"name": "staple102", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F1"},
       "domains": [
@@ -925,7 +925,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "TGAGCGAGTAGCCCACGCAT",
       "idt": {"name": "staple103", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G1"},
       "domains": [
@@ -934,7 +934,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "ACAACCCGTCAACAACCATC",
       "idt": {"name": "staple104", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H1"},
       "domains": [
@@ -943,7 +943,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "GGATTCTCCGCGACAATGAC",
       "idt": {"name": "staple105", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A2"},
       "domains": [
@@ -952,7 +952,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TGGGAACAAAATAGTTGCGC",
       "idt": {"name": "staple106", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B2"},
       "domains": [
@@ -961,7 +961,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "CGGCGGATTGCTTGATACCG",
       "idt": {"name": "staple107", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C2"},
       "domains": [
@@ -970,7 +970,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "ACCGTAATGGTCTTAAACAG",
       "idt": {"name": "staple108", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D2"},
       "domains": [
@@ -979,7 +979,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GATAGGTCACGAGGTGAATT",
       "idt": {"name": "staple109", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E2"},
       "domains": [
@@ -988,7 +988,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "GTTGGTGTAGGCTTGCTTTC",
       "idt": {"name": "staple110", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F2"},
       "domains": [
@@ -997,7 +997,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "ATGGGCGCATCGGTTTATCA",
       "idt": {"name": "staple111", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G2"},
       "domains": [
@@ -1006,7 +1006,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "CGTAACCGTGTTAATTGTAT",
       "idt": {"name": "staple112", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H2"},
       "domains": [
@@ -1015,7 +1015,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "CATCTGCCAGAAAGGAGCCT",
       "idt": {"name": "staple113", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A3"},
       "domains": [
@@ -1024,7 +1024,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "TTTGAGGGGAAAAGGCTCCA",
       "idt": {"name": "staple114", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B3"},
       "domains": [
@@ -1033,7 +1033,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "CGACGACAGTTCTCCAAAAA",
       "idt": {"name": "staple115", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C3"},
       "domains": [
@@ -1042,7 +1042,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "ATCGGCCTCAACGTTGAAAA",
       "idt": {"name": "staple116", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D3"},
       "domains": [
@@ -1051,7 +1051,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "GGAAGATCGCTAATTTTTTC",
       "idt": {"name": "staple117", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E3"},
       "domains": [
@@ -1060,7 +1060,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "ACTCCAGCCATTGCGAATAA",
       "idt": {"name": "staple118", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F3"},
       "domains": [
@@ -1069,7 +1069,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "GCTTTCCGGCACTAAAGGAA",
       "idt": {"name": "staple119", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G3"},
       "domains": [
@@ -1078,7 +1078,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "ACCGCTTCTGGAAAGGAACA",
       "idt": {"name": "staple120", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H3"},
       "domains": [
@@ -1087,7 +1087,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "GTGCCGGAAAAGTGAGAATA",
       "idt": {"name": "staple121", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A4"},
       "domains": [
@@ -1096,7 +1096,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "CCAGGCAAAGGTTTCAGCGG",
       "idt": {"name": "staple122", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B4"},
       "domains": [
@@ -1105,7 +1105,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "CGCCATTCGCACTTTCAACA",
       "idt": {"name": "staple123", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C4"},
       "domains": [
@@ -1114,7 +1114,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "CATTCAGGCTTTGCTAAACA",
       "idt": {"name": "staple124", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D4"},
       "domains": [
@@ -1123,7 +1123,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "GCGCAACTGTGTATGGGATT",
       "idt": {"name": "staple125", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E4"},
       "domains": [
@@ -1132,7 +1132,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "TGGGAAGGGCTGAATTTTCT",
       "idt": {"name": "staple126", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F4"},
       "domains": [
@@ -1141,7 +1141,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GATCGGTGCGCGTTAGTAAA",
       "idt": {"name": "staple127", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G4"},
       "domains": [
@@ -1150,7 +1150,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "GGCCTCTTCGTCTTTCCAGA",
       "idt": {"name": "staple128", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H4"},
       "domains": [
@@ -1159,7 +1159,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "CTATTACGCCAGTTTTGTCG",
       "idt": {"name": "staple129", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A5"},
       "domains": [
@@ -1168,7 +1168,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "AGCTGGCGAAAACGATCTAA",
       "idt": {"name": "staple130", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B5"},
       "domains": [
@@ -1177,7 +1177,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "AGGGGGATGTTAGTTAGCGT",
       "idt": {"name": "staple131", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C5"},
       "domains": [
@@ -1186,7 +1186,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "GCTGCAAGGCACAGCCCTCA",
       "idt": {"name": "staple132", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D5"},
       "domains": [
@@ -1195,7 +1195,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "GATTAAGTTGCATTCCACAG",
       "idt": {"name": "staple133", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E5"},
       "domains": [
@@ -1204,7 +1204,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "GGTAACGCCAACGCCTGTAG",
       "idt": {"name": "staple134", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F5"},
       "domains": [
@@ -1213,7 +1213,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GGGTTTTCCCACAAACTACA",
       "idt": {"name": "staple135", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G5"},
       "domains": [
@@ -1222,7 +1222,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "AGTCACGACGCGTCACCAGT",
       "idt": {"name": "staple136", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H5"},
       "domains": [
@@ -1231,7 +1231,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TTGTAAAACGCACTGAGTTT",
       "idt": {"name": "staple137", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A6"},
       "domains": [
@@ -1240,7 +1240,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "ACGGCCAGTGTGTACCGTAA",
       "idt": {"name": "staple138", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B6"},
       "domains": [
@@ -1249,7 +1249,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "CCAAGCTTGCTAGGAACCCA",
       "idt": {"name": "staple139", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C6"},
       "domains": [
@@ -1258,7 +1258,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "ATGCCTGCAGGCAAGCCCAA",
       "idt": {"name": "staple140", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D6"},
       "domains": [
@@ -1267,7 +1267,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "GTCGACTCTATTCAGGGATA",
       "idt": {"name": "staple141", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E6"},
       "domains": [
@@ -1276,7 +1276,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "GAGGATCCCCCACCCTCATT",
       "idt": {"name": "staple142", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F6"},
       "domains": [
@@ -1285,7 +1285,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "GGGTACCGAGTCAGAGCCAC",
       "idt": {"name": "staple143", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G6"},
       "domains": [
@@ -1294,7 +1294,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "CTCGAATTCGACCGCCACCC",
       "idt": {"name": "staple144", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H6"},
       "domains": [
@@ -1303,7 +1303,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TAATCATGGTCACCCTCAGA",
       "idt": {"name": "staple145", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A7"},
       "domains": [
@@ -1312,7 +1312,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "CATAGCTGTTTCAGAACCGC",
       "idt": {"name": "staple146", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B7"},
       "domains": [
@@ -1321,7 +1321,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "TCCTGTGTGAACCGCCACCC",
       "idt": {"name": "staple147", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C7"},
       "domains": [
@@ -1330,7 +1330,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "AATTGTTATCGAGGTTTAGT",
       "idt": {"name": "staple148", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D7"},
       "domains": [
@@ -1339,7 +1339,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "CGCTCACAATCCGTACTCAG",
       "idt": {"name": "staple149", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E7"},
       "domains": [
@@ -1348,7 +1348,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TCCACACAACAGGTGTATCA",
       "idt": {"name": "staple150", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F7"},
       "domains": [
@@ -1357,7 +1357,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "ATACGAGCCGAGCCCGGAAT",
       "idt": {"name": "staple151", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G7"},
       "domains": [
@@ -1366,7 +1366,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "GAAGCATAAAATATAAGTAT",
       "idt": {"name": "staple152", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H7"},
       "domains": [
@@ -1375,7 +1375,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GTGTAAAGCCGAGAGGGTTG",
       "idt": {"name": "staple153", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A8"},
       "domains": [
@@ -1384,7 +1384,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TGGGGTGCCTAAGTGCCGTC",
       "idt": {"name": "staple154", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B8"},
       "domains": [
@@ -1393,7 +1393,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "AATGAGTGAGCCAGGCGGAT",
       "idt": {"name": "staple155", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C8"},
       "domains": [
@@ -1402,7 +1402,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "CTAACTCACATTGCTCAGTA",
       "idt": {"name": "staple156", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D8"},
       "domains": [
@@ -1411,7 +1411,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "TTAATTGCGTTAGCGGGGTT",
       "idt": {"name": "staple157", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E8"},
       "domains": [
@@ -1420,7 +1420,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "TGCGCTCACTGGATTAGGAT",
       "idt": {"name": "staple158", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F8"},
       "domains": [
@@ -1429,7 +1429,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "GCCCGCTTTCCTCAAGAGAA",
       "idt": {"name": "staple159", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G8"},
       "domains": [
@@ -1438,7 +1438,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "CAGTCGGGAAGCTGAGACTC",
       "idt": {"name": "staple160", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H8"},
       "domains": [
@@ -1447,7 +1447,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "ACCTGTCGTGGTATTAAGAG",
       "idt": {"name": "staple161", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A9"},
       "domains": [
@@ -1456,7 +1456,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "CCAGCTGCATAAACATGAAA",
       "idt": {"name": "staple162", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B9"},
       "domains": [
@@ -1465,7 +1465,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TAATGAATCGTATTATTCTG",
       "idt": {"name": "staple163", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C9"},
       "domains": [
@@ -1474,7 +1474,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "GCCAACGCGCTTTCGGAACC",
       "idt": {"name": "staple164", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D9"},
       "domains": [
@@ -1483,7 +1483,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "GGGGAGAGGCCCCCTGCCTA",
       "idt": {"name": "staple165", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E9"},
       "domains": [
@@ -1492,7 +1492,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "GGTTTGCGTACAGTTAATGC",
       "idt": {"name": "staple166", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F9"},
       "domains": [
@@ -1501,7 +1501,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TTGGGCGCCACCCGTATAAA",
       "idt": {"name": "staple167", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G9"},
       "domains": [
@@ -1510,7 +1510,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "GGGTGGTTTTAGTAACAGTG",
       "idt": {"name": "staple168", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H9"},
       "domains": [
@@ -1519,7 +1519,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "TCTTTTCACCCAGTGCCTTG",
       "idt": {"name": "staple169", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A10"},
       "domains": [
@@ -1528,7 +1528,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "AGTGAGACGGTTAACGGGGT",
       "idt": {"name": "staple170", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B10"},
       "domains": [
@@ -1537,7 +1537,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "GCAACAGCTGGTAATAAGTT",
       "idt": {"name": "staple171", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C10"},
       "domains": [
@@ -1546,7 +1546,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "ATTGCCCTTCGAGTGTACTG",
       "idt": {"name": "staple172", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D10"},
       "domains": [
@@ -1555,7 +1555,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "ACCGCCTGGCGATGATACAG",
       "idt": {"name": "staple173", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E10"},
       "domains": [
@@ -1564,7 +1564,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "CCTGAGAGAGCATGGCTTTT",
       "idt": {"name": "staple174", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F10"},
       "domains": [
@@ -1573,7 +1573,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "TTGCAGCAAGAAGCGTCATA",
       "idt": {"name": "staple175", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G10"},
       "domains": [
@@ -1582,7 +1582,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "CGGTCCACGCCCGTTCCAGT",
       "idt": {"name": "staple176", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H10"},
       "domains": [
@@ -1591,7 +1591,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "TGGTTTGCCCTCTGAATTTA",
       "idt": {"name": "staple177", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A11"},
       "domains": [
@@ -1600,7 +1600,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "CAGCAGGCGAAAGCGCAGTC",
       "idt": {"name": "staple178", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B11"},
       "domains": [
@@ -1609,7 +1609,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "AAATCCTGTTCCAGAATGGA",
       "idt": {"name": "staple179", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C11"},
       "domains": [
@@ -1618,7 +1618,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "TGATGGTGGTCTCATTAAAG",
       "idt": {"name": "staple180", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D11"},
       "domains": [
@@ -1627,7 +1627,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "TCCGAAATCGCAAATAAATC",
       "idt": {"name": "staple181", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E11"},
       "domains": [
@@ -1636,7 +1636,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "GCAAAATCCCTATTCACAAA",
       "idt": {"name": "staple182", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F11"},
       "domains": [
@@ -1645,7 +1645,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "TTATAAATCATTGGCCTTGA",
       "idt": {"name": "staple183", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G11"},
       "domains": [
@@ -1654,7 +1654,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "AAAGAATAGCGGTCAGACGA",
       "idt": {"name": "staple184", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H11"},
       "domains": [
@@ -1663,7 +1663,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "CCGAGATAGGGGTTGAGGCA",
       "idt": {"name": "staple185", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "A12"},
       "domains": [
@@ -1672,7 +1672,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "GTTGAGTGTTATTGACAGGA",
       "idt": {"name": "staple186", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "B12"},
       "domains": [
@@ -1681,7 +1681,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GTTCCAGTTTCGCCGCCAGC",
       "idt": {"name": "staple187", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "C12"},
       "domains": [
@@ -1690,7 +1690,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "GGAACAAGAGCCACCAGAGC",
       "idt": {"name": "staple188", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "D12"},
       "domains": [
@@ -1699,7 +1699,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "TCCACTATTAACCAGAACCA",
       "idt": {"name": "staple189", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "E12"},
       "domains": [
@@ -1708,7 +1708,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "AAGAACGTGGCAGAGCCGCC",
       "idt": {"name": "staple190", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "F12"},
       "domains": [
@@ -1717,7 +1717,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "ACTCCAACGTCCACCACCCT",
       "idt": {"name": "staple191", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "G12"},
       "domains": [
@@ -1726,7 +1726,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "CAAAGGGCGAACCCTCAGAG",
       "idt": {"name": "staple192", "scale": "25nm", "purification": "STD", "plate": "plate2", "well": "H12"},
       "domains": [
@@ -1735,7 +1735,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "AAAACCGTCTCAGAACCGCC",
       "idt": {"name": "staple193", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A1"},
       "domains": [
@@ -1744,7 +1744,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "ATCAGGGCGACCGCCACCCT",
       "idt": {"name": "staple194", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B1"},
       "domains": [
@@ -1753,7 +1753,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "TGGCCCACTATCCCTCAGAG",
       "idt": {"name": "staple195", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C1"},
       "domains": [
@@ -1762,7 +1762,7 @@
       ]
     },
     {
-      "color": "#32b86c",
+      "color": "#f74308",
       "sequence": "CGTGAACCATCGGAACCGCC",
       "idt": {"name": "staple196", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D1"},
       "domains": [
@@ -1771,7 +1771,7 @@
       ]
     },
     {
-      "color": "#333333",
+      "color": "#57bb00",
       "sequence": "CACCCAAATCGAGCCACCAC",
       "idt": {"name": "staple197", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E1"},
       "domains": [
@@ -1780,7 +1780,7 @@
       ]
     },
     {
-      "color": "#320096",
+      "color": "#888888",
       "sequence": "AAGTTTTTTGACCGGAACCA",
       "idt": {"name": "staple198", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F1"},
       "domains": [
@@ -1789,7 +1789,7 @@
       ]
     },
     {
-      "color": "#03b6a2",
+      "color": "#32b86c",
       "sequence": "GGGTCGAGGTAATCAAAATC",
       "idt": {"name": "staple199", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G1"},
       "domains": [
@@ -1798,7 +1798,7 @@
       ]
     },
     {
-      "color": "#7300de",
+      "color": "#333333",
       "sequence": "GCCGTAAAGCATCTTTTCAT",
       "idt": {"name": "staple200", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H1"},
       "domains": [
@@ -1807,7 +1807,7 @@
       ]
     },
     {
-      "color": "#aaaa00",
+      "color": "#320096",
       "sequence": "ACTAAATCGGAGCGTTTGCC",
       "idt": {"name": "staple201", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "A2"},
       "domains": [
@@ -1816,7 +1816,7 @@
       ]
     },
     {
-      "color": "#b8056c",
+      "color": "#03b6a2",
       "sequence": "AACCCTAAAGCCCCCTTATT",
       "idt": {"name": "staple202", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "B2"},
       "domains": [
@@ -1825,7 +1825,7 @@
       ]
     },
     {
-      "color": "#007200",
+      "color": "#7300de",
       "sequence": "GGAGCCCCCGTCGGTCATAG",
       "idt": {"name": "staple203", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "C2"},
       "domains": [
@@ -1834,7 +1834,7 @@
       ]
     },
     {
-      "color": "#cc0000",
+      "color": "#aaaa00",
       "sequence": "ATTTAGAGCTATCGGCATTT",
       "idt": {"name": "staple204", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "D2"},
       "domains": [
@@ -1843,7 +1843,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#b8056c",
       "sequence": "TGACGGGGAAGCGCGTTTTC",
       "idt": {"name": "staple205", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "E2"},
       "domains": [
@@ -1852,7 +1852,7 @@
       ]
     },
     {
-      "color": "#f74308",
+      "color": "#007200",
       "sequence": "AGCCGGCGAATCAGACTGTA",
       "idt": {"name": "staple206", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "F2"},
       "domains": [
@@ -1861,7 +1861,7 @@
       ]
     },
     {
-      "color": "#57bb00",
+      "color": "#cc0000",
       "sequence": "CGTGGCGAGAGCCTTTAGCG",
       "idt": {"name": "staple207", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "G2"},
       "domains": [
@@ -1870,7 +1870,7 @@
       ]
     },
     {
-      "color": "#888888",
+      "color": "#f7931e",
       "sequence": "AAGGAAGGGAAATCAAGTTT",
       "idt": {"name": "staple208", "scale": "25nm", "purification": "STD", "plate": "plate3", "well": "H2"},
       "domains": [
