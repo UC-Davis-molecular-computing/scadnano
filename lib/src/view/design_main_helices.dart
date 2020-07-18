@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/geometry.dart';
 import '../state/grid.dart';
 import 'design_main_helix.dart';
 import '../state/helix.dart';
+import 'pure_component.dart';
 
 part 'design_main_helices.over_react.g.dart';
 
@@ -16,7 +17,6 @@ UiFactory<DesignMainHelicesProps> DesignMainHelices = _$DesignMainHelices;
 mixin DesignMainHelicesProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltSet<int> side_selected_helix_idxs;
-  bool strand_create_enabled;
   int design_major_tick_distance;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
@@ -32,7 +32,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool show_helix_circles;
 }
 
-class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponentMixin {
+class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -55,7 +55,6 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
           ..major_tick_offset_font_size = props.major_tick_offset_font_size
           ..major_tick_width_font_size = props.major_tick_width_font_size
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
-          ..strand_create_enabled = props.strand_create_enabled
           ..design_major_tick_distance = props.design_major_tick_distance
           ..grid = props.grid
           ..show_dna = props.show_dna

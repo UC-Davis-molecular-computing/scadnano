@@ -9,9 +9,11 @@ import 'package:react/react_client.dart';
 
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
+import '../state/edit_mode.dart';
 import '../state/grid.dart';
 import '../state/helix.dart';
 import '../app.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -37,7 +39,7 @@ mixin DesignMainHelixProps on UiProps {
   bool show_helix_circles;
 }
 
-class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponentMixin {
+class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
   @override
   render() {
     Helix helix = props.helix;
@@ -92,16 +94,23 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
         _major_tick_offsets_svg_group(),
       if (props.display_major_tick_widths)
         _major_tick_widths_svg_group(),
-      if (props.strand_create_enabled)
-        (Dom.rect()
+//      if (props.strand_create_enabled)
+      (Dom.rect()
 //          ..onClick = start_strand_create
-          ..onPointerDown = start_strand_create
-          ..x = helix.svg_position.x
-          ..y = helix.svg_position.y
-          ..width = '$width'
-          ..height = '$height'
-          ..className = 'helix-invisible-rect'
-          ..key = 'helix-invisible-rect')(),
+        ..onPointerDown = (react.SyntheticPointerEvent event_syn) {
+          if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
+            MouseEvent event = event_syn.nativeEvent;
+            if (event.button != constants.LEFT_CLICK_BUTTON) return;
+            var address = util.get_address_on_helix(event, props.helix);
+            app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
+          }
+        }
+        ..x = helix.svg_position.x
+        ..y = helix.svg_position.y
+        ..width = '$width'
+        ..height = '$height'
+        ..className = 'helix-invisible-rect'
+        ..key = 'helix-invisible-rect')(),
     ]);
   }
 
@@ -139,14 +148,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
     }
   }
 
-  start_strand_create(react.SyntheticPointerEvent event_syn) {
-    MouseEvent event = event_syn.nativeEvent;
-    if (event.button != constants.LEFT_CLICK_BUTTON) return;
-
-    var address = util.get_address_on_helix(event, props.helix);
-    app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
-  }
-
   String helix_circle_id() => 'main-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'main-view-helix-text-${props.helix.idx}';
@@ -159,8 +160,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 //    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
 
     num y = props.helix.svg_position.y -
-        (DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
-        (props.show_dna ? constants.BASE_HEIGHT_SVG : 0));
+        (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + (props.show_dna ? constants.BASE_HEIGHT_SVG : 0));
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {

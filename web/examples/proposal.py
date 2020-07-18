@@ -32,14 +32,14 @@ def adjust_helix_grid_and_positions(design: sc.DNADesign):
 
 
 def idx_to_position(idx: int):
-    x = 0
+    z = 0
     y = 0
     angle = 0
     for _ in range(idx):
-        x += math.cos(angle) * 2.5
+        z += math.cos(angle) * 2.5
         y += math.sin(angle) * 2.5
         angle += 2 * math.pi / 16
-    return sc.Position3D(x=x, y=y)
+    return sc.Position3D(x=0, y=y, z=z)
 
 
 def add_twist_correct_deletions(design: sc.DNADesign):

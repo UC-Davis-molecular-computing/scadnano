@@ -1,12 +1,10 @@
 import 'dart:html';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/view/edit_mode_queryable.dart';
+
+import '../state/context_menu.dart';
+import '../state/helix.dart';
 import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
@@ -15,6 +13,8 @@ import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
+import 'pure_component.dart';
+import '../state/selectable.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 
@@ -45,9 +45,11 @@ mixin DesignMainStrandCrossoverState on UiState {
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponentMixin {
+    with PureComponent {
   @override
-  Map get initialState => (newState()..mouse_hover = false);
+  Map get initialState =>
+      (newState()
+        ..mouse_hover = false);
 
   @override
   render() {
@@ -55,8 +57,6 @@ class DesignMainStrandCrossoverComponent
     Crossover crossover = props.crossover;
     Domain prev_substrand = props.prev_domain;
     Domain next_substrand = props.next_domain;
-
-    bool mouse_hover = state.mouse_hover;
 
     var classname = constants.css_selector_crossover;
     if (props.selected) {
@@ -70,30 +70,48 @@ class DesignMainStrandCrossoverComponent
     var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 
-    if (mouse_hover) {
-      update_mouseover_crossover();
-    }
+    //XXX: I believe this was here so that when the crossover was clicked to set the Helix rolls at
+    // each other (what we call "unstrain backbone here", the updated rolls would immediately display
+    // in the side view while the mouse is on the crossover, instead of requiring a
+    // mouseEnter or mouseLeave event. This is probably cleaner to handle in middleware in response
+    // to the HelixRollSet action, because we don't
+    // want the render() method to have side effects, nor to access global variables.
+//    if (state.mouse_hover) {
+//      update_mouseover_crossover();
+//    }
 
     String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     return (Dom.path()
-          ..d = path
-          ..stroke = color
-          ..className = classname
-          ..onMouseEnter = (ev) {
-            setState(newState()..mouse_hover = true);
-            update_mouseover_crossover();
-          }
-          ..onMouseLeave = ((_) {
-            setState(newState()..mouse_hover = false);
-            mouse_leave_update_mouseover();
-          })
-          ..onPointerDown = ((ev) => props.crossover.handle_selection_mouse_down(ev.nativeEvent))
-          ..onPointerUp = ((ev) => props.crossover.handle_selection_mouse_up(ev.nativeEvent))
-          ..id = id
-          ..key = id)(
+      ..d = path
+      ..stroke = color
+      ..className = classname
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_crossover();
+        }
+      }
+      ..onMouseLeave = (_) {
+        setState(newState()..mouse_hover = false);
+        if (edit_mode_is_backbone()) {
+          mouse_leave_update_mouseover();
+        }
+      }
+      ..onPointerDown = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..id = id
+      ..key = id)(
 //        Dom.svgTitle()(tooltip)
-        );
+    );
   }
 
   @override
@@ -120,7 +138,8 @@ class DesignMainStrandCrossoverComponent
     }
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+  List<ContextMenuItem> context_menu_strand(Strand strand) =>
+      [
         ContextMenuItem(
           title: 'convert to loopout',
           on_click: convert_crossover_to_loopout,

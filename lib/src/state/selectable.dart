@@ -5,12 +5,14 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
-import '../app.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
+import 'loopout.dart';
 import 'dna_end.dart';
 import 'select_mode.dart';
+import 'edit_mode.dart';
 import 'strand.dart';
+import '../app.dart';
 
 part 'selectable.g.dart';
 
@@ -31,6 +33,10 @@ abstract class SelectablesStore
   @memoized
   BuiltSet<Crossover> get selected_crossovers =>
       BuiltSet<Crossover>.from(selected_items.where((s) => s is Crossover));
+
+  @memoized
+  BuiltSet<Loopout> get selected_loopouts =>
+      BuiltSet<Loopout>.from(selected_items.where((s) => s is Loopout));
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
@@ -102,6 +108,24 @@ abstract class SelectablesStore
 
   @memoized
   int get hashCode;
+
+  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) {
+    return [
+      for (var domain in strand.domains())
+        for (var end in [domain.dnaend_5p, domain.dnaend_3p]) if (this.selected_dna_ends.contains(end)) end
+    ].toBuiltSet();
+  }
+
+  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) {
+    return [
+      for (var crossover in strand.crossovers) if (this.selected_crossovers.contains(crossover)) crossover
+    ].toBuiltSet();
+  }
+
+  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) {
+    return [for (var loopout in strand.loopouts()) if (this.selected_loopouts.contains(loopout)) loopout]
+        .toBuiltSet();
+  }
 }
 
 /// Represents a part of the Model that represents a part of the View that is Selectable.
@@ -135,5 +159,64 @@ mixin Selectable {
     if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
       app.dispatch(actions.Select(this, toggle: false, only: true));
     }
+  }
+}
+
+// functions accessing global app variable to detect selectability; WARNING, only call from event handlers
+
+BuiltSet<EditModeChoice> edit_modes() => app.state.ui_state.edit_modes;
+
+BuiltSet<SelectModeChoice> select_modes() => app.state.ui_state.select_mode_state.modes;
+
+bool edit_mode_is_select() => edit_modes().contains(EditModeChoice.select);
+
+bool edit_mode_is_pencil() => edit_modes().contains(EditModeChoice.pencil);
+
+bool edit_mode_is_nick() => edit_modes().contains(EditModeChoice.nick);
+
+bool edit_mode_is_ligate() => edit_modes().contains(EditModeChoice.ligate);
+
+bool edit_mode_is_insertion() => edit_modes().contains(EditModeChoice.insertion);
+
+bool edit_mode_is_deletion() => edit_modes().contains(EditModeChoice.deletion);
+
+bool edit_mode_is_backbone() => edit_modes().contains(EditModeChoice.backbone);
+
+bool strand_selectable(Strand strand) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.strand) &&
+    origami_type_selectable(strand);
+
+bool crossover_selectable(Crossover crossover) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.crossover) &&
+    origami_type_selectable(crossover);
+
+bool loopout_selectable(Loopout loopout) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.loopout) &&
+    origami_type_selectable(loopout);
+
+bool end_selectable(DNAEnd end) =>
+    edit_mode_is_select() && end_type_selectable(end) && origami_type_selectable(end);
+
+bool end_type_selectable(DNAEnd end) =>
+    (end.is_5p && end.substrand_is_first && select_modes().contains(SelectModeChoice.end_5p_strand)) ||
+    (end.is_5p && !end.substrand_is_first && select_modes().contains(SelectModeChoice.end_5p_domain)) ||
+    (!end.is_5p && end.substrand_is_last && select_modes().contains(SelectModeChoice.end_3p_strand)) ||
+    (!end.is_5p && !end.substrand_is_last && select_modes().contains(SelectModeChoice.end_3p_domain));
+
+bool scaffold_selectable() => select_modes().contains(SelectModeChoice.scaffold);
+
+bool staple_selectable() => select_modes().contains(SelectModeChoice.staple);
+
+bool origami_type_selectable(Selectable selectable) {
+  if (!app.state.dna_design.is_origami) {
+    return true;
+  }
+  if (selectable.is_scaffold) {
+    return select_modes().contains(SelectModeChoice.scaffold);
+  } else {
+    return select_modes().contains(SelectModeChoice.staple);
   }
 }

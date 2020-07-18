@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/util.dart';
 
 import '../state/strand.dart';
+import 'pure_component.dart';
 import 'package:scadnano/src/constants.dart' as constants;
 import 'design_main_dna_sequence.dart';
 
@@ -23,7 +24,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool only_display_selected_helices;
 }
 
-class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponentMixin {
+class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
   /// This method is used to handle the `disable_png_cache_until_action_completes` prop.
   /// If this prop is not null, then it dispatches the prop action before disabling it.
   @override

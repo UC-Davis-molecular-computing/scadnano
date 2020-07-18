@@ -4,23 +4,21 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/mouseover_data.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/view/edit_mode_queryable.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
+
+import '../state/selectable.dart';
+import '../state/context_menu.dart';
+import '../state/edit_mode.dart';
+import '../state/helix.dart';
+import '../state/mouseover_data.dart';
+import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
 import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
-import 'design_main_strand_paths.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
-import 'edit_mode_queryable.dart';
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
@@ -56,7 +54,7 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, EditModePropsMixin;
+class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin;
 
 @State()
 mixin DesignMainLoopoutState on UiState {
@@ -66,7 +64,7 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
@@ -84,9 +82,10 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    if (mouse_hover) {
-      update_mouseover_loopout();
-    }
+    //XXX: commented out for same reason as similar commented code in design_main_strand_crossover.dart
+//    if (mouse_hover) {
+//      update_mouseover_loopout();
+//    }
 
     String tooltip = 'loopout: length ${props.loopout.loopout_length}';
 
@@ -279,14 +278,26 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ..d = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}'
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
-        update_mouseover_loopout();
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
       }
       ..onMouseLeave = ((_) {
         setState(newState()..mouse_hover = false);
-        update_mouseover_loopout();
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
       })
-      ..onPointerDown = ((ev) => props.loopout.handle_selection_mouse_down(ev.nativeEvent))
-      ..onPointerUp = ((ev) => props.loopout.handle_selection_mouse_up(ev.nativeEvent))
+      ..onPointerDown = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
       ..key = id
       ..id = id)(Dom.svgTitle()(tooltip));
   }

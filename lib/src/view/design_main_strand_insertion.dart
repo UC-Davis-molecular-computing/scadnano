@@ -1,20 +1,19 @@
 import 'dart:math';
 
-import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
+import '../state/selectable.dart';
+import '../state/helix.dart';
 import '../app.dart';
-import 'package:scadnano/src/state/domain.dart';
+import '../state/domain.dart';
+import 'pure_component.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import 'design_main_strand_loopout.dart';
-import 'edit_mode_queryable.dart';
 
 part 'design_main_strand_insertion.over_react.g.dart';
 
@@ -36,7 +35,7 @@ class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPro
 
 @Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);
@@ -153,8 +152,11 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..y = background_y
       ..width = background_width
       ..height = background_height
-      ..onClick =
-          ((_) => app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion)))
+      ..onClick = (_) {
+        if (edit_mode_is_insertion()) {
+          app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion));
+        }
+      }
       ..key = key_background)();
   }
 

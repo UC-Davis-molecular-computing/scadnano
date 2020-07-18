@@ -4,15 +4,15 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
 
-import 'package:scadnano/src/state/select_mode_state.dart';
-import 'package:scadnano/src/state/selectable.dart';
+import '../state/dialog.dart';
+import '../state/dna_end.dart';
+import '../state/helix.dart';
+import '../state/selectable.dart';
 import '../dna_sequence_constants.dart';
 import '../state/context_menu.dart';
+import '../state/crossover.dart';
+import '../state/loopout.dart';
 import '../app.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
@@ -23,7 +23,7 @@ import 'design_main_strand_paths.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
-import 'edit_mode_queryable.dart';
+import 'pure_component.dart';
 
 part 'design_main_strand.over_react.g.dart';
 
@@ -34,12 +34,15 @@ UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 mixin DesignMainStrandPropsMixin on UiProps {
   Strand strand;
 
-  BuiltSet<int> side_selected_helix_idxs;
+  BuiltSet<int> side_selected_helix_idxs; // null if only_display_selected_helices is false
   bool only_display_selected_helices;
+
+  BuiltSet<DNAEnd> selected_ends_in_strand;
+  BuiltSet<Crossover> selected_crossovers_in_strand;
+  BuiltSet<Loopout> selected_loopouts_in_strand;
 
   bool selected;
   BuiltMap<int, Helix> helices;
-  SelectablesStore selectables_store;
   bool drawing_potential_crossover;
   bool show_modifications;
   bool moving_dna_ends;
@@ -54,10 +57,9 @@ mixin DesignMainStrandPropsMixin on UiProps {
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponentMixin {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
-    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
 
     if (props.strand.substrands.length == 0) {
@@ -78,20 +80,21 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
       ..onPointerUp = handle_click_up
 //      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
       ..className = classname)([
-//        (ConnectedDesignMainStrandPaths()
       (DesignMainStrandPaths()
         ..strand = props.strand
         ..key = 'strand-paths'
         ..helices = props.helices
+        ..selected_ends_in_strand = props.selected_ends_in_strand
+        ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
+        ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
-        ..selectables_store = props.selectables_store
         ..strand_tooltip = tooltip_text(props.strand)
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..only_display_selected_helices = props.only_display_selected_helices)(),
-      _insertions(props.strand, side_selected_helix_idxs, props.strand.color),
-      _deletions(props.strand, side_selected_helix_idxs),
+      _insertions(props.strand, props.strand.color),
+      _deletions(props.strand),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -105,14 +108,15 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   }
 
   handle_click_down(react.SyntheticPointerEvent event_syn) {
-    if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
-      // select/deselect
-      MouseEvent event = event_syn.nativeEvent;
-      props.strand.handle_selection_mouse_down(event);
-
-      // set up drag detection for moving DNA ends
-      var address = util.get_closest_address(event, props.helices.values);
-      app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
+    MouseEvent event = event_syn.nativeEvent;
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (strand_selectable(props.strand)) {
+        // select/deselect
+        props.strand.handle_selection_mouse_down(event);
+        // set up drag detection for moving DNA ends
+        var address = util.get_closest_address(event, props.helices.values);
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
+      }
     }
   }
 
@@ -122,21 +126,20 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      // But it also achieves something we don't want.
-      // See also commented out checks in handle_click_down.
-//      if (select_mode && props.selectable && !props.currently_moving) {
-      props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
+      if (strand_selectable(props.strand) && !props.currently_moving) {
+        props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
+      }
     }
   }
 
   assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
       props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
-  ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
+  ReactElement _insertions(Strand strand, Color color) {
     List<ReactElement> paths = [];
     for (Domain domain in strand.domains()) {
       Helix helix = props.helices[domain.helix];
-      if (should_draw_domain(domain, side_selected_helix_idxs, props.only_display_selected_helices)) {
+      if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var insertion in domain.insertions) {
           String id = util.id_insertion(domain, insertion.offset);
           paths.add((DesignMainStrandInsertion()
@@ -149,19 +152,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         }
       }
     }
-    return (Dom.g()
-      ..key = 'insertions'
-      ..className = 'insertions')(paths);
+    return paths.isEmpty
+        ? null
+        : (Dom.g()
+          ..key = 'insertions'
+          ..className = 'insertions')(paths);
   }
 
-  ReactElement _deletions(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
-    List<ReactElement> deletions = [];
+  ReactElement _deletions(Strand strand) {
+    List<ReactElement> paths = [];
     for (Domain substrand in strand.domains()) {
       Helix helix = props.helices[substrand.helix];
-      if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
+      if (should_draw_domain(
+          substrand, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var deletion in substrand.deletions) {
           String id = util.id_deletion(substrand, deletion);
-          deletions.add((DesignMainStrandDeletion()
+          paths.add((DesignMainStrandDeletion()
             ..domain = substrand
             ..deletion = deletion
             ..helix = helix
@@ -169,23 +175,25 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         }
       }
     }
-    return (Dom.g()
-      ..key = 'deletions'
-      ..className = 'deletions')(deletions);
+    return paths.isEmpty
+        ? null
+        : (Dom.g()
+          ..key = 'deletions'
+          ..className = 'deletions')(paths);
   }
 
   remove_dna() {
-    app.disable_keyboard_shortcuts_while(
-        () => ask_for_remove_dna_sequence(props.strand, props.selectables_store.selected_strands));
+    app.disable_keyboard_shortcuts_while(() =>
+        ask_for_remove_dna_sequence(props.strand, app.state.ui_state.selectables_store.selected_strands));
   }
 
   set_color() {
     app.disable_keyboard_shortcuts_while(
-        () => ask_for_color(props.strand, props.selectables_store.selected_strands));
+        () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
   }
 
   mirror(bool horizontal, bool reverse_polarity) {
-    var selected_strands = props.selectables_store.selected_strands;
+    var selected_strands = app.state.ui_state.selectables_store.selected_strands;
     List<Strand> strands;
     if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == props.strand) {
       // set for single strand if nothing is selected, or exactly this strand is selected
@@ -204,7 +212,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
 
   set_scaffold() {
     Strand strand = props.strand;
-    var selected_strands = props.selectables_store.selected_strands;
+    var selected_strands = app.state.ui_state.selectables_store.selected_strands;
     actions.Action action = batch_if_multiple_selected(
         scaffold_set_strand_action_creator(!strand.is_scaffold), strand, selected_strands);
     app.dispatch(action);

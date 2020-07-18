@@ -13,7 +13,6 @@ import 'helix_hide_all.dart';
 import 'helix_offsets_change.dart';
 import 'insertion_deletion_pairing.dart';
 import 'load_file.dart';
-import 'mode_sensitive_actions_filter.dart';
 import 'reselect_moved_dna_ends.dart';
 import 'reselect_moved_strands.dart';
 import 'save_file.dart';
@@ -27,7 +26,6 @@ import 'invalidate_png.dart';
 import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
-  mode_sensitive_actions_filter_middleware,
   local_storage_middleware,
   export_svg_middleware,
   save_file_middleware,

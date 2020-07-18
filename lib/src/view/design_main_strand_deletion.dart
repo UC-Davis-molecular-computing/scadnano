@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
+
+import '../state/domain.dart';
+import '../state/helix.dart';
 import '../app.dart';
+import 'pure_component.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
-import 'edit_mode_queryable.dart';
+import '../state/selectable.dart';
 
 part 'design_main_strand_deletion.over_react.g.dart';
 
@@ -26,7 +26,7 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   render() {
     Domain domain = props.domain;
@@ -55,15 +55,21 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
         ..y = background_y
         ..width = background_width
         ..height = background_height
-        ..onClick =
-            ((_) => app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion)))
+        ..onClick = ((_) {
+          if (edit_mode_is_deletion()) {
+            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+          }
+        })
         ..key = key_background)(),
       (Dom.path()
         ..className = 'deletion-cross'
         ..fill = 'none'
         ..d = path_cmds
-        ..onClick =
-            ((_) => app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion)))
+        ..onClick = ((_) {
+          if (edit_mode_is_deletion()) {
+            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+          }
+        })
         ..id = key
         ..key = key)()
     ];
