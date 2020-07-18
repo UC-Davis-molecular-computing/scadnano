@@ -60,8 +60,6 @@ class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
-//    print('Strand.render()');
-//    print('props.helices: ${props.helices}');
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
 
@@ -83,7 +81,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
       ..onPointerUp = handle_click_up
 //      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
       ..className = classname)([
-//        (ConnectedDesignMainStrandPaths()
       (DesignMainStrandPaths()
         ..strand = props.strand
         ..key = 'strand-paths'

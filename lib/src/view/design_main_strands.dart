@@ -8,6 +8,7 @@ import '../state/selectable.dart';
 import '../state/app_state.dart';
 import '../state/strand.dart';
 import 'design_main_strand.dart';
+import 'pure_component.dart';
 
 part 'design_main_strands.over_react.g.dart';
 
@@ -47,8 +48,7 @@ mixin DesignMainStrandsProps on UiProps {
   num modification_font_size;
 }
 
-class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
-
+class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> with PureComponent {
   @override
   render() {
     List<ReactElement> elts = [];
@@ -61,6 +61,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
       var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
+
       elts.add((DesignMainStrand()
         ..strand = strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
