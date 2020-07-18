@@ -15,7 +15,8 @@
         {"loopout": 3},
         {"helix": 1, "forward": false, "start": 24, "end": 40}
       ],
-      "is_scaffold": true
+      "is_scaffold": true,
+      "label": "scaffold label"
     },
     {
       "color": "#f74308",
@@ -23,7 +24,8 @@
       "domains": [
         {"helix": 1, "forward": true, "start": 8, "end": 24, "deletions": [20]},
         {"helix": 0, "forward": false, "start": 8, "end": 24, "insertions": [[14, 1]]}
-      ]
+      ],
+      "label": "left staple"
     },
     {
       "color": "#57bb00",
@@ -31,7 +33,8 @@
       "domains": [
         {"helix": 0, "forward": false, "start": 24, "end": 40, "insertions": [[26, 2]]},
         {"helix": 1, "forward": true, "start": 24, "end": 40}
-      ]
+      ],
+      "label": "right staple"
     }
   ]
 }
