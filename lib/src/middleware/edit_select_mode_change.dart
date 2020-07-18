@@ -27,6 +27,7 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
   if (action is actions.EditModesSet ||
       action is actions.EditModeToggle ||
       action is actions.SelectModesSet ||
+      action is actions.SelectModesAdd ||
       action is actions.SelectModeToggle ||
       action is actions.SetAppUIStateStorable) {
     var select_modes = store.state.ui_state.select_mode_state.modes;
