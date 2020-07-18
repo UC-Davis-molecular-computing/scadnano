@@ -9,9 +9,7 @@ import 'package:scadnano/src/state/dna_design.dart';
 import '../actions/actions.dart';
 import '../state/edit_mode.dart';
 import '../state/grid.dart';
-import '../state/helix.dart';
 import '../state/potential_vertical_crossover.dart';
-import '../state/strand.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 import 'design_main_strand_creating.dart';
@@ -23,7 +21,6 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
-import 'edit_mode_queryable.dart';
 import 'potential_crossover_view.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';
@@ -100,7 +97,7 @@ mixin DesignMainPropsMixin on UiProps {
 }
 
 @Props()
-class DesignMainProps = UiProps with EditModePropsMixin, DesignMainPropsMixin;
+class DesignMainProps = UiProps with DesignMainPropsMixin;
 
 @Component2()
 class DesignMainComponent extends UiComponent2<DesignMainProps> {
@@ -121,7 +118,6 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..major_tick_offset_font_size = props.major_tick_offset_font_size
         ..major_tick_width_font_size = props.major_tick_width_font_size
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
-        ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices

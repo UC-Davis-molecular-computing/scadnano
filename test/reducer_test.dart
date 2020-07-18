@@ -4262,6 +4262,39 @@ main() {
     expect_dna_design_equal(state.dna_design, expected_design);
   });
 
+  String design_3helicies_strands_on_1and2_json = r'''
+ {
+  "version": "''' +
+      constants.CURRENT_VERSION +
+      r'''", "grid": "square", "helices": [ 
+    {"grid_position": [0, 0]},
+    {"grid_position": [0, 1]},
+    {"grid_position": [0, 2]}
+  ],
+  "strands": [
+    {
+      "domains": [
+        {"helix": 1, "forward": false, "start": 0, "end": 10}
+      ]
+    },
+    {
+      "domains": [
+        {"helix": 2, "forward": true, "start": 0, "end": 20}
+      ]
+    }
+  ]
+ }
+  ''';
+  DNADesign design_3helicies_strands_on_1and2 =
+      DNADesign.from_json(jsonDecode(design_3helicies_strands_on_1and2_json));
+  test('default_helix_max_offsets', () {
+    for (var helix = 0; helix < 3; helix++) {
+      int expected_max_offset_helix = 20;
+      int actual_max_offset_helix = design_3helicies_strands_on_1and2.helices[helix].max_offset;
+      expect(actual_max_offset_helix, expected_max_offset_helix);
+    }
+  });
+
   group('Loopout length change test:', () {
     test('LoopoutLengthChange', () {
       // simple_loopout_design

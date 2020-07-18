@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.9",
   "grid": "square",
   "helices": [
     {
@@ -10,7 +10,7 @@
   ],
   "strands": [
     {
-      "color": "#b8056c",
+      "color": "#f74308",
       "sequence": "?AGTTAGTT",
       "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 9}

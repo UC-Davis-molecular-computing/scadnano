@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.9",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0]},
@@ -7,7 +7,7 @@
   ],
   "strands": [
     {
-      "color": "#cc0000",
+      "color": "#f74308",
       "sequence": "GTTAGTTAGTTAGTTTAGTTAGTTAGTTA",
       "domains": [
         {"helix": 1, "forward": true, "start": 0, "end": 16, "deletions": [12]},
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "color": "#f7931e",
+      "color": "#57bb00",
       "sequence": "AGTTAGTTAGTTAGTGTTAGTTAGTTAGTT",
       "domains": [
         {"helix": 0, "forward": false, "start": 16, "end": 32, "deletions": [24]},

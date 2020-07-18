@@ -13,9 +13,9 @@ import 'package:tuple/tuple.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
+import 'pure_component.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
-import 'pure_component.dart';
 
 part 'design_main_dna_sequence.over_react.g.dart';
 

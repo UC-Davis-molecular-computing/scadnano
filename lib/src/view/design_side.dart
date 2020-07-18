@@ -4,7 +4,6 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/view/pure_component.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
@@ -14,6 +13,7 @@ import '../state/grid.dart';
 import '../state/grid_position.dart';
 import 'design_side_potential_helix.dart';
 import 'selection_box_view.dart';
+import 'pure_component.dart';
 import '../util.dart' as util;
 
 part 'design_side.over_react.g.dart';

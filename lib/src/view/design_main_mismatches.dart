@@ -1,13 +1,12 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/helix.dart';
+
 
 import '../state/dna_design.dart';
-import '../app.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
-import 'design_main_mismatch.dart';
 import 'pure_component.dart';
+import 'design_main_mismatch.dart';
 
 part 'design_main_mismatches.over_react.g.dart';
 

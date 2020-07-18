@@ -12,11 +12,11 @@ import '../state/mouseover_data.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import 'design_side_rotation.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'helix_context_menu.dart';
-import 'pure_component.dart';
 
 part 'design_side_helix.over_react.g.dart';
 

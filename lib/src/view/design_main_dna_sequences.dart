@@ -4,9 +4,9 @@ import 'package:scadnano/src/actions/actions.dart' as actions;
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/util.dart';
-import 'package:scadnano/src/view/pure_component.dart';
 
 import '../state/strand.dart';
+import 'pure_component.dart';
 import 'package:scadnano/src/constants.dart' as constants;
 import 'design_main_dna_sequence.dart';
 

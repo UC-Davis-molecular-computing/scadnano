@@ -5,14 +5,13 @@ import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 
-import '../state/edit_mode.dart';
 import '../state/strand.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import '../state/domain.dart';
 import '../util.dart' as util;
+import '../state/selectable.dart';
 import '../actions/actions.dart' as actions;
-import 'edit_mode_queryable.dart';
 import 'pure_component.dart';
 import '../state/context_menu.dart';
 
@@ -33,7 +32,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
-class DesignMainDomainProps = UiProps with EditModePropsMixin, DesignMainDomainPropsMixin;
+class DesignMainDomainProps = UiProps with DesignMainDomainPropsMixin;
 
 @Component2()
 class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponent {
@@ -58,16 +57,27 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
   }
 
   _handle_click(SyntheticMouseEvent event_syn) {
-    var domain = props.domain;
-    MouseEvent event = event_syn.nativeEvent;
-    var address = util.get_address_on_helix(event, props.helix);
-    int offset = address.offset;
+    if (edit_mode_is_nick() || edit_mode_is_insertion() || edit_mode_is_deletion()) {
+      var domain = props.domain;
+      MouseEvent event = event_syn.nativeEvent;
+      var address = util.get_address_on_helix(event, props.helix);
+      int offset = address.offset;
 
-    if (offset <= domain.start || offset >= domain.end) {
-      return; // cannot have nick/insertion/deletion on end
+      if (offset <= domain.start || offset >= domain.end) {
+        return; // cannot have nick/insertion/deletion on end
+      }
+
+      if (edit_mode_is_nick()) {
+        if (offset <= domain.start + 1 || offset >= domain.end - 1) {
+          return; // need remaining substrands to be length at least 2
+        }
+        app.dispatch(actions.Nick(domain: domain, offset: offset));
+      } else if (edit_mode_is_insertion()) {
+        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
+      } else if (edit_mode_is_deletion()) {
+        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
+      }
     }
-
-    app.dispatch(actions.NickOrInsertionOrDeletionAdd(domain: domain, offset: offset));
   }
 
   // needed for capturing right-click events with React:

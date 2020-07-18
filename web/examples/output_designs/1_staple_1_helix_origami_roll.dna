@@ -1,12 +1,12 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.9",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "roll": 90}
   ],
   "strands": [
     {
-      "color": "#007200",
+      "color": "#f74308",
       "sequence": "?AGTTAGTT",
       "domains": [
         {"helix": 0, "forward": true, "start": 0, "end": 9}

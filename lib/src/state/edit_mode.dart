@@ -6,6 +6,8 @@ import 'package:built_collection/built_collection.dart';
 
 part 'edit_mode.g.dart';
 
+
+
 class EditModeChoice extends EnumClass {
   const EditModeChoice._(String name) : super(name);
 

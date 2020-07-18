@@ -9,8 +9,8 @@ def main():
         sc.Helix(min_offset=2, max_offset=length, grid_position=(0, 2)),
         sc.Helix(min_offset=3, max_offset=length, grid_position=(0, 3)),
     ]
-    stap_ss = sc.Domain(0, sc.forward, 0, length - 1)
-    scaf_ss = sc.Domain(0, sc.reverse, 0, length - 1)
+    stap_ss = sc.Domain(0, True, 0, length - 1)
+    scaf_ss = sc.Domain(0, False, 0, length - 1)
     stap = sc.Strand([stap_ss])
     scaf = sc.Strand([scaf_ss], color=sc.default_scaffold_color)
     strands = [stap, scaf]

@@ -14,6 +14,7 @@ import 'package:scadnano/src/state/selectable.dart';
 import '../state/dna_design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
+import '../state/crossover.dart';
 import '../state/loopout.dart';
 import '../constants.dart' as constants;
 import 'design_main_strand_dna_end.dart';
@@ -42,10 +43,11 @@ mixin DesignMainStrandPathsProps on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
 
+  BuiltSet<DNAEnd> selected_ends_in_strand;
+  BuiltSet<Crossover> selected_crossovers_in_strand;
+  BuiltSet<Loopout> selected_loopouts_in_strand;
+
   BuiltMap<int, Helix> helices;
-  SelectablesStore selectables_store;
-  SelectModeState select_mode_state;
-  BuiltSet<EditModeChoice> edit_modes;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool origami_type_is_selectable;
@@ -94,7 +96,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..color = strand.color
             ..dna_sequence = strand.dna_sequence_in(substrand)
             ..helix = helix
-            ..edit_modes = props.edit_modes
             ..strand_tooltip = props.strand_tooltip
             ..key = "bound-substrand-$i")());
 
@@ -103,7 +104,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             String key = is_5p
                 ? "5'-end-$i${substrand.is_first ? '-is_first' : ''}"
                 : "3'-end-$i${substrand.is_last ? '-is_last' : ''}";
-            bool end_selected = props.selectables_store.selected(end);
+            bool end_selected = props.selected_ends_in_strand.contains(end);
             ends.add((DesignMainDNAEnd()
               ..domain = substrand
               ..is_5p = is_5p
@@ -111,7 +112,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..helix = helix
               ..is_scaffold = props.strand.is_scaffold
               ..selected = end_selected
-              ..edit_modes = props.edit_modes
               ..moving_this_dna_end = props.moving_dna_ends && end_selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
               ..key = key)());
@@ -131,8 +131,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand = strand
             ..helices = props.helices
             ..color = strand.color
-            ..selected = props.selectables_store.selected(substrand)
-            ..edit_modes = props.edit_modes
+            ..selected = props.selected_loopouts_in_strand.contains(substrand)
             ..prev_domain = prev_dom
             ..next_domain = next_dom
             ..prev_helix = prev_helix
@@ -157,8 +156,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..crossover = crossover
           ..strand = strand
           ..helices = props.helices
-          ..selected = props.selectables_store.selected(crossover)
-//          ..edit_modes = props.edit_modes
+          ..selected = props.selected_crossovers_in_strand.contains(crossover)
           ..prev_domain = prev_ss
           ..next_domain = next_ss
           ..key = 'crossover-paths-${idx_crossover - 1}')());
