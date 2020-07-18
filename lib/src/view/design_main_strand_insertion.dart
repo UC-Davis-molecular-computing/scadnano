@@ -9,7 +9,8 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
 import '../app.dart';
-import 'package:scadnano/src/state/domain.dart';
+import '../state/domain.dart';
+import 'pure_component.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
@@ -36,7 +37,7 @@ class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPro
 
 @Component2()
 class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandInsertionProps>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);

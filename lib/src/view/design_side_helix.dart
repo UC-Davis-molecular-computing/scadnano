@@ -12,6 +12,7 @@ import '../state/mouseover_data.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import 'design_side_rotation.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import '../util.dart' as util;
@@ -38,7 +39,7 @@ mixin DesignSideHelixProps on UiProps {
   Grid grid;
 }
 
-class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponentMixin {
+class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
   @override
   render() {
 //    print('rendering side helix ${props.helix.idx}');

@@ -6,6 +6,7 @@ import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/helix.dart';
 import '../app.dart';
+import 'pure_component.dart';
 import '../constants.dart' as constants;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
@@ -26,7 +27,7 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   render() {
     Domain domain = props.domain;

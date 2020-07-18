@@ -15,6 +15,7 @@ import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 
@@ -45,7 +46,7 @@ mixin DesignMainStrandCrossoverState on UiState {
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 

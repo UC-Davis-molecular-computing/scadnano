@@ -13,6 +13,7 @@ import 'package:tuple/tuple.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
+import 'pure_component.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
@@ -37,7 +38,7 @@ bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
-class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponentMixin {
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;

@@ -17,6 +17,7 @@ import '../app.dart';
 import '5p_end.dart';
 import '3p_end.dart';
 import 'design_main_strand_dna_end_moving.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 import 'edit_mode_queryable.dart';
@@ -55,7 +56,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
 class DesignMainDNAEndProps = UiProps with EditModePropsMixin, DesignMainDNAEndPropsMixin;
 
 @Component2()
-class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponentMixin {
+class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with PureComponent {
   DNAEnd get dna_end => props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
 
   bool get is_first => props.domain.is_first && props.is_5p;

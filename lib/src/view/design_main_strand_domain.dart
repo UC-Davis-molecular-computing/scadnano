@@ -13,6 +13,7 @@ import '../state/domain.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
+import 'pure_component.dart';
 import '../state/context_menu.dart';
 
 part 'design_main_strand_domain.over_react.g.dart';
@@ -35,7 +36,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
 class DesignMainDomainProps = UiProps with EditModePropsMixin, DesignMainDomainPropsMixin;
 
 @Component2()
-class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponentMixin {
+class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponent {
   @override
   render() {
     Domain domain = props.domain;

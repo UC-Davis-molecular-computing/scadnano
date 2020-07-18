@@ -19,6 +19,7 @@ import '../app.dart';
 import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'design_main_strand_paths.dart';
+import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import 'edit_mode_queryable.dart';
 
@@ -66,7 +67,7 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponentMixin {
+    with PureComponent {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 

@@ -20,6 +20,7 @@ import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_domain.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_crossover.dart';
+import 'pure_component.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
 
@@ -53,7 +54,7 @@ mixin DesignMainStrandPathsProps on UiProps {
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
-class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> with PureComponentMixin {
+class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> with PureComponent {
   @override
   render() {
     return (Dom.g()..className = 'strand-paths')(_strand_paths());

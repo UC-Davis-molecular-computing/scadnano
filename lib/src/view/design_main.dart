@@ -121,7 +121,6 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..major_tick_offset_font_size = props.major_tick_offset_font_size
         ..major_tick_width_font_size = props.major_tick_width_font_size
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
-        ..strand_create_enabled = props.edit_modes.contains(EditModeChoice.pencil)
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices

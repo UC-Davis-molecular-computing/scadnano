@@ -13,6 +13,7 @@ import '../state/grid.dart';
 import '../state/grid_position.dart';
 import 'design_side_potential_helix.dart';
 import 'selection_box_view.dart';
+import 'pure_component.dart';
 import '../util.dart' as util;
 
 part 'design_side.over_react.g.dart';
@@ -56,7 +57,7 @@ mixin DesignSideProps on UiProps {
   bool show_grid_coordinates;
 }
 
-class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponentMixin {
+class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
   @override
   render() {
     if (props.helices == null) {
