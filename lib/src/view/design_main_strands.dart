@@ -3,11 +3,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
 
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
-import 'package:scadnano/src/state/selectable.dart';
-
+import '../state/helix.dart';
+import '../state/selectable.dart';
 import '../state/app_state.dart';
 import '../state/strand.dart';
 import 'design_main_strand.dart';
@@ -61,12 +58,17 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> {
         helices_used_in_strand_mutable[ss.helix] = props.helices[ss.helix];
       }
       var helices_used_in_strand = helices_used_in_strand_mutable.build();
+      var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
+      var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
+      var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
       elts.add((DesignMainStrand()
         ..strand = strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..selected = props.selectables_store.selected(strand)
         ..helices = helices_used_in_strand
-        ..selectables_store = props.selectables_store
+        ..selected_ends_in_strand = selected_ends_in_strand
+        ..selected_crossovers_in_strand = selected_crossovers_in_strand
+        ..selected_loopouts_in_strand = selected_loopouts_in_strand
         ..show_modifications = props.show_modifications
         ..currently_moving = props.currently_moving
         ..drawing_potential_crossover = props.drawing_potential_crossover
