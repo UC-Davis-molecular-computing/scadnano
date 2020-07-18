@@ -26,13 +26,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strand_part.dart';
 import 'package:scadnano/src/state/strands_move.dart';
-
-//import '../state/substrand.dart';
-//import '../state/app_state.dart';
-//import '../state/select_mode_state.dart';
-//import '../state/helix.dart';
-//import '../state/strand.dart';
-//import '../state/loopout.dart';
+import '../state/helix.dart';
+import '../state/strand.dart';
+import '../state/loopout.dart';
 import '../state/edit_mode.dart';
 import '../serializers.dart';
 import '../state/select_mode.dart';
@@ -598,7 +594,7 @@ abstract class SaveDNAFile
 
 abstract class LoadDNAFile
     with BuiltJsonSerializable, DNADesignChangingAction
-    implements Built<LoadDNAFile, LoadDNAFileBuilder> {
+    implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   // set to null when getting file from another source such as localStorage

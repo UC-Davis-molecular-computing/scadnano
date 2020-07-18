@@ -25,12 +25,14 @@ class Storable extends EnumClass {
   static BuiltSet<Storable> get values => _$values;
 
   static Storable valueOf(String name) => _$valueOf(name);
+
+  String get key_name =>  _LOCAL_STORAGE_PREFIX + name;
 }
 
 const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 
 save(AppState state, Storable storable) {
-  String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
+  String storable_key = storable.key_name;
   String value_string;
   if ((storable == Storable.dna_design) && (state.ui_state.save_dna_design_in_local_storage)) {
     var dna_design = state.dna_design;
@@ -56,7 +58,7 @@ restore(Storable storable) {
 }
 
 _restore(Storable storable) {
-  String storable_key = _LOCAL_STORAGE_PREFIX + storable.name;
+  String storable_key = storable.key_name;
   if (window.localStorage.containsKey(storable_key)) {
     var json_str = window.localStorage[storable_key];
 
@@ -65,7 +67,10 @@ _restore(Storable storable) {
     if (storable == Storable.dna_design) {
       // TODO(benlee12): Ugly because this forces dna to be loaded before the app
       // state because the filename could be overwritten.
-      action = actions.LoadDNAFile(content: json_str, filename: null);
+      var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name];
+      var storable_json_map = json.decode(storable_json_str);
+      AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
+      action = actions.LoadDNAFile(content: json_str, filename: storables.loaded_filename);
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);
       AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
