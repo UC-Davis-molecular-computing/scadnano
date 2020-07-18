@@ -34,7 +34,7 @@ UiFactory<DesignMainStrandProps> DesignMainStrand = _$DesignMainStrand;
 mixin DesignMainStrandPropsMixin on UiProps {
   Strand strand;
 
-  BuiltSet<int> side_selected_helix_idxs;
+  BuiltSet<int> side_selected_helix_idxs; // null if only_display_selected_helices is false
   bool only_display_selected_helices;
 
   BuiltSet<DNAEnd> selected_ends_in_strand;
@@ -60,7 +60,6 @@ class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
 class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
   @override
   render() {
-    BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
     bool selected = props.selected;
 
     if (props.strand.substrands.length == 0) {
@@ -94,8 +93,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..only_display_selected_helices = props.only_display_selected_helices)(),
-      _insertions(props.strand, side_selected_helix_idxs, props.strand.color),
-      _deletions(props.strand, side_selected_helix_idxs),
+      _insertions(props.strand, props.strand.color),
+      _deletions(props.strand),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -136,11 +135,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
       props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
-  ReactElement _insertions(Strand strand, BuiltSet<int> side_selected_helix_idxs, Color color) {
+  ReactElement _insertions(Strand strand, Color color) {
     List<ReactElement> paths = [];
     for (Domain domain in strand.domains()) {
       Helix helix = props.helices[domain.helix];
-      if (should_draw_domain(domain, side_selected_helix_idxs, props.only_display_selected_helices)) {
+      if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var insertion in domain.insertions) {
           String id = util.id_insertion(domain, insertion.offset);
           paths.add((DesignMainStrandInsertion()
@@ -153,19 +152,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         }
       }
     }
-    return (Dom.g()
-      ..key = 'insertions'
-      ..className = 'insertions')(paths);
+    return paths.isEmpty
+        ? null
+        : (Dom.g()
+          ..key = 'insertions'
+          ..className = 'insertions')(paths);
   }
 
-  ReactElement _deletions(Strand strand, BuiltSet<int> side_selected_helix_idxs) {
-    List<ReactElement> deletions = [];
+  ReactElement _deletions(Strand strand) {
+    List<ReactElement> paths = [];
     for (Domain substrand in strand.domains()) {
       Helix helix = props.helices[substrand.helix];
-      if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
+      if (should_draw_domain(
+          substrand, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var deletion in substrand.deletions) {
           String id = util.id_deletion(substrand, deletion);
-          deletions.add((DesignMainStrandDeletion()
+          paths.add((DesignMainStrandDeletion()
             ..domain = substrand
             ..deletion = deletion
             ..helix = helix
@@ -173,9 +175,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         }
       }
     }
-    return (Dom.g()
-      ..key = 'deletions'
-      ..className = 'deletions')(deletions);
+    return paths.isEmpty
+        ? null
+        : (Dom.g()
+          ..key = 'deletions'
+          ..className = 'deletions')(paths);
   }
 
   remove_dna() {

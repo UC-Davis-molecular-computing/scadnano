@@ -64,7 +64,8 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
 
       elts.add((DesignMainStrand()
         ..strand = strand
-        ..side_selected_helix_idxs = props.side_selected_helix_idxs
+        ..side_selected_helix_idxs =
+            props.only_display_selected_helices ? props.side_selected_helix_idxs : null
         ..selected = props.selectables_store.selected(strand)
         ..helices = helices_used_in_strand
         ..selected_ends_in_strand = selected_ends_in_strand
