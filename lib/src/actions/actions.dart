@@ -1359,7 +1359,6 @@ abstract class ConvertCrossoverToLoopout
   static Serializer<ConvertCrossoverToLoopout> get serializer => _$convertCrossoverToLoopoutSerializer;
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // nick/join
 
@@ -2057,6 +2056,30 @@ abstract class InlineInsertionsDeletions
   InlineInsertionsDeletions._();
 
   static Serializer<InlineInsertionsDeletions> get serializer => _$inlineInsertionsDeletionsSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// which crossovers to default to when setting helix positions/rolls based on crossover
+
+abstract class DefaultCrossoverTypeForSettingHelixRollsSet
+    with
+        BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<DefaultCrossoverTypeForSettingHelixRollsSet,
+            DefaultCrossoverTypeForSettingHelixRollsSetBuilder> {
+  bool get scaffold;
+
+  bool get staple;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DefaultCrossoverTypeForSettingHelixRollsSet({bool scaffold, bool staple}) =
+      _$DefaultCrossoverTypeForSettingHelixRollsSet._;
+
+  DefaultCrossoverTypeForSettingHelixRollsSet._();
+
+  static Serializer<DefaultCrossoverTypeForSettingHelixRollsSet> get serializer =>
+      _$defaultCrossoverTypeForSettingHelixRollsSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

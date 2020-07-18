@@ -57,7 +57,11 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
     ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
     ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..save_dna_design_in_local_storage = state.ui_state.save_dna_design_in_local_storage),
+    ..save_dna_design_in_local_storage = state.ui_state.save_dna_design_in_local_storage
+    ..default_crossover_type_scaffold_for_setting_helix_rolls =
+        state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
+    ..default_crossover_type_staple_for_setting_helix_rolls =
+        state.ui_state.default_crossover_type_staple_for_setting_helix_rolls),
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -90,6 +94,8 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
   bool save_dna_design_in_local_storage;
+  bool default_crossover_type_scaffold_for_setting_helix_rolls;
+  bool default_crossover_type_staple_for_setting_helix_rolls;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -233,7 +239,6 @@ Saves designs in localStorage on every edit. Disabling this minimizes the time n
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
-        ..name = 'strand-paste-keep-color'
         ..onChange =
             ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
       DropdownDivider({}),
@@ -262,6 +267,51 @@ crossover selected, it is assumed to be the first crossover.
 New grid coordinates are calculated based on the crossovers to ensure that each 
 pair of adjacent helices has crossover angles that point the backbone angles 
 directly at the adjoining helix.''')(),
+      (MenuBoolean()
+        ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
+        ..display = 'default to leftmost scaffold crossover'
+        ..tooltip = '''\
+When selecting "Set helix coordinates based on crossovers", if two adjacent 
+helices do not have a crossover selected, determines which types to select 
+automatically.
+
+If this is checked and "default to leftmost staple crossover" is unchecked,
+then the leftmost scaffold crossover will be used.
+
+If both are checked, the leftmost crossover of any type will be used.
+
+Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
+        ..onChange = (_) {
+          // disallow if both would be unchecked
+          if (props.default_crossover_type_staple_for_setting_helix_rolls) {
+            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: !props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: props.default_crossover_type_staple_for_setting_helix_rolls));
+          }
+        })(),
+      (MenuBoolean()
+        ..value = props.default_crossover_type_staple_for_setting_helix_rolls
+        ..display = 'default to leftmost staple crossover'
+        ..tooltip = '''\
+When selecting "Set helix coordinates based on crossovers", if two adjacent 
+helices do not have a crossover selected, determines which types to select 
+automatically.
+
+If this is checked and "default to leftmost scaffold crossover" is unchecked,
+then the leftmost staple crossover will be used.
+
+If both are checked, the leftmost crossover of any type will be used.
+
+Ignored if design is not an origami (i.e., does not have at least one scaffold).'''
+        ..onChange = (_) {
+          // disallow if both would be unchecked
+          if (props.default_crossover_type_scaffold_for_setting_helix_rolls) {
+            props.dispatch(actions.DefaultCrossoverTypeForSettingHelixRollsSet(
+                scaffold: props.default_crossover_type_scaffold_for_setting_helix_rolls,
+                staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
+          }
+        })(),
+      DropdownDivider({}),
     );
   }
 
@@ -292,7 +342,6 @@ directly at the adjoining helix.''')(),
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
-        ..name = 'show-dna'
         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
         ..key = 'show-dna')(),
       (MenuBoolean()
@@ -301,7 +350,6 @@ to speed up navigation.'''
         ..tooltip = '''\
 Show mismatches between DNA assigned to one strand and the strand on the same
 helix with the opposite orientation.'''
-        ..name = 'show-mismatches'
         ..onChange = (_) {
           props.dispatch(actions.ShowMismatchesSet(!props.show_mismatches));
         }
@@ -315,7 +363,6 @@ helix with the opposite orientation.'''
         ..value = props.show_modifications
         ..display = 'Show Modifications'
         ..tooltip = 'Check to show DNA modifications (e.g., biotins, fluorophores).'
-        ..name = 'show-modifications-span'
         ..onChange = ((_) => props.dispatch(actions.ShowModificationsSet(!props.show_modifications)))
         ..key = 'show-mods')(),
       (MenuBoolean()
@@ -323,7 +370,6 @@ helix with the opposite orientation.'''
         ..hide = !props.show_modifications
         ..display = 'Display Modification Connector'
         ..tooltip = 'Check to display DNA modification connectors.'
-        ..name = 'modifications-display-connector-span'
         ..onChange = ((_) =>
             props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
         ..key = 'display-mod-connector')(),
@@ -438,7 +484,7 @@ designs that have overlapping non-parallel helices.'''
         ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
             show_helix_circles_main_view: !props.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
-        (MenuBoolean()
+      (MenuBoolean()
         ..value = props.show_grid_coordinates_side_view
         ..display = 'Show grid coordinates in side view'
         ..tooltip = '''\

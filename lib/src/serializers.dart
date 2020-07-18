@@ -123,6 +123,7 @@ part 'serializers.g.dart';
   HelixMajorTickStartChangeAll,
   HelixRollSet,
   HelixRollSetAtOther,
+  DefaultCrossoverTypeForSettingHelixRollsSet,
   Nick,
   Ligate,
   JoinStrandsByCrossover,

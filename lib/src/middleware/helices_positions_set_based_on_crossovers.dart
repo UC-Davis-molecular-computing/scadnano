@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/crossover.dart';
@@ -86,7 +87,17 @@ Please select only one, or select none to default to the first crossover between
       address_bot = addresses_crossovers_this_helices_pair.first.item2;
     } else {
       // otherwise if none are selected, find the addresses of first crossover between this pair of helices
-      var address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, dna_design);
+      // using boolean scaffold/staple settings from user to possible ignore one of those types
+      Tuple2<Address, Address> address_top_bot;
+      bool use_scaffold = state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls;
+      bool use_staple = state.ui_state.default_crossover_type_staple_for_setting_helix_rolls;
+
+      if (!state.dna_design.is_origami) {
+        use_scaffold = use_staple = true;
+      }
+      address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, dna_design,
+          use_scaffold: use_scaffold, use_staple: use_staple);
+
       if (address_top_bot == null) {
         var msg = 'Must have at least one crossover between helices ${helix_top.idx} and ${helix_bot.idx}';
         util.async_alert(msg);
@@ -102,11 +113,24 @@ Please select only one, or select none to default to the first crossover between
 
 // "First" refers to having the lowest offset on helix h1.
 Tuple2<Address, Address> _first_crossover_addresses_between_helices(
-    Helix helix_top, Helix helix_bot, DNADesign dna_design) {
+    Helix helix_top, Helix helix_bot, DNADesign dna_design,
+    {@required bool use_scaffold = true, @required bool use_staple = true}) {
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_top =
       dna_design.address_crossover_pairs_by_helix_idx[helix_top.idx];
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_bot =
       dna_design.address_crossover_pairs_by_helix_idx[helix_bot.idx];
+
+  // if not using scaffold or crossovers when finding leftmost, filter those out
+  if (!use_scaffold) {
+    address_crossovers_on_bot = address_crossovers_on_bot
+        .where((address_crossover) => !address_crossover.item2.is_scaffold)
+        .toBuiltList();
+  }
+  if (!use_staple) {
+    address_crossovers_on_bot = address_crossovers_on_bot
+        .where((address_crossover) => address_crossover.item2.is_scaffold)
+        .toBuiltList();
+  }
 
   // find first crossover on h1 that also goes to h2
   for (Tuple2<Address, Crossover> address_crossover_top in address_crossovers_on_top) {
