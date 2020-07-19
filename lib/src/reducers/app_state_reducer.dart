@@ -1,7 +1,7 @@
 import 'package:redux/redux.dart';
 
 import 'app_ui_state_reducer.dart';
-import 'dna_design_reducer.dart';
+import 'design_reducer.dart';
 import 'undo_redo_reducer.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
@@ -25,7 +25,7 @@ AppState app_state_reducer(AppState state, action) {
   //XXX: I had a lot of bugs when I introduced local variables to track all the updates to the state below.
   // Repeatedly updating the variable state seems safer.
 
-  // crucial that this is done first so dna_design holds the "current" value (not next)
+  // crucial that this is done first so design holds the "current" value (not next)
   state = undo_redo_reducer(state, action);
   if (modify_undo_redo_stacks) {
     state = undoable_action_reducer(state, action);
@@ -33,7 +33,7 @@ AppState app_state_reducer(AppState state, action) {
 
   // "local" reducers can operate on one slice of the state and need only read that same slice
   state = state.rebuild((m) => m
-    ..dna_design = dna_design_reducer(state.dna_design, action)?.toBuilder()
+    ..design = design_reducer(state.design, action)?.toBuilder()
     ..ui_state.replace(ui_state_local_reducer(state.ui_state, action))
     ..error_message =
         TypedReducer<String, actions.ErrorMessageSet>(error_message_reducer)(state.error_message, action)
@@ -46,7 +46,7 @@ AppState app_state_reducer(AppState state, action) {
   // items from the DNADesign can still see the set of selected items in
   // original_state.ui_state.selectables_store.
   state = state.rebuild((m) => m
-    ..dna_design = dna_design_global_reducer(state.dna_design, original_state, action)?.toBuilder()
+    ..design = design_global_reducer(state.design, original_state, action)?.toBuilder()
     ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.

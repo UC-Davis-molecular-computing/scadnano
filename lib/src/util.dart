@@ -31,7 +31,7 @@ import 'state/grid.dart';
 import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
-import 'state/dna_design.dart';
+import 'state/design.dart';
 import 'constants.dart' as constants;
 import 'state/domain.dart';
 import 'state/position3d.dart';
@@ -152,11 +152,11 @@ Future<String> get_text_file_content(String url) async =>
     await HttpRequest.getString(url).then((content) => content);
 
 ///// Go to url specifying a directory, and if directory listing is enabled, parse the names of the
-///// files ending in .dna. TODO: implement this, doesn't work now with local server
-//Future<List<String>> get_dna_files_in_directory(String url) async {
+///// files ending in .sc. TODO: implement this, doesn't work now with local server
+//Future<List<String>> get_sc_files_in_directory(String url) async {
 //  String page = await HttpRequest.getString(url).then((content) => content);
 //  print('page=\n$page');
-//  var regex = RegExp(r'href="(.*\.dna)"');
+//  var regex = RegExp(r'href="(.*\.${constants.all_scadnano_file_extensions})"');
 //  var matches = regex.allMatches(page);
 //  for (var match in matches) {
 //    print('match: $match');
@@ -659,7 +659,7 @@ save_editor_content_to_js_context(String new_content) {
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
-/// Since this is only used for [DNADesign]s, it throws an [IllegalDNADesignError].
+/// Since this is only used for [Design]s, it throws an [IllegalDNADesignError].
 /// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
 /// [name] is the name of the class in which we expect to find this key (e.g., we expect to find
 /// "domains" in Strand
@@ -1250,11 +1250,11 @@ bool bboxes_intersect_generalized(
 // unit testing utilities
 
 /// Returns the default state of the app.
-AppState default_state() {
-  var dna_design = DNADesign();
-  var ui_state = AppUIState.from_dna_design(dna_design);
+AppState default_state({Grid grid=Grid.none}) {
+  var design = Design((b) => b..grid = grid);
+  var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppStateBuilder
-        ..dna_design.replace(dna_design)
+        ..design = design.toBuilder()
         ..ui_state.replace(ui_state)
         ..editor_content = '')
       .build();

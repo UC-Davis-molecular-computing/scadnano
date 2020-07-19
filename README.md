@@ -82,7 +82,7 @@ A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/maste
 
 ## **WARNING: Save your work**
 
-It is strongly recommended that you frequently save your work by pressing the "Save" button to save your design to a `.dna` file on your computer.
+It is strongly recommended that you frequently save your work by pressing the "Save" button to save your design to a `.sc` file on your computer.
 
 Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
 In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
@@ -129,7 +129,7 @@ screenshot of scadnano web interface:
 ![](doc-images/screenshot-initial.png)
 
 The screenshot above shows many of the terms used in scadnano. 
-It is instructive to see how that example design is represented as a `.dna` file 
+It is instructive to see how that example design is represented as a `.sc` file 
 (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)):
 
 ```json
@@ -320,12 +320,12 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **Load example:** Some pre-made example designs can be loaded.
 
   * **Open:**
-  Loads a `.dna` file from your local computer. (The extension `.json` is also recognized.) Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
+  Loads a `.sc` file from your local computer. (The extension `.json` is also recognized.) Note that due to browser security restrictions on accessing the local file system, it is not possible for a changed design to be automatically loaded. This precludes the possibility of repeatedly re-running a local Python script and seeing the changed design immediately re-loaded in the browser; the Load button must be clicked and a local file selected whenever you wish to re-load the file.
 
-    Another way to load a `.dna` file is to click and drag it onto the scadnano web interface from your local file system.
+    Another way to load a `.sc` file is to click and drag it onto the scadnano web interface from your local file system.
 
   * **Save:**
-  Saves the current design in a `.dna` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
+  Saves the current design in a `.sc` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
   * **Import/Export cadnano v2:**
   Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.

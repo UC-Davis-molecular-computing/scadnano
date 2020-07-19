@@ -24,7 +24,7 @@ part 'design_main_strand_dna_end.over_react.g.dart';
 //  DNAEnd end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
 //  return DesignMainDNAEnd()
 //    ..selected = state.ui_state.selectables_store.selected(end)
-//    ..helix = state.dna_design.helices[props.domain.helix]
+//    ..helix = state.design.helices[props.domain.helix]
 //    ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
 //    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
 //}
@@ -87,7 +87,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     // see here: https://github.com/marcojakob/dart-dnd/issues/27
     Domain substrand = this.props.domain;
     DNAEnd dna_end = props.is_5p ? substrand.dnaend_5p : substrand.dnaend_3p;
-    var helix = app.state.dna_design.helices[substrand.helix];
+    var helix = app.state.design.helices[substrand.helix];
     var offset = props.is_5p ? substrand.offset_5p : substrand.offset_3p;
     var pos = helix.svg_base_pos(offset, substrand.forward);
 

@@ -14,7 +14,7 @@ import 'crossover.dart';
 import '../json_serializable.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
-import 'dna_design.dart';
+import 'design.dart';
 import 'domain.dart';
 import 'loopout.dart';
 import 'substrand.dart';

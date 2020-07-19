@@ -2,12 +2,11 @@ import origami_rectangle as rect
 import scadnano as sc
 
 
-
-def main():
+def create_design():
     design = rect.create(num_helices=16, num_cols=28, seam_left_column=12, assign_seq=False,
                          num_flanking_columns=2,
                          num_flanking_helices=2, edge_staples=False,
-                         scaffold_nick_offset=102)
+                         scaffold_nick_offset=102, use_idt_defaults=True)
 
     # # need this to match original design, but doesn't leave room for left-side adapters
     # design.move_strand_offsets(8)
@@ -37,7 +36,7 @@ def set_helix_major_tickets(design):
         helix.major_ticks = list(major_ticks)
 
 
-def add_twist_correct_deletions(design: sc.DNADesign):
+def add_twist_correct_deletions(design: sc.Design):
     # I choose between 3 and 4 offset arbitrarily for twist-correction deletions for some reason,
     # so they have to be hard-coded.
     for col, offset in zip(range(4, 29, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
@@ -45,7 +44,7 @@ def add_twist_correct_deletions(design: sc.DNADesign):
             design.add_deletion(helix, 16 * col + offset)
 
 
-def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
+def move_top_and_bottom_staples_within_column_boundaries(design: sc.Design):
     top_staples = design.strands_starting_on_helix(2)
     bot_staples = design.strands_starting_on_helix(17)
     bot_staples.remove(design.scaffold)
@@ -85,7 +84,7 @@ def add_domains_for_barrel_seam(design):
         design.insert_domain(top_5p, 0, ss_bot)
 
 
-def add_toeholds_for_seam_displacement(design: sc.DNADesign):
+def add_toeholds_for_seam_displacement(design: sc.Design):
     for helix in [2, 17]:
         staples_5p = design.strands_starting_on_helix(helix)
 
@@ -96,7 +95,8 @@ def add_toeholds_for_seam_displacement(design: sc.DNADesign):
 
         for stap_5p in staples_5p:
             toe_ss = sc.Domain(helix=1 if helix == 2 else 18, forward=helix == 2,
-                               start=stap_5p.first_domain().start, end=stap_5p.first_domain().end)
+                               start=stap_5p.first_bound_domain().start,
+                               end=stap_5p.first_bound_domain().end)
             design.insert_domain(stap_5p, 0, toe_ss)
 
 
@@ -106,13 +106,13 @@ def add_adapters(design):
     left_outside_seed = left_inside_seed - 26
     for bot_helix in range(2, 18, 2):
         top_helix = bot_helix - 1 if bot_helix != 2 else 17
-        ss_top = sc.Domain(helix=top_helix, forward=True,
+        dom_top = sc.Domain(helix=top_helix, forward=True,
                            start=left_outside_seed, end=left_inside_seed)
-        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+        dom_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=left_outside_seed, end=left_inside_seed)
         idt = sc.IDTFields(name=f'adap-left-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
-        adapter = sc.Strand(domains=[ss_bot, ss_top], idt=idt)
+        adapter = sc.Strand(domains=[dom_bot, dom_top], idt=idt)
         design.add_strand(adapter)
 
     # right adapters
@@ -120,13 +120,13 @@ def add_adapters(design):
     right_outside_seed = right_inside_seed + 26
     for bot_helix in range(2, 18, 2):
         top_helix = bot_helix - 1 if bot_helix != 2 else 17
-        ss_top = sc.Domain(helix=top_helix, forward=True,
+        dom_top = sc.Domain(helix=top_helix, forward=True,
                            start=right_inside_seed, end=right_outside_seed)
-        ss_bot = sc.Domain(helix=bot_helix, forward=False,
+        dom_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=right_inside_seed, end=right_outside_seed)
         idt = sc.IDTFields(name=f'adap-right-{top_helix}-{bot_helix}',
                            scale='25nm', purification='STD')
-        adapter = sc.Strand(domains=[ss_top, ss_bot], idt=idt)
+        adapter = sc.Strand(domains=[dom_top, dom_bot], idt=idt)
         design.add_strand(adapter)
 
 
@@ -163,7 +163,9 @@ def add_tiles_and_assign_dna(design):
                            start=left_left, end=left_right)
         ss_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=left_left, end=left_right)
-        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
+        idt = sc.IDTFields(name=f'tile-left-{top_helix}-{bot_helix}',
+                           scale='25nm', purification='STD')
+        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0), idt=idt)
         design.add_strand(tile)
         design.assign_dna(tile, seq)
 
@@ -176,7 +178,9 @@ def add_tiles_and_assign_dna(design):
                            start=right_left, end=right_right)
         ss_bot = sc.Domain(helix=bot_helix, forward=False,
                            start=right_left, end=right_right)
-        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0))
+        idt = sc.IDTFields(name=f'tile-right-{top_helix}-{bot_helix}',
+                           scale='25nm', purification='STD')
+        tile = sc.Strand(domains=[ss_bot, ss_top], color=sc.Color(0, 0, 0), idt=idt)
         design.add_strand(tile)
         design.assign_dna(tile, seq)
 
@@ -244,10 +248,8 @@ def assign_dna_to_unzipper_toeholds(design):
         design.assign_dna(strand, seq)
 
 
-
-
 if not sc.in_browser() and __name__ == '__main__':
-    the_design = main()
+    the_design = create_design()
     the_design.write_scadnano_file(directory='output_designs')
     the_design.write_idt_bulk_input_file(directory='idt')
     # the_design.write_idt_plate_excel_file(directory='idt', export_non_modified_strand_version=True)

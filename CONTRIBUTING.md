@@ -61,6 +61,8 @@ The objects implementing what is called *state* below are immutable, and we use 
 
 This seems as though it would be very memory expensive, but implemented correctly, it's fairly efficient. For example, if you have a large object tree and want to change one subtree of it, then most of the old subtrees can be shared with the new one. The only objects that need to change are those representing nodes between the changed subtree and the root.
 
+**Note:** Until built_value deals with [this issue](https://github.com/google/built_value.dart/issues/774), it actually does require allocating brand new objects most of the time. This seems to have a measurable effect on performance, but mostly because OverReact avoids re-rendering a component if the new props (see explanation of React props below) are `identical` (i.e., referentially equal), but this re-rendering-avoiding optimization doesn't work if the new props are a new object, even if equal according to `==`. So it is costing us, but not because of the extra memory allocation or time to populate it; more because OverReact unnecessarily re-renders a component whenever its props are objects, even if they represent the same value as before.
+
 Unfortunately, built_value is implemented in a way that requires quite a bit of boilerplate code to express fairly simple objects. For example, we need an object representing an "action" (actions are described below) that changes the Boolean value of one UI setting (namely whether copy/pasted strands keep the same color in the new strand, or generate a new color). 
 
 The most straightforward implementation of this in Dart would be a class like this:
@@ -274,7 +276,7 @@ For many typical features one would want to add that involve changing some aspec
 
 - **if necessary, add new data fields the app state**: In many instances, particularly "UI state" (aspects of the state that control how things look, but are not stored in the DNADesign), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`.
 
-  If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.dna_design` is persisted in localStorage, but that is handled separately.
+  If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.design` is persisted in localStorage, but that is handled separately.
 
 - **create view component for interaction**: The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`.
 
@@ -313,7 +315,7 @@ For many typical features one would want to add that involve changing some aspec
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
-## Pushing to the repository and documenting changes
+## Pushing to the repository dev branch and documenting changes (done on all updates)
 
 Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch.
 
@@ -331,15 +333,25 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 6. Run unit tests and ensure they pass.
 
-7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
+7. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
 
-8. After merging, it will say that the branch you just merged from can be safely deleted. Delete it.
+8. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. 
 
-9. Locally, remember to switch back to the `dev` branch and pull it to get these changes.
+9. After merging, it will say that the branch you just merged from can be safely deleted. Delete the branch.
+
+10. Locally, remember to switch back to the `dev` branch and pull it to get these changes locally.
+
+## Pushing to the repository master branch and documenting changes (done less frequently)
 
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
 
-In this case, even though it will say "the dev branch can be safely deleted", **do not delete the dev branch**.
+**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the master branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
+
+![](images/github-CI-checks-incomplete.png)
+
+and like this when complete:
+
+![](images/github-CI-checks-complete.png)
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 

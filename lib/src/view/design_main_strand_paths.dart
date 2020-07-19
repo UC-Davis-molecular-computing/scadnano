@@ -11,7 +11,7 @@ import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
 
 // import '../app.dart';
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/crossover.dart';
@@ -28,7 +28,7 @@ part 'design_main_strand_paths.over_react.g.dart';
 //UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
 //    connect<AppState, DesignMainStrandPathsProps>(
 //  mapStateToProps: (state) => (DesignMainStrandPaths()
-//    ..helices = state.dna_design.helices
+//    ..helices = state.design.helices
 //    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
 //    ..selectables_store = state.ui_state.selectables_store
 //    ..select_mode_state = state.ui_state.select_mode_state
@@ -219,7 +219,7 @@ Point<num> control_point_for_crossover_bezier_curve(
 //      return;
 //    }
 //    var substrand = this.strand.substrands.first;
-//    var helix = app.state.dna_design.helices[substrand.helix_idx];
+//    var helix = app.state.design.helices[substrand.helix_idx];
 //    var start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
 //    var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 //    for (int i = 0; i < this.strand.substrands.length; i++) {
@@ -231,7 +231,7 @@ Point<num> control_point_for_crossover_bezier_curve(
 //      if (i < this.strand.substrands.length - 1) {
 //        var old_substrand = substrand;
 //        substrand = this.strand.substrands[i + 1];
-//        helix = app.state.dna_design.helices[substrand.helix_idx];
+//        helix = app.state.design.helices[substrand.helix_idx];
 //        start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
 //        var control = _control_point_for_crossover_bezier_curve(old_substrand, substrand);
 //        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');

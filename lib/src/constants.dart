@@ -1,14 +1,15 @@
 import 'dart:html';
 
+import 'package:color/color.dart';
 import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.9.12";
+const String CURRENT_VERSION = "0.10.0";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DNA_DESIGN_MESSAGE = 'No DNA Design loaded.\n'
+const NO_DESIGN_MESSAGE = 'No Design loaded.\n'
     'Try loading an example by selecting File --> Load example,\n'
     'or select File --> Open... to load a .dna file from your local drive.';
 
@@ -67,6 +68,12 @@ const default_modification_font_size = 12;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
+const default_scadnano_file_extension = 'sc';
+const legacy_scadnano_file_extensions = ['dna', 'json'];
+final all_scadnano_file_extensions = [default_scadnano_file_extension] + legacy_scadnano_file_extensions;
+
+const default_script_file_extension = 'py';
+
 const js_function_name_log_python_loaded = 'log_python_loaded';
 const js_function_name_cache_svg = 'cache_svg';
 const js_function_name_setup_svg_panzoom = 'setup_svg_panzoom';
@@ -91,6 +98,9 @@ const js_function_name_set_error_message_from_python_script = 'set_error_message
 const editor_content_js_key = 'editor_content';
 
 const compile_button_id = 'compile';
+
+final color_forward_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
+final color_reverse_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
@@ -127,7 +137,7 @@ const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 const design_modifications_key = 'modifications_in_design';
-final dna_design_keys = [
+final design_keys = [
       version_key,
       grid_key,
       major_tick_distance_key,

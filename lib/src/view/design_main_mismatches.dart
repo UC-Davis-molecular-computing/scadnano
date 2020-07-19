@@ -2,7 +2,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 
 
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
@@ -13,7 +13,7 @@ part 'design_main_mismatches.over_react.g.dart';
 UiFactory<DesignMainMismatchesProps> DesignMainMismatches = _$DesignMainMismatches;
 
 mixin DesignMainMismatchesProps on UiProps {
-  DNADesign dna_design;
+  Design design;
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
 }
@@ -28,12 +28,11 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
   List<ReactElement> _create_mismatch_components() {
     List<ReactElement> mismatch_components = [];
     Set<String> keys = {};
-    var dna_design = props.dna_design;
-    for (Strand strand in dna_design.strands) {
+    for (Strand strand in props.design.strands) {
       for (Domain substrand in strand.domains()) {
-        BuiltList<Mismatch> mismatches = dna_design.mismatches_on_substrand(substrand);
+        BuiltList<Mismatch> mismatches = props.design.mismatches_on_substrand(substrand);
         for (Mismatch mismatch in mismatches) {
-          var helix = dna_design.helices[substrand.helix];
+          var helix = props.design.helices[substrand.helix];
           if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix.idx)) {
             var base_svg_pos = helix.svg_base_pos(mismatch.offset, substrand.forward);
             // For now, if there is a mismatch in an insertion we simply display it for the whole insertion,

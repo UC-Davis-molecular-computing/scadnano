@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/actions/actions.dart' as actions;
 import 'package:scadnano/src/constants.dart' as constants;
@@ -13,7 +13,7 @@ main() {
   initializeComponentTests();
   group('helices_positions_set_based_on_crossovers', () {
     test('helices_angle', () {
-      DNADesign helices_angle = dna_design_from_string("""
+      Design helices_angle = design_from_string("""
         {
           "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
@@ -189,10 +189,10 @@ main() {
           ]
         }
       """);
-      Store<AppState> store = store_from_dna_design(helices_angle);
+      Store<AppState> store = store_from_design(helices_angle);
       store.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
 
-      DNADesign expected_design = dna_design_from_string("""
+      Design expected_design = design_from_string("""
         {
           "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
@@ -427,7 +427,7 @@ main() {
           ]
         }
       """);
-      expect_dna_design_equal(store.state.dna_design, expected_design);
+      expect_design_equal(store.state.design, expected_design);
     });
   });
 }

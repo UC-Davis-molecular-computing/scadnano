@@ -9,7 +9,7 @@ import '../state/app_state.dart';
 assign_dna_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.AssignDNA && action.assign_complements & action.warn_on_change) {
     try {
-      assign_dna_reducer(store.state.dna_design.strands, action);
+      assign_dna_reducer(store.state.design.strands, action);
     } on ArgumentError catch (e) {
       window.alert(e.message);
       return;

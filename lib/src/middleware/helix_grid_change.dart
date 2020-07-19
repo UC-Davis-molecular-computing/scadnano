@@ -9,9 +9,9 @@ import '../state/app_state.dart';
 
 /// Check whether user wants to remove helix that has strands on it.
 helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  if (action is actions.GridChange && !action.grid.is_none() && store.state.dna_design.grid.is_none()) {
+  if (action is actions.GridChange && !action.grid.is_none() && store.state.design.grid.is_none()) {
     Map<int, GridPosition> new_grid_positions_map = {
-      for (var helix in store.state.dna_design.helices.values)
+      for (var helix in store.state.design.helices.values)
         helix.idx: util.position3d_to_grid(helix.position, action.grid)
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
@@ -25,7 +25,7 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
           var gp1 = new_grid_positions_map[h1idx];
           var gp2 = new_grid_positions_map[h2idx];
           if (gp1 == gp2) {
-            var helices = store.state.dna_design.helices;
+            var helices = store.state.design.helices;
             var pos1 = helices[h1idx].position3d();
             var pos2 = helices[h2idx].position3d();
             var msg = '''\

@@ -24,11 +24,11 @@ StrandsMove strands_move_start_reducer(
     StrandsMove strands_move, AppState state, actions.StrandsMoveStart action) {
   return StrandsMove(
       strands_moving: action.strands,
-      all_strands: state.dna_design.strands,
+      all_strands: state.design.strands,
       original_address: action.address,
-      helices: state.dna_design.helices,
-      helices_view_order: state.dna_design.helices_view_order,
-      helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+      helices: state.design.helices,
+      helices_view_order: state.design.helices_view_order,
+      helices_view_order_inverse: state.design.helices_view_order_inverse,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
 }
@@ -39,11 +39,11 @@ StrandsMove strands_move_start_selected_strands_reducer(
       BuiltList<Strand>(state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
   return StrandsMove(
       strands_moving: selected_strands,
-      all_strands: state.dna_design.strands,
+      all_strands: state.design.strands,
       original_address: action.address,
-      helices: state.dna_design.helices,
-      helices_view_order: state.dna_design.helices_view_order,
-      helices_view_order_inverse: state.dna_design.helices_view_order_inverse,
+      helices: state.design.helices,
+      helices_view_order: state.design.helices_view_order,
+      helices_view_order_inverse: state.design.helices_view_order_inverse,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
 }

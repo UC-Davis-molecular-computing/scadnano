@@ -18,7 +18,7 @@ part 'edit_and_select_modes.over_react.g.dart';
 
 UiFactory<EditAndSelectModesProps> ConnectedEditAndSelectModes = connect<AppState, EditAndSelectModesProps>(
   mapStateToProps: (state) {
-    bool is_origami = (state.dna_design?.is_origami == true);
+    bool is_origami = (state.design?.is_origami == true);
     return EditAndSelectModes()
       ..edit_modes = state.ui_state.edit_modes
       ..select_mode_state = state.ui_state.select_mode_state

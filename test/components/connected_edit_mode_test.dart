@@ -56,7 +56,7 @@ void main() {
     });
 
     group('renders a EditMode', () {
-      test('that renders the select button', () {
+      test('that_renders_the_select_button', () {
         final select_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.select));
         expect(select_button, isNotNull);
       });

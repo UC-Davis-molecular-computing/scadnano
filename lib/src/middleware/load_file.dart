@@ -16,12 +16,12 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
     app?.view?.design_view?.clear_copy_buffer();
 
     // re-center if necessary
-    if (store.state.ui_state.autofit && store.state.dna_design != null) {
+    if (store.state.ui_state.autofit && store.state.design != null) {
 //      Point<num> pan_side = Point<num>(50, 50);
 //      Point<num> pan_main = Point<num>(100, 50);
-//      if (store.state.dna_design.helices.length > 0) {
+//      if (store.state.design.helices.length > 0) {
 //        // center at smallest-index helix
-//        var helices = store.state.dna_design.helices.values.toList();
+//        var helices = store.state.design.helices.values.toList();
 //        var first_helix = helices.first;
 //        for (var helix in helices) {
 //          if (first_helix.idx > helix.idx) {

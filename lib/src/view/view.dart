@@ -145,15 +145,17 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
       return;
     }
 
+    var dot_exts = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).toList();
+    var extensions_str = dot_exts.sublist(0, dot_exts.length-1).join(', ') + ', or ' + dot_exts.last;
     if (files.length > 1) {
-      window.alert('More than one file dropped! Please drop only one .sc, .dna, or .json file.');
+      window.alert('More than one file dropped! Please drop only one ${extensions_str} file.');
       return;
     }
 
     var file = files.first;
     var filename = file.name;
     var ext = path.extension(filename);
-    if (ext == '.dna' || ext == '.json' || ext == '.sc') {
+    if (dot_exts.contains(ext)) {
       var confirm =
           app.state.has_error() || window.confirm('Are you sure you want to replace the current design?');
 
@@ -167,7 +169,7 @@ setup_file_drag_and_drop_listener(Element drop_zone) {
         file_reader.readAsText(file);
       }
     } else {
-      window.alert('scadnano does not support "${ext}" type files. Please drop a .sc, .dna, or .json file.');
+      window.alert('scadnano does not support "${ext}" type files. Please drop a ${extensions_str} file.');
     }
   });
 }

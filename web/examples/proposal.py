@@ -5,7 +5,7 @@ import scadnano as sc
 import modifications as mod
 
 
-def main() -> sc.DNADesign:
+def create_design() -> sc.Design:
     design = rect.create(num_helices=16, num_cols=28, seam_left_column=12, assign_seq=False,
                          num_flanking_columns=2, edge_staples=False,
                          scaffold_nick_offset=102)
@@ -23,7 +23,7 @@ def main() -> sc.DNADesign:
     return design
 
 
-def adjust_helix_grid_and_positions(design: sc.DNADesign):
+def adjust_helix_grid_and_positions(design: sc.Design):
     design.grid = sc.Grid.none
     for helix in design.helices.values():
         helix.grid_position = None
@@ -42,7 +42,7 @@ def idx_to_position(idx: int):
     return sc.Position3D(x=0, y=y, z=z)
 
 
-def add_twist_correct_deletions(design: sc.DNADesign):
+def add_twist_correct_deletions(design: sc.Design):
     # I choose between 3 and 4 offset arbitrarily for twist-correction deletions for some reason,
     # so they have to be hard-coded.
     for col, offset in zip(range(4, 29, 3), [4, 3, 3, 4, 3, 3, 3, 3, 3]):
@@ -50,7 +50,7 @@ def add_twist_correct_deletions(design: sc.DNADesign):
             design.add_deletion(helix, 16 * col + offset)
 
 
-def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
+def move_top_and_bottom_staples_within_column_boundaries(design: sc.Design):
     top_staples = design.strands_starting_on_helix(0)
     bot_staples = design.strands_starting_on_helix(15)
     bot_staples.remove(design.scaffold)
@@ -64,7 +64,7 @@ def move_top_and_bottom_staples_within_column_boundaries(design: sc.DNADesign):
         design.set_start(bot_staple.domains[0], current_start + 8)
 
 
-def add_domains_for_barrel_seam(design: sc.DNADesign):
+def add_domains_for_barrel_seam(design: sc.Design):
     top_staples_5p = design.strands_starting_on_helix(0)
     top_staples_3p = design.strands_ending_on_helix(0)
     bot_staples_5p = design.strands_starting_on_helix(15)
@@ -90,7 +90,7 @@ def add_domains_for_barrel_seam(design: sc.DNADesign):
         design.insert_domain(top_5p, 0, ss_bot)
 
 
-def add_angle_inducing_insertions_deletions(design: sc.DNADesign):
+def add_angle_inducing_insertions_deletions(design: sc.Design):
     # insertion followed by deletion
     start = 59
     end = start + (32 * 12)
@@ -221,7 +221,7 @@ coords_all = {'beth': beth_coords, 'yim': yim_coords, 'will': will_coords, 'you'
               'marry': marry_coords, 'me': me_coords, 'yes': yes_coords}
 
 
-def add_biotins(design: sc.DNADesign, word: str):
+def add_biotins(design: sc.Design, word: str):
     coords_orig = coords_all[word]
     # we removed two helices from original design, so subtract 2 from helix indices
     # also the offsets are off by 24
@@ -239,10 +239,11 @@ def add_biotins(design: sc.DNADesign, word: str):
 
 if not sc.in_browser() and __name__ == '__main__':
     for word in ['beth', 'yim', 'will', 'you', 'marry', 'me', 'yes']:
-        the_design = main()
+        the_design = create_design()
         add_biotins(the_design, word)
 
-        the_design.write_scadnano_file(directory='proposal', filename=f"{word}.dna")
+        ext = sc.default_scadnano_file_extension
+        the_design.write_scadnano_file(directory='proposal', filename=f"{word}.{ext}")
         the_design.write_idt_bulk_input_file(directory='proposal', filename=f"{word}.idt")
         the_design.write_idt_plate_excel_file(directory='proposal', filename=f"{word}.xls",
                                               # export_non_modified_strand_version=True,

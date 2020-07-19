@@ -13,7 +13,7 @@ GlobalReducer<StrandCreation, AppState> strand_creation_global_reducer = combine
 StrandCreation strand_create_start_reducer(
         StrandCreation strand_creation, AppState state, actions.StrandCreateStart action) =>
     StrandCreation(
-        helix: state.dna_design.helices[action.address.helix_idx],
+        helix: state.design.helices[action.address.helix_idx],
         forward: action.address.forward,
         original_offset: action.address.offset,
         color: action.color);

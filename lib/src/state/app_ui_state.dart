@@ -9,8 +9,8 @@ import 'package:scadnano/src/actions/actions.dart';
 import '../serializers.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
-import 'dna_design.dart';
-import 'example_dna_designs.dart';
+import 'design.dart';
+import 'example_designs.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
 import 'select_mode_state.dart';
@@ -79,7 +79,11 @@ abstract class AppUIStateStorable
 
   bool get show_grid_coordinates_side_view;
 
-  bool get save_dna_design_in_local_storage;
+  bool get save_design_in_local_storage;
+
+  bool get default_crossover_type_scaffold_for_setting_helix_rolls;
+
+  bool get default_crossover_type_staple_for_setting_helix_rolls;
 
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
@@ -107,7 +111,9 @@ abstract class AppUIStateStorable
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_grid_coordinates_side_view = false;
-    b.save_dna_design_in_local_storage = true;
+    b.save_design_in_local_storage = true;
+    b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
+    b.default_crossover_type_staple_for_setting_helix_rolls = true;
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -147,7 +153,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   BuiltList<MouseoverData> get mouseover_datas;
 
-  ExampleDNADesigns get example_dna_designs;
+  ExampleDesigns get example_designs;
 
   @nullable
   Dialog get dialog;
@@ -233,7 +239,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_grid_coordinates_side_view => storables.show_grid_coordinates_side_view;
 
-  bool get save_dna_design_in_local_storage => storables.save_dna_design_in_local_storage;
+  bool get save_design_in_local_storage => storables.save_design_in_local_storage;
+
+  bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
+      storables.default_crossover_type_scaffold_for_setting_helix_rolls;
+
+  bool get default_crossover_type_staple_for_setting_helix_rolls =>
+      storables.default_crossover_type_staple_for_setting_helix_rolls;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);
@@ -251,7 +263,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dialog = null;
     b.strand_creation = null;
     b.helix_change_apply_to_all = false;
-    b.example_dna_designs = DEFAULT_example_dna_designs_builder;
+    b.example_designs = DEFAULT_example_designs_builder;
     b.assign_complement_to_bound_strands_default = true;
     b.warn_on_change_strand_dna_assign_default = true;
     b.dna_sequence_png_uri = null;
@@ -266,7 +278,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   AppUIState._();
 
-  factory AppUIState.from_dna_design(DNADesign design) {
+  factory AppUIState.from_design(Design design) {
     var selectables_store = SelectablesStore();
     return DEFAULT_AppUIState.rebuild((s) => s..selectables_store.replace(selectables_store));
   }
@@ -279,11 +291,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
 const DEFAULT_FILENAME_NO_EXT = 'default_dna_filename';
 const DEFAULT_SCRIPT_FILENAME_NO_EXT = 'default_script_filename';
-const DEFAULT_EXT = 'dna';
-const DEFAULT_SCRIPT_EXT = 'py';
-const ALLOWED_EXTENSIONS_DESIGN = ['dna', 'json'];
-const ALLOWED_EXTENSIONS_SCRIPT = ['py'];
 
-default_filename() => DEFAULT_FILENAME_NO_EXT + "." + DEFAULT_EXT;
+default_filename() => DEFAULT_FILENAME_NO_EXT + "." + constants.default_scadnano_file_extension;
 
-default_script_filename() => DEFAULT_SCRIPT_FILENAME_NO_EXT + "." + DEFAULT_SCRIPT_EXT;
+default_script_filename() => DEFAULT_SCRIPT_FILENAME_NO_EXT + "." + constants.default_script_file_extension;

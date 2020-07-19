@@ -6,7 +6,7 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/insertion_deletion_pairing.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/strands_move.dart';
@@ -57,7 +57,7 @@ BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.Rep
 // action may not have the strand itself
 BuiltList<Strand> strands_part_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandPartAction action) {
-  Strand strand = state.dna_design.strands_by_id[action.strand_part.strand_id];
+  Strand strand = state.design.strands_by_id[action.strand_part.strand_id];
   int strand_idx = strands.indexOf(strand);
 
   if (strand_idx < 0) {
@@ -167,7 +167,7 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
   var strands_builder = strands.toBuilder();
   Set<Strand> strands_affected = {};
   for (var move in action.dna_ends_move.moves) {
-    var strand = state.dna_design.end_to_strand(move.dna_end);
+    var strand = state.design.end_to_strand(move.dna_end);
     strands_affected.add(strand);
   }
 
@@ -175,7 +175,7 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
 
   for (var strand in strands_affected) {
     int strand_idx = strands.indexOf(strand);
-    var ret = single_strand_dna_ends_commit_stop_reducer(strand, move, state.dna_design);
+    var ret = single_strand_dna_ends_commit_stop_reducer(strand, move, state.design);
     strand = ret.item1;
     records.addAll(ret.item2);
     strand = strand.initialize();
@@ -214,7 +214,7 @@ class InsertionDeletionRecord {
 }
 
 Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop_reducer(
-    Strand strand, DNAEndsMove all_move, DNADesign design) {
+    Strand strand, DNAEndsMove all_move, Design design) {
   List<InsertionDeletionRecord> records = [];
   List<Substrand> substrands = strand.substrands.toList();
 
@@ -303,8 +303,8 @@ BuiltList<Strand> strand_create(
 
   // skip creating Strand if one is already there
   //FIXME: this doesn't seem necessary anymore, given how we've done this error checking while creating
-  var existing_substrands_start = state.dna_design.substrands_on_helix_at(helix_idx, start);
-  var existing_substrands_end = state.dna_design.substrands_on_helix_at(helix_idx, end - 1);
+  var existing_substrands_start = state.design.substrands_on_helix_at(helix_idx, start);
+  var existing_substrands_end = state.design.substrands_on_helix_at(helix_idx, end - 1);
   for (var ss in existing_substrands_start.union(existing_substrands_end)) {
     if (ss.forward == forward) {
       return strands;

@@ -5,7 +5,7 @@ import 'package:scadnano/src/state/strand.dart';
 
 import '../serializers.dart';
 import 'domain.dart';
-import 'dna_design.dart';
+import 'design.dart';
 import 'helix.dart';
 
 part 'strands_move.g.dart';

@@ -1,6 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/substrand.dart';
 import 'package:tuple/tuple.dart';

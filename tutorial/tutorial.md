@@ -8,7 +8,7 @@ The design will look like this when we are done:
 
 ![](images/complete_design_no_DNA.png)
 
-The completed design is available as a [`.dna` file](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.dna) readable by scadnano.
+The completed design is available as a [`.sc` file](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.sc) readable by scadnano.
 
 
 ## Note about interface
@@ -31,7 +31,7 @@ If you have never used scadnano before, you will see a screen similar to this:
 
 ## Load completed design to see what it looks like
 
-Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.dna) and save it somewhere on your local file system.
+Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/output_designs/24_helix_origami_rectangle_twist_corrected.sc) and save it somewhere on your local file system.
 
 Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different):
 
@@ -52,7 +52,7 @@ After loading you should see this:
 
 The left part is called the "side view" and the middle part is called the "main view".
 
-First, save this design into a file by pressing the "Save" button. Name the file `24_helix_rectangle.dna`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically using the "Save" button.
+First, save this design into a file by pressing the "Save" button. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically using the "Save" button.
 
 
 
@@ -80,7 +80,7 @@ Each helix has two "rows" of offsets. The top row always contains the strand who
 
 For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D [projections](https://en.wikipedia.org/wiki/3D_projection) of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a [linear projection](https://en.wikipedia.org/wiki/Projection_(linear_algebra)). See the [documentation](../README.md) for an explanation of how scadnano chooses helix positions in the main view.
 
-Each helix has given an integer *index*, starting at 0 in the order you create them. (When creating helices with the scripting library or manually editing a scadnano `.dna` file, the helix indices can be any integers, but they must be unique to a helix.) By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.dna` file), but these edits will be supported soon.
+Each helix has given an integer *index*, starting at 0 in the order you create them. (When creating helices with the scripting library or manually editing a scadnano `.sc` file, the helix indices can be any integers, but they must be unique to a helix.) By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.sc` file), but these edits will be supported soon.
 
 For now, we just have to be careful to add helices in the order we want them to appear in the main view. In both the main view and side view, we'd like them to appear 0,1,...,23 in order from top to bottom, so zoom out in the side view, and click in the side view to create 23 more helices below the first. If you mess up and click somewhere incorrectly, you can press Ctrl+Z to undo the last action (and Ctrl+Shift+Z to redo):
 
@@ -389,7 +389,7 @@ This is a good opportunity to show how the Python scripting library can be used 
 
 First, follow the [installation instructions](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-Save the file using the "Save" button. Name it `24_helix_rectangle.dna`.
+Save the file using the "Save" button. Name it `24_helix_rectangle.sc`.
 
 Next, put a Python file named `add_deletions_to_24_helix_rectangle.py` in the same folder, with this content:
 
@@ -397,15 +397,15 @@ Next, put a Python file named `add_deletions_to_24_helix_rectangle.py` in the sa
 import scadnano as sc
 
 def main():
-    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.dna')
+    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.sc')
     return design
 
 if __name__ == '__main__':
     design = main()
-    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.dna')
+    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.sc')
 ```
 
-If you run the above code, it will simply read the design from `24_helix_rectangle.dna` and write the same design to `24_helix_rectangle_twist_corrected.dna`. Our goal now is to add the appropriate deletions in the script before writing the output.
+If you run the above code, it will simply read the design from `24_helix_rectangle.sc` and write the same design to `24_helix_rectangle_twist_corrected.sc`. Our goal now is to add the appropriate deletions in the script before writing the output.
 
 We can simply loop over the helices and the offsets we need to do this. The three new lines are marked with `###`
 
@@ -413,7 +413,7 @@ We can simply loop over the helices and the offsets we need to do this. The thre
 import scadnano as sc
 
 def main():
-    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.dna')
+    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.sc')
     for helix in range(24):                     ###
         for offset in range(27, 294, 48):       ###
             design.add_deletion(helix, offset)  ###
@@ -421,12 +421,12 @@ def main():
 
 if __name__ == '__main__':
     design = main()
-    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.dna')
+    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.sc')
 ```
 
 This code will only work for this particular design. One could imagine a more general algorithm that works on arbitrary DNA origami rectangles, making some assumptions about how they are designed. But this code is fairly easy to write for just this one specific design: we want deletions on every helix (outer `for` loop), starting after offset 27 and incrementing every 48 bases until the end (inner `for` loop).
 
-If we now load the file `24_helix_rectangle_twist_corrected.dna`, we see this:
+If we now load the file `24_helix_rectangle_twist_corrected.sc`, we see this:
 
 ![](images/complete_design_no_DNA.png)
 

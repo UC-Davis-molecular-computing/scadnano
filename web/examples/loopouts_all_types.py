@@ -1,7 +1,7 @@
 import scadnano as sc
 
 
-def main():
+def create_design():
     ss_f0 = sc.Domain(helix=0, forward=True, start=0, end=8)
     hairpin0 = sc.Loopout(length=5)
     ss_r0 = sc.Domain(helix=0, forward=False, start=0, end=8)
@@ -20,7 +20,7 @@ def main():
         [ss_f0, hairpin0, ss_r0, crossover_like_loopout, ss_f1, long_range_loopout, ss_r2, hairpin2, ss_f2,
          hairpin2_2, ss_r2_2])
 
-    design = sc.DNADesign(strands=[strand], grid=sc.square)
+    design = sc.Design(strands=[strand], grid=sc.square)
     t5 = 'TTTAC'
     t10 = 'TTTACTTACG'
     t20 = 'TTTTTTTTTTACGTTGCAGG'
@@ -41,5 +41,5 @@ def main():
 
 
 if not sc.in_browser() and __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')

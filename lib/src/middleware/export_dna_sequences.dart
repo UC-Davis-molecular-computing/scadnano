@@ -11,7 +11,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
 
   AppState state = store.state;
   if (action is actions.ExportDNA) {
-    List<Strand> strands = state.dna_design.strands.toList();
+    List<Strand> strands = state.design.strands.toList();
     if (!action.include_scaffold) {
       strands.removeWhere((strand) => strand.is_scaffold);
     }

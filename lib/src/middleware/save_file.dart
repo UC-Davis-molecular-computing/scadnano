@@ -22,7 +22,7 @@ save_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next)
 }
 
 _save_file(AppState state) async {
-  String content = json_encode(state.dna_design);
+  String content = json_encode(state.design);
   String default_filename = state.ui_state.loaded_filename;
   util.save_file(default_filename, content, and_then: () => change_tab_title(false));
 }

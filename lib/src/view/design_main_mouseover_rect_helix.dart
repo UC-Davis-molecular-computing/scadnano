@@ -26,7 +26,7 @@ const DEBUG_PRINT_MOUSEOVER = false;
 
 UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
     connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
-  Helix helix = state.dna_design.helices[props.helix_idx];
+  Helix helix = state.design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
   bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
   return DesignMainMouseoverRectHelix()
@@ -132,7 +132,7 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
 //    print('  new forward: ${mouseover_params.forward}');
     if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
         mouseover_data.offset == mouseover_params.offset &&
-        mouseover_data.substrand?.forward == mouseover_params.forward) {
+        mouseover_data.domain?.forward == mouseover_params.forward) {
       needs = false;
     }
 //    else {

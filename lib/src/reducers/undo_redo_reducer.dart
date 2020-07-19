@@ -2,7 +2,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../state/undo_redo.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
@@ -24,18 +24,18 @@ AppState undo_reducer(AppState state, actions.Undo action) {
   if (undo_redo.undo_stack.isEmpty) {
     return state;
   } else {
-    DNADesign dna_design_curr = state.dna_design;
-    ListBuilder<DNADesign> undo_stack = undo_redo.undo_stack.toBuilder();
-    ListBuilder<DNADesign> redo_stack = undo_redo.redo_stack.toBuilder();
+    Design design_cur = state.design;
+    ListBuilder<Design> undo_stack = undo_redo.undo_stack.toBuilder();
+    ListBuilder<Design> redo_stack = undo_redo.redo_stack.toBuilder();
 
-    DNADesign dna_design_prev = undo_stack.removeLast();
-    redo_stack.add(dna_design_curr);
+    Design design_prev = undo_stack.removeLast();
+    redo_stack.add(design_cur);
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
     AppState new_model = state.rebuild((m) => m
       ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
-      ..dna_design.replace(dna_design_prev)
+      ..design.replace(design_prev)
       ..undo_redo.replace(undo_redo.rebuild((u) => u
         ..undo_stack = undo_stack
         ..redo_stack = redo_stack)));
@@ -49,18 +49,18 @@ AppState redo_reducer(AppState state, actions.Redo action) {
   if (undo_redo.redo_stack.isEmpty) {
     return state;
   } else {
-    DNADesign dna_design_curr = state.dna_design;
-    ListBuilder<DNADesign> undo_stack = undo_redo.undo_stack.toBuilder();
-    ListBuilder<DNADesign> redo_stack = undo_redo.redo_stack.toBuilder();
+    Design design_cur = state.design;
+    ListBuilder<Design> undo_stack = undo_redo.undo_stack.toBuilder();
+    ListBuilder<Design> redo_stack = undo_redo.redo_stack.toBuilder();
 
-    DNADesign dna_design_next = redo_stack.removeLast();
-    undo_stack.add(dna_design_curr);
+    Design design_next = redo_stack.removeLast();
+    undo_stack.add(design_cur);
 
     bool changed_since_last_save = undo_stack.isNotEmpty;
 
     AppState new_model = state.rebuild((m) => m
       ..ui_state.replace(state.ui_state.rebuild((u) => u..changed_since_last_save = changed_since_last_save))
-      ..dna_design.replace(dna_design_next)
+      ..design.replace(design_next)
       ..undo_redo.replace(undo_redo.rebuild((u) => u
         ..undo_stack = undo_stack
         ..redo_stack = redo_stack)));
@@ -75,5 +75,5 @@ AppState undo_redo_clear_reducer(AppState state, actions.UndoRedoClear action) =
 AppState undoable_action_typed_reducer(AppState state, actions.UndoableAction action) =>
   state.rebuild((m) => m
     ..undo_redo.replace(state.undo_redo.rebuild((u) => u
-      ..undo_stack.add(state.dna_design)
+      ..undo_stack.add(state.design)
       ..redo_stack.clear())));

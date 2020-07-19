@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/selectable.dart';
 
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 import '../state/undo_redo.dart';
@@ -15,18 +15,18 @@ var hline = '*' * 100;
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   Map<String, dynamic> map;
   String error_message;
-  DNADesign dna_design_new;
+  Design design_new;
 
   try {
     map = jsonDecode(action.content);
     bool invert_y_axis = state.ui_state.invert_y_axis;
-    dna_design_new = DNADesign.from_json(map, invert_y_axis);
+    design_new = Design.from_json(map, invert_y_axis);
   } on IllegalDNADesignError catch (error, stack_trace) {
     error_message = ''
-        '**********************'
-        '\n* illegal DNA design *'
-        '\n**********************'
-        '\n\nThe DNA design has the following problem:'
+        '******************'
+        '\n* illegal design *'
+        '\n******************'
+        '\n\nThe design has the following problem:'
         '\n\n${error.cause}'
         '${util.stack_trace_message_bug_report(stack_trace)}';
   } catch (error, stack_trace) {
@@ -41,30 +41,30 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
     ;
   }
 
-  if (error_message == null && dna_design_new == null) {
-    error_message = constants.NO_DNA_DESIGN_MESSAGE;
+  if (error_message == null && design_new == null) {
+    error_message = constants.NO_DESIGN_MESSAGE;
   }
 
   AppState new_state;
   if (error_message != null) {
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..dna_design = null
+      ..design = null
       ..ui_state.changed_since_last_save = false
       ..error_message = error_message);
-  } else if (dna_design_new != null) {
+  } else if (design_new != null) {
     // remove selected helices from
     BuiltSet<int> side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
-    if (state.dna_design != null && dna_design_new.helices.length < state.dna_design.helices.length) {
+    if (state.design != null && design_new.helices.length < state.design.helices.length) {
       side_selected_helix_idxs = side_selected_helix_idxs
-          .rebuild((s) => s.removeWhere((idx) => idx >= dna_design_new.helices.length));
+          .rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
     }
     var new_selectables_store = SelectablesStore();
-//    new_selectables_store = new_selectables_store.register_dna_design(dna_design_new);
+//    new_selectables_store = new_selectables_store.register_design(design_new);
     var new_filename = action.filename ?? state.ui_state.loaded_filename;
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
-      ..dna_design = dna_design_new.toBuilder()
+      ..design = design_new.toBuilder()
       ..ui_state.update((u) => u
         ..selectables_store.replace(new_selectables_store)
         ..changed_since_last_save = false
