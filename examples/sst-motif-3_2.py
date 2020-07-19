@@ -1,7 +1,7 @@
 import scadnano as sc
 
 
-def main():
+def create_design():
     blue = sc.Color(r=0, g=0, b=255)
     black = sc.Color(r=0, g=0, b=0)
     red = sc.Color(r=255, g=0, b=0)
@@ -29,12 +29,12 @@ def main():
             strand = sc.Strand([ss1, ss2], color=color)
             strands.append(strand)
 
-    # design = sc.DNADesign(helices=helices, strands=strands, grid=sc.square)
-    design = sc.DNADesign(major_tick_distance=10, strands=strands, grid=sc.square)
+    # design = sc.Design(helices=helices, strands=strands, grid=sc.square)
+    design = sc.Design(major_tick_distance=10, strands=strands, grid=sc.square)
 
     return design
 
 
 if not sc.in_browser() and __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')

@@ -2,12 +2,12 @@ import scadnano as sc
 import modifications as mod
 
 
-def main():
+def create_design():
     # helices
     helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
 
     # whole design
-    design = sc.DNADesign(helices=helices, strands=[], grid=sc.square)
+    design = sc.Design(helices=helices, strands=[], grid=sc.square)
 
     design.strand(1, 8).to(24).cross(0).to(8) # left staple
     design.strand(0, 40).to(24).cross(1).to(40).with_modification_5p(mod.biotin_5p) # right staple
@@ -25,5 +25,5 @@ def main():
 
 
 if __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')
