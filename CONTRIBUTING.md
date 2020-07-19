@@ -315,7 +315,7 @@ For many typical features one would want to add that involve changing some aspec
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
-## Pushing to the repository and documenting changes
+## Pushing to the repository dev branch and documenting changes (done on all updates)
 
 Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch.
 
@@ -333,15 +333,25 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 6. Run unit tests and ensure they pass.
 
-7. Create a pull request (PR) to merge the changes from the new branch into `dev`.
+7. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
 
-8. After merging, it will say that the branch you just merged from can be safely deleted. Delete it.
+8. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. 
 
-9. Locally, remember to switch back to the `dev` branch and pull it to get these changes.
+9. After merging, it will say that the branch you just merged from can be safely deleted. Delete the branch.
+
+10. Locally, remember to switch back to the `dev` branch and pull it to get these changes locally.
+
+## Pushing to the repository master branch and documenting changes (done less frequently)
 
 Less frequently, pull requests (abbreviated PR) can be made from `dev` to `master`, but make sure that `dev` is working before merging to `master` as all changes to `master` are automatically built and deployed to https://scadnano.org.
 
-In this case, even though it will say "the dev branch can be safely deleted", **do not delete the dev branch**.
+**WARNING:** Always wait for the checks to complete. This is important 1) to ensure that unit tests pass, and 2) to ensure that the deployment to github pages on the dev branch does not get clobbered by the deployment on the master branch. Both deploy to the gh-pages branch, so we never want two of these actions running at once. They will look like this when incomplete:
+
+![](images/github-CI-checks-incomplete.png)
+
+and like this when complete:
+
+![](images/github-CI-checks-complete.png)
 
 We have an automated release system (through a GitHub action) that automatically creates release notes.
 
