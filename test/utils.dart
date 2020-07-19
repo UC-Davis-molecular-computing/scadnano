@@ -11,7 +11,7 @@ import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
@@ -37,16 +37,16 @@ void initializeTestStore(AppState state) {
   app.store = testStore;
 }
 
-/// Returns an [DNADesign] based on json string.
-DNADesign dna_design_from_string(String str) {
-  return DNADesign.from_json(jsonDecode(str));
+/// Returns an [Design] based on json string.
+Design design_from_string(String str) {
+  return Design.from_json(jsonDecode(str));
 }
 
 /// Returns an [AppState] based on dna design.
-AppState app_state_from_dna_design(DNADesign dna_design) {
-  var ui_state = AppUIState.from_dna_design(dna_design);
+AppState app_state_from_design(Design design) {
+  var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppStateBuilder
-        ..dna_design.replace(dna_design)
+        ..design.replace(design)
         ..ui_state.replace(ui_state)
         ..error_message = ''
         ..editor_content = '')
@@ -54,13 +54,13 @@ AppState app_state_from_dna_design(DNADesign dna_design) {
   return state;
 }
 
-/// Returns an [AppState] based on dna_design_json
+/// Returns an [AppState] based on design_json
 /// and initial DNA design state. This is used to generate
 /// expected app states by adding the initial action to
 /// the undo stack as well as changing changed_since_last_save
 /// to true.
-AppState expected_state_from_json_string(String dna_design_json, DNADesign initial_design) {
-  return app_state_from_dna_design(DNADesign.from_json(json.decode(dna_design_json))).rebuild((b) => b
+AppState expected_state_from_json_string(String design_json, Design initial_design) {
+  return app_state_from_design(Design.from_json(json.decode(design_json))).rebuild((b) => b
     ..undo_redo.undo_stack.add(initial_design)
     ..ui_state.changed_since_last_save = true);
 }
@@ -109,7 +109,7 @@ void expect_helices_equal(BuiltMap<int, Helix> actual_helices, BuiltMap<int, Hel
 ///
 /// This function makes debugging easier by splitting the giant assertion
 /// into smaller assertions on individual fields.
-void expect_dna_design_equal(DNADesign actual, DNADesign matcher) {
+void expect_design_equal(Design actual, Design matcher) {
   expect(actual.version, matcher.version);
   expect(actual.grid, matcher.grid);
   expect(actual.major_tick_distance, matcher.major_tick_distance);
@@ -125,11 +125,11 @@ void expect_ui_state_equal(AppUIState actual, AppUIState matcher) {
 }
 
 /// Asserts that [actual] stack matches [matcher] stack.
-void expect_stack_equal(BuiltList<DNADesign> actual, BuiltList<DNADesign> matcher) {
+void expect_stack_equal(BuiltList<Design> actual, BuiltList<Design> matcher) {
   expect(actual.length, matcher.length);
 
   for (int i = 0; i < actual.length; ++i) {
-    expect_dna_design_equal(actual[i], matcher[i]);
+    expect_design_equal(actual[i], matcher[i]);
   }
 }
 
@@ -144,15 +144,15 @@ void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
 /// This function makes debugging easier by splitting the giant assertion
 /// into smaller assertions on individual fields.
 void expect_app_state_equal(AppState actual, AppState matcher) {
-  expect_dna_design_equal(actual.dna_design, matcher.dna_design);
+  expect_design_equal(actual.design, matcher.design);
   expect_ui_state_equal(actual.ui_state, matcher.ui_state);
   expect_undo_redo_equal(actual.undo_redo, matcher.undo_redo);
   expect(actual.error_message, matcher.error_message);
   expect(actual.editor_content, matcher.editor_content);
 }
 
-Store<AppState> store_from_dna_design(DNADesign dna_design) {
-  var state = app_state_from_dna_design(dna_design);
+Store<AppState> store_from_design(Design design) {
+  var state = app_state_from_design(design);
   var store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
   app.store = store;
   return store;

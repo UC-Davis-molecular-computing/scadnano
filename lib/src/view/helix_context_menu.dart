@@ -348,14 +348,14 @@ positive offsets from the previous tick mark''');
 
   // TODO: avoid global variable here if possible (move this logic to middleware)
   if (apply_to_all) {
-    for (var other_helix in app.state.dna_design.helices.values) {
+    for (var other_helix in app.state.design.helices.values) {
       t = major_ticks.firstWhere((t) => t < other_helix.min_offset, orElse: () => null);
       if (t != null) {
         window.alert('major tick ${t} is less than minimum offset ${other_helix.min_offset}');
         return null;
       }
     }
-//      for (var other_helix in app.state.dna_design.helices.values) {
+//      for (var other_helix in app.state.design.helices.values) {
 //        t = major_ticks.firstWhere((t) => t > other_helix.max_offset, orElse: () => null);
 //        if (t != null) {
 //          window.alert("major tick ${t} is greater than maximum offset ${other_helix.max_offset}, "
@@ -394,7 +394,7 @@ List<int> parse_helix_idxs_and_check_validity(String helix_idxs_str) {
     if (helix_idx == null) {
       window.alert('"${helix_idx}" is not a valid integer');
       return null;
-    } else if (!app.state.dna_design.helices.keys.contains(helix_idx)) {
+    } else if (!app.state.design.helices.keys.contains(helix_idx)) {
       // TODO: avoid global variable here if possible (move this logic to middleware)
       window.alert('${helix_idx} is not the index of any helix in this design');
       return null;

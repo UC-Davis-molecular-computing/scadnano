@@ -13,9 +13,9 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     connect<AppState, DesignMainStrandsMovingProps>(mapStateToProps: (state) {
   return DesignMainStrandsMoving()
     ..strands_move = state.ui_state.strands_move
-    ..helices = state.dna_design.helices
-    ..helices_view_order = state.dna_design.helices_view_order
-    ..helices_view_order_inverse = state.dna_design.helices_view_order_inverse
+    ..helices = state.design.helices
+    ..helices_view_order = state.design.helices_view_order
+    ..helices_view_order_inverse = state.design.helices_view_order_inverse
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
 })(DesignMainStrandsMoving);
 

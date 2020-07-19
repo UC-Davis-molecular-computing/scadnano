@@ -27,12 +27,12 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
       return DesignSide();
     } else {
       return DesignSide()
-        ..helices = state.dna_design.helices
+        ..helices = state.design.helices
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
         ..edit_modes = state.ui_state.edit_modes
-        ..grid = state.dna_design.grid
+        ..grid = state.design.grid
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
         ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor
         ..show_grid_coordinates = state.ui_state.show_grid_coordinates_side_view

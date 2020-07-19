@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/grid.dart';
 
 import '../json_serializable.dart';
@@ -27,7 +27,7 @@ export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action
 _save_file_cadnano(AppState state) async {
   var response = await http.post(
     constants.export_url,
-    body: json_encode(state.dna_design),
+    body: json_encode(state.design),
     headers: {"Content-Type": "application/json"},
   );
 
@@ -42,7 +42,7 @@ _save_file_cadnano(AppState state) async {
 }
 
 _save_file_codenano(AppState state) async {
-  DNADesign design = state.dna_design;
+  Design design = state.design;
   if (design == null) {
     return;
   }
@@ -52,7 +52,7 @@ _save_file_codenano(AppState state) async {
     return;
   }
 
-  Map design_json = state.dna_design.to_json_serializable(suppress_indent: true);
+  Map design_json = state.design.to_json_serializable(suppress_indent: true);
 
   // codenano parameters; taken from an example file
   design_json['parameters'] = {

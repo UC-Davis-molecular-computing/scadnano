@@ -7,7 +7,7 @@ import 'package:built_collection/built_collection.dart';
 import '../state/substrand.dart';
 import '../app.dart';
 import '../state/domain.dart';
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
@@ -15,7 +15,7 @@ import '../state/app_state.dart';
 check_mirror_strands_legal_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.StrandsMirror && action.strands.isNotEmpty) {
     List<Strand> strands_to_mirror = action.strands.toList();
-    DNADesign design = store.state.dna_design;
+    Design design = store.state.design;
 
     List<Strand> mirrored_strands = action.horizontal
         ? horizontal_mirror_of_strands(design, strands_to_mirror, action.reverse_polarity)
@@ -52,7 +52,7 @@ check_mirror_strands_legal_middleware(Store<AppState> store, action, NextDispatc
 //XXX: it's critical that these functions return strands in the same order they were received because
 // the ReplaceStrands action replaces them "in place" where the index of the original strand was.
 List<Strand> horizontal_mirror_of_strands(
-    DNADesign design, List<Strand> strands_to_mirror, bool reverse_polarity) {
+    Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
   int min_offset =
       [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.start].reduce(min);
   int max_offset =
@@ -94,7 +94,7 @@ List<Strand> horizontal_mirror_of_strands(
 int reflect_between_min_and_max(int number, int min_num, int max_num) => max_num - number + min_num;
 
 List<Strand> vertical_mirror_of_strands(
-    DNADesign design, List<Strand> strands_to_mirror, bool reverse_polarity) {
+    Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
   // helix idxs occupied by strands
   var helix_idxs_involved = {
     for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.helix

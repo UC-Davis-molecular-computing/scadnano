@@ -7,7 +7,7 @@ import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/dialog.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/example_dna_designs.dart';
+import 'package:scadnano/src/state/example_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/select_mode.dart';
@@ -36,9 +36,9 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
     ..autofit = state.ui_state.autofit
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
-    ..grid = state.dna_design?.grid
-    ..example_dna_designs = state.ui_state.example_dna_designs
-    ..design_has_insertions_or_deletions = state.dna_design?.has_insertions_or_deletions == true
+    ..grid = state.design?.grid
+    ..example_designs = state.ui_state.example_designs
+    ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
     ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
     ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
     ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
@@ -57,7 +57,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
     ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
     ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..save_dna_design_in_local_storage = state.ui_state.save_dna_design_in_local_storage
+    ..save_design_in_local_storage = state.ui_state.save_design_in_local_storage
     ..default_crossover_type_scaffold_for_setting_helix_rolls =
         state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
     ..default_crossover_type_staple_for_setting_helix_rolls =
@@ -80,7 +80,7 @@ mixin MenuPropsMixin on UiProps {
   bool autofit;
   bool only_display_selected_helices;
   Grid grid;
-  ExampleDNADesigns example_dna_designs;
+  ExampleDesigns example_designs;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
   bool redo_stack_empty;
@@ -93,7 +93,7 @@ mixin MenuPropsMixin on UiProps {
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
-  bool save_dna_design_in_local_storage;
+  bool save_design_in_local_storage;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
 }
@@ -158,7 +158,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..display = '📄 Load example')(),
       (MenuFormFile()
         ..id = 'open-form-file'
-        ..accept = ALLOWED_EXTENSIONS_DESIGN.map((ext) => '.' + ext).join(",")
+        ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
         ..display = '📂 Open...'
         ..keyboard_shortcut = 'Ctrl+O')(),
@@ -190,13 +190,13 @@ really want to exit without saving.'''
         ..display = 'Export codenano')(),
       DropdownDivider({}),
       (MenuBoolean()
-        ..value = props.save_dna_design_in_local_storage
+        ..value = props.save_design_in_local_storage
         ..display = 'Save Design in localStorage'
         ..tooltip = '''\
 Saves designs in localStorage on every edit. Disabling this minimizes the time needed to render large designs.'''
         ..name = 'save-dna-design-in-local-storage'
-        ..onChange = ((_) => props.dispatch(actions.SaveDNADesignInLocalStorageSet(
-            save_dna_design_in_local_storage: !props.save_dna_design_in_local_storage)))
+        ..onChange = ((_) => props.dispatch(actions.SaveDesignInLocalStorageSet(
+            save_design_in_local_storage: !props.save_design_in_local_storage)))
         ..key = 'save-dna-design-in-local-storage')(),
     );
   }
@@ -343,7 +343,7 @@ Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
 to speed up navigation.'''
         ..onChange = ((_) => props.dispatch(actions.ShowDNASet(!props.show_dna)))
-        ..key = 'show-dna')(),
+        ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.show_mismatches
         ..display = 'Show DNA Base Mismatches'
@@ -611,14 +611,14 @@ Shows grid coordinates in the side view under the helix index.'''
     var dialog = Dialog(title: 'Load example DNA design', items: [
       DialogRadio(
         label: 'designs',
-        options: props.example_dna_designs.filenames,
+        options: props.example_designs.filenames,
       ),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
     int selected_idx = (results[0] as DialogRadio).selected_idx;
-    props.dispatch(actions.ExampleDNADesignsLoad(selected_idx: selected_idx));
+    props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
 }
 
@@ -656,7 +656,7 @@ cadnano_file_loaded(FileReader file_reader, String filename) async {
 
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    filename = path.setExtension(filename, '.dna');
+    filename = path.setExtension(filename, '.${constants.default_scadnano_file_extension}');
     app.dispatch(actions.LoadDNAFile(content: json_model_text, filename: filename));
   } else {
     Map response_body_json = jsonDecode(response.body);

@@ -1,7 +1,7 @@
 import '../state/domain.dart';
 import '../state/helix.dart';
 import '../state/strand.dart';
-import '../state/dna_design.dart';
+import '../state/design.dart';
 import '../actions/actions.dart' as actions;
 
 /// Converts deletions and insertions by "inlining" them. Insertions and deletions are removed,
@@ -12,7 +12,7 @@ import '../actions/actions.dart' as actions;
 ///
 /// We assume that a major tick mark appears just to the LEFT of the offset it encodes, e.g.,
 /// with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
-DNADesign inline_insertions_deletions_reducer(DNADesign design, actions.InlineInsertionsDeletions _) {
+Design inline_insertions_deletions_reducer(Design design, actions.InlineInsertionsDeletions _) {
   Map<int, Helix> helices_new = design.helices.toMap();
   List<StrandBuilder> strand_builders_new = design.strands.map((s) => s.toBuilder()).toList();
   for (int helix_idx = 0; helix_idx < design.helices.length; helix_idx++) {
@@ -26,7 +26,7 @@ DNADesign inline_insertions_deletions_reducer(DNADesign design, actions.InlineIn
 }
 
 _inline_deletions_insertions_on_helix(
-    DNADesign design, int helix_idx, Map<int, Helix> helices_new, List<StrandBuilder> strands_new) {
+    Design design, int helix_idx, Map<int, Helix> helices_new, List<StrandBuilder> strands_new) {
   var helices = design.helices;
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // first gather information before changing anything

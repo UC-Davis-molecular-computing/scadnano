@@ -4,7 +4,7 @@ import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
 
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 
@@ -32,13 +32,13 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
       action is actions.SetAppUIStateStorable) {
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
-    var design = store.state.dna_design;
-    bool is_origami = store.state.dna_design.is_origami;
+    var design = store.state.design;
+    bool is_origami = store.state.design.is_origami;
     set_selectables_css_style_rules(design, edit_modes, select_modes, is_origami);
   }
 }
 
-set_selectables_css_style_rules(DNADesign design, BuiltSet<EditModeChoice> edit_modes,
+set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_modes,
     BuiltSet<SelectModeChoice> select_modes, bool is_origami) {
   bool edit_mode_is_select = edit_modes.contains(EditModeChoice.select);
   bool scaffold_parts_selectable =

@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -34,13 +34,13 @@ _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async 
   if (addresses == null) return;
   double first_roll = helices[0].roll;
   List<RollZY> rolls_and_positions =
-      _calculate_rolls_and_positions(state.dna_design, helices, addresses, first_roll);
+      _calculate_rolls_and_positions(state.design, helices, addresses, first_roll);
   _set_rolls_and_positions(helices, rolls_and_positions);
 }
 
 // Gets helices in order of their view order
 List<Helix> _get_helices_to_process(AppState state) {
-  DNADesign design = state.dna_design;
+  Design design = state.design;
   List<Helix> helices;
   BuiltSet<int> selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
   if (selected_helix_idxs.isEmpty) {
@@ -58,10 +58,10 @@ List<Helix> _get_helices_to_process(AppState state) {
 /// returns null if two such crossovers are selected
 /// if none are selected, finds the first (one with lowest offset on helix earlier in order in [helices])
 List<Tuple2<Address, Address>> _get_addresses_to_process(AppState state, List<Helix> helices) {
-  var dna_design = state.dna_design;
+  var design = state.design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
   var addresses_of_selected_crossovers_by_prev_helix_idx =
-      _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, dna_design);
+      _get_addresses_of_selected_crossovers_by_prev_helix_idx(selected_crossovers, helices, design);
 
   List<Tuple2<Address, Address>> addresses = [];
   for (int i = 0; i < helices.length - 1; i++) {
@@ -92,10 +92,10 @@ Please select only one, or select none to default to the first crossover between
       bool use_scaffold = state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls;
       bool use_staple = state.ui_state.default_crossover_type_staple_for_setting_helix_rolls;
 
-      if (!state.dna_design.is_origami) {
+      if (!state.design.is_origami) {
         use_scaffold = use_staple = true;
       }
-      address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, dna_design,
+      address_top_bot = _first_crossover_addresses_between_helices(helix_top, helix_bot, design,
           use_scaffold: use_scaffold, use_staple: use_staple);
 
       if (address_top_bot == null) {
@@ -113,12 +113,12 @@ Please select only one, or select none to default to the first crossover between
 
 // "First" refers to having the lowest offset on helix h1.
 Tuple2<Address, Address> _first_crossover_addresses_between_helices(
-    Helix helix_top, Helix helix_bot, DNADesign dna_design,
+    Helix helix_top, Helix helix_bot, Design design,
     {@required bool use_scaffold = true, @required bool use_staple = true}) {
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_top =
-      dna_design.address_crossover_pairs_by_helix_idx[helix_top.idx];
+      design.address_crossover_pairs_by_helix_idx[helix_top.idx];
   BuiltList<Tuple2<Address, Crossover>> address_crossovers_on_bot =
-      dna_design.address_crossover_pairs_by_helix_idx[helix_bot.idx];
+      design.address_crossover_pairs_by_helix_idx[helix_bot.idx];
 
   // if not using scaffold or crossovers when finding leftmost, filter those out
   if (!use_scaffold) {
@@ -160,7 +160,7 @@ Tuple2<Address, Address> _first_crossover_addresses_between_helices(
 // }
 // Sorts each list by the offset on its first helix (first meaning first in order in helices)
 Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected_crossovers_by_prev_helix_idx(
-    BuiltSet<Crossover> selected_crossovers, List<Helix> helices, DNADesign dna_design) {
+    BuiltSet<Crossover> selected_crossovers, List<Helix> helices, Design design) {
   // this is essentially what we return, but each crossover also carries with it the start offset of
   // the helix earlier in the ordering, which helps to sort the lists of crossovers before returning
   Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> addresses_top_bot_crossovers = {};
@@ -178,7 +178,7 @@ Map<Tuple2<int, int>, List<Tuple2<Address, Address>>> _get_addresses_of_selected
     // below, prev and next refer to the crossover;
     // which helix is prev or next in the 5' --> 3' direction of the strand
     // This could be out of order with the relative order of those two helices in the helices parameter
-    var strand = dna_design.crossover_to_strand[crossover];
+    var strand = design.crossover_to_strand[crossover];
     var prev_dom = strand.substrands[crossover.prev_domain_idx] as Domain;
     var next_dom = strand.substrands[crossover.next_domain_idx] as Domain;
     var prev_idx = prev_dom.helix;
@@ -247,10 +247,10 @@ class RollZY {
 /// each pair of helix backbones at each other through the given [addresses].
 /// The first roll is [first_roll].
 List<RollZY> _calculate_rolls_and_positions(
-    DNADesign dna_design, List<Helix> helices, List<Tuple2<Address, Address>> addresses, double first_roll) {
+    Design design, List<Helix> helices, List<Tuple2<Address, Address>> addresses, double first_roll) {
   assert(helices.length == addresses.length + 1);
 
-  Geometry geometry = dna_design.geometry;
+  Geometry geometry = design.geometry;
 
   double x = helices[0].position3d().x;
   double y = helices[0].position3d().y;
@@ -263,7 +263,7 @@ List<RollZY> _calculate_rolls_and_positions(
     var z = rollxys[i].z;
     var y = rollxys[i].y;
 
-    var degrees_top = dna_design.helix_rotation_at(address_top, roll);
+    var degrees_top = design.helix_rotation_at(address_top, roll);
     // 0 is straight up, not right as in Cartesian rotation, so we have to convert
     var radians_top_cartesian = util.to_radians(degrees_top - 90);
     var next_z = z + cos(radians_top_cartesian) * geometry.distance_between_helices_nm;
@@ -279,7 +279,7 @@ List<RollZY> _calculate_rolls_and_positions(
     }
     // then find out *current* angle at that offset (of forward strand, since that defines roll by convention)
     var address_bot_forward = address_bot.rebuild((b) => b..forward = true);
-    var current_roll_at_address_bot = dna_design.helix_rotation_at(address_bot_forward);
+    var current_roll_at_address_bot = design.helix_rotation_at(address_bot_forward);
     // now calculate difference between what we want (angle_strand_bot)
     // and what we have now (current_roll_at_address_bot)
     var delta_roll = (angle_strand_bot - current_roll_at_address_bot) % 360;

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/context_menu_reducer.dart';
-import 'package:scadnano/src/state/example_dna_designs.dart';
+import 'package:scadnano/src/state/example_designs.dart';
 import 'package:scadnano/src/state/grid_position.dart';
 
 import '../state/app_state.dart';
@@ -43,9 +43,9 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
       ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
       ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(
           ui_state.helix_change_apply_to_all, action)
-      ..example_dna_designs.replace(
-          TypedReducer<ExampleDNADesigns, actions.ExampleDNADesignsLoad>(example_dna_designs_idx_set_reducer)(
-              ui_state.example_dna_designs, action))
+      ..example_designs.replace(
+          TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(
+              ui_state.example_designs, action))
       ..assign_complement_to_bound_strands_default =
       TypedReducer<bool, actions.AssignDNA>(assign_complement_to_bound_strands_default_reducer)(
           ui_state.assign_complement_to_bound_strands_default, action)
@@ -116,8 +116,8 @@ bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainVi
 bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
     action.show_grid_coordinates_side_view;
 
-bool save_dna_design_in_local_storage_reducer(bool _, actions.SaveDNADesignInLocalStorageSet action) =>
-    action.save_dna_design_in_local_storage;
+bool save_design_in_local_storage_reducer(bool _, actions.SaveDesignInLocalStorageSet action) =>
+    action.save_design_in_local_storage;
 
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
@@ -180,9 +180,9 @@ Reducer<BuiltList<MouseoverData>> mouseover_data_reducer = combineReducers([
   TypedReducer<BuiltList<MouseoverData>, actions.MouseoverDataClear>(mouseover_data_clear_reducer),
 ]);
 
-ExampleDNADesigns example_dna_designs_idx_set_reducer(ExampleDNADesigns example_dna_designs,
-    actions.ExampleDNADesignsLoad action) =>
-    example_dna_designs.rebuild((b) => b..selected_idx = action.selected_idx);
+ExampleDesigns example_designs_idx_set_reducer(ExampleDesigns example_designs,
+    actions.ExampleDesignsLoad action) =>
+    example_designs.rebuild((b) => b..selected_idx = action.selected_idx);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables
@@ -222,9 +222,9 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
       ..show_grid_coordinates_side_view =
       TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(
           storables.show_grid_coordinates_side_view, action)
-      ..save_dna_design_in_local_storage =
-      TypedReducer<bool, actions.SaveDNADesignInLocalStorageSet>(save_dna_design_in_local_storage_reducer)(
-          storables.save_dna_design_in_local_storage, action)
+      ..save_design_in_local_storage =
+      TypedReducer<bool, actions.SaveDesignInLocalStorageSet>(save_design_in_local_storage_reducer)(
+          storables.save_design_in_local_storage, action)
       ..strand_paste_keep_color =
       TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(
           storables.strand_paste_keep_color, action)

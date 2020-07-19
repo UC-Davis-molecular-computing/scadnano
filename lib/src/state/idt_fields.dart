@@ -5,7 +5,7 @@ import 'package:scadnano/src/state/unused_fields.dart';
 import '../constants.dart' as constants;
 import '../serializers.dart';
 import '../util.dart' as util;
-import 'dna_design.dart';
+import 'design.dart';
 
 import 'package:built_value/built_value.dart';
 

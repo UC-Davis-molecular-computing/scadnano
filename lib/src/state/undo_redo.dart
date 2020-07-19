@@ -3,7 +3,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
-import 'dna_design.dart';
+import 'design.dart';
 
 part 'undo_redo.g.dart';
 
@@ -11,13 +11,13 @@ final DEFAULT_UndoRedoBuilder = UndoRedoBuilder();
 final DEFAULT_UndoRedo = DEFAULT_UndoRedoBuilder.build();
 
 abstract class UndoRedo with BuiltJsonSerializable implements Built<UndoRedo, UndoRedoBuilder> {
-  BuiltList<DNADesign> get undo_stack;
+  BuiltList<Design> get undo_stack;
 
-  BuiltList<DNADesign> get redo_stack;
+  BuiltList<Design> get redo_stack;
 
   static void _initializeBuilder(UndoRedoBuilder b) {
-    b.undo_stack = ListBuilder<DNADesign>();
-    b.redo_stack = ListBuilder<DNADesign>();
+    b.undo_stack = ListBuilder<Design>();
+    b.redo_stack = ListBuilder<Design>();
   }
 
   /************************ begin BuiltValue boilerplate ************************/

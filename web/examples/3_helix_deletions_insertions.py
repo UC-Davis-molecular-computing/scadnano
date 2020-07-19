@@ -3,7 +3,7 @@ import scadnano as sc
 
 # If running in scadnano, define a function called main() that returns design.
 # It will be displayed in the browser by scadnano.
-def main():
+def create_design():
     helices = [sc.Helix(max_offset=64), sc.Helix(max_offset=64), sc.Helix(max_offset=64)]
 
     # left staple
@@ -41,10 +41,10 @@ def main():
     s_extra3b = sc.Strand(domains=[ss_extra3b])
 
     # whole design
-    design = sc.DNADesign(helices=helices,
-                          strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3, s_extra4,
+    design = sc.Design(helices=helices,
+                       strands=[scaf, stap_left, stap_right, s_extra1, s_extra2, s_extra3, s_extra4,
                                    s_extra1b, s_extra2b, s_extra3b, s_extra5],
-                          grid=sc.square)
+                       grid=sc.square)
 
     # deletions and insertions added to design so they can be added to both strands on a helix
     design.add_deletion(helix=0, offset=11)
@@ -68,5 +68,5 @@ def main():
 
 # If running from the command line, call main() manually and write design to .dna file.
 if not sc.in_browser() and __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')

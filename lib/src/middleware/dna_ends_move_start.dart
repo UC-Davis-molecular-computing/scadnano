@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
 import 'package:scadnano/src/state/helix.dart';
@@ -22,14 +22,14 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
     BuiltSet<DNAEnd> selected_ends = store.state.ui_state.selectables_store.selected_dna_ends;
     List<DNAEndMove> moves = [];
     for (var end in selected_ends) {
-      int lowest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, false);
-      int highest_offset = find_allowable_offset(store.state.dna_design, end, selected_ends, true);
+      int lowest_offset = find_allowable_offset(store.state.design, end, selected_ends, false);
+      int highest_offset = find_allowable_offset(store.state.design, end, selected_ends, true);
 
       var move = DNAEndMove(dna_end: end, lowest_offset: lowest_offset, highest_offset: highest_offset);
       moves.add(move);
     }
 
-    DNADesign design = store.state.dna_design;
+    Design design = store.state.design;
     Set<Strand> strands_affected = {};
     for (var move in moves) {
       Strand strand = design.end_to_strand(move.dna_end);
@@ -50,8 +50,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
 /// Finds extreme (highest or lowest depending on [highest]) offset that an end at [offset] could be
 /// moved to. This depends on what is the closest end that is not selected, and how many selected ends
 /// are in between this end and that one.
-int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
-  Domain substrand = dna_design.end_to_domain[end];
+int find_allowable_offset(Design design, DNAEnd end, BuiltSet<DNAEnd> selected_ends, bool highest) {
+  Domain substrand = design.end_to_domain[end];
   int helix_idx = substrand.helix;
   Set<int> selected_offsets = selected_ends.map((e) => e.offset_inclusive).toSet();
 
@@ -59,7 +59,7 @@ int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> sel
   List<int> unselected_end_offsets_to_one_side = [];
   List<int> selected_end_offsets_to_one_side = [];
   List<Domain> other_substrands_same_dir_same_helix =
-      dna_design.domains_on_helix(helix_idx).where((ss) => ss.forward == substrand.forward).toList();
+      design.domains_on_helix(helix_idx).where((ss) => ss.forward == substrand.forward).toList();
   for (var ss in other_substrands_same_dir_same_helix) {
     for (int other_offset in [ss.start, ss.end - 1]) {
       if (highest && other_offset > end.offset_inclusive) {
@@ -79,7 +79,7 @@ int find_allowable_offset(DNADesign dna_design, DNAEnd end, BuiltSet<DNAEnd> sel
   }
 
   if (unselected_end_offsets_to_one_side.isEmpty) {
-    Helix helix = dna_design.helices[helix_idx];
+    Helix helix = design.helices[helix_idx];
     return highest ? helix.max_offset - 1 : helix.min_offset;
   }
 

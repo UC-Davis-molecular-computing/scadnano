@@ -210,7 +210,7 @@ class DesignViewComponent {
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
         var old_address = strands_move.current_address;
-        var address = util.get_closest_address(event, app.state.dna_design.helices.values);
+        var address = util.get_closest_address(event, app.state.design.helices.values);
         if (address != old_address) {
           app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
         }
@@ -224,7 +224,7 @@ class DesignViewComponent {
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
-            !app.state.dna_design.is_occupied(new_address) && // can't draw strand over existing strand
+            !app.state.design.is_occupied(new_address) && // can't draw strand over existing strand
             new_offset != strand_creation.original_offset && // can't put start and end at same offset
             strand_creation.helix.min_offset <= new_offset && // can't go off end of helix
             new_offset < strand_creation.helix.max_offset) {
@@ -458,7 +458,7 @@ class DesignViewComponent {
 //          ..id = 'side-view-svg'
 //          ..width = '100%'
 //          ..height = '100%')(
-//          (DesignSide()..store = app.state.dna_design.helices_store)(),
+//          (DesignSide()..store = app.state.design.helices_store)(),
 //        ),
 //      );
 //      react_dom.render(react_svg_pan_zoom_side, this.side_pane);
@@ -615,9 +615,9 @@ class DesignViewComponent {
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
-      if (!app.state.dna_design.grid.is_none()) {
+      if (!app.state.design.grid.is_none()) {
         bool invert_y = app.state.ui_state.invert_y_axis;
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.dna_design.grid, invert_y,
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.design.grid, invert_y,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));

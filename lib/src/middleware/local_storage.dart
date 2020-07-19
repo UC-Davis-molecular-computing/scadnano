@@ -19,7 +19,7 @@ part 'local_storage.g.dart';
 class Storable extends EnumClass {
   const Storable._(String name) : super(name);
 
-  static const Storable dna_design = _$dna_design;
+  static const Storable design = _$design;
   static const Storable app_ui_state_storables = _$app_ui_state_storables;
 
   static BuiltSet<Storable> get values => _$values;
@@ -34,9 +34,9 @@ const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 save(AppState state, Storable storable) {
   String storable_key = storable.key_name;
   String value_string;
-  if ((storable == Storable.dna_design) && (state.ui_state.save_dna_design_in_local_storage)) {
-    var dna_design = state.dna_design;
-    value_string = json_encode(dna_design);
+  if ((storable == Storable.design) && (state.ui_state.save_design_in_local_storage)) {
+    var design = state.design;
+    value_string = json_encode(design);
   } else if (storable == Storable.app_ui_state_storables) {
     value_string = jsonEncode(standard_serializers.serialize(state.ui_state.storables));
   }
@@ -64,8 +64,8 @@ _restore(Storable storable) {
 
     actions.Action action = null;
 
-    if (storable == Storable.dna_design) {
-      // TODO(benlee12): Ugly because this forces dna to be loaded before the app
+    if (storable == Storable.design) {
+      // TODO(benlee12): Ugly because this forces design to be loaded before the app
       // state because the filename could be overwritten.
       var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name];
       var storable_json_map = json.decode(storable_json_str);
@@ -76,7 +76,7 @@ _restore(Storable storable) {
       var storable_json_map = json.decode(json_str);
       AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
       action = actions.SetAppUIStateStorable(storables);
-      // TODO(benlee12): Ugly because this forces dna to be loaded before the app
+      // TODO(benlee12): Ugly because this forces design to be loaded before the app
       // state because the filename could be overwritten.
       document.title = storables.loaded_filename;
     }
@@ -115,7 +115,7 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
     save_async(state_after, action.storables());
   }
   // if user selects to save DNADesign on every edit, we should save even before they've made an edit
-  if (action is actions.SaveDNADesignInLocalStorageSet && action.save_dna_design_in_local_storage) {
-    save_storable_async(state_after, Storable.dna_design);
+  if (action is actions.SaveDesignInLocalStorageSet && action.save_design_in_local_storage) {
+    save_storable_async(state_after, Storable.design);
   }
 }

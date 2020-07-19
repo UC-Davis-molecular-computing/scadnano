@@ -8,7 +8,7 @@ import '../state/app_state.dart';
 /// Check whether user wants to remove helix that has strands on it.
 helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.HelixRemove) {
-    if (store.state.dna_design.domains_on_helix(action.helix_idx).isNotEmpty) {
+    if (store.state.design.domains_on_helix(action.helix_idx).isNotEmpty) {
       var confirm_remove = window.confirm('Helix ${action.helix_idx} has domains on it. '
           'If you delete the helix, the domains will be removed. '
           'Are you sure you wish to remove helix ${action.helix_idx}?');
@@ -22,7 +22,7 @@ helix_remove_middleware(Store<AppState> store, dynamic action, NextDispatcher ne
 
     // Collect all helix_idx with substrands.
     for (int helix_idx in side_selected_helix_idxs) {
-      if (store.state.dna_design.domains_on_helix(helix_idx).isNotEmpty) {
+      if (store.state.design.domains_on_helix(helix_idx).isNotEmpty) {
         helix_idx_with_substrands.add(helix_idx);
       }
     }

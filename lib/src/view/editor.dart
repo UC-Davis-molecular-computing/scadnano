@@ -6,7 +6,7 @@ import 'package:codemirror/codemirror.dart';
 import 'package:codemirror/hints.dart';
 
 import '../app.dart';
-import '../state/app_ui_state.dart';
+import '../constants.dart' as constants;
 
 //TODO: compile Python scripts in the browser using pyodide (or something)
 
@@ -105,7 +105,8 @@ class EditorViewComponent {
     // load button
     this.controls_element.children.add(new LabelElement()..text = "Load:");
     this.controls_element.children.add(file_chooser);
-    this.file_chooser.accept = ALLOWED_EXTENSIONS_SCRIPT.map((ext) => '.' + ext).join(",");
+//    this.file_chooser.accept = ALLOWED_EXTENSIONS_SCRIPT.map((ext) => '.' + ext).join(",");
+    this.file_chooser.accept = '.' + constants.default_script_file_extension;
 
     // Theme control.
     var theme_label_element = LabelElement()..attributes = {'for': 'theme'};

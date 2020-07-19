@@ -43,7 +43,7 @@ currently_selectable(AppState state, Selectable item) {
   if (!select_modes.contains(item.select_mode())) {
     return false;
   }
-  if (state.dna_design.is_origami) {
+  if (state.design.is_origami) {
     if (item.is_scaffold && !select_modes.contains(SelectModeChoice.scaffold)) {
       return false;
     }
@@ -80,8 +80,8 @@ SelectablesStore select_all_selectables_reducer(
   bool staple_selectable = modes.contains(SelectModeChoice.staple);
 
   List<Selectable> selected = [];
-  for (var strand in state.dna_design.strands) {
-    if (!state.dna_design.is_origami ||
+  for (var strand in state.design.strands) {
+    if (!state.design.is_origami ||
         (strand.is_scaffold && scaffold_selectable) ||
         (!strand.is_scaffold && staple_selectable)) {
       if (modes.contains(SelectModeChoice.strand)) selected.add(strand);
@@ -115,12 +115,12 @@ SelectablesStore selections_adjust_reducer(
   // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
   // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
 
-  bool is_origami = state.dna_design.is_origami;
+  bool is_origami = state.design.is_origami;
   var select_modes = state.ui_state.select_mode_state.modes;
   Set<SvgElement> elts_overlapping =
       util.enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
 
-  var selectable_by_id = state.dna_design.selectable_by_id;
+  var selectable_by_id = state.design.selectable_by_id;
   List<Selectable> overlapping_now = [
 //    for (var elt in elts_overlapping) if (selectables_by_id.containsKey(elt.id)) selectables_by_id[elt.id]
     for (var elt in elts_overlapping) if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
@@ -144,14 +144,14 @@ SelectablesStore selections_adjust_reducer(
 Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.SelectAll>(select_all_reducer),
   TypedReducer<SelectablesStore, actions.SelectionsClear>(selections_clear_reducer),
-  TypedReducer<SelectablesStore, actions.DNADesignChangingAction>(dna_design_changing_action_reducer),
+  TypedReducer<SelectablesStore, actions.DesignChangingAction>(design_changing_action_reducer),
   TypedReducer<SelectablesStore, actions.SelectModeToggle>(selections_clear_reducer),
   TypedReducer<SelectablesStore, actions.SelectModesSet>(selections_clear_reducer),
 ]);
 
 // because the DNADesign changed, some selected items may no longer be valid
-SelectablesStore dna_design_changing_action_reducer(
-        SelectablesStore selectables_store, actions.DNADesignChangingAction action) =>
+SelectablesStore design_changing_action_reducer(
+        SelectablesStore selectables_store, actions.DesignChangingAction action) =>
     action is actions.HelicesPositionsSetBasedOnCrossovers ? selectables_store : selectables_store.clear();
 
 SelectablesStore select_all_reducer(SelectablesStore selectables_store, actions.SelectAll action) =>
@@ -170,7 +170,7 @@ BuiltSet<int> helix_selections_adjust_reducer(
     BuiltSet<int> helix_idxs_selected, AppState state, actions.HelixSelectionsAdjust action) {
   bool toggle = action.toggle;
   var selection_box = action.selection_box;
-  var all_helices = state.dna_design.helices;
+  var all_helices = state.design.helices;
   List<util.Box> all_bboxes = all_helices.values.map((helix) => helix_to_box(helix)).toList();
   var selection_box_as_box = util.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping = util.enclosure_list(all_helices.values, all_bboxes, selection_box_as_box);

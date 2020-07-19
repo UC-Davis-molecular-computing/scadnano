@@ -15,8 +15,8 @@ part 'design_main_strands.over_react.g.dart';
 UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     connect<AppState, DesignMainStrandsProps>(mapStateToProps: (state) {
   return DesignMainStrands()
-    ..strands = state.dna_design.strands
-    ..helices = state.dna_design.helices
+    ..strands = state.design.strands
+    ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
     ..show_modifications = state.ui_state.show_modifications

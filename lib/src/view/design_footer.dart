@@ -16,7 +16,7 @@ UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFoo
     MouseoverData first_mouseover_data =
         mouseover_datas.isNotEmpty ? state.ui_state.mouseover_datas.first : null;
     Strand strand_first_mouseover_data = mouseover_datas.isNotEmpty
-        ? state.dna_design.substrand_to_strand[first_mouseover_data.domain]
+        ? state.design.substrand_to_strand[first_mouseover_data.domain]
         : null;
     String loaded_filename = state.ui_state.loaded_filename;
     return (DesignFooter()

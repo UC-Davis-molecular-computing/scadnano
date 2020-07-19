@@ -13,7 +13,7 @@ import 'state/dialog.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
-import 'state/example_dna_designs.dart';
+import 'state/example_designs.dart';
 import 'state/export_dna_format.dart';
 import 'state/geometry.dart';
 import 'state/modification.dart';
@@ -43,7 +43,7 @@ part 'serializers.g.dart';
 @SerializersFor([
   StrandsMirror,
   ReplaceStrands,
-  SaveDNADesignInLocalStorageSet,
+  SaveDesignInLocalStorageSet,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
   SelectModeToggle,
@@ -183,8 +183,8 @@ part 'serializers.g.dart';
   DialogHide,
   StrandColorSet,
   StrandPasteKeepColorSet,
-  ExampleDNADesigns,
-  ExampleDNADesignsLoad,
+  ExampleDesigns,
+  ExampleDesignsLoad,
   HelixPositionSet,
   HelixGridPositionSet,
   InlineInsertionsDeletions,

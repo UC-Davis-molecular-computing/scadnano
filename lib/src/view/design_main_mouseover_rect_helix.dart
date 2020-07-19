@@ -26,7 +26,7 @@ const DEBUG_PRINT_MOUSEOVER = false;
 
 UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
     connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
-  Helix helix = state.dna_design.helices[props.helix_idx];
+  Helix helix = state.design.helices[props.helix_idx];
   BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
   bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
   return DesignMainMouseoverRectHelix()

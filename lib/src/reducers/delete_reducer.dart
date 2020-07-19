@@ -29,7 +29,7 @@ BuiltList<Strand> delete_all_reducer(
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (state.ui_state.select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
-    var substrands = Set<Domain>.from(ends.map((end) => state.dna_design.end_to_domain[end]));
+    var substrands = Set<Domain>.from(ends.map((end) => state.design.end_to_domain[end]));
     strands = remove_domains(strands, state, substrands);
   }
 
@@ -47,14 +47,14 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
   // collect all linkers for one strand because we need special case to remove multiple from one strand
   Map<Strand, List<Linker>> strand_to_linkers = {};
   for (var crossover in crossovers) {
-    var strand = state.dna_design.crossover_to_strand[crossover];
+    var strand = state.design.crossover_to_strand[crossover];
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
     strand_to_linkers[strand].add(crossover);
   }
   for (var loopout in loopouts) {
-    var strand = state.dna_design.loopout_to_strand(loopout);
+    var strand = state.design.loopout_to_strand(loopout);
     if (strand_to_linkers[strand] == null) {
       strand_to_linkers[strand] = [];
     }
@@ -69,7 +69,7 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
   }
 
   // remove old strands and add new strands to DNADesign
-  var new_strands = state.dna_design.strands.toList();
+  var new_strands = state.design.strands.toList();
   new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
   new_strands.addAll(strands_to_add);
 
@@ -199,7 +199,7 @@ BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Set<
   // collect all Domains for one strand because we need special case to remove multiple from one strand
   Map<Strand, Set<Domain>> strand_to_substrands = {};
   for (var substrand in substrands) {
-    var strand = state.dna_design.substrand_to_strand[substrand];
+    var strand = state.design.substrand_to_strand[substrand];
     if (strand_to_substrands[strand] == null) {
       strand_to_substrands[strand] = {};
     }

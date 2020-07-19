@@ -3,7 +3,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 
 import '../serializers.dart';
-import 'dna_design.dart';
+import 'design.dart';
 import 'helix.dart';
 import 'domain.dart';
 import 'strand.dart';
@@ -59,7 +59,7 @@ abstract class MouseoverData
   int get hashCode;
 
   /// Converts from raw mouseover data (helix, offset, forward) to data user wants to see in the footer (substrand)
-  static List<MouseoverData> from_params(DNADesign dna_design, Iterable<MouseoverParams> params) {
+  static List<MouseoverData> from_params(Design design, Iterable<MouseoverParams> params) {
     Domain domain_in_direction = null;
     var mouseover_datas_builder = List<MouseoverData>();
     for (var param in params) {
@@ -68,16 +68,16 @@ abstract class MouseoverData
       bool forward = param.forward;
       Color color_forward = constants.color_forward_rotation_arrow_no_strand;
       Color color_reverse = constants.color_forward_rotation_arrow_no_strand;
-      Helix helix = dna_design.helices[helix_idx];
-      double roll_forward = dna_design.helix_rotation_forward(helix, offset);
+      Helix helix = design.helices[helix_idx];
+      double roll_forward = design.helix_rotation_forward(helix, offset);
       int num_domains_found = 0;
-      for (Domain domain in dna_design.domains_on_helix(helix_idx)) {
+      for (Domain domain in design.domains_on_helix(helix_idx)) {
         if (domain.contains_offset(offset)) {
           if (domain.forward == forward) {
             domain_in_direction = domain;
           }
           num_domains_found++;
-          Strand strand = dna_design.substrand_to_strand[domain];
+          Strand strand = design.substrand_to_strand[domain];
           if (domain.forward) {
             color_forward = strand.color;
           } else {
@@ -88,7 +88,7 @@ abstract class MouseoverData
           break;
         }
       }
-      double minor_groove_angle = dna_design.geometry.minor_groove_angle;
+      double minor_groove_angle = design.geometry.minor_groove_angle;
       mouseover_datas_builder.add(MouseoverData(helix, offset, domain_in_direction, color_forward,
           color_reverse, roll_forward, minor_groove_angle));
     }

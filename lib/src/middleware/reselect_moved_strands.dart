@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/domain.dart';
@@ -17,10 +17,10 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
 
     List<Address> addresses = [];
     StrandsMove strands_move = action.strands_move;
-    BuiltList<int> helices_view_order = store.state.dna_design.helices_view_order;
-    BuiltMap<int, int> helices_view_order_inverse = store.state.dna_design.helices_view_order_inverse;
+    BuiltList<int> helices_view_order = store.state.design.helices_view_order;
+    BuiltMap<int, int> helices_view_order_inverse = store.state.design.helices_view_order_inverse;
 
-    // first collect addresses while dna_design.end_to_substrand is still valid
+    // first collect addresses while design.end_to_substrand is still valid
     for (Strand strand in strands_move.strands_moving) {
       Domain old_substrand = strand.first_domain();
       DNAEnd old_5p_end = old_substrand.dnaend_5p;
@@ -38,11 +38,11 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
 
     // now find new ends at given addresses
     List<Strand> new_strands = [];
-    DNADesign new_dna_design = store.state.dna_design;
+    Design new_design = store.state.design;
     // if strand polarity switched, the 3' end of each strand will now be where the 5' end was
     BuiltMap<Address, Strand> address_to_strand = strands_move.delta_forward
-        ? new_dna_design.address_3p_to_strand
-        : new_dna_design.address_5p_to_strand;
+        ? new_design.address_3p_to_strand
+        : new_design.address_5p_to_strand;
     for (var address in addresses) {
       Strand new_strand = address_to_strand[address];
       new_strands.add(new_strand);

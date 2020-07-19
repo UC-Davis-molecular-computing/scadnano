@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/unused_fields.dart';
 
@@ -368,11 +368,11 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   int num_bases() => this.max_offset - this.min_offset;
 
   /// Calculates full list of major tick marks, in sorted order,
-  /// whether using [DNADesign.default_major_tick_distance],
+  /// whether using [Design.default_major_tick_distance],
   /// [Helix.major_tick_distance], or [Helix.major_ticks].
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
   /// overrides [Helix.major_tick_distance], which overrides
-  /// [DNADesign.default_major_tick_distance].
+  /// [Design.default_major_tick_distance].
   List<int> calculate_major_ticks(int default_major_tick_distance) {
     List<int> ticks = [];
     if (has_major_ticks()) {

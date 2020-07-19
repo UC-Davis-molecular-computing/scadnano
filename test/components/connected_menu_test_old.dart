@@ -7,7 +7,7 @@ import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/view/menu.dart';
 import 'package:test/test.dart';
 
@@ -18,7 +18,7 @@ AppState initializeTestState() {
   return util.default_state().rebuild((b) => b
     ..ui_state.storables.show_dna = false
     ..ui_state.storables.show_mismatches = true
-    ..dna_design.replace(two_helices_design));
+    ..design.replace(two_helices_design));
 }
 
 const MenuTestId = 'scadnano.MenuComponent';
@@ -50,7 +50,7 @@ String two_helices_json = r"""
   ]
  }
   """;
-DNADesign two_helices_design = DNADesign.from_json(jsonDecode(two_helices_json), false);
+Design two_helices_design = Design.from_json(jsonDecode(two_helices_json), false);
 
 main() {
   utils.initializeComponentTests();
@@ -80,7 +80,7 @@ main() {
     group('renders a ConnectedMenu', () {
       test('that show DNA checkmarks can be checked off', () async {
         CheckboxInputElement show_dna_checkbox =
-            getByTestId(component, 'scadnano.MenuComponent.input.show_dna');
+            getByTestId(component, 'scadnano.MenuComponent.input.show_dna_sequences');
         expect(show_dna_checkbox, isNotNull);
 
         expect(show_dna_checkbox.checked, false);

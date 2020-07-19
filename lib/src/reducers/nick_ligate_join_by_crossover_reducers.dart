@@ -12,7 +12,7 @@ import '../constants.dart' as constants;
 BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, actions.Nick action) {
   // remove Domain where nick will be, and remember where it was attached
   Domain domain_to_remove = action.domain;
-  var strand = state.dna_design.substrand_to_strand[domain_to_remove];
+  var strand = state.design.substrand_to_strand[domain_to_remove];
 
   // create new Domains
   int nick_offset = action.offset;
@@ -111,8 +111,8 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
   DNAEnd dna_end_clicked = action.dna_end;
-  Domain substrand = state.dna_design.end_to_domain[dna_end_clicked];
-  Strand strand = state.dna_design.substrand_to_strand[substrand];
+  Domain substrand = state.design.end_to_domain[dna_end_clicked];
+  Strand strand = state.design.substrand_to_strand[substrand];
   int helix = substrand.helix;
   bool forward = substrand.forward;
   int offset = dna_end_clicked.offset;
@@ -123,11 +123,11 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   BuiltSet<Domain> substrands_adjacent;
   DNAEnd strand_end;
   if (dna_end_clicked.is_start)
-    substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset - 1);
+    substrands_adjacent = state.design.substrands_on_helix_at(helix, offset - 1);
   else
-    substrands_adjacent = state.dna_design.substrands_on_helix_at(helix, offset);
+    substrands_adjacent = state.design.substrands_on_helix_at(helix, offset);
   for (var substrand_adj in substrands_adjacent) {
-    Strand strand_adj = state.dna_design.substrand_to_strand[substrand_adj];
+    Strand strand_adj = state.design.substrand_to_strand[substrand_adj];
     var ends = strand.ligatable_ends_with(strand_adj);
     if (ends != null) {
       strand_end = ends.item1;
@@ -150,8 +150,8 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
     ss_left = other_substrand;
     ss_right = substrand;
   }
-  Strand strand_left = state.dna_design.substrand_to_strand[ss_left];
-  Strand strand_right = state.dna_design.substrand_to_strand[ss_right];
+  Strand strand_left = state.design.substrand_to_strand[ss_left];
+  Strand strand_right = state.design.substrand_to_strand[ss_right];
 
   // normalize 5'/3' distinction; below refers to which Strand has the 5'/3' end that will be ligated
   // So strand_5p is the one whose 3' end will be the 3' end of the whole new Strand
@@ -198,8 +198,8 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   bool first_clicked_is_from = !dna_end_first_click.is_5p;
   DNAEnd dna_end_from = first_clicked_is_from ? dna_end_first_click : dna_end_second_click;
   DNAEnd dna_end_to = first_clicked_is_from ? dna_end_second_click : dna_end_first_click;
-  Strand strand_from = state.dna_design.end_to_strand(dna_end_from);
-  Strand strand_to = state.dna_design.end_to_strand(dna_end_to);
+  Strand strand_from = state.design.end_to_strand(dna_end_from);
+  Strand strand_to = state.design.end_to_strand(dna_end_to);
   if (strand_from == strand_to) {
     // circular Strands not supported
     print('WARNING: circular strands not supported, so I cannot connect strand ${strand_to.id()} to itself.');

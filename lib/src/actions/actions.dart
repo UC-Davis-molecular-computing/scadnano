@@ -46,13 +46,13 @@ abstract class Action {
 
 // Actions that affect the DNADesign (i.e., not purely UIAppState-affecting actions such as selecting items).
 // Only Undo and Redo implement this directly; all others implement the subtype UndoableAction.
-abstract class DNADesignChangingAction implements StorableAction, SvgPngCacheInvalidatingAction {
-  Iterable<Storable> storables() => [Storable.dna_design];
+abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvalidatingAction {
+  Iterable<Storable> storables() => [Storable.design];
 }
 
 /// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
-abstract class UndoableAction implements DNADesignChangingAction {
-  Iterable<Storable> storables() => [Storable.dna_design];
+abstract class UndoableAction implements DesignChangingAction {
+  Iterable<Storable> storables() => [Storable.design];
 }
 
 /// Fast actions happen rapidly and are not dispatched to normal store for optimization
@@ -95,7 +95,7 @@ abstract class HelixSelectSvgPngCacheInvalidatingAction extends Action {}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Undo/Redo
 
-abstract class Undo with BuiltJsonSerializable, DNADesignChangingAction implements Built<Undo, UndoBuilder> {
+abstract class Undo with BuiltJsonSerializable, DesignChangingAction implements Built<Undo, UndoBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Undo() => Undo.from((b) => b);
 
@@ -106,7 +106,7 @@ abstract class Undo with BuiltJsonSerializable, DNADesignChangingAction implemen
   static Serializer<Undo> get serializer => _$undoSerializer;
 }
 
-abstract class Redo with BuiltJsonSerializable, DNADesignChangingAction implements Built<Redo, RedoBuilder> {
+abstract class Redo with BuiltJsonSerializable, DesignChangingAction implements Built<Redo, RedoBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Redo() => Redo.from((b) => b);
 
@@ -593,7 +593,7 @@ abstract class SaveDNAFile
 }
 
 abstract class LoadDNAFile
-    with BuiltJsonSerializable, DNADesignChangingAction
+    with BuiltJsonSerializable, DesignChangingAction
     implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
@@ -1989,17 +1989,17 @@ abstract class StrandPasteKeepColorSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // example DNA design
 
-abstract class ExampleDNADesignsLoad
+abstract class ExampleDesignsLoad
     with BuiltJsonSerializable
-    implements Action, Built<ExampleDNADesignsLoad, ExampleDNADesignsLoadBuilder> {
+    implements Action, Built<ExampleDesignsLoad, ExampleDesignsLoadBuilder> {
   int get selected_idx;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExampleDNADesignsLoad({int selected_idx}) = _$ExampleDNADesignsLoad._;
+  factory ExampleDesignsLoad({int selected_idx}) = _$ExampleDesignsLoad._;
 
-  ExampleDNADesignsLoad._();
+  ExampleDesignsLoad._();
 
-  static Serializer<ExampleDNADesignsLoad> get serializer => _$exampleDNADesignsLoadSerializer;
+  static Serializer<ExampleDesignsLoad> get serializer => _$exampleDesignsLoadSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2144,21 +2144,21 @@ abstract class ShowGridCoordinatesSideViewSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // add option to not save DNADesign in localStorage on every edit
 
-abstract class SaveDNADesignInLocalStorageSet
+abstract class SaveDesignInLocalStorageSet
     with BuiltJsonSerializable
     implements
         AppUIStateStorableAction,
-        Built<SaveDNADesignInLocalStorageSet, SaveDNADesignInLocalStorageSetBuilder> {
-  bool get save_dna_design_in_local_storage;
+        Built<SaveDesignInLocalStorageSet, SaveDesignInLocalStorageSetBuilder> {
+  bool get save_design_in_local_storage;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SaveDNADesignInLocalStorageSet({bool save_dna_design_in_local_storage}) =
-      _$SaveDNADesignInLocalStorageSet._;
+  factory SaveDesignInLocalStorageSet({bool save_design_in_local_storage}) =
+      _$SaveDesignInLocalStorageSet._;
 
-  SaveDNADesignInLocalStorageSet._();
+  SaveDesignInLocalStorageSet._();
 
-  static Serializer<SaveDNADesignInLocalStorageSet> get serializer =>
-      _$saveDNADesignInLocalStorageSetSerializer;
+  static Serializer<SaveDesignInLocalStorageSet> get serializer =>
+      _$saveDesignInLocalStorageSetSerializer;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png

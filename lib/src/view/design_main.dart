@@ -4,7 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import 'package:scadnano/src/state/dna_design.dart';
+import 'package:scadnano/src/state/design.dart';
 
 import '../actions/actions.dart';
 import '../state/edit_mode.dart';
@@ -36,10 +36,10 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
       return (DesignMain()..has_error = true);
     } else {
       return (DesignMain()
-        ..dna_design = state.dna_design
+        ..design = state.design
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
-        ..grid = state.dna_design.grid
-        ..potential_vertical_crossovers = state.dna_design.potential_vertical_crossovers
+        ..grid = state.design.grid
+        ..potential_vertical_crossovers = state.design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
         ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
@@ -51,7 +51,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
-        ..design_major_tick_distance = state.dna_design.major_tick_distance
+        ..design_major_tick_distance = state.design.major_tick_distance
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
@@ -70,7 +70,7 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 
 @Props()
 mixin DesignMainPropsMixin on UiProps {
-  DNADesign dna_design;
+  Design design;
   Grid grid;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
@@ -112,9 +112,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
 
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
-        ..helices = props.dna_design.helices
+        ..helices = props.design.helices
         ..grid = props.grid
-        ..geometry = props.dna_design.geometry
+        ..geometry = props.design.geometry
         ..major_tick_offset_font_size = props.major_tick_offset_font_size
         ..major_tick_width_font_size = props.major_tick_width_font_size
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
@@ -131,7 +131,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainMismatches()
-          ..dna_design = props.dna_design
+          ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mismatches')(),
@@ -140,7 +140,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
-          ..helices = props.dna_design.helices
+          ..helices = props.design.helices
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()
@@ -152,14 +152,14 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
-          ..helices = props.dna_design.helices
-          ..strands = props.dna_design.strands
+          ..helices = props.design.helices
+          ..strands = props.design.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..key = 'dna')(),
+          ..key = 'dna-sequences')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
@@ -170,7 +170,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..key = 'selection-box')(),
       if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
-          ..helices = props.dna_design.helices
+          ..helices = props.design.helices
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
     ]);

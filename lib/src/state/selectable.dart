@@ -211,7 +211,7 @@ bool scaffold_selectable() => select_modes().contains(SelectModeChoice.scaffold)
 bool staple_selectable() => select_modes().contains(SelectModeChoice.staple);
 
 bool origami_type_selectable(Selectable selectable) {
-  if (!app.state.dna_design.is_origami) {
+  if (!app.state.design.is_origami) {
     return true;
   }
   if (selectable.is_scaffold) {
