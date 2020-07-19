@@ -1,7 +1,7 @@
 import scadnano as sc
 
 
-def main():
+def create_design():
     # helices
     helices = [sc.Helix(max_offset=48), sc.Helix(max_offset=48)]
 
@@ -23,7 +23,7 @@ def main():
     scaf = sc.Strand(domains=[scaf_ss1_left, scaf_ss0, loopout, scaf_ss1_right], is_scaffold=True)
 
     # whole design
-    design = sc.DNADesign(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
+    design = sc.Design(helices=helices, strands=[scaf, stap_left, stap_right], grid=sc.square)
 
     # deletions and insertions added to design are added to both strands on a helix
     design.add_deletion(helix=1, offset=20)
@@ -37,5 +37,5 @@ def main():
 
 
 if __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')

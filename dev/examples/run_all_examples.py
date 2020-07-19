@@ -21,8 +21,9 @@ def run(filename):
     module = importlib.import_module(modulename)
     if hasattr(module, "main"):
         print(f"  found main function in module {modulename}; running it and writing its output")
-        design: sc.DNADesign = module.main()
-        design.write_scadnano_file(directory='output_designs', filename=modulename + '.dna')
+        design: sc.Design = module.create_design()
+        design.write_scadnano_file(directory='output_designs',
+                                   filename=modulename + f'.{sc.default_scadnano_file_extension}')
     else:
         print(f"  found no main function in module {modulename}; running as subprocess instead")
         try:

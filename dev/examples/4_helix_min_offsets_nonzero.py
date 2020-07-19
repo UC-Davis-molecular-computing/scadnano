@@ -1,7 +1,7 @@
 import scadnano as sc
 
 
-def main():
+def create_design():
     length = 30
     helices = [
         sc.Helix(min_offset=0, max_offset=length, grid_position=(0, 0)),
@@ -14,11 +14,11 @@ def main():
     stap = sc.Strand([stap_ss])
     scaf = sc.Strand([scaf_ss], color=sc.default_scaffold_color)
     strands = [stap, scaf]
-    design = sc.DNADesign(helices=helices, strands=strands, grid=sc.Grid.square)
+    design = sc.Design(helices=helices, strands=strands, grid=sc.Grid.square)
 
     return design
 
 
 if not sc.in_browser() and __name__ == '__main__':
-    design = main()
+    design = create_design()
     design.write_scadnano_file(directory='output_designs')
