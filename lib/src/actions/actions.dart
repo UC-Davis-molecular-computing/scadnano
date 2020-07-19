@@ -597,12 +597,19 @@ abstract class LoadDNAFile
     implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
+  bool get write_local_storage;
+
   // set to null when getting file from another source such as localStorage
   @nullable
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDNAFile({String content, String filename}) = _$LoadDNAFile._;
+  factory LoadDNAFile({String content, String filename, bool write_local_storage = true}) {
+    return LoadDNAFile.from((b) => b
+      ..content = content
+      ..filename = filename
+      ..write_local_storage = write_local_storage);
+  }
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
 

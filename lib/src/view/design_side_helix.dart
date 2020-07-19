@@ -34,6 +34,7 @@ mixin DesignSideHelixProps on UiProps {
   bool mouse_is_over;
   bool helix_change_apply_to_all;
   bool show_grid_coordinates;
+  bool invert_y;
   MouseoverData mouseover_data;
   BuiltSet<EditModeChoice> edit_modes;
   Grid grid;
@@ -42,16 +43,8 @@ mixin DesignSideHelixProps on UiProps {
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {
   @override
   render() {
-//    print('rendering side helix ${props.helix.idx}');
-    MouseoverData mouseover_data = props.mouseover_data;
-//    print('  mouseover_data: $mouseover_data');
-
-    Helix helix = props.helix;
-
-    bool selected = props.selected;
-
     String classname_circle = '$SIDE_VIEW_PREFIX-helix-circle';
-    if (selected) {
+    if (props.selected) {
       classname_circle += ' selected';
     }
     if (props.mouse_is_over && props.edit_modes.contains(EditModeChoice.pencil)) {
@@ -80,14 +73,14 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       (Dom.circle()
         ..className = classname_circle
         ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
-        ..onClick = ((e) => this._handle_click(e, helix))
+        ..onClick = ((e) => this._handle_click(e, props.helix))
         ..id = helix_circle_id()
         ..key = 'circle')((Dom.svgTitle()..key='circle-tooltip')(tooltip)),
       (Dom.text()
             ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
             ..id = helix_text_id()
-            ..onClick = ((e) => this._handle_click(e, helix))
+            ..onClick = ((e) => this._handle_click(e, props.helix))
             ..key = 'text-idx')(
           SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
               ? grid_position_str
@@ -104,20 +97,20 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     ];
 
 //    print('checking mouseover data');
-    if (mouseover_data != null) {
+    if (props.mouseover_data != null) {
 //      print('mouseover data not null; creating DesignSideRotation now');
-      assert(mouseover_data.helix.idx == this.props.helix.idx);
+      assert(props.mouseover_data.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
         ..radius = constants.HELIX_RADIUS_SIDE_PIXELS
-        ..helix = mouseover_data.helix
-        ..offset = mouseover_data.offset
+        ..mouseover_data = props.mouseover_data
+        ..invert_y= props.invert_y
         ..key = 'rotation'
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation')();
       children.add(rot_component);
     }
 
-    Position3D pos3d = helix.position3d();
-    Point<num> center = util.position3d_to_side_view_svg(pos3d, helix.invert_y_axis);
+    Position3D pos3d = props.helix.position3d();
+    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_y_axis);
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }

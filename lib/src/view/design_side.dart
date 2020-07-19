@@ -79,6 +79,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
         (DesignSideHelix()
 //        (ConnectedDesignSideHelix()
           ..helix = helix
+          ..invert_y = props.invert_y
           ..grid = props.grid
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..edit_modes = props.edit_modes

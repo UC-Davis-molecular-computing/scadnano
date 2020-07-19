@@ -3489,9 +3489,10 @@ main() {
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
 
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
+      expect(state.ui_state.mouseover_datas[0].helix, helix);
+      expect(state.ui_state.mouseover_datas[0].offset, offset);
+      expect(state.ui_state.mouseover_datas[0].domain, domain);
     });
 
     test('MouseOverUpdate from different offset same strand', () {
@@ -3515,16 +3516,14 @@ main() {
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
-
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
       mouseoverParams = MouseoverParams(1, 13, true);
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      mouseoverData = MouseoverData(helix, 13, domain);
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
+      expect(state.ui_state.mouseover_datas[0].helix, helix);
+      expect(state.ui_state.mouseover_datas[0].offset, 13);
+      expect(state.ui_state.mouseover_datas[0].domain, domain);
     });
 
     test('MouseOverUpdate from same offset different strand', () {
@@ -3553,17 +3552,15 @@ main() {
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
-
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
       mouseoverParams = MouseoverParams(1, 12, false);
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       domain = two_helices_design.strands[3].domains()[0];
-      mouseoverData = MouseoverData(helix, offset, domain);
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
+      expect(state.ui_state.mouseover_datas[0].helix, helix);
+      expect(state.ui_state.mouseover_datas[0].offset, offset);
+      expect(state.ui_state.mouseover_datas[0].domain, domain);
     });
 
     test('MouseDataClear from helix to outside of helix', () {
@@ -3587,9 +3584,6 @@ main() {
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
-      MouseoverData mouseoverData = MouseoverData(helix, offset, domain);
-
-      expect(state.ui_state.mouseover_datas, [mouseoverData].toBuiltList());
 
       state = app_state_reducer(state, MouseoverDataClear());
 

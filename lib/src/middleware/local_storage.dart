@@ -26,7 +26,7 @@ class Storable extends EnumClass {
 
   static Storable valueOf(String name) => _$valueOf(name);
 
-  String get key_name =>  _LOCAL_STORAGE_PREFIX + name;
+  String get key_name => _LOCAL_STORAGE_PREFIX + name;
 }
 
 const String _LOCAL_STORAGE_PREFIX = "scadnano:";
@@ -70,7 +70,8 @@ _restore(Storable storable) {
       var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name];
       var storable_json_map = json.decode(storable_json_str);
       AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
-      action = actions.LoadDNAFile(content: json_str, filename: storables.loaded_filename);
+      action = actions.LoadDNAFile(
+          content: json_str, filename: storables.loaded_filename, write_local_storage: false);
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);
       AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
@@ -106,7 +107,9 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
   next(action);
   var state_after = store.state;
   if (action is actions.AppUIStateStorableAction) {
-    save_async(state_after, [Storable.app_ui_state_storables]);
+    if (action is actions.LoadDNAFile && action.write_local_storage || action is! actions.LoadDNAFile) {
+      save_async(state_after, [Storable.app_ui_state_storables]);
+    }
   }
   if (action is actions.StorableAction) {
     save_async(state_after, action.storables());

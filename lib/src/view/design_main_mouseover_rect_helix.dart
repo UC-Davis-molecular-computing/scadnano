@@ -132,7 +132,7 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
 //    print('  new forward: ${mouseover_params.forward}');
     if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
         mouseover_data.offset == mouseover_params.offset &&
-        mouseover_data.substrand?.forward == mouseover_params.forward) {
+        mouseover_data.domain?.forward == mouseover_params.forward) {
       needs = false;
     }
 //    else {

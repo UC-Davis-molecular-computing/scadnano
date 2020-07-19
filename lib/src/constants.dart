@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:color/color.dart';
 import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
@@ -91,6 +92,9 @@ const js_function_name_set_error_message_from_python_script = 'set_error_message
 const editor_content_js_key = 'editor_content';
 
 const compile_button_id = 'compile';
+
+final color_forward_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
+final color_reverse_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
