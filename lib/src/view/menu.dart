@@ -543,7 +543,7 @@ Shows grid coordinates in the side view under the helix index.'''
       },
       DropdownItem(
         {
-          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/README.md',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
           'target': '_blank',
         },
         'Web Interface Help',
@@ -558,7 +558,7 @@ Shows grid coordinates in the side view under the helix index.'''
       DropdownItem(
         {
           'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md',
+              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
         'Python Scripting Help',
