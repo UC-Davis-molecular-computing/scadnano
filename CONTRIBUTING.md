@@ -114,13 +114,15 @@ The basic idea is that the entire application can be thought of as consisting of
 
 2. **View**, a function that takes the state as input and produces HTML code (i.e., a view that the user can see on the screen) as output.
 
-3. **Update**, a function that modifies the state.
+3. **Update**, a function that modifies the state (more accurately, creates a new state from the old state).
 
-The idea of *unidirectional data flow* is that information flow goes like this: 
+The idea of *unidirectional data flow* is that information flow (or if you like, causality) goes like this: 
 
 state &rarr; view &rarr; update &rarr; state
 
 and never in the reverse direction. In other words, view is a function of the state (i.e., the state directly influences the view, but nothing in the view every directly influences the state), user interaction with the view (and some other asynchronous events such as files loading) cause an update (but update code never modifies the view directly), and updating alters the state (which is in turn what triggers the view to be re-rendered).
+
+The last part is the trickiest to get correct when writing GUI code, so it is handled automatically by React and Redux.
 
 We get into more detail below.
 
@@ -129,11 +131,11 @@ We get into more detail below.
     
     This is implemented in scadnano as the object `app.state`. Notice that main.dart (in the root directory of the repo) contains a single line of code, `app.start();` (which runs in lib/src/app.dart), which in turn calls `initialize_state()`, which creates a state object (and puts it in something called the "Redux store" so that Redux knows about it). 
 
-    The state (of type `AppState` in scadnano) contains the whole DNADesign describing the design the user is viewing/editing. The state also contains all the "UI state". UI state (of type `AppUIState` in scadnano) includes view settings such as whether DNA sequences are visible (which are stored in localStorage to remain constant if the user closes and reopens the app), as well as more ephemeral UI state such as the current position and dimensions of a dragging selection box.
+    The state (of type `AppState` in scadnano) contains the whole Design describing the design the user is viewing/editing. The state also contains all the "UI state". UI state (of type `AppUIState` in scadnano) includes view settings such as whether DNA sequences are visible (which are stored in localStorage to remain constant if the user closes and reopens the app), as well as more ephemeral UI state such as the current position and dimensions of a dragging selection box.
     
-    The state is a tree structure representing object containment (i.e., `AppState` contains a `DNADesign`, an `AppUIState`, and a few other things; the `DNADesign` contains a list of `Strand`'s, each `Strand` contains a list of `Domain`'s, etc.)
+    The state is a tree structure (in other words, there are no cyclic object references) representing object containment, i.e., `AppState` contains a `Design`, an `AppUIState`, and a few other things; the `Design` contains a list of `Strand`'s, each `Strand` contains a list of `Domain`'s, etc. The fact that it must be acyclic makes much of the programming quite tricky. For instance, in the [Python package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package), each `Domain` has a reference back to the `Strand` in which it is contained. This helps to do things such as have a `Domain` compute its DNA sequence (the substring of the containing `Strand`'s DNA sequence). Such cyclic references are forbidden by built_value, which means that some code is more awkward to write in the Dart library. (For example, to ask about a `Domain`'s DNA sequence, you call `strand.dna_sequence_in(domain)` on its containing `Strand`.)
 
-    Because we use some libraries that are not designed to work with React and Redux, not *all* information the app needs is in the state. For example, we use the [svg-pan-zoom library](https://github.com/ariutta/svg-pan-zoom) to enable panning and zooming. That library keeps track of the current zoom level and translation in the main view and side view, so they are not stored in the state. One long-term goal is to migrate to a React library for this functionality, which will allow the whole app to be more "pure" React/Redux.
+    Because we use some libraries that are not designed to work with React and Redux, not *all* information the app needs is in the state. For example, we use the [svg-pan-zoom library](https://github.com/ariutta/svg-pan-zoom) to enable panning and zooming. That library keeps track of the current zoom level and translation in the main view and side view, so those values are not stored in the state. One long-term goal is to migrate to a React library for this functionality, which will allow the whole app to be more "pure" React/Redux.
 
 2. **View:** 
     This can be thought of as a *function* that takes the state as input and outputs an HTML tree to display in the browser. It is a "pure" function, meaning that the displayed HTML is a deterministic function of the state, and should consult no other side information.
@@ -143,17 +145,17 @@ We get into more detail below.
     If the app were pure React/Redux, the entire view itself would be a single React component, which contains only other React components. Because of the current use of libraries such as [svg-pan-zoom](https://github.com/ariutta/svg-pan-zoom) that are not React, the top-level view is implemented manually in Dart (using the `dart:html` package), but some nodes in the view tree are React components, and those subtrees implement the pure React/Redux ideas.
 
 3. **Reducers (a.k.a. update):**
-    Reducers are how the state updates in response user interaction (or more general interaction with the "environment", e.g., files loading or HTTP requests arriving). Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll. A state change could also be initiated by something like an asynchronous network event or a file loading.
+    Reducers are how the state updates in response user interactio, or more generally, "the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
 
-    The key idea is that the code that detects the user interaction (or more generally, interaction from some source outside the app) does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in. 
+    The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in. 
     
-    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. Rather than modifying the state, an *Action* object is created describing the change that is supposed to happen. This object is given to Redux (by calling a function called `dispatch`), which in turn calls the *reducer*, which is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state for the old, and goes about conferring with React about which parts of the view now need to be updated.
+    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux (by calling a function called `dispatch`), which in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated.
 
     Actions, like the objects of the state, are themselves immutable instances of built_value.
 
-    Many bugs in interactive visual applications result from making changes to the state and trying to update the parts of the view that depend on it, but forgetting some parts. One way to avoid this would be, on every single state change, to redraw the entire view from scratch, as though the application were just starting up for the first time. This would result in fewer bugs, but it is highly inefficient.
+    Many bugs in interactive visual applications result from making changes to the state and attempting to update the parts of the view that depend on it, but accidentally leaving out some parts of the view that need to be updated. One way to avoid this would be, on every single state change, to redraw the entire view from scratch, as though the application were just starting up for the first time. This would result in fewer bugs, but it is highly inefficient.
 
-    React and Redux give a way to write the code as though this were happening. But under the hood they do many optimizations to ensure that only the parts of the view that need to be re-rendered are actually re-rendered. The reason the state is required to be immutable is that this allows Redux and React a simple way to do some fast comparisons. Suppose one of those objects after a global state change is literally the same object, i.e., `identical(old_object, new_object)` holds, also known as *referential equality*. Then because of immutability, the object necessarily represents the same data as before. Thus, no part of the view need to be re-rendered that depends only on objects that have not changed. Due to immutability, the comparison to check which objects have changed is quite fast.
+    React and Redux give a way to write the code *as though* the entire view is being redrawn from scratch. But under the hood they do many optimizations to ensure that only the parts of the view that need to be re-rendered are actually re-rendered. The reason the state is required to be immutable is that this allows Redux and React a simple way to do some fast comparisons. Suppose one of those state objects after a global state change is literally the same object, i.e., `identical(old_object, new_object)` holds, also known as *referential equality*. Then because of immutability, the object necessarily represents the same data as before (i.e., they are *semantically equal*). Thus, no part of the view needs to be re-rendered that depends only on state objects that have not changed. Due to immutability, the comparison to check which objects have changed is quite fast. (**Note:** As mentioned above, right now it's actually having problems because built_value is [fairly liberal](https://github.com/google/built_value.dart/issues/774) with allocating new objects that are semantically equal to the old, and OverReact [uses only referential equality](https://github.com/Workiva/over_react/issues/434#issuecomment-660399030) (i.e. `identical(old_object, new_object)`), not semantic equality (i.e., `old_object == new_object`).)
 
     Now, the top-level state object always changes, so the top-level view code always potentially re-renders. But the point is that it will recursively check each of its subcomponents and only re-render those that depend on state information that actually changed. So most of the view remains as it was.
 
@@ -254,7 +256,7 @@ webdev serve --release
 ## General recipe for adding features
 As described above, the use of React and Redux is intended to reduce the number of bugs, by a clean separation of 
 
-- **state:** What is the current state of the program, including not only the DNADesign, but all other aspects such as UI state. This is represented by an instance of `AppState`.
+- **state:** What is the current state of the program, including not only the Design, but all other aspects such as UI state. This is represented by an instance of `AppState`.
 
 - **view:** What does the visual interface look like, as a function of the model. This is represented by React components.
 
@@ -276,9 +278,9 @@ For many typical features one would want to add that involve changing some aspec
 
   Any action that will result in the DNA sequences being drawn in a different place (e.g., inverting the y-axis or removing a helix), should implement `SvgPngCacheInvalidatingAction`.
 
-  Any Action modifying the DNADesign should implement `UndoableAction`. This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DNADesignChangingAction`, but that is more general. For instance, it is called when a new DNADesign is loaded from a file, which changes the DNADesign, but is not an undo-able action.)
+  Any Action modifying the Design should implement `UndoableAction`. This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new Design is loaded from a file, which changes the Design, but is not an undo-able action.)
 
-- **if necessary, add new data fields the app state**: In many instances, particularly "UI state" (aspects of the state that control how things look, but are not stored in the DNADesign), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`.
+- **if necessary, add new data fields the app state**: In many instances, particularly "UI state" (aspects of the state that control how things look, but are not stored in the Design), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`.
 
   If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.design` is persisted in localStorage, but that is handled separately.
 
