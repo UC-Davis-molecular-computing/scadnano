@@ -1,8 +1,9 @@
-# Contributing to scadnano
+# Contributing to the scadnano web interface
 First off, thanks for taking the time to contribute!
 
 The following is a set of guidelines for contributing to scadnano.
-Use your best judgement, and feel free to propose changes to this document in a pull request, or post questions as issues on the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
+Feel free to propose changes to this document in a pull request, 
+or post questions as issues on the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
 
 ## What should I know before I get started?
 
@@ -43,6 +44,10 @@ to implement most features.
 
 ### Required reading: Dart
 The scadnano web interface is written mostly in Dart. So it's obviously a good idea to read through the [Dart documentation](https://dart.dev/guides) a bit. Everyone learns new languages a bit differently, so depending on your style, it might be good to go through their tutorials and write a bit of independent Dart code first, or you might find just diving into scadnano itself works better for you to learn by example.
+
+### git
+
+We use [git](https://git-scm.com/docs/gittutorial) and [GitHub](https://guides.github.com/activities/hello-world/). You can use the command-line git, or a GUI such as [GitHub desktop](https://desktop.github.com/), which is very easy to use and supports the most common git commands, but it is not fully-featured, so you may want another [git client](https://www.google.com/search?q=git+client) if you prefer not to use the command line.
 
 ### Required reading: Libraries
 It is a good idea first to read through the documentation on 
@@ -169,7 +174,7 @@ scadnano can be developed locally.
 
 ### Cloning
 
-The first step is creating your own clone.
+The first step is cloning the repository so you have it available locally.
 
 ```
 git clone https://github.com/UC-Davis-molecular-computing/scadnano.git
@@ -314,7 +319,7 @@ For many typical features one would want to add that involve changing some aspec
 
   Much of scadnano was designed before this framework was used, so you'll sometimes see the use of global variables in view code (instead of accessing only the React props), or side effects. In general these are not good practice and should be changed eventually.
 
-  On each action dispatch, the middleware executes *before* the reducer is called. All middleware should at some point call `next(action)` to let the subsequent middleware, and reducer, proceed. But sometimes the point of the middleware is to stop the action (e.g., if the action is invalid somehow); in this case, it makes sense not to call `next(action)` and let the action "die".
+  On each action dispatch, the middleware executes *before* the reducer is called. All middleware should at some point call `next(action)` to let the subsequent middleware, and finally reducer, proceed. But sometimes the point of the middleware is to stop the action (e.g., if the action is invalid somehow); in this case, it makes sense not to call `next(action)` and let the action "die".
 
   *Note:* You need to remember to add the middleware function to the list in the file lib/src/middleware/all_middleware.dart, or it won't be called. Remember also to call `next(action)` (unless you actually want to stop the Action from going through).
 
@@ -323,17 +328,17 @@ TODO: add link to a more detailed tutorial walking through the steps above showi
 
 ## Pushing to the repository dev branch and documenting changes (done on all updates)
 
-Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch.
+Minor changes, such as updating README, adding example files, etc., can be committed directly to the `dev` branch. (Note: currently this option is only available to administrators; other contributors should follow the instructions below.)
 
 For any more significant change that is made (e.g., closing an issue, adding a new feature), follow these steps:
 
-1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description. For example, *"problem with loading gridless design"* is a bad title. A better title is *"loading gridless design with negative x coordinates throws exception"*.
+1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description, and that it describes the change we would like to make to the software. For example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
 
-3. If it is about fixing a bug, add tests to reproduce the bug before working on fixing it.
+3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
 
-4. If it is about implementing a feature, add tests to test the feature.
+4. If it is about implementing a feature, first add tests to test the feature. For instance, if you are adding a new method, this involves writing code that calls the method and tests various combinations of example inputs and expected output.
 
 5. Work entirely in that branch to fix the issue.
 
@@ -341,11 +346,11 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 7. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
 
-8. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. 
+8. Wait for all checks to complete (see next section), and then merge the changes from the new branch into `dev`. This will typically require someone else to review the code first and possibly request changes.
 
 9. After merging, it will say that the branch you just merged from can be safely deleted. Delete the branch.
 
-10. Locally, remember to switch back to the `dev` branch and pull it to get these changes locally.
+10. Locally, remember to switch back to the `dev` branch and pull it. (Although you added those changes locally, they revert back once you switch to your local `dev` branch, which needs to be synced with the remote repo for you to see the changes that were just merged from the now-deleted temporary branch.)
 
 ## Pushing to the repository master branch and documenting changes (done less frequently)
 
@@ -359,7 +364,7 @@ and like this when complete:
 
 ![](images/github-CI-checks-complete.png)
 
-We have an automated release system (through a GitHub action) that automatically creates release notes.
+We have an automated release system (through a GitHub action) that automatically creates release notes when changes are merged into the master branch.
 
 Although the GitHub web interface abbreviates long commit messages, the full commit message is included for each commit in a PR.
 
@@ -367,7 +372,7 @@ However, commit descriptions are not shown in the release notes. In GitHub deskt
 
 So make sure that everything people should see in the automatically generated release notes is included in the commit message. GitHub lets you [automatically close](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords) an issue by putting a phrase such as "closes #14". Although the release notes will link to the issue that was closed, they [will not describe it in any other way](https://github.com/marvinpinto/actions/issues/34). So it is important, for the sake of having readable release notes, to describe briefly the issue that was closed in the commit message.
 
-One simple way to do this is to copy/paste the title of the issue into the commit message. For this reason, issue titles should be stated in terms of what change should happen to handle an issue. For example, instead of the title being *"helices are displayed at the wrong y-coordinate in the honeycomb grid"*, a better issue title is *"display helices at the proper y-coordinate in the honeycomb grid"*. That way, when the issue is fixed in a commit, that title can simply be copied and pasted as the description of what was done for the commit message. (But you should still add "fixes #<issue_number>" in the commit message.)
+One simple way to do this is to copy/paste the title of the issue into the commit message. For this reason, issue titles should be stated in terms of what change should happen to handle an issue. For example, instead of the title being *"helices are displayed at the wrong y-coordinate in the honeycomb grid"*, a better issue title is *"display helices at the proper y-coordinate in the honeycomb grid"*. That way, when the issue is fixed in a commit, that title can simply be copied and pasted as the description of what was done for the commit message. (But you should still add "fixes #<issue_number>" in the commit message, e.g., the full commit message could be *"fixes #101; display helices at the proper y-coordinate in the honeycomb grid"* .)
 
 Users can read the description by clicking on the link to the commit or the pull request, but anything is put there, then the commit message should say something like "click on commit/PR for more details".
 
@@ -375,30 +380,27 @@ See here for an example: https://github.com/UC-Davis-molecular-computing/scadnan
 
 So the steps are:
 
-1. Commit changes to the `dev` branch. There will typically be several of these. Despite GitHub's suggestions to keep commit messages short and put longer text in descriptions, because only the commit message is included in the release notes, it's okay to put more detail (but very long stuff should go in the description, or possibly documentation such as the README.md file).
+1. If necessary, follow the instructions above to merge changes from a temporary branch to the `dev` branch. There will typically be several of these. Despite GitHub's suggestions to keep commit messages short and put longer text in descriptions, because only the commit message is included in the release notes, it's okay to put more detail in the message (but very long stuff should go in the description, or possibly documentation such as the README.md file).
 
-2. One of the changes committed should change the version number. This is a string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`
+    One of the changes committed should change the version number. We follow [semantic versioning](https://semver.org/). This is a string of the form `"MAJOR.MINOR.PATCH"`, e.g., `"0.9.3"`
     - For the web interface repo scadnano, this is located at the top of the file https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/constants.dart
     - For the Python library repo scadnano-python-package, this is located in two places: the bottom of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/_version.py (as `__version__ = "0.9.3"` or something similar) and the near the top of the file https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/scadnano/scadnano.py (as `__version__ = "0.9.3"` or something similar). This latter one is only there for users who do not install from PyPI, and who simply download the file scadnano.py to put it in a directory with their script).
+
+    The PATCH version numbers are not always synced between the two repos, but, they should stay synced on MAJOR and MINOR versions. **Note:** right now this isn't quite true since MINOR versions deal with backwards-compatible feature additions, and some features are supported on one but not the other; e.g., modifications can be made in the Python package but not the web interface, and calculating helix rolls/positions from crossovers can be done in the web interface but not the Python package. But post-version-1.0.0, the major and minor versions of the  should be enforced.
 
 3. Ensure all unit tests pass.
 
 4. In the Python repo, ensure that the documentation is generated without errors. From the subfolder `doc`, run the command `make html`, ensure there are no errors, and inspect the documentation it generates in the folder `build`.
 
-5. Create a PR to merge changes from dev into master and then do the merge.)
+5. Create a PR to merge changes from dev into master. 
 
-6. Once the PR changes are merged, a release will be automatically created here: https://github.com/UC-Davis-molecular-computing/scadnano/releases or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented, with the commit message (but not description) included in the release notes.
+6. One the PR is reviewed and approved, do the merge.
 
-7. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into master, or else the release (which defaults to the tag `latest`) will be overwritten.
+7. Once the PR changes are merged, a release will be automatically created here: https://github.com/UC-Davis-molecular-computing/scadnano/releases or https://github.com/UC-Davis-molecular-computing/scadnano-python-package/releases. It will have a title that is a placerholder, which is a reminder to change its title and tag. Each commit will be documented, with the commit message (but not description) included in the release notes.
 
-8. In the Python repo, update the PyPI package by running the following two commands from the root of the repo, replacing `scadnano-0.9.3.tar.gz` with the appropriate version number:
-    ```
-    $ python setup.py sdist
-    $ twine upload dist/scadnano-0.9.3.tar.gz
-    ```
-    The latter command uploads to PyPI, and requires permissions to be set up; see https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
+8. Change *both* the title *and* tag to the version number with a `v` prepended, e.g., `v0.9.3`. It is imperative to change the tag before the next merge into master, or else the release (which defaults to the tag `latest`) will be overwritten.
 
-    The file created will be placed in the dist/ subfolder, but this folder is not tracked by git, so the file does not need to be added.
+
 
 
 
