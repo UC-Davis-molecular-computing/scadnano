@@ -14,6 +14,7 @@ import 'package:over_react/over_react.dart' as react;
 
 import 'package:scadnano/src/middleware/throttle.dart';
 import 'package:scadnano/src/state/dna_ends_move.dart';
+import 'package:scadnano/src/state/local_storage_design_choice.dart';
 import 'package:scadnano/src/state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
@@ -84,6 +85,7 @@ class App {
 //    util.save_editor_content_to_js_context(state.editor_content);
       restore_all_local_storage();
       setup_warning_before_unload();
+      setup_save_design_to_localStorage_before_unload();
       make_dart_functions_available_to_js(state);
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
@@ -152,6 +154,15 @@ class App {
       if (state.ui_state.warn_on_exit_if_unsaved && state.undo_redo.undo_stack.isNotEmpty) {
         BeforeUnloadEvent e = event;
         e.returnValue = 'You have unsaved work. Are you sure you want to leave?';
+      }
+    });
+  }
+
+  setup_save_design_to_localStorage_before_unload() {
+    window.onBeforeUnload.listen((_) {
+      if (state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_exit ||
+          state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.periodic) {
+        save(state, Storable.design);
       }
     });
   }
