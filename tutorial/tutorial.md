@@ -119,7 +119,7 @@ To do this, select pencil mode and click on helix 0, offset 8, on top, and drag 
 
 This is a strand consisting of a single *domain*, which is a portion of a strand contiguous on a single helix. Later we will add *crossovers* to connect multiple domains on different helices into a single strand, but for now we simply draw the domains.
 
-By default, strands are not scaffolds, meaning they are part of a design that doesn't represent DNA origami, or they are a DNA origami staple. To make this strand a scaffold, right click the strand and select "set as scaffold"
+By default, strands are not scaffolds, meaning they are part of a design that doesn't represent DNA origami, or they are a DNA origami staple. To make this strand a scaffold, right-click the strand and select "set as scaffold"
 
 ![](images/set_scaffold.png)
 
@@ -143,6 +143,8 @@ which lengthens the strand:
 
 ![](images/strand_lengthened.png)
 
+To unselect all items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to clear all selections.
+
 Now, zoom out and repeat to lengthen it all the way to (almost) the end of the helix. When zoomed out, it can be difficult to click exactly on the 3' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 3' end:
 
 ![](images/selection_box_over_3p_end.png)
@@ -152,6 +154,8 @@ Unfortunately, to drag the 3' end, you do have to click it. So it may require zo
 ![](images/scaffold_helix_0_full_length.png)
 
 Note that we stop a bit short on each side (leaving 8 unoccupied offsets on each side of the helix), because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912. (Actually it will be slightly shorter because of the deletions we add near the end.)
+
+You can also Shift-click (or Shift + drag selection box) on items to add them to the selection one at a time, and Ctrl-click (or Ctrl + drag selection box) to toggle whether they are selected.
 
 
 
