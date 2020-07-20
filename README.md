@@ -29,6 +29,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
 * [Performance tips](#performance-tips)
+* [Contributing](#contributing)
 
 ## Overview
 
@@ -558,3 +559,6 @@ See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a
 
 # Performance tips
 There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this and save only infrequently.
+
+# Contributing
+If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/CONTRIBUTING.md) for the scadnano Python package.
