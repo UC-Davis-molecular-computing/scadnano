@@ -31,7 +31,7 @@ If you have never used scadnano before, you will see a screen similar to this:
 
 ## Load completed design to see what it looks like
 
-Download the [completed design(https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/24_helix_origami_rectangle_twist_corrected.sc) and save it somewhere on your local file system.
+Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/24_helix_origami_rectangle_twist_corrected.sc) and save it somewhere on your local file system.
 
 Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different):
 
