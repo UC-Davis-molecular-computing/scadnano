@@ -7,28 +7,27 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/export_dna_format.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import 'package:scadnano/src/state/selection_box.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strand_part.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+
+import '../state/app_ui_state.dart';
+import '../state/domain.dart';
+import '../state/context_menu.dart';
+import '../state/crossover.dart';
+import '../state/dialog.dart';
+import '../state/dna_end.dart';
+import '../state/dna_ends_move.dart';
+import '../state/export_dna_format.dart';
+import '../state/grid.dart';
 import '../state/helix.dart';
-import '../state/strand.dart';
+import '../state/local_storage_design_choice.dart';
 import '../state/loopout.dart';
+import '../state/position3d.dart';
+import '../state/potential_crossover.dart';
+import '../state/selectable.dart';
+import '../state/selection_box.dart';
+import '../state/strand.dart';
+import '../state/strand_part.dart';
+import '../state/strands_move.dart';
 import '../state/edit_mode.dart';
 import '../serializers.dart';
 import '../state/select_mode.dart';
@@ -207,6 +206,24 @@ abstract class ThrottledActionNonFast
   ThrottledActionNonFast._();
 
   static Serializer<ThrottledActionNonFast> get serializer => _$throttledActionNonFastSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// set options for when to write design to localStorage
+
+abstract class LocalStorageDesignChoiceSet
+    with BuiltJsonSerializable
+    implements
+        AppUIStateStorableAction,
+        Built<LocalStorageDesignChoiceSet, LocalStorageDesignChoiceSetBuilder> {
+  LocalStorageDesignChoice get choice;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LocalStorageDesignChoiceSet({LocalStorageDesignChoice choice}) = _$LocalStorageDesignChoiceSet._;
+
+  LocalStorageDesignChoiceSet._();
+
+  static Serializer<LocalStorageDesignChoiceSet> get serializer => _$localStorageDesignChoiceSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2141,25 +2158,6 @@ abstract class ShowGridCoordinatesSideViewSet
       _$showGridCoordinatesSideViewSetSerializer;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// add option to not save DNADesign in localStorage on every edit
-
-abstract class SaveDesignInLocalStorageSet
-    with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<SaveDesignInLocalStorageSet, SaveDesignInLocalStorageSetBuilder> {
-  bool get save_design_in_local_storage;
-
-  /************************ begin BuiltValue boilerplate ************************/
-  factory SaveDesignInLocalStorageSet({bool save_design_in_local_storage}) =
-      _$SaveDesignInLocalStorageSet._;
-
-  SaveDesignInLocalStorageSet._();
-
-  static Serializer<SaveDesignInLocalStorageSet> get serializer =>
-      _$saveDesignInLocalStorageSetSerializer;
-}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png
 
