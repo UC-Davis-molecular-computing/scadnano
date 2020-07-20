@@ -6,8 +6,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
+
+import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 import 'actions/actions.dart';
 import 'dna_sequence_constants.dart';
+import 'state/local_storage_design_choice.dart';
 import 'state/context_menu.dart';
 import 'state/dialog.dart';
 import 'state/dna_end.dart';
@@ -23,7 +26,6 @@ import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
 import 'state/strand_creation.dart';
 import 'state/strands_move.dart';
-import 'state/substrand.dart';
 import 'state/grid.dart';
 import 'state/helix.dart';
 import 'state/idt_fields.dart';
@@ -41,9 +43,11 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  LocalStorageDesignOption,
+  LocalStorageDesignChoice,
+  LocalStorageDesignChoiceSet,
   StrandsMirror,
   ReplaceStrands,
-  SaveDesignInLocalStorageSet,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
   SelectModeToggle,

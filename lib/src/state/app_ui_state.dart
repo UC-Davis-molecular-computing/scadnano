@@ -5,6 +5,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/actions/actions.dart';
+import 'package:scadnano/src/state/local_storage_design_choice.dart';
 
 import '../serializers.dart';
 import 'context_menu.dart';
@@ -79,11 +80,11 @@ abstract class AppUIStateStorable
 
   bool get show_grid_coordinates_side_view;
 
-  bool get save_design_in_local_storage;
-
   bool get default_crossover_type_scaffold_for_setting_helix_rolls;
 
   bool get default_crossover_type_staple_for_setting_helix_rolls;
+
+  LocalStorageDesignChoice get local_storage_design_choice;
 
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
@@ -111,9 +112,10 @@ abstract class AppUIStateStorable
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_grid_coordinates_side_view = false;
-    b.save_design_in_local_storage = true;
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
+    b.local_storage_design_choice =
+        LocalStorageDesignChoice().toBuilder();
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -239,13 +241,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_grid_coordinates_side_view => storables.show_grid_coordinates_side_view;
 
-  bool get save_design_in_local_storage => storables.save_design_in_local_storage;
-
   bool get default_crossover_type_scaffold_for_setting_helix_rolls =>
       storables.default_crossover_type_scaffold_for_setting_helix_rolls;
 
   bool get default_crossover_type_staple_for_setting_helix_rolls =>
       storables.default_crossover_type_staple_for_setting_helix_rolls;
+
+  LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);

@@ -10,6 +10,7 @@ import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/state/example_designs.dart';
 import 'package:scadnano/src/state/export_dna_format.dart';
 import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/local_storage_design_choice.dart';
 import 'package:scadnano/src/state/select_mode.dart';
 import 'package:scadnano/src/view/menu_number.dart';
 import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
@@ -23,7 +24,6 @@ import 'package:scadnano/src/view/menu_form_file.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
-import '../state/app_ui_state.dart';
 import '../util.dart' as util;
 
 part 'menu.over_react.g.dart';
@@ -57,7 +57,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
     ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
     ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..save_design_in_local_storage = state.ui_state.save_design_in_local_storage
+    ..local_storage_design_choice = state.ui_state.local_storage_design_choice
     ..default_crossover_type_scaffold_for_setting_helix_rolls =
         state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
     ..default_crossover_type_staple_for_setting_helix_rolls =
@@ -93,9 +93,9 @@ mixin MenuPropsMixin on UiProps {
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
-  bool save_design_in_local_storage;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
+  LocalStorageDesignChoice local_storage_design_choice;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -148,25 +148,27 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
   }
 
   file_menu() {
-    return NavDropdown(
-      {
-        'title': 'File',
-        'id': 'file-nav-dropdown',
-      },
+    return NavDropdown({
+      'title': 'File',
+      'id': 'file-nav-dropdown',
+    }, [
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(load_example_dialog))
-        ..display = '📄 Load example')(),
+        ..display = '📄 Load example'
+        ..key = 'load-example')(),
       (MenuFormFile()
         ..id = 'open-form-file'
         ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
         ..display = '📂 Open...'
-        ..keyboard_shortcut = 'Ctrl+O')(),
-      DropdownDivider({}),
+        ..keyboard_shortcut = 'Ctrl+O'
+        ..key = 'open-form-file')(),
+      DropdownDivider({'key': 'divider-file-load'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.SaveDNAFile()))
         ..display = '💾 Save...'
-        ..keyboard_shortcut = 'Ctrl+S')(),
+        ..keyboard_shortcut = 'Ctrl+S'
+        ..key = 'save-file')(),
       (MenuBoolean()
         ..value = props.warn_on_exit_if_unsaved
         ..display = 'Warn on exit if unsaved'
@@ -175,30 +177,26 @@ If checked, before attempting to close or refresh the page, if the design has
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
         ..onChange =
-            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved))))(),
-      DropdownDivider({}),
+            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
+        ..key = 'warn-on-exit-if-unsaved')(),
+      DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
         ..id = 'import-cadnano-form-file'
         ..accept = '.json'
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
-        ..display = 'Import cadnano v2')(),
+        ..display = 'Import cadnano v2'
+        ..key = 'import-cadnano')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
-        ..display = 'Export cadnano v2')(),
+        ..display = 'Export cadnano v2'
+        ..key = 'export-cadnano')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'Export codenano')(),
-      DropdownDivider({}),
-      (MenuBoolean()
-        ..value = props.save_design_in_local_storage
-        ..display = 'Save Design in localStorage'
-        ..tooltip = '''\
-Saves designs in localStorage on every edit. Disabling this minimizes the time needed to render large designs.'''
-        ..name = 'save-dna-design-in-local-storage'
-        ..onChange = ((_) => props.dispatch(actions.SaveDesignInLocalStorageSet(
-            save_design_in_local_storage: !props.save_design_in_local_storage)))
-        ..key = 'save-dna-design-in-local-storage')(),
-    );
+        ..display = 'Export codenano'
+        ..key = 'export-codenano')(),
+      DropdownDivider({'key': 'divider-export'}),
+      ...file_menu_save_design_local_storage_options(),
+    ]);
   }
 
   edit_menu() {
@@ -557,8 +555,7 @@ Shows grid coordinates in the side view under the helix index.'''
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
         'Python Scripting Help',
@@ -620,6 +617,57 @@ Shows grid coordinates in the side view under the helix index.'''
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
+
+  List<ReactElement> file_menu_save_design_local_storage_options() => [
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+          ..display = 'Save design in localStorage on every edit'
+          ..tooltip = '''\
+On every edit, save current design in localStorage (in your web browser).
+
+Disabling this minimizes the time needed to render large designs.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
+          ..key = 'save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+          ..display = 'Save design in localStorage before exiting'
+          ..tooltip = '''\
+Before exiting, save current design in localStorage (in your web browser). 
+This is much faster than saving on every edit, but if the browser crashes, 
+all changes made will be lost, so it is not as safe as storing on every edit.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
+          ..key = 'save-dna-design-in-local-storage-on-exit')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
+          ..display = 'Do not save design in localStorage'
+          ..tooltip = '''\
+Never saves the design in localStorage.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..key = 'never-save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+          ..display = 'Save design in localStorage periodically'
+          ..tooltip = '''\
+Every <period> seconds, save current design in localStorage (in your web browser). 
+Also saves before exiting.
+This is safer than never saving, or saving only before exiting, but will not save edits
+that occurred between the last edit and a browser crash.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
+          ..key = 'save-dna-design-in-local-storage-periodically')(),
+        (MenuNumber()
+          ..display = 'period (seconds)'
+          ..min_value = 1
+          ..default_value = props.local_storage_design_choice.period_seconds
+          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+          ..tooltip = 'Number of seconds between saving design to localStorage.'
+          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
+      ];
 }
 
 request_load_file_from_file_chooser(

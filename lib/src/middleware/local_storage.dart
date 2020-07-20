@@ -6,6 +6,7 @@ import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/app_ui_state.dart';
 import 'package:scadnano/src/serializers.dart';
+import 'package:scadnano/src/state/local_storage_design_choice.dart';
 
 import '../json_serializable.dart';
 import '../state/app_state.dart';
@@ -34,7 +35,7 @@ const String _LOCAL_STORAGE_PREFIX = "scadnano:";
 save(AppState state, Storable storable) {
   String storable_key = storable.key_name;
   String value_string;
-  if ((storable == Storable.design) && (state.ui_state.save_design_in_local_storage)) {
+  if (storable == Storable.design) {
     var design = state.design;
     value_string = json_encode(design);
   } else if (storable == Storable.app_ui_state_storables) {
@@ -111,11 +112,21 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
       save_async(state_after, [Storable.app_ui_state_storables]);
     }
   }
+  // Store if this is StorableAction, unless it's changing Design and we don't want to store on edits.
   if (action is actions.StorableAction) {
-    save_async(state_after, action.storables());
+    if (action is actions.DesignChangingAction) {
+      if (store.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit) {
+        save_async(state_after, action.storables());
+      }
+    } else {
+      save_async(state_after, action.storables());
+    }
   }
-  // if user selects to save DNADesign on every edit, we should save even before they've made an edit
-  if (action is actions.SaveDesignInLocalStorageSet && action.save_design_in_local_storage) {
+  // if user selects to save DNADesign on every edit or periodically,
+  // we should save even before they've made an edit
+  if (action is actions.LocalStorageDesignChoiceSet &&
+      (action.choice.option == LocalStorageDesignOption.on_edit ||
+          action.choice.option == LocalStorageDesignOption.periodic)) {
     save_storable_async(state_after, Storable.design);
   }
 }
