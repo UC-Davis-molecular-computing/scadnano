@@ -3,4 +3,5 @@
 cp .git/index .git/index-copy
 rm .git/index
 mv .git/index-copy .git/index
-
+# go to sleep for 2 seconds to let Dropbox sync, which seems to help
+sleep 2
