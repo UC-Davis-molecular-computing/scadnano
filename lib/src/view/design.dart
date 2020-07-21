@@ -616,7 +616,7 @@ class DesignViewComponent {
     assert(!(mouse_pos == null && event == null));
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
       if (!app.state.design.grid.is_none()) {
-        bool invert_y = app.state.ui_state.invert_y_axis;
+        bool invert_y = app.state.ui_state.invert_yz;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.design.grid, invert_y,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {

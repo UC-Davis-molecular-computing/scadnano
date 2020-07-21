@@ -42,7 +42,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
     int first_helix_view_order = 0;
     if (props.helices.isNotEmpty) {
       int min_helix_idx = props.helices.keys.reduce(min);
-      if (props.helices[min_helix_idx].invert_y_axis) {
+      if (props.helices[min_helix_idx].invert_yz) {
         first_helix_view_order = props.helices.length - 1;
       }
     }

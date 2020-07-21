@@ -230,7 +230,7 @@ Version get_version(String version_str) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<int, Helix> helices, Grid grid,
+Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_yz, Map<int, Helix> helices, Grid grid,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -268,7 +268,7 @@ Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_y_axis, Map<in
     helix = helix.rebuild((b) => b
       ..geometry.replace(geometry)
       ..svg_position_ = Point<num>(x, y)
-      ..invert_y_axis = invert_y_axis);
+      ..invert_yz = invert_yz);
     prev_helix = helix;
 
     new_helices[helix.idx] = helix;
@@ -487,7 +487,9 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y) {
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
   if (invert_y) {
-    point = Point<num>(point.x, -point.y);
+    num z = point.x; // note Point.x is its name in the math library, but in the side view it means z
+    num y = point.y;
+    point = Point<num>(-z, -y);
   }
   return point * 2 * radius;
 }
@@ -618,35 +620,34 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
   }
   if (invert_y) {
     v = -v;
+    h = -h;
   }
   return GridPosition(h, v);
 }
 
 GridPosition position3d_to_grid(Position3D position, Grid grid) {
-//  Point<num> svg_coord = position3d_to_main_view_svg(position);
+  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
+  // doesn't depend on whether y is going up or down
   Point<num> svg_coord = position3d_to_side_view_svg(position, false);
   GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord, false);
   return grid_position;
 }
 
 Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
-//  GridPosition grid_position = side_view_svg_to_grid(grid_position, svg_coord);
+  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
+  // doesn't depend on whether y is going up or down
   Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid, false);
   Position3D position3d = svg_side_view_to_position3d(svg_coord, false);
   return position3d;
 }
 
-Point<num> position3d_to_main_view_svg(Geometry geometry, Position3D position) => Point<num>(
-    position.x * geometry.nm_to_main_svg_pixels,
-    (position.y / geometry.distance_between_helices_nm) * geometry.distance_between_helices_main_svg);
-
 Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y) => Point<num>(
-      position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5,
+      position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
       position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
     );
 
 Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y) => Position3D(
-      z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5,
+      z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
       y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
       x: 0,
     );
@@ -1250,7 +1251,7 @@ bool bboxes_intersect_generalized(
 // unit testing utilities
 
 /// Returns the default state of the app.
-AppState default_state({Grid grid=Grid.none}) {
+AppState default_state({Grid grid = Grid.none}) {
   var design = Design((b) => b..grid = grid);
   var ui_state = AppUIState.from_design(design);
   var state = (DEFAULT_AppStateBuilder

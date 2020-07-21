@@ -568,7 +568,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_y_axis = false]) {
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_yz = false]) {
     if (json_map == null) return null;
 
     var design_builder = DesignBuilder();
@@ -607,7 +607,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (helix_builder.idx == null) {
         helix_builder.idx = idx;
       }
-      helix_builder.invert_y_axis = invert_y_axis;
+      helix_builder.invert_yz = invert_yz;
       helix_builder.grid = design_builder.grid;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
@@ -675,7 +675,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, invert_y_axis, helices, design_builder.grid);
+    helices = util.helices_assign_svg(geometry, invert_yz, helices, design_builder.grid);
     design_builder.helices.replace(helices);
 
     // modifications in whole design

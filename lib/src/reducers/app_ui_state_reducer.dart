@@ -103,7 +103,7 @@ num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet 
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool invert_y_axis_reducer(bool _, actions.InvertYAxisSet action) => action.invert_y_axis;
+bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
@@ -207,8 +207,8 @@ AppUIStateStorable app_ui_state_storable_reducer(AppUIStateStorable storables, a
               storables.major_tick_width_font_size, action)
       ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
           storables.show_mismatches, action)
-      ..invert_y_axis =
-          TypedReducer<bool, actions.InvertYAxisSet>(invert_y_axis_reducer)(storables.invert_y_axis, action)
+      ..invert_yz =
+          TypedReducer<bool, actions.InvertYZSet>(invert_yz_reducer)(storables.invert_yz, action)
       ..warn_on_exit_if_unsaved =
           TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
               storables.warn_on_exit_if_unsaved, action)

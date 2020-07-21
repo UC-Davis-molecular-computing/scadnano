@@ -110,7 +110,7 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     }
 
     Position3D pos3d = props.helix.position3d();
-    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_y_axis);
+    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_yz);
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }
