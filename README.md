@@ -101,7 +101,7 @@ so repeatedly saving the file will change its name every time.
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
-**Security settings preventing saving:** Some users have reported that in Chrome, they will be unable to save the file, which we have tracked as an [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402). However, it's not straightforward to reproduce that error. If you have trouble with this, try setting your Chrome "Safe Browsing" settings from "Enhanced protection" to "Standard protection". This is in Chrome Settings (⋮ symbol in the top right), under "Security". (See the [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402) for a screenshot.)
+**Security settings preventing saving:** Some users have reported that in Chrome, they will be unable to save the file, which we have tracked as an [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402). However, it's not straightforward to reproduce that error. If you have trouble with this, try setting your Chrome "Safe Browsing" settings from "Enhanced protection" to "Standard protection". This is in Chrome Settings (listed under ⋮ symbol in the top right), under "Security". (See the [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402) for a screenshot.)
 
 
 ## Stable and development versions
