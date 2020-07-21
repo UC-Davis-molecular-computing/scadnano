@@ -563,20 +563,20 @@ abstract class SetOnlyDisplaySelectedHelices
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // invert y-axis
 
-abstract class InvertYAxisSet
+abstract class InvertYZSet
     with BuiltJsonSerializable
     implements
         AppUIStateStorableAction,
         SvgPngCacheInvalidatingAction,
-        Built<InvertYAxisSet, InvertYAxisSetBuilder> {
-  bool get invert_y_axis;
+        Built<InvertYZSet, InvertYZSetBuilder> {
+  bool get invert_yz;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InvertYAxisSet({bool invert_y_axis}) = _$InvertYAxisSet._;
+  factory InvertYZSet({bool invert_yz}) = _$InvertYZSet._;
 
-  InvertYAxisSet._();
+  InvertYZSet._();
 
-  static Serializer<InvertYAxisSet> get serializer => _$invertYAxisSetSerializer;
+  static Serializer<InvertYZSet> get serializer => _$invertYZSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

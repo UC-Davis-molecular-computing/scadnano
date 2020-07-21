@@ -72,7 +72,7 @@ abstract class AppUIStateStorable
 
   String get loaded_script_filename;
 
-  bool get invert_y_axis;
+  bool get invert_yz;
 
   bool get warn_on_exit_if_unsaved;
 
@@ -108,7 +108,7 @@ abstract class AppUIStateStorable
     b.display_major_tick_widths_all_helices = false;
     b.loaded_filename = default_filename();
     b.loaded_script_filename = default_script_filename();
-    b.invert_y_axis = false;
+    b.invert_yz = false;
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_grid_coordinates_side_view = false;
@@ -233,7 +233,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   BuiltSet<EditModeChoice> get edit_modes => storables.edit_modes;
 
-  bool get invert_y_axis => storables.invert_y_axis;
+  bool get invert_yz => storables.invert_yz;
 
   bool get warn_on_exit_if_unsaved => storables.warn_on_exit_if_unsaved;
 

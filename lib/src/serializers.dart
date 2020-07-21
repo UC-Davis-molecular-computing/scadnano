@@ -202,7 +202,7 @@ part 'serializers.g.dart';
   SetIsZoomAboveThreshold,
   DNASequencePredefined,
   SetOnlyDisplaySelectedHelices,
-  InvertYAxisSet,
+  InvertYZSet,
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
   MajorTickOffsetFontSizeSet,

@@ -72,7 +72,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,
-    bool invert_y_axis = false,
+    bool invert_yz = false,
     Position3D position = null,
     Point<num> svg_position = null,
   }) {
@@ -93,7 +93,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..roll = roll
       ..pitch = pitch
       ..yaw = yaw
-      ..invert_y_axis = invert_y_axis
+      ..invert_yz = invert_yz
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
@@ -124,7 +124,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   Point<num> get svg_position_;
 
   Point<num> get svg_position =>
-      invert_y_axis ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
+      invert_yz ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;
@@ -146,7 +146,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
 
-  bool get invert_y_axis;
+  bool get invert_yz;
 
   // If regular or periodic distances are used, this is the starting offset
   int get major_tick_start;
@@ -165,8 +165,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @memoized
   Position3D get default_position {
     num x = min_offset * geometry.rise_per_base_pair;
-    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_y_axis);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_y_axis).rebuild((b) => b..x = x);
+    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_yz);
+    Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_yz).rebuild((b) => b..x = x);
     return position3d;
   }
 
@@ -363,7 +363,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
 
-  num svg_height() => constants.BASE_HEIGHT_SVG * 2; //(invert_y_axis ? -2 : 2);
+  num svg_height() => constants.BASE_HEIGHT_SVG * 2; //(invert_yz ? -2 : 2);
 
   int num_bases() => this.max_offset - this.min_offset;
 
