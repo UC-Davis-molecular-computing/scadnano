@@ -15916,7 +15916,7 @@ _.b=b
 _.c=c
 _.d=d},
 oA:function(a){var t,s
-a.gbd().b="0.10.1"
+a.gbd().b="0.10.2"
 a.gbd().c=C.A
 t=N.a92(10.5,1,0.5,150,0.332)
 t.toString
@@ -15936,7 +15936,7 @@ t=new N.eq()
 N.oA(t)
 s=u.N
 r=u.z
-q=H.k(E.h0(d1,"version","0.10.1",C.r,c2,c2,s,r))
+q=H.k(E.h0(d1,"version","0.10.2",C.r,c2,c2,s,r))
 t.gbd().b=q
 E.ahh(t.gbd().b).ad(0,E.ahh("0.9.0"))
 q=u.q
@@ -38069,7 +38069,7 @@ gFw:function(){var t=this.e,s=u.S
 return J.dp(t.ga6(t),new N.Su(),s).bb(0,H.ep(P.yR(),s))},
 z1:function(a){return this.a1(new N.Sj(u.mX.a(a)))},
 FX:function(a){return this.a1(new N.Sw(J.aoB(u.mX.a(a).c)))},
-dP:function(a8){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this,a2="major_tick_distance",a3=u.N,a4=u.z,a5=P.as(["version","0.10.1"],a3,a4),a6=a1.r,a7=H.C(a6)
+dP:function(a8){var t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1=this,a2="major_tick_distance",a3=u.N,a4=u.z,a5=P.as(["version","0.10.2"],a3,a4),a6=a1.r,a7=H.C(a6)
 a5.a5(0,S.db(a6.b,a6.a,a7.c,a7.Q[1]))
 a7=a1.b
 a5.v(0,"grid",a7.a)
