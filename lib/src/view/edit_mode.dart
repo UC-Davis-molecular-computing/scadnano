@@ -32,14 +32,12 @@ class EditModeComponent extends UiComponent2<EditModeProps> with RedrawCounterMi
       ...[for (var choice in EditModeChoice.values) this._button_for_choice(choice)],
     ]);
   }
-  static button_response(EditModeChoice mode){
-    app.dispatch(actions.EditModeToggle(mode));
-    app.dispatch(actions.SelectionsClear());
-  }
-
   ReactElement _button_for_choice(EditModeChoice mode) {
     return (Dom.button()
-      ..onClick = ((_) => button_response(mode))
+      ..onClick = (_) {
+        app.dispatch(actions.EditModeToggle(mode));
+        app.dispatch(actions.SelectionsClear());
+      }
       ..className = 'mode-button ' +
           (props.modes.contains(mode) ? 'edit-mode-button-selected' : 'edit-mode-button-unselected')
       // TODO(benlee12): Find out how to only added this id for testing and not production if inefficient.
