@@ -1,5 +1,5 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/view/react_bootstrap.dart';
+import '../view/react_bootstrap.dart';
 
 part 'menu_dropdown_item.over_react.g.dart';
 

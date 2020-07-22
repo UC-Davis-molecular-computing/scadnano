@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/reducers/util_reducer.dart';
-import 'package:scadnano/src/state/grid.dart';
+import '../state/app_state.dart';
+import '../reducers/util_reducer.dart';
+import '../state/grid.dart';
 import '../state/design.dart';
 import '../actions/actions.dart' as actions;
 import 'helices_reducer.dart';

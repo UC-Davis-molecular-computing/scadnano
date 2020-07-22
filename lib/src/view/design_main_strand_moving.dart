@@ -1,13 +1,13 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/reducers/strands_reducer.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/geometry.dart';
 
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/view/design_main_strand_dna_end_moving.dart';
+import '../reducers/strands_reducer.dart';
+import '../state/domain.dart';
+import '../state/dna_end.dart';
+import '../state/geometry.dart';
+import '../state/helix.dart';
+import '../state/strand.dart';
+import '../view/design_main_strand_dna_end_moving.dart';
 
 import 'design_main_strand_paths.dart';
 

@@ -1,10 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/view/design_main_strand_modification_domain.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
+import '../state/loopout.dart';
+import '../state/substrand.dart';
+import '../view/design_main_strand_modification_domain.dart';
 
 import '../state/strand.dart';
 import '../state/helix.dart';

@@ -4,9 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/potential_vertical_crossover.dart';
-import 'package:scadnano/src/state/selectable.dart';
+import '../state/loopout.dart';
+import '../state/potential_vertical_crossover.dart';
+import '../state/selectable.dart';
 import 'package:tuple/tuple.dart';
 import 'geometry.dart';
 import 'crossover.dart';

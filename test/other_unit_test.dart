@@ -1,8 +1,7 @@
 import 'dart:convert';
-
-import 'package:scadnano/src/state/design.dart';
 import 'package:test/test.dart';
 
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/util.dart' as util;
 
 main() {

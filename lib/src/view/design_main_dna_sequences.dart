@@ -1,13 +1,13 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:scadnano/src/app.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/util.dart';
+import '../actions/actions.dart' as actions;
+import '../app.dart';
+import '../state/helix.dart';
+import '../util.dart';
 
 import '../state/strand.dart';
 import 'pure_component.dart';
-import 'package:scadnano/src/constants.dart' as constants;
+import '../constants.dart' as constants;
 import 'design_main_dna_sequence.dart';
 
 part 'design_main_dna_sequences.over_react.g.dart';

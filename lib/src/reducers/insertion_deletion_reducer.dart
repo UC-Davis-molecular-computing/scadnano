@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/actions/actions.dart' as actions;
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import '../actions/actions.dart' as actions;
+import '../state/domain.dart';
+import '../state/strand.dart';
+import '../state/substrand.dart';
 
 Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionAction action) {
   Domain substrand = action.domain;

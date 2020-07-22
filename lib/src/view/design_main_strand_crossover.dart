@@ -2,7 +2,7 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/geometry.dart';
+import '../state/geometry.dart';
 
 import '../state/context_menu.dart';
 import '../state/helix.dart';

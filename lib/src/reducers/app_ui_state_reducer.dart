@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/reducers/context_menu_reducer.dart';
-import 'package:scadnano/src/state/example_designs.dart';
-import 'package:scadnano/src/state/grid_position.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
+import '../reducers/context_menu_reducer.dart';
+import '../state/example_designs.dart';
+import '../state/grid_position.dart';
+import '../state/local_storage_design_choice.dart';
 
 import '../state/app_state.dart';
 import '../state/app_ui_state.dart';

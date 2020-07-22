@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/dialog.dart';
+import '../state/dialog.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';

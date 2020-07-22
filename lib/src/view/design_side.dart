@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
+import '../state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';

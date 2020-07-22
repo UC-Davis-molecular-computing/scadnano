@@ -4,7 +4,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
-import 'package:scadnano/src/state/geometry.dart';
+import '../state/geometry.dart';
 
 import '../state/dialog.dart';
 import '../state/dna_end.dart';

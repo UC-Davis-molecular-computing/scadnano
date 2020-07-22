@@ -3,10 +3,10 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import '../state/context_menu.dart';
+import '../state/edit_mode.dart';
+import '../state/grid.dart';
+import '../state/position3d.dart';
 
 import '../state/mouseover_data.dart';
 import '../app.dart';

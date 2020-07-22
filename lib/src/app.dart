@@ -9,13 +9,13 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
-import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 
-import 'package:scadnano/src/middleware/throttle.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
+import 'middleware/all_middleware.dart';
+import 'middleware/throttle.dart';
+import 'state/dna_ends_move.dart';
+import 'state/local_storage_design_choice.dart';
+import 'state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';

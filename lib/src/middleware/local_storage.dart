@@ -4,9 +4,9 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/serializers.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
+import '../state/app_ui_state.dart';
+import '../serializers.dart';
+import '../state/local_storage_design_choice.dart';
 
 import '../json_serializable.dart';
 import '../state/app_state.dart';

@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
-import 'package:scadnano/src/actions/actions.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
+import '../actions/actions.dart';
+import '../state/local_storage_design_choice.dart';
 
 import '../serializers.dart';
 import 'context_menu.dart';

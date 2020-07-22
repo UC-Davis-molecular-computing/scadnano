@@ -3,10 +3,10 @@ import 'dart:html';
 import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/select_mode.dart';
+import '../state/app_state.dart';
+import '../state/design.dart';
+import '../state/edit_mode.dart';
+import '../state/select_mode.dart';
 
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;

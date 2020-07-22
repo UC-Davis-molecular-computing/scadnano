@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:react/react_client.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/geometry.dart';
 
+import '../state/geometry.dart';
 import '../state/grid.dart';
 import 'design_main_helix.dart';
 import '../state/helix.dart';

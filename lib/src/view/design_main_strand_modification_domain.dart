@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/modification.dart';
+import '../state/modification.dart';
 
 import '../state/strand.dart';
 import '../state/helix.dart';

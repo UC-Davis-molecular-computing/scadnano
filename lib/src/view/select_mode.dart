@@ -1,6 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
+import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';

@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/adjust_grid_position.dart';
-import 'package:scadnano/src/middleware/export_cadnano_or_codenano_file.dart';
+import '../middleware/adjust_grid_position.dart';
+import '../middleware/export_cadnano_or_codenano_file.dart';
 
 import 'assign_dna.dart';
 import 'check_mirror_strands_legal.dart';

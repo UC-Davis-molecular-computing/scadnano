@@ -4,9 +4,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import 'package:scadnano/src/state/design.dart';
 
-import '../actions/actions.dart';
+import '../actions/actions.dart' as actions;
+import '../state/design.dart';
 import '../state/edit_mode.dart';
 import '../state/grid.dart';
 import '../state/potential_vertical_crossover.dart';
@@ -85,7 +85,7 @@ mixin DesignMainPropsMixin on UiProps {
   num major_tick_width_font_size;
   bool drawing_potential_crossover;
   String dna_sequence_png_uri;
-  Action disable_png_cache_until_action_completes;
+  actions.Action disable_png_cache_until_action_completes;
   bool is_zoom_above_threshold;
   bool only_display_selected_helices;
   bool helix_change_apply_to_all;

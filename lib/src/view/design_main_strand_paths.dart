@@ -3,15 +3,11 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode_state.dart';
-import 'package:scadnano/src/state/selectable.dart';
 
-// import '../app.dart';
+import '../state/context_menu.dart';
+import '../state/dna_end.dart';
+import '../state/geometry.dart';
+import '../state/helix.dart';
 import '../state/design.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
@@ -25,18 +21,6 @@ import 'design_main_strand_crossover.dart';
 import 'pure_component.dart';
 
 part 'design_main_strand_paths.over_react.g.dart';
-
-//UiFactory<_$DesignMainStrandPathsProps> ConnectedDesignMainStrandPaths =
-//    connect<AppState, DesignMainStrandPathsProps>(
-//  mapStateToProps: (state) => (DesignMainStrandPaths()
-//    ..helices = state.design.helices
-//    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
-//    ..selectables_store = state.ui_state.selectables_store
-//    ..select_mode_state = state.ui_state.select_mode_state
-//    ..edit_modes = state.ui_state.edit_modes
-//    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
-//    ..moving_dna_ends = state.ui_state.moving_dna_ends),
-//)(DesignMainStrandPaths);
 
 UiFactory<DesignMainStrandPathsProps> DesignMainStrandPaths = _$DesignMainStrandPaths;
 

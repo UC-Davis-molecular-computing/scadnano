@@ -7,7 +7,7 @@ import 'package:react/react_client/react_interop.dart';
 // import 'package:react/react_client.dart';
 // import 'package:redux/redux.dart';
 import 'package:scadnano/src/app.dart';
-// import 'package:scadnano/src/reducers/app_state_reducer.dart';
+// import '../reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
 import 'package:scadnano/src/view/edit_mode.dart';

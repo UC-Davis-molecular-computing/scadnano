@@ -4,13 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/grid.dart';
+import '../state/design.dart';
+import '../state/grid.dart';
 
 import '../json_serializable.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
-import 'package:scadnano/src/constants.dart' as constants;
+import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {

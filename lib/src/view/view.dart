@@ -8,7 +8,7 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/components.dart' as over_react_components;
-import 'package:scadnano/src/view/edit_and_select_modes.dart';
+import '../view/edit_and_select_modes.dart';
 
 import '../state/app_state.dart';
 import 'design.dart';

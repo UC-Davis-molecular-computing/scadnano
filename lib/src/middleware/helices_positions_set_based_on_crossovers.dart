@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import '../state/crossover.dart';
+import '../state/design.dart';
+import '../state/domain.dart';
+import '../state/geometry.dart';
+import '../state/helix.dart';
+import '../state/position3d.dart';
 import 'package:tuple/tuple.dart';
 
 import '../actions/actions.dart' as actions;

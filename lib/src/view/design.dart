@@ -13,14 +13,14 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
 
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strand_creation.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+import '../state/domain.dart';
+import '../state/dna_ends_move.dart';
+import '../state/edit_mode.dart';
+import '../state/helix.dart';
+import '../state/select_mode.dart';
+import '../state/strand.dart';
+import '../state/strand_creation.dart';
+import '../state/strands_move.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';

@@ -1,9 +1,9 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+import '../state/geometry.dart';
+import '../state/helix.dart';
+import '../state/strands_move.dart';
 
 import '../state/app_state.dart';
 import 'design_main_strand_moving.dart';

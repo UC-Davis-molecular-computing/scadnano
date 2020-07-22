@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/position3d.dart';
-import 'package:scadnano/src/state/unused_fields.dart';
+import '../state/design.dart';
+import '../state/position3d.dart';
+import '../state/unused_fields.dart';
 
 import '../json_serializable.dart';
 import '../serializers.dart';

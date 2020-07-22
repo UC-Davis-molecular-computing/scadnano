@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/position3d.dart';
+import '../state/position3d.dart';
 
 import '../app.dart';
 import '../state/grid.dart';

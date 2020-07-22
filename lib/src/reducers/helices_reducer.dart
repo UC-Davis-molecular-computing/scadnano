@@ -2,14 +2,14 @@ import 'dart:math';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/reducers/util_reducer.dart';
-import 'package:scadnano/src/state/app_state.dart';
+import '../reducers/util_reducer.dart';
+import '../state/app_state.dart';
 
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/strand.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
+import '../state/geometry.dart';
+import '../state/grid.dart';
+import '../state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import '../state/helix.dart';
 import '../actions/actions.dart' as actions;

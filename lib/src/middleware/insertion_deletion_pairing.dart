@@ -1,6 +1,6 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
 
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';

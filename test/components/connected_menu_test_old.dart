@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:test/test.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
 import 'package:react/react_client/react_interop.dart';
+
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/view/menu.dart';
-import 'package:test/test.dart';
-
 import 'package:scadnano/src/util.dart' as util;
+
 import '../utils.dart' as utils;
 
 AppState initializeTestState() {

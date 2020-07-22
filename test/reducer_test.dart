@@ -2,16 +2,14 @@
 // import 'dart:io';
 
 import 'dart:math';
-
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:test/test.dart';
-
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
@@ -40,6 +38,7 @@ import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/extension_methods.dart';
 import 'package:scadnano/src/util.dart' as util;
 import 'package:scadnano/src/constants.dart' as constants;
+
 import 'utils.dart';
 
 main() {

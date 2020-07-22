@@ -1,6 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/state/unused_fields.dart';
+import '../state/unused_fields.dart';
 
 import '../constants.dart' as constants;
 import '../serializers.dart';

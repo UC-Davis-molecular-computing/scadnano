@@ -1,7 +1,7 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
+import '../state/design.dart';
 
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';

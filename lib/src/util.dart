@@ -14,10 +14,10 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/middleware/export_svg.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/view/design.dart';
+import 'middleware/export_svg.dart';
+import 'state/app_state.dart';
+import 'state/app_ui_state.dart';
+import 'view/design.dart';
 import 'package:tuple/tuple.dart';
 import 'package:quiver/iterables.dart' as quiver;
 

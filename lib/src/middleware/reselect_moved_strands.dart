@@ -1,12 +1,12 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/helix.dart';
+import '../state/design.dart';
+import '../state/helix.dart';
 
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+import '../state/domain.dart';
+import '../state/dna_end.dart';
+import '../state/strand.dart';
+import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 

@@ -1,15 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/crossover.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/linker.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/modification.dart';
-import 'package:scadnano/src/state/selectable.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import '../state/app_state.dart';
+import '../state/domain.dart';
+import '../state/crossover.dart';
+import '../state/dna_end.dart';
+import '../state/linker.dart';
+import '../state/loopout.dart';
+import '../state/modification.dart';
+import '../state/selectable.dart';
+import '../state/strand.dart';
+import '../state/substrand.dart';
 
 import '../actions/actions.dart' as actions;
 
