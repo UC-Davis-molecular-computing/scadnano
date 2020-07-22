@@ -1155,8 +1155,7 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_deletion_design =
-      Design.from_json(jsonDecode(simple_helix_with_deletion_json));
+  Design simple_helix_with_deletion_design = Design.from_json(jsonDecode(simple_helix_with_deletion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1275,8 +1274,7 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_insertion_design =
-      Design.from_json(jsonDecode(simple_helix_with_insertion_json));
+  Design simple_helix_with_insertion_design = Design.from_json(jsonDecode(simple_helix_with_insertion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1758,8 +1756,7 @@ main() {
   ]
  }
   ''';
-  Design two_helices_join_inner_strands =
-      Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
+  Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
 
@@ -2575,8 +2572,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo().rebuild(
-        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
+    expected_undo_redo = UndoRedo()
+        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
     expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2678,8 +2675,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo().rebuild(
-        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
+    expected_undo_redo = UndoRedo()
+        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
     expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2720,8 +2717,7 @@ main() {
 ]
 }
 ''';
-  Design simple_helix_no_seq_smaller_design =
-      Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
+  Design simple_helix_no_seq_smaller_design = Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
   test('Dragging end less than helix min offset (see issue #77)', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
     Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
@@ -3051,14 +3047,15 @@ main() {
       expect(final_state.ui_state.edit_modes, edit_modes);
     });
   });
-   test('clicking_out_of_select_mode_unselects_strands', () {
-     SelectablesStore edit_mode_store = SelectablesStore().select(two_helices_design.strands[0]);
-     AppState initial_state = app_state_from_dna_design(two_helices_design).rebuild((b) => b
-     ..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
-     initial_state.ui_state.selectables_store.select(two_helices_design.strands[0]);
-     AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.pencil));
-     expect(final_state.ui_state.selectables_store, edit_mode_store.unselect(two_helices_design.strands[0]));
-      });
+
+  test('clicking_out_of_select_mode_unselects_strands', () {
+    SelectablesStore edit_mode_store = SelectablesStore().select(two_helices_design.strands[0]);
+    AppState initial_state = app_state_from_design(two_helices_design)
+        .rebuild((b) => b..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
+    initial_state.ui_state.selectables_store.select(two_helices_design.strands[0]);
+    AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.pencil));
+    expect(final_state.ui_state.selectables_store, edit_mode_store.unselect(two_helices_design.strands[0]));
+  });
 
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
@@ -4624,8 +4621,7 @@ main() {
       ]
     }
     ''';
-    Design two_helices_with_empty_offsets =
-        Design.from_json(jsonDecode(two_helices_with_empty_offsets_json));
+    Design two_helices_with_empty_offsets = Design.from_json(jsonDecode(two_helices_with_empty_offsets_json));
     AppState state = app_state_from_design(two_helices_with_empty_offsets);
     StrandsMove strandsMove = null;
 
@@ -5879,8 +5875,7 @@ main() {
       ]
     }
     ''';
-    Design many_helices_modification_design =
-        Design.from_json(json.decode(many_helices_modification_json));
+    Design many_helices_modification_design = Design.from_json(json.decode(many_helices_modification_json));
     AppState initial_state = app_state_from_design(many_helices_modification_design);
 
     Crossover crossover23 =
@@ -5994,8 +5989,7 @@ main() {
 
       expect_app_state_equal(state, expected_state);
 
-      Crossover crossover56 =
-          expected_state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+      Crossover crossover56 = expected_state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
       // Delete crossover between 5 and 6.
       //    B     Cy3   B
       // 0  [-----------------
