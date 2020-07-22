@@ -617,13 +617,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         throw IllegalDNADesignError(
             'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
       }
-      // don't want to do this while codenano has different version numbers
-//      if (position_x_z_should_swap && grid_is_none) {
-//        // prior to version 0.10.0, x and z had the opposite role
-//        num swap = helix_builder.position_.x;
-//        helix_builder.position_.x = helix_builder.position_.z;
-//        helix_builder.position_.z = swap;
-//      }
       helix_builders.add(helix_builder);
       idx++;
     }

@@ -79,6 +79,52 @@ Reducer<Helix> _helix_individual_reducers = combineReducers([
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// change idx
+
+Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxsChange action) {
+  var helices = design.helices.toMap();
+  var strands = design.strands.toList();
+
+  // change helices
+  for (int old_idx in action.idx_replacements.keys) {
+    int new_idx = action.idx_replacements[old_idx];
+    var helix = helices[old_idx].rebuild((b) => b..idx = new_idx);
+    helices.remove(old_idx);
+    helices[new_idx] = helix;
+  }
+
+
+  // change helix idx refs on domains
+  for (int s = 0; s < strands.length; s++) {
+    var strand = strands[s];
+    var substrands = strand.substrands.toList();
+    bool changed_strand = false;
+    for (int d = 0; d < strand.substrands.length; d++) {
+      var substrand = strand.substrands[d];
+      if (substrand is Domain) {
+        Domain domain = substrand as Domain;
+        int new_idx = action.idx_replacements[domain.helix];
+        if (new_idx != null) {
+          domain = domain.rebuild((b) => b..helix = new_idx);
+          substrands[d] = domain;
+          changed_strand = true;
+        }
+      }
+    }
+    if (changed_strand) {
+      strands[s] = strand.rebuild((b) => b..substrands.replace(substrands));
+    }
+  }
+
+  //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
+
+
+  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, design.grid);
+  design = design.rebuild((b) => b..helices.replace(helices)..strands.replace(strands));
+  return design;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change min/max offsets
 
 Helix helix_offset_change_reducer(Helix helix, actions.HelixOffsetChange action) =>

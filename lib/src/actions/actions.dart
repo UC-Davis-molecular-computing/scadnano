@@ -141,7 +141,7 @@ abstract class BatchAction
 
   /************************ begin BuiltValue boilerplate ************************/
   factory BatchAction(Iterable<UndoableAction> actions) =>
-      BatchAction.from((b) => b..actions.replace(BuiltList<UndoableAction>(actions)));
+      BatchAction.from((b) => b..actions.replace(actions));
 
   factory BatchAction.from([void Function(BatchActionBuilder) updates]) = _$BatchAction;
 
@@ -1220,6 +1220,25 @@ abstract class HelixMajorTickPeriodicDistancesChangeAll
 
   static Serializer<HelixMajorTickPeriodicDistancesChangeAll> get serializer =>
       _$helixMajorTickPeriodicDistancesChangeAllSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helix change min/max offsets
+
+abstract class HelixIdxsChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<HelixIdxsChange, HelixIdxsChangeBuilder> {
+  BuiltMap<int, int> get idx_replacements;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixIdxsChange({Map<int,int> idx_replacements}) =>
+      HelixIdxsChange.from((b) => b..idx_replacements.replace(idx_replacements));
+
+  factory HelixIdxsChange.from([void Function(HelixIdxsChangeBuilder) updates]) = _$HelixIdxsChange;
+
+  HelixIdxsChange._();
+
+  static Serializer<HelixIdxsChange> get serializer => _$helixIdxsChangeSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

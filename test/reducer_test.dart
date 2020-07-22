@@ -3519,7 +3519,6 @@ main() {
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
-      int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
 
       mouseoverParams = MouseoverParams(1, 13, true);
@@ -3585,10 +3584,6 @@ main() {
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
-
-      Helix helix = two_helices_design.helices[1];
-      int offset = 12;
-      Domain domain = two_helices_design.strands[2].domains()[0];
 
       state = app_state_reducer(state, MouseoverDataClear());
 

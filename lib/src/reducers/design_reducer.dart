@@ -60,8 +60,12 @@ Design design_error_message_set_reducer(Design design, actions.ErrorMessageSet a
 // whole: operate on the whole DNADesign
 // global: need the whole AppState
 GlobalReducer<Design, AppState> design_whole_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<Design, AppState, actions.HelixIdxsChange>(helix_idx_change_reducer),
   TypedGlobalReducer<Design, AppState, actions.HelixAdd>(helix_add_design_reducer),
   TypedGlobalReducer<Design, AppState, actions.HelixRemove>(helix_remove_design_global_reducer),
   TypedGlobalReducer<Design, AppState, actions.HelixRemoveAllSelected>(
       helix_remove_all_selected_design_global_reducer),
 ]);
+
+
+

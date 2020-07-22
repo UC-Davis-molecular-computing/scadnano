@@ -14,8 +14,6 @@ import '../util.dart' as util;
 
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
   Future<void> dialog_helix_adjust_length() async {
-    int helix_idx = helix.idx;
-
     var dialog = Dialog(title: 'adjust helix length', items: [
       DialogNumber(label: 'minimum', value: helix.min_offset),
       DialogNumber(label: 'maximum', value: helix.max_offset),
@@ -38,8 +36,20 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
       app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
     } else {
       app.dispatch(
-          actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
+          actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset, max_offset: max_offset));
     }
+  }
+
+  Future<void> dialog_helix_adjust_idx() async {
+    var dialog = Dialog(title: 'adjust helix index', items: [
+      DialogNumber(label: 'new index', value: helix.idx),
+    ]);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    int new_idx = (results[0] as DialogNumber).value;
+
+    app.dispatch(actions.HelixIdxsChange(idx_replacements: {helix.idx: new_idx}));
   }
 
   Future<void> dialog_helix_adjust_roll() async {
@@ -277,6 +287,10 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
   }
 
+  helix_adjust_idx() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_idx);
+  }
+
   helix_adjust_major_tick_marks() {
     app.disable_keyboard_shortcuts_while(dialog_helix_adjust_major_tick_marks);
   }
@@ -307,6 +321,10 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     ContextMenuItem(
       title: 'adjust length',
       on_click: helix_adjust_length,
+    ),
+    ContextMenuItem(
+      title: 'adjust index',
+      on_click: helix_adjust_idx,
     ),
     ContextMenuItem(
       title: 'adjust tick marks',
