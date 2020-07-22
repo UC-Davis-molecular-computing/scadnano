@@ -7,6 +7,15 @@ html, body {
     font-family: sans-serif;
 }
 
+/* https://stackoverflow.com/questions/15904416/placing-a-link-inside-of-a-tooltip */
+.parent .tooltip {
+    display: none;
+}
+
+.parent:hover .tooltip {
+    display: block;
+}
+
 /************************************************
 ** BEGIN layout
 ************************************************/
