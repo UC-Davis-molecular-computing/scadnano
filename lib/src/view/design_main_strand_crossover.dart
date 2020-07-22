@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/context_menu.dart';
 import '../state/helix.dart';
@@ -32,6 +33,7 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Domain next_domain;
   bool selected;
   BuiltMap<int, Helix> helices;
+  Geometry geometry;
 }
 
 class DesignMainStrandCrossoverProps = UiProps with DesignMainStrandCrossoverPropsMixin;
@@ -66,7 +68,7 @@ class DesignMainStrandCrossoverComponent
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    var path = crossover_path_description(prev_substrand, next_substrand, props.helices);
+    var path = crossover_path_description(prev_substrand, next_substrand, props.helices, props.geometry);
     var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 

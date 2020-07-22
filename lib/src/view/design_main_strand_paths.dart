@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dna_end.dart';
 import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/select_mode_state.dart';
 import 'package:scadnano/src/state/selectable.dart';
@@ -54,6 +55,7 @@ mixin DesignMainStrandPathsProps on UiProps {
   String strand_tooltip;
   bool only_display_selected_helices;
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
+  Geometry geometry;
 }
 
 class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsProps> with PureComponent {
@@ -159,6 +161,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           ..selected = props.selected_crossovers_in_strand.contains(crossover)
           ..prev_domain = prev_ss
           ..next_domain = next_ss
+          ..geometry = props.geometry
           ..key = 'crossover-paths-${idx_crossover - 1}')());
       }
     }
@@ -168,14 +171,12 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 }
 
 String crossover_path_description(
-  Domain prev_substrand,
-  Domain next_substrand,
-  BuiltMap<int, Helix> helices,
-) {
+    Domain prev_substrand, Domain next_substrand, BuiltMap<int, Helix> helices, Geometry geometry) {
   var prev_helix = helices[prev_substrand.helix];
   var next_helix = helices[next_substrand.helix];
   var start_svg = prev_helix.svg_base_pos(prev_substrand.offset_3p, prev_substrand.forward);
-  var control = control_point_for_crossover_bezier_curve(prev_substrand, next_substrand, helices);
+  var control =
+      control_point_for_crossover_bezier_curve(prev_substrand, next_substrand, helices, geometry: geometry);
   var end_svg = next_helix.svg_base_pos(next_substrand.offset_5p, next_substrand.forward);
 
   var path = 'M ${start_svg.x} ${start_svg.y} Q ${control.x} ${control.y} ${end_svg.x} ${end_svg.y}';
@@ -185,10 +186,15 @@ String crossover_path_description(
 
 Point<num> control_point_for_crossover_bezier_curve(
     Domain from_ss, Domain to_ss, BuiltMap<int, Helix> helices,
-    {int delta = 0}) {
-  var helix_distance = (from_ss.helix - to_ss.helix).abs();
+    {int delta = 0, Geometry geometry}) {
   var from_helix = helices[from_ss.helix];
   var to_helix = helices[to_ss.helix];
+
+  // normalized so that adjacent helices are distance 1
+  var helix_distance_normalized =
+      ((from_helix.svg_position.y - to_helix.svg_position.y) / geometry.distance_between_helices_main_svg)
+          .abs();
+
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
   var end_pos = to_helix.svg_base_pos(to_ss.offset_5p + delta, to_ss.forward);
   bool from_strand_below = from_helix.svg_position.y > to_helix.svg_position.y;
@@ -204,7 +210,7 @@ Point<num> control_point_for_crossover_bezier_curve(
   Point<num> unit_normal = normal * (1 / normal.magnitude);
   // This scale seems to look good even with many crossovers at same column,
   // e.g., long_range_crossovers.py in the examples directory.
-  double scale = helix_distance * 0.5;
+  double scale = helix_distance_normalized * 0.5;
   Point<num> scale_normal = unit_normal * scale;
   control = mid + scale_normal * (constants.BASE_WIDTH_SVG / 2);
   return control;

@@ -3,6 +3,7 @@ import 'package:over_react/over_react.dart';
 import 'package:scadnano/src/reducers/strands_reducer.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
@@ -24,6 +25,7 @@ mixin DesignMainStrandMovingProps on UiProps {
   int delta_offset;
   bool delta_forward;
   bool allowable;
+  Geometry geometry;
 }
 
 class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovingProps> {
@@ -90,7 +92,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         substrand = domains[i + 1];
         helix = props.helices[substrand.helix];
         start_svg = helix.svg_base_pos(substrand.offset_5p, substrand.forward);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand, props.helices);
+        var control = control_point_for_crossover_bezier_curve(old_substrand, substrand, props.helices,
+            geometry: props.geometry);
         path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
       }
     }

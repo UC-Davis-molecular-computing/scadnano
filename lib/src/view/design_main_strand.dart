@@ -4,6 +4,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/dialog.dart';
 import '../state/dna_end.dart';
@@ -52,6 +53,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   int modification_font_size;
   bool invert_y;
+  Geometry geometry;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
@@ -92,6 +94,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         ..strand_tooltip = tooltip_text(props.strand)
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
+        ..geometry=props.geometry
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(props.strand, props.strand.color),
       _deletions(props.strand),

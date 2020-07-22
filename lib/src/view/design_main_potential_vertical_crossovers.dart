@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import '../state/potential_vertical_crossover.dart';
@@ -15,6 +16,7 @@ UiFactory<DesignMainPotentialVerticalCrossoversProps> DesignMainPotentialVertica
 mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltMap<int, Helix> helices;
+  Geometry geometry;
 }
 
 
@@ -27,6 +29,7 @@ class DesignMainPotentialVerticalCrossoversComponent
         (DesignMainPotentialVerticalCrossover()
           ..potential_vertical_crossover = potential_vertical_crossover
           ..helices=props.helices
+          ..geometry = props.geometry
           ..key = potential_vertical_crossover.dna_end_top.id())()
     ]);
   }

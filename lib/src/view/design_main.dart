@@ -141,6 +141,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..helices = props.design.helices
+          ..geometry = props.design.geometry
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
         (DesignMainStrandCreating()

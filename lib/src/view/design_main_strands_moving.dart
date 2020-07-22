@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strands_move.dart';
 
@@ -16,7 +17,8 @@ UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     ..helices = state.design.helices
     ..helices_view_order = state.design.helices_view_order
     ..helices_view_order_inverse = state.design.helices_view_order_inverse
-    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
+    ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
+    ..geometry = state.design.geometry;
 })(DesignMainStrandsMoving);
 
 UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainStrandsMoving;
@@ -27,6 +29,7 @@ mixin DesignMainStrandsMovingProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   BuiltList<int> helices_view_order;
   BuiltMap<int, int> helices_view_order_inverse;
+  Geometry geometry;
 }
 
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {
@@ -48,6 +51,7 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..helices = props.helices
           ..allowable = props.strands_move.allowable
+          ..geometry = props.geometry
           ..key = strand.toString())()
     ]);
   }

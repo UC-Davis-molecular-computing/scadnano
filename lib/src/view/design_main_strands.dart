@@ -2,6 +2,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/helix.dart';
 import '../state/selectable.dart';
@@ -27,7 +28,8 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
     ..modification_font_size = state.ui_state.modification_font_size
-    ..modification_display_connector = state.ui_state.modification_display_connector;
+    ..modification_display_connector = state.ui_state.modification_display_connector
+  ..geometry = state.design.geometry;
 })(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
@@ -46,6 +48,7 @@ mixin DesignMainStrandsProps on UiProps {
   bool only_display_selected_helices;
   bool modification_display_connector;
   num modification_font_size;
+  Geometry geometry;
 }
 
 class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> with PureComponent {
@@ -80,6 +83,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..only_display_selected_helices = props.only_display_selected_helices
         ..modification_font_size = props.modification_font_size
         ..modification_display_connector = props.modification_display_connector
+        ..geometry = props.geometry
         ..key = strand.toString())());
     }
 

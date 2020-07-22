@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix.dart';
 
 import 'package:scadnano/src/state/potential_vertical_crossover.dart';
@@ -19,6 +20,7 @@ UiFactory<DesignMainPotentialVerticalCrossoverProps> DesignMainPotentialVertical
 mixin DesignMainPotentialVerticalCrossoverProps on UiProps {
   PotentialVerticalCrossover potential_vertical_crossover;
   BuiltMap<int, Helix> helices;
+  Geometry geometry;
 }
 
 
@@ -36,7 +38,7 @@ class DesignMainPotentialVerticalCrossoverComponent
     }
 
     var classname_this_curve = 'potential-vertical-crossover-curve';
-    var path = crossover_path_description(prev_substrand, next_substrand, props.helices);
+    var path = crossover_path_description(prev_substrand, next_substrand, props.helices, props.geometry);
     var color = crossover.color;
 
     String tooltip = 'click to add a crossover';
