@@ -3051,6 +3051,14 @@ main() {
       expect(final_state.ui_state.edit_modes, edit_modes);
     });
   });
+   test('clicking_out_of_select_mode_unselects_strands', () {
+     SelectablesStore edit_mode_store = SelectablesStore().select(two_helices_design.strands[0]);
+     AppState initial_state = app_state_from_dna_design(two_helices_design).rebuild((b) => b
+     ..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
+     initial_state.ui_state.selectables_store.select(two_helices_design.strands[0]);
+     AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.pencil));
+     expect(final_state.ui_state.selectables_store, edit_mode_store.unselect(two_helices_design.strands[0]));
+      });
 
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
