@@ -580,6 +580,20 @@ Shows grid coordinates in the side view under the helix index.'''
         },
         'Python Scripting API',
       ),
+      DropdownItem(
+        {
+          'href': 'https://scadnano.org/dev',
+          'target': '_blank',
+          'title': '''\
+Development version of scadnano, located at https://scadnano.org/dev.
+
+This is updated more frequently than the main site at https://scadnano.org.
+
+This includes open issues that have been handled in the dev branch but not the main branch:
+https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev'''
+        },
+        'scadnano dev version',
+      ),
     );
   }
 

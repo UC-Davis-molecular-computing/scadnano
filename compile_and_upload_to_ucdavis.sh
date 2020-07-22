@@ -1,3 +1,3 @@
-./compile.sh
-./up.sh
+bash compile.sh
+bash up.sh
 
