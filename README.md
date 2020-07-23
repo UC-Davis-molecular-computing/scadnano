@@ -126,11 +126,11 @@ If an issue is handled in the dev branch, the issue remains open, but you will s
 The main parts of the program are the *side view* on the left, and the *main view* in the center. 
 The side view shows DNA helices "head on", with the interpretation that as you move to the right in the main view, this is like moving "into the screen" in the side view.
 
-screenshot of scadnano web interface:
+Annotated screenshot of scadnano web interface:
 
 ![](doc-images/screenshot-initial.png)
 
-The screenshot above shows many of the terms used in scadnano. 
+The screenshot is annotated with labels showing many of the terms used in scadnano's data model. 
 It is instructive to see how that example design is represented as a `.sc` file 
 (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)):
 
