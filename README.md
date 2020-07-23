@@ -35,7 +35,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 
 The design of scadnano is based heavily on [cadnano](https://cadnano.org/), 
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
-with two main differences: 
+with three main differences: 
 
 1) scadnano runs entirely in the browser, with no installation required. 
 Currently only 
@@ -52,7 +52,7 @@ planned in the future.
 ([help](https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme) / 
 [API](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
 
-A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
+3) The file format is easily human-readable (see [example below](#terminology)), to help when debugging scripts or interfacing with other software.
 
 This document explains how to use the web interface for viewing and manually editing designs.
 The documentation for the Python scripting package is 
