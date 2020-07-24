@@ -292,7 +292,7 @@ The *z* and *y* coordinates are shown in the side view, with *z* increasing to t
 In the main view, the horizontal direction is the *x* coordinate.
 The vertical direction, however, is not exactly the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
 Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
-The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices (i.e., the side view distance; the *z* distance is ignored in this calculation).
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *z-y* distance between the helices (i.e., the side view distance; the *x* distance is ignored in this calculation).
 If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *z* coordinate, or they all have the same *y* coordinate),
 then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
 Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
