@@ -13,6 +13,7 @@ import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
+import 'group.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
@@ -61,6 +62,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
+
+  BuiltMap<String, HelixGroup> get groups;
 
   @memoized
   bool get is_origami {

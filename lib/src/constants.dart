@@ -137,6 +137,7 @@ const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 const design_modifications_key = 'modifications_in_design';
+const groups_key = 'groups';
 final design_keys = [
       version_key,
       grid_key,
@@ -147,6 +148,7 @@ final design_keys = [
       potential_helices_key,
       strands_key,
       design_modifications_key,
+      groups_key,
     ] +
     legacy_geometry_keys;
 

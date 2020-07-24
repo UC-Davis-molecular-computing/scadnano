@@ -7,6 +7,7 @@ import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
 
+import 'state/group.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 import 'actions/actions.dart';
 import 'dna_sequence_constants.dart';
@@ -69,6 +70,7 @@ part 'serializers.g.dart';
   SelectionBoxRemove,
   MouseoverParams,
   Helix,
+  HelixGroup,
   Domain,
   Strand,
   Geometry,
