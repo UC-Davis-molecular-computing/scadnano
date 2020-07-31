@@ -29,39 +29,42 @@ import '../util.dart' as util;
 part 'menu.over_react.g.dart';
 
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
-  mapStateToProps: (state) => (Menu()
-    ..show_dna = state.ui_state.show_dna
-    ..show_modifications = state.ui_state.show_modifications
-    ..show_mismatches = state.ui_state.show_mismatches
-    ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
-    ..autofit = state.ui_state.autofit
-    ..only_display_selected_helices = state.ui_state.only_display_selected_helices
+  mapStateToProps: (state) {
+    return (Menu()
+      ..no_grid_is_none = state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..show_dna = state.ui_state.show_dna
+      ..show_modifications = state.ui_state.show_modifications
+      ..show_mismatches = state.ui_state.show_mismatches
+      ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
+      ..autofit = state.ui_state.autofit
+      ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
-    ..example_designs = state.ui_state.example_designs
-    ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
-    ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
-    ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
-    ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-        app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-        app.state.ui_state.selectables_store.selected_items.isNotEmpty)
-    ..modification_font_size = state.ui_state.modification_font_size
-    ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
-    ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
-    ..modification_display_connector = state.ui_state.modification_display_connector
-    ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
-    ..display_base_offsets_of_major_ticks_only_first_helix =
-        state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
-    ..display_major_tick_widths = state.ui_state.display_major_tick_widths
-    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-    ..invert_yz = state.ui_state.invert_yz
-    ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
-    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
-    ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..local_storage_design_choice = state.ui_state.local_storage_design_choice
-    ..default_crossover_type_scaffold_for_setting_helix_rolls =
-        state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
-    ..default_crossover_type_staple_for_setting_helix_rolls =
-        state.ui_state.default_crossover_type_staple_for_setting_helix_rolls),
+      ..example_designs = state.ui_state.example_designs
+      ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
+      ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
+      ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
+      ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+          app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+          app.state.ui_state.selectables_store.selected_items.isNotEmpty)
+      ..modification_font_size = state.ui_state.modification_font_size
+      ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
+      ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
+      ..modification_display_connector = state.ui_state.modification_display_connector
+      ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
+      ..display_base_offsets_of_major_ticks_only_first_helix =
+          state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+      ..display_major_tick_widths = state.ui_state.display_major_tick_widths
+      ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
+      ..invert_yz = state.ui_state.invert_yz
+      ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+      ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
+      ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
+      ..local_storage_design_choice = state.ui_state.local_storage_design_choice
+      ..default_crossover_type_scaffold_for_setting_helix_rolls =
+          state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
+      ..default_crossover_type_staple_for_setting_helix_rolls =
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
+  },
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -69,6 +72,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
 UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
+  bool no_grid_is_none;
   bool show_dna;
   bool show_modifications;
   num modification_font_size;
@@ -79,7 +83,6 @@ mixin MenuPropsMixin on UiProps {
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
-//  Grid grid;
   ExampleDesigns example_designs;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
@@ -250,21 +253,21 @@ Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
       DropdownDivider({}),
-//      (MenuDropdownItem()
-//        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
-//        ..display = 'Set helix coordinates based on crossovers'
-//        ..disabled = props.grid != Grid.none
-//        ..tooltip = '''\
-//The grid must be set to none to enable this.
-//
-//Select some crossovers and some helices. If no helices are selected, then all
-//helices are processed. At most one crossover between pairs of adjacent (in
-//view order) helices can be selected. If a pair of adjacent helices has no
-//crossover selected, it is assumed to be the first crossover.
-//
-//New grid coordinates are calculated based on the crossovers to ensure that each
-//pair of adjacent helices has crossover angles that point the backbone angles
-//directly at the adjoining helix.''')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
+        ..display = 'Set helix coordinates based on crossovers'
+        ..disabled = props.no_grid_is_none
+        ..tooltip = '''\
+The grid must be set to none to enable this.
+
+Select some crossovers and some helices. If no helices are selected, then all
+helices are processed. At most one crossover between pairs of adjacent (in
+view order) helices can be selected. If a pair of adjacent helices has no
+crossover selected, it is assumed to be the first crossover.
+
+New grid coordinates are calculated based on the crossovers to ensure that each
+pair of adjacent helices has crossover angles that point the backbone angles
+directly at the adjoining helix.''')(),
       (MenuBoolean()
         ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
