@@ -58,6 +58,9 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {
         var helix = props.helices[helix_idx];
+        var group = props.groups[helix.group];
+        int view_order = group.helices_view_order_inverse[helix.idx];
+
         if (only_display_selected_helices && side_selected_helix_idxs.contains(helix.idx) ||
             !only_display_selected_helices) {
           children.add((DesignMainHelix()
@@ -70,9 +73,9 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
             ..show_helix_circles = props.show_helix_circles
             ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
                 (!props.display_base_offsets_of_major_ticks_only_first_helix ||
-                    helix.view_order == first_helix_view_order)
+                    view_order == first_helix_view_order)
             ..display_major_tick_widths = props.display_major_tick_widths &&
-                (props.display_major_tick_widths_all_helices || helix.view_order == first_helix_view_order)
+                (props.display_major_tick_widths_all_helices || view_order == first_helix_view_order)
             ..key = helix.idx.toString())());
         }
       }

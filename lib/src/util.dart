@@ -264,21 +264,18 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_yz, Map<int, Helix> helices,
+Map<int, Helix> helices_assign_svg(
+    Geometry geometry, bool invert_yz, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
-  var selected_helices = [
-    for (var helix in helices.values) if (selected_helix_idxs.contains(helix.idx)) helix
-  ];
-
   Map<int, Helix> new_helices = Map<int, Helix>.of(helices);
 
   Set<String> group_names = {for (var helix in helices.values) helix.group};
   Map<String, Map<int, Helix>> selected_helices_by_group = {for (var name in group_names) name: {}};
-  for (int idx in helices.keys) {
+  for (int idx in selected_helix_idxs) {
     var helix = helices[idx];
     selected_helices_by_group[helix.group][idx] = helix;
   }
@@ -286,9 +283,11 @@ Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_yz, Map<int, H
   // process by groups because view order only makes sense within a group, and we need
   // to go in view order
   for (var group_name in selected_helices_by_group.keys) {
+    HelixGroup group = groups[group_name];
     var selected_helices_in_group = selected_helices_by_group[group_name].values.toList();
     var selected_helices_sorted_by_view_order = List<Helix>.from(selected_helices_in_group);
-    selected_helices_sorted_by_view_order.sort((h1, h2) => h1.view_order - h2.view_order);
+    selected_helices_sorted_by_view_order.sort(
+        (h1, h2) => group.helices_view_order_inverse[h1.idx] - group.helices_view_order_inverse[h2.idx]);
 
     num prev_y = null;
 
@@ -357,7 +356,6 @@ Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
 }
 
 bool left_mouse_button_pressed_during_mouse_event(MouseEvent event) => event.buttons & 1 == 1;
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points

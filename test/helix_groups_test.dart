@@ -1,10 +1,18 @@
 import 'dart:convert';
+
+import 'package:test/test.dart';
+import 'package:quiver/iterables.dart' as quiver;
+
+import 'package:scadnano/src/actions/actions.dart';
+import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/grid_position.dart';
-import 'package:test/test.dart';
+import 'package:scadnano/src/extension_methods.dart';
 
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/constants.dart' as constants;
+
+import 'utils.dart';
 
 main() {
   test('JSON_no_groups_ensure_grid_in_JSON', () {
@@ -191,7 +199,7 @@ main() {
     expect(() => Design.from_json(json_map), throwsException);
   });
 
-  test('JSON_4_helix_groups', () {
+  group('group_with_4_helix_groups', () {
     var json_str = '''
 {
   "version": "0.10.1",
@@ -222,8 +230,8 @@ main() {
     {"group": "north", "max_offset": 18, "grid_position": [1, 2], "idx": 3},
     {"group": "north", "max_offset": 17, "grid_position": [2, 2], "idx": 4},
     {"group": "north", "max_offset": 16, "grid_position": [2, 1], "idx": 5},
-    {"group": "south", "max_offset": 24, "grid_position": [0, 6], "idx": 6},
-    {"group": "south", "max_offset": 25, "grid_position": [0, 7], "idx": 7},
+    {"group": "south", "max_offset": 24, "grid_position": [0, 0], "idx": 6},
+    {"group": "south", "max_offset": 25, "grid_position": [0, 1], "idx": 7},
     {
       "group": "west",
       "max_offset": 26,
@@ -236,8 +244,8 @@ main() {
       "position": {"x": 0, "y": 2.5, "z": 0},
       "idx": 9
     },
-    {"group": "east", "max_offset": 22, "grid_position": [0, 13], "idx": 13},
-    {"group": "east", "max_offset": 23, "grid_position": [0, 15], "idx": 15}
+    {"group": "east", "max_offset": 22, "grid_position": [0, 0], "idx": 13},
+    {"group": "east", "max_offset": 23, "grid_position": [0, 1], "idx": 15}
   ],
   "strands": [
     {
@@ -277,79 +285,113 @@ main() {
         ''';
     var json_map = jsonDecode(json_str);
     var design = Design.from_json(json_map);
-
+    var state = app_state_from_design(design);
     var n = 'n';
     var s = 's';
     var e = 'e';
     var w = 'w';
-    var groups = design.groups;
 
-    expect(groups.length, 4);
+    test('JSON_4_helix_groups', () {
+      var groups = design.groups;
 
-    expect(groups[n].helices_view_order, [0, 1, 2, 3, 4, 5]);
-    expect(groups[s].helices_view_order, [7, 6]);
-    expect(groups[w].helices_view_order, [8, 9]);
-    expect(groups[e].helices_view_order, [13, 15]);
+      expect(groups.length, 4);
 
-    expect(groups[n].grid, Grid.honeycomb);
-    expect(groups[e].grid, Grid.square);
-    expect(groups[s].grid, Grid.square);
-    expect(groups[w].grid, Grid.none);
+      expect(groups[n].helices_view_order, [0, 1, 2, 3, 4, 5]);
+      expect(groups[s].helices_view_order, [7, 6]);
+      expect(groups[w].helices_view_order, [8, 9]);
+      expect(groups[e].helices_view_order, [13, 15]);
 
-    num eps = 0.000001;
-    expect(groups[n].pitch, closeTo(0, eps));
-    expect(groups[e].pitch, closeTo(45, eps));
-    expect(groups[s].pitch, closeTo(0, eps));
-    expect(groups[w].pitch, closeTo(0, eps));
+      expect(groups[n].grid, Grid.honeycomb);
+      expect(groups[e].grid, Grid.square);
+      expect(groups[s].grid, Grid.square);
+      expect(groups[w].grid, Grid.none);
 
-    Map<String, dynamic> json_map_export = design.to_json_serializable(suppress_indent: false);
-    expect(json_map_export.containsKey(constants.groups_key), true);
+      num eps = 0.000001;
+      expect(groups[n].pitch, closeTo(0, eps));
+      expect(groups[e].pitch, closeTo(45, eps));
+      expect(groups[s].pitch, closeTo(0, eps));
+      expect(groups[w].pitch, closeTo(0, eps));
 
-    Map<String, dynamic> groups_map = json_map_export[constants.groups_key];
-    expect(groups_map.length, 4);
+      Map<String, dynamic> json_map_export = design.to_json_serializable(suppress_indent: false);
+      expect(json_map_export.containsKey(constants.groups_key), true);
 
-    Set<String> names = groups_map.keys.toSet();
-    expect(names, {n, e, s, w});
+      Map<String, dynamic> groups_map = json_map_export[constants.groups_key];
+      expect(groups_map.length, 4);
 
-    Map<String, dynamic> group_n = groups_map[n];
-    Map<String, dynamic> group_e = groups_map[e];
-    Map<String, dynamic> group_s = groups_map[s];
-    Map<String, dynamic> group_w = groups_map[w];
+      Set<String> names = groups_map.keys.toSet();
+      expect(names, {n, e, s, w});
 
-    Map<String, dynamic> pos_n = group_n[constants.position_key];
-    expect(pos_n['x'], closeTo(0, eps));
-    expect(pos_n['y'], closeTo(-200, eps));
-    expect(pos_n['z'], closeTo(0, eps));
+      Map<String, dynamic> group_n = groups_map[n];
+      Map<String, dynamic> group_e = groups_map[e];
+      Map<String, dynamic> group_s = groups_map[s];
+      Map<String, dynamic> group_w = groups_map[w];
 
-    Map<String, dynamic> pos_e = group_e[constants.position_key];
-    expect(pos_e['x'], closeTo(0, eps));
-    expect(pos_e['y'], closeTo(0, eps));
-    expect(pos_e['z'], closeTo(100, eps));
+      Map<String, dynamic> pos_n = group_n[constants.position_key];
+      expect(pos_n['x'], closeTo(0, eps));
+      expect(pos_n['y'], closeTo(-200, eps));
+      expect(pos_n['z'], closeTo(0, eps));
 
-    Map<String, dynamic> pos_s = group_s[constants.position_key];
-    expect(pos_s['x'], closeTo(0, eps));
-    expect(pos_s['y'], closeTo(70, eps));
-    expect(pos_s['z'], closeTo(0, eps));
+      Map<String, dynamic> pos_e = group_e[constants.position_key];
+      expect(pos_e['x'], closeTo(0, eps));
+      expect(pos_e['y'], closeTo(0, eps));
+      expect(pos_e['z'], closeTo(100, eps));
 
-    Map<String, dynamic> pos_w = group_w[constants.position_key];
-    expect(pos_w['x'], closeTo(0, eps));
-    expect(pos_w['y'], closeTo(0, eps));
-    expect(pos_w['z'], closeTo(0, eps));
+      Map<String, dynamic> pos_s = group_s[constants.position_key];
+      expect(pos_s['x'], closeTo(0, eps));
+      expect(pos_s['y'], closeTo(70, eps));
+      expect(pos_s['z'], closeTo(0, eps));
 
-    expect(group_n[constants.grid_key], Grid.honeycomb);
-    expect(group_e[constants.grid_key], Grid.square);
-    expect(group_s[constants.grid_key], Grid.square);
-    expect(group_w[constants.grid_key], Grid.none);
+      Map<String, dynamic> pos_w = group_w[constants.position_key];
+      expect(pos_w['x'], closeTo(0, eps));
+      expect(pos_w['y'], closeTo(0, eps));
+      expect(pos_w['z'], closeTo(0, eps));
 
-    expect(group_n[constants.pitch_key], closeTo(0, eps));
-    expect(group_e[constants.pitch_key], closeTo(45, eps));
-    expect(group_s[constants.pitch_key], closeTo(0, eps));
-    expect(group_w[constants.pitch_key], closeTo(0, eps));
+      expect(group_n[constants.grid_key], Grid.honeycomb);
+      expect(group_e[constants.grid_key], Grid.square);
+      expect(group_s[constants.grid_key], Grid.square);
+      expect(group_w[constants.grid_key], Grid.none);
 
-    // test auto-assignment of grid_positions based on helices view order
-    expect(design.helices[6].grid_position, GridPosition(0, 0));
-    expect(design.helices[7].grid_position, GridPosition(0, 1));
-    expect(design.helices[13].grid_position, GridPosition(0, 0));
-    expect(design.helices[15].grid_position, GridPosition(0, 1));
+      expect(group_n[constants.pitch_key], closeTo(0, eps));
+      expect(group_e[constants.pitch_key], closeTo(45, eps));
+      expect(group_s[constants.pitch_key], closeTo(0, eps));
+      expect(group_w[constants.pitch_key], closeTo(0, eps));
+
+      // test auto-assignment of grid_positions based on helices view order
+      expect(design.helices[6].grid_position, GridPosition(0, 0));
+      expect(design.helices[7].grid_position, GridPosition(0, 1));
+      expect(design.helices[13].grid_position, GridPosition(0, 0));
+      expect(design.helices[15].grid_position, GridPosition(0, 1));
+    });
+
+    test('helix_add_correct_view_order', () {
+      var group_name = s;
+      var new_grid_position = GridPosition(0, 2);
+      state = state.rebuild((b) => b..ui_state.storables.displayed_group_name = group_name);
+      var action = HelixAdd(grid_position: new_grid_position);
+      var new_design = design_whole_global_reducer(design, state, action);
+
+      expect(new_design.helices.length, 13);
+      expect(new_design.helices.keys.max, 16);
+
+      var new_helix = new_design.helices[16];
+      expect(new_helix.group, group_name);
+      expect(new_helix.grid_position, new_grid_position);
+
+      expect(new_design.groups[s].helices_view_order[0], 7);
+      expect(new_design.groups[s].helices_view_order[1], 6);
+      expect(new_design.groups[s].helices_view_order[2], 16);
+    });
+
+    test('helix_remove_correct_view_order', () {
+      var group_name = s;
+      state = state.rebuild((b) => b..ui_state.storables.displayed_group_name = group_name);
+      var action = HelixRemove(7);
+      var new_design = design_whole_global_reducer(design, state, action);
+
+      expect(new_design.helices.length, 11);
+      expect(new_design.helices.keys.max, 15);
+
+      expect(new_design.groups[s].helices_view_order[0], 6);
+    });
   });
 }

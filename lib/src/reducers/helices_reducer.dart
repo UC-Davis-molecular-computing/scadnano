@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/group.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
 
 import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/geometry.dart';
-import '../state/grid.dart';
 import '../state/strand.dart';
 import 'delete_reducer.dart' as delete_reducer;
 import '../state/helix.dart';
@@ -54,14 +54,14 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
 ]);
 
 BuiltMap<int, Helix> helix_individual_reducer(
-    BuiltMap<int, Helix> helices, AppState app_state, actions.HelixIndividualAction action) {
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixIndividualAction action) {
   Helix helix = helices[action.helix_idx];
   var new_helix = _helix_individual_reducers(helix, action);
   if (new_helix != helix) {
     var helices_map = helices.toMap();
     helices_map[action.helix_idx] = new_helix;
-    Geometry geometry = app_state.design.geometry;
-    helices_map = util.helices_assign_svg(geometry, app_state.ui_state.invert_yz, helices_map);
+    helices_map = util.helices_assign_svg(
+        state.design.geometry, state.ui_state.invert_yz, helices_map, state.design.groups);
     return helices_map.build();
   } else {
     return helices;
@@ -101,7 +101,7 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
     for (int d = 0; d < strand.substrands.length; d++) {
       var substrand = strand.substrands[d];
       if (substrand is Domain) {
-        Domain domain = substrand as Domain;
+        Domain domain = substrand;
         int new_idx = action.idx_replacements[domain.helix];
         if (new_idx != null) {
           domain = domain.rebuild((b) => b..helix = new_idx);
@@ -117,7 +117,7 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
 
   //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
 
-  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices);
+  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, design.groups);
   design = design.rebuild((b) => b..helices.replace(helices)..strands.replace(strands));
   return design;
 }
@@ -133,12 +133,11 @@ Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => h
   ..max_offset = max_offset ?? helix.max_offset);
 
 BuiltMap<int, Helix> helix_offset_change_all_reducer(
-    BuiltMap<int, Helix> helices, AppState app_state, actions.HelixOffsetChangeAll action) {
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixOffsetChangeAll action) {
   Helix map_func(_, Helix helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset);
   var helices_after = helices.map_values(map_func);
-  var geometry = app_state.design.geometry;
-  var helices_after_svg_adjusted =
-      util.helices_assign_svg(geometry, app_state.ui_state.invert_yz, helices_after.toMap());
+  var helices_after_svg_adjusted = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
   return helices_after_svg_adjusted.build();
 }
 
@@ -239,9 +238,14 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
     max_offset = constants.default_max_offset;
   }
 
+  // add helix's review order entry
   int num_helices_in_group = design.helix_idxs_in_group[state.ui_state.displayed_group_name].length;
-
   var group = design.groups[state.ui_state.displayed_group_name];
+  var new_helices_view_order = group.helices_view_order.toList();
+  new_helices_view_order.add(new_idx);
+  var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
+  var new_groups = design.groups.toMap();
+  new_groups[state.ui_state.displayed_group_name] = new_group;
 
   Helix helix = Helix(
     idx: new_idx,
@@ -252,26 +256,37 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
     position: action.position,
     min_offset: min_offset,
     max_offset: max_offset,
-    view_order: num_helices_in_group,
   );
-  Map<int, Helix> helices = design.helices.toMap();
-  helices[helix.idx] = helix;
-  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices);
+  Map<int, Helix> new_helices = design.helices.toMap();
+  new_helices[helix.idx] = helix;
+  new_helices =
+      util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, new_helices, new_groups.build());
 
-  return design.rebuild((d) => d..helices.replace(helices));
+  return design.rebuild((d) => d..helices.replace(new_helices)..groups.replace(new_groups));
 }
 
 Design helix_remove_design_global_reducer(Design design, AppState state, actions.HelixRemove action) {
   Set<Domain> substrands_on_helix = design.domains_on_helix(action.helix_idx).toSet();
   var strands_with_substrands_removed =
       delete_reducer.remove_domains(design.strands, state, substrands_on_helix);
-  // var strands_with_helix_indices_updated =
-  //     change_all_bound_substrand_helix_idxs(strands_with_substrands_removed, action.helix_idx, -1);
   var new_helices = remove_helix_assuming_no_domains(design.helices, action);
-  var geometry = state.design.geometry;
-  var new_helices_list = util.helices_assign_svg(geometry, state.ui_state.invert_yz, new_helices.toMap());
-  return design
-      .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
+
+  // remove helix's review order entry
+  var group = design.groups[state.ui_state.displayed_group_name];
+  int old_view_order = group.helices_view_order_inverse[action.helix_idx];
+  var new_helices_view_order = group.helices_view_order.toList();
+  new_helices_view_order.remove(old_view_order);
+  var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
+  var new_groups = design.groups.toMap();
+  new_groups[state.ui_state.displayed_group_name] = new_group;
+
+  var new_helices_list = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, new_helices.toMap(), new_groups.build());
+
+  return design.rebuild((d) => d
+    ..helices.replace(new_helices_list)
+    ..groups.replace(new_groups)
+    ..strands.replace(strands_with_substrands_removed));
 }
 
 Design helix_remove_all_selected_design_global_reducer(
@@ -283,10 +298,25 @@ Design helix_remove_all_selected_design_global_reducer(
       delete_reducer.remove_domains(design.strands, state, substrands_on_helices);
 
   var new_helices = remove_helices_assuming_no_domains(design.helices, helix_idxs);
-  var geometry = state.design.geometry;
-  var new_helices_list = util.helices_assign_svg(geometry, state.ui_state.invert_yz, new_helices.toMap());
-  return design
-      .rebuild((d) => d..helices.replace(new_helices_list)..strands.replace(strands_with_substrands_removed));
+
+  // remove helix's review order entry
+  var group = design.groups[state.ui_state.displayed_group_name];
+  var old_view_orders = {
+    [for (var helix_idx in helix_idxs) group.helices_view_order_inverse[helix_idx]]
+  };
+  var new_helices_view_order = group.helices_view_order.toList();
+  new_helices_view_order.removeWhere((order) => old_view_orders.contains(order));
+  var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
+  var new_groups = design.groups.toMap();
+  new_groups[state.ui_state.displayed_group_name] = new_group;
+
+  var new_helices_list = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, new_helices.toMap(), new_groups.build());
+
+  return design.rebuild((d) => d
+    ..helices.replace(new_helices_list)
+    ..groups.replace(new_groups)
+    ..strands.replace(strands_with_substrands_removed));
 }
 
 /// Change (by amount `increment`) all helix_idx's of all Domains with helix >= helix_idx.
@@ -312,49 +342,12 @@ List<Strand> change_all_domains_helix_idxs(BuiltList<Strand> strands, int helix_
 
 /// Remove helix from list, assuming no Domains are on it.
 BuiltMap<int, Helix> remove_helix_assuming_no_domains(
-    BuiltMap<int, Helix> helices, actions.HelixRemove action) {
-  Map<int, Helix> helices_builder = helices.toMap();
-  int removed_view_order = helices[action.helix_idx].view_order;
-  helices_builder.remove(action.helix_idx);
-  for (int i in helices_builder.keys) {
-    HelixBuilder helix_builder = helices_builder[i].toBuilder();
-//    if (i >= action.helix_idx) {
-//      helix_builder.idx = i;
-//    }
-    if (helix_builder.view_order >= removed_view_order) {
-      helix_builder.view_order--;
-    }
-    helices_builder[i] = helix_builder.build();
-  }
-  return helices_builder.build();
-}
+        BuiltMap<int, Helix> helices, actions.HelixRemove action) =>
+    helices.rebuild((b) => b..remove(action.helix_idx));
 
 BuiltMap<int, Helix> remove_helices_assuming_no_domains(
-    BuiltMap<int, Helix> helices, Iterable<int> helix_idxs) {
-  Map<int, Helix> helices_builder = helices.toMap();
-  BuiltList<int> removed_view_orders =
-      BuiltList<int>([for (var helix_idx in helix_idxs) helices[helix_idx].view_order]);
-  helices_builder.removeWhere((helix_idx, _) => helix_idxs.contains(helix_idx));
-
-  for (int i in helices_builder.keys) {
-    HelixBuilder helix_builder = helices_builder[i].toBuilder();
-    // The view order decrements by the number of removed view orders that was less than it.
-    helix_builder.view_order -= _count_less_than(removed_view_orders, helix_builder.view_order);
-    helices_builder[i] = helix_builder.build();
-  }
-  return helices_builder.build();
-}
-
-/// Returns the number of values in list that are less than x.
-_count_less_than(Iterable<int> list, int x) {
-  int count = 0;
-  for (var ele in list) {
-    if (ele < x) {
-      count++;
-    }
-  }
-  return count;
-}
+        BuiltMap<int, Helix> helices, Iterable<int> helix_idxs) =>
+    helices.rebuild((b) => b..removeWhere((idx, _) => helix_idxs.contains(idx)));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change, so helix must change positions
@@ -380,7 +373,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 
   BuiltMap<int, Helix> new_helices =
       {for (var helix in helices_builder.values) helix.idx: helix.build()}.build();
-  new_helices = reassign_svg_positions(state.design.geometry, state.ui_state.invert_yz, new_helices, null);
+  new_helices = reassign_svg_positions(state, new_helices, null);
   return new_helices;
 }
 
@@ -388,14 +381,14 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 // invert y axis
 BuiltMap<int, Helix> invert_yz_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.InvertYZSet action) {
-  var new_helices = reassign_svg_positions(state.design.geometry, action.invert_yz, helices, null);
+  var new_helices = reassign_svg_positions(state, helices, null);
   return new_helices;
 }
 
 // This is needed when the whole AppUIStateStorables is set, since it also changes invert_yz
 BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
-  var new_helices = reassign_svg_positions(state.design.geometry, action.storables.invert_yz, helices, null);
+  var new_helices = reassign_svg_positions(state, helices, null);
   return new_helices;
 }
 
@@ -415,7 +408,7 @@ BuiltMap<int, Helix> helix_grid_position_set_reducer(
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
-    new_helices = reassign_svg_positions(state.design.geometry, state.ui_state.invert_yz, new_helices, null);
+    new_helices = reassign_svg_positions(state, new_helices, null);
     return new_helices;
   } else {
     return helices;
@@ -435,8 +428,7 @@ BuiltMap<int, Helix> helix_position_set_reducer(
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
-    var geometry = state.design.geometry;
-    new_helices = reassign_svg_positions(geometry, state.ui_state.invert_yz, new_helices, null);
+    new_helices = reassign_svg_positions(state, new_helices, null);
     return new_helices;
   } else {
     return helices;
@@ -447,13 +439,16 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 // select/unselect Helices (so SVG positions need to be recalculated)
 
 BuiltMap<int, Helix> reassign_svg_positions(
-    Geometry geometry, bool invert_yz, BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
+    AppState state, BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
   if (helices.length == 0) {
     return helices;
   }
+  Geometry geometry = state.design.geometry;
+  bool invert_yz = state.ui_state.invert_yz;
+  BuiltMap<String, HelixGroup> groups = state.design.groups;
   Map<int, Helix> helices_map = helices.toMap();
-  helices_map =
-      util.helices_assign_svg(geometry, invert_yz, helices_map, selected_helix_idxs: selected_helix_idxs);
+  helices_map = util.helices_assign_svg(geometry, invert_yz, helices_map, groups,
+      selected_helix_idxs: selected_helix_idxs);
   return BuiltMap<int, Helix>(helices_map);
 }
 
@@ -461,8 +456,7 @@ BuiltMap<int, Helix> helix_select_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelect action) {
   var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
   if (state.ui_state.only_display_selected_helices) {
-    var geometry = state.design.geometry;
-    return reassign_svg_positions(geometry, state.ui_state.invert_yz, helices, selected_helix_idxs);
+    return reassign_svg_positions(state, helices, selected_helix_idxs);
   } else {
     return helices;
   }
@@ -473,8 +467,7 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
   var selected_helix_idxs =
       helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
   if (state.ui_state.only_display_selected_helices) {
-    return reassign_svg_positions(
-        state.design.geometry, state.ui_state.invert_yz, helices, selected_helix_idxs);
+    return reassign_svg_positions(state, helices, selected_helix_idxs);
   } else {
     return helices;
   }
@@ -483,7 +476,7 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
 BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsClear action) {
   if (state.ui_state.only_display_selected_helices) {
-    return reassign_svg_positions(state.design.geometry, state.ui_state.invert_yz, helices, BuiltSet<int>());
+    return reassign_svg_positions(state, helices, BuiltSet<int>());
   } else {
     return helices;
   }
@@ -492,11 +485,10 @@ BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
 BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetOnlyDisplaySelectedHelices action) {
   if (action.show) {
-    return reassign_svg_positions(
-        state.design.geometry, state.ui_state.invert_yz, helices, state.ui_state.side_selected_helix_idxs);
+    return reassign_svg_positions(state, helices, state.ui_state.side_selected_helix_idxs);
   } else {
     var all_helix_idxs = BuiltSet<int>(state.design.helices.keys);
-    return reassign_svg_positions(state.design.geometry, state.ui_state.invert_yz, helices, all_helix_idxs);
+    return reassign_svg_positions(state, helices, all_helix_idxs);
   }
 }
 

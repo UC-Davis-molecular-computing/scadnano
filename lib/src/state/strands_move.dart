@@ -6,6 +6,7 @@ import 'package:built_value/serializer.dart';
 import '../state/strand.dart';
 
 import '../serializers.dart';
+import 'group.dart';
 import 'helix.dart';
 
 part 'strands_move.g.dart';
@@ -21,6 +22,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       {BuiltList<Strand> strands_moving,
       BuiltList<Strand> all_strands,
       BuiltMap<int, Helix> helices,
+      BuiltMap<String, HelixGroup> groups,
       Address original_address,
       bool copy = false,
       bool keep_color = true}) {
@@ -30,6 +32,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
+      ..groups.replace(groups)
       ..original_address.replace(original_address)
       ..current_address.replace(original_address)
       ..copy = copy
@@ -48,6 +51,8 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   BuiltMap<int, Helix> get helices;
 
+  BuiltMap<String, HelixGroup> get groups;
+
   Address get original_address;
 
   Address get current_address;
@@ -62,9 +67,9 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   Helix get current_helix => helices[current_address.helix_idx];
 
-  int get original_view_order => original_helix.view_order;
+  int get original_view_order => groups[original_helix.group].helices_view_order_inverse[original_helix.idx];
 
-  int get current_view_order => current_helix.view_order;
+  int get current_view_order => groups[current_helix.group].helices_view_order_inverse[current_helix.idx];
 
   int get delta_offset => current_address.offset - original_address.offset;
 
@@ -73,5 +78,4 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   bool get delta_forward => current_address.forward != original_address.forward;
 
   bool get is_nontrivial => original_address != current_address;
-
 }

@@ -430,7 +430,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       ]) {
         int helix_idx_top;
         int helix_idx_bot;
-        var address_top;
         bool forward_top;
         Domain substrand_top;
         Domain substrand_bot;
@@ -442,7 +441,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             if (helix_idx + 1 == address_3p.helix_idx) {
               // 5' end is on top, 3' is on bottom
               helix_idx_top = address_5p.helix_idx;
-              address_top = address_5p;
               forward_top = forward;
               substrand_top = ss;
               dna_end_top = substrand_top.dnaend_5p;
@@ -453,7 +451,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             } else {
               // 3' end is on top, 5' is on bottom
               helix_idx_top = address_3p.helix_idx;
-              address_top = address_3p;
               forward_top = !forward;
               substrand_top = strand_3p.last_domain();
               dna_end_top = substrand_top.dnaend_3p;
@@ -742,16 +739,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
     design_builder.groups.replace(groups_map);
 
-    // need to build groups before this point because next function calls helices_view_order_inverse
-    assign_view_orders_to_helix_builders_from_groups(groups_map, helix_builders_map);
-
     assign_grids_to_helix_builders_from_groups(groups_map, helix_builders_map);
 
     // build Helices
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, invert_yz, helices);
+    helices = util.helices_assign_svg(geometry, invert_yz, helices, groups_map.build());
     design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -1390,14 +1384,6 @@ check_helices_view_order_is_bijection(Iterable<int> helices_view_order_, Iterabl
   if (sorted_helices_view_order != sorted_helix_idxs) {
     throw IllegalDesignError("The specified helices view order: ${helices_view_order_}\n "
         "is not a bijection on helices indices: ${helix_idxs_}.");
-  }
-}
-
-assign_view_orders_to_helix_builders_from_groups(
-    Map<String, HelixGroup> groups_map, Map<int, HelixBuilder> helix_builders_map) {
-  for (var helix_builder in helix_builders_map.values) {
-    var group = groups_map[helix_builder.group];
-    helix_builder.view_order = group.helices_view_order_inverse[helix_builder.idx];
   }
 }
 

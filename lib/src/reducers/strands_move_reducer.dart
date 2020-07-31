@@ -30,6 +30,7 @@ StrandsMove strands_move_start_reducer(
       strands_moving: action.strands,
       all_strands: state.design.strands,
       helices: state.design.helices,
+      groups: state.design.groups,
       original_address: action.address,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
@@ -43,6 +44,7 @@ StrandsMove strands_move_start_selected_strands_reducer(
       strands_moving: selected_strands,
       all_strands: state.design.strands,
       helices: state.design.helices,
+      groups: state.design.groups,
       original_address: action.address,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
@@ -85,13 +87,12 @@ bool in_bounds(Design design, StrandsMove strands_move) {
 
   // look for offset out of bounds
   for (int original_helix_idx in design.helices.keys) {
-//    var substrands_moving = strands_move.helix_idx_to_substrands_moving[original_helix_idx];
     var substrands_moving = construct_helix_idx_to_substrands_map(
         strands_move.strands_moving, design.helices.keys)[original_helix_idx];
     if (substrands_moving.isEmpty) continue;
 
-    int new_helix_idx =
-        group.helices_view_order[design.helices[original_helix_idx].view_order + delta_view_order];
+    int view_order_orig = group.helices_view_order_inverse[original_helix_idx];
+    int new_helix_idx = group.helices_view_order[view_order_orig + delta_view_order];
     Helix helix = design.helices[new_helix_idx];
     for (var ss in substrands_moving) {
       if (ss.start + delta_offset < helix.min_offset) return false;
@@ -133,8 +134,10 @@ bool is_allowable(Design design, StrandsMove strands_move) {
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
     // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
-    int new_helix_idx =
-        current_group.helices_view_order[design.helices[original_helix_idx].view_order + delta_view_order];
+    Helix original_helix = design.helices[original_helix_idx];
+    HelixGroup original_group = design.groups[original_helix.group];
+    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
 
     Helix new_helix = design.helices[new_helix_idx];
     var substrands_fixed = helix_idx_to_substrands_fixed[new_helix_idx];

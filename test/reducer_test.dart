@@ -218,7 +218,8 @@ main() {
     var geometry = state.design.geometry;
     final correct_helix =
         new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
-    var correct_helices = util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix});
+    var correct_helices =
+        util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, state.design.groups);
     expect(state.design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
@@ -1880,9 +1881,7 @@ main() {
     Helix helix1 = two_helices_design.helices[1];
     num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_main_svg;
 
-    Helix new_helix1 = helix1.rebuild((b) => b
-      ..svg_position_ = Point(0, svg_y_helix_1)
-      ..view_order = 0);
+    Helix new_helix1 = helix1.rebuild((b) => b..svg_position_ = Point(0, svg_y_helix_1));
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
     Design new_design =
         two_helices_design.rebuild((b) => b..helices.replace({1: new_helix1})..strands.replace(new_strands));
@@ -4618,8 +4617,6 @@ main() {
     AppState state = app_state_from_design(two_helices_with_empty_offsets);
     StrandsMove strandsMove = null;
 
-    Helix helix0 = two_helices_with_empty_offsets.helices.values.first;
-    Helix helix1 = two_helices_with_empty_offsets.helices.values.last;
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
     test('StrandsMoveStart (no copy)', () {
@@ -4650,6 +4647,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4789,6 +4787,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4923,6 +4922,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: false);
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -5003,6 +5003,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5046,6 +5047,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5088,6 +5090,7 @@ main() {
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5547,7 +5550,8 @@ main() {
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
       // need to reassign SVG here since original design had positive x Position3D, which means
       // positive svi_position.x
-      new_helices = util.helices_assign_svg(no_grid_two_helices_design.geometry, false, new_helices);
+      new_helices = util.helices_assign_svg(
+          no_grid_two_helices_design.geometry, false, new_helices, state.design.groups);
 
       Design expected_design = no_grid_two_helices_design.rebuild((b) => b..helices.replace(new_helices));
       expected_design = expected_design.set_grid(grid);
@@ -5680,7 +5684,8 @@ main() {
 
     var built_expected_helices = expected_helices.build().toMap();
     var geometry = two_helices_design.geometry;
-    built_expected_helices = util.helices_assign_svg(geometry, false, built_expected_helices);
+    built_expected_helices =
+        util.helices_assign_svg(geometry, false, built_expected_helices, state.design.groups);
 
     AppState expected_state = state.rebuild((b) => b
       ..design.helices.replace(built_expected_helices)
@@ -7105,6 +7110,7 @@ main() {
         all_strands: all_strands,
         original_address: original_address,
         helices: state.design.helices,
+        groups: state.design.groups,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
@@ -7304,6 +7310,7 @@ main() {
         all_strands: all_strands,
         original_address: original_address,
         helices: state.design.helices,
+        groups: state.design.groups,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 

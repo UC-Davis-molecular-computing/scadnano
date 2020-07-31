@@ -64,7 +64,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int idx,
     Grid grid,
     Geometry geometry,
-    int view_order = null,
     GridPosition grid_position = null,
     num roll = constants.default_roll,
     num pitch = constants.default_pitch,
@@ -77,15 +76,11 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     Point<num> svg_position = null,
     String group = constants.default_group_name,
   }) {
-    if (view_order == null) {
-      view_order = idx;
-    }
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }
     return Helix.from((b) => b
       ..idx = idx
-      ..view_order = view_order
       ..geometry = geometry?.toBuilder()
       ..group = group
       ..grid = grid
@@ -115,9 +110,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default.
   int get idx;
-
-  // This is inferred from DNADesign.helices_view_order and is here for convenience, but isn't serialized.
-  int get view_order;
 
   Grid get grid;
 
@@ -172,8 +164,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   @nullable
   BuiltList<int> get major_ticks;
-
-  GridPosition default_grid_position() => GridPosition(0, this.view_order);
 
   @memoized
   Position3D get default_position {

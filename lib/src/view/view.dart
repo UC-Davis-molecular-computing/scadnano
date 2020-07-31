@@ -12,8 +12,6 @@ import '../view/edit_and_select_modes.dart';
 
 import '../state/app_state.dart';
 import 'design.dart';
-import 'edit_mode.dart';
-import 'select_mode.dart';
 import 'menu.dart';
 import 'editor.dart';
 import '../app.dart';
