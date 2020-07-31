@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/grid_position.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/state/design.dart';
@@ -39,6 +40,37 @@ main() {
     var json_map_export = design.to_json_serializable(suppress_indent: false);
     expect(json_map_export.containsKey(constants.grid_key), true);
     expect(json_map_export.containsKey(constants.groups_key), false);
+  });
+
+  test('JSON_groups_ensure_no_grid_or_helices_view_order_in_JSON', () {
+    var json_str = '''
+{
+  "groups": {
+    "north": {
+      "position": {"x": 0, "y": -200, "z": 0},
+      "grid": "honeycomb"
+    },
+    "east": {
+      "position": {"x": 0, "y": 0, "z": 100},
+      "pitch": 45,
+      "grid": "square"
+    }
+  },
+  "helices": [
+    {"group": "north", "max_offset": 20, "grid_position": [0, 0]},
+    {"group": "north", "max_offset": 21, "grid_position": [0, 1]},
+    {"group": "east", "max_offset": 22, "grid_position": [0, 13]},
+    {"group": "east", "max_offset": 23, "grid_position": [0, 15]}
+  ],
+  "strands": []
+}
+    ''';
+    var json_map = jsonDecode(json_str);
+    var design = Design.from_json(json_map);
+    var json_map_export = design.to_json_serializable(suppress_indent: false);
+    expect(json_map_export.containsKey(constants.grid_key), false);
+    expect(json_map_export.containsKey(constants.helices_view_order_key), false);
+    expect(json_map_export.containsKey(constants.groups_key), true);
   });
 
   test('JSON_bad_no_groups_but_helices_reference_groups', () {
@@ -313,5 +345,11 @@ main() {
     expect(group_e[constants.pitch_key], closeTo(45, eps));
     expect(group_s[constants.pitch_key], closeTo(0, eps));
     expect(group_w[constants.pitch_key], closeTo(0, eps));
+
+    // test auto-assignment of grid_positions based on helices view order
+    expect(design.helices[6].grid_position, GridPosition(0, 0));
+    expect(design.helices[7].grid_position, GridPosition(0, 1));
+    expect(design.helices[13].grid_position, GridPosition(0, 0));
+    expect(design.helices[15].grid_position, GridPosition(0, 1));
   });
 }

@@ -27,6 +27,7 @@ import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
 import 'design_main_error_boundary.dart';
+import 'menu_side.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -43,6 +44,7 @@ const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 
 const FOOTER_ID = 'design-footer-mouse-over';
 const MODES_ID = 'design-mode-buttons';
+const SIDE_VIEW_MENU_ID = 'side-view-menu';
 const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
@@ -59,6 +61,8 @@ class DesignViewComponent {
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
+
+  DivElement side_view_menu = DivElement()..attributes = {'id': SIDE_VIEW_MENU_ID};
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
@@ -129,6 +133,7 @@ class DesignViewComponent {
 
     this.error_message_component = ErrorMessageComponent(error_message_pane);
 
+    side_pane.children.add(side_view_menu);
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
@@ -190,29 +195,60 @@ class DesignViewComponent {
 //      });
     }
 
-    main_view_svg.onMouseMove.listen((event) {
+    main_view_svg.onMouseMove.listen((MouseEvent event) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
+      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
+
       // move potential crossover
       main_view_mouse_position = event.client;
       main_view_move_potential_crossover(event);
 
-      // move selected DNA ends
-      DNAEndsMove moves_store = app.store_dna_ends_move.state;
-      if (moves_store != null) {
-        Helix helix = moves_store.helix;
-        int offset = util.get_address_on_helix(event, helix).offset;
-        int old_offset = moves_store.current_offset;
-        if (offset != old_offset) {
-          app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+      // DNAEnds move and Strands move only should happen while left click is enabled
+      if (left_click_down) {
+        // move selected DNA ends
+        DNAEndsMove moves_store = app.store_dna_ends_move.state;
+        if (moves_store != null) {
+          var group_names = group_names_of_ends(moves_store);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            Helix helix = moves_store.helix;
+            var group = app.state.design.groups[helix.group];
+            var geometry = app.state.design.geometry;
+            int offset = util.get_address_on_helix(event, helix, group, geometry).offset;
+            int old_offset = moves_store.current_offset;
+            if (offset != old_offset) {
+              app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+            }
+          }
         }
       }
 
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-        var old_address = strands_move.current_address;
-        var address = util.get_closest_address(event, app.state.design.helices.values);
-        if (address != old_address) {
-          app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+        // ugg... when copy/pasting, the left click doesn't have to be depressed
+        // when moving, it does
+        // paste is stopped from ever getting here (and the user was warned in strands_move_middleware)
+        // if strands were on many groups, so it's safe to execute
+        // this is copy is true. If moving, then we rely on the error-checking code next to warn the user
+        // about strands being in multiple groups.
+        if (strands_move.copy || left_click_down) {
+          var group_names = group_names_of_strands(strands_move);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            var old_address = strands_move.current_address;
+            var address = util.get_closest_address(
+                event, app.state.design.helices.values, app.state.design.groups, app.state.design.geometry);
+            if (address != old_address) {
+              app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+            }
+          }
         }
       }
 
@@ -220,7 +256,9 @@ class DesignViewComponent {
       StrandCreation strand_creation = app.state.ui_state.strand_creation;
       if (strand_creation != null) {
         int old_offset = strand_creation.current_offset;
-        int new_offset = util.get_address_on_helix(event, strand_creation.helix).offset;
+        var group = app.state.design.groups[strand_creation.helix.group];
+        var geometry = app.state.design.geometry;
+        int new_offset = util.get_address_on_helix(event, strand_creation.helix, group, geometry).offset;
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
@@ -486,6 +524,17 @@ class DesignViewComponent {
         this.root_element.children.add(this.context_menu_container);
       }
 
+      // side view menu
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedSideMenu()(),
+          ),
+        ),
+        querySelector('#$SIDE_VIEW_MENU_ID'),
+      );
+
+      // side view svg
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -499,6 +548,7 @@ class DesignViewComponent {
         querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
+      // main view
       react_dom.render(
         DesignMainErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -520,6 +570,7 @@ class DesignViewComponent {
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
+      // footer
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -529,6 +580,7 @@ class DesignViewComponent {
         this.footer_element,
       );
 
+      // context menu
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -538,6 +590,7 @@ class DesignViewComponent {
         this.context_menu_container,
       );
 
+      // interactive dialog
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -571,6 +624,7 @@ class DesignViewComponent {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
     var strands =
         BuiltList<Strand>(app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
+
     int min_helix_idx;
     int min_offset;
     bool min_forward;
@@ -615,9 +669,11 @@ class DesignViewComponent {
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
-      if (!app.state.design.grid.is_none()) {
+      var displayed_group_name = app.state.ui_state.displayed_group_name;
+      var displayed_grid = app.state.design.groups[displayed_group_name].grid;
+      if (!displayed_grid.is_none()) {
         bool invert_y = app.state.ui_state.invert_yz;
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.design.grid, invert_y,
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
@@ -638,6 +694,11 @@ class DesignViewComponent {
     }
   }
 }
+
+group_names_of_strands(StrandsMove strands_move) =>
+    app.state.design.group_names_of_strands(strands_move.strands_moving);
+
+group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
 //  if (app.store_dna_ends_move.state != null || app.state.ui_state.strands_move != null) {

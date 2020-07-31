@@ -6,6 +6,9 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
+import 'transform_by_helix_group.dart';
+import '../state/geometry.dart';
+import '../state/group.dart';
 import '../state/selectable.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
@@ -22,20 +25,6 @@ import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
-//UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
-//    connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
-//  bool selected = state.ui_state.selectables_store.selected(props.loopout);
-//  bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
-//  var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
-//  var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
-//  return DesignMainLoopout()
-//    ..selected = selected
-//    ..selectable = selectable
-//    ..edit_modes = state.ui_state.edit_modes
-//    ..prev_substrand = prev_ss
-//    ..next_substrand = next_ss;
-//})(DesignMainLoopout);
-
 @Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
@@ -51,10 +40,13 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Helix next_helix;
   bool selected;
   BuiltSet<EditModeChoice> edit_modes;
+
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin;
+class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, TransformByHelixGroupPropsMixin;
 
 @State()
 mixin DesignMainLoopoutState on UiState {
@@ -64,15 +56,13 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponent {
+    with PureComponent, TransformByHelixGroup<DesignMainLoopoutProps> {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
   @override
   render() {
     Color color = props.color;
-
-    bool mouse_hover = state.mouse_hover;
 
     var classname = constants.css_selector_loopout;
     if (props.selected) {
@@ -89,7 +79,49 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     String tooltip = 'loopout: length ${props.loopout.loopout_length}';
 
-    return _hairpin_arc(classname, color, tooltip);
+    bool within_group = props.prev_helix.group == props.next_helix.group;
+    String path_description;
+
+    if (within_group) {
+      path_description = loopout_path_description_with_group();
+    } else {
+      path_description = loopout_path_description_between_groups();
+    }
+
+    var path_props = Dom.path()
+      ..className = classname
+      ..stroke = color.toHexColor().toCssString()
+      ..d = path_description
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
+      }
+      ..onMouseLeave = ((_) {
+        setState(newState()..mouse_hover = false);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
+      })
+      ..onPointerDown = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..key = props.loopout.id()
+      ..id = props.loopout.id();
+
+    if (within_group) {
+      path_props.transform = transform_of_helix(props.prev_helix.idx);
+    }
+
+    return path_props(Dom.svgTitle()(tooltip));
 
 //    if (util.is_hairpin(prev_ss, next_ss)) {
 //      // special case for hairpin so it's not a short straight line
@@ -188,7 +220,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
   }
 
-  ReactElement _hairpin_arc(String classname, Color color, String tooltip) {
+  String loopout_path_description_with_group() {
     Helix top_helix = props.prev_helix;
     Helix bot_helix = props.next_helix;
     Domain top_dom = props.prev_domain;
@@ -212,8 +244,6 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
     int next_offset = top_dom_is_prev ? bot_offset : top_offset;
 
-//    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
-//    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
     var prev_svg = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward);
     var next_svg = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward);
 
@@ -246,60 +276,48 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       y_offset1 += h;
       y_offset2 -= h;
     }
-//    if (top_ss == props.prev_substrand) {
-//      y_offset1 = top_svg.y - h;
-//      y_offset2 = bot_svg.y + h;
-//      if (top_offset == top_ss.end - 1) {
-//        x_offset1 = top_svg.x + w;
-//        x_offset2 = bot_svg.x + w;
-//      } else {
-//        x_offset1 = top_svg.x - w;
-//        x_offset2 = bot_svg.x - w;
-//      }
-//    } else {
-//      y_offset2 = top_svg.y - h;
-//      y_offset1 = bot_svg.y + h;
-//      if (top_offset == top_ss.end - 1) {
-//        x_offset2 = top_svg.x + w;
-//        x_offset1 = bot_svg.x + w;
-//      } else {
-//        x_offset2 = top_svg.x - w;
-//        x_offset1 = bot_svg.x - w;
-//      }
-//    }
 
     var c1 = Point<num>(x_offset1, y_offset1);
     var c2 = Point<num>(x_offset2, y_offset2);
 
-    String id = props.loopout.id();
-    return (Dom.path()
-      ..className = classname
-      ..stroke = color.toHexColor().toCssString()
-      ..d = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}'
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
-      }
-      ..onMouseLeave = ((_) {
-        setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
-      })
-      ..onPointerDown = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..key = id
-      ..id = id)(Dom.svgTitle()(tooltip));
+    var path = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
+
+    return path;
+  }
+
+  String loopout_path_description_between_groups() {
+    int prev_offset = props.prev_domain.dnaend_3p.offset_inclusive;
+    int next_offset = props.next_domain.dnaend_5p.offset_inclusive;
+
+    var prev_group = props.groups[props.prev_helix.group];
+    var next_group = props.groups[props.next_helix.group];
+
+    var prev_svg_untransformed = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward);
+    var next_svg_untransformed = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward);
+
+    var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
+    var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
+
+    var w = 2 * util.sigmoid(props.loopout.loopout_length) * constants.BASE_WIDTH_SVG;
+    var h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
+
+    // un-rotated
+    var prev_y_offset = prev_svg.y + h;
+    var next_y_offset = next_svg.y - h;
+    var prev_x_offset = prev_svg.x + w;
+    var next_x_offset = next_svg.x + w;
+    var prev_c_unrotated = Point<num>(prev_x_offset, prev_y_offset);
+    var next_c_unrotated = Point<num>(next_x_offset, next_y_offset);
+
+    // rotated
+    var prev_c = util.rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
+    var next_c = util.rotate(next_c_unrotated, next_group.pitch, origin: next_svg);
+
+    var path = 'M ${prev_svg.x} ${prev_svg.y} '
+        'C ${prev_c.x} ${prev_c.y} ${next_c.x} ${next_c.y} '
+        '${next_svg.x} ${next_svg.y}';
+
+    return path;
   }
 }
 

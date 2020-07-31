@@ -47,8 +47,11 @@ _save_file_codenano(AppState state) async {
     return;
   }
 
-  if (design.grid != Grid.none) {
-    window.alert('Grid must be set to none to export to codenano. First convert grid to none.');
+  var grids = design.groups.values.map((group) => group.grid).toSet();
+  if (!(grids.length == 1 && grids.first == Grid.none)) {
+    var msg = 'Grid must be set to none for all helix groups to export to codenano. '
+        'First convert all grids to none.';
+    window.alert(msg);
     return;
   }
 

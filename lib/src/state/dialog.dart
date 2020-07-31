@@ -242,7 +242,7 @@ abstract class DialogRadio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DialogRadio({String label, BuiltList<String> options, int selected_idx = 0}) {
+  factory DialogRadio({String label, Iterable<String> options, int selected_idx = 0}) {
     return DialogRadio.from((b) => b
       ..options.replace(options)
       ..selected_idx = selected_idx

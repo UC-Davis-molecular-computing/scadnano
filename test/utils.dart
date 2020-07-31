@@ -110,9 +110,6 @@ void expect_helices_equal(BuiltMap<int, Helix> actual_helices, BuiltMap<int, Hel
 /// This function makes debugging easier by splitting the giant assertion
 /// into smaller assertions on individual fields.
 void expect_design_equal(Design actual, Design matcher) {
-  expect(actual.version, matcher.version);
-  expect(actual.grid, matcher.grid);
-  expect(actual.major_tick_distance, matcher.major_tick_distance);
   expect_helices_equal(actual.helices, matcher.helices);
   expect_strands_equal(actual.strands, matcher.strands);
   expect(actual.is_origami, matcher.is_origami);

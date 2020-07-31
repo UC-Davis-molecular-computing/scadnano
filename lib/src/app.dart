@@ -10,6 +10,7 @@ import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:over_react/over_react.dart' as react;
+import 'package:scadnano/src/state/group.dart';
 
 import 'middleware/all_middleware.dart';
 import 'middleware/throttle.dart';
@@ -47,8 +48,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-  print("m13p7249 rotated 5587: ${DNASequencePredefined.dna_sequence_by_name('M13p7249')}");
-  print("m13p7249 unrotated: ${DNASequencePredefined.dna_sequence_by_name('M13p7249', 0)}");
+
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.

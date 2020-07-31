@@ -11,6 +11,7 @@ import 'package:built_collection/built_collection.dart';
 
 import '../state/app_ui_state.dart';
 import '../state/domain.dart';
+import '../state/group.dart';
 import '../state/context_menu.dart';
 import '../state/crossover.dart';
 import '../state/dialog.dart';
@@ -281,7 +282,7 @@ abstract class SelectModeToggle
 
 abstract class SelectModesAdd
     with BuiltJsonSerializable
-    implements Action, Built<SelectModesAdd, SelectModesAddBuilder> {
+    implements AppUIStateStorableAction, Built<SelectModesAdd, SelectModesAddBuilder> {
   BuiltList<SelectModeChoice> get modes;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -1231,7 +1232,7 @@ abstract class HelixIdxsChange
   BuiltMap<int, int> get idx_replacements;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixIdxsChange({Map<int,int> idx_replacements}) =>
+  factory HelixIdxsChange({Map<int, int> idx_replacements}) =>
       HelixIdxsChange.from((b) => b..idx_replacements.replace(idx_replacements));
 
   factory HelixIdxsChange.from([void Function(HelixIdxsChangeBuilder) updates]) = _$HelixIdxsChange;
@@ -1446,11 +1447,11 @@ abstract class JoinStrandsByCrossover
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// mirror image Strands
+// reflect (mirror image) Strands
 
-abstract class StrandsMirror
+abstract class StrandsReflect
     with BuiltJsonSerializable
-    implements Action, Built<StrandsMirror, StrandsMirrorBuilder> {
+    implements Action, Built<StrandsReflect, StrandsReflectBuilder> {
   BuiltList<Strand> get strands;
 
   bool get horizontal;
@@ -1458,12 +1459,14 @@ abstract class StrandsMirror
   bool get reverse_polarity;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMirror({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
-      _$StrandsMirror._;
+  factory StrandsReflect(
+      {BuiltList<Strand> strands,
+      bool horizontal,
+      bool reverse_polarity}) = _$StrandsReflect._;
 
-  StrandsMirror._();
+  StrandsReflect._();
 
-  static Serializer<StrandsMirror> get serializer => _$strandsMirrorSerializer;
+  static Serializer<StrandsReflect> get serializer => _$strandsReflectSerializer;
 }
 
 abstract class ReplaceStrands
@@ -1911,12 +1914,75 @@ abstract class GridChange
     implements Built<GridChange, GridChangeBuilder> {
   Grid get grid;
 
+  String get group_name;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory GridChange({Grid grid}) = _$GridChange._;
+  factory GridChange({Grid grid, String group_name}) = _$GridChange._;
 
   GridChange._();
 
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// changes to Helix groups
+
+abstract class GroupDisplayedChange
+    with BuiltJsonSerializable
+    implements Action, Built<GroupDisplayedChange, GroupDisplayedChangeBuilder> {
+  String get group_name;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupDisplayedChange({String group_name}) = _$GroupDisplayedChange._;
+
+  GroupDisplayedChange._();
+
+  static Serializer<GroupDisplayedChange> get serializer => _$groupDisplayedChangeSerializer;
+}
+
+abstract class GroupAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements AppUIStateStorableAction, Built<GroupAdd, GroupAddBuilder> {
+  String get name;
+
+  HelixGroup get group;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupAdd({String name, HelixGroup group}) = _$GroupAdd._;
+
+  GroupAdd._();
+
+  static Serializer<GroupAdd> get serializer => _$groupAddSerializer;
+}
+
+abstract class GroupRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<GroupRemove, GroupRemoveBuilder> {
+  String get name;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupRemove({String name}) = _$GroupRemove._;
+
+  GroupRemove._();
+
+  static Serializer<GroupRemove> get serializer => _$groupRemoveSerializer;
+}
+
+abstract class GroupChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<GroupChange, GroupChangeBuilder> {
+  String get old_name;
+
+  String get new_name;
+
+  HelixGroup get new_group;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupChange({String old_name, String new_name, HelixGroup new_group}) = _$GroupChange._;
+
+  GroupChange._();
+
+  static Serializer<GroupChange> get serializer => _$groupChangeSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

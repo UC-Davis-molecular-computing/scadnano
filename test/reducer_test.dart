@@ -218,8 +218,7 @@ main() {
     var geometry = state.design.geometry;
     final correct_helix =
         new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
-    var correct_helices =
-        util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, Grid.square);
+    var correct_helices = util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix});
     expect(state.design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
@@ -3857,7 +3856,7 @@ main() {
     Strand strand0 = two_helices_join_inner_strands.strands[0];
     Strand strand1 = two_helices_join_inner_strands.strands[1];
     Strand strand2 = two_helices_join_inner_strands.strands[2];
-    test('Select and delete strands', () {
+    test('select_and_delete_strands', () {
       AppState state = app_state_from_design(two_helices_join_inner_strands);
       BuiltList<Selectable> selectables = [strand0, strand1].toBuiltList();
 
@@ -4650,10 +4649,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4792,10 +4788,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix1.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4929,10 +4922,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: false);
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -5012,10 +5002,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: false);
 
       // start move
@@ -5058,10 +5045,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: false);
 
       // start move
@@ -5103,10 +5087,7 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
           copy: false);
 
       // start move
@@ -5502,15 +5483,14 @@ main() {
       state = app_state_reducer(state, GridChange(grid: Grid.hex));
 
       List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
+          two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
       for (int i = 0; i < helices_builder.length; i++) {
         helices_builder[i].grid = Grid.hex;
       }
       BuiltMap<int, Helix> new_helices =
           {for (var helix in helices_builder) helix.idx: helix.build()}.build();
-      Design expected_design = two_helices_design.rebuild((b) => b
-        ..grid = Grid.hex
-        ..helices.replace(new_helices));
+      Design expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expected_design = expected_design.set_grid(Grid.hex);
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5520,7 +5500,7 @@ main() {
       state = app_state_reducer(state, GridChange(grid: grid));
 
       List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
+          two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
       for (int i = 0; i < helices_builder.length; i++) {
         GridPosition gridPosition = helices_builder[i].grid_position.build();
         helices_builder[i]
@@ -5530,9 +5510,8 @@ main() {
       }
       BuiltMap<int, Helix> new_helices =
           {for (var helix in helices_builder) helix.idx: helix.build()}.build();
-      Design expected_design = two_helices_design.rebuild((b) => b
-        ..grid = grid
-        ..helices.replace(new_helices));
+      Design expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expected_design = expected_design.set_grid(grid);
       expect_design_equal(state.design, expected_design);
     });
 
@@ -5568,11 +5547,10 @@ main() {
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
       // need to reassign SVG here since original design had positive x Position3D, which means
       // positive svi_position.x
-      new_helices = util.helices_assign_svg(no_grid_two_helices_design.geometry, false, new_helices, grid);
+      new_helices = util.helices_assign_svg(no_grid_two_helices_design.geometry, false, new_helices);
 
-      Design expected_design = no_grid_two_helices_design.rebuild((b) => b
-        ..helices.replace(new_helices)
-        ..grid = grid);
+      Design expected_design = no_grid_two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expected_design = expected_design.set_grid(grid);
 
       expect_design_equal(state.design, expected_design);
     });
@@ -5702,7 +5680,7 @@ main() {
 
     var built_expected_helices = expected_helices.build().toMap();
     var geometry = two_helices_design.geometry;
-    built_expected_helices = util.helices_assign_svg(geometry, false, built_expected_helices, Grid.square);
+    built_expected_helices = util.helices_assign_svg(geometry, false, built_expected_helices);
 
     AppState expected_state = state.rebuild((b) => b
       ..design.helices.replace(built_expected_helices)
@@ -5767,12 +5745,13 @@ main() {
     Design out_of_order_design = Design.from_json(json.decode(out_of_order_json));
     test('helices_view_order', () {
       BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
-      expect(out_of_order_design.helices_view_order, expected_helices_view_order);
+      expect(out_of_order_design.default_group().helices_view_order, expected_helices_view_order);
     });
     test('helices_view_order', () {
       BuiltMap<int, int> expected_helices_view_order_inverse =
           BuiltMap<int, int>({12: 0, 13: 3, 15: 1, 17: 2});
-      expect(out_of_order_design.helices_view_order_inverse, expected_helices_view_order_inverse);
+      expect(out_of_order_design.default_group().helices_view_order_inverse,
+          expected_helices_view_order_inverse);
     });
   });
 
@@ -7116,19 +7095,16 @@ main() {
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
-      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.default_group().helices_view_order;
       BuiltMap<int, int> helices_view_order_inverse =
-          many_helices_modifications_split.helices_view_order_inverse;
+          many_helices_modifications_split.default_group().helices_view_order_inverse;
       bool copy = false;
 
       StrandsMove strands_move = StrandsMove(
         strands_moving: strands_moving,
         all_strands: all_strands,
         original_address: original_address,
-        original_helix_idx: original_helix_idx,
-        helices: helices,
-        helices_view_order: helices_view_order,
-        helices_view_order_inverse: helices_view_order_inverse,
+        helices: state.design.helices,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
@@ -7318,19 +7294,16 @@ main() {
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
-      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.default_group().helices_view_order;
       BuiltMap<int, int> helices_view_order_inverse =
-          many_helices_modifications_split.helices_view_order_inverse;
+          many_helices_modifications_split.default_group().helices_view_order_inverse;
       bool copy = true;
 
       StrandsMove strands_move = StrandsMove(
         strands_moving: strands_moving,
         all_strands: all_strands,
         original_address: original_address,
-        original_helix_idx: original_helix_idx,
-        helices: helices,
-        helices_view_order: helices_view_order,
-        helices_view_order_inverse: helices_view_order_inverse,
+        helices: state.design.helices,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 

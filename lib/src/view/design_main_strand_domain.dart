@@ -29,6 +29,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Helix helix;
   String strand_tooltip;
   Strand strand;
+  String transform;
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
 }
 
@@ -47,6 +48,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     return (Dom.line()
       ..onClick = _handle_click
       ..stroke = props.color.toHexColor().toCssString()
+      ..transform = props.transform
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
       ..x2 = '${end_svg.x}'
@@ -60,7 +62,9 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     if (edit_mode_is_nick() || edit_mode_is_insertion() || edit_mode_is_deletion()) {
       var domain = props.domain;
       MouseEvent event = event_syn.nativeEvent;
-      var address = util.get_address_on_helix(event, props.helix);
+      var group = app.state.design.groups[props.helix.group];
+      var geometry = app.state.design.geometry;
+      var address = util.get_address_on_helix(event, props.helix, group, geometry);
       int offset = address.offset;
 
       if (offset <= domain.start || offset >= domain.end) {

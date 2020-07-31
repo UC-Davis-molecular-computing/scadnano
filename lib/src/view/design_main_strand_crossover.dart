@@ -4,6 +4,8 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import '../state/geometry.dart';
 
+import 'transform_by_helix_group.dart';
+import '../state/group.dart';
 import '../state/context_menu.dart';
 import '../state/helix.dart';
 import '../state/crossover.dart';
@@ -33,10 +35,12 @@ mixin DesignMainStrandCrossoverPropsMixin on UiProps {
   Domain next_domain;
   bool selected;
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
 }
 
-class DesignMainStrandCrossoverProps = UiProps with DesignMainStrandCrossoverPropsMixin;
+class DesignMainStrandCrossoverProps = UiProps
+    with DesignMainStrandCrossoverPropsMixin, TransformByHelixGroupPropsMixin;
 
 @State()
 mixin DesignMainStrandCrossoverState on UiState {
@@ -47,18 +51,14 @@ mixin DesignMainStrandCrossoverState on UiState {
 
 class DesignMainStrandCrossoverComponent
     extends UiStatefulComponent2<DesignMainStrandCrossoverProps, DesignMainStrandCrossoverState>
-    with PureComponent {
+    with PureComponent, TransformByHelixGroup<DesignMainStrandCrossoverProps> {
   @override
-  Map get initialState =>
-      (newState()
-        ..mouse_hover = false);
+  Map get initialState => (newState()..mouse_hover = false);
 
   @override
   render() {
     Strand strand = props.strand;
     Crossover crossover = props.crossover;
-    Domain prev_substrand = props.prev_domain;
-    Domain next_substrand = props.next_domain;
 
     var classname = constants.css_selector_crossover;
     if (props.selected) {
@@ -68,7 +68,19 @@ class DesignMainStrandCrossoverComponent
       classname += ' ' + constants.css_selector_scaffold;
     }
 
-    var path = crossover_path_description(prev_substrand, next_substrand, props.helices, props.geometry);
+    var prev_group = props.helices[props.prev_domain.helix].group;
+    var next_group = props.helices[props.next_domain.helix].group;
+    bool within_group = prev_group == next_group;
+
+    String path;
+    if (within_group) {
+      path = crossover_path_description_within_helix_group(
+          props.prev_domain, props.next_domain, props.helices, props.geometry);
+    } else {
+      path = crossover_path_description_between_helix_groups(
+          props.prev_domain, props.next_domain, props.helices, props.geometry, props.groups);
+    }
+
     var color = strand.color.toHexColor().toCssString();
     var id = crossover.id();
 
@@ -84,36 +96,41 @@ class DesignMainStrandCrossoverComponent
 
     String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
-    return (Dom.path()
-      ..d = path
-      ..stroke = color
-      ..className = classname
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_crossover();
-        }
-      }
-      ..onMouseLeave = (_) {
-        setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          mouse_leave_update_mouseover();
-        }
-      }
-      ..onPointerDown = ((ev) {
-        if (crossover_selectable(props.crossover)) {
-          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (crossover_selectable(props.crossover)) {
-          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..id = id
-      ..key = id)(
-//        Dom.svgTitle()(tooltip)
-    );
+    var path_props = Dom.path()
+          ..d = path
+          ..stroke = color
+          ..className = classname
+          ..onMouseEnter = (ev) {
+            setState(newState()..mouse_hover = true);
+            if (edit_mode_is_backbone()) {
+              update_mouseover_crossover();
+            }
+          }
+          ..onMouseLeave = (_) {
+            setState(newState()..mouse_hover = false);
+            if (edit_mode_is_backbone()) {
+              mouse_leave_update_mouseover();
+            }
+          }
+          ..onPointerDown = ((ev) {
+            if (crossover_selectable(props.crossover)) {
+              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+            }
+          })
+          ..onPointerUp = ((ev) {
+            if (crossover_selectable(props.crossover)) {
+              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+            }
+          })
+          ..id = id
+          ..key = id;
+
+    if (within_group) {
+      path_props.transform = transform_of_helix(props.prev_domain.helix);
+    }
+
+    return path_props();
+//    (Dom.svgTitle()(tooltip));
   }
 
   @override
@@ -140,8 +157,7 @@ class DesignMainStrandCrossoverComponent
     }
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) =>
-      [
+  List<ContextMenuItem> context_menu_strand(Strand strand) => [
         ContextMenuItem(
           title: 'convert to loopout',
           on_click: convert_crossover_to_loopout,
@@ -188,3 +204,4 @@ class DesignMainStrandCrossoverComponent
     app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
   }
 }
+

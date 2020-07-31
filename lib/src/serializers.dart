@@ -44,10 +44,14 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  GroupDisplayedChange,
+  GroupAdd,
+  GroupRemove,
+  GroupChange,
   LocalStorageDesignOption,
   LocalStorageDesignChoice,
   LocalStorageDesignChoiceSet,
-  StrandsMirror,
+  StrandsReflect,
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,

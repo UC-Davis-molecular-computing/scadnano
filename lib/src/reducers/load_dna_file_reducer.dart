@@ -20,7 +20,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
   try {
     map = jsonDecode(action.content);
     design_new = Design.from_json(map, state.ui_state.invert_yz);
-  } on IllegalDNADesignError catch (error, stack_trace) {
+  } on IllegalDesignError catch (error, stack_trace) {
     error_message = ''
         '******************'
         '\n* illegal design *'
@@ -36,8 +36,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         '\n$hline'
         '\n\nThat file\'s contents are printed below.'
         '${util.stack_trace_message_bug_report(stack_trace)}'
-        '\n\nThe file ${action.filename} has this content:\n\n${action.content}'
-    ;
+        '\n\nThe file ${action.filename} has this content:\n\n${action.content}';
   }
 
   if (error_message == null && design_new == null) {
@@ -55,16 +54,25 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
     // remove selected helices from
     BuiltSet<int> side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
     if (state.design != null && design_new.helices.length < state.design.helices.length) {
-      side_selected_helix_idxs = side_selected_helix_idxs
-          .rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
+      side_selected_helix_idxs =
+          side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
     }
+
     var new_selectables_store = SelectablesStore();
-//    new_selectables_store = new_selectables_store.register_design(design_new);
     var new_filename = action.filename ?? state.ui_state.loaded_filename;
+
+    // if new design doesn't have same group names, need to pick a new one
+    var storables = state.ui_state.storables;
+    var displayed_group_name = storables.displayed_group_name;
+    if (!design_new.groups.containsKey(displayed_group_name)) {
+      storables = storables.rebuild((b) => b..displayed_group_name = design_new.groups.keys.first);
+    }
+
     new_state = state.rebuild((m) => m
       ..undo_redo.replace(UndoRedo())
       ..design = design_new.toBuilder()
       ..ui_state.update((u) => u
+        ..storables.replace(storables)
         ..selectables_store.replace(new_selectables_store)
         ..changed_since_last_save = false
         ..storables.loaded_filename = new_filename

@@ -37,7 +37,8 @@ save(AppState state, Storable storable) {
   String value_string;
   if (storable == Storable.design) {
     var design = state.design;
-    value_string = json_encode(design);
+//    value_string = json_encode(design);
+    value_string = json_encode(design, false);
   } else if (storable == Storable.app_ui_state_storables) {
     value_string = jsonEncode(standard_serializers.serialize(state.ui_state.storables));
   }

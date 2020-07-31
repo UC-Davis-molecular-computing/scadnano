@@ -196,15 +196,15 @@ abstract class Domain
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Substrand';
     var forward =
-        util.get_value(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
-    var helix = util.get_value(json_map, constants.helix_idx_key, name);
-    var start = util.get_value(json_map, constants.start_key, name);
-    var end = util.get_value(json_map, constants.end_key, name);
-    var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
+        util.mandatory_field(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
+    var helix = util.mandatory_field(json_map, constants.helix_idx_key, name);
+    var start = util.mandatory_field(json_map, constants.start_key, name);
+    var end = util.mandatory_field(json_map, constants.end_key, name);
+    var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions =
-        parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
+        parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
-    Object label = util.get_value_with_null_default(json_map, constants.label_key);
+    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 

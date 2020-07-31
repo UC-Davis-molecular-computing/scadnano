@@ -45,6 +45,12 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   static Position3D origin = Position3D();
 
+  @override
+  Position3D operator *(num scalar) => Position3D(x: x * scalar, y: y * scalar, z: z * scalar);
+
+  @override
+  Position3D operator +(Position3D other) => Position3D(x: x + other.x, y: y + other.y, z: z + other.z);
+
   /************************ begin BuiltValue boilerplate ************************/
   factory Position3D({num x = 0, num y = 0, num z = 0}) => Position3D.from((b) => b
     ..x = x

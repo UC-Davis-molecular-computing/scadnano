@@ -35,9 +35,9 @@ mixin DesignSideHelixProps on UiProps {
   bool helix_change_apply_to_all;
   bool show_grid_coordinates;
   bool invert_y;
+  Grid grid;
   MouseoverData mouseover_data;
   BuiltSet<EditModeChoice> edit_modes;
-  Grid grid;
 }
 
 class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with PureComponent {

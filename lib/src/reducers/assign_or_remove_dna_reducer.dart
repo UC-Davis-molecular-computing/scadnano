@@ -206,7 +206,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
             'to a strand bound to this one). This occurred while directly assigning a DNA '
             'sequence to the strand whose 5\' end is at helix ${ss_from.helix}, and is of '
             'length ${strand_from.dna_length}.';
-        throw IllegalDNADesignError(msg);
+        throw IllegalDesignError(msg);
       }
     }
   }
@@ -226,7 +226,7 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
           '${strand.dna_sequence}, '
           'but you tried to assign a different sequence of length ${seq.length} to '
           'it, which is\n{$seq}.';
-      throw IllegalDNADesignError(msg);
+      throw IllegalDesignError(msg);
     }
   }
   return seq;

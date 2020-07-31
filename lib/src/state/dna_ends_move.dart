@@ -11,11 +11,8 @@ import 'helix.dart';
 part 'dna_ends_move.g.dart';
 
 abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMove, DNAEndsMoveBuilder> {
-  factory DNAEndsMove(
-      {BuiltList<DNAEndMove> moves,
-      int original_offset,
-      int current_offset,
-      Helix helix}) = _$DNAEndsMove._;
+  factory DNAEndsMove({BuiltList<DNAEndMove> moves, int original_offset, int current_offset, Helix helix}) =
+      _$DNAEndsMove._;
 
   factory DNAEndsMove.from([void Function(DNAEndsMoveBuilder) updates]) = _$DNAEndsMove;
 
@@ -23,9 +20,10 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
 
   static Serializer<DNAEndsMove> get serializer => _$dNAEndsMoveSerializer;
 
-  /************************ end BuiltValue boilerplate ************************/
   @memoized
   int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   BuiltList<DNAEndMove> get moves;
 
@@ -39,6 +37,9 @@ abstract class DNAEndsMove with BuiltJsonSerializable implements Built<DNAEndsMo
   /// (note that some ends have offset different from start_offset, but we are trying to move all of them
   /// by current_offset - start_offset, assuming that won't be too far for any of them)
   int get current_offset;
+
+  @memoized
+  BuiltList<DNAEnd> get ends_moving => [for (var end_move in moves) end_move.dna_end].build();
 
   @memoized
   int get delta => current_offset - original_offset;

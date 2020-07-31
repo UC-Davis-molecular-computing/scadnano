@@ -47,7 +47,7 @@ abstract class Modification {
     } else if (location == "internal") {
       mod = ModificationInternal.from_json(json_map).rebuild((b) => b.unused_fields = unused_fields);
     } else {
-      throw IllegalDNADesignError('unknown Modification location "${location}"');
+      throw IllegalDesignError('unknown Modification location "${location}"');
     }
 
     return mod;

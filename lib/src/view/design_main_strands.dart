@@ -2,8 +2,9 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import '../state/geometry.dart';
 
+import '../state/group.dart';
+import '../state/geometry.dart';
 import '../state/helix.dart';
 import '../state/selectable.dart';
 import '../state/app_state.dart';
@@ -18,6 +19,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
   return DesignMainStrands()
     ..strands = state.design.strands
     ..helices = state.design.helices
+    ..groups = state.design.groups
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
     ..show_modifications = state.ui_state.show_modifications
@@ -29,7 +31,7 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
     ..modification_font_size = state.ui_state.modification_font_size
     ..modification_display_connector = state.ui_state.modification_display_connector
-  ..geometry = state.design.geometry;
+    ..geometry = state.design.geometry;
 })(DesignMainStrands);
 
 UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
@@ -37,6 +39,7 @@ UiFactory<DesignMainStrandsProps> DesignMainStrands = _$DesignMainStrands;
 mixin DesignMainStrandsProps on UiProps {
   BuiltList<Strand> strands;
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   SelectablesStore selectables_store;
   bool show_modifications;
@@ -57,10 +60,13 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
     List<ReactElement> elts = [];
     for (var strand in props.strands) {
       Map<int, Helix> helices_used_in_strand_mutable = {};
-      for (var ss in strand.domains()) {
-        helices_used_in_strand_mutable[ss.helix] = props.helices[ss.helix];
+      for (var domain in strand.domains()) {
+        helices_used_in_strand_mutable[domain.helix] = props.helices[domain.helix];
       }
       var helices_used_in_strand = helices_used_in_strand_mutable.build();
+      var group_names_in_strand = helices_used_in_strand.values.map((helix) => helix.group);
+      BuiltMap<String, HelixGroup> groups_in_strand =
+          {for (var name in group_names_in_strand) name: props.groups[name]}.build();
       var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
@@ -71,6 +77,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
             props.only_display_selected_helices ? props.side_selected_helix_idxs : null
         ..selected = props.selectables_store.selected(strand)
         ..helices = helices_used_in_strand
+        ..groups = groups_in_strand
         ..selected_ends_in_strand = selected_ends_in_strand
         ..selected_crossovers_in_strand = selected_crossovers_in_strand
         ..selected_loopouts_in_strand = selected_loopouts_in_strand

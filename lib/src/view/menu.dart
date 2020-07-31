@@ -36,7 +36,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
     ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
     ..autofit = state.ui_state.autofit
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
-    ..grid = state.design?.grid
+//    ..grid = state.design?.grid
     ..example_designs = state.ui_state.example_designs
     ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
     ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
@@ -79,7 +79,7 @@ mixin MenuPropsMixin on UiProps {
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
-  Grid grid;
+//  Grid grid;
   ExampleDesigns example_designs;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
@@ -127,7 +127,7 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       file_menu(),
       edit_menu(),
       view_menu(),
-      grid_menu(),
+//      grid_menu(),
       export_menu(),
       help_menu(),
 //      dummy_button(),
@@ -250,21 +250,21 @@ Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
       DropdownDivider({}),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
-        ..display = 'Set helix coordinates based on crossovers'
-        ..disabled = props.grid != Grid.none
-        ..tooltip = '''\
-The grid must be set to none to enable this.
-
-Select some crossovers and some helices. If no helices are selected, then all
-helices are processed. At most one crossover between pairs of adjacent (in 
-view order) helices can be selected. If a pair of adjacent helices has no 
-crossover selected, it is assumed to be the first crossover.  
-
-New grid coordinates are calculated based on the crossovers to ensure that each 
-pair of adjacent helices has crossover angles that point the backbone angles 
-directly at the adjoining helix.''')(),
+//      (MenuDropdownItem()
+//        ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
+//        ..display = 'Set helix coordinates based on crossovers'
+//        ..disabled = props.grid != Grid.none
+//        ..tooltip = '''\
+//The grid must be set to none to enable this.
+//
+//Select some crossovers and some helices. If no helices are selected, then all
+//helices are processed. At most one crossover between pairs of adjacent (in
+//view order) helices can be selected. If a pair of adjacent helices has no
+//crossover selected, it is assumed to be the first crossover.
+//
+//New grid coordinates are calculated based on the crossovers to ensure that each
+//pair of adjacent helices has crossover angles that point the backbone angles
+//directly at the adjoining helix.''')(),
       (MenuBoolean()
         ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
         ..display = 'default to leftmost scaffold crossover'
@@ -499,26 +499,26 @@ Shows grid coordinates in the side view under the helix index.'''
     ];
   }
 
-  grid_menu() {
-    return NavDropdown(
-      {
-        'title': 'Grid',
-        'id': 'grid-nav-dropdown',
-      },
-      [
-        for (var grid in Grid.values)
-          DropdownItem(
-            {
-              'active': grid == props.grid,
-              'disabled': grid == props.grid,
-              'key': grid.toString(),
-              'onClick': ((ev) => props.dispatch(actions.GridChange(grid: grid))),
-            },
-            grid.toString(),
-          )
-      ],
-    );
-  }
+//  grid_menu() {
+//    return NavDropdown(
+//      {
+//        'title': 'Grid',
+//        'id': 'grid-nav-dropdown',
+//      },
+//      [
+//        for (var grid in Grid.values)
+//          DropdownItem(
+//            {
+//              'active': grid == props.grid,
+//              'disabled': grid == props.grid,
+//              'key': grid.toString(),
+//              'onClick': ((ev) => props.dispatch(actions.GridChange(grid: grid))),
+//            },
+//            grid.toString(),
+//          )
+//      ],
+//    );
+//  }
 
   export_menu() {
     return NavDropdown(

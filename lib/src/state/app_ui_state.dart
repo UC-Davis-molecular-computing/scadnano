@@ -86,6 +86,8 @@ abstract class AppUIStateStorable
 
   LocalStorageDesignChoice get local_storage_design_choice;
 
+  String get displayed_group_name;
+
   static void _initializeBuilder(AppUIStateStorableBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -114,6 +116,7 @@ abstract class AppUIStateStorable
     b.show_grid_coordinates_side_view = false;
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
+    b.displayed_group_name = constants.default_group_name;
     b.local_storage_design_choice =
         LocalStorageDesignChoice().toBuilder();
   }
@@ -246,6 +249,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get default_crossover_type_staple_for_setting_helix_rolls =>
       storables.default_crossover_type_staple_for_setting_helix_rolls;
+
+  String get displayed_group_name => storables.displayed_group_name;
 
   LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
