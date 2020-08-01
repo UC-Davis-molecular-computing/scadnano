@@ -66,10 +66,10 @@ StrandsMove strands_adjust_address_reducer(
 // if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
 // where the strands would go if it were allowable.
 bool in_bounds(Design design, StrandsMove strands_move) {
-  var address_helix_idx = strands_move.current_address.helix_idx;
-  var helix = design.helices[address_helix_idx];
-  var group = design.groups[helix.group];
-  var num_helices_in_group = design.helices_in_group(helix.group).length;
+  var current_address_helix_idx = strands_move.current_address.helix_idx;
+  var current_helix = design.helices[current_address_helix_idx];
+  var current_group = design.groups[current_helix.group];
+  var num_helices_in_group = design.helices_in_group(current_helix.group).length;
 
   int original_helix_idx = strands_move.strands_moving.first.domains().first.helix;
   var original_helix = design.helices[original_helix_idx];
@@ -91,8 +91,8 @@ bool in_bounds(Design design, StrandsMove strands_move) {
         strands_move.strands_moving, design.helices.keys)[original_helix_idx];
     if (substrands_moving.isEmpty) continue;
 
-    int view_order_orig = group.helices_view_order_inverse[original_helix_idx];
-    int new_helix_idx = group.helices_view_order[view_order_orig + delta_view_order];
+    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
     Helix helix = design.helices[new_helix_idx];
     for (var ss in substrands_moving) {
       if (ss.start + delta_offset < helix.min_offset) return false;
