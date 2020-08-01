@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:test/test.dart';
-import 'package:quiver/iterables.dart' as quiver;
 
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
@@ -286,10 +286,10 @@ main() {
     var json_map = jsonDecode(json_str);
     var design = Design.from_json(json_map);
     var state = app_state_from_design(design);
-    var n = 'n';
-    var s = 's';
-    var e = 'e';
-    var w = 'w';
+    var n = 'north';
+    var s = 'south';
+    var e = 'east';
+    var w = 'west';
 
     test('JSON_4_helix_groups', () {
       var groups = design.groups;
@@ -346,15 +346,16 @@ main() {
       expect(pos_w['y'], closeTo(0, eps));
       expect(pos_w['z'], closeTo(0, eps));
 
-      expect(group_n[constants.grid_key], Grid.honeycomb);
-      expect(group_e[constants.grid_key], Grid.square);
-      expect(group_s[constants.grid_key], Grid.square);
-      expect(group_w[constants.grid_key], Grid.none);
+      expect(group_n[constants.grid_key], Grid.honeycomb.name);
+      expect(group_e[constants.grid_key], Grid.square.name);
+      expect(group_s[constants.grid_key], Grid.square.name);
+      expect(group_w[constants.grid_key], Grid.none.name);
 
-      expect(group_n[constants.pitch_key], closeTo(0, eps));
+      // if pitch is 0, that's the default, so won't get written to JSON
+      expect(group_n[constants.pitch_key], null);
       expect(group_e[constants.pitch_key], closeTo(45, eps));
-      expect(group_s[constants.pitch_key], closeTo(0, eps));
-      expect(group_w[constants.pitch_key], closeTo(0, eps));
+      expect(group_s[constants.pitch_key], null);
+      expect(group_w[constants.pitch_key], null);
 
       // test auto-assignment of grid_positions based on helices view order
       expect(design.helices[6].grid_position, GridPosition(0, 0));
@@ -393,5 +394,68 @@ main() {
 
       expect(new_design.groups[s].helices_view_order[0], 6);
     });
+  });
+
+  test('helices_in_default_group_nondefault_indices', () {
+    String two_helices_with_helix_idx_gap_json = r'''
+ {
+  "version": "''' +
+        constants.CURRENT_VERSION +
+        r'''", 
+  "grid": "square", 
+  "helices": [ 
+    {"grid_position": [0, 0], "idx": 0}, 
+    {"grid_position": [0, 1], "idx": 4} 
+  ],
+  "strands": [
+    {
+      "domains": [
+        {"helix": 0, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "domains": [
+        {"helix": 0, "forward": false , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "domains": [
+        {"helix": 4, "forward": true , "start": 0, "end": 16}
+      ]
+    },
+    {
+      "domains": [
+        {"helix": 4, "forward": false , "start": 0, "end": 16}
+      ]
+    }
+  ]
+ }
+  ''';
+    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+    expect(design.groups.length, 1);
+    expect(design.default_group().grid, Grid.square);
+    expect(design.default_group().helices_view_order, [0, 4]);
+  });
+
+  test('helices_in_default_group_nondefault_view_order', () {
+    String two_helices_with_helix_idx_gap_json = r'''
+{
+    "grid": "square",
+    "helices": [
+      {"grid_position": [0, 0], "idx": 12},
+      {"grid_position": [0, 1], "idx": 13},
+      {"grid_position": [0, 2], "idx": 15},
+      {"grid_position": [0, 3], "idx": 17}
+    ],
+    "helices_view_order": [12, 15, 17, 13],
+    "strands": []
+  }
+  ''';
+    Design design = Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+    expect(design.groups.length, 1);
+    expect(design.default_group().grid, Grid.square);
+    expect(design.default_group().helices_view_order, [12, 15, 17, 13].build());
+    expect(
+        design.default_group().helices_view_order_inverse, {12: 0, 15: 1, 17: 2, 13: 3}.build());
   });
 }

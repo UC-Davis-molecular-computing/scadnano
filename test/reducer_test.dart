@@ -2032,7 +2032,12 @@ main() {
  {
   "version": "''' +
       constants.CURRENT_VERSION +
-      r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+      r'''", 
+  "grid": "square", 
+  "helices": [ 
+    {"grid_position": [0, 0], "idx": 0}, 
+    {"grid_position": [0, 1], "idx": 4} 
+  ],
   "strands": [
     {
       "domains": [
@@ -2059,6 +2064,7 @@ main() {
   ''';
   Design two_helices_with_helix_idx_gap_design =
       Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+
   test('add new helix be one higher than max id', () {
     AppState state = app_state_from_design(two_helices_with_helix_idx_gap_design);
 
@@ -5483,7 +5489,7 @@ main() {
   group('Grid change tests: ', () {
     test('GridChange square to hex', () {
       AppState state = app_state_from_design(two_helices_design);
-      state = app_state_reducer(state, GridChange(grid: Grid.hex));
+      state = app_state_reducer(state, GridChange(grid: Grid.hex, group_name: constants.default_group_name));
 
       List<HelixBuilder> helices_builder =
           two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
@@ -5500,7 +5506,7 @@ main() {
     test('GridChange square to none', () {
       AppState state = app_state_from_design(two_helices_design);
       Grid grid = Grid.none;
-      state = app_state_reducer(state, GridChange(grid: grid));
+      state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
       List<HelixBuilder> helices_builder =
           two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
@@ -5522,7 +5528,7 @@ main() {
       AppState state = app_state_from_design(no_grid_two_helices_design);
       Grid grid = Grid.square;
 
-      state = app_state_reducer(state, GridChange(grid: grid));
+      state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
       Helix original_helix0 = no_grid_two_helices_design.helices[0];
       Helix original_helix1 = no_grid_two_helices_design.helices[1];

@@ -8,8 +8,7 @@ import '../constants.dart' as constants;
 
 part 'app_state.g.dart';
 
-final DEFAULT_AppStateBuilder = AppStateBuilder();
-final DEFAULT_AppState = DEFAULT_AppStateBuilder.build();
+final DEFAULT_AppState = AppStateBuilder().build();
 
 abstract class AppState implements Built<AppState, AppStateBuilder> {
 
@@ -26,7 +25,7 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
 
   static void _initializeBuilder(AppStateBuilder b) {
     b.design = null;
-    b.ui_state = DEFAULT_AppUIStateBuilder;
+    b.ui_state.replace(DEFAULT_AppUIState);
     b.error_message = constants.NO_DESIGN_MESSAGE;
     b.editor_content = "";
     b.undo_redo = DEFAULT_UndoRedoBuilder;

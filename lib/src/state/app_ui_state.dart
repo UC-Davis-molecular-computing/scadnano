@@ -23,8 +23,7 @@ import 'strands_move.dart';
 
 part 'app_ui_state.g.dart';
 
-final DEFAULT_AppUIStateBuilder = AppUIStateBuilder();
-final DEFAULT_AppUIState = DEFAULT_AppUIStateBuilder.build();
+final DEFAULT_AppUIState = AppUIStateBuilder().build();
 
 abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState, AppUIStateBuilder> {
   /// For selected objects in main view
@@ -169,7 +168,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.dna_sequence_png_uri = null;
     b.disable_png_cache_until_action_completes = null;
     b.is_zoom_above_threshold = false;
-    b.storables = DEFAULT_AppUIStateStorableBuilder;
+    b.storables.replace(DEFAULT_AppUIStateStorable);
   }
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -184,7 +183,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   }
 
   factory AppUIState([void Function(AppUIStateBuilder) updates]) =>
-      _$AppUIState((u) => u..replace(DEFAULT_AppUIStateBuilder.build()));
+      _$AppUIState((u) => u..replace(DEFAULT_AppUIState));
 
   static Serializer<AppUIState> get serializer => _$appUIStateSerializer;
 }

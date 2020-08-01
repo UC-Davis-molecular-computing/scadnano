@@ -45,7 +45,7 @@ Design design_from_string(String str) {
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_design(Design design) {
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppStateBuilder
+  var state = (DEFAULT_AppState.toBuilder()
         ..design.replace(design)
         ..ui_state.replace(ui_state)
         ..error_message = ''

@@ -16,8 +16,7 @@ import '../constants.dart' as constants;
 
 part 'group.g.dart';
 
-final DEFAULT_HelixGroupBuilder = HelixGroupBuilder();
-final DEFAULT_HelixGroup = DEFAULT_HelixGroupBuilder.build();
+final DEFAULT_HelixGroup = HelixGroupBuilder().build();
 
 abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup, HelixGroupBuilder> {
   Grid get grid;

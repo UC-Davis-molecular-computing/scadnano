@@ -10,8 +10,7 @@ import '../constants.dart' as constants;
 
 part 'app_ui_state_storables.g.dart';
 
-final DEFAULT_AppUIStateStorableBuilder = AppUIStateStorablesBuilder();
-final DEFAULT_AppUIStateStorable = DEFAULT_AppUIStateStorableBuilder.build();
+final DEFAULT_AppUIStateStorable = AppUIStateStorablesBuilder().build();
 
 /// This is the portion of AppUIState that gets written into localStorage.
 abstract class AppUIStateStorables

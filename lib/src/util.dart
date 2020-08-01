@@ -1211,7 +1211,7 @@ String wc_base(String base) {
 AppState default_state({Grid grid = Grid.none}) {
   var design = Design(grid: grid);
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppStateBuilder
+  var state = (DEFAULT_AppState.toBuilder()
         ..design = design.toBuilder()
         ..ui_state.replace(ui_state)
         ..editor_content = '')

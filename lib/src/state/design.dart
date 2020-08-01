@@ -719,7 +719,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // helix groups; populate with grids, but not helices_view_order yet
     Map<String, HelixGroupBuilder> group_builders_map = null;
     if (!using_groups) {
-      group_builders_map = {constants.default_group_name: DEFAULT_HelixGroupBuilder..grid = grid};
+      group_builders_map = {constants.default_group_name: DEFAULT_HelixGroup.toBuilder()..grid = grid};
     } else {
       Map<String, dynamic> groups_json = json_map[constants.groups_key];
       group_builders_map = {};
@@ -732,7 +732,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
-    // if helices_view_order not already specified in group, give each a default
+    ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
+
+    // if helices_view_order not already specified in group or top-level of design, give each a default
+    if (json_map.containsKey(constants.helices_view_order_key)) {
+      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
+      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
+    }
     assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
 
     // build groups
@@ -819,12 +825,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_legal_design() {
+    _ensure_helix_groups_exist();
     _check_helix_offsets();
     _check_strands_reference_helices_legally();
     _check_loopouts_not_consecutive_or_singletons_or_zero_length();
     check_strands_overlap_legally();
     _check_grid_positions_disjoint();
-    _ensure_helix_groups_exist();
   }
 
   _check_helix_offsets() {
@@ -1315,14 +1321,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _ensure_helix_groups_exist() {
-//    print('checking groups listed in helices; valid groups are ${groups.keys.join(", ")}');
     for (var helix in helices.values) {
-//      print('helix ${helix.idx} group: ${helix.group}');
       if (!groups.containsKey(helix.group)) {
         throw IllegalDesignError('helix ${helix.idx} has group ${helix.group}, which does not '
             'exist in the design. The valid groups are '
             '${groups.keys.join(", ")}');
       }
+    }
+  }
+}
+
+ensure_helix_groups_in_groups_map(Map<int, HelixBuilder> helix_builders_map, Map<String, HelixGroupBuilder> group_builders_map) {
+  for (var helix_builder in helix_builders_map.values) {
+    if (!group_builders_map.containsKey(helix_builder.group)) {
+      throw IllegalDesignError('helix ${helix_builder.idx} has group ${helix_builder.group}, which does not '
+          'exist in the design.\n'
+          'The valid groups are: '
+          '${group_builders_map.keys.join(", ")}');
     }
   }
 }

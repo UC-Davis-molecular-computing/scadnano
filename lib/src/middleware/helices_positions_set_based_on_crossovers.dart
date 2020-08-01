@@ -32,12 +32,22 @@ helix_positions_set_based_on_crossovers_middleware(
 }
 
 _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async {
+  // figure out which groups to skip and warn user if there are any
+  List<String> group_names_to_skip = [];
   for (var group_name in state.design.groups.keys) {
     var group = state.design.groups[group_name];
-    if (group.grid != Grid.none) { // skip if not Grid.n
-      window.alert('Skipping helix group ${group_name} because its grid is not "none".');
-      continue;
+    if (group.grid != Grid.none) {
+      group_names_to_skip.add(group_name);
     }
+  }
+  if (group_names_to_skip.isNotEmpty) {
+    window.alert('Skipping helix groups ${group_names_to_skip.join(", ")} because their grids are not "none".');
+  }
+
+  // process remaining groups
+  for (var group_name in state.design.groups.keys) {
+    if (group_names_to_skip.contains(group_name)) continue;
+    var group = state.design.groups[group_name];
     List<Helix> helices = _get_helices_to_process(state, group);
     List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
     if (addresses == null) return;
@@ -68,8 +78,7 @@ List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
 /// on the two helices it connects.
 /// returns null if two such crossovers are selected
 /// if none are selected, finds the first (one with lowest offset on helix earlier in order in [helices])
-List<Tuple2<Address, Address>> _get_addresses_to_process(
-    AppState state, List<Helix> helices) {
+List<Tuple2<Address, Address>> _get_addresses_to_process(AppState state, List<Helix> helices) {
   var design = state.design;
   var selected_crossovers = state.ui_state.selectables_store.selected_crossovers;
   var addresses_of_selected_crossovers_by_prev_helix_idx =
