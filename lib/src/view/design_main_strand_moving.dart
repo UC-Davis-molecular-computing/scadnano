@@ -1,8 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/view/pure_component.dart';
 
+import 'pure_component.dart';
+import 'design_main_strand_loopout.dart';
 import 'transform_by_helix_group.dart';
+import '../state/loopout.dart';
 import '../state/group.dart';
 import '../reducers/strands_reducer.dart';
 import '../state/domain.dart';
@@ -85,33 +87,48 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
   }
 
   ReactElement _draw_strand_lines_single_path(Strand strand_moved) {
-    List<Domain> domains = strand_moved.domains();
-    Domain domain = domains.first;
+    Domain domain_first = strand_moved.domains().first;
 
-    var helix = props.helices[domain.helix];
-    var start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward);
+    var helix = props.helices[domain_first.helix];
+    var start_svg = helix.svg_base_pos(domain_first.offset_5p, domain_first.forward);
     var path_cmds = ['M ${start_svg.x} ${start_svg.y}'];
 
-    for (int i = 0; i < domains.length; i++) {
-      // substrand line
-      var end_svg = helix.svg_base_pos(domain.offset_3p, domain.forward);
-      path_cmds.add('L ${end_svg.x} ${end_svg.y}');
+    var substrands = strand_moved.substrands;
+    for (int i = 0; i < substrands.length; i++) {
+      var substrand = substrands[i];
+      if (substrand is Domain) {
+        Domain domain = substrand;
+        // substrand line
+        var end_svg = helix.svg_base_pos(domain.offset_3p, domain.forward);
+        path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
-      // crossover/loopout line/arc
-      if (i < domains.length - 1) {
-        var old_substrand = domain;
-        domain = domains[i + 1];
-        helix = props.helices[domain.helix];
-        start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward);
-        var control = control_point_for_crossover_bezier_curve(old_substrand, domain, props.helices,
-            geometry: props.geometry);
-        path_cmds.add('Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}');
+        // crossover/loopout line/arc
+        if (i < substrands.length - 1 && substrands[i + 1] is Domain) {
+          var old_domain = domain;
+          domain = substrands[i + 1];
+          helix = props.helices[domain.helix];
+          start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward);
+          var control = control_point_for_crossover_bezier_curve(old_domain, domain, props.helices,
+              geometry: props.geometry);
+          var crossover_path_desc = 'Q ${control.x} ${control.y} ${start_svg.x} ${start_svg.y}';
+          path_cmds.add(crossover_path_desc);
+        }
+      } else if (substrand is Loopout && i > 0 && i < substrands.length - 1) {
+        // bounds check i just in case we support loopouts on end some day
+        var loopout = substrand;
+        var prev_domain = substrands[i - 1] as Domain;
+        var next_domain = substrands[i + 1] as Domain;
+        var prev_helix = props.helices[prev_domain.helix];
+        var next_helix = props.helices[next_domain.helix];
+        var loopout_path_desc = loopout_path_description_within_group(
+            prev_helix, next_helix, prev_domain, next_domain, loopout, false);
+        path_cmds.add(loopout_path_desc);
+        helix = props.helices[next_domain.helix]; // need to update this for next domain line to be draw
       }
     }
 
     int key = 0;
     var path = (Dom.path()
-//      ..id= substrand_line_id(substrand),
       ..className = 'domain-line' + (props.allowable ? '' : ' disallowed')
       ..stroke = props.strand.color.toHexColor().toCssString()
       ..fill = 'none'

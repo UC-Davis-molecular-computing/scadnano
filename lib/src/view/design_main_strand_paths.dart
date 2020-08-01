@@ -172,7 +172,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
 
 // transform svg_base_pos according to helix groups, and return absolute SVG path that can be
 // drawn untransformed to go between helix groups
-String crossover_path_description_between_helix_groups(Domain prev_domain, Domain next_domain,
+String crossover_path_description_between_groups(Domain prev_domain, Domain next_domain,
     BuiltMap<int, Helix> helices, Geometry geometry, BuiltMap<String, HelixGroup> groups) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];
@@ -200,7 +200,7 @@ String crossover_path_description_between_helix_groups(Domain prev_domain, Domai
 
 // treat svg_base_pos as though helix group has position = origin; let component calling this function
 // do the transform based on its access to the group position
-String crossover_path_description_within_helix_group(
+String crossover_path_description_within_group(
     Domain prev_domain, Domain next_domain, BuiltMap<int, Helix> helices, Geometry geometry) {
   var prev_helix = helices[prev_domain.helix];
   var next_helix = helices[next_domain.helix];

@@ -74,10 +74,10 @@ class DesignMainStrandCrossoverComponent
 
     String path;
     if (within_group) {
-      path = crossover_path_description_within_helix_group(
+      path = crossover_path_description_within_group(
           props.prev_domain, props.next_domain, props.helices, props.geometry);
     } else {
-      path = crossover_path_description_between_helix_groups(
+      path = crossover_path_description_between_groups(
           props.prev_domain, props.next_domain, props.helices, props.geometry, props.groups);
     }
 

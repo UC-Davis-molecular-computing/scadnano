@@ -53,7 +53,7 @@ class DesignMainPotentialVerticalCrossoverComponent
     }
 
     var classname_this_curve = 'potential-vertical-crossover-curve';
-    var path = crossover_path_description_within_helix_group(
+    var path = crossover_path_description_within_group(
         prev_domain, next_domain, props.helices, props.geometry);
     var color = crossover.color;
 
