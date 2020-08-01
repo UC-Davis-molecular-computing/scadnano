@@ -62,11 +62,8 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     return (Dom.g()
       ..className = 'strand-moving'
       ..transform = transform_of_helix(first_domain_moved.helix))(
-//        (ConnectedDesignMainStrandPaths()
       _draw_strand_lines_single_path(strand_moved),
       (EndMoving()
-//        ..helix = props.helices[props
-//            .original_group.helices_view_order[props.helices[first_dom.helix].view_order + props.delta_view_order]]
         ..helix = first_helix_moved
         ..dna_end = end_5p_moved
         ..color = props.strand.color
@@ -76,8 +73,6 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
         ..key = 'end-5p')(),
       (EndMoving()
-//        ..helix = props.helices[
-//            props.original_group.helices_view_order[props.helices[last_dom.helix].view_order + props.delta_view_order]]
         ..helix = last_helix_moved
         ..dna_end = end_3p_moved
         ..color = props.strand.color

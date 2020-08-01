@@ -106,8 +106,6 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       return null;
     }
 
-
-
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.design.helices
@@ -149,6 +147,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..start = props.strand_creation.start
           ..end = props.strand_creation.end
           ..color = props.strand_creation.color
+          ..helices = {props.strand_creation.helix.idx: props.strand_creation.helix}.build()
+          ..groups = {
+            props.strand_creation.helix.group: props.design.groups[props.strand_creation.helix.group]
+          }.build()
+          ..geometry = props.design.geometry
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()

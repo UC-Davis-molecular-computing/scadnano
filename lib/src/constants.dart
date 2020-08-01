@@ -328,6 +328,10 @@ const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
 
+const css_selector_strand_creating = 'strand-creating';
+const css_selector_end_5p_strand_creating = '5p-strand-creating';
+const css_selector_end_3p_strand_creating = '3p-strand-creating';
+
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';

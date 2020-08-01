@@ -8,6 +8,8 @@ import '../state/geometry.dart';
 
 part 'transform_by_helix_group.over_react.g.dart';
 
+/// Components that have these three fields in their props can mixin these props and the below
+/// class to get a function to compute the proper transform based on a helix group, given the Helix idx.
 mixin TransformByHelixGroupPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
