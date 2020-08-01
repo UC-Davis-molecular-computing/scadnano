@@ -243,8 +243,14 @@ class DesignViewComponent {
             window.alert(msg);
           } else {
             var old_address = strands_move.current_address;
-            var address = util.get_closest_address(
-                event, app.state.design.helices.values, app.state.design.groups, app.state.design.geometry);
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
+                  ]
+                : app.state.design.helices.values;
+            var address = util.find_closest_address(
+                event, visible_helices, app.state.design.groups, app.state.design.geometry);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
             }

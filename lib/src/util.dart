@@ -414,7 +414,7 @@ Point<num> closest_point_in_rectangle(
 }
 
 /// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
-Helix get_closest_helix(
+Helix find_closest_helix(
     MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
@@ -434,11 +434,11 @@ Helix get_closest_helix(
 }
 
 /// Return (closest) helix, offset and direction where click event occurred.
-Address get_closest_address(
+Address find_closest_address(
     MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
 
-  Helix helix = get_closest_helix(event, helices, groups, geometry);
+  Helix helix = find_closest_helix(event, helices, groups, geometry);
 
   var group = groups[helix.group];
   var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
@@ -1063,12 +1063,8 @@ List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) 
 
 /// Return offset and direction on helix where click event occurred.
 Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry) {
-  var closest_address = get_closest_address(event, [helix], {helix.group: group}.build(), geometry);
+  var closest_address = find_closest_address(event, [helix], {helix.group: group}.build(), geometry);
   return closest_address;
-//  var svg_coord = svg_position_of_mouse_click(event);
-//  int offset = helix.svg_x_to_offset(svg_coord.x);
-//  bool forward = helix.svg_y_is_forward(svg_coord.y);
-//  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
 
 String remove_whitespace_and_uppercase(String string) {

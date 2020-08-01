@@ -125,7 +125,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.get_closest_address(event, props.helices.values, props.groups, props.geometry);
+        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
     }

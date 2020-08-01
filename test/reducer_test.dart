@@ -1950,7 +1950,7 @@ main() {
     ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
-        .rebuild((b) => b..ui_state.side_selected_helix_idxs.replace([0, 2]));
+        .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([0, 2]));
 
     AppState actual_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
@@ -2014,7 +2014,7 @@ main() {
     ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
-        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
+        .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
 
     AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
@@ -3244,7 +3244,7 @@ main() {
 
     test('Test_SetOnlyDisplaySelectedHelices', () {
       AppState initial_state = app_state_from_design(two_helices_design)
-          .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+          .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
 
       AppState expected_state_after_set_true =
           initial_state.rebuild((b) => b..ui_state.storables.only_display_selected_helices = true);
@@ -4088,7 +4088,7 @@ main() {
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state =
-          state.rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+          state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
       expect_app_state_equal(state, expected_state);
     });
 
@@ -4105,7 +4105,7 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
       expect_app_state_equal(state, expected_state);
 
       // clear should reset helix positions (but keep only display selected helices true).
@@ -4149,7 +4149,7 @@ main() {
 
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
       expect_app_state_equal(state, expected_state);
     });
   });
