@@ -76,7 +76,7 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
         ..selectables_store.replace(new_selectables_store)
         ..changed_since_last_save = false
         ..storables.loaded_filename = new_filename
-        ..side_selected_helix_idxs.replace(side_selected_helix_idxs))
+        ..storables.side_selected_helix_idxs.replace(side_selected_helix_idxs))
       ..error_message = "");
   } else {
     throw AssertionError("This line should be unreachable");

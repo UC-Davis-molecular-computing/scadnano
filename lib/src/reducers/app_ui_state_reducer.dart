@@ -32,7 +32,6 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
   ..drawing_potential_crossover =
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
-  ..side_selected_helix_idxs.replace(side_selected_helices_reducer(ui_state.side_selected_helix_idxs, action))
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
@@ -188,6 +187,8 @@ ExampleDesigns example_designs_idx_set_reducer(
 
 AppUIStateStorables app_ui_state_storable_global_reducer(
     AppUIStateStorables storables, AppState state, action) {
+  // forgot why we made special case for this, but it seems appropriate since it's updating the whole
+  // storables object and not just slices
   if (action is actions.SetAppUIStateStorable) {
     AppUIStateStorables storables = action.storables;
     if (!state.design.groups.containsKey(action.storables.displayed_group_name)) {
@@ -196,7 +197,10 @@ AppUIStateStorables app_ui_state_storable_global_reducer(
     }
     return storables;
   }
+
   return storables.rebuild((b) => b
+    ..side_selected_helix_idxs
+        .replace(side_selected_helices_global_reducer(storables.side_selected_helix_idxs, state, action))
     ..displayed_group_name =
         TypedGlobalReducer<String, AppState, actions.GroupRemove>(displayed_group_name_group_remove_reducer)(
             storables.displayed_group_name, state, action));
@@ -210,6 +214,8 @@ String displayed_group_name_group_remove_reducer(String _, AppState state, actio
 // storables local reducer
 AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables storables, action) {
   return storables.rebuild((b) => b
+    ..side_selected_helix_idxs
+        .replace(side_selected_helices_reducer(storables.side_selected_helix_idxs, action))
     ..displayed_group_name = displayed_group_name_reducer(storables.displayed_group_name, action)
     ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
     ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
@@ -255,8 +261,7 @@ Reducer<String> displayed_group_name_reducer = combineReducers([
 String displayed_group_name_change_displayed_group_reducer(String _, actions.GroupDisplayedChange action) =>
     action.group_name;
 
-String displayed_group_name_change_name_reducer(
-        String displayed_group_name, actions.GroupChange action) =>
+String displayed_group_name_change_name_reducer(String displayed_group_name, actions.GroupChange action) =>
     displayed_group_name == action.old_name ? action.new_name : displayed_group_name;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,9 +329,7 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, state, action))
   ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
-  ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
-  ..side_selected_helix_idxs
-      .replace(side_selected_helices_global_reducer(ui_state.side_selected_helix_idxs, state, action)));
+  ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder());
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

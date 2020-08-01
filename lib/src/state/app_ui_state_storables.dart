@@ -21,6 +21,8 @@ abstract class AppUIStateStorables
 
   BuiltSet<EditModeChoice> get edit_modes;
 
+  BuiltSet<int> get side_selected_helix_idxs;
+
   bool get autofit;
 
   bool get show_dna;
@@ -78,6 +80,7 @@ abstract class AppUIStateStorables
     // then they will be populated with a default value instead of raising an exception.
     b.edit_modes = SetBuilder<EditModeChoice>([EditModeChoice.select]);
     b.select_mode_state = DEFAULT_SelectModeStateBuilder;
+    b.side_selected_helix_idxs = SetBuilder<int>();
     b.autofit = true;
     b.show_dna = false;
     b.show_modifications = true;

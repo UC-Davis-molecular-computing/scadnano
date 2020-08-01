@@ -30,9 +30,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// For selected objects in main view
   SelectablesStore get selectables_store;
 
-  /// Special case for helices, which can always be selected, but only in the side view.
-  BuiltSet<int> get side_selected_helix_idxs;
-
   @nullable
   StrandsMove get strands_move;
 
@@ -106,6 +103,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   /*********** below getters delegate to storables ********************/
 
+  /// Special case for helices, which can always be selected, but only in the side view.
+  BuiltSet<int> get side_selected_helix_idxs => storables.side_selected_helix_idxs;
+
   String get loaded_filename => storables.loaded_filename;
 
   String get loaded_script_filename => storables.loaded_script_filename;
@@ -153,7 +153,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.selection_box_displayed_main = false;
     b.selection_box_displayed_side = false;
     b.selectables_store = SelectablesStoreBuilder();
-    b.side_selected_helix_idxs.replace([]);
     b.drawing_potential_crossover = false;
     b.moving_dna_ends = false;
     b.changed_since_last_save = false;

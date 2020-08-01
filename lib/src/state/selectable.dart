@@ -99,6 +99,18 @@ abstract class SelectablesStore
     return rebuild((s) => s..selected_items = selected_items_builder);
   }
 
+  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
+        for (var domain in strand.domains())
+          for (var end in [domain.dnaend_5p, domain.dnaend_3p]) if (selected_dna_ends.contains(end)) end
+      }.build();
+
+  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) => {
+        for (var crossover in strand.crossovers) if (selected_crossovers.contains(crossover)) crossover
+      }.build();
+
+  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) =>
+      {for (var loopout in strand.loopouts()) if (selected_loopouts.contains(loopout)) loopout}.build();
+
   /************************ begin BuiltValue boilerplate ************************/
   SelectablesStore._();
 
@@ -108,24 +120,6 @@ abstract class SelectablesStore
 
   @memoized
   int get hashCode;
-
-  BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) {
-    return [
-      for (var domain in strand.domains())
-        for (var end in [domain.dnaend_5p, domain.dnaend_3p]) if (this.selected_dna_ends.contains(end)) end
-    ].toBuiltSet();
-  }
-
-  BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) {
-    return [
-      for (var crossover in strand.crossovers) if (this.selected_crossovers.contains(crossover)) crossover
-    ].toBuiltSet();
-  }
-
-  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) {
-    return [for (var loopout in strand.loopouts()) if (this.selected_loopouts.contains(loopout)) loopout]
-        .toBuiltSet();
-  }
 }
 
 /// Represents a part of the Model that represents a part of the View that is Selectable.
