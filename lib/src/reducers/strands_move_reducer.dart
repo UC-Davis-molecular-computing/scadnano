@@ -11,7 +11,7 @@ import '../state/helix.dart';
 import '../state/strand.dart';
 import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
-import '../util.dart' as util;
+import '../extension_methods.dart';
 
 GlobalReducer<StrandsMove, AppState> strands_move_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),
@@ -80,8 +80,8 @@ bool in_bounds(Design design, StrandsMove strands_move) {
 
   // look for helix out of bounds
   Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move, original_group);
-  int min_view_order = view_orders_of_helices_of_moving_strands.reduce(min);
-  int max_view_order = view_orders_of_helices_of_moving_strands.reduce(max);
+  int min_view_order = view_orders_of_helices_of_moving_strands.min;
+  int max_view_order = view_orders_of_helices_of_moving_strands.max;
   if (min_view_order + delta_view_order < 0) return false;
   if (max_view_order + delta_view_order >= num_helices_in_group) return false;
 

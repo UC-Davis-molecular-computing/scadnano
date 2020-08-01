@@ -22,18 +22,6 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
-//Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
-//  DNAEnd end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
-//  return DesignMainDNAEnd()
-//    ..selected = state.ui_state.selectables_store.selected(end)
-//    ..helix = state.design.helices[props.domain.helix]
-//    ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
-//    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
-//}
-//
-//UiFactory<DesignMainDNAEndProps> ConnectedDesignMainDNAEnd = connect<AppState, DesignMainDNAEndProps>(
-//    mapStateToPropsWithOwnProps: mapStateToPropsWithOwnProps)(DesignMainDNAEnd);
-
 @Factory()
 UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
@@ -118,7 +106,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..is_5p = props.is_5p
       ..key = 'moving-end';
 
-    return (Dom.g()..className='dna-ends'..transform = props.transform)(
+    return (Dom.g()
+      ..className = constants.css_selector_end_parent_group
+      ..transform = props.transform)(
       end_props(),
       end_moving_props(),
     );

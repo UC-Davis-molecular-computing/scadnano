@@ -20,6 +20,7 @@ import 'reselect_moved_strands.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
+import 'selections_intersect_box_compute.dart';
 import 'strand_create.dart';
 import 'strands_move.dart';
 import 'throttle.dart';
@@ -49,6 +50,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
   reselect_moved_strands_middleware,
+  selections_intersect_box_compute_middleware,
   insertion_deletion_pairing_middleware,
   adjust_grid_position_middleware,
   invalidate_png_middleware,

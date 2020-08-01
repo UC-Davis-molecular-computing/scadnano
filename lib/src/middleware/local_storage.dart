@@ -128,9 +128,12 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
 
   if (storables_after.local_storage_design_choice.option == LocalStorageDesignOption.on_edit &&
       design_before != design_after) {
-    if (action is! actions.UndoableAction && action is! actions.LoadDNAFile) {
+    if (action is! actions.UndoableAction &&
+        action is! actions.LoadDNAFile &&
+        action is! actions.Undo &&
+        action is! actions.Redo) {
       print('WARNING: some Action changed the design, so I am writing the Design to localStorage,\n'
-          'but that action is not UndoableAction or LoadDNAFile\n'
+          'but that action is not UndoableAction, LoadDNAFile, Undo, or Redo\n'
           'action is ${action}');
     }
     save_storable_async(state_after, Storable.design);

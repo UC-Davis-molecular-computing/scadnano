@@ -326,6 +326,8 @@ const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
 const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
 const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
+const css_selector_end_parent_group = 'dna-ends';
+
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';

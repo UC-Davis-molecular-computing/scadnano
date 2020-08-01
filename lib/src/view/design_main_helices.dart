@@ -9,7 +9,7 @@ import '../state/geometry.dart';
 import 'design_main_helix.dart';
 import '../state/helix.dart';
 import 'pure_component.dart';
-import '../util.dart' as util;
+import '../extension_methods.dart';
 
 part 'design_main_helices.over_react.g.dart';
 
@@ -51,7 +51,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
         continue;
       }
 
-      int min_helix_idx = helix_idxs_in_group.reduce(min);
+      int min_helix_idx = helix_idxs_in_group.min;
       int first_helix_view_order =
           props.helices[min_helix_idx].invert_yz ? helix_idxs_in_group.length - 1 : 0;
 

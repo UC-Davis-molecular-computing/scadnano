@@ -893,6 +893,9 @@ abstract class SelectionsClear
   static Serializer<SelectionsClear> get serializer => _$selectionsClearSerializer;
 }
 
+// dispatched in response to Selection box being done drawning (i.e., mouse button goes up),
+// but needs to be intercepted by middleware, which queries the DOM to see what Selectable
+// SVG objects intersect the box, and then constructs a SelectOrToggleAll action with those objects
 abstract class SelectionsAdjust
     with BuiltJsonSerializable
     implements Action, Built<SelectionsAdjust, SelectionsAdjustBuilder> {
@@ -906,6 +909,21 @@ abstract class SelectionsAdjust
   SelectionsAdjust._();
 
   static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
+}
+
+abstract class SelectOrToggleItems
+    with BuiltJsonSerializable
+    implements Action, Built<SelectOrToggleItems, SelectOrToggleItemsBuilder> {
+  BuiltList<Selectable> get items;
+
+  bool get toggle;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectOrToggleItems({BuiltList<Selectable> items, bool toggle}) = _$SelectOrToggleItems._;
+
+  SelectOrToggleItems._();
+
+  static Serializer<SelectOrToggleItems> get serializer => _$selectOrToggleItemsSerializer;
 }
 
 // This selects all that are specified in constructor. SelectAllSelectable selects all selectable items

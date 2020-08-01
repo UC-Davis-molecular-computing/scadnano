@@ -228,7 +228,7 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
 
   int num_helices = design.helices.length;
   if (num_helices > 0) {
-    max_idx_current = design.helices.keys.reduce(max);
+    max_idx_current = design.helices.keys.max;
     new_idx = max_idx_current + 1;
     min_offset = design.min_offset;
     max_offset = design.max_offset;

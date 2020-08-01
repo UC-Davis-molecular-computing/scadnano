@@ -23,6 +23,7 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
+import '../extension_methods.dart';
 
 part 'design.g.dart';
 
@@ -481,11 +482,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// max offset allowed on any Helix in the Model
   @memoized
-  int get max_offset => helices.values.map((helix) => helix.max_offset).reduce(max);
+  int get max_offset => helices.values.map((helix) => helix.max_offset).max;
 
   /// min offset allowed on any Helix in the Model
   @memoized
-  int get min_offset => helices.values.map((helix) => helix.min_offset).reduce(min);
+  int get min_offset => helices.values.map((helix) => helix.min_offset).min;
 
   Design add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
@@ -626,7 +627,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool has_nondefault_min_offset(Helix helix) {
     var starts = domains_on_helix(helix.idx).map((ss) => ss.start);
-    int min_start = starts.isEmpty ? null : starts.reduce(min);
+    int min_start = starts.isEmpty ? null : starts.min;
     // if all offsets are nonnegative (or there are no substrands, i.e., min_start == null),
     // then default min_offset is 0; otherwise it is minimum offset
     if (min_start == null || min_start >= 0) {

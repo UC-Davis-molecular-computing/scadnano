@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
@@ -12,6 +11,7 @@ import '../state/design.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
+import '../extension_methods.dart';
 
 check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispatcher next) {
   if (action is actions.StrandsReflect && action.strands.isNotEmpty) {
@@ -65,9 +65,9 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
 List<Strand> horizontal_reflection_of_strands(
     Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
   int min_offset =
-      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.start].reduce(min);
+      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.start].min;
   int max_offset =
-      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.end].reduce(max);
+      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.end].max;
 
   List<Strand> mirrored_strands = [];
   for (var strand in strands_to_mirror) {

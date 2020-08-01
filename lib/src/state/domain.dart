@@ -42,7 +42,6 @@ abstract class Insertion
 
   @memoized
   int get hashCode;
-
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
@@ -67,7 +66,7 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
-  bool is_scaffold,
+      bool is_scaffold,
       Object label = null,
       bool is_first = false,
       bool is_last = false}) {
@@ -195,14 +194,13 @@ abstract class Domain
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Substrand';
-    var forward =
-        util.mandatory_field(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
+    var forward = util.mandatory_field(json_map, constants.forward_key, name,
+        legacy_keys: constants.legacy_forward_keys);
     var helix = util.mandatory_field(json_map, constants.helix_idx_key, name);
     var start = util.mandatory_field(json_map, constants.start_key, name);
     var end = util.mandatory_field(json_map, constants.end_key, name);
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
-    var insertions =
-        parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
+    var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 

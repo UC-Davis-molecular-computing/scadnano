@@ -109,6 +109,7 @@ part 'serializers.g.dart';
   HelixSelect,
   SelectionsAdjust,
   SelectionsClear,
+  SelectOrToggleItems,
   DeleteAllSelected,
   SelectAll,
   SelectAllSelectable,

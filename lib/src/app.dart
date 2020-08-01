@@ -178,8 +178,8 @@ warn_wrong_browser() {
         'scadnano does not currently support this browser. '
         'Please use Chrome or Firefox instead.';
     window.alert(msg);
+    print('current browser: ${browser.name}');
   }
-  print('current browser: ${browser.name}');
 }
 
 /// Return null if browser is fine.
