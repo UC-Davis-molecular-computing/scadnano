@@ -4,7 +4,8 @@ import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:redux/redux.dart';
-import '../state/app_ui_state.dart';
+import 'package:scadnano/src/state/design.dart';
+import '../state/app_ui_state_storables.dart';
 import '../serializers.dart';
 import '../state/local_storage_design_choice.dart';
 
@@ -12,6 +13,7 @@ import '../json_serializable.dart';
 import '../state/app_state.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 
 part 'local_storage.g.dart';
 
@@ -71,12 +73,23 @@ _restore(Storable storable) {
       // state because the filename could be overwritten.
       var storable_json_str = window.localStorage[Storable.app_ui_state_storables.key_name];
       var storable_json_map = json.decode(storable_json_str);
-      AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
+      AppUIStateStorables storables = null;
+      try {
+        storables = standard_serializers.deserialize(storable_json_map);
+      } catch (e, stackTrace) {
+        print('ERROR: in loading design from localStorage, encountered this error trying to load '
+            'app_ui_state_storables, so a default filename has been chosen:'
+            '\n${e.toString()}'
+            '\n\nstack trace:'
+            '\n\n${stackTrace}');
+      }
       action = actions.LoadDNAFile(
-          content: json_str, filename: storables.loaded_filename, write_local_storage: false);
+          content: json_str,
+          filename: storables?.loaded_filename ?? 'default_filename.sc',
+          write_local_storage: false);
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);
-      AppUIStateStorable storables = standard_serializers.deserialize(storable_json_map);
+      AppUIStateStorables storables = standard_serializers.deserialize(storable_json_map);
       action = actions.SetAppUIStateStorable(storables);
       // TODO(benlee12): Ugly because this forces design to be loaded before the app
       // state because the filename could be overwritten.
@@ -95,34 +108,34 @@ restore_all_local_storage() {
   }
 }
 
-save_async(AppState state, Iterable<Storable> storables) async {
-  for (var storable in storables) {
-    save(state, storable);
-  }
-}
-
 save_storable_async(AppState state, Storable storable) async {
   save(state, storable);
 }
 
 local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
+  AppUIStateStorables storables_before = store.state.ui_state.storables;
+  Design design_before = store.state.design;
   next(action);
+  AppUIStateStorables storables_after = store.state.ui_state.storables;
+  Design design_after = store.state.design;
   var state_after = store.state;
-  if (action is actions.AppUIStateStorableAction) {
+
+  if (storables_before != storables_after) {
     if (action is actions.LoadDNAFile && action.write_local_storage || action is! actions.LoadDNAFile) {
-      save_async(state_after, [Storable.app_ui_state_storables]);
+      save_storable_async(state_after, Storable.app_ui_state_storables);
     }
   }
-  // Store if this is StorableAction, unless it's changing Design and we don't want to store on edits.
-  if (action is actions.StorableAction) {
-    if (action is actions.DesignChangingAction) {
-      if (store.state.ui_state.local_storage_design_choice.option == LocalStorageDesignOption.on_edit) {
-        save_async(state_after, action.storables());
-      }
-    } else {
-      save_async(state_after, action.storables());
+
+  if (storables_after.local_storage_design_choice.option == LocalStorageDesignOption.on_edit &&
+      design_before != design_after) {
+    if (action is! actions.UndoableAction && action is! actions.LoadDNAFile) {
+      print('WARNING: some Action changed the design, so I am writing the Design to localStorage,\n'
+          'but that action is not UndoableAction or LoadDNAFile\n'
+          'action is ${action}');
     }
+    save_storable_async(state_after, Storable.design);
   }
+
   // if user selects to save DNADesign on every edit or periodically,
   // we should save even before they've made an edit
   if (action is actions.LocalStorageDesignChoiceSet &&

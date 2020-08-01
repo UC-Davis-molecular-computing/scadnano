@@ -103,11 +103,15 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
       helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
       if (helices_view_order.length != helix_idxs.length) {
         throw IllegalDesignError('number of helices (${helix_idxs.length}) does not match '
-            'length of helices_view_order (${helices_view_order.length})');
+            'length of helices_view_order (${helices_view_order.length})\n'
+            'helix idxs:         ${helix_idxs.join(", ")}\n'
+            'helices_view_order: ${helices_view_order.join(", ")}');
       }
       if (!util.lists_contain_same_elts(helices_view_order, helix_idxs)) {
         throw IllegalDesignError('helices_view_order ${helices_view_order} must have same indexes as '
-            'helix_idxs ${helix_idxs}');
+            'helix_idxs ${helix_idxs}\n'
+            'helix idxs:         ${helix_idxs.join(", ")}\n'
+            'helices_view_order: ${helices_view_order.join(", ")}');
       }
     } else {
       helices_view_order = List<int>.of(helix_idxs);

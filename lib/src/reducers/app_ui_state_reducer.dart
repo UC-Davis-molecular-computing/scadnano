@@ -9,6 +9,7 @@ import '../state/local_storage_design_choice.dart';
 
 import '../state/app_state.dart';
 import '../state/app_ui_state.dart';
+import '../state/app_ui_state_storables.dart';
 import '../state/mouseover_data.dart';
 import '../reducers/select_mode_state_reducer.dart';
 import '../reducers/edit_modes_reducer.dart';
@@ -185,10 +186,10 @@ ExampleDesigns example_designs_idx_set_reducer(
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables global reducer
 
-AppUIStateStorable app_ui_state_storable_global_reducer(
-    AppUIStateStorable storables, AppState state, action) {
+AppUIStateStorables app_ui_state_storable_global_reducer(
+    AppUIStateStorables storables, AppState state, action) {
   if (action is actions.SetAppUIStateStorable) {
-    AppUIStateStorable storables = action.storables;
+    AppUIStateStorables storables = action.storables;
     if (!state.design.groups.containsKey(action.storables.displayed_group_name)) {
       // if displayed_group_name does not exist, must pick a new one
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
@@ -207,7 +208,7 @@ String displayed_group_name_group_remove_reducer(String _, AppState state, actio
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables local reducer
-AppUIStateStorable app_ui_state_storable_local_reducer(AppUIStateStorable storables, action) {
+AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables storables, action) {
   return storables.rebuild((b) => b
     ..displayed_group_name = displayed_group_name_reducer(storables.displayed_group_name, action)
     ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))

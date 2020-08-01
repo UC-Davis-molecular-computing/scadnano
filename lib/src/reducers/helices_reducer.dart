@@ -273,9 +273,8 @@ Design helix_remove_design_global_reducer(Design design, AppState state, actions
 
   // remove helix's review order entry
   var group = design.groups[state.ui_state.displayed_group_name];
-  int old_view_order = group.helices_view_order_inverse[action.helix_idx];
   var new_helices_view_order = group.helices_view_order.toList();
-  new_helices_view_order.remove(old_view_order);
+  new_helices_view_order.remove(action.helix_idx);
   var new_group = group.rebuild((b) => b..helices_view_order.replace(new_helices_view_order));
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;

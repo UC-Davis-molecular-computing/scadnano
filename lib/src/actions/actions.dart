@@ -9,7 +9,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 
-import '../state/app_ui_state.dart';
+import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
 import '../state/group.dart';
 import '../state/context_menu.dart';
@@ -77,9 +77,6 @@ abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<Skip
 abstract class StorableAction extends Action {
   Iterable<Storable> storables();
 }
-
-/// [Action] that should trigger all of AppUIStateStorable to be written into localStorage.
-abstract class AppUIStateStorableAction extends Action {}
 
 /// [Action] that should invalidate the svg png cache.
 abstract class SvgPngCacheInvalidatingAction extends Action {}
@@ -214,9 +211,7 @@ abstract class ThrottledActionNonFast
 
 abstract class LocalStorageDesignChoiceSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<LocalStorageDesignChoiceSet, LocalStorageDesignChoiceSetBuilder> {
+    implements Action, Built<LocalStorageDesignChoiceSet, LocalStorageDesignChoiceSetBuilder> {
   LocalStorageDesignChoice get choice;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -232,7 +227,7 @@ abstract class LocalStorageDesignChoiceSet
 
 abstract class EditModeToggle
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<EditModeToggle, EditModeToggleBuilder> {
+    implements Action, Built<EditModeToggle, EditModeToggleBuilder> {
   EditModeChoice get mode;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -266,7 +261,7 @@ abstract class EditModesSet
 
 abstract class SelectModeToggle
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SelectModeToggle, SelectModeToggleBuilder> {
+    implements Action, Built<SelectModeToggle, SelectModeToggleBuilder> {
   SelectModeChoice get select_mode_choice;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -282,7 +277,7 @@ abstract class SelectModeToggle
 
 abstract class SelectModesAdd
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SelectModesAdd, SelectModesAddBuilder> {
+    implements Action, Built<SelectModesAdd, SelectModesAddBuilder> {
   BuiltList<SelectModeChoice> get modes;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -295,7 +290,7 @@ abstract class SelectModesAdd
 
 abstract class SelectModesSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
+    implements Action, Built<SelectModesSet, SelectModesSetBuilder> {
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -314,9 +309,9 @@ abstract class SelectModesSet
 abstract class SetAppUIStateStorable
     with BuiltJsonSerializable
     implements Action, Built<SetAppUIStateStorable, SetAppUIStateStorableBuilder> {
-  AppUIStateStorable get storables;
+  AppUIStateStorables get storables;
 
-  factory SetAppUIStateStorable(AppUIStateStorable storables) =>
+  factory SetAppUIStateStorable(AppUIStateStorables storables) =>
       SetAppUIStateStorable.from((b) => b..storables = storables.toBuilder());
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -328,9 +323,7 @@ abstract class SetAppUIStateStorable
   static Serializer<SetAppUIStateStorable> get serializer => _$setAppUIStateStorableSerializer;
 }
 
-abstract class ShowDNASet
-    with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
+abstract class ShowDNASet with BuiltJsonSerializable implements Action, Built<ShowDNASet, ShowDNASetBuilder> {
   bool get show;
 
   factory ShowDNASet(bool show) => ShowDNASet.from((b) => b..show = show);
@@ -345,7 +338,7 @@ abstract class ShowDNASet
 
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
+    implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
   bool get show;
 
   factory ShowModificationsSet(bool show) => ShowModificationsSet.from((b) => b..show = show);
@@ -361,7 +354,7 @@ abstract class ShowModificationsSet
 
 abstract class ModificationFontSizeSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
+    implements Action, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
   num get font_size;
 
   factory ModificationFontSizeSet(num font_size) =>
@@ -378,9 +371,7 @@ abstract class ModificationFontSizeSet
 
 abstract class MajorTickOffsetFontSizeSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
+    implements Action, Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
   num get font_size;
 
   factory MajorTickOffsetFontSizeSet(num font_size) =>
@@ -397,7 +388,7 @@ abstract class MajorTickOffsetFontSizeSet
 
 abstract class MajorTickWidthFontSizeSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
+    implements Action, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
   num get font_size;
 
   factory MajorTickWidthFontSizeSet(num font_size) =>
@@ -414,9 +405,7 @@ abstract class MajorTickWidthFontSizeSet
 
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
+    implements Action, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
   bool get show;
 
   factory SetModificationDisplayConnector(bool show) =>
@@ -434,7 +423,7 @@ abstract class SetModificationDisplayConnector
 
 abstract class ShowMismatchesSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
+    implements Action, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
   bool get show;
 
   factory ShowMismatchesSet(bool show) => ShowMismatchesSet.from((b) => b..show = show);
@@ -449,7 +438,7 @@ abstract class ShowMismatchesSet
 
 abstract class SetShowEditor
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetShowEditor, SetShowEditorBuilder> {
+    implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
   bool get show;
 
   factory SetShowEditor(bool show) => SetShowEditor.from((b) => b..show = show);
@@ -466,7 +455,7 @@ abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
     with
         BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
             SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
   bool get show;
@@ -487,9 +476,7 @@ abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
 
 abstract class DisplayMajorTicksOffsetsSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<DisplayMajorTicksOffsetsSet, DisplayMajorTicksOffsetsSetBuilder> {
+    implements Action, Built<DisplayMajorTicksOffsetsSet, DisplayMajorTicksOffsetsSetBuilder> {
   bool get show;
 
   factory DisplayMajorTicksOffsetsSet(bool show) => DisplayMajorTicksOffsetsSet.from((b) => b..show = show);
@@ -506,7 +493,7 @@ abstract class DisplayMajorTicksOffsetsSet
 abstract class SetDisplayMajorTickWidthsAllHelices
     with BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<SetDisplayMajorTickWidthsAllHelices, SetDisplayMajorTickWidthsAllHelicesBuilder> {
   bool get show;
 
@@ -526,7 +513,7 @@ abstract class SetDisplayMajorTickWidthsAllHelices
 
 abstract class SetDisplayMajorTickWidths
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder> {
+    implements Action, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder> {
   bool get show;
 
   factory SetDisplayMajorTickWidths(bool show) => SetDisplayMajorTickWidths.from((b) => b..show = show);
@@ -543,7 +530,7 @@ abstract class SetDisplayMajorTickWidths
 abstract class SetOnlyDisplaySelectedHelices
     with BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         SvgPngCacheInvalidatingAction,
         Built<SetOnlyDisplaySelectedHelices, SetOnlyDisplaySelectedHelicesBuilder> {
   bool get show;
@@ -566,10 +553,7 @@ abstract class SetOnlyDisplaySelectedHelices
 
 abstract class InvertYZSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        SvgPngCacheInvalidatingAction,
-        Built<InvertYZSet, InvertYZSetBuilder> {
+    implements Action, SvgPngCacheInvalidatingAction, Built<InvertYZSet, InvertYZSetBuilder> {
   bool get invert_yz;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -585,7 +569,7 @@ abstract class InvertYZSet
 
 abstract class WarnOnExitIfUnsavedSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
+    implements Action, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -612,7 +596,7 @@ abstract class SaveDNAFile
 
 abstract class LoadDNAFile
     with BuiltJsonSerializable, DesignChangingAction
-    implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
+    implements Action, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   bool get write_local_storage;
@@ -1459,10 +1443,8 @@ abstract class StrandsReflect
   bool get reverse_polarity;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsReflect(
-      {BuiltList<Strand> strands,
-      bool horizontal,
-      bool reverse_polarity}) = _$StrandsReflect._;
+  factory StrandsReflect({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
+      _$StrandsReflect._;
 
   StrandsReflect._();
 
@@ -1942,7 +1924,7 @@ abstract class GroupDisplayedChange
 
 abstract class GroupAdd
     with BuiltJsonSerializable, UndoableAction
-    implements AppUIStateStorableAction, Built<GroupAdd, GroupAddBuilder> {
+    implements Action, Built<GroupAdd, GroupAddBuilder> {
   String get name;
 
   HelixGroup get group;
@@ -2077,7 +2059,7 @@ abstract class StrandColorSet
 
 abstract class StrandPasteKeepColorSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
+    implements Action, Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
   bool get keep;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2174,7 +2156,7 @@ abstract class DefaultCrossoverTypeForSettingHelixRollsSet
     with
         BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<DefaultCrossoverTypeForSettingHelixRollsSet,
             DefaultCrossoverTypeForSettingHelixRollsSetBuilder> {
   bool get scaffold;
@@ -2194,9 +2176,7 @@ abstract class DefaultCrossoverTypeForSettingHelixRollsSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // center on load
 
-abstract class AutofitSet
-    with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<AutofitSet, AutofitSetBuilder> {
+abstract class AutofitSet with BuiltJsonSerializable implements Action, Built<AutofitSet, AutofitSetBuilder> {
   bool get autofit;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2228,9 +2208,7 @@ abstract class ShowHelixCirclesMainViewSet
 
 abstract class ShowGridCoordinatesSideViewSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
+    implements Action, Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
   bool get show_grid_coordinates_side_view;
 
   /************************ begin BuiltValue boilerplate ************************/
