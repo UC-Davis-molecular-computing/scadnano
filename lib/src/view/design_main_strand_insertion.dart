@@ -29,6 +29,7 @@ mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Color color;
   Helix helix;
   String id;
+  String transform;
 }
 
 class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
@@ -82,6 +83,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..d = 'M $x0 $y0 '
           'C $x1 $y1, $x2 $y2, $x3 $y2 '
           'C $x4 $y2, $x5 $y1, $x0 $y0 '
+      ..transform = props.transform
       ..id = props.id
       ..key = props.id)();
     return insertion_path;

@@ -8,9 +8,11 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/domains_move.dart';
 
-import '../state/app_ui_state.dart';
+import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
+import '../state/group.dart';
 import '../state/context_menu.dart';
 import '../state/crossover.dart';
 import '../state/dialog.dart';
@@ -50,6 +52,10 @@ abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvali
 }
 
 /// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
+/// Previously, whether an action was a subtype of UndoableAction was used to check whether to write
+/// the design to localStorage. Now, we just check whether the Design changed, but print a warning
+/// if the action is not a subtype of UndoableAction. However, this subtype relationship IS still
+/// currently used to detect whether to affect the undo stack.
 abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
 }
@@ -76,9 +82,6 @@ abstract class SkipUndo with BuiltJsonSerializable implements Action, Built<Skip
 abstract class StorableAction extends Action {
   Iterable<Storable> storables();
 }
-
-/// [Action] that should trigger all of AppUIStateStorable to be written into localStorage.
-abstract class AppUIStateStorableAction extends Action {}
 
 /// [Action] that should invalidate the svg png cache.
 abstract class SvgPngCacheInvalidatingAction extends Action {}
@@ -213,9 +216,7 @@ abstract class ThrottledActionNonFast
 
 abstract class LocalStorageDesignChoiceSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<LocalStorageDesignChoiceSet, LocalStorageDesignChoiceSetBuilder> {
+    implements Action, Built<LocalStorageDesignChoiceSet, LocalStorageDesignChoiceSetBuilder> {
   LocalStorageDesignChoice get choice;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -231,7 +232,7 @@ abstract class LocalStorageDesignChoiceSet
 
 abstract class EditModeToggle
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<EditModeToggle, EditModeToggleBuilder> {
+    implements Action, Built<EditModeToggle, EditModeToggleBuilder> {
   EditModeChoice get mode;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -265,7 +266,7 @@ abstract class EditModesSet
 
 abstract class SelectModeToggle
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SelectModeToggle, SelectModeToggleBuilder> {
+    implements Action, Built<SelectModeToggle, SelectModeToggleBuilder> {
   SelectModeChoice get select_mode_choice;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -294,7 +295,7 @@ abstract class SelectModesAdd
 
 abstract class SelectModesSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SelectModesSet, SelectModesSetBuilder> {
+    implements Action, Built<SelectModesSet, SelectModesSetBuilder> {
   BuiltSet<SelectModeChoice> get select_mode_choices;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -313,9 +314,9 @@ abstract class SelectModesSet
 abstract class SetAppUIStateStorable
     with BuiltJsonSerializable
     implements Action, Built<SetAppUIStateStorable, SetAppUIStateStorableBuilder> {
-  AppUIStateStorable get storables;
+  AppUIStateStorables get storables;
 
-  factory SetAppUIStateStorable(AppUIStateStorable storables) =>
+  factory SetAppUIStateStorable(AppUIStateStorables storables) =>
       SetAppUIStateStorable.from((b) => b..storables = storables.toBuilder());
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -327,9 +328,7 @@ abstract class SetAppUIStateStorable
   static Serializer<SetAppUIStateStorable> get serializer => _$setAppUIStateStorableSerializer;
 }
 
-abstract class ShowDNASet
-    with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowDNASet, ShowDNASetBuilder> {
+abstract class ShowDNASet with BuiltJsonSerializable implements Action, Built<ShowDNASet, ShowDNASetBuilder> {
   bool get show;
 
   factory ShowDNASet(bool show) => ShowDNASet.from((b) => b..show = show);
@@ -344,7 +343,7 @@ abstract class ShowDNASet
 
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
+    implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
   bool get show;
 
   factory ShowModificationsSet(bool show) => ShowModificationsSet.from((b) => b..show = show);
@@ -360,7 +359,7 @@ abstract class ShowModificationsSet
 
 abstract class ModificationFontSizeSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
+    implements Action, Built<ModificationFontSizeSet, ModificationFontSizeSetBuilder> {
   num get font_size;
 
   factory ModificationFontSizeSet(num font_size) =>
@@ -377,9 +376,7 @@ abstract class ModificationFontSizeSet
 
 abstract class MajorTickOffsetFontSizeSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
+    implements Action, Built<MajorTickOffsetFontSizeSet, MajorTickOffsetFontSizeSetBuilder> {
   num get font_size;
 
   factory MajorTickOffsetFontSizeSet(num font_size) =>
@@ -396,7 +393,7 @@ abstract class MajorTickOffsetFontSizeSet
 
 abstract class MajorTickWidthFontSizeSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
+    implements Action, Built<MajorTickWidthFontSizeSet, MajorTickWidthFontSizeSetBuilder> {
   num get font_size;
 
   factory MajorTickWidthFontSizeSet(num font_size) =>
@@ -413,9 +410,7 @@ abstract class MajorTickWidthFontSizeSet
 
 abstract class SetModificationDisplayConnector
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
+    implements Action, Built<SetModificationDisplayConnector, SetModificationDisplayConnectorBuilder> {
   bool get show;
 
   factory SetModificationDisplayConnector(bool show) =>
@@ -433,7 +428,7 @@ abstract class SetModificationDisplayConnector
 
 abstract class ShowMismatchesSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
+    implements Action, Built<ShowMismatchesSet, ShowMismatchesSetBuilder> {
   bool get show;
 
   factory ShowMismatchesSet(bool show) => ShowMismatchesSet.from((b) => b..show = show);
@@ -448,7 +443,7 @@ abstract class ShowMismatchesSet
 
 abstract class SetShowEditor
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetShowEditor, SetShowEditorBuilder> {
+    implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
   bool get show;
 
   factory SetShowEditor(bool show) => SetShowEditor.from((b) => b..show = show);
@@ -465,7 +460,7 @@ abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
     with
         BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
             SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelixBuilder> {
   bool get show;
@@ -486,9 +481,7 @@ abstract class SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix
 
 abstract class DisplayMajorTicksOffsetsSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<DisplayMajorTicksOffsetsSet, DisplayMajorTicksOffsetsSetBuilder> {
+    implements Action, Built<DisplayMajorTicksOffsetsSet, DisplayMajorTicksOffsetsSetBuilder> {
   bool get show;
 
   factory DisplayMajorTicksOffsetsSet(bool show) => DisplayMajorTicksOffsetsSet.from((b) => b..show = show);
@@ -505,7 +498,7 @@ abstract class DisplayMajorTicksOffsetsSet
 abstract class SetDisplayMajorTickWidthsAllHelices
     with BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<SetDisplayMajorTickWidthsAllHelices, SetDisplayMajorTickWidthsAllHelicesBuilder> {
   bool get show;
 
@@ -525,7 +518,7 @@ abstract class SetDisplayMajorTickWidthsAllHelices
 
 abstract class SetDisplayMajorTickWidths
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder> {
+    implements Action, Built<SetDisplayMajorTickWidths, SetDisplayMajorTickWidthsBuilder> {
   bool get show;
 
   factory SetDisplayMajorTickWidths(bool show) => SetDisplayMajorTickWidths.from((b) => b..show = show);
@@ -542,7 +535,7 @@ abstract class SetDisplayMajorTickWidths
 abstract class SetOnlyDisplaySelectedHelices
     with BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         SvgPngCacheInvalidatingAction,
         Built<SetOnlyDisplaySelectedHelices, SetOnlyDisplaySelectedHelicesBuilder> {
   bool get show;
@@ -565,10 +558,7 @@ abstract class SetOnlyDisplaySelectedHelices
 
 abstract class InvertYZSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        SvgPngCacheInvalidatingAction,
-        Built<InvertYZSet, InvertYZSetBuilder> {
+    implements Action, SvgPngCacheInvalidatingAction, Built<InvertYZSet, InvertYZSetBuilder> {
   bool get invert_yz;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -584,7 +574,7 @@ abstract class InvertYZSet
 
 abstract class WarnOnExitIfUnsavedSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
+    implements Action, Built<WarnOnExitIfUnsavedSet, WarnOnExitIfUnsavedSetBuilder> {
   bool get warn;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -611,7 +601,7 @@ abstract class SaveDNAFile
 
 abstract class LoadDNAFile
     with BuiltJsonSerializable, DesignChangingAction
-    implements AppUIStateStorableAction, Built<LoadDNAFile, LoadDNAFileBuilder> {
+    implements Action, Built<LoadDNAFile, LoadDNAFileBuilder> {
   String get content;
 
   bool get write_local_storage;
@@ -908,6 +898,9 @@ abstract class SelectionsClear
   static Serializer<SelectionsClear> get serializer => _$selectionsClearSerializer;
 }
 
+// dispatched in response to Selection box being done drawning (i.e., mouse button goes up),
+// but needs to be intercepted by middleware, which queries the DOM to see what Selectable
+// SVG objects intersect the box, and then constructs a SelectOrToggleAll action with those objects
 abstract class SelectionsAdjust
     with BuiltJsonSerializable
     implements Action, Built<SelectionsAdjust, SelectionsAdjustBuilder> {
@@ -921,6 +914,21 @@ abstract class SelectionsAdjust
   SelectionsAdjust._();
 
   static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
+}
+
+abstract class SelectOrToggleItems
+    with BuiltJsonSerializable
+    implements Action, Built<SelectOrToggleItems, SelectOrToggleItemsBuilder> {
+  BuiltList<Selectable> get items;
+
+  bool get toggle;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectOrToggleItems({BuiltList<Selectable> items, bool toggle}) = _$SelectOrToggleItems._;
+
+  SelectOrToggleItems._();
+
+  static Serializer<SelectOrToggleItems> get serializer => _$selectOrToggleItemsSerializer;
 }
 
 // This selects all that are specified in constructor. SelectAllSelectable selects all selectable items
@@ -1231,7 +1239,7 @@ abstract class HelixIdxsChange
   BuiltMap<int, int> get idx_replacements;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixIdxsChange({Map<int,int> idx_replacements}) =>
+  factory HelixIdxsChange({Map<int, int> idx_replacements}) =>
       HelixIdxsChange.from((b) => b..idx_replacements.replace(idx_replacements));
 
   factory HelixIdxsChange.from([void Function(HelixIdxsChangeBuilder) updates]) = _$HelixIdxsChange;
@@ -1446,11 +1454,11 @@ abstract class JoinStrandsByCrossover
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// mirror image Strands
+// reflect (mirror image) Strands
 
-abstract class StrandsMirror
+abstract class StrandsReflect
     with BuiltJsonSerializable
-    implements Action, Built<StrandsMirror, StrandsMirrorBuilder> {
+    implements Action, Built<StrandsReflect, StrandsReflectBuilder> {
   BuiltList<Strand> get strands;
 
   bool get horizontal;
@@ -1458,12 +1466,12 @@ abstract class StrandsMirror
   bool get reverse_polarity;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMirror({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
-      _$StrandsMirror._;
+  factory StrandsReflect({BuiltList<Strand> strands, bool horizontal, bool reverse_polarity}) =
+      _$StrandsReflect._;
 
-  StrandsMirror._();
+  StrandsReflect._();
 
-  static Serializer<StrandsMirror> get serializer => _$strandsMirrorSerializer;
+  static Serializer<StrandsReflect> get serializer => _$strandsReflectSerializer;
 }
 
 abstract class ReplaceStrands
@@ -1587,6 +1595,9 @@ abstract class PotentialCrossoverRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strands move
 
+
+// This is a poor name for the action; it is used when we want to copy strands
+// (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<StrandsMoveStart, StrandsMoveStartBuilder> {
@@ -1655,6 +1666,61 @@ abstract class StrandsMoveCommit
   StrandsMoveCommit._();
 
   static Serializer<StrandsMoveCommit> get serializer => _$strandsMoveCommitSerializer;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// domains move
+
+abstract class DomainsMoveStartSelectedDomains
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveStartSelectedDomains, DomainsMoveStartSelectedDomainsBuilder> {
+  Address get address;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveStartSelectedDomains({Address address}) = _$DomainsMoveStartSelectedDomains._;
+
+  DomainsMoveStartSelectedDomains._();
+
+  static Serializer<DomainsMoveStartSelectedDomains> get serializer => _$domainsMoveStartSelectedDomainsSerializer;
+}
+
+abstract class DomainsMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveStop, DomainsMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveStop() = _$DomainsMoveStop;
+
+  DomainsMoveStop._();
+
+  static Serializer<DomainsMoveStop> get serializer => _$domainsMoveStopSerializer;
+}
+
+abstract class DomainsMoveAdjustAddress
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveAdjustAddress, DomainsMoveAdjustAddressBuilder> {
+  Address get address;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveAdjustAddress({Address address}) = _$DomainsMoveAdjustAddress._;
+
+  DomainsMoveAdjustAddress._();
+
+  static Serializer<DomainsMoveAdjustAddress> get serializer => _$domainsMoveAdjustAddressSerializer;
+}
+
+abstract class DomainsMoveCommit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<DomainsMoveCommit, DomainsMoveCommitBuilder> {
+  DomainsMove get domains_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveCommit({DomainsMove domains_move}) = _$DomainsMoveCommit._;
+
+  DomainsMoveCommit._();
+
+  static Serializer<DomainsMoveCommit> get serializer => _$domainsMoveCommitSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1911,12 +1977,75 @@ abstract class GridChange
     implements Built<GridChange, GridChangeBuilder> {
   Grid get grid;
 
+  String get group_name;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory GridChange({Grid grid}) = _$GridChange._;
+  factory GridChange({Grid grid, String group_name}) = _$GridChange._;
 
   GridChange._();
 
   static Serializer<GridChange> get serializer => _$gridChangeSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// changes to Helix groups
+
+abstract class GroupDisplayedChange
+    with BuiltJsonSerializable
+    implements Action, Built<GroupDisplayedChange, GroupDisplayedChangeBuilder> {
+  String get group_name;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupDisplayedChange({String group_name}) = _$GroupDisplayedChange._;
+
+  GroupDisplayedChange._();
+
+  static Serializer<GroupDisplayedChange> get serializer => _$groupDisplayedChangeSerializer;
+}
+
+abstract class GroupAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<GroupAdd, GroupAddBuilder> {
+  String get name;
+
+  HelixGroup get group;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupAdd({String name, HelixGroup group}) = _$GroupAdd._;
+
+  GroupAdd._();
+
+  static Serializer<GroupAdd> get serializer => _$groupAddSerializer;
+}
+
+abstract class GroupRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<GroupRemove, GroupRemoveBuilder> {
+  String get name;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupRemove({String name}) = _$GroupRemove._;
+
+  GroupRemove._();
+
+  static Serializer<GroupRemove> get serializer => _$groupRemoveSerializer;
+}
+
+abstract class GroupChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<GroupChange, GroupChangeBuilder> {
+  String get old_name;
+
+  String get new_name;
+
+  HelixGroup get new_group;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GroupChange({String old_name, String new_name, HelixGroup new_group}) = _$GroupChange._;
+
+  GroupChange._();
+
+  static Serializer<GroupChange> get serializer => _$groupChangeSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2011,7 +2140,7 @@ abstract class StrandColorSet
 
 abstract class StrandPasteKeepColorSet
     with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
+    implements Action, Built<StrandPasteKeepColorSet, StrandPasteKeepColorSetBuilder> {
   bool get keep;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2108,7 +2237,7 @@ abstract class DefaultCrossoverTypeForSettingHelixRollsSet
     with
         BuiltJsonSerializable
     implements
-        AppUIStateStorableAction,
+        Action,
         Built<DefaultCrossoverTypeForSettingHelixRollsSet,
             DefaultCrossoverTypeForSettingHelixRollsSetBuilder> {
   bool get scaffold;
@@ -2128,9 +2257,7 @@ abstract class DefaultCrossoverTypeForSettingHelixRollsSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // center on load
 
-abstract class AutofitSet
-    with BuiltJsonSerializable
-    implements AppUIStateStorableAction, Built<AutofitSet, AutofitSetBuilder> {
+abstract class AutofitSet with BuiltJsonSerializable implements Action, Built<AutofitSet, AutofitSetBuilder> {
   bool get autofit;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2162,9 +2289,7 @@ abstract class ShowHelixCirclesMainViewSet
 
 abstract class ShowGridCoordinatesSideViewSet
     with BuiltJsonSerializable
-    implements
-        AppUIStateStorableAction,
-        Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
+    implements Action, Built<ShowGridCoordinatesSideViewSet, ShowGridCoordinatesSideViewSetBuilder> {
   bool get show_grid_coordinates_side_view;
 
   /************************ begin BuiltValue boilerplate ************************/

@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/view/design_main_domains_moving.dart';
 
 import '../actions/actions.dart' as actions;
 import '../state/design.dart';
@@ -38,7 +39,6 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
       return (DesignMain()
         ..design = state.design
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
-        ..grid = state.design.grid
         ..potential_vertical_crossovers = state.design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
@@ -51,7 +51,6 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
-        ..design_major_tick_distance = state.design.major_tick_distance
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
@@ -71,7 +70,6 @@ UiFactory<DesignMainProps> DesignMain = _$DesignMain;
 @Props()
 mixin DesignMainPropsMixin on UiProps {
   Design design;
-  Grid grid;
   BuiltList<PotentialVerticalCrossover> potential_vertical_crossovers;
   BuiltSet<int> side_selected_helix_idxs;
   BuiltSet<EditModeChoice> edit_modes;
@@ -80,7 +78,6 @@ mixin DesignMainPropsMixin on UiProps {
   bool has_error;
   bool show_mismatches;
   bool show_dna;
-  int design_major_tick_distance;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool drawing_potential_crossover;
@@ -113,13 +110,13 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
     ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.design.helices
-        ..grid = props.grid
+        ..groups = props.design.groups
+        ..helix_idxs_in_group = props.design.helix_idxs_in_group
         ..geometry = props.design.geometry
         ..major_tick_offset_font_size = props.major_tick_offset_font_size
         ..major_tick_width_font_size = props.major_tick_width_font_size
         ..helix_change_apply_to_all = props.helix_change_apply_to_all
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
-        ..design_major_tick_distance = props.design_major_tick_distance
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
         ..show_helix_circles = props.show_helix_circles
@@ -141,6 +138,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..helices = props.design.helices
+          ..groups = props.design.groups
           ..geometry = props.design.geometry
           ..key = 'potential-vertical-crossovers')(),
       if (props.strand_creation != null)
@@ -150,6 +148,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..start = props.strand_creation.start
           ..end = props.strand_creation.end
           ..color = props.strand_creation.color
+          ..helices = {props.strand_creation.helix.idx: props.strand_creation.helix}.build()
+          ..groups = {
+            props.strand_creation.helix.group: props.design.groups[props.strand_creation.helix.group]
+          }.build()
+          ..geometry = props.design.geometry
           ..key = 'strand-creating')(),
       if (props.show_dna)
         (DesignMainDNASequences()
@@ -174,6 +177,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helices = props.design.helices
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
+      (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
     ]);
 
     if (USING_REACT_DND) {

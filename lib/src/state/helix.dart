@@ -64,28 +64,25 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int idx,
     Grid grid,
     Geometry geometry,
-    int view_order = null,
     GridPosition grid_position = null,
-    num roll = constants.default_helix_roll,
-    num pitch = constants.default_helix_pitch,
-    num yaw = constants.default_helix_yaw,
+    num roll = constants.default_roll,
+    num pitch = constants.default_pitch,
+    num yaw = constants.default_yaw,
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,
     bool invert_yz = false,
     Position3D position = null,
     Point<num> svg_position = null,
+    String group = constants.default_group_name,
   }) {
-    if (view_order == null) {
-      view_order = idx;
-    }
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }
     return Helix.from((b) => b
       ..idx = idx
-      ..view_order = view_order
       ..geometry = geometry?.toBuilder()
+      ..group = group
       ..grid = grid
       ..grid_position = grid_position?.toBuilder()
       ..position_ = position?.toBuilder()
@@ -100,17 +97,25 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..unused_fields.replace({}));
   }
 
+  static void _initializeBuilder(HelixBuilder b) {
+    b.group = constants.default_group_name;
+    b.min_offset = 0;
+    b.roll = constants.default_roll;
+    b.pitch = constants.default_pitch;
+    b.yaw = constants.default_yaw;
+    b.invert_yz = false;
+  }
+
   /// unique identifier of used helix; also index indicating order to show
   /// in main view from top to bottom (unused helices not shown in main view)
   /// by default.
   int get idx;
 
-  // This is inferred from DNADesign.helices_view_order and is here for convenience, but isn't serialized.
-  int get view_order;
-
   Grid get grid;
 
   Geometry get geometry;
+
+  String get group;
 
   /// position within square/hex/honeycomb integer grid (side view)
   @nullable
@@ -160,8 +165,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   BuiltList<int> get major_ticks;
 
-  GridPosition default_grid_position() => GridPosition(0, this.idx);
-
   @memoized
   Position3D get default_position {
     num x = min_offset * geometry.rise_per_base_pair;
@@ -193,11 +196,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return util.to_degrees(angle_radians);
   }
 
-  bool has_default_roll() => util.are_close(roll, constants.default_helix_roll);
+  bool has_default_group() => group == constants.default_group_name;
 
-  bool has_default_pitch() => util.are_close(pitch, constants.default_helix_pitch);
+  bool has_default_roll() => util.are_close(roll, constants.default_roll);
 
-  bool has_default_yaw() => util.are_close(yaw, constants.default_helix_yaw);
+  bool has_default_pitch() => util.are_close(pitch, constants.default_pitch);
+
+  bool has_default_yaw() => util.are_close(yaw, constants.default_yaw);
 
   bool has_default_major_tick_distance() => major_tick_distance == null;
 
@@ -249,6 +254,10 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     if (!has_default_major_tick_start()) {
       json_map[constants.major_tick_start_key] = major_tick_start;
+    }
+
+    if (!has_default_group()) {
+      json_map[constants.group_key] = group;
     }
 
     if (has_major_tick_periodic_distances()) {
@@ -314,14 +323,14 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (json_map.containsKey(constants.major_tick_periodic_distances_key)) {
       var major_tick_periodic_distances_json = json_map[constants.major_tick_periodic_distances_key];
       helix_builder.major_tick_periodic_distances =
-          ListBuilder<int>(List<int>.from(major_tick_periodic_distances_json));
+          ListBuilder<int>(List<int>.of(major_tick_periodic_distances_json));
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
       List<dynamic> gp_list = json_map[constants.grid_position_key];
-      if (!(gp_list.length == 2 || gp_list.length == 3)) {
+      if (!(gp_list.length == 2)) {
         throw ArgumentError(
-            "list of grid_position coordinates must be length 2 or 3 but this is the list: ${gp_list}");
+            "list of grid_position coordinates must be length 2 but this is the list: ${gp_list}");
       }
       helix_builder.grid_position = GridPosition.from_list(gp_list).toBuilder();
     }
@@ -333,24 +342,26 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       }
     }
 
+    helix_builder.group = util.optional_field(json_map, constants.group_key, constants.default_group_name);
+
     // XXX: many of these fields are not nullable. But they are allowed to be null in the builder,
     // before we call build(). We communicate to the DNADesign that they need to be populated with
     // defaults by allowing them to be null here. These are for fields where the default requires
     // knowledge of the whole design (e.g., min and max offset are based on offsets of Domains on
     // the helix).
-    helix_builder.min_offset = util.get_value_with_null_default(json_map, constants.min_offset_key);
+    helix_builder.min_offset = util.optional_field_with_null_default(json_map, constants.min_offset_key);
     helix_builder.major_tick_start =
-        util.get_value_with_null_default(json_map, constants.major_tick_start_key);
-    helix_builder.idx = util.get_value_with_null_default(json_map, constants.idx_on_helix_key);
+        util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
+    helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
     helix_builder.roll =
-        util.get_value_with_default(json_map, constants.roll_key, constants.default_helix_roll);
+        util.optional_field(json_map, constants.roll_key, constants.default_roll);
     helix_builder.pitch =
-        util.get_value_with_default(json_map, constants.pitch_key, constants.default_helix_pitch);
-    helix_builder.yaw = util.get_value_with_default(json_map, constants.yaw_key, constants.default_helix_yaw);
+        util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
+    helix_builder.yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
     if (json_map.containsKey(constants.major_tick_distance_key) &&
         json_map.containsKey(constants.major_tick_periodic_distances_key)) {
-      throw IllegalDNADesignError('helix ${helix_builder.idx ?? ""} has both keys '
+      throw IllegalDesignError('helix ${helix_builder.idx ?? ""} has both keys '
           '${constants.major_tick_distance_key} and '
           '${constants.major_tick_periodic_distances_key}. At most one is allow to be specified.');
     }
@@ -368,12 +379,10 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   int num_bases() => this.max_offset - this.min_offset;
 
   /// Calculates full list of major tick marks, in sorted order,
-  /// whether using [Design.default_major_tick_distance],
-  /// [Helix.major_tick_distance], or [Helix.major_ticks].
+  /// whether using [Helix.major_tick_distance], or [Helix.major_ticks].
   /// They are used in reverse order to determine precedence. (e.g., [Helix.major_ticks]
-  /// overrides [Helix.major_tick_distance], which overrides
-  /// [Design.default_major_tick_distance].
-  List<int> calculate_major_ticks(int default_major_tick_distance) {
+  /// overrides [Helix.major_tick_distance].
+  List<int> calculate_major_ticks() {
     List<int> ticks = [];
     if (has_major_ticks()) {
       var sorted_ticks = major_ticks.toList();
@@ -390,7 +399,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     } else {
       int distance = major_tick_distance != null && major_tick_distance > 0
           ? major_tick_distance
-          : default_major_tick_distance;
+          : grid.default_major_tick_distance();
       if (distance > 0) {
         ticks = [for (int tick = major_tick_start; tick <= max_offset; tick += distance) tick];
       }

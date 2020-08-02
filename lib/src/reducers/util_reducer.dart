@@ -1,5 +1,5 @@
 /// A Reducer that changes some "local state" (a substree of the full state tree),
-/// but requires reaching into a larger substree (global state) to know how to apply the action.
+/// but requires reaching into a larger subtree (global state) to know how to apply the action.
 typedef LocalState GlobalReducer<LocalState, GlobalState>(
     LocalState local_state, GlobalState global_state, dynamic action);
 

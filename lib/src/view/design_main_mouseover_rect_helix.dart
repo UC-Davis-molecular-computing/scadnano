@@ -88,7 +88,9 @@ mouse_leave_update_mouseover() {
 
 update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
   MouseEvent event = event_syn.nativeEvent;
-  var address = util.get_address_on_helix(event, helix);
+  var group = app.state.design.groups[helix.group];
+  var geometry = app.state.design.geometry;
+  var address = util.get_address_on_helix(event, helix, group, geometry);
   int offset = address.offset;
   bool forward = address.forward;
 

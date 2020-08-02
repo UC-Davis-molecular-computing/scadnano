@@ -5,13 +5,14 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.10.2";
+const String CURRENT_VERSION = "0.11.0";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 const NO_DESIGN_MESSAGE = 'No Design loaded.\n'
     'Try loading an example by selecting File --> Load example,\n'
-    'or select File --> Open... to load a .dna file from your local drive.';
+    'or select File --> Open... to load a .sc file from your local drive.\n'
+    'You can also drag and drop a .sc file from your file system to the browser.';
 
 // https://www.w3schools.com/jsref/event_button.asp
 const LEFT_CLICK_BUTTON = 0;
@@ -104,12 +105,14 @@ final color_reverse_rotation_arrow_no_strand = Color.rgb(0, 0, 0);
 
 // NOTE: this is assuming a coordinate system where 0 degrees is straight up (negative y) in the main view,
 // and rotation is clockwise
-const default_helix_roll = 0.0;
-const default_helix_pitch = 0.0;
-const default_helix_yaw = 0.0;
+const default_roll = 0.0;
+const default_pitch = 0.0;
+const default_yaw = 0.0;
 //const default_helix_rotation_anchor = 0;
 
 const default_side_pane_width = '8%';
+
+const default_group_name = 'default_group';
 
 /////////////////////////////////////////////////////////////
 // Geometry constants
@@ -123,30 +126,26 @@ const default_inter_helix_gap = 0.5;
 /////////////////////////////////////////////////////////////
 // JSON keys
 
-// DNADesign keys
+// Design keys
 const version_key = 'version';
 const grid_key = 'grid';
 const geometry_key = 'geometry';
 const legacy_geometry_keys = ['parameters'];
-const major_tick_distance_key = 'major_tick_distance';
-const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
-const major_tick_start_key = 'major_tick_start';
-const major_ticks_key = 'major_ticks';
 const helices_key = 'helices';
 const helices_view_order_key = 'helices_view_order';
 const potential_helices_key = 'potential_helices';
 const strands_key = 'strands';
 const design_modifications_key = 'modifications_in_design';
+const groups_key = 'groups';
 final design_keys = [
       version_key,
       grid_key,
-      major_tick_distance_key,
-      major_ticks_key,
       helices_key,
       helices_view_order_key,
       potential_helices_key,
       strands_key,
       design_modifications_key,
+      groups_key,
     ] +
     legacy_geometry_keys;
 
@@ -179,10 +178,11 @@ const grid_position_key = 'grid_position';
 const svg_position_key = 'svg_position';
 const position_key = 'position';
 const legacy_position_keys = ['origin']; //XXX: we aren't check for this currently
-const helix_major_ticks_key = 'major_ticks';
-const helix_major_tick_distance_key = 'major_tick_distance';
-const helix_major_tick_start_key = 'major_tick_start';
-const helix_major_tick_periodic_distances_key = 'major_tick_periodic_distances';
+const major_ticks_key = 'major_ticks';
+const major_tick_distance_key = 'major_tick_distance';
+const major_tick_start_key = 'major_tick_start';
+const major_tick_periodic_distances_key = 'major_tick_periodic_distances';
+const group_key = 'group';
 final helix_keys = [
       idx_on_helix_key,
       max_offset_key,
@@ -193,10 +193,11 @@ final helix_keys = [
       grid_position_key,
       svg_position_key,
       position_key,
-      helix_major_ticks_key,
-      helix_major_tick_distance_key,
-      helix_major_tick_start_key,
-      helix_major_tick_periodic_distances_key,
+      major_ticks_key,
+      major_tick_distance_key,
+      major_tick_start_key,
+      major_tick_periodic_distances_key,
+      group_key,
     ] +
     legacy_position_keys;
 // Cannot have List concatenation in const expressions.
@@ -325,6 +326,15 @@ const css_selector_end_5p_strand = 'five-prime-end-first-substrand';
 const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
 const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
+const css_selector_end_parent_group = 'dna-ends';
+
+const css_selector_domain_moving = 'domain-line-moving';
+const css_selector_disallowed = 'disallowed';
+
+const css_selector_strand_creating = 'strand-creating';
+const css_selector_end_5p_strand_creating = '5p-strand-creating';
+const css_selector_end_3p_strand_creating = '3p-strand-creating';
+
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';

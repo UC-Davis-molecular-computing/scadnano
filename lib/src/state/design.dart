@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
@@ -13,6 +14,7 @@ import 'crossover.dart';
 import 'dna_end.dart';
 import 'grid_position.dart';
 import '../json_serializable.dart';
+import 'group.dart';
 import 'modification.dart';
 import 'strand.dart';
 import 'domain.dart';
@@ -22,27 +24,28 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
+import '../extension_methods.dart';
 
 part 'design.g.dart';
 
 abstract class Design with UnusedFields implements Built<Design, DesignBuilder>, JSONSerializable {
   Design._();
 
-  factory Design([void Function(DesignBuilder) updates]) = _$Design;
+  factory Design({Grid grid = Grid.none}) => Design.from((b) => b
+    ..groups[constants.default_group_name] =
+        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid));
+
+  factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
 
   static void _initializeBuilder(DesignBuilder b) {
     b.version = constants.CURRENT_VERSION;
-    b.grid = Grid.none;
     b.geometry = Geometry().toBuilder();
-    b.helices = MapBuilder<int,Helix>();
+    b.helices = MapBuilder<int, Helix>();
     b.strands = ListBuilder<Strand>();
     b.unused_fields = MapBuilder<String, Object>({});
-  }
-
-  static void _finalizeBuilder(DesignBuilder b) {
-    if (b.major_tick_distance == null) {
-      b.major_tick_distance = b.grid.default_major_tick_distance();
-    }
+    b.groups = MapBuilder<String, HelixGroup>({constants.default_group_name: DEFAULT_HelixGroup});
+    b.groups[constants.default_group_name] =
+        b.groups[constants.default_group_name].rebuild((g) => g.grid = Grid.none);
   }
 
   @memoized
@@ -52,15 +55,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   String get version;
 
-  Grid get grid;
-
   Geometry get geometry;
-
-  int get major_tick_distance;
 
   BuiltMap<int, Helix> get helices;
 
   BuiltList<Strand> get strands;
+
+  BuiltMap<String, HelixGroup> get groups;
+
+  BuiltMap<int, Helix> helices_in_group(String group_name) =>
+      BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
 
   @memoized
   bool get is_origami {
@@ -70,6 +74,46 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     return false;
+  }
+
+  BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
+    var helix_idxs_of_selected_strands = {
+      for (var strand in selected_strands) for (var domain in strand.domains()) domain.helix
+    };
+    var groups_of_selected_strands = {
+      for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
+    };
+    return groups_of_selected_strands.build();
+  }
+
+  @memoized
+  BuiltMap<Domain, Color> get color_of_domain {
+    Map<Domain, Color> map = {};
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        map[domain] = strand.color;
+      }
+    }
+    return map.build();
+  }
+
+  BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
+    var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
+    var groups_of_domains = {
+      for (int helix_idx in helix_idxs_of_domains) helices[helix_idx].group
+    };
+    return groups_of_domains.build();
+  }
+
+  BuiltSet<String> group_names_of_ends(Iterable<DNAEnd> ends) {
+    Set<String> names = {};
+    for (var end in ends) {
+      int helix_idx = end_to_domain[end].helix;
+      var helix = helices[helix_idx];
+      var name = helix.group;
+      names.add(name);
+    }
+    return names.build();
   }
 
   // like crossovers_by_helix_idx, but maps to sets instead of lists
@@ -257,7 +301,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
-    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id]) {
+    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id, domains_by_id]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];
         map[key] = obj;
@@ -377,7 +421,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// Gets Strand with 5p end at given address (helix,offset,forward)
+  /// Gets Strand with 3p end at given address (helix,offset,forward)
   /// Offset is inclusive, i.e., dna_end.offset_inclusive
   @memoized
   BuiltMap<Address, Strand> get address_3p_to_strand {
@@ -407,7 +451,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       ]) {
         int helix_idx_top;
         int helix_idx_bot;
-        var address_top;
         bool forward_top;
         Domain substrand_top;
         Domain substrand_bot;
@@ -419,7 +462,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             if (helix_idx + 1 == address_3p.helix_idx) {
               // 5' end is on top, 3' is on bottom
               helix_idx_top = address_5p.helix_idx;
-              address_top = address_5p;
               forward_top = forward;
               substrand_top = ss;
               dna_end_top = substrand_top.dnaend_5p;
@@ -430,7 +472,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             } else {
               // 3' end is on top, 5' is on bottom
               helix_idx_top = address_3p.helix_idx;
-              address_top = address_3p;
               forward_top = !forward;
               substrand_top = strand_3p.last_domain();
               dna_end_top = substrand_top.dnaend_3p;
@@ -448,8 +489,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             offset: offset,
             forward_top: forward_top,
             color: strand_5p.color.toHexColor().toCssString(),
-            substrand_top: substrand_top,
-            substrand_bot: substrand_bot,
+            domain_top: substrand_top,
+            domain_bot: substrand_bot,
             dna_end_top: dna_end_top,
             dna_end_bot: dna_end_bot,
           ));
@@ -461,11 +502,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// max offset allowed on any Helix in the Model
   @memoized
-  int get max_offset => helices.values.map((helix) => helix.max_offset).reduce(max);
+  int get max_offset => helices.values.map((helix) => helix.max_offset).max;
 
   /// min offset allowed on any Helix in the Model
   @memoized
-  int get min_offset => helices.values.map((helix) => helix.min_offset).reduce(min);
+  int get min_offset => helices.values.map((helix) => helix.min_offset).min;
 
   Design add_strand(Strand strand) => rebuild((d) => d..strands.add(strand));
 
@@ -478,19 +519,65 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return rebuild((d) => d..strands.removeWhere((strand) => strands_to_remove_set.contains(strand)));
   }
 
+  bool has_default_groups() => groups.length == 1 && groups.containsKey(constants.default_group_name);
+
+  /// Throw exception if group is not default; otherwise return the default group
+  HelixGroup default_group() {
+    // Gets default group and raise exception if default group is not being used
+    if (!has_default_groups()) {
+      throw ArgumentError('cannot access Design.helices_view_order when groups are used. '
+          'Access group.helices_view_order for each group instead.');
+    }
+    if (groups == null) {
+      throw AssertionError('Design.groups should not be None by this point');
+    }
+    var all_groups = List<HelixGroup>.from(groups.values);
+    var group = all_groups.first;
+    return group;
+  }
+
+  /// Throw exception if default group is not being used; otherwise set the grid of the default group.
+  set_grid(Grid grid) {
+    var group = default_group();
+    group = group.rebuild((b) => b..grid = grid);
+    var design = rebuild((b) {
+      b.groups[constants.default_group_name] = group;
+    });
+    return design;
+  }
+
+  /// Throw exception if default group is not being used; otherwise set the grid of the default group.
+  set_helices_view_order(Iterable<int> helices_view_order) {
+    var group = default_group();
+    group = group.rebuild((b) => b..helices_view_order.replace(helices_view_order));
+    var design = rebuild((b) {
+      b.groups[constants.default_group_name] = group;
+    });
+    return design;
+  }
+
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {constants.version_key: constants.CURRENT_VERSION};
 
     json_map.addAll(unused_fields.toMap());
 
-    json_map[constants.grid_key] = this.grid.to_json();
-
-    if (!this.geometry.is_default()) {
-      json_map[constants.geometry_key] = this.geometry.to_json_serializable(suppress_indent: suppress_indent);
+    if (has_default_groups()) {
+      json_map[constants.grid_key] = default_group().grid.to_json();
     }
 
-    if (this.major_tick_distance != grid.default_major_tick_distance()) {
-      json_map[constants.major_tick_distance_key] = this.major_tick_distance;
+    if (!this.geometry.is_default()) {
+      json_map[constants.geometry_key] = geometry.to_json_serializable(suppress_indent: suppress_indent);
+    }
+
+    if (!has_default_groups()) {
+      Map<String, dynamic> group_map = {};
+      for (var name in groups.keys) {
+        var group = groups[name];
+        var helix_idxs_in_group = [for (var helix in helices.values) if (helix.group == name) helix.idx];
+        group_map[name] =
+            group.to_json_serializable(suppress_indent: suppress_indent, helix_idxs: helix_idxs_in_group);
+      }
+      json_map[constants.groups_key] = group_map;
     }
 
     var helix_jsons_map = {
@@ -503,7 +590,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         List<Map<String, dynamic>>.from(helix_jsons_map.values.map(util.unwrap_from_noindent));
     _remove_helix_idxs_if_default(helix_jsons_unwrapped);
 
-    //
     for (var helix in helices.values) {
       var helix_json = util.unwrap_from_noindent(helix_jsons_map[helix.idx]);
       if (has_nondefault_max_offset(helix)) {
@@ -516,9 +602,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     json_map[constants.helices_key] = helix_jsons_map.values.toList();
 
-    if (!util.is_increasing(helices_view_order)) {
-      var order = helices_view_order.toList();
-      json_map[constants.helices_view_order_key] = suppress_indent ? NoIndent(order) : order;
+    if (has_default_groups()) {
+      var helices_view_order = default_group().helices_view_order;
+      if (!util.is_increasing(helices_view_order)) {
+        var order = helices_view_order.toList();
+        json_map[constants.helices_view_order_key] = suppress_indent ? NoIndent(order) : order;
+      }
     }
 
     // modifications
@@ -558,7 +647,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool has_nondefault_min_offset(Helix helix) {
     var starts = domains_on_helix(helix.idx).map((ss) => ss.start);
-    int min_start = starts.isEmpty ? null : starts.reduce(min);
+    int min_start = starts.isEmpty ? null : starts.min;
     // if all offsets are nonnegative (or there are no substrands, i.e., min_start == null),
     // then default min_offset is 0; otherwise it is minimum offset
     if (min_start == null || min_start >= 0) {
@@ -568,37 +657,44 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  static _check_mutually_exclusive_fields(Map<String, dynamic> json_map) {
+    var exclusive_pairs = [
+      [constants.grid_key, constants.groups_key],
+      [constants.helices_view_order_key, constants.groups_key],
+    ];
+    for (var pair in exclusive_pairs) {
+      var key1 = pair[0];
+      var key2 = pair[1];
+      if (json_map.containsKey(key1) && json_map.containsKey(key2)) {
+        throw IllegalDesignError('cannot specify both "${key1}" and "${key2}" in Design JSON');
+      }
+    }
+  }
+
   static Design from_json(Map<String, dynamic> json_map, [bool invert_yz = false]) {
     if (json_map == null) return null;
 
+    _check_mutually_exclusive_fields(json_map);
+
     var design_builder = DesignBuilder();
 
-    design_builder.version =
-        util.get_value_with_default(json_map, constants.version_key, constants.CURRENT_VERSION);
-    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.9.0');
+    design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
 
-    design_builder.grid = util.get_value_with_default(
-        json_map, constants.grid_key, constants.default_grid,
-        transformer: Grid.valueOf);
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
 
-    bool grid_is_none = design_builder.grid == Grid.none;
+    bool grid_is_none = grid == Grid.none;
+    bool using_groups = json_map.containsKey(constants.groups_key);
 
     design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
 
-    Geometry geometry = util.get_value_with_default(json_map, constants.geometry_key, Geometry(),
+    Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
         transformer: (geometry_map) => Geometry.from_json(geometry_map),
         legacy_keys: constants.legacy_geometry_keys);
     design_builder.geometry.replace(geometry);
 
-    if (json_map.containsKey(constants.major_tick_distance_key)) {
-      design_builder.major_tick_distance = json_map[constants.major_tick_distance_key];
-    } else {
-      design_builder.major_tick_distance = design_builder.grid.default_major_tick_distance();
-    }
-
-    List<HelixBuilder> helix_builders = [];
+    List<HelixBuilder> helix_builders_list = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
-    int num_helices = deserialized_helices_list.length;
 
     // create HelixBuilders
     int idx = 0;
@@ -608,50 +704,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         helix_builder.idx = idx;
       }
       helix_builder.invert_yz = invert_yz;
-      helix_builder.grid = design_builder.grid;
       helix_builder.geometry = geometry.toBuilder();
-      if (grid_is_none && helix_json.containsKey(constants.grid_position_key)) {
-        throw IllegalDNADesignError(
+      if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
+        throw IllegalDesignError(
             'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
-      } else if (!grid_is_none && helix_json.containsKey(constants.position_key)) {
-        throw IllegalDNADesignError(
+      } else if (!grid_is_none && !using_groups && helix_json.containsKey(constants.position_key)) {
+        throw IllegalDesignError(
             'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
       }
-      helix_builders.add(helix_builder);
+      helix_builders_list.add(helix_builder);
       idx++;
     }
 
-    // view order of helices
-    var helix_indices = [for (var helix_builder in helix_builders) helix_builder.idx];
     // ensure no two helices have same idx
-    Tuple2<int, int> repeated_idxs = util.repeated_element_indices(helix_indices);
-    if (repeated_idxs != null) {
-      int i1 = repeated_idxs.item1;
-      int i2 = repeated_idxs.item2;
-      int helix_idx = helix_builders[i1].idx;
-      throw IllegalDNADesignError('helix idx values must be unique, '
-          'but two helices share idx = ${helix_idx}; they appear at positions ${i1} and ${i2} in the '
-          'list of helices.');
-    }
-    List<int> helices_view_order = List<int>.from(
-        util.get_value_with_default(json_map, constants.helices_view_order_key, helix_indices));
-    if (helices_view_order.length != num_helices) {
-      throw IllegalDNADesignError('length of helices (${num_helices}) does not match '
-          'length of helices_view_order (${helices_view_order.length})');
-    }
-    var helices_view_order_sorted = List<int>.from(helices_view_order);
-    helix_indices.sort();
-    helices_view_order_sorted.sort();
-    if (!ListEquality().equals(helices_view_order_sorted, helix_indices)) {
-      throw IllegalDNADesignError('helices_view_order = ${helices_view_order} is not a permutation of '
-          'the indices of the helices, which are ${helix_indices}');
-    }
+    var helix_indices = [for (var helix_builder in helix_builders_list) helix_builder.idx];
+    _ensure_helix_idxs_unique(helix_indices, helix_builders_list);
 
-    for (int view_order = 0; view_order < helices_view_order.length; view_order++) {
-      int idx = helices_view_order[view_order];
-      var helix_builder = helix_builders.firstWhere((h) => h.idx == idx);
-      helix_builder.view_order = view_order;
-    }
+    // now that we know idx's are unique, assign from list into map with idx keys
+    Map<int, HelixBuilder> helix_builders_map = {
+      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
+    };
 
     // strands
     List<Strand> strands = [];
@@ -662,13 +734,45 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     design_builder.strands.replace(strands);
 
-    _set_helices_min_max_offsets(helix_builders, design_builder.strands.build());
+    set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
+
+    // helix groups; populate with grids, but not helices_view_order yet
+    Map<String, HelixGroupBuilder> group_builders_map = null;
+    if (!using_groups) {
+      group_builders_map = {constants.default_group_name: DEFAULT_HelixGroup.toBuilder()..grid = grid};
+    } else {
+      Map<String, dynamic> groups_json = json_map[constants.groups_key];
+      group_builders_map = {};
+      for (var name in groups_json.keys) {
+        var group_json = groups_json[name];
+        var helix_idxs_in_group =
+            helix_builders_map.keys.where((idx) => helix_builders_map[idx].group == name);
+        group_builders_map[name] =
+            HelixGroup.from_json(group_json, helix_idxs: helix_idxs_in_group).toBuilder();
+      }
+    }
+
+    ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
+
+    // if helices_view_order not already specified in group or top-level of design, give each a default
+    if (json_map.containsKey(constants.helices_view_order_key)) {
+      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
+      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
+    }
+    assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
+
+    // build groups
+    Map<String, HelixGroup> groups_map =
+        group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
+    design_builder.groups.replace(groups_map);
+
+    assign_grids_to_helix_builders_from_groups(groups_map, helix_builders_map);
 
     // build Helices
     Map<int, Helix> helices = {
-      for (var helix_builder in helix_builders) helix_builder.idx: helix_builder.build()
+      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, invert_yz, helices, design_builder.grid);
+    helices = util.helices_assign_svg(geometry, invert_yz, helices, groups_map.build());
     design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -688,11 +792,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var design = design_builder.build();
     design._check_legal_design();
 
-//    print('design: ${design}');
-//    print('design.geometry.to_json_serializable(): ${design.geometry.to_json_serializable()}');
-//    print('design.geometry.toJson(): ${design.geometry.toJson()}');
-
     return design;
+  }
+
+  static List<int> set_helices_view_order_default_group(
+      Map<String, dynamic> json_map, List<int> helix_indices) {
+    int num_helices = helix_indices.length;
+    var helices_view_order =
+        List<int>.from(util.optional_field(json_map, constants.helices_view_order_key, helix_indices));
+    if (helices_view_order.length != num_helices) {
+      throw IllegalDesignError('length of helices (${num_helices}) does not match '
+          'length of helices_view_order (${helices_view_order.length})');
+    }
+    var helices_view_order_sorted = List<int>.of(helices_view_order);
+    helix_indices.sort();
+    helices_view_order_sorted.sort();
+    if (!ListEquality().equals(helices_view_order_sorted, helix_indices)) {
+      throw IllegalDesignError('helices_view_order = ${helices_view_order} is not a permutation of '
+          'the indices of the helices, which are ${helix_indices}');
+    }
+    return helices_view_order;
   }
 
   static assign_modifications_to_strands(
@@ -726,6 +845,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_legal_design() {
+    _ensure_helix_groups_exist();
     _check_helix_offsets();
     _check_strands_reference_helices_legally();
     _check_loopouts_not_consecutive_or_singletons_or_zero_length();
@@ -739,7 +859,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         var err_msg = 'for helix ${helix.idx}, '
             'helix.min_offset = ${helix.min_offset} must be strictly less than '
             'helix.max_offset = ${helix.max_offset}';
-        throw IllegalDNADesignError(err_msg);
+        throw IllegalDesignError(err_msg);
       }
     }
   }
@@ -858,19 +978,19 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           if (current_domains.length > 2) {
             var domain2 = current_domains[2];
             if (domain0.forward == domain1.forward) {
-              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+              throw IllegalDesignError(err_msg(domain0, domain1, helix_idx));
             }
             if (domain0.forward == domain2.forward) {
-              throw IllegalDNADesignError(err_msg(domain0, domain2, helix_idx));
+              throw IllegalDesignError(err_msg(domain0, domain2, helix_idx));
             }
             if (domain1.forward == domain2.forward) {
-              throw IllegalDNADesignError(err_msg(domain1, domain2, helix_idx));
+              throw IllegalDesignError(err_msg(domain1, domain2, helix_idx));
             }
             throw AssertionError("since current_domains = ${current_domains} has at least three domains, "
                 "I expected to find a pair of illegally overlapping domains");
           } else if (current_domains.length == 2) {
             if (domain0.forward == domain1.forward) {
-              throw IllegalDNADesignError(err_msg(domain0, domain1, helix_idx));
+              throw IllegalDesignError(err_msg(domain0, domain1, helix_idx));
             }
           }
         }
@@ -878,9 +998,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  @memoized
+  BuiltMap<String, BuiltList<int>> get helix_idxs_in_group {
+    Map<String, List<int>> map = {for (var name in groups.keys) name: []};
+
+    for (int idx in helices.keys) {
+      var helix = helices[idx];
+      var group_name = helix.group;
+      map[group_name].add(idx);
+    }
+
+    return {for (var name in map.keys) name: map[name].build()}.build();
+  }
+
   _check_grid_positions_disjoint() {
-    if (!grid.is_none()) {
-      var idxs = helices.keys.toList();
+    for (var group_name in groups.keys) {
+      var group = groups[group_name];
+      if (group.grid == Grid.none) {
+        continue;
+      }
+      BuiltList<int> idxs = helix_idxs_in_group[group_name];
       var gps = {for (var idx in idxs) idx: helices[idx].grid_position};
       for (int i = 0; i < gps.length - 1; i++) {
         int idx1 = idxs[i];
@@ -889,18 +1026,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           int idx2 = idxs[j];
           var gp2 = gps[idx2];
           if (gp1 == gp2) {
-            throw IllegalDNADesignError('cannot use the same grid_position twice, but helices '
-                '${idx1} and ${idx2} both have grid_position ${gp1}');
+            throw IllegalDesignError('cannot use the same grid_position twice in the same group, but helices '
+                '${idx1} and ${idx2} both have grid_position ${gp1} and are both in group ${group_name}');
           }
         }
       }
     }
   }
-
-//  String toString() =>
-//      """DNADesign(is_origami=$is_origami, grid=$grid, major_tick_distance=$major_tick_distance,
-//  helices=$helices,
-//  strands=$strands)""";
 
   ListBuilder<Mismatch> _find_mismatches_on_substrand(Domain substrand) {
     var mismatches = ListBuilder<Mismatch>();
@@ -1012,6 +1144,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     return list_builder.build();
   }
+
+  @memoized
+  BuiltList<Domain> get all_domains =>
+      [for (var strand in strands) for (var domain in strand.domains()) domain].build();
 
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
@@ -1144,27 +1280,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool helix_has_substrands(Helix helix) => this.helix_idx_to_substrands[helix.idx].isNotEmpty;
 
-  /// Returns a map mapping helix indices to their view order.
-  @memoized
-  BuiltMap<int, int> get helices_view_order_inverse {
-    Map<int, int> view_order_inverse = Map<int, int>();
-    for (var idx in helices.keys) {
-      int view_order = helices[idx].view_order;
-      view_order_inverse[idx] = view_order;
-    }
-    return view_order_inverse.build();
-  }
-
-  /// Returns a map mapping view_order to helix_idx.
-  @memoized
-  BuiltList<int> get helices_view_order {
-    List<int> view_orders = List<int>(helices.length);
-    for (var idx in helices.keys) {
-      int view_order = helices[idx].view_order;
-      view_orders[view_order] = idx;
-    }
-    return view_orders.toBuiltList();
-  }
+//  /// Returns a map mapping view_order to helix_idx.
+//  @memoized
+//  BuiltList<int> get helices_view_order {
+//    List<int> view_orders = List<int>(helices.length);
+//    for (var idx in helices.keys) {
+//      int view_order = helices[idx].view_order;
+//      view_orders[view_order] = idx;
+//    }
+//    return view_orders.toBuiltList();
+//  }
 
   bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
 
@@ -1218,6 +1343,89 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
   }
+
+  _ensure_helix_groups_exist() {
+    for (var helix in helices.values) {
+      if (!groups.containsKey(helix.group)) {
+        throw IllegalDesignError('helix ${helix.idx} has group ${helix.group}, which does not '
+            'exist in the design. The valid groups are '
+            '${groups.keys.join(", ")}');
+      }
+    }
+  }
+}
+
+ensure_helix_groups_in_groups_map(
+    Map<int, HelixBuilder> helix_builders_map, Map<String, HelixGroupBuilder> group_builders_map) {
+  for (var helix_builder in helix_builders_map.values) {
+    if (!group_builders_map.containsKey(helix_builder.group)) {
+      throw IllegalDesignError('helix ${helix_builder.idx} has group ${helix_builder.group}, which does not '
+          'exist in the design.\n'
+          'The valid groups are: '
+          '${group_builders_map.keys.join(", ")}');
+    }
+  }
+}
+
+assign_grids_to_helix_builders_from_groups(
+    Map<String, HelixGroup> groups_map, Map<int, HelixBuilder> helix_builders) {
+  for (HelixBuilder helix_builder in helix_builders.values) {
+    HelixGroup group = groups_map[helix_builder.group];
+    helix_builder.grid = group.grid;
+  }
+}
+
+assign_default_helices_view_orders_to_groups(
+    Map<String, HelixGroupBuilder> group_builders_map, Map<int, HelixBuilder> helix_builders) {
+  Map<String, int> num_helices_in_group =
+      group_builders_map.map((key, value) => MapEntry<String, int>(key, 0));
+  for (var helix_builder in helix_builders.values) {
+    num_helices_in_group[helix_builder.group]++;
+  }
+
+  for (var name in group_builders_map.keys) {
+    var group_builder = group_builders_map[name];
+    if (group_builder.helices_view_order?.length != num_helices_in_group[name]) {
+      Map<int, HelixBuilder> helix_builders_in_group = {};
+      for (int idx in helix_builders.keys) {
+        var helix = helix_builders[idx];
+        if (helix.group == name) {
+          helix_builders_in_group[idx] = helix;
+        }
+      }
+      assign_default_helices_view_order(group_builder, helix_builders_in_group);
+    }
+  }
+}
+
+assign_default_helices_view_order(
+    HelixGroupBuilder group_builder, Map<int, HelixBuilder> helix_builders_in_group) {
+  var helix_idxs = helix_builders_in_group.keys.toList();
+  BuiltList<int> existing_helices_view_order = group_builder.helices_view_order.build();
+  var new_helices_view_order = check_helices_view_order_and_return(existing_helices_view_order, helix_idxs);
+  group_builder.helices_view_order.replace(new_helices_view_order);
+}
+
+List<int> check_helices_view_order_and_return(Iterable<int> helices_view_order, Iterable<int> helix_idxs) {
+  if (helices_view_order?.length != helix_idxs.length) {
+    var identity = List<int>.of(helix_idxs);
+    identity.sort();
+    helices_view_order = identity;
+  } else {
+    check_helices_view_order_is_bijection(helices_view_order, helix_idxs);
+  }
+  return helices_view_order.toList();
+}
+
+check_helices_view_order_is_bijection(Iterable<int> helices_view_order_, Iterable<int> helix_idxs_) {
+  var sorted_helices_view_order = List<int>.of(helices_view_order_);
+  var sorted_helix_idxs = List<int>.of(helix_idxs_);
+  sorted_helices_view_order.sort();
+  sorted_helix_idxs.sort();
+  if (sorted_helices_view_order != sorted_helix_idxs) {
+    throw IllegalDesignError("The specified helices view order: ${helices_view_order_}\n "
+        "is not a bijection on helices indices: ${helix_idxs_}.");
+  }
 }
 
 BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
@@ -1233,11 +1441,11 @@ BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<
   for (Strand strand in strands) {
     for (Substrand substrand in strand.substrands) {
       if (substrand.is_domain()) {
-        var bound_ss = substrand as Domain;
-        if (helix_idx_to_substrands.containsKey(bound_ss.helix)) {
-          helix_idx_to_substrands[bound_ss.helix].add(bound_ss);
+        var domain = substrand as Domain;
+        if (helix_idx_to_substrands.containsKey(domain.helix)) {
+          helix_idx_to_substrands[domain.helix].add(domain);
         } else {
-          helix_idx_to_substrands[bound_ss.helix] = [bound_ss];
+          helix_idx_to_substrands[domain.helix] = [domain];
         }
       }
     }
@@ -1253,11 +1461,22 @@ BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<
   return helix_idx_to_substrands_builtset_builder.build();
 }
 
-_set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand> strands) {
-  var helix_idx_to_substrands =
-      construct_helix_idx_to_substrands_map(strands, helix_builders.map((h) => h.idx));
+_ensure_helix_idxs_unique(List<int> helix_indices, List<HelixBuilder> helix_builders_list) {
+  Tuple2<int, int> repeated_idxs = util.repeated_element_indices(helix_indices);
+  if (repeated_idxs != null) {
+    int i1 = repeated_idxs.item1;
+    int i2 = repeated_idxs.item2;
+    int helix_idx = helix_builders_list[i1].idx;
+    throw IllegalDesignError('helix idx values must be unique, '
+        'but two helices share idx = ${helix_idx}; they appear at positions ${i1} and ${i2} in the '
+        'list of helices.');
+  }
+}
 
-  for (int idx = 0; idx < helix_builders.length; idx++) {
+set_helices_min_max_offsets(Map<int, HelixBuilder> helix_builders, Iterable<Strand> strands) {
+  var helix_idx_to_substrands = construct_helix_idx_to_substrands_map(strands, helix_builders.keys);
+
+  for (int idx in helix_builders.keys) {
     HelixBuilder helix_builder = helix_builders[idx];
 
     if (helix_builder.max_offset == null) {
@@ -1285,14 +1504,13 @@ _set_helices_min_max_offsets(List<HelixBuilder> helix_builders, Iterable<Strand>
 
 int calculate_default_max_offset(Iterable<Strand> strands) {
   int greatest_max_offset;
-  if(strands.isEmpty){
+  if (strands.isEmpty) {
     greatest_max_offset = constants.default_max_offset;
-  }
-  else{
+  } else {
     greatest_max_offset = strands.first.first_domain().end;
     for (var strand in strands) {
-      for (var domain in strand.domains()){
-        if(domain.end > greatest_max_offset){
+      for (var domain in strand.domains()) {
+        if (domain.end > greatest_max_offset) {
           greatest_max_offset = domain.end;
         }
       }
@@ -1332,13 +1550,13 @@ int _wc(int code_unit) {
   }
 }
 
-class IllegalDNADesignError implements Exception {
+class IllegalDesignError implements Exception {
   String cause;
 
-  IllegalDNADesignError(this.cause);
+  IllegalDesignError(this.cause);
 }
 
-class StrandError extends IllegalDNADesignError {
+class StrandError extends IllegalDesignError {
   StrandError(Strand strand, String the_cause) : super(the_cause) {
     var first_substrand = strand.first_domain();
     var last_substrand = strand.last_domain();

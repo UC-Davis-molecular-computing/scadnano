@@ -1,11 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import '../state/strand.dart';
 
 import '../serializers.dart';
-import 'domain.dart';
-import 'design.dart';
+import 'strand.dart';
+import 'group.dart';
 import 'helix.dart';
 
 part 'strands_move.g.dart';
@@ -17,14 +16,17 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   static Serializer<StrandsMove> get serializer => _$strandsMoveSerializer;
 
+  @memoized
+  int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
+
   factory StrandsMove(
       {BuiltList<Strand> strands_moving,
       BuiltList<Strand> all_strands,
-      Address original_address,
-      int original_helix_idx,
       BuiltMap<int, Helix> helices,
-      BuiltList<int> helices_view_order,
-      BuiltMap<int, int> helices_view_order_inverse,
+      BuiltMap<String, HelixGroup> groups,
+      Address original_address,
       bool copy = false,
       bool keep_color = true}) {
     var strands_fixed =
@@ -33,8 +35,7 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
-      ..helices_view_order.replace(helices_view_order)
-      ..helices_view_order_inverse.replace(helices_view_order_inverse)
+      ..groups.replace(groups)
       ..original_address.replace(original_address)
       ..current_address.replace(original_address)
       ..copy = copy
@@ -42,21 +43,17 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..allowable = true);
   }
 
-  /************************ end BuiltValue boilerplate ************************/
-  @memoized
-  int get hashCode;
-
   BuiltList<Strand> get strands_moving;
 
   BuiltList<Strand> get strands_fixed;
 
+  BuiltMap<int, Helix> get helices;
+
+  BuiltMap<String, HelixGroup> get groups;
+
   Address get original_address;
 
   Address get current_address;
-
-  Helix get original_helix => helices[original_address.helix_idx];
-
-  Helix get current_helix => helices[current_address.helix_idx];
 
   bool get allowable;
 
@@ -64,38 +61,19 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   bool get keep_color;
 
-  BuiltMap<int, Helix> get helices;
+  Helix get original_helix => helices[original_address.helix_idx];
 
-  BuiltList<int> get helices_view_order;
+  Helix get current_helix => helices[current_address.helix_idx];
 
-  BuiltMap<int, int> get helices_view_order_inverse;
+  int get original_view_order => groups[original_helix.group].helices_view_order_inverse[original_helix.idx];
 
-  int get num_helices => helices.length;
+  int get current_view_order => groups[current_helix.group].helices_view_order_inverse[current_helix.idx];
 
   int get delta_offset => current_address.offset - original_address.offset;
 
-  int get delta_view_order => current_helix.view_order - original_helix.view_order;
+  int get delta_view_order => current_view_order - original_view_order;
 
   bool get delta_forward => current_address.forward != original_address.forward;
 
   bool get is_nontrivial => original_address != current_address;
-
-  @memoized
-  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands_moving =>
-      construct_helix_idx_to_substrands_map(strands_moving, helices.keys);
-
-  @memoized
-  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands_fixed =>
-      construct_helix_idx_to_substrands_map(strands_fixed, helices.keys);
-
-  @memoized
-  BuiltList<int> get view_order_moving {
-    Set<int> ret = {};
-    for (var strand in strands_moving) {
-      for (var ss in strand.domains()) {
-        ret.add(helices_view_order_inverse[ss.helix]);
-      }
-    }
-    return ret.toBuiltList();
-  }
 }

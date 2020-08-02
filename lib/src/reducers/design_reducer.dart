@@ -5,6 +5,7 @@ import '../reducers/util_reducer.dart';
 import '../state/grid.dart';
 import '../state/design.dart';
 import '../actions/actions.dart' as actions;
+import 'groups_reducer.dart';
 import 'helices_reducer.dart';
 import 'inline_insertions_deletions_reducer.dart';
 import 'strands_reducer.dart';
@@ -32,11 +33,9 @@ Design design_global_reducer(Design design, AppState state, action) {
 // composed: operate on slices of the DNADesign
 // local: don't need the whole AppState
 Design design_composed_local_reducer(Design design, action) => design?.rebuild((d) => d
-  ..grid = TypedReducer<Grid, actions.GridChange>(grid_local_reducer)(design.grid, action)
+  ..groups.replace(groups_local_reducer(design.groups, action))
   ..helices.replace(helices_local_reducer(design.helices, action))
   ..strands.replace(strands_local_reducer(design.strands, action)));
-
-Grid grid_local_reducer(Grid grid, actions.GridChange action) => action.grid;
 
 // composed: operate on slices of the DNADesign
 // global: need the whole AppState

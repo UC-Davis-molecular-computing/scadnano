@@ -2,136 +2,118 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/strand.dart';
 
+import '../state/domains_move.dart';
 import '../state/group.dart';
 import '../state/design.dart';
 import '../reducers/util_reducer.dart';
 import '../state/app_state.dart';
 import '../state/helix.dart';
-import '../state/strand.dart';
-import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
 import '../extension_methods.dart';
 
-GlobalReducer<StrandsMove, AppState> strands_move_global_reducer = combineGlobalReducers([
-  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStart>(strands_move_start_reducer),
-  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveStartSelectedStrands>(
-      strands_move_start_selected_strands_reducer),
-  TypedGlobalReducer<StrandsMove, AppState, actions.StrandsMoveAdjustAddress>(strands_adjust_address_reducer),
+GlobalReducer<DomainsMove, AppState> domains_move_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<DomainsMove, AppState, actions.DomainsMoveStartSelectedDomains>(
+      domains_move_start_selected_domains_reducer),
+  TypedGlobalReducer<DomainsMove, AppState, actions.DomainsMoveAdjustAddress>(domains_adjust_address_reducer),
 ]);
 
-Reducer<StrandsMove> strands_move_local_reducer = combineReducers([
-  TypedReducer<StrandsMove, actions.StrandsMoveStop>(strands_move_stop_reducer),
+Reducer<DomainsMove> domains_move_local_reducer = combineReducers([
+  TypedReducer<DomainsMove, actions.DomainsMoveStop>(domains_move_stop_reducer),
 ]);
 
-StrandsMove strands_move_start_reducer(
-    StrandsMove strands_move, AppState state, actions.StrandsMoveStart action) {
-  return StrandsMove(
-      strands_moving: action.strands,
-      all_strands: state.design.strands,
+DomainsMove domains_move_start_selected_domains_reducer(
+    DomainsMove _, AppState state, actions.DomainsMoveStartSelectedDomains action) {
+  Set<Domain> selected_domains =
+      Set<Domain>.from(state.ui_state.selectables_store.selected_items.where((s) => s is Domain));
+  Set<Strand> strands_of_selected_domains = {
+    for (var domain in selected_domains)
+      state.design.substrand_to_strand[domain]
+  };
+  return DomainsMove(
+      domains_moving: selected_domains.toBuiltList(),
+      all_domains: state.design.all_domains,
+      strands_with_domains_moving: strands_of_selected_domains.toBuiltList(),
       helices: state.design.helices,
       groups: state.design.groups,
-      original_address: action.address,
-      copy: action.copy,
-      keep_color: state.ui_state.strand_paste_keep_color);
+      original_address: action.address);
 }
 
-StrandsMove strands_move_start_selected_strands_reducer(
-    StrandsMove _, AppState state, actions.StrandsMoveStartSelectedStrands action) {
-  BuiltList<Strand> selected_strands =
-      BuiltList<Strand>(state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
-  return StrandsMove(
-      strands_moving: selected_strands,
-      all_strands: state.design.strands,
-      helices: state.design.helices,
-      groups: state.design.groups,
-      original_address: action.address,
-      copy: action.copy,
-      keep_color: state.ui_state.strand_paste_keep_color);
-}
+DomainsMove domains_move_stop_reducer(DomainsMove domains_move, actions.DomainsMoveStop action) => null;
 
-StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsMoveStop action) => null;
-
-StrandsMove strands_adjust_address_reducer(
-    StrandsMove strands_move, AppState state, actions.StrandsMoveAdjustAddress action) {
-  StrandsMove new_strands_move = strands_move.rebuild((b) => b..current_address.replace(action.address));
-  if (in_bounds(state.design, new_strands_move)) {
-    bool allowable = is_allowable(state.design, new_strands_move);
-    return new_strands_move.rebuild((b) => b..allowable = allowable);
+DomainsMove domains_adjust_address_reducer(
+    DomainsMove domains_move, AppState state, actions.DomainsMoveAdjustAddress action) {
+  DomainsMove new_domains_move = domains_move.rebuild((b) => b..current_address.replace(action.address));
+  if (in_bounds(state.design, new_domains_move)) {
+    bool allowable = is_allowable(state.design, new_domains_move);
+    return new_domains_move.rebuild((b) => b..allowable = allowable);
   } else {
-    return strands_move;
+    return domains_move;
   }
 }
 
 // if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
-// where the strands would go if it were allowable.
-bool in_bounds(Design design, StrandsMove strands_move) {
-  var current_address_helix_idx = strands_move.current_address.helix_idx;
+// where the domains would go if it were allowable.
+bool in_bounds(Design design, DomainsMove domains_move) {
+  var current_address_helix_idx = domains_move.current_address.helix_idx;
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
   var num_helices_in_group = design.helices_in_group(current_helix.group).length;
 
-  //XXX: not sure why I had the commented out one first
-//  int original_helix_idx = strands_move.strands_moving.first.domains().first.helix;
-  int original_helix_idx = strands_move.original_address.helix_idx;
+  int original_helix_idx = domains_move.original_address.helix_idx;
   var original_helix = design.helices[original_helix_idx];
   var original_group = design.groups[original_helix.group];
 
-  int delta_view_order = strands_move.delta_view_order;
-  int delta_offset = strands_move.delta_offset;
+  int delta_view_order = domains_move.delta_view_order;
+  int delta_offset = domains_move.delta_offset;
 
   // look for helix out of bounds
-  Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move, original_group);
-  int min_view_order = view_orders_of_helices_of_moving_strands.min;
-  int max_view_order = view_orders_of_helices_of_moving_strands.max;
+  Set<int> view_orders_of_helices_of_moving_domains = view_order_moving(domains_move, original_group);
+  int min_view_order = view_orders_of_helices_of_moving_domains.min;
+  int max_view_order = view_orders_of_helices_of_moving_domains.max;
   if (min_view_order + delta_view_order < 0) return false;
   if (max_view_order + delta_view_order >= num_helices_in_group) return false;
 
   // look for offset out of bounds
   for (int original_helix_idx in design.helices.keys) {
-    var domains_moving = construct_helix_idx_to_substrands_map(
-        strands_move.strands_moving, design.helices.keys)[original_helix_idx];
-    if (domains_moving.isEmpty) continue;
+    if (domains_move.domains_moving_on_helix[original_helix_idx].isEmpty) continue;
 
     int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
     Helix helix = design.helices[new_helix_idx];
-    for (var ss in domains_moving) {
-      if (ss.start + delta_offset < helix.min_offset) return false;
-      if (ss.end + delta_offset > helix.max_offset) return false;
+    for (var domain in domains_move.domains_moving_on_helix[original_helix_idx]) {
+      if (domain.start + delta_offset < helix.min_offset) return false;
+      if (domain.end + delta_offset > helix.max_offset) return false;
     }
   }
 
   return true;
 }
 
-Set<int> view_order_moving(StrandsMove strands_move, HelixGroup original_group) {
+Set<int> view_order_moving(DomainsMove domains_move, HelixGroup original_group) {
   Set<int> ret = {};
-  for (var strand in strands_move.strands_moving) {
-    for (var domain in strand.domains()) {
-      ret.add(original_group.helices_view_order_inverse[domain.helix]);
-    }
+  for (var domain in domains_move.domains_moving) {
+    ret.add(original_group.helices_view_order_inverse[domain.helix]);
   }
   return ret;
 }
 
 // XXX: assumes in_bounds check has already passed
-bool is_allowable(Design design, StrandsMove strands_move) {
-  var current_address_helix_idx = strands_move.current_address.helix_idx;
+bool is_allowable(Design design, DomainsMove domains_move) {
+  var current_address_helix_idx = domains_move.current_address.helix_idx;
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
 
-  int delta_view_order = strands_move.delta_view_order;
-  int delta_offset = strands_move.delta_offset;
-  bool delta_forward = strands_move.delta_forward;
+  int delta_view_order = domains_move.delta_view_order;
+  int delta_offset = domains_move.delta_offset;
+  bool delta_forward = domains_move.delta_forward;
 
-  var helix_idx_to_substrands_moving =
-      construct_helix_idx_to_substrands_map(strands_move.strands_moving, design.helices.keys);
-  var helix_idx_to_substrands_fixed =
-      construct_helix_idx_to_substrands_map(strands_move.strands_fixed, design.helices.keys);
 
+  // look for moving domains overlapping fixed domains
   for (int original_helix_idx in design.helices.keys) {
-    var domains_moving = helix_idx_to_substrands_moving[original_helix_idx];
+    var domains_moving = domains_move.domains_moving_on_helix[original_helix_idx];
     if (domains_moving.isEmpty) continue;
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
@@ -142,7 +124,7 @@ bool is_allowable(Design design, StrandsMove strands_move) {
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
 
     Helix new_helix = design.helices[new_helix_idx];
-    var domains_fixed = helix_idx_to_substrands_fixed[new_helix_idx];
+    var domains_fixed = domains_move.domains_fixed_on_helix[new_helix_idx];
     if (domains_fixed.isEmpty) continue;
 
     // below, note that delta_forward != dom.forward is equivalent to delta_forward XOR dom.forward, i.e.,
@@ -164,6 +146,7 @@ bool is_allowable(Design design, StrandsMove strands_move) {
       }
     }
   }
+
   return true;
 }
 
@@ -198,4 +181,31 @@ bool intersection(List<Point<int>> ints1, List<Point<int>> ints2) {
   }
 
   return false;
+}
+
+Domain move_domain(
+    {Domain domain,
+    HelixGroup original_group,
+    HelixGroup current_group,
+    int delta_view_order,
+    int delta_offset,
+    bool delta_forward,
+    bool set_first_last_false = false}) {
+  num original_view_order = original_group.helices_view_order_inverse[domain.helix];
+  num new_view_order = original_view_order + delta_view_order;
+  int new_helix_idx = current_group.helices_view_order[new_view_order];
+  assert(new_helix_idx != null);
+  Domain domain_moved = domain.rebuild(
+    (b) => b
+      ..is_first = set_first_last_false? false: b.is_first
+      ..is_last = set_first_last_false? false: b.is_last
+      ..helix = new_helix_idx
+      ..forward = (delta_forward != domain.forward)
+      ..start = domain.start + delta_offset
+      ..end = domain.end + delta_offset
+      ..deletions.replace(domain.deletions.map((d) => d + delta_offset))
+      ..insertions
+          .replace(domain.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
+  );
+  return domain_moved;
 }

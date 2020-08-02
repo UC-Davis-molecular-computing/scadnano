@@ -1,4 +1,8 @@
+#FIXME: set these to false eventually; will create lots of errors we have to handle
 analyzer:
+  strong-mode:
+    implicit-casts: true
+    implicit-dynamic: true
   errors:
     uri_has_not_been_generated: ignore
 #   exclude:
@@ -14,4 +18,3 @@ linter:
     - test_types_in_equals
     - unrelated_type_equality_checks
     - valid_regexps
-

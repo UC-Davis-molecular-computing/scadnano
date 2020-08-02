@@ -15,6 +15,7 @@ class SelectModeChoice extends EnumClass {
   static const SelectModeChoice end_3p_strand = _$end_3p_strand;
   static const SelectModeChoice end_5p_domain = _$end_5p_substrand;
   static const SelectModeChoice end_3p_domain = _$end_3p_substrand;
+  static const SelectModeChoice domain = _$domain;
   static const SelectModeChoice crossover = _$crossover;
   static const SelectModeChoice loopout = _$loopout;
   static const SelectModeChoice strand = _$strand;
@@ -44,16 +45,6 @@ class SelectModeChoice extends EnumClass {
   @override
   String toString() => display_name();
 
-//  static const end_5p_strand = SelectModeChoice._("5' strand", 'five-prime-end-first-substrand');
-//  static const end_3p_strand = SelectModeChoice._("3' strand", 'three-prime-end-last-substrand');
-//  static const end_5p_substrand = SelectModeChoice._("5' (other)", 'five-prime-end');
-//  static const end_3p_substrand = SelectModeChoice._("3' (other)", 'three-prime-end');
-//  static const crossover = SelectModeChoice._('crossover', 'crossover-curve');
-//  static const loopout = SelectModeChoice._('loopout', 'loopout-curve');
-//  static const strand = SelectModeChoice._('strand', 'strand');
-//  static const scaffold = SelectModeChoice._('scaffold', 'scaffold');
-//  static const staple = SelectModeChoice._('staple', 'staple');
-
   String css_selector() {
     switch (this) {
       case end_5p_strand:
@@ -64,6 +55,8 @@ class SelectModeChoice extends EnumClass {
         return constants.css_selector_end_5p_domain;
       case end_3p_domain:
         return constants.css_selector_end_3p_domain;
+      case domain:
+        return constants.css_selector_domain;
       case crossover:
         return constants.css_selector_crossover;
       case loopout:
@@ -84,9 +77,10 @@ class SelectModeChoice extends EnumClass {
       BuiltList<SelectModeChoice>(non_origami_choices.toList() + [scaffold, staple]);
 
   static final BuiltList<SelectModeChoice> non_origami_choices =
-      BuiltList<SelectModeChoice>(strand_parts.toList() + [strand]);
+      BuiltList<SelectModeChoice>([strand] + strand_parts.toList());
 
   static final BuiltList<SelectModeChoice> strand_parts = BuiltList<SelectModeChoice>([
+    domain,
     end_5p_strand,
     end_3p_strand,
     end_5p_domain,

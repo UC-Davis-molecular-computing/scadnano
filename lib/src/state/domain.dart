@@ -5,6 +5,8 @@ import 'package:built_value/serializer.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
+import 'select_mode.dart';
+import 'selectable.dart';
 import '../serializers.dart';
 import 'strand_part.dart';
 import 'dna_end.dart';
@@ -42,14 +44,13 @@ abstract class Insertion
 
   @memoized
   int get hashCode;
-
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
-/// Domain that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
-/// to any other Substrand since there is no Helix it is associated with.
+/// Domain that overlaps it, but it could potentially bind. By contrast a Loopout cannot be bound
+/// to any other Substrand since there is no Helix with which it is associated.
 abstract class Domain
-    with BuiltJsonSerializable, UnusedFields
+    with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Domain, DomainBuilder>, Substrand {
   Domain._();
 
@@ -67,7 +68,7 @@ abstract class Domain
       Iterable<Insertion> insertions,
       String dna_sequence,
       String strand_id,
-  bool is_scaffold,
+      bool is_scaffold,
       Object label = null,
       bool is_first = false,
       bool is_last = false}) {
@@ -126,6 +127,8 @@ abstract class Domain
 
   @nullable
   String get strand_id;
+
+  SelectModeChoice select_mode() => SelectModeChoice.domain;
 
   @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
@@ -195,16 +198,15 @@ abstract class Domain
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Substrand';
-    var forward =
-        util.get_value(json_map, constants.forward_key, name, legacy_keys: constants.legacy_forward_keys);
-    var helix = util.get_value(json_map, constants.helix_idx_key, name);
-    var start = util.get_value(json_map, constants.start_key, name);
-    var end = util.get_value(json_map, constants.end_key, name);
-    var deletions = List<int>.from(util.get_value_with_default(json_map, constants.deletions_key, []));
-    var insertions =
-        parse_json_insertions(util.get_value_with_default(json_map, constants.insertions_key, []));
+    var forward = util.mandatory_field(json_map, constants.forward_key, name,
+        legacy_keys: constants.legacy_forward_keys);
+    var helix = util.mandatory_field(json_map, constants.helix_idx_key, name);
+    var start = util.mandatory_field(json_map, constants.start_key, name);
+    var end = util.mandatory_field(json_map, constants.end_key, name);
+    var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
+    var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
-    Object label = util.get_value_with_null_default(json_map, constants.label_key);
+    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 

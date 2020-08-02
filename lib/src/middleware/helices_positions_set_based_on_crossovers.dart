@@ -1,8 +1,11 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:meta/meta.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/group.dart';
 import '../state/crossover.dart';
 import '../state/design.dart';
 import '../state/domain.dart';
@@ -29,17 +32,34 @@ helix_positions_set_based_on_crossovers_middleware(
 }
 
 _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async {
-  List<Helix> helices = _get_helices_to_process(state);
-  List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
-  if (addresses == null) return;
-  double first_roll = helices[0].roll;
-  List<RollZY> rolls_and_positions =
-      _calculate_rolls_and_positions(state.design, helices, addresses, first_roll);
-  _set_rolls_and_positions(helices, rolls_and_positions);
+  // figure out which groups to skip and warn user if there are any
+  List<String> group_names_to_skip = [];
+  for (var group_name in state.design.groups.keys) {
+    var group = state.design.groups[group_name];
+    if (group.grid != Grid.none) {
+      group_names_to_skip.add(group_name);
+    }
+  }
+  if (group_names_to_skip.isNotEmpty) {
+    window.alert('Skipping helix groups ${group_names_to_skip.join(", ")} because their grids are not "none".');
+  }
+
+  // process remaining groups
+  for (var group_name in state.design.groups.keys) {
+    if (group_names_to_skip.contains(group_name)) continue;
+    var group = state.design.groups[group_name];
+    List<Helix> helices = _get_helices_to_process(state, group);
+    List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
+    if (addresses == null) return;
+    double first_roll = helices[0].roll;
+    List<RollZY> rolls_and_positions =
+        _calculate_rolls_and_positions(state.design, helices, addresses, first_roll);
+    _set_rolls_and_positions(helices, rolls_and_positions);
+  }
 }
 
 // Gets helices in order of their view order
-List<Helix> _get_helices_to_process(AppState state) {
+List<Helix> _get_helices_to_process(AppState state, HelixGroup group) {
   Design design = state.design;
   List<Helix> helices;
   BuiltSet<int> selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
@@ -48,7 +68,8 @@ List<Helix> _get_helices_to_process(AppState state) {
   } else {
     helices = [for (var helix_idx in selected_helix_idxs) design.helices[helix_idx]];
   }
-  helices.sort((h1, h2) => h1.view_order - h2.view_order);
+  helices
+      .sort((h1, h2) => group.helices_view_order_inverse[h1.idx] - group.helices_view_order_inverse[h2.idx]);
   return helices;
 }
 

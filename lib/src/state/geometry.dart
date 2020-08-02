@@ -89,18 +89,18 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
   bool inter_helix_gap_is_default() => util.are_close(inter_helix_gap, constants.default_inter_helix_gap);
 
   static Geometry from_json(Map<String, dynamic> json_map) {
-    double rise_per_base_pair = util.get_value_with_default(
+    double rise_per_base_pair = util.optional_field(
         json_map, constants.rise_per_base_pair_key, constants.default_rise_per_base_pair,
         legacy_keys: constants.legacy_rise_per_base_pair_keys);
     double helix_radius =
-        util.get_value_with_default(json_map, constants.helix_radius_key, constants.default_helix_radius);
+        util.optional_field(json_map, constants.helix_radius_key, constants.default_helix_radius);
     double bases_per_turn =
-        util.get_value_with_default(json_map, constants.bases_per_turn_key, constants.default_bases_per_turn);
-    double minor_groove_angle = util.get_value_with_default(
+        util.optional_field(json_map, constants.bases_per_turn_key, constants.default_bases_per_turn);
+    double minor_groove_angle = util.optional_field(
         json_map, constants.minor_groove_angle_key, constants.default_minor_groove_angle,
         legacy_keys: constants.legacy_minor_groove_angle_keys,
         legacy_transformer: (num angle_radians) => util.to_degrees(angle_radians));
-    double inter_helix_gap = util.get_value_with_default(
+    double inter_helix_gap = util.optional_field(
         json_map, constants.inter_helix_gap_key, constants.default_inter_helix_gap);
 
     var geometry = Geometry(

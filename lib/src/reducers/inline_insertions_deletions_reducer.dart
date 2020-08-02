@@ -63,7 +63,7 @@ _inline_deletions_insertions_on_helix(
   dels_ins_offsets_sorted.sort();
 
   // fix helix major ticks
-  List<int> major_ticks = helix.calculate_major_ticks(design.major_tick_distance);
+  List<int> major_ticks = helix.calculate_major_ticks();
   major_ticks.sort();
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////

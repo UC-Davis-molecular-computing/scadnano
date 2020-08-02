@@ -21,6 +21,7 @@ mixin DesignMainStrandModificationDomainProps on UiProps {
   bool display_connector;
   int font_size;
   bool invert_y;
+  String transform;
 }
 
 
@@ -31,17 +32,17 @@ class DesignMainStrandModificationDomainComponent
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
     bool display_connector = props.display_connector;
     if (props.modification is Modification5Prime) {
-      return (Dom.g()..className = "'modification-5'")([
+      return (Dom.g()..className = "'modification-5'"..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);
     } else if (props.modification is Modification3Prime) {
-      return (Dom.g()..className = "'modification-3'")([
+      return (Dom.g()..className = "'modification-3'"..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);
     } else {
-      return (Dom.g()..className = 'modification-internal')([
+      return (Dom.g()..className = 'modification-internal'..transform = props.transform)([
         if (display_connector) _internal_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);

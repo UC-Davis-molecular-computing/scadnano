@@ -65,9 +65,9 @@ abstract class IDTFields
 
   static IDTFields from_json(Map<String, dynamic> json_map) {
     var field_name = 'IDTFields';
-    var name = util.get_value(json_map, constants.idt_name_key, field_name);
-    var scale = util.get_value(json_map, constants.idt_scale_key, field_name);
-    var purification = util.get_value(json_map, constants.idt_purification_key, field_name);
+    var name = util.mandatory_field(json_map, constants.idt_name_key, field_name);
+    var scale = util.mandatory_field(json_map, constants.idt_scale_key, field_name);
+    var purification = util.mandatory_field(json_map, constants.idt_purification_key, field_name);
     var plate, well;
     if (json_map.containsKey(constants.idt_plate_key)) {
       plate = json_map[constants.idt_plate_key];
@@ -76,11 +76,11 @@ abstract class IDTFields
       well = json_map[constants.idt_well_key];
     }
     if (plate == null && well != null) {
-      throw IllegalDNADesignError("cannot set IDTFields.well to ${well} when plate is null\n"
+      throw IllegalDesignError("cannot set IDTFields.well to ${well} when plate is null\n"
           "this occurred when reading IDTFields entry:\n${json_map}");
     }
     if (plate != null && well == null) {
-      throw IllegalDNADesignError("cannot set IDTFields.plate to ${plate} when well is null\n"
+      throw IllegalDesignError("cannot set IDTFields.plate to ${plate} when well is null\n"
           "this occurred when reading IDTFields entry:\n${json_map}");
     }
     var unused_fields = util.unused_fields_map(json_map, constants.idt_keys);

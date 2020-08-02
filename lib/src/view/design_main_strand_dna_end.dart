@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/group.dart';
 
 import '../state/selectable.dart';
 import '../state/dna_end.dart';
@@ -20,18 +22,6 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
-//Map mapStateToPropsWithOwnProps(AppState state, DesignMainDNAEndProps props) {
-//  DNAEnd end = props.is_5p ? props.domain.dnaend_5p : props.domain.dnaend_3p;
-//  return DesignMainDNAEnd()
-//    ..selected = state.ui_state.selectables_store.selected(end)
-//    ..helix = state.design.helices[props.domain.helix]
-//    ..moving_this_dna_end = state.ui_state.moving_dna_ends && state.ui_state.selectables_store.selected(end)
-//    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover;
-//}
-//
-//UiFactory<DesignMainDNAEndProps> ConnectedDesignMainDNAEnd = connect<AppState, DesignMainDNAEndProps>(
-//    mapStateToPropsWithOwnProps: mapStateToPropsWithOwnProps)(DesignMainDNAEnd);
-
 @Factory()
 UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
@@ -42,7 +32,10 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   bool is_5p;
   bool is_scaffold;
 
+  String transform;
   Helix helix;
+  HelixGroup group;
+  Geometry geometry;
   bool selected;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
@@ -113,10 +106,12 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..is_5p = props.is_5p
       ..key = 'moving-end';
 
-    return [
+    return (Dom.g()
+      ..className = constants.css_selector_end_parent_group
+      ..transform = props.transform)(
       end_props(),
       end_moving_props(),
-    ];
+    );
   }
 
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
@@ -144,7 +139,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
 
     if (edit_mode_is_pencil() && !props.drawing_potential_crossover && (is_first || is_last)) {
       int offset = props.is_5p ? props.domain.offset_5p : props.domain.offset_3p;
-      Point<num> start_point = props.helix.svg_base_pos(offset, props.domain.forward);
+      var start_point_untransformed = props.helix.svg_base_pos(offset, props.domain.forward);
+      var start_point = props.group.transform_point_main_view(start_point_untransformed, props.geometry);
       var potential_crossover = PotentialCrossover(
         helix_idx: props.helix.idx,
         forward: props.domain.forward,

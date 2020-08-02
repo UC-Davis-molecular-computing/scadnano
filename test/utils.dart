@@ -45,7 +45,7 @@ Design design_from_string(String str) {
 /// Returns an [AppState] based on dna design.
 AppState app_state_from_design(Design design) {
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppStateBuilder
+  var state = (DEFAULT_AppState.toBuilder()
         ..design.replace(design)
         ..ui_state.replace(ui_state)
         ..error_message = ''
@@ -110,9 +110,6 @@ void expect_helices_equal(BuiltMap<int, Helix> actual_helices, BuiltMap<int, Hel
 /// This function makes debugging easier by splitting the giant assertion
 /// into smaller assertions on individual fields.
 void expect_design_equal(Design actual, Design matcher) {
-  expect(actual.version, matcher.version);
-  expect(actual.grid, matcher.grid);
-  expect(actual.major_tick_distance, matcher.major_tick_distance);
   expect_helices_equal(actual.helices, matcher.helices);
   expect_strands_equal(actual.strands, matcher.strands);
   expect(actual.is_origami, matcher.is_origami);

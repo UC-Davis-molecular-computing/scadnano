@@ -20,7 +20,9 @@ import 'reselect_moved_strands.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
+import 'selections_intersect_box_compute.dart';
 import 'strand_create.dart';
+import 'move_ensure_same_group.dart';
 import 'throttle.dart';
 import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
@@ -29,6 +31,7 @@ import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
+  move_ensure_all_in_same_helix_group_middleware,
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
@@ -47,10 +50,11 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
   reselect_moved_strands_middleware,
+  selections_intersect_box_compute_middleware,
   insertion_deletion_pairing_middleware,
   adjust_grid_position_middleware,
   invalidate_png_middleware,
-  check_mirror_strands_legal_middleware,
+  check_reflect_strands_legal_middleware,
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
 ]);

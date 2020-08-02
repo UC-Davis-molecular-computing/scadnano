@@ -20,17 +20,21 @@ BuiltList<Strand> delete_all_reducer(
     return strands;
   }
 
-  if (state.ui_state.select_mode_state.strands_selectable()) {
+  var select_mode_state = state.ui_state.select_mode_state;
+  if (select_mode_state.strands_selectable()) {
     var strands_to_remove = Set<Strand>.from(items.where((item) => item is Strand));
     strands = _remove_strands(strands, strands_to_remove);
-  } else if (state.ui_state.select_mode_state.linkers_selectable()) {
+  } else if (select_mode_state.linkers_selectable()) {
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
-  } else if (state.ui_state.select_mode_state.ends_selectable()) {
+  } else if (select_mode_state.ends_selectable()) {
     var ends = items.where((item) => item is DNAEnd);
-    var substrands = Set<Domain>.from(ends.map((end) => state.design.end_to_domain[end]));
-    strands = remove_domains(strands, state, substrands);
+    var domains = ends.map((end) => state.design.end_to_domain[end]);
+    strands = remove_domains(strands, state, domains);
+  } else if (select_mode_state.domains_selectable()) {
+    var domains = List<Domain>.from(items.where((item) => item is Domain));
+    strands = remove_domains(strands, state, domains);
   }
 
   return strands;
@@ -192,13 +196,13 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
   return new_strands;
 }
 
-BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Set<Domain> substrands) {
+BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iterable<Domain> domains) {
   Set<Strand> strands_to_remove = {};
   List<Strand> strands_to_add = [];
 
   // collect all Domains for one strand because we need special case to remove multiple from one strand
   Map<Strand, Set<Domain>> strand_to_substrands = {};
-  for (var substrand in substrands) {
+  for (var substrand in domains) {
     var strand = state.design.substrand_to_strand[substrand];
     if (strand_to_substrands[strand] == null) {
       strand_to_substrands[strand] = {};

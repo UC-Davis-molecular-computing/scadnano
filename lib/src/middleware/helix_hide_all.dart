@@ -10,12 +10,14 @@ helix_hide_all_middleware(Store<AppState> store, dynamic action, NextDispatcher 
   next(action);
 
   if ((action is actions.SetOnlyDisplaySelectedHelices ||
-      action is actions.HelixSelect ||
-      action is actions.HelixSelectionsAdjust ||
-      action is actions.HelixSelectionsClear ||
-      action is actions.HelixRemoveAllSelected ||
-      action is actions.HelixRemove ||
-      action is actions.LoadDNAFile) && !store.state.has_error()) {
+          action is actions.HelixSelect ||
+          action is actions.HelixSelectionsAdjust ||
+          action is actions.HelixSelectionsClear ||
+          action is actions.HelixRemoveAllSelected ||
+          action is actions.HelixRemove ||
+          action is actions.LoadDNAFile ||
+          action is actions.SetAppUIStateStorable) &&
+      !store.state.has_error()) {
     var ui_state = store.state.ui_state;
     var design = store.state.design;
     if (ui_state.only_display_selected_helices &&
