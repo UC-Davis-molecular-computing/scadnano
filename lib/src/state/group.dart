@@ -81,7 +81,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
 
     json_map[constants.grid_key] = grid.name;
 
-    var default_helices_view_order = List<int>.of(helix_idxs);
+    var default_helices_view_order = List<int>.from(helix_idxs);
     default_helices_view_order.sort();
     var helices_view_order_to_write = helices_view_order.toList();
     var eq = const ListEquality().equals;

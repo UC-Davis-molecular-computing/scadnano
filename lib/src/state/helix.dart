@@ -323,7 +323,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (json_map.containsKey(constants.major_tick_periodic_distances_key)) {
       var major_tick_periodic_distances_json = json_map[constants.major_tick_periodic_distances_key];
       helix_builder.major_tick_periodic_distances =
-          ListBuilder<int>(List<int>.of(major_tick_periodic_distances_json));
+          ListBuilder<int>(List<int>.from(major_tick_periodic_distances_json));
     }
 
     if (json_map.containsKey(constants.grid_position_key)) {
