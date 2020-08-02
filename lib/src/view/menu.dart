@@ -656,7 +656,7 @@ Disabling this minimizes the time needed to render large designs.'''
           ..display = 'Save design in localStorage before exiting'
           ..tooltip = '''\
 Before exiting, save current design in localStorage (in your web browser). 
-This is much faster than saving on every edit, but if the browser crashes, 
+For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
           ..onChange = ((_) => props.dispatch(
               actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
