@@ -1,10 +1,11 @@
 import 'dart:html';
 
+import 'package:collection/collection.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/position3d.dart';
 
+import '../state/position3d.dart';
 import '../state/grid.dart';
 import '../state/dialog.dart';
 import '../view/redraw_counter_component_mixin.dart';
@@ -186,8 +187,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     Grid grid_chosen = Grid.valueOf(grid_name_chosen);
 
     // get helices_view_order
-    List<int> helices_view_order_old = group.helices_view_order.toList();
-    helices_view_order_old.sort();
+    List<int> helices_view_order_old_sorted = group.helices_view_order.toList();
+    helices_view_order_old_sorted.sort();
     String helices_view_order_str = (results[helices_view_order_idx] as DialogText).value.trim();
     List<int> helices_view_order_chosen = [];
     if (helices_view_order_str.isNotEmpty) {
@@ -199,7 +200,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
           window.alert('${order_str} is not an integer');
           return;
         }
-        if (!helices_view_order_old.contains(order)) {
+        if (!helices_view_order_old_sorted.contains(order)) {
           window.alert('${order} is not a valid helix index');
           return;
         }
@@ -208,8 +209,11 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
       List<int> helices_view_order_chosen_sorted = List<int>.of(helices_view_order_chosen);
       helices_view_order_chosen_sorted.sort();
-      if (helices_view_order_old != helices_view_order_chosen) {
-        window.alert('The helix indices ${helices_view_order_old} must each appear exactly once.');
+      var eq = ListEquality().equals;
+      if (!eq(helices_view_order_old_sorted, helices_view_order_chosen_sorted)) {
+        window.alert('The helix indices must each appear exactly once.\n'
+            'helix indices: ${helices_view_order_old_sorted}\n'
+            'you entered:   ${helices_view_order_chosen_sorted}');
         return;
       }
     }
