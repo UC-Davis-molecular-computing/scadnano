@@ -158,6 +158,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..disabled = disabled
           ..value = item.value
           ..size = item.size
+//          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;

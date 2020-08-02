@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -32,16 +34,13 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       mutually_exclusive_checkbox_groups = [];
     }
     List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
-      for (var group in mutually_exclusive_checkbox_groups)
-        BuiltList<int>(group)
+      for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group)
     ];
     Map<int, BuiltList<int>> disable_when_on_half_built = {
-      for (var idx in disable_when_on.keys)
-        idx: BuiltList<int>(disable_when_on[idx])
+      for (var idx in disable_when_on.keys) idx: BuiltList<int>(disable_when_on[idx])
     };
     Map<int, BuiltList<int>> disable_when_off_half_built = {
-      for (var idx in disable_when_off.keys)
-        idx: BuiltList<int>(disable_when_off[idx])
+      for (var idx in disable_when_off.keys) idx: BuiltList<int>(disable_when_off[idx])
     };
     return Dialog.from((b) => b
       ..title = title
@@ -137,6 +136,9 @@ abstract class DialogText
   static Serializer<DialogText> get serializer => _$dialogTextSerializer;
 
   factory DialogText({String label, int size = null, String value = ''}) {
+    if (size == null) {
+      size = size_from_text(value);
+    }
     return DialogText.from((b) => b
       ..label = label
       ..size = size
@@ -149,9 +151,11 @@ abstract class DialogText
 
   String get value;
 
-  @nullable
   int get size;
 }
+
+// calculate size of text field from its length
+int size_from_text(String value, {int minimum = 20}) => max(minimum, value.length);
 
 abstract class DialogTextArea
     with BuiltJsonSerializable

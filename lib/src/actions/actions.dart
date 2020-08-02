@@ -2031,6 +2031,7 @@ abstract class GroupRemove
   static Serializer<GroupRemove> get serializer => _$groupRemoveSerializer;
 }
 
+//FIXME: warning: should not change the grid through this action; dispatch GridChange instead
 abstract class GroupChange
     with BuiltJsonSerializable, UndoableAction
     implements Built<GroupChange, GroupChangeBuilder> {

@@ -143,23 +143,19 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
   }
 
   ask_new_parameters_for_current_group() async {
-    var grid_name_list = ['square', 'honeycomb', 'hex', 'none'];
     var group = props.groups[props.displayed_group_name];
     var existing_grid = group.grid;
-    int existing_grid_idx = grid_name_list.indexOf(existing_grid.name);
 
     int name_idx = 0;
-    int grid_idx = 1;
-    int position_x_idx = 2;
-    int position_y_idx = 3;
-    int position_z_idx = 4;
-    int pitch_idx = 5;
-    int roll_idx = 6;
-    int yaw_idx = 7;
-    int helices_view_order_idx = 8;
-    var items = List<DialogItem>(9);
+    int position_x_idx = 1;
+    int position_y_idx = 2;
+    int position_z_idx = 3;
+    int pitch_idx = 4;
+    int roll_idx = 5;
+    int yaw_idx = 6;
+    int helices_view_order_idx = 7;
+    var items = List<DialogItem>(8);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
-    items[grid_idx] = DialogRadio(label: 'grid', options: grid_name_list, selected_idx: existing_grid_idx);
     items[position_x_idx] = DialogNumber(label: 'x', value: group.position.x);
     items[position_y_idx] = DialogNumber(label: 'y', value: group.position.y);
     items[position_z_idx] = DialogNumber(label: 'z', value: group.position.z);
@@ -169,7 +165,8 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     items[helices_view_order_idx] =
         DialogText(label: 'helices view order (space separated)', value: group.helices_view_order.join(' '));
 
-    var dialog = Dialog(title: 'adjust current Helix group', items: items);
+    var dialog =
+        Dialog(title: 'adjust current Helix group (to adjust grid use Grid menu on left)', items: items);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
@@ -181,10 +178,6 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
       window.alert(msg);
       return;
     }
-
-    // get grid
-    String grid_name_chosen = (results[grid_idx] as DialogRadio).value;
-    Grid grid_chosen = Grid.valueOf(grid_name_chosen);
 
     // get helices_view_order
     List<int> helices_view_order_old_sorted = group.helices_view_order.toList();
@@ -228,7 +221,7 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     var position = Position3D(x: position_x, y: position_y, z: position_z);
 
     HelixGroup new_group = HelixGroup(
-        grid: grid_chosen,
+        grid: existing_grid,
         helices_view_order: helices_view_order_chosen,
         position: position,
         pitch: pitch,
