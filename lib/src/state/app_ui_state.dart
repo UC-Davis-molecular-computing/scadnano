@@ -12,6 +12,7 @@ import '../serializers.dart';
 import 'context_menu.dart';
 import 'dialog.dart';
 import 'design.dart';
+import 'domains_move.dart';
 import 'example_designs.dart';
 import 'grid_position.dart';
 import 'mouseover_data.dart';
@@ -31,6 +32,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   @nullable
   StrandsMove get strands_move;
+
+  @nullable
+  DomainsMove get domains_move;
 
   bool get drawing_potential_crossover;
 

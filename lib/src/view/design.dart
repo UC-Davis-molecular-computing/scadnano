@@ -7,11 +7,11 @@ import 'dart:svg' as svg;
 import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
-import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/domains_move.dart';
 
 import '../state/domain.dart';
 import '../state/dna_ends_move.dart';
@@ -232,8 +232,8 @@ class DesignViewComponent {
         // ugg... when copy/pasting, the left click doesn't have to be depressed
         // when moving, it does
         // paste is stopped from ever getting here (and the user was warned in strands_move_middleware)
-        // if strands were on many groups, so it's safe to execute
-        // this is copy is true. If moving, then we rely on the error-checking code next to warn the user
+        // if strands were on many groups, so it's safe to execute this, IF copy is true.
+        // If moving, then we rely on the error-checking code next to warn the user
         // about strands being in multiple groups.
         if (strands_move.copy || left_click_down) {
           var group_names = group_names_of_strands(strands_move);
@@ -253,6 +253,32 @@ class DesignViewComponent {
                 event, visible_helices, app.state.design.groups, app.state.design.geometry);
             if (address != old_address) {
               app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+            }
+          }
+        }
+      }
+
+      // move selected Domains
+      DomainsMove domains_move = app.state.ui_state.domains_move;
+      if (domains_move != null) {
+        if (left_click_down) {
+          var group_names = group_names_of_domains(domains_move);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
+                'These domains occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            var old_address = domains_move.current_address;
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
+                  ]
+                : app.state.design.helices.values;
+            var address = util.find_closest_address(
+                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+            if (address != old_address) {
+              app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
             }
           }
         }
@@ -348,6 +374,9 @@ class DesignViewComponent {
     }
     if (app.state.ui_state.strands_move != null) {
       app.dispatch(actions.StrandsMoveStop());
+    }
+    if (app.state.ui_state.domains_move != null) {
+      app.dispatch(actions.DomainsMoveStop());
     }
     if (app.state.ui_state.strand_creation != null) {
       app.dispatch(actions.StrandCreateStop());
@@ -704,6 +733,9 @@ class DesignViewComponent {
 group_names_of_strands(StrandsMove strands_move) =>
     app.state.design.group_names_of_strands(strands_move.strands_moving);
 
+group_names_of_domains(DomainsMove domains_move) =>
+    app.state.design.group_names_of_domains(domains_move.domains_moving);
+
 group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
 
 main_view_pointer_up(MouseEvent event) {
@@ -726,6 +758,14 @@ main_view_pointer_up(MouseEvent event) {
     app.dispatch(actions.StrandsMoveStop());
     if (strands_move.allowable && strands_move.is_nontrivial) {
       app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
+    }
+  }
+
+  if (app.state.ui_state.domains_move != null) {
+    DomainsMove domains_move = app.state.ui_state.domains_move;
+    app.dispatch(actions.DomainsMoveStop());
+    if (domains_move.allowable && domains_move.is_nontrivial) {
+      app.dispatch(actions.DomainsMoveCommit(domains_move: domains_move));
     }
   }
 

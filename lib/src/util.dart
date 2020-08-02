@@ -17,6 +17,7 @@ import 'package:platform_detect/platform_detect.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';
+import 'state/domains_move.dart';
 import 'state/group.dart';
 import 'state/strands_move.dart';
 import 'view/design.dart';
@@ -117,6 +118,28 @@ HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_mo
 
 String current_group_name_from_strands_move(Design design, StrandsMove strands_move) {
   var helix_idx = strands_move.current_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
+}
+
+HelixGroup original_group_from_domains_move(Design design, DomainsMove domains_move) {
+  var group_name = original_group_name_from_domains_move(design, domains_move);
+  return design.groups[group_name];
+}
+
+String original_group_name_from_domains_move(Design design, DomainsMove domains_move) {
+  var helix_idx = domains_move.original_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
+}
+
+HelixGroup current_group_from_domains_move(Design design, DomainsMove domains_move) {
+  var group_name = current_group_name_from_domains_move(design, domains_move);
+  return design.groups[group_name];
+}
+
+String current_group_name_from_domains_move(Design design, DomainsMove domains_move) {
+  var helix_idx = domains_move.current_address.helix_idx;
   var helix = design.helices[helix_idx];
   return helix.group;
 }
@@ -291,7 +314,7 @@ Map<int, Helix> helices_assign_svg(
 
     num prev_y = null;
 
-    var prev_helix = null;
+    Helix prev_helix = null;
     for (var helix in selected_helices_sorted_by_view_order) {
       num x = main_view_svg_x_of_helix(geometry, helix);
       num y = main_view_svg_y_of_helix(geometry, helix);
@@ -472,7 +495,8 @@ Point<num> svg_position_of_mouse_click(MouseEvent event) {
 
 Point<num> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
-    Element svg_elt = svg_ancestor(event.target);
+    SvgElement target = event.target as SvgElement;
+    Element svg_elt = svg_ancestor(target);
     var rect = svg_elt.getBoundingClientRect().topLeft;
     var offset = event.client - rect;
     return offset;
@@ -483,9 +507,9 @@ Point<num> get_svg_point(MouseEvent event) {
 
 SvgSvgElement svg_ancestor(SvgElement elt) {
   while (!(elt is SvgSvgElement)) {
-    elt = elt.parent;
+    elt = elt.parent as SvgElement;
   }
-  return elt;
+  return elt as SvgSvgElement;
 }
 
 Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);

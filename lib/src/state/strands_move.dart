@@ -1,11 +1,9 @@
-import 'dart:math';
-
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import '../state/strand.dart';
 
 import '../serializers.dart';
+import 'strand.dart';
 import 'group.dart';
 import 'helix.dart';
 
@@ -17,6 +15,11 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
   StrandsMove._();
 
   static Serializer<StrandsMove> get serializer => _$strandsMoveSerializer;
+
+  @memoized
+  int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   factory StrandsMove(
       {BuiltList<Strand> strands_moving,
@@ -39,11 +42,6 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       ..keep_color = keep_color
       ..allowable = true);
   }
-
-  @memoized
-  int get hashCode;
-
-  /************************ end BuiltValue boilerplate ************************/
 
   BuiltList<Strand> get strands_moving;
 

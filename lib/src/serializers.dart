@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
+import 'state/domains_move.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -174,6 +175,11 @@ part 'serializers.g.dart';
   StrandsMoveStop,
   StrandsMoveAdjustAddress,
   StrandsMoveCommit,
+  DomainsMove,
+  DomainsMoveStartSelectedDomains,
+  DomainsMoveStop,
+  DomainsMoveAdjustAddress,
+  DomainsMoveCommit,
   GridChange,
   ThrottledActionFast,
   ThrottledActionNonFast,

@@ -23,7 +23,9 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
     ..show_modifications = state.ui_state.show_modifications
-    ..currently_moving = state.ui_state.strands_move != null || state.ui_state.moving_dna_ends
+    ..currently_moving = state.ui_state.strands_move != null ||
+        state.ui_state.domains_move != null ||
+        state.ui_state.moving_dna_ends
     ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
     ..moving_dna_ends = state.ui_state.moving_dna_ends
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
@@ -70,6 +72,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
       var selected_ends_in_strand = props.selectables_store.selected_ends_in_strand(strand);
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
+      var selected_domains_in_strand = props.selectables_store.selected_domains_in_strand(strand);
 
       elts.add((DesignMainStrand()
         ..strand = strand
@@ -81,6 +84,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..selected_ends_in_strand = selected_ends_in_strand
         ..selected_crossovers_in_strand = selected_crossovers_in_strand
         ..selected_loopouts_in_strand = selected_loopouts_in_strand
+        ..selected_domains_in_strand = selected_domains_in_strand
         ..show_modifications = props.show_modifications
         ..currently_moving = props.currently_moving
         ..drawing_potential_crossover = props.drawing_potential_crossover

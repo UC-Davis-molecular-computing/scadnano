@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
 
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
@@ -82,7 +83,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var groups_of_selected_strands = {
       for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
     };
-    return groups_of_selected_strands.toBuiltSet();
+    return groups_of_selected_strands.build();
+  }
+
+  @memoized
+  BuiltMap<Domain, Color> get color_of_domain {
+    Map<Domain, Color> map = {};
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        map[domain] = strand.color;
+      }
+    }
+    return map.build();
+  }
+
+  BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
+    var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
+    var groups_of_domains = {
+      for (int helix_idx in helix_idxs_of_domains) helices[helix_idx].group
+    };
+    return groups_of_domains.build();
   }
 
   BuiltSet<String> group_names_of_ends(Iterable<DNAEnd> ends) {
@@ -281,7 +301,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
-    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id]) {
+    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id, domains_by_id]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];
         map[key] = obj;
@@ -1125,6 +1145,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return list_builder.build();
   }
 
+  @memoized
+  BuiltList<Domain> get all_domains =>
+      [for (var strand in strands) for (var domain in strand.domains()) domain].build();
+
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
   /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
@@ -1331,7 +1355,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 }
 
-ensure_helix_groups_in_groups_map(Map<int, HelixBuilder> helix_builders_map, Map<String, HelixGroupBuilder> group_builders_map) {
+ensure_helix_groups_in_groups_map(
+    Map<int, HelixBuilder> helix_builders_map, Map<String, HelixGroupBuilder> group_builders_map) {
   for (var helix_builder in helix_builders_map.values) {
     if (!group_builders_map.containsKey(helix_builder.group)) {
       throw IllegalDesignError('helix ${helix_builder.idx} has group ${helix_builder.group}, which does not '

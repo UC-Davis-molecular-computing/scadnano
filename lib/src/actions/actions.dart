@@ -8,6 +8,7 @@ import 'package:built_value/serializer.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/domains_move.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -51,6 +52,10 @@ abstract class DesignChangingAction implements StorableAction, SvgPngCacheInvali
 }
 
 /// Undoable actions, which must affect the DNADesign, and can be undone by Ctrl+Z.
+/// Previously, whether an action was a subtype of UndoableAction was used to check whether to write
+/// the design to localStorage. Now, we just check whether the Design changed, but print a warning
+/// if the action is not a subtype of UndoableAction. However, this subtype relationship IS still
+/// currently used to detect whether to affect the undo stack.
 abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
 }
@@ -1590,6 +1595,9 @@ abstract class PotentialCrossoverRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strands move
 
+
+// This is a poor name for the action; it is used when we want to copy strands
+// (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<StrandsMoveStart, StrandsMoveStartBuilder> {
@@ -1658,6 +1666,61 @@ abstract class StrandsMoveCommit
   StrandsMoveCommit._();
 
   static Serializer<StrandsMoveCommit> get serializer => _$strandsMoveCommitSerializer;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// domains move
+
+abstract class DomainsMoveStartSelectedDomains
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveStartSelectedDomains, DomainsMoveStartSelectedDomainsBuilder> {
+  Address get address;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveStartSelectedDomains({Address address}) = _$DomainsMoveStartSelectedDomains._;
+
+  DomainsMoveStartSelectedDomains._();
+
+  static Serializer<DomainsMoveStartSelectedDomains> get serializer => _$domainsMoveStartSelectedDomainsSerializer;
+}
+
+abstract class DomainsMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveStop, DomainsMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveStop() = _$DomainsMoveStop;
+
+  DomainsMoveStop._();
+
+  static Serializer<DomainsMoveStop> get serializer => _$domainsMoveStopSerializer;
+}
+
+abstract class DomainsMoveAdjustAddress
+    with BuiltJsonSerializable
+    implements Action, Built<DomainsMoveAdjustAddress, DomainsMoveAdjustAddressBuilder> {
+  Address get address;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveAdjustAddress({Address address}) = _$DomainsMoveAdjustAddress._;
+
+  DomainsMoveAdjustAddress._();
+
+  static Serializer<DomainsMoveAdjustAddress> get serializer => _$domainsMoveAdjustAddressSerializer;
+}
+
+abstract class DomainsMoveCommit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<DomainsMoveCommit, DomainsMoveCommitBuilder> {
+  DomainsMove get domains_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainsMoveCommit({DomainsMove domains_move}) = _$DomainsMoveCommit._;
+
+  DomainsMoveCommit._();
+
+  static Serializer<DomainsMoveCommit> get serializer => _$domainsMoveCommitSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

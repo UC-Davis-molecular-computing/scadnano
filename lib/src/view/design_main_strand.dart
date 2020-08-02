@@ -43,9 +43,11 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends_in_strand;
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
+  BuiltSet<Domain> selected_domains_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
 
   bool selected;
   bool drawing_potential_crossover;
@@ -57,7 +59,6 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   int modification_font_size;
   bool invert_y;
-  Geometry geometry;
 }
 
 class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
@@ -92,9 +93,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..key = 'strand-paths'
         ..helices = props.helices
         ..groups = props.groups
+        ..currently_moving = props.currently_moving
         ..selected_ends_in_strand = props.selected_ends_in_strand
         ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
         ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
+        ..selected_domains_in_strand = props.selected_domains_in_strand
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..strand_tooltip = tooltip_text(props.strand)

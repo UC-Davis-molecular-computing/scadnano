@@ -13,6 +13,7 @@ import '../state/geometry.dart';
 import '../state/helix.dart';
 import '../state/strand.dart';
 import '../view/design_main_strand_dna_end_moving.dart';
+import '../constants.dart' as constants;
 
 import 'design_main_strand_paths.dart';
 
@@ -46,7 +47,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       return null;
     }
 
-    Strand strand_moved = moved_strand(
+    Strand strand_moved = move_strand(
         strand: props.strand,
         original_group: props.original_group,
         current_group: props.current_group,
@@ -127,9 +128,14 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
       }
     }
 
+    var classname = constants.css_selector_domain;
+    if (!props.allowable) {
+      classname += ' ' + constants.css_selector_disallowed;
+    }
+
     int key = 0;
     var path = (Dom.path()
-      ..className = 'domain-line' + (props.allowable ? '' : ' disallowed')
+      ..className = classname
       ..stroke = props.strand.color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = path_cmds.join(' ')

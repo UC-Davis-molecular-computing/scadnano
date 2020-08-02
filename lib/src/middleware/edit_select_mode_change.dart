@@ -11,14 +11,20 @@ import '../state/select_mode.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
-const selectable_css_style_non_domain_end = {
+const selectable_css_style_non_domain_or_end = {
   'filter': 'url("#shadow")',
+  'stroke-width': '5pt',
 };
 
-const selectable_css_style_domain_end = {
+const selectable_css_style_domain = {
+  'stroke': 'hotpink',
+  'stroke-width': '5pt',
+};
+
+const selectable_css_style_end = {
   'filter': 'url("#shadow")',
   'stroke': 'black',
-  'stroke-width': '0.5px',
+  'stroke-width': '1pt',
   'visibility': 'visible',
 };
 
@@ -65,9 +71,15 @@ set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_mod
     SelectModeChoice select_mode_choice,
     bool is_origami}) {
   bool select_mode_contains_part = select_modes.contains(select_mode_choice);
-  var selectable_css_style_this_choice = SelectModeChoice.ends.contains(select_mode_choice)
-      ? selectable_css_style_domain_end
-      : selectable_css_style_non_domain_end;
+  var selectable_css_style_this_choice;
+
+  if (SelectModeChoice.ends.contains(select_mode_choice)) {
+    selectable_css_style_this_choice = selectable_css_style_end;
+  } else if (SelectModeChoice.domain == select_mode_choice) {
+    selectable_css_style_this_choice = selectable_css_style_domain;
+  } else {
+    selectable_css_style_this_choice = selectable_css_style_non_domain_or_end;
+  }
 
   var all_strand_selector = '.${select_mode_choice.css_selector()}:hover';
   var staple_only_selector =

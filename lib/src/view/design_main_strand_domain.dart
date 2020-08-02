@@ -4,16 +4,21 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
+import 'package:react/react.dart' as react;
+import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
+import '../state/geometry.dart';
+import '../state/group.dart';
 import '../app.dart';
 import '../state/helix.dart';
 import '../state/domain.dart';
 import '../util.dart' as util;
 import '../state/selectable.dart';
-import '../actions/actions.dart' as actions;
 import 'pure_component.dart';
 import '../state/context_menu.dart';
+import '../actions/actions.dart' as actions;
+import '../constants.dart' as constants;
 
 part 'design_main_strand_domain.over_react.g.dart';
 
@@ -31,12 +36,19 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Strand strand;
   String transform;
   List<ContextMenuItem> Function(Strand strand) context_menu_strand;
+  bool currently_moving;
+  bool selected;
+
+  BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
 }
 
-class DesignMainDomainProps = UiProps with DesignMainDomainPropsMixin;
+class DesignMainDomainProps = UiProps with DesignMainDomainPropsMixin, TransformByHelixGroupPropsMixin;
 
 @Component2()
-class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with PureComponent {
+class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
+    with PureComponent, TransformByHelixGroup<DesignMainDomainProps> {
   @override
   render() {
     Domain domain = props.domain;
@@ -45,20 +57,30 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
     Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
 
+    var classname = constants.css_selector_domain;
+    if (props.selected) {
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
+    }
+
     return (Dom.line()
-      ..onClick = _handle_click
+      ..className = classname
+      ..onClick = _handle_click_for_nick_insertion_deletion
+      ..onPointerDown = handle_click_down
+      ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()
       ..transform = props.transform
       ..x1 = '${start_svg.x}'
       ..y1 = '${start_svg.y}'
       ..x2 = '${end_svg.x}'
       ..y2 = '${end_svg.y}'
-      ..key = id
       ..id = id
-      ..className = 'domain-line')(Dom.svgTitle()(tooltip_text(domain) + '\n' + props.strand_tooltip));
+      ..key = id)(Dom.svgTitle()(tooltip_text(domain) + '\n' + props.strand_tooltip));
   }
 
-  _handle_click(SyntheticMouseEvent event_syn) {
+  _handle_click_for_nick_insertion_deletion(SyntheticMouseEvent event_syn) {
     if (edit_mode_is_nick() || edit_mode_is_insertion() || edit_mode_is_deletion()) {
       var domain = props.domain;
       MouseEvent event = event_syn.nativeEvent;
@@ -80,6 +102,31 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps> with
         app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
       } else if (edit_mode_is_deletion()) {
         app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
+      }
+    }
+  }
+
+  handle_click_down(react.SyntheticPointerEvent event_syn) {
+    MouseEvent event = event_syn.nativeEvent;
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (domain_selectable(props.domain)) {
+        // select/deselect
+        props.domain.handle_selection_mouse_down(event);
+        // set up drag detection for moving DNA ends
+        var address = util.find_closest_address(event, [props.helix], props.groups, props.geometry);
+        app.dispatch(actions.DomainsMoveStartSelectedDomains(address: address));
+      }
+    }
+  }
+
+  handle_click_up(react.SyntheticPointerEvent event_syn) {
+    if (event_syn.nativeEvent.button == constants.LEFT_CLICK_BUTTON) {
+      //XXX: This is tricky. If we condition on !props.currently_moving, then this achieves something we
+      // want, which is that if we are moving a group of strands, and we are in a disallowed position where
+      // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
+      // then it would otherwise become selected on mouse up, when really we just want to end the move.
+      if (domain_selectable(props.domain) && !props.currently_moving) {
+        props.domain.handle_selection_mouse_up(event_syn.nativeEvent);
       }
     }
   }

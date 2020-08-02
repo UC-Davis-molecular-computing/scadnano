@@ -34,11 +34,13 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends_in_strand;
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
+  BuiltSet<Domain> selected_domains_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
 
+  bool currently_moving;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool origami_type_is_selectable;
@@ -79,32 +81,38 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
       substrand = strand.substrands[i];
 
       if (substrand is Domain) {
-        Helix helix = props.helices[substrand.helix];
+        Domain domain = substrand;
+        Helix helix = props.helices[domain.helix];
         bool draw_domain = should_draw_domain(
-            substrand.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
+            domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         draw_prev_dom = draw_domain;
         if (draw_domain) {
           paths.add((DesignMainDomain()
-            ..domain = substrand
+            ..domain = domain
             ..strand = props.strand
-            ..transform = transform_of_helix(substrand.helix)
+            ..currently_moving = props.currently_moving
+            ..transform = transform_of_helix(domain.helix)
             ..context_menu_strand = props.context_menu_strand
             ..color = strand.color
-            ..dna_sequence = strand.dna_sequence_in(substrand)
+            ..selected = props.selected_domains_in_strand.contains(domain)
+            ..dna_sequence = strand.dna_sequence_in(domain)
             ..helix = helix
+            ..helices = {helix.idx: helix}.build()
+            ..groups = {helix.group: props.groups[helix.group]}.build()
+            ..geometry = props.geometry
             ..strand_tooltip = props.strand_tooltip
             ..key = "bound-substrand-$i")());
 
           bool is_5p = true;
-          for (DNAEnd end in [substrand.dnaend_5p, substrand.dnaend_3p]) {
+          for (DNAEnd end in [domain.dnaend_5p, domain.dnaend_3p]) {
             String key = is_5p
-                ? "5'-end-$i${substrand.is_first ? '-is_first' : ''}"
-                : "3'-end-$i${substrand.is_last ? '-is_last' : ''}";
+                ? "5'-end-$i${domain.is_first ? '-is_first' : ''}"
+                : "3'-end-$i${domain.is_last ? '-is_last' : ''}";
             bool end_selected = props.selected_ends_in_strand.contains(end);
             ends.add((DesignMainDNAEnd()
-              ..domain = substrand
+              ..domain = domain
               ..is_5p = is_5p
-              ..transform = transform_of_helix(substrand.helix)
+              ..transform = transform_of_helix(domain.helix)
               ..color = strand.color
               ..helix = helix
               ..group = props.groups[helix.group]
@@ -118,6 +126,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           }
         }
       } else if (substrand is Loopout) {
+        Loopout loopout = substrand;
         Domain next_dom = strand.substrands[i + 1];
         Domain prev_dom = strand.substrands[i - 1];
         Helix prev_helix = props.helices[prev_dom.helix];
@@ -126,13 +135,13 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             next_dom.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
         if (draw_prev_dom && draw_next_dom) {
           paths.add((DesignMainLoopout()
-            ..loopout = substrand
+            ..loopout = loopout
             ..strand = strand
             ..helices = props.helices
             ..groups = props.groups
             ..geometry = props.geometry
             ..color = strand.color
-            ..selected = props.selected_loopouts_in_strand.contains(substrand)
+            ..selected = props.selected_loopouts_in_strand.contains(loopout)
             ..prev_domain = prev_dom
             ..next_domain = next_dom
             ..prev_helix = prev_helix

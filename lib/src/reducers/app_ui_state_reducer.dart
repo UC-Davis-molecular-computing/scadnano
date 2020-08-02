@@ -15,6 +15,7 @@ import '../reducers/select_mode_state_reducer.dart';
 import '../reducers/edit_modes_reducer.dart';
 import '../actions/actions.dart' as actions;
 import 'dialog_reducer.dart';
+import 'domains_move_reducer.dart';
 import 'strand_creation_reducer.dart';
 import 'strands_move_reducer.dart';
 import 'util_reducer.dart';
@@ -33,6 +34,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
   ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
+  ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
       side_view_mouse_grid_pos_reducer(ui_state.side_view_grid_position_mouse_cursor, action)?.toBuilder()
   ..side_view_position_mouse_cursor =
@@ -329,6 +331,7 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
   ..selectables_store.replace(selectables_store_reducer(ui_state.selectables_store, state, action))
   ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
   ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
+  ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
   ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder());
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([

@@ -7,6 +7,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
+import 'domain.dart';
 import 'loopout.dart';
 import 'dna_end.dart';
 import 'select_mode.dart';
@@ -37,6 +38,9 @@ abstract class SelectablesStore
   @memoized
   BuiltSet<Loopout> get selected_loopouts =>
       BuiltSet<Loopout>.from(selected_items.where((s) => s is Loopout));
+
+  @memoized
+  BuiltSet<Domain> get selected_domains => BuiltSet<Domain>.from(selected_items.where((s) => s is Domain));
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
@@ -111,6 +115,9 @@ abstract class SelectablesStore
   BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) =>
       {for (var loopout in strand.loopouts()) if (selected_loopouts.contains(loopout)) loopout}.build();
 
+  BuiltSet<Domain> selected_domains_in_strand(Strand strand) =>
+      {for (var domain in strand.domains()) if (selected_domains.contains(domain)) domain}.build();
+
   /************************ begin BuiltValue boilerplate ************************/
   SelectablesStore._();
 
@@ -180,6 +187,11 @@ bool strand_selectable(Strand strand) =>
     edit_mode_is_select() &&
     select_modes().contains(SelectModeChoice.strand) &&
     origami_type_selectable(strand);
+
+bool domain_selectable(Domain domain) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.domain) &&
+    origami_type_selectable(domain);
 
 bool crossover_selectable(Crossover crossover) =>
     edit_mode_is_select() &&

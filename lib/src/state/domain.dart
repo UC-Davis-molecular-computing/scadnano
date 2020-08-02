@@ -5,6 +5,8 @@ import 'package:built_value/serializer.dart';
 import 'package:tuple/tuple.dart';
 import 'package:built_collection/built_collection.dart';
 
+import 'select_mode.dart';
+import 'selectable.dart';
 import '../serializers.dart';
 import 'strand_part.dart';
 import 'dna_end.dart';
@@ -45,10 +47,10 @@ abstract class Insertion
 }
 
 /// Represents a Substrand that is on a Helix. It may not be bound in the sense of having another
-/// Domain that overlaps it, but it could potentially bind. By constrast a Loopout cannot be bound
-/// to any other Substrand since there is no Helix it is associated with.
+/// Domain that overlaps it, but it could potentially bind. By contrast a Loopout cannot be bound
+/// to any other Substrand since there is no Helix with which it is associated.
 abstract class Domain
-    with BuiltJsonSerializable, UnusedFields
+    with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Domain, DomainBuilder>, Substrand {
   Domain._();
 
@@ -125,6 +127,8 @@ abstract class Domain
 
   @nullable
   String get strand_id;
+
+  SelectModeChoice select_mode() => SelectModeChoice.domain;
 
   @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
