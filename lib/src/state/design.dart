@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
+import 'package:scadnano/src/state/strand_maker.dart';
 
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
@@ -65,6 +66,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
+
+  StrandMaker strand(int current_helix, int current_offset){
+    return StrandMaker(this, current_helix, current_offset);
+  }
 
   @memoized
   bool get is_origami {

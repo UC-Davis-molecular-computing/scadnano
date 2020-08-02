@@ -1,4 +1,11 @@
 import 'dart:convert';
+import 'package:built_collection/built_collection.dart';
+import 'package:color/color.dart';
+import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/grid.dart';
+import 'package:scadnano/src/state/loopout.dart';
+import 'package:scadnano/src/state/modification.dart';
+import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/state/design.dart';
@@ -75,5 +82,199 @@ main() {
 //    expect(design.helices[1].position3d().z, 20);
   });
 
+  group('strand_maker_tests', () {
+    test('test_strand__0_0_to_10_cross_1_to_5', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).commit();
 
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+    });
+    test('test_strand__0_0_to_10_cross_1_to_5__reverse', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(1, 5).to(10).cross(0).to(0).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 1, forward: true, start: 5, end: 10, is_scaffold: false),
+          Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__h0_off0_to_off10_cross_h1_to_off5_loopout_length3_h2_to_off15', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).loopout(2, 3).to(15).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+          Loopout(3, 0, 2, false),
+          Domain(helix: 2, forward: true, start: 5, end: 15, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__two_forward_paranemic_crossovers', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(15).cross(2).to(20).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: true, start: 10, end: 15, is_scaffold: false),
+          Domain(helix: 2, forward: true, start: 15, end: 20, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__two_reverse_paranemic_crossovers', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(5).cross(2).to(0).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+          Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+          Domain(helix: 2, forward: false, start: 0, end: 5, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__multiple_strands', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
+      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand(
+          [
+            Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+            Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+          ],
+          color: Color.rgb(247, 67, 8),
+        )));
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand(
+          [
+            Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+            Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
+          ],
+          color: Color.rgb(247, 67, 8),
+        )));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__multiple_strands_other_order', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand(
+          [
+            Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
+            Domain(helix: 1, forward: true, start: 10, end: 20, is_scaffold: false),
+          ],
+          color: Color.rgb(247, 67, 8),
+        )));
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand(
+          [
+            Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+            Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+          ],
+          color: Color.rgb(247, 67, 8),
+        )));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__multiple_strands_overlap_no_error', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design
+          .strand(0, 0)
+          .to(10)
+          .cross(1)
+          .to(0)
+          .as_scaffold()
+          .with_modification_internal(
+              5,
+              ModificationInternal(
+                  display_text: 'Cy3',
+                  id: '/iCy3/',
+                  idt_text: '/iCy3/',
+                  allowed_bases: null,
+                  unused_fields: BuiltMap<String, Object>()))
+          .commit();
+      actual_design = actual_design
+          .strand(0, 10)
+          .to(0)
+          .cross(1)
+          .to(10)
+          .with_modification_5p(Modification5Prime(
+              display_text: 'B',
+              id: '/5Biosg/',
+              idt_text: '/5Biosg/',
+              unused_fields: BuiltMap<String, Object>()))
+          .commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand(
+          [
+            Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+            Domain(helix: 1, forward: false, start: 0, end: 10, is_scaffold: false),
+          ],
+          color: Color.rgb(247, 67, 8),
+          modifications_int: {
+            5: ModificationInternal(
+                display_text: 'Cy3',
+                id: '/iCy3/',
+                idt_text: '/iCy3/',
+                allowed_bases: null,
+                unused_fields: BuiltMap<String, Object>())
+          },
+          is_scaffold: true,
+        )));
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: false, start: 0, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: true, start: 0, end: 10, is_scaffold: false),
+        ],
+            color: Color.rgb(247, 67, 8),
+            modification_5p: Modification5Prime(
+                display_text: 'B',
+                id: '/5Biosg/',
+                idt_text: '/5Biosg/',
+                unused_fields: BuiltMap<String, Object>()))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+    test('test_strand__call_to_twice_legally', () {
+      Design actual_design = new Design(grid: Grid.square);
+      actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).to(0).commit();
+
+      Design expected_design = new Design();
+      expected_design = expected_design.rebuild((s) => s
+        ..strands.add(Strand([
+          Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
+          Domain(helix: 1, forward: false, start: 0, end: 5, is_scaffold: false),
+        ], color: Color.rgb(247, 67, 8))));
+      expect(actual_design.strands, expected_design.strands);
+      expected_design = expected_design.rebuild((s) => s..strands.clear());
+    });
+  });
 }
