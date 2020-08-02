@@ -8,8 +8,8 @@ extension BuiltMapValues<K, Vin> on BuiltMap<K, Vin> {
 
 extension MapValues<K, Vin> on Map<K, Vin> {
   /// Maps f onto all values in given Map, without changing keys.
-  Map<K, Vout> map_values<Vout>(Vout f(Vin v)) =>
-      this.map((K key, Vin value) => MapEntry<K, Vout>(key, f(value)));
+  Map<K, Vout> map_values<Vout>(Vout f(K k, Vin v)) =>
+      this.map((K key, Vin value) => MapEntry<K, Vout>(key, f(key, value)));
 }
 
 extension MinMaxOfIterable<C extends Comparable> on Iterable<C> {

@@ -353,27 +353,32 @@ BuiltMap<int, Helix> remove_helices_assuming_no_domains(
 
 BuiltMap<int, Helix> helix_grid_change_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.GridChange action) {
-  Map<int, HelixBuilder> helices_builder =
-      state.design.helices_in_group(action.group_name).toMap().map_values((h) => h.toBuilder());
-  for (int i in helices.keys) {
-    Helix helix = helices[i];
-    helices_builder[i].grid = action.grid;
+  // make builder of all helices
+  Map<int, Helix> new_helices = helices.toMap();
+
+  // process only those in this group
+  var helix_idxs_in_group = state.design.helix_idxs_in_group[action.group_name];
+  for (int idx in helix_idxs_in_group) {
+    var helix = helices[idx];
+    HelixBuilder helix_builder = helix.toBuilder();
+    helix_builder.grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
-      helices_builder[i].grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
-      helices_builder[i].position_ = null;
+      helix_builder.grid_position =
+          util.position3d_to_grid(helix.position, action.grid).toBuilder();
+      helix_builder.position_ = null;
     }
     if (action.grid.is_none() && helix.position_ == null) {
-      helices_builder[i].grid_position = null;
+      helix_builder.grid_position = null;
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)
-      helices_builder[i].position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+      helix_builder.position_ =
+          util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
     }
+    new_helices[idx]= helix_builder.build();
   }
 
-  BuiltMap<int, Helix> new_helices =
-      {for (var helix in helices_builder.values) helix.idx: helix.build()}.build();
-  new_helices = reassign_svg_positions(state, new_helices, null);
-  return new_helices;
+  var new_helices_built = reassign_svg_positions(state, new_helices.build(), null);
+  return new_helices_built;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
