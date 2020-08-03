@@ -421,6 +421,19 @@ This refers to the menu at the top of the whole app. At the top of the side view
     You can also choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
 
     The roll of the first helix in view order is used to compute positions and rolls of the remaining. Thus, if you would like the whole design to be at a certain rotation, first set the roll of the first helix, and then click this button.
+
+  * **Set geometric parameters:**
+    Set geometric parameters affecting how the design is displayed.
+    
+    * rise per base pair: This is the number of nanometers a single base pair occupies (i.e., width in main view)
+
+    * helix radius: The radius of a helix in nanometers.
+
+    * inter-helix gap: The distance between two adjacent helices. The value 2*helix_radius+inter_helix_gap is the distance between the centers of two adjacent helices.
+
+    * bases per turn: The number of bases in a single full turn of DNA.
+
+    * minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction of its long axis.
   
 * View
 
