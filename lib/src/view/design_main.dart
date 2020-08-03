@@ -175,6 +175,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.design.helices
+          ..groups = props.design.groups
+          ..geometry = props.design.geometry
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
       (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),

@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 import '../state/edit_mode.dart';
 
 import '../state/app_state.dart';
@@ -24,59 +25,43 @@ const _CLASS = 'helix-mouseover';
 const DEBUG_PRINT_MOUSEOVER = false;
 //const DEBUG_PRINT_MOUSEOVER = true;
 
-UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
-    connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
-  Helix helix = state.design.helices[props.helix_idx];
-  BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
-  bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
-  return DesignMainMouseoverRectHelix()
-    ..helix = helix
-    ..show = show
-    ..mouseover_datas = mouseover_datas;
-})(DesignMainMouseoverRectHelix);
-
+//UiFactory<DesignMainMouseoverRectHelixProps> ConnectedDesignMainMouseoverRectHelix =
+//    connect<AppState, DesignMainMouseoverRectHelixProps>(mapStateToPropsWithOwnProps: (state, props) {
+//  Helix helix = state.design.helices[props.helix_idx];
+//  BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
+//  bool show = state.ui_state.edit_modes.contains(EditModeChoice.backbone);
+//  return DesignMainMouseoverRectHelix()
+//    ..helix = helix
+//    ..show = show
+//    ..mouseover_datas = mouseover_datas;
+//})(DesignMainMouseoverRectHelix);
 
 UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$DesignMainMouseoverRectHelix;
 
-
 mixin DesignMainMouseoverRectHelixProps on UiProps {
-  int helix_idx;
   Helix helix;
-  bool show;
-  BuiltList<MouseoverData> mouseover_datas;
 }
 
-
-class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps> {
-  @override
-  bool shouldComponentUpdate(Map nextProps, Map nextState) {
-    Helix helix = nextProps['DesignMainMouseoverRectHelixProps.helix'];
-    bool show = nextProps['DesignMainMouseoverRectHelixProps.show'];
-    return !(helix == props.helix && show == props.show);
-  }
-
+class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps>
+    with PureComponent {
   @override
   render() {
-    Helix helix = props.helix;
+    String id = '$_ID_PREFIX-${props.helix.idx}';
 
-    String id = '$_ID_PREFIX-${helix.idx}';
-
-    var width = helix.svg_width();
-    var height = helix.svg_height();
-    Point<num> translation = helix_main_view_translation(helix);
+    var width = props.helix.svg_width();
+    var height = props.helix.svg_height();
 
     return (Dom.rect()
-      ..transform = 'translate(${translation.x} ${translation.y})'
-      ..x = '0'
-      ..y = '0'
+      ..x = '${props.helix.svg_position.x}'
+      ..y = '${props.helix.svg_position.y}'
       ..width = '$width'
       ..height = '$height'
       ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
       //XXX: it matters that we reference props.mouseover_datas, not a local variable
       // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
       // otherwise the callback is not updated until render executes again
-      ..onMouseEnter = ((event) => update_mouseover(event, helix, props.mouseover_datas))
-      ..onMouseMove = ((event) => update_mouseover(event, helix, props.mouseover_datas))
+      ..onMouseEnter = ((event) => update_mouseover(event, props.helix))
+      ..onMouseMove = ((event) => update_mouseover(event, props.helix))
       ..id = id
       ..className = _CLASS)();
   }
@@ -86,7 +71,7 @@ mouse_leave_update_mouseover() {
   app.dispatch(actions.MouseoverDataClear());
 }
 
-update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<MouseoverData> mouseover_datas) {
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
   MouseEvent event = event_syn.nativeEvent;
   var group = app.state.design.groups[helix.group];
   var geometry = app.state.design.geometry;
@@ -110,6 +95,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix, BuiltList<Mouseover
   }
 
   var mouseover_params = MouseoverParams(helix.idx, offset, forward);
+
+  BuiltList<MouseoverData> mouseover_datas = app.state.ui_state.mouseover_datas;
 
   if (needs_update(mouseover_params, mouseover_datas)) {
 //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
@@ -149,4 +136,3 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
   }
   return needs;
 }
-
