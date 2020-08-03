@@ -121,7 +121,7 @@ const default_rise_per_base_pair = 0.332;
 const default_helix_radius = 1.0;
 const default_bases_per_turn = 10.5;
 const default_minor_groove_angle = 150.0;
-const default_inter_helix_gap = 0.5;
+const default_inter_helix_gap = 0.65;
 
 /////////////////////////////////////////////////////////////
 // JSON keys

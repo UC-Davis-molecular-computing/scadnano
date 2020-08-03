@@ -103,18 +103,17 @@ abstract class DialogInteger
   num get value;
 }
 
-abstract class DialogFloatingNumber
+abstract class DialogFloat
     with BuiltJsonSerializable
-    implements DialogItem, Built<DialogFloatingNumber, DialogFloatingNumberBuilder> {
-  factory DialogFloatingNumber.from([void Function(DialogFloatingNumberBuilder) updates]) =
-      _$DialogFloatingNumber;
+    implements DialogItem, Built<DialogFloat, DialogFloatBuilder> {
+  factory DialogFloat.from([void Function(DialogFloatBuilder) updates]) = _$DialogFloat;
 
-  DialogFloatingNumber._();
+  DialogFloat._();
 
-  static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
+  static Serializer<DialogFloat> get serializer => _$dialogFloatSerializer;
 
-  factory DialogFloatingNumber({String label, num value}) {
-    return DialogFloatingNumber.from((b) => b
+  factory DialogFloat({String label, num value}) {
+    return DialogFloat.from((b) => b
       ..label = label
       ..value = value);
   }

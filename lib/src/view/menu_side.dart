@@ -156,12 +156,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     int helices_view_order_idx = 7;
     var items = List<DialogItem>(8);
     items[name_idx] = DialogText(label: 'name', value: props.displayed_group_name);
-    items[position_x_idx] = DialogFloatingNumber(label: 'x', value: group.position.x);
-    items[position_y_idx] = DialogFloatingNumber(label: 'y', value: group.position.y);
-    items[position_z_idx] = DialogFloatingNumber(label: 'z', value: group.position.z);
-    items[pitch_idx] = DialogFloatingNumber(label: 'pitch', value: group.pitch);
-    items[roll_idx] = DialogFloatingNumber(label: 'roll', value: group.roll);
-    items[yaw_idx] = DialogFloatingNumber(label: 'yaw', value: group.yaw);
+    items[position_x_idx] = DialogFloat(label: 'x', value: group.position.x);
+    items[position_y_idx] = DialogFloat(label: 'y', value: group.position.y);
+    items[position_z_idx] = DialogFloat(label: 'z', value: group.position.z);
+    items[pitch_idx] = DialogFloat(label: 'pitch', value: group.pitch);
+    items[roll_idx] = DialogFloat(label: 'roll', value: group.roll);
+    items[yaw_idx] = DialogFloat(label: 'yaw', value: group.yaw);
     items[helices_view_order_idx] =
         DialogText(label: 'helices view order (space separated)', value: group.helices_view_order.join(' '));
 
@@ -212,12 +212,12 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
     }
 
     // get position and orientation
-    num position_x = (results[position_x_idx] as DialogFloatingNumber).value;
-    num position_y = (results[position_y_idx] as DialogFloatingNumber).value;
-    num position_z = (results[position_z_idx] as DialogFloatingNumber).value;
-    num pitch = (results[pitch_idx] as DialogFloatingNumber).value;
-    num roll = (results[roll_idx] as DialogFloatingNumber).value;
-    num yaw = (results[yaw_idx] as DialogFloatingNumber).value;
+    num position_x = (results[position_x_idx] as DialogFloat).value;
+    num position_y = (results[position_y_idx] as DialogFloat).value;
+    num position_z = (results[position_z_idx] as DialogFloat).value;
+    num pitch = (results[pitch_idx] as DialogFloat).value;
+    num roll = (results[roll_idx] as DialogFloat).value;
+    num yaw = (results[yaw_idx] as DialogFloat).value;
     var position = Position3D(x: position_x, y: position_y, z: position_z);
 
     HelixGroup new_group = HelixGroup(

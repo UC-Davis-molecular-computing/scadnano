@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:quiver/iterables.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import '../state/dialog.dart';
 import '../state/edit_mode.dart';
 import '../state/example_designs.dart';
@@ -31,6 +33,7 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
+      ..geometry = state.design.geometry
       ..no_grid_is_none = state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
       ..show_modifications = state.ui_state.show_modifications
@@ -99,6 +102,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
+  Geometry geometry;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -130,10 +134,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       file_menu(),
       edit_menu(),
       view_menu(),
-//      grid_menu(),
       export_menu(),
       help_menu(),
-//      dummy_button(),
     );
   }
 
@@ -149,6 +151,9 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       'Dummy',
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// file menu
 
   file_menu() {
     return NavDropdown({
@@ -201,6 +206,60 @@ really want to exit without saving.'''
       ...file_menu_save_design_local_storage_options(),
     ]);
   }
+
+  List<ReactElement> file_menu_save_design_local_storage_options() => [
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+          ..display = 'Save design in localStorage on every edit'
+          ..tooltip = '''\
+On every edit, save current design in localStorage (in your web browser).
+
+Disabling this minimizes the time needed to render large designs.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
+          ..key = 'save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+          ..display = 'Save design in localStorage before exiting'
+          ..tooltip = '''\
+Before exiting, save current design in localStorage (in your web browser). 
+For large designs, this is faster than saving on every edit, but if the browser crashes, 
+all changes made will be lost, so it is not as safe as storing on every edit.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
+          ..key = 'save-dna-design-in-local-storage-on-exit')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
+          ..display = 'Do not save design in localStorage'
+          ..tooltip = '''\
+Never saves the design in localStorage.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..key = 'never-save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+          ..display = 'Save design in localStorage periodically'
+          ..tooltip = '''\
+Every <period> seconds, save current design in localStorage (in your web browser). 
+Also saves before exiting.
+This is safer than never saving, or saving only before exiting, but will not save edits
+that occurred between the last edit and a browser crash.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
+          ..key = 'save-dna-design-in-local-storage-periodically')(),
+        (MenuNumber()
+          ..display = 'period (seconds)'
+          ..min_value = 1
+          ..default_value = props.local_storage_design_choice.period_seconds
+          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+          ..tooltip = 'Number of seconds between saving design to localStorage.'
+          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
+      ];
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// edit menu
 
   edit_menu() {
     return NavDropdown(
@@ -313,8 +372,33 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
           }
         })(),
       DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => ask_for_geometry(props.geometry))
+        ..display = 'Set geometric parameters'
+        ..tooltip = '''\
+Set geometric parameters affecting how the design is displayed.
+
+- rise per base pair: This is the number of nanometers a single base pair occupies (i.e., width in main view)
+                      default ${constants.default_rise_per_base_pair} nm
+
+- helix radius:       The radius of a helix in nanometers.
+                      default ${constants.default_helix_radius} nm
+
+- inter-helix gap:    The distance between two adjacent helices. The value 2*helix_radius+inter_helix_gap
+                      is the distance between the centers of two adjacent helices.
+                      default ${constants.default_inter_helix_gap} nm
+
+- bases per turn:     The number of bases in a single full turn of DNA.
+                      default ${constants.default_bases_per_turn}
+
+- minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction
+                      of its long axis.
+                      default ${constants.default_minor_groove_angle} degrees''')(),
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// view menu
 
   view_menu() {
     var elts = [
@@ -502,26 +586,8 @@ Shows grid coordinates in the side view under the helix index.'''
     ];
   }
 
-//  grid_menu() {
-//    return NavDropdown(
-//      {
-//        'title': 'Grid',
-//        'id': 'grid-nav-dropdown',
-//      },
-//      [
-//        for (var grid in Grid.values)
-//          DropdownItem(
-//            {
-//              'active': grid == props.grid,
-//              'disabled': grid == props.grid,
-//              'key': grid.toString(),
-//              'onClick': ((ev) => props.dispatch(actions.GridChange(grid: grid))),
-//            },
-//            grid.toString(),
-//          )
-//      ],
-//    );
-//  }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// export menu
 
   export_menu() {
     return NavDropdown(
@@ -540,6 +606,9 @@ Shows grid coordinates in the side view under the helix index.'''
         ..display = 'DNA Sequences')(),
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// help menu
 
   help_menu() {
     return NavDropdown(
@@ -600,6 +669,9 @@ https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20de
     );
   }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// helper methods
+
   Future<void> export_dna() async {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
     String buttontype = DiaAttr.CHECKBOX;
@@ -639,57 +711,42 @@ https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20de
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
+}
 
-  List<ReactElement> file_menu_save_design_local_storage_options() => [
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
-          ..display = 'Save design in localStorage on every edit'
-          ..tooltip = '''\
-On every edit, save current design in localStorage (in your web browser).
+Future<void> ask_for_geometry(Geometry geometry) async {
+  int rise_per_base_pair_idx = 0;
+  int helix_radius_idx = 1;
+  int inter_helix_gap_idx = 2;
+  int bases_per_turn_idx = 3;
+  int minor_groove_angle_idx = 4;
 
-Disabling this minimizes the time needed to render large designs.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
-          ..key = 'save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
-          ..display = 'Save design in localStorage before exiting'
-          ..tooltip = '''\
-Before exiting, save current design in localStorage (in your web browser). 
-For large designs, this is faster than saving on every edit, but if the browser crashes, 
-all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
-          ..key = 'save-dna-design-in-local-storage-on-exit')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
-          ..display = 'Do not save design in localStorage'
-          ..tooltip = '''\
-Never saves the design in localStorage.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
-          ..key = 'never-save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
-          ..display = 'Save design in localStorage periodically'
-          ..tooltip = '''\
-Every <period> seconds, save current design in localStorage (in your web browser). 
-Also saves before exiting.
-This is safer than never saving, or saving only before exiting, but will not save edits
-that occurred between the last edit and a browser crash.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
-          ..key = 'save-dna-design-in-local-storage-periodically')(),
-        (MenuNumber()
-          ..display = 'period (seconds)'
-          ..min_value = 1
-          ..default_value = props.local_storage_design_choice.period_seconds
-          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
-          ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
-          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
-      ];
+  var items = List<DialogItem>(5);
+  items[rise_per_base_pair_idx] =
+      DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+  items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
+  items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
+  items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
+  items[minor_groove_angle_idx] =
+      DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
+
+  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  double rise_per_base_pair = (results[rise_per_base_pair_idx] as DialogFloat).value;
+  double helix_radius = (results[helix_radius_idx] as DialogFloat).value;
+  double inter_helix_gap = (results[inter_helix_gap_idx] as DialogFloat).value;
+  double bases_per_turn = (results[bases_per_turn_idx] as DialogFloat).value;
+  double minor_groove_angle = (results[minor_groove_angle_idx] as DialogFloat).value;
+
+  var new_geometry = Geometry(
+    rise_per_base_pair: rise_per_base_pair,
+    helix_radius: helix_radius,
+    inter_helix_gap: inter_helix_gap,
+    bases_per_turn: bases_per_turn,
+    minor_groove_angle: minor_groove_angle,
+  );
+  app.dispatch(actions.GeometrySet(geometry: new_geometry));
 }
 
 request_load_file_from_file_chooser(

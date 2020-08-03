@@ -111,12 +111,12 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int helix_idx = helix.idx;
 
     var dialog = Dialog(title: 'adjust helix roll (degrees)', items: [
-      DialogFloatingNumber(label: 'roll', value: helix.roll),
+      DialogFloat(label: 'roll', value: helix.roll),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    double roll = (results[0] as DialogFloatingNumber).value;
+    double roll = (results[0] as DialogFloat).value;
     roll = roll % 360;
 
     app.dispatch(actions.HelixRollSet(helix_idx: helix_idx, roll: roll));
@@ -316,17 +316,17 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var position = helix.position ?? Position3D();
 
     var dialog = Dialog(title: 'adjust helix position', items: [
-      DialogFloatingNumber(label: 'x', value: position.x),
-      DialogFloatingNumber(label: 'y', value: position.y),
-      DialogFloatingNumber(label: 'z', value: position.z),
+      DialogFloat(label: 'x', value: position.x),
+      DialogFloat(label: 'y', value: position.y),
+      DialogFloat(label: 'z', value: position.z),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num x = (results[0] as DialogFloatingNumber).value;
-    num y = (results[1] as DialogFloatingNumber).value;
-    num z = (results[2] as DialogFloatingNumber).value;
+    num x = (results[0] as DialogFloat).value;
+    num y = (results[1] as DialogFloat).value;
+    num z = (results[2] as DialogFloat).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(

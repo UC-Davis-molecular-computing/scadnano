@@ -9,6 +9,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -858,6 +859,22 @@ abstract class MousePositionSideClear
   MousePositionSideClear._();
 
   static Serializer<MousePositionSideClear> get serializer => _$mousePositionSideClearSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// geometry
+
+abstract class GeometrySet
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<GeometrySet, GeometrySetBuilder> {
+  Geometry get geometry;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory GeometrySet({Geometry geometry}) = _$GeometrySet._;
+
+  GeometrySet._();
+
+  static Serializer<GeometrySet> get serializer => _$geometrySetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
