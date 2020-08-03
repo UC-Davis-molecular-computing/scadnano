@@ -161,7 +161,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..substrand = domain
             ..helix = helix
             ..color = props.strand.color
-//            ..transform = transform_of_helix(domain.helix)
+            ..transform = transform_of_helix(domain.helix)
             ..id = id
             ..key = id)());
         }
@@ -195,6 +195,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             ..domain = domain
             ..deletion = deletion
             ..helix = helix
+            ..transform = transform_of_helix(domain.helix)
             ..key = id)());
         }
       }
@@ -385,7 +386,7 @@ Future<void> ask_for_assign_dna_sequence(
     DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
     DialogCheckbox(label: 'use predefined DNA sequence'),
     DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.names),
-    DialogNumber(label: 'rotation of predefined DNA sequence', value: 5587),
+    DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
@@ -404,7 +405,7 @@ Future<void> ask_for_assign_dna_sequence(
   bool use_predefined_dna_sequence = (results[1] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
     String predefined_sequence_name = (results[2] as DialogRadio).value;
-    int rotation = (results[3] as DialogNumber).value;
+    int rotation = (results[3] as DialogInteger).value;
     dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_name, rotation);
   } else {
     dna_sequence = (results[0] as DialogTextArea).value;

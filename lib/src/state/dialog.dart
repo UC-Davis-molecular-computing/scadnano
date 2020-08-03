@@ -81,17 +81,17 @@ abstract class DialogItem {
   dynamic get value;
 }
 
-abstract class DialogNumber
+abstract class DialogInteger
     with BuiltJsonSerializable
-    implements DialogItem, Built<DialogNumber, DialogNumberBuilder> {
-  factory DialogNumber.from([void Function(DialogNumberBuilder) updates]) = _$DialogNumber;
+    implements DialogItem, Built<DialogInteger, DialogIntegerBuilder> {
+  factory DialogInteger.from([void Function(DialogIntegerBuilder) updates]) = _$DialogInteger;
 
-  DialogNumber._();
+  DialogInteger._();
 
-  static Serializer<DialogNumber> get serializer => _$dialogNumberSerializer;
+  static Serializer<DialogInteger> get serializer => _$dialogIntegerSerializer;
 
-  factory DialogNumber({String label, num value}) {
-    return DialogNumber.from((b) => b
+  factory DialogInteger({String label, num value}) {
+    return DialogInteger.from((b) => b
       ..label = label
       ..value = value);
   }

@@ -43,7 +43,13 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
-    return [insertion_path, insertion_background, text_num_insertions];
+    return (Dom.g()
+      ..className = 'insertion-group'
+      ..transform = props.transform)(
+      insertion_path,
+      insertion_background,
+      text_num_insertions,
+    );
   }
 
   ReactElement _insertion_path() {
@@ -83,7 +89,6 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..d = 'M $x0 $y0 '
           'C $x1 $y1, $x2 $y2, $x3 $y2 '
           'C $x4 $y2, $x5 $y1, $x0 $y0 '
-      ..transform = props.transform
       ..id = props.id
       ..key = props.id)();
     return insertion_path;

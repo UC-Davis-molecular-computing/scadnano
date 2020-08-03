@@ -20,6 +20,7 @@ mixin DesignMainStrandDeletionPropsMixin on UiProps {
   Domain domain;
   int deletion;
   Helix helix;
+  String transform;
 }
 
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
@@ -48,30 +49,31 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
 
     String key = 'deletion-H${domain.helix}-${deletion_offset}';
     String key_background = 'deletion-background-H${domain.helix}-${deletion_offset}';
-    return [
-      (Dom.rect()
-        ..className = 'deletion-background'
-        ..x = background_x
-        ..y = background_y
-        ..width = background_width
-        ..height = background_height
-        ..onClick = ((_) {
-          if (edit_mode_is_deletion()) {
-            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
-          }
-        })
-        ..key = key_background)(),
-      (Dom.path()
-        ..className = 'deletion-cross'
-        ..fill = 'none'
-        ..d = path_cmds
-        ..onClick = ((_) {
-          if (edit_mode_is_deletion()) {
-            app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
-          }
-        })
-        ..id = key
-        ..key = key)()
-    ];
+    return (Dom.g()
+          ..className = 'deletion-group'
+          ..transform = props.transform)(
+        (Dom.rect()
+          ..className = 'deletion-background'
+          ..x = background_x
+          ..y = background_y
+          ..width = background_width
+          ..height = background_height
+          ..onClick = ((_) {
+            if (edit_mode_is_deletion()) {
+              app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+            }
+          })
+          ..key = key_background)(),
+        (Dom.path()
+          ..className = 'deletion-cross'
+          ..fill = 'none'
+          ..d = path_cmds
+          ..onClick = ((_) {
+            if (edit_mode_is_deletion()) {
+              app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
+            }
+          })
+          ..id = key
+          ..key = key)());
   }
 }

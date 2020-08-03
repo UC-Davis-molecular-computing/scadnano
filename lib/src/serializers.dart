@@ -196,7 +196,7 @@ part 'serializers.g.dart';
   Dialog,
   DialogItem,
   DialogText,
-  DialogNumber,
+  DialogInteger,
   DialogFloatingNumber,
   DialogTextArea,
   DialogCheckbox,

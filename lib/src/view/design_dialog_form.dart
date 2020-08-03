@@ -184,7 +184,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogNumber) {
+    } else if (item is DialogInteger) {
       return Dom.label()(
         '${item.label}: ',
         (Dom.input()
@@ -196,7 +196,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             var new_responses = state.responses.toBuilder();
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogNumber response = state.responses[dialog_item_idx];
+            DialogInteger response = state.responses[dialog_item_idx];
             new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
