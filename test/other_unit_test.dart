@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/state/domain.dart';
+import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/grid_position.dart';
+import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification.dart';
@@ -83,11 +86,19 @@ main() {
   });
 
   group('strand_maker_tests', () {
+    Map<int, Helix> helices = {
+      0: Helix(idx: 0, geometry: Geometry(), grid_position: GridPosition(0, 0), grid: Grid.square),
+      1: Helix(idx: 1, geometry: Geometry(), grid_position: GridPosition(0, 1), grid: Grid.square),
+      2: Helix(idx: 2, geometry: Geometry(), grid_position: GridPosition(0, 2), grid: Grid.square),
+      3: Helix(idx: 3, geometry: Geometry(), grid_position: GridPosition(0, 3), grid: Grid.square),
+      4: Helix(idx: 4, geometry: Geometry(), grid_position: GridPosition(0, 4), grid: Grid.square),
+      5: Helix(idx: 5, geometry: Geometry(), grid_position: GridPosition(0, 5), grid: Grid.square),
+    };
     test('test_strand__0_0_to_10_cross_1_to_5', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
@@ -96,10 +107,10 @@ main() {
       expect(actual_design.strands, expected_design.strands);
     });
     test('test_strand__0_0_to_10_cross_1_to_5__reverse', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(1, 5).to(10).cross(0).to(0).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 1, forward: true, start: 5, end: 10, is_scaffold: false),
@@ -109,10 +120,10 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__h0_off0_to_off10_cross_h1_to_off5_loopout_length3_h2_to_off15', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).loopout(2, 3).to(15).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
@@ -124,10 +135,10 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__two_forward_paranemic_crossovers', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(15).cross(2).to(20).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
@@ -138,10 +149,10 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__two_reverse_paranemic_crossovers', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 20).to(10).cross(1).to(5).cross(2).to(0).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 0, forward: false, start: 10, end: 20, is_scaffold: false),
@@ -152,11 +163,11 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__multiple_strands', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
       actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand(
           [
@@ -177,11 +188,11 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__multiple_strands_other_order', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 20).to(10).cross(1).to(20).commit();
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(0).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand(
           [
@@ -202,7 +213,7 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__multiple_strands_overlap_no_error', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design
           .strand(0, 0)
           .to(10)
@@ -230,7 +241,7 @@ main() {
               unused_fields: BuiltMap<String, Object>()))
           .commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand(
           [
@@ -263,10 +274,10 @@ main() {
       expected_design = expected_design.rebuild((s) => s..strands.clear());
     });
     test('test_strand__call_to_twice_legally', () {
-      Design actual_design = new Design(grid: Grid.square);
+      Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).to(0).commit();
 
-      Design expected_design = new Design();
+      Design expected_design = new Design(grid: Grid.square, helices: helices);
       expected_design = expected_design.rebuild((s) => s
         ..strands.add(Strand([
           Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),

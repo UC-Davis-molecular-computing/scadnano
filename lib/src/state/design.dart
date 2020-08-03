@@ -32,9 +32,15 @@ part 'design.g.dart';
 abstract class Design with UnusedFields implements Built<Design, DesignBuilder>, JSONSerializable {
   Design._();
 
-  factory Design({Grid grid = Grid.none}) => Design.from((b) => b
+  factory Design({Map<int, Helix> helices, Grid grid = Grid.none}){
+    if(helices == null){ //if helices are not specified
+      helices = {};
+    }
+    return Design.from((b) => b
     ..groups[constants.default_group_name] =
-        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid));
+        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid)
+    ..helices.replace(helices));
+  }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
 

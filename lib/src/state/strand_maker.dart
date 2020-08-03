@@ -40,7 +40,7 @@ class StrandMaker {
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
         modifications_int: this.modifications_int);
-    this.design = this.design.add_strand(strand);
+    this.design = this.design.add_strand(strand); //error-checking automatically done by this method
     return this.design;
   }
 
