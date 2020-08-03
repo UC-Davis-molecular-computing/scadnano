@@ -21,6 +21,8 @@ mixin DesignMainMouseoverRectHelicesPropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+
+  BuiltSet<int> side_selected_helix_idxs;
 }
 
 class DesignMainMouseoverRectHelicesProps = UiProps
@@ -38,15 +40,19 @@ class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMou
         String transform = transform_of_helix(first_helix_idx);
         List<ReactElement> rect_elts = [];
         for (int helix_idx in group.helices_view_order) {
-          Helix helix = props.helices[helix_idx];
-          rect_elts.add((DesignMainMouseoverRectHelix()
-            ..helix = helix
-            ..key = helix.idx)());
+          if (props.side_selected_helix_idxs.contains(helix_idx)) {
+            Helix helix = props.helices[helix_idx];
+            rect_elts.add((DesignMainMouseoverRectHelix()
+              ..helix = helix
+              ..key = helix.idx)());
+          }
         }
-        svg_groups.add((Dom.g()
-          ..className = '$_CLASS-group-$group_name'
-          ..transform = transform
-          ..key = group_name)(rect_elts));
+        if (rect_elts.isNotEmpty) {
+          svg_groups.add((Dom.g()
+            ..className = '$_CLASS-group-$group_name'
+            ..transform = transform
+            ..key = group_name)(rect_elts));
+        }
       }
     }
     return (Dom.g()

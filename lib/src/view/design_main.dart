@@ -177,6 +177,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helices = props.design.helices
           ..groups = props.design.groups
           ..geometry = props.design.geometry
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
       (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
