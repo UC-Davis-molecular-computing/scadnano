@@ -13,12 +13,12 @@ import '../util.dart' as util;
 
 const selectable_css_style_non_domain_or_end = {
   'filter': 'url("#shadow")',
-  'stroke-width': '5pt',
+  'stroke-width': '5pt', // makes thicker when selected so easier to see
 };
 
 const selectable_css_style_domain = {
   'stroke': 'hotpink',
-  'stroke-width': '5pt',
+  'stroke-width': '5pt', // makes thicker when selected so easier to see
 };
 
 const selectable_css_style_end = {
