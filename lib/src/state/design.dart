@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
+import 'package:scadnano/src/state/strand_maker.dart';
 
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
@@ -31,9 +32,18 @@ part 'design.g.dart';
 abstract class Design with UnusedFields implements Built<Design, DesignBuilder>, JSONSerializable {
   Design._();
 
-  factory Design({Grid grid = Grid.none}) => Design.from((b) => b
+  factory Design({Iterable<Helix> helices, Grid grid = Grid.none}){
+    if(helices == null){ //if helices are not specified
+      helices = {};
+    }
+    var helices_map = {
+      for (var helix in helices) helix.idx: helix
+    };
+    return Design.from((b) => b
     ..groups[constants.default_group_name] =
-        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid));
+        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid)
+    ..helices.replace(helices_map));
+  }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
 
@@ -65,6 +75,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
+
+  StrandMaker strand(int current_helix, int current_offset){
+    return StrandMaker(this, current_helix, current_offset);
+  }
 
   @memoized
   bool get is_origami {
