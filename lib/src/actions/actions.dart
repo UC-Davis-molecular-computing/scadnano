@@ -1271,6 +1271,56 @@ abstract class HelixOffsetChange
   static Serializer<HelixOffsetChange> get serializer => _$helixOffsetChangeSerializer;
 }
 
+abstract class HelixMinOffsetSetByDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixMinOffsetSetByDomains, HelixMinOffsetSetByDomainsBuilder> {
+  int get helix_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMinOffsetSetByDomains({int helix_idx}) = _$HelixMinOffsetSetByDomains._;
+
+  HelixMinOffsetSetByDomains._();
+
+  static Serializer<HelixMinOffsetSetByDomains> get serializer => _$helixMinOffsetSetByDomainsSerializer;
+}
+
+abstract class HelixMaxOffsetSetByDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements HelixIndividualAction, Built<HelixMaxOffsetSetByDomains, HelixMaxOffsetSetByDomainsBuilder> {
+  int get helix_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMaxOffsetSetByDomains({int helix_idx}) = _$HelixMaxOffsetSetByDomains._;
+
+  HelixMaxOffsetSetByDomains._();
+
+  static Serializer<HelixMaxOffsetSetByDomains> get serializer => _$helixMaxOffsetSetByDomainsSerializer;
+}
+
+abstract class HelixMinOffsetSetByDomainsAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMinOffsetSetByDomainsAll, HelixMinOffsetSetByDomainsAllBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMinOffsetSetByDomainsAll() = _$HelixMinOffsetSetByDomainsAll;
+
+  HelixMinOffsetSetByDomainsAll._();
+
+  static Serializer<HelixMinOffsetSetByDomainsAll> get serializer =>
+      _$helixMinOffsetSetByDomainsAllSerializer;
+}
+
+abstract class HelixMaxOffsetSetByDomainsAll
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixMaxOffsetSetByDomainsAll, HelixMaxOffsetSetByDomainsAllBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixMaxOffsetSetByDomainsAll() = _$HelixMaxOffsetSetByDomainsAll;
+
+  HelixMaxOffsetSetByDomainsAll._();
+
+  static Serializer<HelixMaxOffsetSetByDomainsAll> get serializer =>
+      _$helixMaxOffsetSetByDomainsAllSerializer;
+}
+
 abstract class HelixOffsetChangeAll
     with BuiltJsonSerializable, UndoableAction
     implements Built<HelixOffsetChangeAll, HelixOffsetChangeAllBuilder> {
@@ -1595,7 +1645,6 @@ abstract class PotentialCrossoverRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strands move
 
-
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart
@@ -1668,8 +1717,6 @@ abstract class StrandsMoveCommit
   static Serializer<StrandsMoveCommit> get serializer => _$strandsMoveCommitSerializer;
 }
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // domains move
 
@@ -1683,7 +1730,8 @@ abstract class DomainsMoveStartSelectedDomains
 
   DomainsMoveStartSelectedDomains._();
 
-  static Serializer<DomainsMoveStartSelectedDomains> get serializer => _$domainsMoveStartSelectedDomainsSerializer;
+  static Serializer<DomainsMoveStartSelectedDomains> get serializer =>
+      _$domainsMoveStartSelectedDomainsSerializer;
 }
 
 abstract class DomainsMoveStop

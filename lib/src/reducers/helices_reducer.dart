@@ -39,6 +39,10 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixPositionSet>(helix_position_set_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixOffsetChangeAll>(
       helix_offset_change_all_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMinOffsetSetByDomainsAll>(
+      helix_min_offset_set_by_domains_all_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixMaxOffsetSetByDomainsAll>(
+      helix_max_offset_set_by_domains_all_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixIndividualAction>(helix_individual_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelect>(helix_select_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixSelectionsAdjust>(
@@ -56,7 +60,7 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
 BuiltMap<int, Helix> helix_individual_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixIndividualAction action) {
   Helix helix = helices[action.helix_idx];
-  var new_helix = _helix_individual_reducers(helix, action);
+  var new_helix = _helix_individual_reducers(helix, state, action);
   if (new_helix != helix) {
     var helices_map = helices.toMap();
     helices_map[action.helix_idx] = new_helix;
@@ -68,14 +72,20 @@ BuiltMap<int, Helix> helix_individual_reducer(
   }
 }
 
-Reducer<Helix> _helix_individual_reducers = combineReducers([
-  TypedReducer<Helix, actions.HelixOffsetChange>(helix_offset_change_reducer),
-  TypedReducer<Helix, actions.HelixMajorTickDistanceChange>(helix_major_tick_distance_change_reducer),
-  TypedReducer<Helix, actions.HelixMajorTickPeriodicDistancesChange>(
+GlobalReducer<Helix, AppState> _helix_individual_reducers = combineGlobalReducers([
+  TypedGlobalReducer<Helix, AppState, actions.HelixOffsetChange>(helix_offset_change_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMinOffsetSetByDomains>(
+      helix_min_offset_set_by_domains_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMaxOffsetSetByDomains>(
+      helix_max_offset_set_by_domains_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMajorTickDistanceChange>(
+      helix_major_tick_distance_change_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMajorTickPeriodicDistancesChange>(
       helix_major_tick_periodic_distances_change_reducer),
-  TypedReducer<Helix, actions.HelixMajorTickStartChange>(helix_major_tick_start_change_reducer),
-  TypedReducer<Helix, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
-  TypedReducer<Helix, actions.HelixRollSet>(helix_roll_set_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMajorTickStartChange>(
+      helix_major_tick_start_change_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixMajorTicksChange>(helix_major_ticks_change_reducer),
+  TypedGlobalReducer<Helix, AppState, actions.HelixRollSet>(helix_roll_set_reducer),
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +135,7 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // change min/max offsets
 
-Helix helix_offset_change_reducer(Helix helix, actions.HelixOffsetChange action) =>
+Helix helix_offset_change_reducer(Helix helix, AppState _, actions.HelixOffsetChange action) =>
     _change_offset_one_helix(helix, action.min_offset, action.max_offset);
 
 Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => helix.rebuild((b) => b
@@ -135,6 +145,44 @@ Helix _change_offset_one_helix(Helix helix, int min_offset, int max_offset) => h
 BuiltMap<int, Helix> helix_offset_change_all_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixOffsetChangeAll action) {
   Helix map_func(_, Helix helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset);
+  var helices_after = helices.map_values(map_func);
+  var helices_after_svg_adjusted = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
+  return helices_after_svg_adjusted.build();
+}
+
+Helix helix_min_offset_set_by_domains_reducer(
+        Helix helix, AppState state, actions.HelixMinOffsetSetByDomains action) =>
+    _min_offset_set_by_domains_one_helix(helix, state.design);
+
+Helix helix_max_offset_set_by_domains_reducer(
+        Helix helix, AppState state, actions.HelixMaxOffsetSetByDomains action) =>
+    _max_offset_set_by_domains_one_helix(helix, state.design);
+
+Helix _min_offset_set_by_domains_one_helix(Helix helix, Design design) {
+  var domains = design.domains_on_helix(helix.idx);
+  int min_offset = [for (var dom in domains) dom.start].min;
+  return helix.rebuild((b) => b..min_offset = min_offset);
+}
+
+Helix _max_offset_set_by_domains_one_helix(Helix helix, Design design) {
+  var domains = design.domains_on_helix(helix.idx);
+  int max_offset = [for (var dom in domains) dom.end].max;
+  return helix.rebuild((b) => b..max_offset = max_offset);
+}
+
+BuiltMap<int, Helix> helix_min_offset_set_by_domains_all_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixMinOffsetSetByDomainsAll action) {
+  Helix map_func(_, Helix helix) => _min_offset_set_by_domains_one_helix(helix, state.design);
+  var helices_after = helices.map_values(map_func);
+  var helices_after_svg_adjusted = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
+  return helices_after_svg_adjusted.build();
+}
+
+BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.HelixMaxOffsetSetByDomainsAll action) {
+  Helix map_func(_, Helix helix) => _max_offset_set_by_domains_one_helix(helix, state.design);
   var helices_after = helices.map_values(map_func);
   var helices_after_svg_adjusted = util.helices_assign_svg(
       state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
@@ -162,17 +210,19 @@ BuiltMap<int, Helix> helix_major_tick_periodic_distances_change_all_reducer(
     helices.map_values((_, helix) =>
         _change_major_tick_periodic_distances_one_helix(helix, action.major_tick_periodic_distances));
 
-Helix helix_major_tick_distance_change_reducer(Helix helix, actions.HelixMajorTickDistanceChange action) =>
+Helix helix_major_tick_distance_change_reducer(
+        Helix helix, AppState _, actions.HelixMajorTickDistanceChange action) =>
     _change_major_tick_distance_one_helix(helix, action.major_tick_distance);
 
 Helix helix_major_tick_periodic_distances_change_reducer(
-        Helix helix, actions.HelixMajorTickPeriodicDistancesChange action) =>
+        Helix helix, AppState _, actions.HelixMajorTickPeriodicDistancesChange action) =>
     _change_major_tick_periodic_distances_one_helix(helix, action.major_tick_periodic_distances);
 
-Helix helix_major_tick_start_change_reducer(Helix helix, actions.HelixMajorTickStartChange action) =>
+Helix helix_major_tick_start_change_reducer(
+        Helix helix, AppState _, actions.HelixMajorTickStartChange action) =>
     _change_major_tick_start_one_helix(helix, action.major_tick_start);
 
-Helix helix_major_ticks_change_reducer(Helix helix, actions.HelixMajorTicksChange action) =>
+Helix helix_major_ticks_change_reducer(Helix helix, AppState _, actions.HelixMajorTicksChange action) =>
     _change_major_ticks_one_helix(helix, action.major_ticks);
 
 Helix _change_major_tick_distance_one_helix(Helix helix, int major_tick_distance) => helix.rebuild((b) => b
@@ -191,7 +241,7 @@ Helix _change_major_tick_periodic_distances_one_helix(
 Helix _change_major_ticks_one_helix(Helix helix, BuiltList<int> major_ticks) =>
     helix.rebuild((b) => b..major_ticks.replace(major_ticks)..major_tick_periodic_distances.replace([]));
 
-Helix helix_roll_set_reducer(Helix helix, actions.HelixRollSet action) =>
+Helix helix_roll_set_reducer(Helix helix, AppState _, actions.HelixRollSet action) =>
     helix.rebuild((h) => h..roll = action.roll);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,18 +413,16 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     HelixBuilder helix_builder = helix.toBuilder();
     helix_builder.grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
-      helix_builder.grid_position =
-          util.position3d_to_grid(helix.position, action.grid).toBuilder();
+      helix_builder.grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none() && helix.position_ == null) {
       helix_builder.grid_position = null;
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)
-      helix_builder.position_ =
-          util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+      helix_builder.position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
     }
-    new_helices[idx]= helix_builder.build();
+    new_helices[idx] = helix_builder.build();
   }
 
   var new_helices_built = reassign_svg_positions(state, new_helices.build(), null);

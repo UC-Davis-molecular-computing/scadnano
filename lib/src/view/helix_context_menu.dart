@@ -13,30 +13,85 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
-  Future<void> dialog_helix_adjust_length() async {
-    var dialog = Dialog(title: 'adjust helix length', items: [
-      DialogNumber(label: 'minimum', value: helix.min_offset),
-      DialogNumber(label: 'maximum', value: helix.max_offset),
-      DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all),
-    ]);
+  Future<void> dialog_helix_adjust_min_offset() async {
+    int min_idx = 0;
+    int min_set_by_domain_idx = 1;
+    int apply_to_all_idx = 2;
+
+    var items = List<DialogItem>(3);
+    items[min_idx] = DialogNumber(label: 'minimum', value: helix.min_offset);
+    items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
+    items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
+
+    var dialog = Dialog(title: 'adjust helix minimum offset', items: items, disable_when_on: {
+      min_idx: [min_set_by_domain_idx],
+    });
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    int min_offset = (results[0] as DialogNumber).value;
-    int max_offset = (results[1] as DialogNumber).value;
-    bool apply_to_all = (results[2] as DialogCheckbox).value;
+    bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
+    bool min_set_by_domain = (results[min_set_by_domain_idx] as DialogCheckbox).value;
 
-    if (min_offset >= max_offset) {
-      window.alert('minimum offset ${min_offset} must be strictly less than maximum offset, '
-          'but maximum offset is ${max_offset}');
-      return;
-    }
-
-    if (apply_to_all) {
-      app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
+    if (min_set_by_domain) {
+      if (apply_to_all) {
+        app.dispatch(actions.HelixMinOffsetSetByDomainsAll());
+      } else {
+        app.dispatch(actions.HelixMinOffsetSetByDomains(helix_idx: helix.idx));
+      }
     } else {
-      app.dispatch(
-          actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset, max_offset: max_offset));
+      int min_offset = (results[min_idx] as DialogNumber).value;
+      if (min_offset >= helix.max_offset) {
+        window.alert('minimum offset must be strictly less than maximum offset  ${helix.max_offset}, '
+            'but you chose minimum offset ${min_offset}');
+        return;
+      }
+      if (apply_to_all) {
+        app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset));
+      } else {
+        app.dispatch(
+            actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset));
+      }
+    }
+  }
+
+  Future<void> dialog_helix_adjust_max_offset() async {
+    int max_idx = 0;
+    int max_set_by_domain_idx = 1;
+    int apply_to_all_idx = 2;
+
+    var items = List<DialogItem>(3);
+    items[max_idx] = DialogNumber(label: 'maximum', value: helix.max_offset);
+    items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
+    items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
+
+    var dialog = Dialog(title: 'adjust helix maximum offset', items: items, disable_when_on: {
+      max_idx: [max_set_by_domain_idx],
+    });
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
+    bool max_set_by_domain = (results[max_set_by_domain_idx] as DialogCheckbox).value;
+
+    if (max_set_by_domain) {
+      if (apply_to_all) {
+        app.dispatch(actions.HelixMaxOffsetSetByDomainsAll());
+      } else {
+        app.dispatch(actions.HelixMaxOffsetSetByDomains(helix_idx: helix.idx));
+      }
+    } else {
+      int max_offset = (results[max_idx] as DialogNumber).value;
+      if (helix.min_offset >= max_offset) {
+        window.alert('minimum offset ${helix.min_offset} must be strictly less than maximum offset, '
+            'but you chose maximum offset ${max_offset}');
+        return;
+      }
+      if (apply_to_all) {
+        app.dispatch(actions.HelixOffsetChangeAll(max_offset: max_offset));
+      } else {
+        app.dispatch(
+            actions.HelixOffsetChange(helix_idx: helix.idx, max_offset: max_offset));
+      }
     }
   }
 
@@ -283,8 +338,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         )));
   }
 
-  helix_adjust_length() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
+  helix_adjust_min_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_min_offset);
+  }
+
+  helix_adjust_max_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_max_offset);
   }
 
   helix_adjust_idx() {
@@ -319,8 +378,12 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
 
   return [
     ContextMenuItem(
-      title: 'adjust length',
-      on_click: helix_adjust_length,
+      title: 'adjust min offset',
+      on_click: helix_adjust_min_offset,
+    ),
+    ContextMenuItem(
+      title: 'adjust max offset',
+      on_click: helix_adjust_max_offset,
     ),
     ContextMenuItem(
       title: 'adjust index',

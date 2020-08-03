@@ -10,7 +10,6 @@ import 'package:react/react_client.dart';
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
 import '../state/edit_mode.dart';
-import '../state/grid.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
