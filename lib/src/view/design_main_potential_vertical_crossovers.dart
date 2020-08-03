@@ -18,6 +18,9 @@ mixin DesignMainPotentialVerticalCrossoversProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
+
+  bool only_display_selected_helices;
+  BuiltSet<int> side_selected_helix_idxs;
 }
 
 class DesignMainPotentialVerticalCrossoversComponent
@@ -26,10 +29,15 @@ class DesignMainPotentialVerticalCrossoversComponent
   render() {
     List<ReactElement> crossover_components = [];
     for (var potential_vertical_crossover in props.potential_vertical_crossovers) {
-
       // pick out only helices and group we need for this component
       int idx_top = potential_vertical_crossover.helix_idx_top;
       int idx_bot = potential_vertical_crossover.helix_idx_bot;
+
+      // skip if either helix is not being displayed
+      if (props.only_display_selected_helices &&
+          !props.side_selected_helix_idxs.containsAll([idx_bot, idx_top])) {
+        continue;
+      }
       BuiltMap<int, Helix> helices_of_crossover =
           (props.helices.toMap()..removeWhere((idx, _) => !(idx == idx_top || idx == idx_bot))).build();
       var group_top = helices_of_crossover[idx_top].group;

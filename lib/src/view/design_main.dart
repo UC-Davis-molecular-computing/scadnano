@@ -138,6 +138,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         (DesignMainPotentialVerticalCrossovers()
           ..potential_vertical_crossovers = props.potential_vertical_crossovers
           ..helices = props.design.helices
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..groups = props.design.groups
           ..geometry = props.design.geometry
           ..key = 'potential-vertical-crossovers')(),
@@ -177,6 +179,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..helices = props.design.helices
           ..groups = props.design.groups
           ..geometry = props.design.geometry
+          ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mouseover-rect')(),
       (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),

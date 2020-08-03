@@ -30,9 +30,10 @@ abstract class PotentialVerticalCrossover
     DNAEnd dna_end_bot,
   }) = _$PotentialVerticalCrossover._;
 
-  /************************ end BuiltValue boilerplate ************************/
   @memoized
   int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   int get helix_idx_top;
 
