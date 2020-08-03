@@ -86,14 +86,14 @@ main() {
   });
 
   group('strand_maker_tests', () {
-    Iterable<Helix> helices = {
+    List<Helix> helices = [
       Helix(idx: 0, geometry: Geometry(), grid_position: GridPosition(0, 0), grid: Grid.square),
       Helix(idx: 1, geometry: Geometry(), grid_position: GridPosition(0, 1), grid: Grid.square),
       Helix(idx: 2, geometry: Geometry(), grid_position: GridPosition(0, 2), grid: Grid.square),
       Helix(idx: 3, geometry: Geometry(), grid_position: GridPosition(0, 3), grid: Grid.square),
       Helix(idx: 4, geometry: Geometry(), grid_position: GridPosition(0, 4), grid: Grid.square),
       Helix(idx: 5, geometry: Geometry(), grid_position: GridPosition(0, 5), grid: Grid.square),
-    };
+    ];
     test('test_strand__0_0_to_10_cross_1_to_5', () {
       Design actual_design = new Design(grid: Grid.square, helices: helices);
       actual_design = actual_design.strand(0, 0).to(10).cross(1).to(5).commit();
