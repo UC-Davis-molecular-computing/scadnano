@@ -1873,8 +1873,7 @@ main() {
     AppState original_state = app_state_from_design(two_helices_design);
 
     AppState final_state = app_state_reducer(original_state, HelixRemove(0));
-
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design]));
+    Design final_design = final_state.design;
 
     Geometry geometry = two_helices_design.geometry;
 
@@ -1883,14 +1882,10 @@ main() {
 
     Helix new_helix1 = helix1.rebuild((b) => b..svg_position_ = Point(0, svg_y_helix_1));
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
-    Design new_design =
+    Design expected_design =
         two_helices_design.rebuild((b) => b..helices.replace({1: new_helix1})..strands.replace(new_strands));
 
-    AppState expected_state = original_state.rebuild((b) => b
-      ..design.replace(new_design)
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(final_state, expected_state);
+    expect_design_equal(final_design, expected_design);
   });
 
   test('remove helices from DNA design', () {
@@ -3252,18 +3247,12 @@ main() {
       AppState initial_state = app_state_from_design(two_helices_design)
           .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
 
-      AppState expected_state_after_set_true =
-          initial_state.rebuild((b) => b..ui_state.storables.only_display_selected_helices = true);
-
       AppState final_state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
       expect(final_state.ui_state.only_display_selected_helices, true);
-      expect_app_state_equal(final_state, expected_state_after_set_true);
 
       // Setting back to false should reset state back to initial state.
       final_state = app_state_reducer(final_state, SetOnlyDisplaySelectedHelices(false));
       expect(final_state.ui_state.only_display_selected_helices, false);
-
-      expect_app_state_equal(final_state, initial_state);
     });
   });
 
@@ -5508,20 +5497,19 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
-      for (int i = 0; i < helices_builder.length; i++) {
-        GridPosition gridPosition = helices_builder[i].grid_position.build();
-        helices_builder[i]
-          ..grid = grid
-          ..position_.replace(util.grid_to_position3d(gridPosition, Grid.square))
-          ..grid_position = null;
-      }
-      BuiltMap<int, Helix> new_helices =
-          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
-      Design expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
-      expected_design = expected_design.set_grid(grid);
-      expect_design_equal(state.design, expected_design);
+      var expected_position_h0 =
+          util.grid_to_position3d(two_helices_design.helices[0].grid_position, Grid.square);
+      var expected_position_h1 =
+          util.grid_to_position3d(two_helices_design.helices[1].grid_position, Grid.square);
+
+      expect(state.design.default_group().grid, Grid.none);
+      num eps = 0.0001;
+      expect(state.design.helices[0].position3d().x, closeTo(expected_position_h0.x, eps));
+      expect(state.design.helices[0].position3d().y, closeTo(expected_position_h0.y, eps));
+      expect(state.design.helices[0].position3d().z, closeTo(expected_position_h0.z, eps));
+      expect(state.design.helices[1].position3d().x, closeTo(expected_position_h1.x, eps));
+      expect(state.design.helices[1].position3d().y, closeTo(expected_position_h1.y, eps));
+      expect(state.design.helices[1].position3d().z, closeTo(expected_position_h1.z, eps));
     });
 
     test('GridChange_none_to_square', () {

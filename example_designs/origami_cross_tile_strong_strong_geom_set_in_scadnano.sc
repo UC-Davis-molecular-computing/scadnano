@@ -1,7 +1,7 @@
 {
   "version": "0.11.0",
   "geometry": {
-    "inter_helix_gap": 5.76
+    "inter_helix_gap": 0.65
   },
   "groups": {
     "east": {

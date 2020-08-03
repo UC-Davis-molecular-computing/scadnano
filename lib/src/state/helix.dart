@@ -168,9 +168,23 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @memoized
   Position3D get default_position {
     num x = min_offset * geometry.rise_per_base_pair;
-    Point<num> svg_pos = util.side_view_grid_to_svg(grid_position, grid, invert_yz);
-    Position3D position3d = util.svg_side_view_to_position3d(svg_pos, invert_yz).rebuild((b) => b..x = x);
-    return position3d;
+
+    // normalized so helices are diameter 1
+    Point<num> point_zy;
+    if (grid == Grid.square) {
+      point_zy = Point<num>(grid_position.h, grid_position.v);
+    } else if (grid == Grid.hex) {
+      point_zy = util.hex_grid_position_to_position2d_diameter_1_circles(grid_position);
+    } else if (grid == Grid.honeycomb) {
+      point_zy = util.honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
+    } else {
+      throw AssertionError('should not be accessing default_position if grid_position is not defined');
+    }
+
+    num y = point_zy.y * geometry.distance_between_helices_nm;
+    num z = point_zy.x * geometry.distance_between_helices_nm;
+    Position3D pos = Position3D(x: x, y: y, z: z);
+    return pos;
   }
 
   bool has_grid_position() => this.grid_position != null;

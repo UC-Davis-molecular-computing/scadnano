@@ -319,7 +319,7 @@ Design helix_remove_design_global_reducer(Design design, AppState state, actions
   Set<Domain> substrands_on_helix = design.domains_on_helix(action.helix_idx).toSet();
   var strands_with_substrands_removed =
       delete_reducer.remove_domains(design.strands, state, substrands_on_helix);
-  var new_helices = remove_helix_assuming_no_domains(design.helices, action);
+  var new_helices_before_svg_assign = remove_helix_assuming_no_domains(design.helices, action);
 
   // remove helix's review order entry
   var group = design.groups[state.ui_state.displayed_group_name];
@@ -329,11 +329,11 @@ Design helix_remove_design_global_reducer(Design design, AppState state, actions
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;
 
-  var new_helices_list = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, new_helices.toMap(), new_groups.build());
+  var new_helices_after_svg_assign = util.helices_assign_svg(
+      state.design.geometry, state.ui_state.invert_yz, new_helices_before_svg_assign.toMap(), new_groups.build());
 
   return design.rebuild((d) => d
-    ..helices.replace(new_helices_list)
+    ..helices.replace(new_helices_after_svg_assign)
     ..groups.replace(new_groups)
     ..strands.replace(strands_with_substrands_removed));
 }
