@@ -4113,8 +4113,8 @@ main() {
     var MARGIN = 1;
     test('HelixSelectionAdjust', () {
       // Creating a box that wraps around the grid from (0, 0) to (1, 0) to select helix 0
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = state.design.geometry.helix_radius_svg + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
@@ -4122,8 +4122,8 @@ main() {
 
     test('HelixSelectionAdjust_with_toggle_on', () {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -4136,8 +4136,8 @@ main() {
       state = app_state_reducer(state, HelixSelect(0, true));
 
       // Unselect 0 and select 1 and 2
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -5497,10 +5497,10 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      var expected_position_h0 =
-          util.grid_to_position3d(two_helices_design.helices[0].grid_position, Grid.square);
-      var expected_position_h1 =
-          util.grid_to_position3d(two_helices_design.helices[1].grid_position, Grid.square);
+      var expected_position_h0 = util.grid_to_position3d(
+          two_helices_design.helices[0].grid_position, Grid.square, two_helices_design.geometry);
+      var expected_position_h1 = util.grid_to_position3d(
+          two_helices_design.helices[1].grid_position, Grid.square, two_helices_design.geometry);
 
       expect(state.design.default_group().grid, Grid.none);
       num eps = 0.0001;
@@ -5530,8 +5530,10 @@ main() {
       expected_position1 =
           expected_position1.rebuild((b) => b.x = original_helix1.min_offset * geometry.base_width_svg);
 
-      GridPosition expected_grid_position0 = util.position3d_to_grid(expected_position0, grid);
-      GridPosition expected_grid_position1 = util.position3d_to_grid(expected_position1, grid);
+      GridPosition expected_grid_position0 =
+          util.position3d_to_grid(expected_position0, grid, no_grid_two_helices_design.geometry);
+      GridPosition expected_grid_position1 =
+          util.position3d_to_grid(expected_position1, grid, no_grid_two_helices_design.geometry);
 
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
