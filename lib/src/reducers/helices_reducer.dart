@@ -329,8 +329,8 @@ Design helix_remove_design_global_reducer(Design design, AppState state, actions
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;
 
-  var new_helices_after_svg_assign = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, new_helices_before_svg_assign.toMap(), new_groups.build());
+  var new_helices_after_svg_assign = util.helices_assign_svg(state.design.geometry, state.ui_state.invert_yz,
+      new_helices_before_svg_assign.toMap(), new_groups.build());
 
   return design.rebuild((d) => d
     ..helices.replace(new_helices_after_svg_assign)
@@ -425,7 +425,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     new_helices[idx] = helix_builder.build();
   }
 
-  var new_helices_built = reassign_svg_positions(state, new_helices.build(), null);
+  var new_helices_built = reassign_svg_positions(state, new_helices.build());
   return new_helices_built;
 }
 
@@ -433,14 +433,15 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 // invert y axis
 BuiltMap<int, Helix> invert_yz_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.InvertYZSet action) {
-  var new_helices = reassign_svg_positions(state, helices, null);
+  var new_helices = reassign_svg_positions(state, helices);
   return new_helices;
 }
 
 // This is needed when the whole AppUIStateStorables is set, since it also changes invert_yz
 BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
-  var new_helices = reassign_svg_positions(state, helices, null);
+  var new_helices =
+      reassign_svg_positions(state, helices, selected_helix_idxs: action.storables.side_selected_helix_idxs);
   return new_helices;
 }
 
@@ -460,7 +461,7 @@ BuiltMap<int, Helix> helix_grid_position_set_reducer(
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
-    new_helices = reassign_svg_positions(state, new_helices, null);
+    new_helices = reassign_svg_positions(state, new_helices);
     return new_helices;
   } else {
     return helices;
@@ -480,7 +481,7 @@ BuiltMap<int, Helix> helix_position_set_reducer(
     var helices_map = helices.toBuilder();
     helices_map[action.helix_idx] = new_helix;
     var new_helices = helices_map.build();
-    new_helices = reassign_svg_positions(state, new_helices, null);
+    new_helices = reassign_svg_positions(state, new_helices);
     return new_helices;
   } else {
     return helices;
@@ -490,10 +491,13 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated)
 
-BuiltMap<int, Helix> reassign_svg_positions(
-    AppState state, BuiltMap<int, Helix> helices, BuiltSet<int> selected_helix_idxs) {
+BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix> helices,
+    {BuiltSet<int> selected_helix_idxs = null}) {
   if (helices.length == 0) {
     return helices;
+  }
+  if (selected_helix_idxs == null && state.ui_state.only_display_selected_helices) {
+    selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
   }
   Geometry geometry = state.design.geometry;
   bool invert_yz = state.ui_state.invert_yz;
@@ -508,7 +512,7 @@ BuiltMap<int, Helix> helix_select_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelect action) {
   var selected_helix_idxs = helix_select_reducer(state.ui_state.side_selected_helix_idxs, action);
   if (state.ui_state.only_display_selected_helices) {
-    return reassign_svg_positions(state, helices, selected_helix_idxs);
+    return reassign_svg_positions(state, helices, selected_helix_idxs: selected_helix_idxs);
   } else {
     return helices;
   }
@@ -519,7 +523,7 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
   var selected_helix_idxs =
       helix_selections_adjust_reducer(state.ui_state.side_selected_helix_idxs, state, action);
   if (state.ui_state.only_display_selected_helices) {
-    return reassign_svg_positions(state, helices, selected_helix_idxs);
+    return reassign_svg_positions(state, helices, selected_helix_idxs: selected_helix_idxs);
   } else {
     return helices;
   }
@@ -528,7 +532,7 @@ BuiltMap<int, Helix> helix_selections_adjust_helices_reducer(
 BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.HelixSelectionsClear action) {
   if (state.ui_state.only_display_selected_helices) {
-    return reassign_svg_positions(state, helices, BuiltSet<int>());
+    return reassign_svg_positions(state, helices);
   } else {
     return helices;
   }
@@ -537,10 +541,10 @@ BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
 BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetOnlyDisplaySelectedHelices action) {
   if (action.show) {
-    return reassign_svg_positions(state, helices, state.ui_state.side_selected_helix_idxs);
+    return reassign_svg_positions(state, helices);
   } else {
     var all_helix_idxs = BuiltSet<int>(state.design.helices.keys);
-    return reassign_svg_positions(state, helices, all_helix_idxs);
+    return reassign_svg_positions(state, helices, selected_helix_idxs: all_helix_idxs);
   }
 }
 
