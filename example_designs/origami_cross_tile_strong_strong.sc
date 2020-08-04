@@ -1802,19 +1802,6 @@
     {
       "color": "#228b22",
       "domains": [
-        {"helix": 76, "forward": false, "start": 112, "end": 123},
-        {"helix": 77, "forward": true, "start": 112, "end": 123},
-        {"helix": 54, "forward": false, "start": 112, "end": 123},
-        {"helix": 55, "forward": true, "start": 112, "end": 123},
-        {"helix": 32, "forward": false, "start": 112, "end": 123},
-        {"helix": 33, "forward": true, "start": 112, "end": 123},
-        {"helix": 10, "forward": false, "start": 112, "end": 123},
-        {"helix": 11, "forward": true, "start": 112, "end": 123}
-      ]
-    },
-    {
-      "color": "#228b22",
-      "domains": [
         {"helix": 75, "forward": true, "start": 104, "end": 115},
         {"helix": 12, "forward": false, "start": 104, "end": 115}
       ]
@@ -1879,6 +1866,24 @@
         {"helix": 67, "forward": true, "start": 32, "end": 43},
         {"helix": 20, "forward": false, "start": 32, "end": 43},
         {"helix": 19, "forward": true, "start": 32, "end": 40}
+      ]
+    },
+    {
+      "color": "#228b22",
+      "domains": [
+        {"helix": 76, "forward": false, "start": 112, "end": 123},
+        {"helix": 77, "forward": true, "start": 112, "end": 123},
+        {"helix": 54, "forward": false, "start": 112, "end": 123},
+        {"helix": 55, "forward": true, "start": 112, "end": 123}
+      ]
+    },
+    {
+      "color": "#228b22",
+      "domains": [
+        {"helix": 32, "forward": false, "start": 112, "end": 123},
+        {"helix": 33, "forward": true, "start": 112, "end": 123},
+        {"helix": 10, "forward": false, "start": 112, "end": 123},
+        {"helix": 11, "forward": true, "start": 112, "end": 123}
       ]
     }
   ]
