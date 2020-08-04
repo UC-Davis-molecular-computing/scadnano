@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/domain.dart';
 import '../state/helix.dart';
@@ -30,20 +31,21 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     with PureComponent {
   @override
   render() {
+    Geometry geometry = props.helix.geometry;
     Domain domain = props.domain;
     int deletion_offset = props.deletion;
 
     Point<num> pos = props.helix.svg_base_pos(deletion_offset, domain.forward);
 
     // deletion
-    var width = 0.8 * constants.BASE_WIDTH_SVG;
+    var width = 0.8 * geometry.base_width_svg;
     var half_width = 0.5 * width;
     var path_cmds = 'M ${pos.x - half_width} ${pos.y - half_width} '
         'l ${width} ${width} m ${-width} ${0} l ${width} ${-width}';
 
     // deletion invisible background
-    num background_width = constants.BASE_WIDTH_SVG;
-    num background_height = constants.BASE_HEIGHT_SVG;
+    num background_width = geometry.base_width_svg;
+    num background_height = geometry.base_height_svg;
     num background_x = pos.x - background_width / 2;
     num background_y = pos.y - background_height / 2;
 

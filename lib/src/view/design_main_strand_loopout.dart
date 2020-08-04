@@ -192,8 +192,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
     var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
 
-    var w = 2 * util.sigmoid(props.loopout.loopout_length) * constants.BASE_WIDTH_SVG;
-    var h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
+    var w = 2 * util.sigmoid(props.loopout.loopout_length) * props.geometry.base_width_svg;
+    var h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * props.geometry.base_height_svg;
 
     // un-rotated
     var prev_y_offset = prev_svg.y + h;
@@ -224,6 +224,7 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
     Domain next_domain, Loopout loopout, bool include_start_M) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
+  Geometry geometry = top_helix.geometry;
   Domain top_dom = prev_domain;
   Domain bot_dom = next_domain;
   if (top_helix.idx == bot_helix.idx) {
@@ -251,11 +252,11 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
   var w, h;
 
   if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
-    h = 10 * util.sigmoid(loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
+    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
   } else {
-    w = 2 * util.sigmoid(loopout.loopout_length) * constants.BASE_WIDTH_SVG;
-    h = 10 * util.sigmoid(loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
+    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
   }
 
   var x_offset1, x_offset2, y_offset1, y_offset2;
@@ -291,6 +292,7 @@ String loopout_path_description_within_group_new(Helix prev_helix, Helix next_he
     Domain next_domain, Loopout loopout, bool include_start_M) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
+  Geometry geometry = prev_helix.geometry;
   Domain top_domain = prev_domain;
   Domain bot_domain = next_domain;
   if (top_helix.idx == bot_helix.idx) {
@@ -330,11 +332,11 @@ String loopout_path_description_within_group_new(Helix prev_helix, Helix next_he
   var w, h;
 
   if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
-    h = 5 * util.sigmoid(loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
+    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+    h = 5 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
   } else {
-    w = 2 * util.sigmoid(loopout.loopout_length) * constants.BASE_WIDTH_SVG;
-    h = 5 * util.sigmoid(loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
+    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
+    h = 5 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
   }
 
   var y_offset_bot = bot_svg.y;

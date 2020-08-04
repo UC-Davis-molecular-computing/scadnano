@@ -158,7 +158,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           String id = util.id_insertion(domain, insertion.offset);
           paths.add((DesignMainStrandInsertion()
             ..insertion = insertion
-            ..substrand = domain
+            ..domain = domain
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)

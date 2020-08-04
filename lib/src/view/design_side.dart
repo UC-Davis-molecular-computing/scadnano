@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
 import '../state/edit_mode.dart';
 
@@ -32,6 +33,7 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
       var helices_in_group = {for (int idx in helix_idxs_in_group) idx: state.design.helices[idx]}.build();
       return DesignSide()
         ..helices = helices_in_group
+        ..geometry = state.design.geometry
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
@@ -52,6 +54,7 @@ mixin DesignSideProps on UiProps {
   BuiltSet<int> helix_idxs_selected;
   BuiltList<MouseoverData> mouseover_datas;
   BuiltSet<EditModeChoice> edit_modes;
+  Geometry geometry;
 
   Point<num> mouse_svg_pos;
   GridPosition grid_position_mouse_cursor;
@@ -75,13 +78,9 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     };
     BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
-//    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
-//        'DesignSide.render()  using helices:\n${helices}');
-
     List helices_components = [
       for (var helix in props.helices.values)
         (DesignSideHelix()
-//        (ConnectedDesignSideHelix()
           ..helix = helix
           ..grid = props.displayed_group.grid
           ..invert_y = props.invert_y
@@ -105,6 +104,7 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
       if (should_display_potential_helix)
         (DesignSidePotentialHelix()
           ..grid = props.displayed_group.grid
+          ..geometry = props.geometry
           ..invert_y = props.invert_y
           ..grid_position = props.grid_position_mouse_cursor
           ..mouse_svg_pos = props.mouse_svg_pos

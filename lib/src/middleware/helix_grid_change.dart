@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/group.dart';
 import '../state/grid_position.dart';
@@ -14,9 +15,10 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
   if (action is actions.GridChange &&
       !action.grid.is_none() &&
       store.state.design.groups[action.group_name].grid.is_none()) {
+    Geometry geometry = store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
-        helix.idx: util.position3d_to_grid(helix.position, action.grid)
+        helix.idx: util.position3d_to_grid(helix.position, action.grid, geometry)
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
     // if lengths don't match, there's a duplicate grid position

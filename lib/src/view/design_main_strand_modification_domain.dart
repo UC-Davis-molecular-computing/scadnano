@@ -9,10 +9,8 @@ import '../constants.dart' as constants;
 
 part 'design_main_strand_modification_domain.over_react.g.dart';
 
-
 UiFactory<DesignMainStrandModificationDomainProps> DesignMainStrandModificationDomain =
     _$DesignMainStrandModificationDomain;
-
 
 mixin DesignMainStrandModificationDomainProps on UiProps {
   Address address;
@@ -24,7 +22,6 @@ mixin DesignMainStrandModificationDomainProps on UiProps {
   String transform;
 }
 
-
 class DesignMainStrandModificationDomainComponent
     extends UiComponent2<DesignMainStrandModificationDomainProps> {
   @override
@@ -32,17 +29,23 @@ class DesignMainStrandModificationDomainComponent
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
     bool display_connector = props.display_connector;
     if (props.modification is Modification5Prime) {
-      return (Dom.g()..className = "'modification-5'"..transform = props.transform)([
+      return (Dom.g()
+        ..className = "'modification-5'"
+        ..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);
     } else if (props.modification is Modification3Prime) {
-      return (Dom.g()..className = "'modification-3'"..transform = props.transform)([
+      return (Dom.g()
+        ..className = "'modification-3'"
+        ..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);
     } else {
-      return (Dom.g()..className = 'modification-internal'..transform = props.transform)([
+      return (Dom.g()
+        ..className = 'modification-internal'
+        ..transform = props.transform)([
         if (display_connector) _internal_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
       ]);
@@ -50,9 +53,9 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _end_connector(Point<num> pos, bool forward) {
-    num y_delta = Y_DELTA_MOD;
+    num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta) / 4.0;
-    double x = -X_DELTA_MOD;
+    double x = -x_delta_mod();
     return (Dom.polyline()
       ..fill = 'none'
       ..stroke = 'black'
@@ -67,7 +70,7 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _internal_connector(Point<num> pos, bool forward) {
-    num y_delta = Y_DELTA_MOD;
+    num y_delta = y_delta_mod();
     double y_del_small = (forward ? -y_delta : y_delta).toDouble();
     return (Dom.line()
       ..stroke = 'black'
@@ -80,7 +83,7 @@ class DesignMainStrandModificationDomainComponent
   }
 
   ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
-    num y_delta = Y_DELTA_MOD;
+    num y_delta = y_delta_mod();
     double y_del_small = (forward ? -1.1 * y_delta : y_delta).toDouble();
     int font_size = props.font_size;
     String baseline = forward ? 'baseline' : 'hanging';
@@ -95,9 +98,8 @@ class DesignMainStrandModificationDomainComponent
       ..dominantBaseline = baseline
       ..key = 'mod')(props.modification.display_text);
   }
-}
 
-//num y_delta_mod(Helix helix) => 1.8 * helix.svg_height() / 2.0;
-//num y_delta_mod(Helix helix) => constants.BASE_HEIGHT_SVG * 1.8;
-const Y_DELTA_MOD = constants.BASE_HEIGHT_SVG * 1.8;
-const X_DELTA_MOD = constants.BASE_WIDTH_SVG / 3.0;
+  num y_delta_mod() => props.helix.geometry.base_height_svg * 1.8;
+
+  num x_delta_mod() => props.helix.geometry.base_width_svg / 3.0;
+}

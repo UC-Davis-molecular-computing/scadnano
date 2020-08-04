@@ -405,6 +405,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.GridChange action) {
   // make builder of all helices
   Map<int, Helix> new_helices = helices.toMap();
+  Geometry geometry = state.design.geometry;
 
   // process only those in this group
   var helix_idxs_in_group = state.design.helix_idxs_in_group[action.group_name];
@@ -413,14 +414,16 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     HelixBuilder helix_builder = helix.toBuilder();
     helix_builder.grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
-      helix_builder.grid_position = util.position3d_to_grid(helix.position, action.grid).toBuilder();
+      helix_builder.grid_position =
+          util.position3d_to_grid(helix.position, action.grid, geometry).toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none() && helix.position_ == null) {
       helix_builder.grid_position = null;
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)
-      helix_builder.position_ = util.grid_to_position3d(helix.grid_position, helix.grid).toBuilder();
+      helix_builder.position_ =
+          util.grid_to_position3d(helix.grid_position, helix.grid, geometry).toBuilder();
     }
     new_helices[idx] = helix_builder.build();
   }

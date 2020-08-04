@@ -62,19 +62,25 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
   double get distance_between_helices_nm => 2 * helix_radius + inter_helix_gap;
 
   @memoized
-  double get distance_between_helices_main_svg => distance_between_helices_nm * nm_to_main_svg_pixels;
+  double get distance_between_helices_svg => distance_between_helices_nm * nm_to_svg_pixels;
 
   @memoized
   double get helix_diameter_nm => 2 * helix_radius;
 
   @memoized
-  double get helix_radius_svg => helix_radius * nm_to_main_svg_pixels;
+  double get helix_radius_svg => helix_radius * nm_to_svg_pixels;
 
   @memoized
-  double get helix_diameter_svg => helix_diameter_nm * nm_to_main_svg_pixels;
+  double get helix_diameter_svg => helix_diameter_nm * nm_to_svg_pixels;
 
   @memoized
-  double get nm_to_main_svg_pixels => constants.BASE_WIDTH_SVG / rise_per_base_pair;
+  double get base_width_svg => rise_per_base_pair * 30.12;
+
+  @memoized
+  double get base_height_svg => rise_per_base_pair * 30.12;
+
+  @memoized
+  double get nm_to_svg_pixels => base_width_svg / rise_per_base_pair;
 
   bool rise_per_base_pair_is_default() =>
       util.are_close(rise_per_base_pair, constants.default_rise_per_base_pair);

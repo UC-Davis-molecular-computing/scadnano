@@ -1,5 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 
 import '../state/design.dart';
@@ -43,9 +44,11 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
               // otherwise, already rendered mismatch for this insertion
               keys.add(key);
               var mismatch_component = (DesignMainMismatch()
-                ..key = key
                 ..base_svg_pos = base_svg_pos
-                ..forward = substrand.forward)();
+                ..geometry = props.design.geometry
+                ..forward = substrand.forward
+                ..key = key
+              )();
               mismatch_components.add(mismatch_component);
             }
           }

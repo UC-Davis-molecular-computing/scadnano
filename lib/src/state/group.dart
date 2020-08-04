@@ -146,7 +146,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
   }
 
   String transform_str(Geometry geometry) {
-    var translate_svg = position * geometry.nm_to_main_svg_pixels;
+    var translate_svg = position * geometry.nm_to_svg_pixels;
     return 'translate(${translate_svg.x}, ${translate_svg.y}) rotate(${pitch})';
 //    return 'rotate(${pitch}) translate($x_translate_svg, $y_translate_svg)';
   }
@@ -155,7 +155,7 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
   /// First we rotate about the origin by pitch, then we translated by
   /// (position.x, position.y), converted to SVG scale.
   Point<num> transform_point_main_view(Point<num> point, Geometry geometry, {bool inverse = false}) {
-    Point<num> translation = Point<num>(position.x, position.y) * geometry.nm_to_main_svg_pixels;
+    Point<num> translation = Point<num>(position.x, position.y) * geometry.nm_to_svg_pixels;
     if (!inverse) {
       Point<num> rotated = util.rotate(point, pitch);
       Point<num> translated_and_rotated = rotated + translation;

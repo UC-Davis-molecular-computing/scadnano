@@ -1878,7 +1878,7 @@ main() {
     Geometry geometry = two_helices_design.geometry;
 
     Helix helix1 = two_helices_design.helices[1];
-    num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_main_svg;
+    num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_svg;
 
     Helix new_helix1 = helix1.rebuild((b) => b..svg_position_ = Point(0, svg_y_helix_1));
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
@@ -5520,14 +5520,15 @@ main() {
 
       Helix original_helix0 = no_grid_two_helices_design.helices[0];
       Helix original_helix1 = no_grid_two_helices_design.helices[1];
+      Geometry geometry = no_grid_two_helices_design.geometry;
       Position3D expected_position0 = original_helix0.position3d();
       Position3D expected_position1 = original_helix1.position3d();
       // Since positions start out with positive x coordinates, but grid positions set these based
       // on min_offset, x coordinates should become 0.
       expected_position0 =
-          expected_position0.rebuild((b) => b.x = original_helix0.min_offset * constants.BASE_WIDTH_SVG);
+          expected_position0.rebuild((b) => b.x = original_helix0.min_offset * geometry.base_width_svg);
       expected_position1 =
-          expected_position1.rebuild((b) => b.x = original_helix1.min_offset * constants.BASE_WIDTH_SVG);
+          expected_position1.rebuild((b) => b.x = original_helix1.min_offset * geometry.base_width_svg);
 
       GridPosition expected_grid_position0 = util.position3d_to_grid(expected_position0, grid);
       GridPosition expected_grid_position1 = util.position3d_to_grid(expected_position1, grid);
@@ -5587,9 +5588,9 @@ main() {
     Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..svg_position_ = svg_position0);
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
@@ -5609,9 +5610,9 @@ main() {
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5639,9 +5640,9 @@ main() {
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)

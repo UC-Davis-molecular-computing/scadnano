@@ -2,28 +2,19 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-// import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
-import '../state/helix.dart';
 import 'package:tuple/tuple.dart';
 
-// import '../state/app_state.dart';
-// import '../app.dart';
+import '../state/helix.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
 import 'pure_component.dart';
-import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 part 'design_main_dna_sequence.over_react.g.dart';
-
-//UiFactory<_$DesignMainDNASequenceProps> ConnectedDesignMainDNASequence =
-//    connect<AppState, DesignMainDNASequenceProps>(
-//  mapStateToProps: (state) =>
-//      (DesignMainDNASequence()..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs),
-//)(DesignMainDNASequence);
 
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
 
@@ -32,6 +23,7 @@ mixin DesignMainDNASequenceProps on UiProps {
   BuiltSet<int> side_selected_helix_idxs;
   BuiltMap<int, Helix> helices;
   bool only_display_selected_helices;
+  Geometry geometry;
 }
 
 bool should_draw_domain(
@@ -48,23 +40,23 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_domain()) {
         if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          var bound_ss = substrand as Domain;
-          dna_sequence_elts.add(this._dna_sequence_on_domain(bound_ss));
-          for (var insertion in bound_ss.insertions) {
+          var domain = substrand as Domain;
+          dna_sequence_elts.add(this._dna_sequence_on_domain(domain));
+          for (var insertion in domain.insertions) {
             int offset = insertion.offset;
             int length = insertion.length;
-            dna_sequence_elts.add(this._dna_sequence_on_insertion(bound_ss, offset, length));
+            dna_sequence_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
           }
         }
       } else {
         assert(0 < i);
         assert(i < this.props.strand.substrands.length - 1);
         var loopout = substrand as Loopout;
-        Domain prev_ss = this.props.strand.substrands[i - 1];
-        Domain next_ss = this.props.strand.substrands[i + 1];
-        if (should_draw_domain(prev_ss, side_selected_helix_idxs, props.only_display_selected_helices) &&
-            should_draw_domain(next_ss, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_ss, next_ss));
+        Domain prev_dom = this.props.strand.substrands[i - 1];
+        Domain next_dom = this.props.strand.substrands[i + 1];
+        if (should_draw_domain(prev_dom, side_selected_helix_idxs, props.only_display_selected_helices) &&
+            should_draw_domain(next_dom, side_selected_helix_idxs, props.only_display_selected_helices)) {
+          dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_dom, next_dom));
         }
       }
     }
@@ -84,18 +76,16 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var rotate_y = pos.y;
 
     // this is needed to make complementary DNA bases line up more nicely (still not perfect)
-    var x_adjust = -constants.BASE_WIDTH_SVG * 0.32;
+    var x_adjust = -props.geometry.base_width_svg * 0.32;
     if (!domain.forward) {
       rotate_degrees = 180;
     }
-    var dy = -constants.BASE_HEIGHT_SVG * 0.25;
-    var text_length = constants.BASE_WIDTH_SVG * (domain.visual_length - 0.342);
+    var dy = -props.geometry.base_height_svg * 0.25;
+    var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
     var id = 'dna-bound-substrand-H${domain.helix}-S${domain.start}-E${domain.end}-'
         '${domain.forward ? 'forward' : 'reverse'}';
 
     return (Dom.text()
-//      ..onMouseLeave = ((_) => mouse_leave_update_mouseover())
-//      ..onMouseMove = ((event) => update_mouseover(event, helix))
       ..key = id
       ..id = id
       ..className = classname_dna_sequence
@@ -106,14 +96,14 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..dy = '$dy')(seq_to_draw);
   }
 
-  ReactElement _dna_sequence_on_insertion(Domain substrand, int offset, int length) {
-    var subseq = substrand.dna_sequence_in(offset, offset);
+  ReactElement _dna_sequence_on_insertion(Domain domain, int offset, int length) {
+    var subseq = domain.dna_sequence_in(offset, offset);
     //XXX: path_length appears to return different results depending on the computer (probably resolution??)
     // don't rely on it. This caused Firefox for example to render different on the same version.
 //    num path_length = insertion_path_elt.getTotalLength();
 
     var start_offset = '50%';
-    var dy = '${0.1 * constants.BASE_WIDTH_SVG}';
+    var dy = '${0.1 * props.geometry.base_width_svg}';
 
     Tuple2<num, num> ls_fs = _calculate_letter_spacing_and_font_size_insertion(length);
     num letter_spacing = ls_fs.item1;
@@ -128,26 +118,25 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-insertion'
-      //XXX: xlink:href is deprecated, but this is needed  for exporting SVG, due to a bug in InkScape
+      //XXX: xlink:href is deprecated, but this is needed for exporting SVG, due to a bug in Inkscape
       // https://gitlab.com/inkscape/inbox/issues/1763
-//      ..href = '#${util.id_insertion(substrand, offset)}'
-      ..xlinkHref = '#${util.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${util.id_insertion(domain, offset)}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
-      ..key = 'textelt-${util.id_insertion(substrand, offset)}'
+      ..key = 'textelt-${util.id_insertion(domain, offset)}'
       ..dy = dy)(text_path_props(subseq));
   }
 
-  ReactElement _dna_sequence_on_loopout(Loopout loopout, Domain prev_ss, Domain next_ss) {
+  ReactElement _dna_sequence_on_loopout(Loopout loopout, Domain prev_domain, Domain next_domain) {
     var subseq = loopout.dna_sequence;
     var length = subseq.length;
 
     var start_offset = '50%';
-    var dy = '${0.1 * constants.BASE_WIDTH_SVG}';
+    var dy = '${0.1 * props.geometry.base_width_svg}';
 
     Tuple2<num, num> ls_fs;
-    if (util.is_hairpin(prev_ss, next_ss)) {
+    if (util.is_hairpin(prev_domain, next_domain)) {
       ls_fs = _calculate_letter_spacing_and_font_size_hairpin(length);
     } else {
       ls_fs = _calculate_letter_spacing_and_font_size_loopout(length);
@@ -164,14 +153,13 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
-//      ..href = '#${loopout.id()}'
       ..xlinkHref = '#${loopout.id()}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
       ..key = 'loopout-text-'
-          'H${prev_ss.helix},${prev_ss.offset_3p}-'
-          'H${next_ss.helix},${next_ss.offset_5p}'
+          'H${prev_domain.helix},${prev_domain.offset_3p}-'
+          'H${next_domain.helix},${next_domain.offset_5p}'
       ..dy = dy)(text_path_props(subseq));
   }
 }

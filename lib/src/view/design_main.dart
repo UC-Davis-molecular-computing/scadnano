@@ -160,6 +160,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         (DesignMainDNASequences()
           ..helices = props.design.helices
           ..strands = props.design.strands
+          ..geometry = props.design.geometry
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold

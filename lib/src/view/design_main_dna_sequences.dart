@@ -1,5 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../state/helix.dart';
@@ -22,6 +23,7 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
+  Geometry geometry;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -64,6 +66,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
 //            (ConnectedDesignMainDNASequence()
               ..helices = props.helices
               ..strand = strand
+              ..geometry = props.geometry
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices

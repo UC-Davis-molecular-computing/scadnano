@@ -134,7 +134,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   Position3D get position_;
 
-  Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid);
+  Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid, geometry);
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
   double get roll;
@@ -296,18 +296,19 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// given helix idx and offset,  depending on whether strand is going forward or not.
   /// This is relative to the starting point of the Helix.
   Point<num> svg_base_pos(int offset, bool forward) {
-    num x = constants.BASE_WIDTH_SVG / 2.0 + offset * constants.BASE_WIDTH_SVG; // + this.svg_position.x;
+    num x = geometry.base_width_svg / 2.0 + offset * geometry.base_width_svg;
+
     // svg_height is height of whole helix, including both forward and reverse strand
     // must divide by 2 to get height of one strand, then divide by 2 again to go halfway into square
     num y = svg_height() / 4.0 + this.svg_position.y;
     if (!forward) {
-      y += 10;
+      y += geometry.base_height_svg;
     }
     return Point<num>(x, y);
   }
 
   int svg_x_to_offset(num x) {
-    var offset = ((x - svg_position.x) / constants.BASE_WIDTH_SVG).floor();
+    var offset = ((x - svg_position.x) / geometry.base_width_svg).floor();
     return offset;
   }
 
@@ -386,9 +387,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return helix_builder;
   }
 
-  num svg_width() => constants.BASE_WIDTH_SVG * this.num_bases();
+  num svg_width() => geometry.base_width_svg * this.num_bases();
 
-  num svg_height() => constants.BASE_HEIGHT_SVG * 2; //(invert_yz ? -2 : 2);
+  num svg_height() => geometry.base_height_svg * 2;
 
   int num_bases() => this.max_offset - this.min_offset;
 

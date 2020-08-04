@@ -22,10 +22,6 @@ part 'design_side_helix.over_react.g.dart';
 
 const String SIDE_VIEW_PREFIX = 'side-view';
 
-//UiFactory<_$DesignSideHelixProps> ConnectedDesignSideHelix = connect<AppState, _$DesignSideHelixProps>(
-//  mapStateToProps: (state) => (DesignSideHelix()),
-//)(DesignSideHelix);
-
 UiFactory<DesignSideHelixProps> DesignSideHelix = _$DesignSideHelix;
 
 mixin DesignSideHelixProps on UiProps {
@@ -72,45 +68,41 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     var children = [
       (Dom.circle()
         ..className = classname_circle
-        ..r = '${constants.HELIX_RADIUS_SIDE_PIXELS}'
+        ..r = '${props.helix.geometry.helix_radius_svg}'
         ..onClick = ((e) => this._handle_click(e, props.helix))
         ..id = helix_circle_id()
-        ..key = 'circle')((Dom.svgTitle()..key='circle-tooltip')(tooltip)),
+        ..key = 'circle')((Dom.svgTitle()..key = 'circle-tooltip')(tooltip)),
       (Dom.text()
             ..style = SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? {'fontSize': 20} : {}
             ..className = '$SIDE_VIEW_PREFIX-helix-text'
             ..id = helix_text_id()
             ..onClick = ((e) => this._handle_click(e, props.helix))
             ..key = 'text-idx')(
-          SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX
-              ? grid_position_str
-              : props.helix.idx.toString(),
-          (Dom.svgTitle()..key='text-idx-tooltip')(tooltip)),
+          SHOW_HELIX_COORDINATES_INSTEAD_OF_IDX ? grid_position_str : props.helix.idx.toString(),
+          (Dom.svgTitle()..key = 'text-idx-tooltip')(tooltip)),
       if (props.show_grid_coordinates)
         (Dom.text()
-            ..fontSize = 10
-            ..dominantBaseline = 'text-before-edge'
-            ..textAnchor = 'middle'
-            ..y = constants.HELIX_RADIUS_SIDE_PIXELS/2
-            ..key = 'text-grid-position')(grid_position_str),
-          ((Dom.svgTitle()..key='text-grid-position-tooltip')(tooltip)),
+          ..fontSize = 10
+          ..dominantBaseline = 'text-before-edge'
+          ..textAnchor = 'middle'
+          ..y = props.helix.geometry.helix_radius_svg / 2
+          ..key = 'text-grid-position')(grid_position_str),
+      ((Dom.svgTitle()..key = 'text-grid-position-tooltip')(tooltip)),
     ];
 
-//    print('checking mouseover data');
     if (props.mouseover_data != null) {
-//      print('mouseover data not null; creating DesignSideRotation now');
       assert(props.mouseover_data.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
-        ..radius = constants.HELIX_RADIUS_SIDE_PIXELS
+        ..radius = props.helix.geometry.helix_radius_svg
         ..mouseover_data = props.mouseover_data
-        ..invert_y= props.invert_y
-        ..key = 'rotation'
-        ..className = '$SIDE_VIEW_PREFIX-helix-rotation')();
+        ..invert_y = props.invert_y
+        ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
+        ..key = 'rotation')();
       children.add(rot_component);
     }
 
     Position3D pos3d = props.helix.position3d();
-    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_yz);
+    Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_yz, props.helix.geometry);
 
     return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
   }
@@ -143,7 +135,9 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     if (!event.shiftKey) {
       event.preventDefault();
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
+              position: event.page)));
     }
   }
 

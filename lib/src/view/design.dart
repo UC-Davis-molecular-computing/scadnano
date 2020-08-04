@@ -12,6 +12,7 @@ import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
 import '../state/domain.dart';
 import '../state/dna_ends_move.dart';
@@ -708,7 +709,8 @@ class DesignViewComponent {
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
       if (!displayed_grid.is_none()) {
         bool invert_y = app.state.ui_state.invert_yz;
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y,
+        Geometry geometry = app.state.design.geometry;
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));

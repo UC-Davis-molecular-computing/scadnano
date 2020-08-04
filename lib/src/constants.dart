@@ -48,8 +48,9 @@ const NUM_DIGITS_PRECISION_POSITION_DISPLAYED = 2;
 /// lattices---is larger than 2 nm.)
 /// Thus the distance between the helices is 2.5/0.332 ~ 7.5 times the width of a single DNA base.
 
-const int BASE_WIDTH_SVG = 10;
-const int BASE_HEIGHT_SVG = 10;
+//const int BASE_WIDTH_SVG = 10;
+//const int BASE_HEIGHT_SVG = 10;
+
 //XXX: these are commented out to help me see which code needs to be adjusted to use DNADesign.geometry
 //const double HELIX_DISTANCE_NM = 2.5;
 //// https://en.wikipedia.org/wiki/Nucleic_acid_double_helix#Helix_geometries
@@ -59,8 +60,6 @@ const int BASE_HEIGHT_SVG = 10;
 //const double DISTANCE_BETWEEN_HELICES_MAIN_SVG = HELIX_DISTANCE_NM * NM_TO_MAIN_SVG_PIXELS;
 //
 //// unit conversion: nm * (1/0.34) base/nm * BASE_WIDTH_SVG pixels/base = pixels
-
-const double HELIX_RADIUS_SIDE_PIXELS = 25.0;
 
 const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;

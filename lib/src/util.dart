@@ -234,11 +234,11 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
 }
 
 /// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y,
+GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y, Geometry geometry,
     {Point<num> mouse_pos = null, MouseEvent event = null}) {
   SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
-  var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y);
+  var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y, geometry);
   return grid_pos;
 }
 
@@ -323,12 +323,12 @@ Map<int, Helix> helices_assign_svg(
         if (helix.grid.is_none()) {
           var prev_pos = prev_helix.position_;
           var pos = helix.position_;
-          delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_main_svg_pixels;
+          delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_svg_pixels;
         } else {
           var prev_grid_position = prev_helix.grid_position;
           var grid_position = helix.grid_position;
           delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
-              geometry.distance_between_helices_main_svg;
+              geometry.distance_between_helices_svg;
         }
         y = prev_y + delta_y;
       }
@@ -347,12 +347,12 @@ Map<int, Helix> helices_assign_svg(
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
-  num x = helix.position3d().x * geometry.nm_to_main_svg_pixels;
+  num x = helix.position3d().x * geometry.nm_to_svg_pixels;
   return x;
 }
 
 num main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
-  num y = helix.position3d().y * geometry.nm_to_main_svg_pixels;
+  num y = helix.position3d().y * geometry.nm_to_svg_pixels;
   return y;
 }
 
@@ -608,8 +608,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
-Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz) {
-  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geometry geometry) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -626,7 +625,7 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz) {
     num y = point.y;
     point = Point<num>(-z, -y);
   }
-  return point * 2 * radius;
+  return point * geometry.distance_between_helices_svg;
 }
 
 /// see here for definitions: https://www.redblobgames.com/grids/hexagons/
@@ -702,11 +701,19 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y,
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y, Geometry geometry,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
-  num z = svg_coord.x / (2 * radius);
-  num y = svg_coord.y / (2 * radius);
+  num z = svg_coord.x / geometry.distance_between_helices_svg;
+  num y = svg_coord.y / geometry.distance_between_helices_svg;
+  GridPosition gp = position_2d_to_grid_position_diameter_1_circles(grid, z, y, coordinate_system);
+  if (invert_y) {
+    gp = GridPosition(-gp.h, -gp.v);
+  }
+  return gp;
+}
+
+GridPosition position_2d_to_grid_position_diameter_1_circles(
+    Grid grid, num z, num y, [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   int h, v;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
@@ -719,13 +726,13 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-//        y += 0.5;
+        //        y += 0.5;
         y -= 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-//        y += cos(2 * pi / 6);
+        //        y += cos(2 * pi / 6);
         y -= cos(2 * pi / 6);
       }
     }
@@ -753,37 +760,43 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
       throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
   }
-  if (invert_y) {
-    v = -v;
-    h = -h;
+  var gp = GridPosition(h, v);
+  return gp;
+}
+
+GridPosition position3d_to_grid(Position3D position, Grid grid, Geometry geometry) {
+  var gp = position_2d_to_grid_position_diameter_1_circles(grid, position.z, position.y);
+  return gp;
+}
+
+Position3D grid_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
+  num y, z;
+  if (grid == Grid.square) {
+    z = grid_position.h * geometry.distance_between_helices_nm;
+    y = grid_position.v * geometry.distance_between_helices_nm;
+  } else if (grid == Grid.hex) {
+    Point<num> point = hex_grid_position_to_position2d_diameter_1_circles(grid_position);
+    z = point.x * geometry.distance_between_helices_nm;
+    y = point.y * geometry.distance_between_helices_nm;
+  } else if (grid == Grid.honeycomb) {
+    Point<num> point = honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
+    z = point.x * geometry.distance_between_helices_nm;
+    y = point.y * geometry.distance_between_helices_nm;
+  } else {
+    throw ArgumentError(
+        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  return GridPosition(h, v);
+  return Position3D(x: 0, y: y, z: z);
 }
 
-GridPosition position3d_to_grid(Position3D position, Grid grid) {
-  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
-  // doesn't depend on whether y is going up or down
-  Point<num> svg_coord = position3d_to_side_view_svg(position, false);
-  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord, false);
-  return grid_position;
-}
-
-Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
-  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
-  // doesn't depend on whether y is going up or down
-  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid, false);
-  Position3D position3d = svg_side_view_to_position3d(svg_coord, false);
-  return position3d;
-}
-
-Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y) => Point<num>(
-      position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
-      position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
+Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
+      position.z * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
     );
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y) => Position3D(
-      z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
-      y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
+Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y, Geometry geometry) => Position3D(
+      z: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       x: 0,
     );
 

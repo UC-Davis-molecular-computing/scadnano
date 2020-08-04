@@ -231,7 +231,7 @@ Point<num> control_point_for_crossover_bezier_curve(
 
   // normalized so that adjacent helices are distance 1
   var helix_distance_normalized =
-      ((from_helix.svg_position.y - to_helix.svg_position.y) / geometry.distance_between_helices_main_svg)
+      ((from_helix.svg_position.y - to_helix.svg_position.y) / geometry.distance_between_helices_svg)
           .abs();
 
   var start_pos = from_helix.svg_base_pos(from_ss.offset_3p + delta, from_ss.forward);
@@ -251,7 +251,7 @@ Point<num> control_point_for_crossover_bezier_curve(
   // e.g., long_range_crossovers.py in the examples directory.
   double scale = helix_distance_normalized * 0.5;
   Point<num> scale_normal = unit_normal * scale;
-  control = mid + scale_normal * (constants.BASE_WIDTH_SVG / 2);
+  control = mid + scale_normal * (geometry.base_width_svg / 2);
   return control;
 }
 
