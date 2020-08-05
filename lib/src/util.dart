@@ -1388,5 +1388,6 @@ MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<Strin
 // asynchronous alert dialog
 
 async_alert(String msg) async {
+  await null;
   Timer(Duration(microseconds: 1), () => window.alert(msg));
 }

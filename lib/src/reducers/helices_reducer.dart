@@ -254,7 +254,7 @@ BuiltMap<int, Helix> helix_roll_set_at_other_reducer(
 
   var geometry = state.design.geometry;
   num rotation = util.rotation_between_helices(helix, helix_other, action.forward, geometry);
-  double old_rotation_at_anchor = state.design.helix_rotation_forward(helix, action.anchor);
+  double old_rotation_at_anchor = state.design.helix_rotation_forward(helix.idx, action.anchor);
   double delta_roll = rotation - old_rotation_at_anchor;
   double new_roll = (helix.roll + delta_roll) % 360.0;
 

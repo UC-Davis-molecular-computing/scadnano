@@ -69,7 +69,7 @@ abstract class MouseoverData
       Color color_forward = constants.color_forward_rotation_arrow_no_strand;
       Color color_reverse = constants.color_forward_rotation_arrow_no_strand;
       Helix helix = design.helices[helix_idx];
-      double roll_forward = design.helix_rotation_forward(helix, offset);
+      double roll_forward = design.helix_rotation_forward(helix.idx, offset);
       int num_domains_found = 0;
       for (Domain domain in design.domains_on_helix(helix_idx)) {
         if (domain.contains_offset(offset)) {

@@ -200,13 +200,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return default_position;
   }
 
-  /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
+  /// Calculates z-y angle in degrees, according to position3d(), from this [Helix] to [other].
   num angle_to(Helix other) {
     var pos1 = position3d();
     var pos2 = other.position3d();
-    num x = pos2.x - pos1.x;
+    num z = pos2.z - pos1.z;
     num y = pos2.y - pos1.y;
-    num angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
+    num angle_radians = (atan2(z, -y)) % (2 * pi); // using SVG "reverse y" coordinates
     return util.to_degrees(angle_radians);
   }
 
