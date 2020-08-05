@@ -27,11 +27,12 @@ helix_positions_set_based_on_crossovers_middleware(
     Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
-    _async_helix_positions_set_based_on_crossovers_middleware(store.state);
+    var all_actions = helix_positions_set_based_on_crossovers(store.state);
+    app.dispatch(actions.BatchAction(all_actions));
   }
 }
 
-_async_helix_positions_set_based_on_crossovers_middleware(AppState state) async {
+List<actions.UndoableAction> helix_positions_set_based_on_crossovers(AppState state) {
   // figure out which groups to skip and warn user if there are any
   List<String> group_names_to_skip = [];
   for (var group_name in state.design.groups.keys) {
@@ -41,8 +42,11 @@ _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async 
     }
   }
   if (group_names_to_skip.isNotEmpty) {
-    window.alert('Skipping helix groups ${group_names_to_skip.join(", ")} because their grids are not "none".');
+    window.alert('Skipping helix groups ${group_names_to_skip.join(", ")} '
+        'because their grids are not "none".');
   }
+
+  List<actions.UndoableAction> all_actions = [];
 
   // process remaining groups
   for (var group_name in state.design.groups.keys) {
@@ -50,12 +54,17 @@ _async_helix_positions_set_based_on_crossovers_middleware(AppState state) async 
     var group = state.design.groups[group_name];
     List<Helix> helices = _get_helices_to_process(state, group);
     List<Tuple2<Address, Address>> addresses = _get_addresses_to_process(state, helices);
-    if (addresses == null) return;
+    if (addresses == null) {
+      continue;
+    }
     double first_roll = helices[0].roll;
     List<RollZY> rolls_and_positions =
         _calculate_rolls_and_positions(state.design, helices, addresses, first_roll);
-    _set_rolls_and_positions(helices, rolls_and_positions);
+    var all_actions_this_group = set_rolls_and_positions(helices, rolls_and_positions);
+    all_actions.addAll(all_actions_this_group);
   }
+
+  return all_actions;
 }
 
 // Gets helices in order of their view order
@@ -313,7 +322,7 @@ List<RollZY> _calculate_rolls_and_positions(
   return rollxys;
 }
 
-_set_rolls_and_positions(List<Helix> helices, List<RollZY> rolls_and_positions) {
+List<actions.UndoableAction> set_rolls_and_positions(List<Helix> helices, List<RollZY> rolls_and_positions) {
   List<actions.UndoableAction> all_actions = [];
   for (int i = 0; i < helices.length; i++) {
     var helix = helices[i];
@@ -324,5 +333,6 @@ _set_rolls_and_positions(List<Helix> helices, List<RollZY> rolls_and_positions) 
     all_actions.add(roll_action);
     all_actions.add(pos_action);
   }
-  app.dispatch(actions.BatchAction(all_actions));
+  return all_actions;
+//  app.dispatch(actions.BatchAction(all_actions));
 }

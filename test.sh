@@ -24,8 +24,8 @@ if [ "$1" == "--debug" ] || [ "$1" == "-d" ]; then
   fi
 elif [ "$1" == "--test" ] || [ "$1" == "-t" ]; then
   echo "running"
-  echo "    $PUB run build_runner test -- -t $2"
-  $PUB run build_runner test -- -t $2
+  echo "    $PUB run build_runner test -- $2"
+  $PUB run build_runner test -- $2
 elif [ "$1" == "-n" ]; then
   if [ "$3" == "-d" ]; then
     echo "running"

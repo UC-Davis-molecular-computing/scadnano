@@ -44,7 +44,7 @@ BuiltList<MouseoverData> _update_mouseover_datas_with_helix_rotation(
     BuiltList<MouseoverData> mouseover_datas}) {
   Helix old_helix = model.design.helices[helix_idx];
   double old_rotation_at_rotation_anchor =
-      model.design.helix_rotation_forward(old_helix, rotation_anchor);
+      model.design.helix_rotation_forward(old_helix.idx, rotation_anchor);
   double delta_roll = rotation - old_rotation_at_rotation_anchor;
 
   double new_roll = (old_helix.roll + delta_roll) % 360.0;

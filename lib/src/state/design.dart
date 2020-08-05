@@ -4,8 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
-import 'package:scadnano/src/state/strand_maker.dart';
 
+import 'package:scadnano/src/state/position3d.dart';
+import 'package:scadnano/src/state/strand_maker.dart';
 import '../state/loopout.dart';
 import '../state/potential_vertical_crossover.dart';
 import '../state/selectable.dart';
@@ -29,20 +30,46 @@ import '../extension_methods.dart';
 
 part 'design.g.dart';
 
+Position3D default_position(Geometry geometry, int idx) =>
+    Position3D(x: 0, y: idx * geometry.distance_between_helices_nm);
+
+GridPosition default_grid_position(int idx) => GridPosition(0, idx);
+
 abstract class Design with UnusedFields implements Built<Design, DesignBuilder>, JSONSerializable {
   Design._();
 
-  factory Design({Iterable<Helix> helices, Grid grid = Grid.none}){
-    if(helices == null){ //if helices are not specified
-      helices = {};
+  /// If [num_helices] is specified, helices are automatically populated with reasonable defaults based
+  /// on the grid.
+  factory Design({Iterable<Helix> helices, Grid grid = Grid.none, int num_helices}) {
+    if (helices != null && num_helices != null) {
+      throw IllegalDesignError('cannot specify both helices and num_helices:\n'
+          'num_helices = ${num_helices}\n'
+          'helices = ${helices}');
     }
-    var helices_map = {
-      for (var helix in helices) helix.idx: helix
-    };
+    var default_geometry = Geometry();
+    if (helices == null) {
+      if (num_helices == null) {
+        helices = List<Helix>();
+      } else {
+        helices = [
+          for (int idx in Iterable<int>.generate(num_helices))
+            Helix(
+              idx: idx,
+              grid: grid,
+              geometry: default_geometry,
+              grid_position: grid == Grid.none ? null : default_grid_position(idx),
+              position: grid != Grid.none ? null : default_position(default_geometry, idx),
+            )
+        ];
+      }
+    }
+    var helices_map = {for (var helix in helices) helix.idx: helix};
     return Design.from((b) => b
-    ..groups[constants.default_group_name] =
-        b.groups[constants.default_group_name].rebuild((g) => g..grid = grid)
-    ..helices.replace(helices_map));
+      ..geometry.replace(default_geometry)
+      ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
+        ..grid = grid
+        ..helices_view_order.replace(helices_map.keys))
+      ..helices.replace(helices_map));
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -76,7 +103,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<int, Helix> helices_in_group(String group_name) =>
       BuiltMap<int, Helix>.from(helices.toMap()..removeWhere((idx, helix) => helix.group != group_name));
 
-  StrandMaker strand(int current_helix, int current_offset){
+  StrandMaker strand(int current_helix, int current_offset) {
     return StrandMaker(this, current_helix, current_offset);
   }
 
@@ -113,9 +140,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
-    var groups_of_domains = {
-      for (int helix_idx in helix_idxs_of_domains) helices[helix_idx].group
-    };
+    var groups_of_domains = {for (int helix_idx in helix_idxs_of_domains) helices[helix_idx].group};
     return groups_of_domains.build();
   }
 
@@ -149,7 +174,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return builder.build();
   }
 
-  // all (offset,crossover) pairs incident on helix with given idx, sorted by offset on that helix
+  // all (offset,crossover) pairs incident on helix with given idx, sorted by offset on that helix.
   // offset is inclusive on either end. This ensures that each half of a double crossover actual
   // has different offsets, and the leftmost one is considered smaller.
   @memoized
@@ -1244,7 +1269,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   double helix_rotation_at(Address address, [double roll = null]) {
     var helix = helices[address.helix_idx];
     int offset = address.offset;
-    double rotation = helix_rotation_forward(helix, offset, roll);
+    double rotation = helix_rotation_forward(helix.idx, offset, roll);
     if (!address.forward) {
       rotation = (rotation + 150) % 360;
     }
@@ -1253,7 +1278,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// rotation angle of the backbone of the forward strand on [helix] at [offset]
   /// in degrees; gives rotation of backbone of strand in the forward direction, as viewed in the side view
-  double helix_rotation_forward(Helix helix, int offset, [double roll = null]) {
+  double helix_rotation_forward(int helix_idx, int offset, [double roll = null]) {
+    Helix helix = helices[helix_idx];
     if (roll == null) {
       roll = helix.roll;
     }
@@ -1270,7 +1296,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   /// in degrees; rotation of forward strand  + 150 degrees
-  double helix_rotation_reverse(Helix helix, int offset) => this.helix_rotation_forward(helix, offset) + 150;
+  double helix_rotation_reverse(int helix_idx, int offset) =>
+      (helix_rotation_forward(helix_idx, offset) + 150) % 360;
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;

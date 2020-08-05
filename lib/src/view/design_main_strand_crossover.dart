@@ -97,33 +97,33 @@ class DesignMainStrandCrossoverComponent
     String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     var path_props = Dom.path()
-          ..d = path
-          ..stroke = color
-          ..className = classname
-          ..onMouseEnter = (ev) {
-            setState(newState()..mouse_hover = true);
-            if (edit_mode_is_backbone()) {
-              update_mouseover_crossover();
-            }
-          }
-          ..onMouseLeave = (_) {
-            setState(newState()..mouse_hover = false);
-            if (edit_mode_is_backbone()) {
-              mouse_leave_update_mouseover();
-            }
-          }
-          ..onPointerDown = ((ev) {
-            if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_down(ev.nativeEvent);
-            }
-          })
-          ..onPointerUp = ((ev) {
-            if (crossover_selectable(props.crossover)) {
-              props.crossover.handle_selection_mouse_up(ev.nativeEvent);
-            }
-          })
-          ..id = id
-          ..key = id;
+      ..d = path
+      ..stroke = color
+      ..className = classname
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_crossover();
+        }
+      }
+      ..onMouseLeave = (_) {
+        setState(newState()..mouse_hover = false);
+        if (edit_mode_is_backbone()) {
+          mouse_leave_update_mouseover();
+        }
+      }
+      ..onPointerDown = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          props.crossover.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (crossover_selectable(props.crossover)) {
+          props.crossover.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..id = id
+      ..key = id;
 
     if (within_group) {
       path_props.transform = transform_of_helix(props.prev_domain.helix);
@@ -172,10 +172,10 @@ class DesignMainStrandCrossoverComponent
     Domain prev_domain = props.prev_domain;
     Domain next_domain = props.next_domain;
     List<actions.UndoableAction> roll_actions = [];
-    for (var dom in [prev_domain, next_domain]) {
-      var other_ss = dom == prev_domain ? next_domain : prev_domain;
-      int anchor = dom == prev_domain ? dom.offset_3p : dom.offset_5p;
-      var roll_action = actions.HelixRollSetAtOther(dom.helix, other_ss.helix, dom.forward, anchor);
+    for (var domain in [prev_domain, next_domain]) {
+      var other_domain = domain == prev_domain ? next_domain : prev_domain;
+      int anchor = domain == prev_domain ? domain.offset_3p : domain.offset_5p;
+      var roll_action = actions.HelixRollSetAtOther(domain.helix, other_domain.helix, domain.forward, anchor);
       roll_actions.add(roll_action);
     }
     var action = actions.BatchAction(roll_actions);
@@ -204,4 +204,3 @@ class DesignMainStrandCrossoverComponent
     app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
   }
 }
-
