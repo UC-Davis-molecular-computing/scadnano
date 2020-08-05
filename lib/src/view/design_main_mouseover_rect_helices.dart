@@ -41,7 +41,7 @@ class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMou
         String transform = transform_of_helix(first_helix_idx);
         List<ReactElement> rect_elts = [];
         for (int helix_idx in group.helices_view_order) {
-          if (props.only_display_selected_helices && props.side_selected_helix_idxs.contains(helix_idx)) {
+          if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(helix_idx)) {
             Helix helix = props.helices[helix_idx];
             rect_elts.add((DesignMainMouseoverRectHelix()
               ..helix = helix
