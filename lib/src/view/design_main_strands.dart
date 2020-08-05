@@ -25,9 +25,9 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..show_modifications = state.ui_state.show_modifications
     ..currently_moving = state.ui_state.strands_move != null ||
         state.ui_state.domains_move != null ||
-        state.ui_state.moving_dna_ends
-    ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
-    ..moving_dna_ends = state.ui_state.moving_dna_ends
+        state.ui_state.dna_ends_are_moving
+    ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
+    ..moving_dna_ends = state.ui_state.dna_ends_are_moving
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
     ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices

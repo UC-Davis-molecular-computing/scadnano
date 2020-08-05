@@ -1,7 +1,8 @@
 import 'package:redux/redux.dart';
-import '../middleware/adjust_grid_position.dart';
-import '../middleware/export_cadnano_or_codenano_file.dart';
 
+import 'helix_group_move_start.dart';
+import 'adjust_grid_position.dart';
+import 'export_cadnano_or_codenano_file.dart';
 import 'assign_dna.dart';
 import 'check_mirror_strands_legal.dart';
 import 'edit_select_mode_change.dart';
@@ -43,6 +44,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   strand_create_middleware,
   helix_remove_middleware,
   group_remove_middleware,
+  helix_group_move_start_middleware,
   helix_change_offsets_middleware,
   helix_idxs_change_middleware,
   helix_grid_offsets_middleware,

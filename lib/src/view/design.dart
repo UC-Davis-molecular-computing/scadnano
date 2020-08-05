@@ -13,6 +13,7 @@ import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/helix_group_move.dart';
 
 import '../state/domain.dart';
 import '../state/dna_ends_move.dart';
@@ -204,7 +205,7 @@ class DesignViewComponent {
       main_view_mouse_position = event.client;
       main_view_move_potential_crossover(event);
 
-      // DNAEnds move and Strands move only should happen while left click is enabled
+      // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
       if (left_click_down) {
         // move selected DNA ends
         DNAEndsMove moves_store = app.store_dna_ends_move.state;
@@ -224,6 +225,14 @@ class DesignViewComponent {
               app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
             }
           }
+        }
+
+        HelixGroupMove helix_group_move = app.store_helix_group_move.state;
+        if (helix_group_move != null) {
+          Point<num> point =
+              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+          var action = actions.HelixGroupMoveAdjustTranslation(current_mouse_point: point);
+          app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
         }
       }
 
@@ -370,7 +379,7 @@ class DesignViewComponent {
     if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
       app.dispatch(actions.HelixSelectionsClear());
     }
-    if (app.state.ui_state.drawing_potential_crossover) {
+    if (app.state.ui_state.potential_crossover_is_drawing) {
       app.dispatch(actions.PotentialCrossoverRemove());
     }
     if (app.state.ui_state.strands_move != null) {

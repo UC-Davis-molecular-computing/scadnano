@@ -6,6 +6,7 @@ import '../state/design.dart';
 import '../actions/actions.dart' as actions;
 import 'groups_reducer.dart';
 import 'helices_reducer.dart';
+import 'helix_group_move_reducer.dart';
 import 'inline_insertions_deletions_reducer.dart';
 import 'strands_reducer.dart';
 import '../util.dart' as util;
@@ -64,6 +65,7 @@ GlobalReducer<Design, AppState> design_whole_global_reducer = combineGlobalReduc
   TypedGlobalReducer<Design, AppState, actions.HelixRemove>(helix_remove_design_global_reducer),
   TypedGlobalReducer<Design, AppState, actions.HelixRemoveAllSelected>(
       helix_remove_all_selected_design_global_reducer),
+  TypedGlobalReducer<Design, AppState, actions.HelixGroupMoveCommit>(helix_group_move_commit_global_reducer),
 ]);
 
 // need to operate on Design so we can re-set helix svg coordinates

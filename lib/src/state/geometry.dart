@@ -82,6 +82,9 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
   @memoized
   double get nm_to_svg_pixels => base_width_svg / rise_per_base_pair;
 
+  @memoized
+  double get svg_pixels_to_nm => 1.0 / nm_to_svg_pixels;
+
   bool rise_per_base_pair_is_default() =>
       util.are_close(rise_per_base_pair, constants.default_rise_per_base_pair);
 

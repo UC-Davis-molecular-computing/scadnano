@@ -21,6 +21,7 @@ import 'edit_mode.dart';
 import 'selectable.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import 'helix_group_move.dart';
 
 part 'app_ui_state.g.dart';
 
@@ -36,9 +37,11 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   @nullable
   DomainsMove get domains_move;
 
-  bool get drawing_potential_crossover;
+  bool get potential_crossover_is_drawing;
 
-  bool get moving_dna_ends;
+  bool get dna_ends_are_moving;
+
+  bool get helix_group_is_moving;
 
   bool get selection_box_displayed_main;
 
@@ -156,8 +159,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.selection_box_displayed_main = false;
     b.selection_box_displayed_side = false;
     b.selectables_store = SelectablesStoreBuilder();
-    b.drawing_potential_crossover = false;
-    b.moving_dna_ends = false;
+    b.potential_crossover_is_drawing = false;
+    b.dna_ends_are_moving = false;
+    b.helix_group_is_moving = false;
     b.changed_since_last_save = false;
     b.side_view_grid_position_mouse_cursor = null;
     b.side_view_position_mouse_cursor = null;

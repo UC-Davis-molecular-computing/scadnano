@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/helix_group_move.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -16,6 +17,7 @@ import '../reducers/edit_modes_reducer.dart';
 import '../actions/actions.dart' as actions;
 import 'dialog_reducer.dart';
 import 'domains_move_reducer.dart';
+import 'helix_group_move_reducer.dart';
 import 'strand_creation_reducer.dart';
 import 'strands_move_reducer.dart';
 import 'util_reducer.dart';
@@ -30,9 +32,10 @@ import 'mouseover_datas_reducer.dart';
 AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
   ..storables.replace(app_ui_state_storable_local_reducer(ui_state.storables, action))
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
-  ..drawing_potential_crossover =
-      drawing_potential_crossover_reducer(ui_state.drawing_potential_crossover, action)
-  ..moving_dna_ends = moving_dna_ends_reducer(ui_state.moving_dna_ends, action)
+  ..potential_crossover_is_drawing =
+      drawing_potential_crossover_reducer(ui_state.potential_crossover_is_drawing, action)
+  ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
+  ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
   ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
   ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
   ..side_view_grid_position_mouse_cursor =
@@ -81,6 +84,11 @@ Reducer<bool> moving_dna_ends_reducer = combineReducers([
   TypedReducer<bool, actions.DNAEndsMoveStop>(dna_ends_move_stop_app_ui_state_reducer),
 ]);
 
+Reducer<bool> helix_group_is_moving_reducer = combineReducers([
+  TypedReducer<bool, actions.HelixGroupMoveStart>(helix_group_move_start_app_ui_state_reducer),
+  TypedReducer<bool, actions.HelixGroupMoveStop>(helix_group_move_stop_app_ui_state_reducer),
+]);
+
 bool potential_crossover_create_app_ui_state_reducer(bool _, actions.PotentialCrossoverCreate action) => true;
 
 bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCrossoverRemove action) =>
@@ -89,6 +97,10 @@ bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCr
 bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart action) => true;
 
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
+
+bool helix_group_move_start_app_ui_state_reducer(bool _, actions.HelixGroupMoveStart action) => true;
+
+bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveStop action) => false;
 
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
