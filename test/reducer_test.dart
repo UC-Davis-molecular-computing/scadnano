@@ -2132,7 +2132,7 @@ main() {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     AppState actual_state = app_state_reducer(
         initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
-    AppState expect_state = initial_state.rebuild((b) => b.ui_state.moving_dna_ends = true);
+    AppState expect_state = initial_state.rebuild((b) => b.ui_state.dna_ends_are_moving = true);
     expect_app_state_equal(actual_state, expect_state);
   });
 
@@ -4531,7 +4531,7 @@ main() {
 
       // Test AppState reducer
       state = app_state_reducer(state, action);
-      AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = true);
+      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = true);
       expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
@@ -4559,7 +4559,7 @@ main() {
       Action action = PotentialCrossoverRemove();
 
       // Test AppState reducer
-      AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = false);
+      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = false);
       state = app_state_reducer(state, action);
       expect_app_state_equal(state, expected_state);
 

@@ -20,6 +20,7 @@ class EditModeChoice extends EnumClass {
   static const EditModeChoice insertion = _$insertion;
   static const EditModeChoice deletion = _$deletion;
   static const EditModeChoice backbone = _$backbone;
+  static const EditModeChoice move_group = _$move_group;
 
 //  static const EditModeChoice python = _$python;
 
@@ -35,6 +36,7 @@ class EditModeChoice extends EnumClass {
     KeyCode.I: insertion,
     KeyCode.D: deletion,
     KeyCode.B: backbone,
+    KeyCode.M: move_group,
   };
 
   int key_code() {
@@ -53,18 +55,20 @@ class EditModeChoice extends EnumClass {
   BuiltSet<EditModeChoice> get excluded_modes {
     switch (this) {
       case select:
-        return [pencil, backbone, nick, ligate, insertion, deletion].toBuiltSet();
+        return [pencil, backbone, nick, ligate, insertion, deletion, move_group].toBuiltSet();
       case pencil:
-        return [select, ligate, backbone].toBuiltSet();
+        return [select, ligate, backbone, move_group].toBuiltSet();
       case nick:
-        return [select, ligate, insertion, deletion, backbone].toBuiltSet();
+        return [select, ligate, insertion, deletion, backbone, move_group].toBuiltSet();
       case ligate:
-        return [select, pencil, nick, insertion, deletion, backbone].toBuiltSet();
+        return [select, pencil, nick, insertion, deletion, backbone, move_group].toBuiltSet();
       case insertion:
-        return [select, nick, ligate, deletion, backbone].toBuiltSet();
+        return [select, nick, ligate, deletion, backbone, move_group].toBuiltSet();
       case deletion:
-        return [select, nick, ligate, insertion, backbone].toBuiltSet();
+        return [select, nick, ligate, insertion, backbone, move_group].toBuiltSet();
       case backbone:
+        return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
+      case move_group:
         return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
@@ -92,6 +96,8 @@ class EditModeChoice extends EnumClass {
         return '(d)eletion';
       case backbone:
         return '(b)ackbone';
+      case move_group:
+        return '(m)ove group';
     }
     return super.toString();
   }

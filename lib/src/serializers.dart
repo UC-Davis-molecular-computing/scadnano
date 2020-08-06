@@ -7,6 +7,7 @@ import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
 import 'state/domains_move.dart';
+import 'state/helix_group_move.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -46,6 +47,12 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  HelixGroupMove,
+  HelixGroupMoveStart,
+  HelixGroupMoveCreate,
+  HelixGroupMoveAdjustTranslation,
+  HelixGroupMoveStop,
+  HelixGroupMoveCommit,
   GroupDisplayedChange,
   GroupAdd,
   GroupRemove,

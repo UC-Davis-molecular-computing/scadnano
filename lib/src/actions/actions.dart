@@ -10,6 +10,7 @@ import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/helix_group_move.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -1869,6 +1870,76 @@ abstract class DNAEndsMoveCommit
   DNAEndsMoveCommit._();
 
   static Serializer<DNAEndsMoveCommit> get serializer => _$dNAEndsMoveCommitSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// move helix group by dragging
+
+// don't need any info about name because it's always the currently selected group
+// This is triggered by clicking in design main view when in helix move mode.
+abstract class HelixGroupMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<HelixGroupMoveStart, HelixGroupMoveStartBuilder> {
+  Point<num> get mouse_point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupMoveStart({Point<num> mouse_point}) = _$HelixGroupMoveStart._;
+
+  HelixGroupMoveStart._();
+
+  static Serializer<HelixGroupMoveStart> get serializer => _$helixGroupMoveStartSerializer;
+}
+
+// This is created by middleware in response to HelixGroupMoveStart to set up the store.
+abstract class HelixGroupMoveCreate
+    with BuiltJsonSerializable
+    implements Action, Built<HelixGroupMoveCreate, HelixGroupMoveCreateBuilder> {
+  HelixGroupMove get helix_group_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupMoveCreate({HelixGroupMove helix_group_move}) = _$HelixGroupMoveCreate._;
+
+  HelixGroupMoveCreate._();
+
+  static Serializer<HelixGroupMoveCreate> get serializer => _$helixGroupMoveCreateSerializer;
+}
+
+abstract class HelixGroupMoveAdjustTranslation
+    with BuiltJsonSerializable
+    implements FastAction, Built<HelixGroupMoveAdjustTranslation, HelixGroupMoveAdjustTranslationBuilder> {
+  Point<num> get mouse_point;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupMoveAdjustTranslation({Point<num> mouse_point}) = _$HelixGroupMoveAdjustTranslation._;
+
+  HelixGroupMoveAdjustTranslation._();
+
+  static Serializer<HelixGroupMoveAdjustTranslation> get serializer =>
+      _$helixGroupMoveAdjustTranslationSerializer;
+}
+
+abstract class HelixGroupMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<HelixGroupMoveStop, HelixGroupMoveStopBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupMoveStop() = _$HelixGroupMoveStop;
+
+  HelixGroupMoveStop._();
+
+  static Serializer<HelixGroupMoveStop> get serializer => _$helixGroupMoveStopSerializer;
+}
+
+abstract class HelixGroupMoveCommit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<HelixGroupMoveCommit, HelixGroupMoveCommitBuilder> {
+  HelixGroupMove get helix_group_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory HelixGroupMoveCommit({HelixGroupMove helix_group_move}) = _$HelixGroupMoveCommit._;
+
+  HelixGroupMoveCommit._();
+
+  static Serializer<HelixGroupMoveCommit> get serializer => _$helixGroupMoveCommitSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

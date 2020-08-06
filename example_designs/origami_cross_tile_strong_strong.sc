@@ -1,21 +1,21 @@
 {
   "version": "0.11.0",
   "geometry": {
-    "inter_helix_gap": 0.65
+    "inter_helix_gap": 1
   },
   "groups": {
     "east": {
-      "position": {"x": 85.3, "y": 56.3, "z": 0},
+      "position": {"x": 86.19023915155773, "y": 63.6666181932532, "z": 0},
       "pitch": 180,
       "grid": "square"
     },
     "south": {
-      "position": {"x": 14.5, "y": 70.8, "z": 0},
+      "position": {"x": 11.26596461262712, "y": 74.93123441381077, "z": 0},
       "pitch": 270,
       "grid": "square"
     },
     "north": {
-      "position": {"x": 70.8, "y": -14.5, "z": 0},
+      "position": {"x": 74.92298878879043, "y": -11.262667341869733, "z": 0},
       "pitch": 90,
       "grid": "square"
     },

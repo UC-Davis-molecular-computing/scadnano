@@ -23,8 +23,8 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Grid types](#grid-types)
 * [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)
 * [Navigation and control](#navigation-and-control)
-* [Side view menu](#side-view-menu)
 * [Menu](#menu)
+* [Side view menu](#side-view-menu)
 * [Edit modes](#edit-modes)
 * [Assigning DNA](#assigning-dna)
 * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
@@ -333,32 +333,11 @@ Right-clicking on a crossover or loopout lets one toggle between a crossover or 
 Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.
 
 
-## Side view menu
-
-* **Group:**
-  This displays the current groups. Although all helices are displayed at once in the main view, in the side view, only one group is displayed at a time. Using this menu one can switch which group is displayed. These options are also available:
-
-  * **adjust current group:**
-  Adjusts properties of the current group (e.g., grid or pitch angle)
-
-  * **new group:**
-  Creates a new group.
-
-  * **remove current group:**
-  Removes the current group.
-
-* **Grid:**
-  The grid type can be changed to any of:
-  
-  * square
-  * honeycomb
-  * hex
-  * none
-  
-  When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
 
 
 ## Menu
+
+In both the side menu and the main menu, hovering the cursor over a most menu items brings up a tooltip explaining the menu item in more detail.
 
 This refers to the menu at the top of the whole app. At the top of the side view, there is a *side view menu*, described below.
 
@@ -496,6 +475,34 @@ This refers to the menu at the top of the whole app. At the top of the side view
 
 
 
+## Side view menu
+
+In both the side menu and the main menu, hovering the cursor over a most menu items brings up a tooltip explaining the menu item in more detail.
+
+* **Group:**
+  This displays the current groups. Although all helices are displayed at once in the main view, in the side view, only one group is displayed at a time. Using this menu one can switch which group is displayed. These options are also available:
+
+  * **adjust current group:**
+  Adjusts properties of the current group (e.g., grid or pitch angle)
+
+  * **new group:**
+  Creates a new group.
+
+  * **remove current group:**
+  Removes the current group.
+
+* **Grid:**
+  The grid type can be changed to any of:
+  
+  * square
+  * honeycomb
+  * hex
+  * none
+  
+  When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
+
+
+
 ## Edit modes
 
 There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application's display.
@@ -529,7 +536,7 @@ There are different edit modes available, shown on the right side of the screen.
     Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. Ends can be moved, but unlike strands and domains, they can only be moved back and forth along their current helix.
 
   - **crossover, loopout:**
-    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
+    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.)
 
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
@@ -591,8 +598,8 @@ There are different edit modes available, shown on the right side of the screen.
   It is also the case that some simple information about strands and domains under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 
-
-[^1]: Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.
+* **(m)ove group:**
+  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur.)
 
 
 ## Assigning DNA

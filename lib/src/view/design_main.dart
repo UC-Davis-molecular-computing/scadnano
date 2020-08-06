@@ -22,6 +22,7 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
+import 'helix_group_moving.dart';
 import 'potential_crossover_view.dart';
 import 'selection_box_view.dart';
 import 'react_dnd.dart';
@@ -34,13 +35,14 @@ final USING_REACT_DND = false;
 UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainProps>(
   mapStateToProps: (state) {
     if (state.has_error()) {
-      return (DesignMain()..has_error = true);
+      return (DesignMain()
+        ..has_error = true);
     } else {
       return (DesignMain()
         ..design = state.design
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..potential_vertical_crossovers = state.design.potential_vertical_crossovers
-        ..drawing_potential_crossover = state.ui_state.drawing_potential_crossover
+        ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
         ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
         ..has_error = state.has_error()
@@ -59,7 +61,9 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..display_base_offsets_of_major_ticks_only_first_helix =
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
-        ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices);
+        ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
+        ..helix_group_is_moving = state.ui_state.helix_group_is_moving
+      );
     }
   },
 )(DesignMain);
@@ -91,6 +95,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
   bool show_helix_circles;
+  bool helix_group_is_moving;
 }
 
 @Props()
@@ -107,7 +112,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       return null;
     }
 
-    ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
+    ReactElement main_elt = (Dom.g()
+      ..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.design.helices
         ..groups = props.design.groups
@@ -132,7 +138,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mismatches')(),
-      (ConnectedDesignMainStrands()..key = 'strands')(),
+      (ConnectedDesignMainStrands()
+        ..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
@@ -183,8 +190,14 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mouseover-rect')(),
-      (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
-      (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
+      if (props.helix_group_is_moving)
+        (ConnectedHelixGroupMoving()
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..show_helix_circles = props.show_helix_circles
+          ..key = 'helix-group-moving')(),
+      (ConnectedDesignMainDomainsMoving()
+        ..key = 'domains-moving')(),
     ]);
 
     if (USING_REACT_DND) {
