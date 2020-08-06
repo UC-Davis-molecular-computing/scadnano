@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/view/pure_component.dart';
 
 import '../state/group.dart';
 import '../state/geometry.dart';
@@ -54,7 +55,7 @@ mixin DesignMainDomainsMovingProps on UiProps {
   Geometry geometry;
 }
 
-class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMovingProps> {
+class DesignMainDomainsMovingComponent extends UiComponent2<DesignMainDomainsMovingProps> with PureComponent {
   @override
   render() {
     if (props.domains_move == null) {
