@@ -350,18 +350,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
-  BuiltMap<Domain, BuiltList<Mismatch>> get substrand_mismatches_map {
-    var substrand_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
+  BuiltMap<Domain, BuiltList<Mismatch>> get domain_mismatches_map {
+    var domain_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
         for (Domain domain in strand.domains()) {
-          substrand_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
+          domain_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
         }
       }
     }
     var domain_mismatches_builtmap_builder = MapBuilder<Domain, BuiltList<Mismatch>>();
-    substrand_mismatches_map_builder.build().forEach((bound_ss, mismatches) {
-      domain_mismatches_builtmap_builder[bound_ss] = mismatches.build();
+    domain_mismatches_map_builder.build().forEach((domain, mismatches) {
+      domain_mismatches_builtmap_builder[domain] = mismatches.build();
     });
     return domain_mismatches_builtmap_builder.build();
   }
@@ -1164,8 +1164,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
   /// If a mismatch occurs outside an insertion, within_insertion = -1).
   /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
-  BuiltList<Mismatch> mismatches_on_substrand(Domain substrand) {
-    var ret = this.substrand_mismatches_map[substrand];
+  BuiltList<Mismatch> mismatches_on_domain(Domain domain) {
+    var ret = this.domain_mismatches_map[domain];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
     }
