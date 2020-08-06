@@ -1,6 +1,5 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix.dart';
 
@@ -9,6 +8,7 @@ import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_mismatch.dart';
+import '../util.dart' as util;
 
 part 'design_main_mismatches.over_react.g.dart';
 
@@ -60,11 +60,15 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
         HelixGroup group = props.design.groups[helix.group];
         String transform_str = group.transform_str(props.design.geometry);
 
-        mismatch_components.add((Dom.g()
-          ..transform = transform_str
-          ..className = 'mismatch-components-in-domain')(domain_components));
+        if (domain_components.isNotEmpty) {
+          mismatch_components.add((Dom.g()
+            ..transform = transform_str
+            ..className = 'mismatch-components-in-domain'
+            ..key = util.id_domain(domain))(domain_components));
+        }
       }
     }
+
     return mismatch_components;
   }
 }

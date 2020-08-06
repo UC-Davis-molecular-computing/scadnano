@@ -981,7 +981,7 @@ String blob_type_to_string(BlobType blob_type) {
 }
 
 /// [and_then] is a callback to do if the file save dialog is not canceled and no other error occurs.
-/// Currenly, it doesn't do much good, because it is called whether the user cancels or not. But if someday
+/// Currently, it doesn't do much good, because it is called whether the user cancels or not. But if someday
 /// we get around the issues described here:
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/282
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/292
@@ -1009,7 +1009,9 @@ save_file(String default_filename, var content,
     }
 
     Url.revokeObjectUrl(url);
-    and_then();
+    if (and_then != null) {
+      and_then();
+    }
   } on Exception catch (e, stackTrace) {
     _alert_error_saving(e, stackTrace);
   } on Error catch (e, stackTrace) {
