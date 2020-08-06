@@ -54,9 +54,6 @@ set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_mod
   bool all_parts_selectable =
       edit_mode_is_select && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
-  print('all_parts_selectable: $all_parts_selectable');
-  print('staple_parts_selectable: $staple_parts_selectable');
-  print('scaffold_parts_selectable: $scaffold_parts_selectable');
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
     set_strand_part_selectable_css_style_rules(
       select_modes,
