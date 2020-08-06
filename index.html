@@ -135,7 +135,10 @@
     var allow_zoom = true;
 
     function set_allow_pan(allow) {
+        var prev_allow_pan = allow_pan;
         allow_pan = allow;
+        console.log('in Javascript set_allow_pan; before allow_pan = '
+            + prev_allow_pan + '; after allow_pan = ' + allow);
     }
 
     function set_allow_zoom(allow) {
@@ -146,7 +149,8 @@
     //  https://github.com/anvaka/panzoom
     //  https://github.com/timmywil/panzoom
 
-    // This is needed to prevent panning when Ctrl or Shift key is depressed, to allow selection box to be drawn.
+    // This is needed to prevent panning user is drawing for another purpose, such as dragging a
+    // selection box to moving a HelixGroup.
     function before_pan(oldPan, newPan) {
         var allow = true;
         if (document.body.classList.contains('dnd-drag-occurring')) {

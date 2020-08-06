@@ -3,7 +3,6 @@
 .packages
 24-helix-rectangle-origami.dna
 CNAME
-README.html
 bootstrap.min.css
 compile_script.py
 copy_python_scripts.sh

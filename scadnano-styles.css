@@ -12,7 +12,7 @@ html, body {
 ************************************************/
 
 .radio-left {
-    text-align:left;
+    text-align: left;
 }
 
 .error-message {
@@ -277,16 +277,16 @@ html, body {
 ************************************************/
 
 #edit-mode {
-    width: 96px;
+    width: 105px;
 }
 
 #select-mode {
-    width: 96px;
+    width: 105px;
 }
 
 .mode-button {
     border: none;
-    width: 96px;
+    width: 108px;
     /*outline: #0b0080;*/
     /*font-weight: bold;*/
     color: black;
@@ -417,7 +417,7 @@ html, body {
     pointer-events: all;
 }
 
-.domain-line, .loopout-curve {
+.domain-line, .loopout-curve, .domain-line-moving {
     stroke-width: 4;
     stroke-linecap: round;
     fill: none;
@@ -432,7 +432,11 @@ html, body {
     fill: lightgray;
 }
 
-.selected {
+/* excluding domain lines until I can figure out this issue where they disappear.
+https://stackoverflow.com/questions/36284828/svg-adding-shadow-filter-makes-straight-line-invisible
+https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-line-in-svg-makes-it-disappear
+*/
+.selected:not(.domain-line) {
     filter: url("#shadow");
 }
 
@@ -446,6 +450,16 @@ html, body {
     fill: lightgray;
 }
 
+
+/* https://www.w3schools.com/cssref/css_selectors.asp */
+/* These are needed to make parts pink when they are selected individually. */
+.selected.crossover-curve,
+.selected.loopout-curve,
+.selected.insertion-curve,
+.selected.domain-line {
+    stroke: hotpink;
+    stroke-width: 5pt;
+}
 .selected.five-prime-end,
 .selected.three-prime-end,
 .selected.five-prime-end-first-substrand,
@@ -453,39 +467,27 @@ html, body {
     stroke: red;
     fill: hotpink;
     visibility: visible;
+    stroke-width: 1pt;
 }
 
+/* https://www.w3schools.com/cssref/css_selectors.asp */
+/* These are needed to make all parts pink when whole strand is selected, */
+/* i.e., a parent of these components is selected */
+.selected .crossover-curve,
+.selected .loopout-curve,
+.selected .insertion-curve,
+.selected .domain-line {
+    stroke: hotpink;
+    stroke-width: 5pt;
+}
 .selected .five-prime-end,
 .selected .three-prime-end,
 .selected .five-prime-end-first-substrand,
 .selected .three-prime-end-last-substrand {
     stroke: red;
     fill: hotpink;
+    stroke-width: 1pt;
 }
-
-.selected.crossover-curve,
-.selected.loopout-curve,
-.selected.insertion-curve,
-.selected .crossover-curve,
-.selected .loopout-curve,
-.selected .insertion-curve,
-.selected .domain-line {
-    stroke: hotpink;
-}
-
-
-/*.selectable.strand:hover,*/
-/*.selectable.loopout-curve:hover,*/
-/*.selectable.crossover-curve:hover,*/
-/*.selectable.five-prime-end-first-substrand:hover,*/
-/*.selectable.three-prime-end-last-substrand:hover,*/
-/*.selectable.five-prime-end:hover,*/
-/*.selectable.three-prime-end:hover,*/
-/*.selectable.insertion-curve:hover,*/
-/*.selectable.deletion-cross:hover {*/
-/*    filter: url("#shadow");*/
-/*}*/
-
 
 
 /* end formatting of Strand elements when selected/selectable/not selectable */
@@ -622,7 +624,7 @@ html, body {
 
 .side-view-helix-text {
     font-family: Helvetica, serif;
-    font-size: 22pt;
+    font-size: 32pt;
     fill: DarkBlue;
     text-anchor: middle;
     dominant-baseline: central;
@@ -656,11 +658,11 @@ html, body {
 
 /* Since the dropdowns are links, need to overwrite default colors */
 .nav-link:hover {
-    color: rgba(0,0,0);
+    color: rgba(0, 0, 0);
 }
 
 .nav-link {
-    color: rgba(0,0,0, 0.5);
+    color: rgba(0, 0, 0, 0.5);
 }
 
 /* File checkmarks appear on one line */
@@ -681,7 +683,7 @@ html, body {
 }
 
 /* Hides input of Open (only display the label) */
-.form-file-dropdown .custom-file-input{
+.form-file-dropdown .custom-file-input {
     display: none;
 }
 
@@ -713,9 +715,9 @@ html, body {
 }
 
 .dropdown-item-keyboard-shortcut-span {
-    float:right;
+    float: right;
     width: 33%;
-    position:relative;
+    position: relative;
 }
 
 /************************************************
