@@ -148,7 +148,12 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
   String transform_str(Geometry geometry) {
     var translate_svg = position * geometry.nm_to_svg_pixels;
     return 'translate(${translate_svg.x}, ${translate_svg.y}) rotate(${pitch})';
-//    return 'rotate(${pitch}) translate($x_translate_svg, $y_translate_svg)';
+//    return 'rotate(${pitch}) translate(${translate_svg.x}, ${translate_svg.y})';
+  }
+
+  Point<num> translation(Geometry geometry) {
+    var translate_svg = position * geometry.nm_to_svg_pixels;
+    return Point<num>(translate_svg.x, translate_svg.y);
   }
 
   /// Transform point in main view according to this group's position and pitch.

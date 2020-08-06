@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 
@@ -24,5 +26,18 @@ abstract class TransformByHelixGroup<P extends TransformByHelixGroupPropsMixin> 
     var group = props.groups[helix.group];
     var transform_str = group.transform_str(props.geometry);
     return transform_str;
+  }
+
+  String transform_of_group(String group_name) {
+    var group = props.groups[group_name];
+    var transform_str = group.transform_str(props.geometry);
+    return transform_str;
+  }
+
+  Point<num> translation_of_helix(int helix_idx) {
+    Helix helix = props.helices[helix_idx];
+    var group = props.groups[helix.group];
+    Point<num> translation = group.translation(props.geometry);
+    return translation;
   }
 }

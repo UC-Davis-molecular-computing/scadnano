@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/view/transform_by_helix_group.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/helix.dart';
@@ -18,19 +20,25 @@ part 'design_main_dna_sequence.over_react.g.dart';
 
 UiFactory<DesignMainDNASequenceProps> DesignMainDNASequence = _$DesignMainDNASequence;
 
-mixin DesignMainDNASequenceProps on UiProps {
+mixin DesignMainDNASequencePropsMixin on UiProps {
   Strand strand;
   BuiltSet<int> side_selected_helix_idxs;
-  BuiltMap<int, Helix> helices;
   bool only_display_selected_helices;
+
+  BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
 }
+
+class DesignMainDNASequenceProps = UiProps
+    with DesignMainDNASequencePropsMixin, TransformByHelixGroupPropsMixin;
 
 bool should_draw_domain(
         Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
-class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps> with PureComponent {
+class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceProps>
+    with PureComponent, TransformByHelixGroup<DesignMainDNASequenceProps> {
   @override
   render() {
     BuiltSet<int> side_selected_helix_idxs = props.side_selected_helix_idxs;
@@ -41,12 +49,17 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       if (substrand.is_domain()) {
         if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
           var domain = substrand as Domain;
-          dna_sequence_elts.add(this._dna_sequence_on_domain(domain));
+          List<ReactElement> domain_elts = [];
+          domain_elts.add(this._dna_sequence_on_domain(domain));
           for (var insertion in domain.insertions) {
             int offset = insertion.offset;
             int length = insertion.length;
-            dna_sequence_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
+            domain_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
           }
+          dna_sequence_elts.add((Dom.g()
+            ..transform = transform_of_helix(domain.helix)
+            ..className = 'dna-seq-on-domain-group'
+            ..key = util.id_domain(domain))(domain_elts));
         }
       } else {
         assert(0 < i);
@@ -82,8 +95,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     }
     var dy = -props.geometry.base_height_svg * 0.25;
     var text_length = props.geometry.base_width_svg * (domain.visual_length - 0.342);
-    var id = 'dna-bound-substrand-H${domain.helix}-S${domain.start}-E${domain.end}-'
-        '${domain.forward ? 'forward' : 'reverse'}';
+    var id = 'dna-${util.id_domain(domain)}';
 
     return (Dom.text()
       ..key = id

@@ -1047,6 +1047,9 @@ pprint(Map map) {
   print('}');
 }
 
+String id_domain(Domain domain) =>
+    'domain-H${domain.helix}-S${domain.start}-E${domain.end}-${domain.forward ? 'forward' : 'reverse'}';
+
 String id_insertion(Domain substrand, int offset) =>
     'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 

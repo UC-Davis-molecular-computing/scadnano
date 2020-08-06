@@ -166,8 +166,9 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       if (props.show_dna)
         (DesignMainDNASequences()
           ..helices = props.design.helices
-          ..strands = props.design.strands
+          ..groups = props.design.groups
           ..geometry = props.design.geometry
+          ..strands = props.design.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
@@ -178,6 +179,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
       (ConnectedSelectionBoxView()
+        //FIXME: this makes the DesignMain React component not a pure function of AppState,
+        // but currently no way around it since zoom is defined outside of React by the svg-pan-zoom library
         ..stroke_width_getter = (() => 2.0 / util.current_zoom_main_js())
         ..is_main = true
         ..id = 'selection-box-main'

@@ -1,6 +1,7 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/group.dart';
 import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../state/helix.dart';
@@ -17,13 +18,15 @@ UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNAS
 
 mixin DesignMainDNASequencesProps on UiProps {
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
+
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
   String dna_sequence_png_uri;
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
-  Geometry geometry;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -49,10 +52,13 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
     if (should_use_png_dna_sequence) {
       // DNA sequence png.
       return (Dom.g()
-        ..className = 'dna-sequences-main-view'
-        ..pointerEvents = 'none'
-        ..transform =
-            'translate(-${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})')(
+            ..className = 'dna-sequences-main-view'
+            ..pointerEvents = 'none'
+            ..transform =
+                'translate(-${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})'
+//        ..x = -constants.DNA_SEQUENCE_HORIZONTAL_OFFSET
+//        ..y = -constants.DNA_SEQUENCE_VERTICAL_OFFSET
+          )(
         (Dom.image()
           ..xlinkHref = props.dna_sequence_png_uri
           ..id = 'dna-sequences-main-view-png')(),
@@ -63,10 +69,10 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
         for (Strand strand in props.strands)
           if (strand.dna_sequence != null)
             (DesignMainDNASequence()
-//            (ConnectedDesignMainDNASequence()
               ..helices = props.helices
-              ..strand = strand
+              ..groups = props.groups
               ..geometry = props.geometry
+              ..strand = strand
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices
