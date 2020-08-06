@@ -1907,11 +1907,10 @@ abstract class HelixGroupMoveCreate
 abstract class HelixGroupMoveAdjustTranslation
     with BuiltJsonSerializable
     implements FastAction, Built<HelixGroupMoveAdjustTranslation, HelixGroupMoveAdjustTranslationBuilder> {
-  Point<num> get current_mouse_point;
+  Point<num> get mouse_point;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory HelixGroupMoveAdjustTranslation({Point<num> current_mouse_point}) =
-      _$HelixGroupMoveAdjustTranslation._;
+  factory HelixGroupMoveAdjustTranslation({Point<num> mouse_point}) = _$HelixGroupMoveAdjustTranslation._;
 
   HelixGroupMoveAdjustTranslation._();
 
@@ -1931,7 +1930,7 @@ abstract class HelixGroupMoveStop
 }
 
 abstract class HelixGroupMoveCommit
-    with BuiltJsonSerializable
+    with BuiltJsonSerializable, UndoableAction
     implements Action, Built<HelixGroupMoveCommit, HelixGroupMoveCommitBuilder> {
   HelixGroupMove get helix_group_move;
 

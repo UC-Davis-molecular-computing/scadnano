@@ -295,7 +295,7 @@ that occurred between the last edit and a browser crash.'''
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
-        ..display = 'Pasted Strands Keep Original Color'
+        ..display = 'Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
@@ -304,7 +304,7 @@ If unchecked, then a new color is generated.'''
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
-        ..display = 'Inline Insertions/Deletions'
+        ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
         ..tooltip = ''
             '''

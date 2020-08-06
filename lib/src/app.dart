@@ -151,6 +151,11 @@ class App {
         underlying_action is actions.DNAEndsMoveStop) {
       store_dna_ends_move.dispatch(action);
     }
+    if (underlying_action is actions.HelixGroupMoveCreate ||
+        underlying_action is actions.HelixGroupMoveAdjustTranslation ||
+        underlying_action is actions.HelixGroupMoveStop) {
+      store_helix_group_move.dispatch(action);
+    }
   }
 
   setup_warning_before_unload() {

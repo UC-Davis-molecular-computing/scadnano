@@ -51,6 +51,9 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
   @override
   Position3D operator +(Position3D other) => Position3D(x: x + other.x, y: y + other.y, z: z + other.z);
 
+  String xy([int digits_precision = 1]) =>
+      '(${x.toStringAsFixed(digits_precision)}, ${y.toStringAsFixed(digits_precision)})';
+
   /************************ begin BuiltValue boilerplate ************************/
   factory Position3D({num x = 0, num y = 0, num z = 0}) => Position3D.from((b) => b
     ..x = x

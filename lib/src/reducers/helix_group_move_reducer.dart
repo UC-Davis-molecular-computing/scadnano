@@ -19,7 +19,7 @@ HelixGroupMove helix_group_move_create_translation_reducer(
 
 HelixGroupMove helix_group_move_adjust_translation_reducer(
         HelixGroupMove move, actions.HelixGroupMoveAdjustTranslation action) =>
-    move.rebuild((b) => b..current_mouse_point = action.current_mouse_point);
+    move.rebuild((b) => b..current_mouse_point = action.mouse_point);
 
 HelixGroupMove helix_group_move_stop_translation_reducer(
         HelixGroupMove _, actions.HelixGroupMoveStop action) =>
@@ -31,15 +31,7 @@ Design helix_group_move_commit_global_reducer(
   var helix_group_move = action.helix_group_move;
   var group_name = helix_group_move.group_name;
   var new_groups = design.groups.toMap();
-  var group = new_groups[group_name];
-  var original_position = group.position;
-
-  var mouse_translation = helix_group_move.delta;
-  var nm_translation = mouse_translation * design.geometry.svg_pixels_to_nm;
-  var new_position = original_position.rebuild((b) => b
-    ..x = nm_translation.x
-    ..y = nm_translation.y);
-
-  new_groups[group_name] = new_groups[group_name].rebuild((b) => b..position.replace(new_position));
+  new_groups[group_name] =
+      new_groups[group_name].rebuild((b) => b..position.replace(helix_group_move.current_position));
   return design.rebuild((b) => b..groups.replace(new_groups));
 }

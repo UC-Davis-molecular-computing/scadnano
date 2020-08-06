@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
@@ -22,16 +23,19 @@ helix_group_move_start_middleware(Store<AppState> store, action, NextDispatcher 
     HelixGroup group = state.design.groups[group_name];
     var helices_in_group = state.design.helices_in_group(group_name);
 
-    next(action); // this lets the boolean be set that we are moving a helix group
-
-    var helix_group_move = HelixGroupMove(
-      group_name: group_name,
-      group: group,
-      helices: helices_in_group,
-      original_mouse_point: action.mouse_point,
-    );
-
-    app.dispatch(actions.HelixGroupMoveCreate(helix_group_move: helix_group_move));
+    if (helices_in_group.isNotEmpty) {
+      next(action); // this lets the boolean be set that we are moving a helix group
+      var helix_group_move = HelixGroupMove(
+        group_name: group_name,
+        group: group,
+        helices: helices_in_group,
+        original_mouse_point: action.mouse_point,
+      );
+      app.dispatch(actions.HelixGroupMoveCreate(helix_group_move: helix_group_move));
+    } else {
+      var msg = 'Cannot move a helix group that has no helices in it.';
+      window.alert(msg);
+    }
   } else {
     next(action);
   }
