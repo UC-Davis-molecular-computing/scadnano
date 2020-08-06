@@ -3,36 +3,40 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/insertion_deletion_pairing.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/strands_move.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import 'package:scadnano/src/constants.dart';
+import 'package:scadnano/src/state/domains_move.dart';
 import 'package:tuple/tuple.dart';
 
+import '../state/group.dart';
+import '../middleware/insertion_deletion_pairing.dart';
+import '../state/app_state.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
+import '../state/dna_end.dart';
+import '../state/dna_ends_move.dart';
+import '../state/strands_move.dart';
+import '../state/substrand.dart';
 import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 import 'assign_or_remove_dna_reducer.dart';
 import 'change_loopout_length.dart';
 import 'delete_reducer.dart';
+import 'domains_move_reducer.dart';
 import 'insertion_deletion_reducer.dart';
 import 'nick_ligate_join_by_crossover_reducers.dart';
 import 'util_reducer.dart';
 import '../util.dart' as util;
 
 Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
-  TypedReducer<BuiltList<Strand>, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedReducer<BuiltList<Strand>, actions.AssignDNA>(assign_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.RemoveDNA>(remove_dna_reducer),
   TypedReducer<BuiltList<Strand>, actions.ReplaceStrands>(replace_strands_reducer),
-//  TypedReducer<BuiltList<Strand>, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<BuiltList<Strand>, actions.SingleStrandAction>(strands_single_strand_reducer),
 ]);
 
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsMoveCommit>(strands_move_commit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DomainsMoveCommit>(domains_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
       strands_dna_ends_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandPartAction>(strands_part_reducer),
@@ -79,21 +83,20 @@ Reducer<Strand> strand_part_reducer = combineReducers([
 ]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// move strands
+// move strands/domains
 
-BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions.StrandsMoveCommit action) {
+BuiltList<Strand> strands_move_commit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.StrandsMoveCommit action) {
   if (action.strands_move.allowable && action.strands_move.is_nontrivial) {
     var strands_builder = strands.toBuilder();
     for (var strand in action.strands_move.strands_moving) {
       int strand_idx = strands.indexOf(strand);
+      Strand new_strand = one_strand_strands_move_commit_reducer(state.design, strand, action.strands_move);
+      new_strand = new_strand.initialize();
       if (action.strands_move.copy) {
-        Strand new_strand = single_strand_commit_stop_reducer(strand, action.strands_move);
-        new_strand = new_strand.initialize();
         strands_builder.add(new_strand);
       } else {
-        strand = single_strand_commit_stop_reducer(strand, action.strands_move);
-        strand = strand.initialize();
-        strands_builder[strand_idx] = strand;
+        strands_builder[strand_idx] = new_strand;
       }
     }
     return strands_builder.build();
@@ -102,30 +105,78 @@ BuiltList<Strand> strands_move_commit_reducer(BuiltList<Strand> strands, actions
   }
 }
 
-Strand single_strand_commit_stop_reducer(Strand strand, StrandsMove strands_move) {
+// replace all strands that had domains moved
+BuiltList<Strand> domains_move_commit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.DomainsMoveCommit action) {
+  if (action.domains_move.allowable && action.domains_move.is_nontrivial) {
+    var strands_builder = strands.toBuilder();
+    for (var strand in action.domains_move.domains_moving_from_strand.keys) {
+      var domains = action.domains_move.domains_moving_from_strand[strand].toSet();
+      int strand_idx = strands.indexOf(strand);
+      Strand new_strand =
+          one_strand_domains_move_commit_reducer(state.design, strand, domains, action.domains_move);
+      new_strand = new_strand.initialize();
+      strands_builder[strand_idx] = new_strand;
+    }
+    return strands_builder.build();
+  } else {
+    return strands;
+  }
+}
+
+// replace strand with moved domains from that strand
+Strand one_strand_domains_move_commit_reducer(
+    Design design, Strand strand, Set<Domain> domains_on_strand, DomainsMove domains_move) {
+  var substrands = strand.substrands.toList();
+  for (int i = 0; i < substrands.length; i++) {
+    var domain = substrands[i];
+    if (domain is Domain && domains_on_strand.contains(domain)) {
+      var original_group = util.original_group_from_domains_move(design, domains_move);
+      var current_group = util.current_group_from_domains_move(design, domains_move);
+      var moved_domain = move_domain(
+        domain: domain,
+        original_group: original_group,
+        current_group: current_group,
+        delta_view_order: domains_move.delta_view_order,
+        delta_offset: domains_move.delta_offset,
+        delta_forward: domains_move.delta_forward,
+      );
+      substrands[i] = moved_domain;
+    }
+  }
+  return strand.rebuild((b) => b..substrands.replace(substrands));
+}
+
+Strand one_strand_strands_move_commit_reducer(Design design, Strand strand, StrandsMove strands_move) {
   int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
   bool delta_forward = strands_move.delta_forward;
 
-  strand = moved_strand(strand,
+  var original_group = util.original_group_from_strands_move(design, strands_move);
+  var current_group = util.current_group_from_strands_move(design, strands_move);
+
+  strand = move_strand(
+      strand: strand,
+      original_group: original_group,
+      current_group: current_group,
       delta_view_order: delta_view_order,
       delta_offset: delta_offset,
-      delta_forward: delta_forward,
-      helices_view_order: strands_move.helices_view_order,
-      helices_view_order_inverse: strands_move.helices_view_order_inverse);
+      delta_forward: delta_forward);
   if (strands_move.copy && !strands_move.keep_color && !strand.is_scaffold) {
-    //FIXME: this makes the reducer not pure
+    //FIXME: this makes the reducer not pure; put color_cycler in design instead; and make this a
+    // Design-level reducer
     strand = strand.rebuild((b) => b..color = util.color_cycler.next());
   }
   return strand;
 }
 
-Strand moved_strand(Strand strand,
-    {int delta_view_order,
+Strand move_strand(
+    {Strand strand,
+    HelixGroup original_group,
+    HelixGroup current_group,
+    int delta_view_order,
     int delta_offset,
-    bool delta_forward,
-    BuiltList<int> helices_view_order,
-    BuiltMap<int, int> helices_view_order_inverse}) {
+    bool delta_forward}) {
   List<Substrand> substrands = strand.substrands.toList();
   if (delta_forward) {
     substrands = substrands.reversed.toList();
@@ -134,11 +185,15 @@ Strand moved_strand(Strand strand,
     Substrand substrand = substrands[i];
     Substrand new_substrand = substrand;
     if (substrand is Domain) {
-      Domain bound_ss_moved = substrand.rebuild(
+      num original_view_order = original_group.helices_view_order_inverse[substrand.helix];
+      num new_view_order = original_view_order + delta_view_order;
+      int new_helix_idx = current_group.helices_view_order[new_view_order];
+      assert(new_helix_idx != null);
+      Domain bound_domain_moved = substrand.rebuild(
         (b) => b
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
-          ..helix = helices_view_order[helices_view_order_inverse[substrand.helix] + delta_view_order]
+          ..helix = new_helix_idx
           ..forward = (delta_forward != substrand.forward)
           ..start = substrand.start + delta_offset
           ..end = substrand.end + delta_offset
@@ -146,7 +201,7 @@ Strand moved_strand(Strand strand,
           ..insertions.replace(
               substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
-      new_substrand = bound_ss_moved;
+      new_substrand = bound_domain_moved;
     }
     substrands[i] = new_substrand;
   }

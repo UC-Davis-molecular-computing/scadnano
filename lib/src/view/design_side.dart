@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/group.dart';
+import '../state/edit_mode.dart';
 
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
@@ -26,13 +28,17 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
     if (state.has_error()) {
       return DesignSide();
     } else {
+      var displayed_group = state.design.groups[state.ui_state.displayed_group_name];
+      var helix_idxs_in_group = state.design.helix_idxs_in_group[state.ui_state.displayed_group_name];
+      var helices_in_group = {for (int idx in helix_idxs_in_group) idx: state.design.helices[idx]}.build();
       return DesignSide()
-        ..helices = state.design.helices
+        ..helices = helices_in_group
+        ..geometry = state.design.geometry
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..helix_idxs_selected = state.ui_state.side_selected_helix_idxs
         ..mouseover_datas = state.ui_state.mouseover_datas
         ..edit_modes = state.ui_state.edit_modes
-        ..grid = state.design.grid
+        ..displayed_group = displayed_group
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
         ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor
         ..show_grid_coordinates = state.ui_state.show_grid_coordinates_side_view
@@ -48,13 +54,14 @@ mixin DesignSideProps on UiProps {
   BuiltSet<int> helix_idxs_selected;
   BuiltList<MouseoverData> mouseover_datas;
   BuiltSet<EditModeChoice> edit_modes;
+  Geometry geometry;
 
   Point<num> mouse_svg_pos;
-  Grid grid;
   GridPosition grid_position_mouse_cursor;
   bool invert_y;
   bool helix_change_apply_to_all;
   bool show_grid_coordinates;
+  HelixGroup displayed_group;
 }
 
 class DesignSideComponent extends UiComponent2<DesignSideProps> with PureComponent {
@@ -71,16 +78,12 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     };
     BuiltSet<int> helix_idxs_selected = props.helix_idxs_selected;
 
-//    print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n'
-//        'DesignSide.render()  using helices:\n${helices}');
-
     List helices_components = [
       for (var helix in props.helices.values)
         (DesignSideHelix()
-//        (ConnectedDesignSideHelix()
           ..helix = helix
+          ..grid = props.displayed_group.grid
           ..invert_y = props.invert_y
-          ..grid = props.grid
           ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..edit_modes = props.edit_modes
           ..mouse_is_over = props.grid_position_mouse_cursor == helix.grid_position
@@ -100,7 +103,8 @@ class DesignSideComponent extends UiComponent2<DesignSideProps> with PureCompone
     return (Dom.g()..className = 'side-view')([
       if (should_display_potential_helix)
         (DesignSidePotentialHelix()
-          ..grid = this.props.grid
+          ..grid = props.displayed_group.grid
+          ..geometry = props.geometry
           ..invert_y = props.invert_y
           ..grid_position = props.grid_position_mouse_cursor
           ..mouse_svg_pos = props.mouse_svg_pos

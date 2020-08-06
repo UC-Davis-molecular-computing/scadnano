@@ -13,10 +13,15 @@ main() {
   initializeComponentTests();
   group('helices_positions_set_based_on_crossovers', () {
     test('helices_angle', () {
+      // I wrote this when 0.5 was the default gap
       Design helices_angle = design_from_string("""
         {
           "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
+          "geometry": {
+            "helix_radius": 1.0,
+            "inter_helix_gap": 0.5
+          },
           "helices": [
             {"position": {"x": 0, "y": 0, "z": 0}, "major_ticks": [0, 10, 21, 31, 42, 52, 63], "max_offset": 64},
             {"position": {"x": 0, "y": 2.5, "z": 0}, "major_ticks": [0, 10, 21, 31, 42, 52, 63], "max_offset": 64},
@@ -196,6 +201,10 @@ main() {
         {
           "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
+          "geometry": {
+            "helix_radius": 1.0,
+            "inter_helix_gap": 0.5
+          },
           "helices": [
             {
               "position": {"x": 0, "y": 0, "z": 0},

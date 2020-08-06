@@ -13,45 +13,110 @@ import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
 List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to_all) {
-  Future<void> dialog_helix_adjust_length() async {
-    int helix_idx = helix.idx;
+  Future<void> dialog_helix_adjust_min_offset() async {
+    int min_idx = 0;
+    int min_set_by_domain_idx = 1;
+    int apply_to_all_idx = 2;
 
-    var dialog = Dialog(title: 'adjust helix length', items: [
-      DialogNumber(label: 'minimum', value: helix.min_offset),
-      DialogNumber(label: 'maximum', value: helix.max_offset),
-      DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all),
+    var items = List<DialogItem>(3);
+    items[min_idx] = DialogInteger(label: 'minimum', value: helix.min_offset);
+    items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
+    items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
+
+    var dialog = Dialog(title: 'adjust helix minimum offset', items: items, disable_when_on: {
+      min_idx: [min_set_by_domain_idx],
+    });
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
+    bool min_set_by_domain = (results[min_set_by_domain_idx] as DialogCheckbox).value;
+
+    if (min_set_by_domain) {
+      if (apply_to_all) {
+        app.dispatch(actions.HelixMinOffsetSetByDomainsAll());
+      } else {
+        app.dispatch(actions.HelixMinOffsetSetByDomains(helix_idx: helix.idx));
+      }
+    } else {
+      int min_offset = (results[min_idx] as DialogInteger).value;
+      if (min_offset >= helix.max_offset) {
+        window.alert('minimum offset must be strictly less than maximum offset  ${helix.max_offset}, '
+            'but you chose minimum offset ${min_offset}');
+        return;
+      }
+      if (apply_to_all) {
+        app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset));
+      } else {
+        app.dispatch(
+            actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset));
+      }
+    }
+  }
+
+  Future<void> dialog_helix_adjust_max_offset() async {
+    int max_idx = 0;
+    int max_set_by_domain_idx = 1;
+    int apply_to_all_idx = 2;
+
+    var items = List<DialogItem>(3);
+    items[max_idx] = DialogInteger(label: 'maximum', value: helix.max_offset);
+    items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
+    items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
+
+    var dialog = Dialog(title: 'adjust helix maximum offset', items: items, disable_when_on: {
+      max_idx: [max_set_by_domain_idx],
+    });
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    bool apply_to_all = (results[apply_to_all_idx] as DialogCheckbox).value;
+    bool max_set_by_domain = (results[max_set_by_domain_idx] as DialogCheckbox).value;
+
+    if (max_set_by_domain) {
+      if (apply_to_all) {
+        app.dispatch(actions.HelixMaxOffsetSetByDomainsAll());
+      } else {
+        app.dispatch(actions.HelixMaxOffsetSetByDomains(helix_idx: helix.idx));
+      }
+    } else {
+      int max_offset = (results[max_idx] as DialogInteger).value;
+      if (helix.min_offset >= max_offset) {
+        window.alert('minimum offset ${helix.min_offset} must be strictly less than maximum offset, '
+            'but you chose maximum offset ${max_offset}');
+        return;
+      }
+      if (apply_to_all) {
+        app.dispatch(actions.HelixOffsetChangeAll(max_offset: max_offset));
+      } else {
+        app.dispatch(
+            actions.HelixOffsetChange(helix_idx: helix.idx, max_offset: max_offset));
+      }
+    }
+  }
+
+  Future<void> dialog_helix_adjust_idx() async {
+    var dialog = Dialog(title: 'adjust helix index', items: [
+      DialogInteger(label: 'new index', value: helix.idx),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    int min_offset = (results[0] as DialogNumber).value;
-    int max_offset = (results[1] as DialogNumber).value;
-    bool apply_to_all = (results[2] as DialogCheckbox).value;
+    int new_idx = (results[0] as DialogInteger).value;
 
-    if (min_offset >= max_offset) {
-      window.alert('minimum offset ${min_offset} must be strictly less than maximum offset, '
-          'but maximum offset is ${max_offset}');
-      return;
-    }
-
-    if (apply_to_all) {
-      app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset, max_offset: max_offset));
-    } else {
-      app.dispatch(
-          actions.HelixOffsetChange(helix_idx: helix_idx, min_offset: min_offset, max_offset: max_offset));
-    }
+    app.dispatch(actions.HelixIdxsChange(idx_replacements: {helix.idx: new_idx}));
   }
 
   Future<void> dialog_helix_adjust_roll() async {
     int helix_idx = helix.idx;
 
     var dialog = Dialog(title: 'adjust helix roll (degrees)', items: [
-      DialogFloatingNumber(label: 'roll', value: helix.roll),
+      DialogFloat(label: 'roll', value: helix.roll),
     ]);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    double roll = (results[0] as DialogFloatingNumber).value;
+    double roll = (results[0] as DialogFloat).value;
     roll = roll % 360;
 
     app.dispatch(actions.HelixRollSet(helix_idx: helix_idx, roll: roll));
@@ -89,8 +154,8 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[regular_spacing_enabled_idx] =
         DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance());
     items[regular_spacing_distance_idx] =
-        DialogNumber(label: 'regular distance', value: default_regular_distance);
-    items[major_tick_start_idx] = DialogNumber(label: 'starting major tick', value: default_start);
+        DialogInteger(label: 'regular distance', value: default_regular_distance);
+    items[major_tick_start_idx] = DialogInteger(label: 'starting major tick', value: default_start);
     items[periodic_spacing_enabled_idx] =
         DialogCheckbox(label: 'periodic spacing', value: helix.has_major_tick_periodic_distances());
     items[periodic_spacing_distances_idx] =
@@ -134,7 +199,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     int major_tick_distance = null;
     List<int> major_tick_periodic_distances = [];
 
-    int major_tick_start = (results[major_tick_start_idx] as DialogNumber).value;
+    int major_tick_start = (results[major_tick_start_idx] as DialogInteger).value;
     if (major_tick_start < helix.min_offset) {
       window.alert('''\
 ${major_tick_start} is not a valid major tick because it is less than the 
@@ -149,7 +214,7 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         return;
       }
     } else if (use_major_tick_distance) {
-      major_tick_distance = (results[regular_spacing_distance_idx] as DialogNumber).value;
+      major_tick_distance = (results[regular_spacing_distance_idx] as DialogInteger).value;
       if (major_tick_distance <= 0) {
         window.alert('${major_tick_distance} is not a valid distance because it is not positive.');
         return;
@@ -234,15 +299,15 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var grid_position = helix.grid_position ?? GridPosition(0, 0);
 
     var dialog = Dialog(title: 'adjust helix grid position', items: [
-      DialogNumber(label: 'h', value: grid_position.h),
-      DialogNumber(label: 'v', value: grid_position.v),
+      DialogInteger(label: 'h', value: grid_position.h),
+      DialogInteger(label: 'v', value: grid_position.v),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num h = (results[0] as DialogNumber).value;
-    num v = (results[1] as DialogNumber).value;
+    num h = (results[0] as DialogInteger).value;
+    num v = (results[1] as DialogInteger).value;
 
     app.dispatch(actions.HelixGridPositionSet(helix: helix, grid_position: GridPosition(h, v)));
   }
@@ -251,17 +316,17 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
     var position = helix.position ?? Position3D();
 
     var dialog = Dialog(title: 'adjust helix position', items: [
-      DialogFloatingNumber(label: 'x', value: position.x),
-      DialogFloatingNumber(label: 'y', value: position.y),
-      DialogFloatingNumber(label: 'z', value: position.z),
+      DialogFloat(label: 'x', value: position.x),
+      DialogFloat(label: 'y', value: position.y),
+      DialogFloat(label: 'z', value: position.z),
     ]);
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    num x = (results[0] as DialogFloatingNumber).value;
-    num y = (results[1] as DialogFloatingNumber).value;
-    num z = (results[2] as DialogFloatingNumber).value;
+    num x = (results[0] as DialogFloat).value;
+    num y = (results[1] as DialogFloat).value;
+    num z = (results[2] as DialogFloat).value;
 
     // TODO: (check validity)
     app.dispatch(actions.HelixPositionSet(
@@ -273,8 +338,16 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
         )));
   }
 
-  helix_adjust_length() {
-    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_length);
+  helix_adjust_min_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_min_offset);
+  }
+
+  helix_adjust_max_offset() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_max_offset);
+  }
+
+  helix_adjust_idx() {
+    app.disable_keyboard_shortcuts_while(dialog_helix_adjust_idx);
   }
 
   helix_adjust_major_tick_marks() {
@@ -305,8 +378,16 @@ minimum offset ${helix.min_offset} of helix ${helix.min_offset}.''');
 
   return [
     ContextMenuItem(
-      title: 'adjust length',
-      on_click: helix_adjust_length,
+      title: 'adjust min offset',
+      on_click: helix_adjust_min_offset,
+    ),
+    ContextMenuItem(
+      title: 'adjust max offset',
+      on_click: helix_adjust_max_offset,
+    ),
+    ContextMenuItem(
+      title: 'adjust index',
+      on_click: helix_adjust_idx,
     ),
     ContextMenuItem(
       title: 'adjust tick marks',

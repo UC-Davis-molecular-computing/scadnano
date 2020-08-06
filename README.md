@@ -24,6 +24,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Relation of grid_position and position to side and main view display](#relation-of-grid_position-and-position-to-side-and-main-view-display)
 * [Navigation and control](#navigation-and-control)
 * [Menu](#menu)
+* [Side view menu](#side-view-menu)
 * [Edit modes](#edit-modes)
 * [Assigning DNA](#assigning-dna)
 * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
@@ -35,7 +36,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 
 The design of scadnano is based heavily on [cadnano](https://cadnano.org/), 
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
-with two main differences: 
+with three main differences: 
 
 1) scadnano runs entirely in the browser, with no installation required. 
 Currently only 
@@ -49,10 +50,10 @@ and
 planned in the future.
 
 2) scadnano designs, while they can be edited manually in scadnano, can also be created and edited by a well-documented Python scripting library 
-([installation](https://github.com/UC-Davis-molecular-computing/scadnano-python-package) / 
-[documentation](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
+([help](https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme) / 
+[API](https://scadnano-python-package.readthedocs.io)), to help automate tedious tasks.
 
-A secondary goal is that the file format should be easily human-readable (see example below), to help when debugging scripts or interfacing with other software.
+3) The file format is easily human-readable (see [example below](#terminology)), to help when debugging scripts or interfacing with other software.
 
 This document explains how to use the web interface for viewing and manually editing designs.
 The documentation for the Python scripting package is 
@@ -86,7 +87,7 @@ A [tutorial](https://github.com/UC-Davis-molecular-computing/scadnano/blob/maste
 It is strongly recommended that you frequently save your work by pressing the "Save" button to save your design to a `.sc` file on your computer.
 
 Despite being run in a browser, currently this application is not really a "web app". Nothing is stored on a server; everything is running and being stored in your browser locally.
-In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. 
+In particular, your design is not automatically saved in an easily recoverable way. *For convenience only*, the application uses something called [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) to store your most recent design in the browser. Thus, if you close your browser and re-start the application later, you should see the design you were working on before. There are some options to customize the schedule of this in the file menu.
 
 **However, relying on your browser's localStorage is not a safe or recommended method of saving your work.**
 The storage format may change, or your browser may remove the contents of localStorage, and then your work would be lost.
@@ -101,6 +102,7 @@ so repeatedly saving the file will change its name every time.
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
+**Security settings preventing saving:** Some users have reported that in Chrome, they will be unable to save the file, which we have tracked as an [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402). However, it's not straightforward to reproduce that error. If you have trouble with this, try setting your Chrome "Safe Browsing" settings from "Enhanced protection" to "Standard protection". This is in Chrome Settings (listed under ⋮ symbol in the top right), under "Security". (See the [issue](https://github.com/UC-Davis-molecular-computing/scadnano/issues/402) for a screenshot.)
 
 
 ## Stable and development versions
@@ -124,12 +126,15 @@ If an issue is handled in the dev branch, the issue remains open, but you will s
 
 The main parts of the program are the *side view* on the left, and the *main view* in the center. 
 The side view shows DNA helices "head on", with the interpretation that as you move to the right in the main view, this is like moving "into the screen" in the side view.
+The side view assumes that all helices are parallel.
+One can use different *groups* to specify groups of helices, such that all helices within a group are parallel, but different groups have different relative angles.
+The side view shows only one group at a time (but the default is to have a single group).
 
-screenshot of scadnano web interface:
+Annotated screenshot of scadnano web interface:
 
 ![](doc-images/screenshot-initial.png)
 
-The screenshot above shows many of the terms used in scadnano. 
+The screenshot is annotated with labels showing many of the terms used in scadnano's data model. 
 It is instructive to see how that example design is represented as a `.sc` file 
 (which is itself something called [JSON format](https://en.wikipedia.org/wiki/JSON)):
 
@@ -188,16 +193,16 @@ Although it is not necessary to deal directly with the above JSON data, it is wo
 This model is manipulated directly in the Python scripting library, and indirectly through the web interface.
 This section explains the meaning of the terms, although some more detail about them is given in subsequent sections explaining how the interface allows them to be edited.
 
-A design consists of a *grid* type 
-(a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none, explained below), 
-a list of *helices*, 
-and a list of *strands*. 
+A design consists of a list of *helices* and a list of *strands*. 
 The order of the helices matters; if there are *h* helices, the helices are numbered 0 through *h*-1.
 This can be overridden by specifying a field called `idx` in each helix, but the default is to number them consecutively in order.
 (The strands also have an order, which generally doesn't matter, but it influences, for instance, which are drawn on top, so a strand later in the list will have its crossovers drawn over the top of earlier strands.)
 Each helix defines a set of integer *offsets* with a minimum and maximum; in the example above, the minimum and maximum for each helix are 0 and 48, respectively, so 48 total offsets are shown.
 Each offset is a position along the length of a helix where a DNA base of a strand can go.
 
+One can also specify a *grid* type, a.k.a., *lattice*, one of the following types: square, hex, honeycomb, or none.
+Technically this is not associated to the whole design, but to a *group*, described below.
+However, there is a default group, and putting a grid as a top-level JSON field means it will be assigned to the default group.
 Helices in a grid have a two-integer *grid position* depicted in the side view.
 See the [Python scripting documentation](https://scadnano-python-package.readthedocs.io/#scadnano.scadnano.Helix.grid_position) for more detail about the meaning of these positions.
 Helices without a grid have a *position*, a 3D real vector describing their *x*, *y*, *z* coordinates in units of nanometers.
@@ -206,10 +211,11 @@ A Helix may also define angles *pitch*, *roll*, and *yaw* in units of degrees, b
 [not well-supported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/39). 
 Helix.yaw will likely never be supported visually in the main or side views, 
 but it is retained as a field for compatibility with other software for 3D visualization.
-Helix.pitch will be supported, and it will refer to rotation of the helix in the plane of the main view, 
-with default value 0 meaning that the helix moves to the right as offsets increase.
 Helix.roll is currently supported, and the interpretation is that roll 0 means the phosphate backbone of the strand that is forward=true on the helix is pointing straight *up* in the side and main views.
 Rotation is clockwise, at a rate of 10.5 base pairs per 360 degrees.
+
+Helix.pitch, which refers to rotation of the helix in the plane of the main view, is currently ignored.
+However, it is possible to rotate helices in the main view, using *groups*, described below.
 
 The position of helices in the main view depends on the grid position if a grid is used, and on the position otherwise. 
 (Each grid position is interpreted as a position from a constrained set of possible positions.)
@@ -253,6 +259,16 @@ However, it is often best to mostly finalize the design before assigning a DNA s
 Many of the operations attempt to keep things consistent when modifying a design where some strands already have DNA sequences assigned, but in some cases it's not clear what to do. 
 (e.g., what happens when a length-5 strand with sequence AACGT is extended to have a larger length? what DNA bases are assigned to the new offsets?)
 
+Each helix belongs to a *group*.
+If not specified, all helices are in the group named `"default_group"`.
+Most DNA designs, even those that have not all helices parallel, will typically have several groups of helices, where all helices in a group *are* parallel.
+The way that scadnano supports such designs is as follows.
+*groups* is a top-level field in the Design JSON, mapping a group name (a string) to a map describing the group.
+Each group has fields `grid`, `position` (itself a map with `x`, `y`, `z` fields), `pitch`, `yaw`, `roll`, and `helices_view_order`.
+If not specified, `"default_group"` is the name, with `grid="none"`, `helices_view_order` assumed to be the indices of helices in this group in increasing order, and all other values are numbers equal to 0.
+Each helix is associated to a group via field `group` in the helix description, giving the name of the group.
+All helices in a group are translated by the group's `position` and rotated in the main view by the group's `pitch` angle.
+(Although one can specify `pitch` for an individual helix, this is for the sake of compatibility with other tools, but that field of the helix is ignored by the scadnano interface.)
 
 
 
@@ -285,13 +301,16 @@ none grid:
 ## Relation of grid_position and position to side and main view display
 The main view and side views are 2D representations of a 3D object.
 The views display helices in the following way.
+First, each helix in a group is translated by its group's `position.x` and `position.y` values, and rotated clockwise by the group's `pitch` angle.
+The description below is relative to this translation and rotation.
+
 Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
 The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
 
 In the main view, the horizontal direction is the *x* coordinate.
 The vertical direction, however, is not exactly the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
 Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
-The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices (i.e., the side view distance; the *z* distance is ignored in this calculation).
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *z-y* distance between the helices (i.e., the side view distance; the *x* distance is ignored in this calculation).
 If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *z* coordinate, or they all have the same *y* coordinate),
 then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
 Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
@@ -315,7 +334,12 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
 
 
+
 ## Menu
+
+In both the side menu and the main menu, hovering the cursor over a most menu items brings up a tooltip explaining the menu item in more detail.
+
+This refers to the menu at the top of the whole app. At the top of the side view, there is a *side view menu*, described below.
 
 * File
   * **Load example:** Some pre-made example designs can be loaded.
@@ -330,6 +354,22 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
   * **Import/Export cadnano v2:**
   Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+
+  * **Save design in localStorage on every edit:**
+  On every edit, save current design in localStorage (in your web browser). Disabling this minimizes the time needed to render large designs.
+
+  * **Save design in localStorage before exiting:**
+  Before exiting, save current design in localStorage (in your web browser). For large designs, this is faster than saving on every edit, but if the browser crashes, all changes made will be lost, so it is not as safe as storing on every edit.
+
+  * **Do not save design in localStorage:**
+  Never saves the design in localStorage.
+
+  * **Save design in localStorage periodically:**
+  Periodically (number of seconds customizable), save current design in localStorage (in your web browser). 
+  Also saves before exiting.
+  This is safer than never saving, or saving only before exiting, but will not save edits that occurred between the last edit and a browser crash.
+
+
 
 * Edit
   * **Copy/paste:**
@@ -352,8 +392,6 @@ Setting length to a positive integer converts to a loopout and setting a length 
     We assume that a major tick mark appears just to the LEFT of the offset it encodes, 
     e.g., with minimum offset set, a major tick mark at offset 0 is the leftmost tick mark that could appear.
 
-
-
   * **Set helix coordinates based on crossovers:**
     scadnano can help to visualize 3D structure of designs where all helices are parallel. This can only be used on a gridless design (i.e., the *none* grid). Select a group of crossovers, one per pair of helices that are displayed adjacently in the main view (i.e., they are adjacent in view order, meaning their indices are adjacent if `helices_view_order` is not specified), and then click this button. Those crossovers are used to calculate the angles between helices assuming that those crossovers are unstrained. The *x*,*y* coordinates of each helix other than the first will be set to match the expected angles between helices, and the *roll* value of each helix other than the first will be set to point the backbone angles of each helix at its neighbors at those crossovers.
 
@@ -362,6 +400,19 @@ Setting length to a positive integer converts to a loopout and setting a length 
     You can also choose not to select some crossovers. For any pair of adjacent helices where you do not select a crossover, the "leftmost" crossover is chosen. (Defined as the crossover whose offset on the *first* helix in the ordering is minimal.)
 
     The roll of the first helix in view order is used to compute positions and rolls of the remaining. Thus, if you would like the whole design to be at a certain rotation, first set the roll of the first helix, and then click this button.
+
+  * **Set geometric parameters:**
+    Set geometric parameters affecting how the design is displayed.
+    
+    * rise per base pair: This is the number of nanometers a single base pair occupies (i.e., width in main view)
+
+    * helix radius: The radius of a helix in nanometers.
+
+    * inter-helix gap: The distance between two adjacent helices. The value 2*helix_radius+inter_helix_gap is the distance between the centers of two adjacent helices.
+
+    * bases per turn: The number of bases in a single full turn of DNA.
+
+    * minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction of its long axis.
   
 * View
 
@@ -393,9 +444,17 @@ Setting length to a positive integer converts to a loopout and setting a length 
   * **display only selected helices:**
     This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "stretching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
 
+  * **invert y- and z-axes:**
+    In the main view, invert the y-axis, and in the side view, invert both the y-axis and the z-axis. 
+    If unchecked, then use "screen coordinates", where increasing y moves down. 
+    If checked, then use Cartesian coordinates where increasing y moves up. 
+    Also invert the z-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
-* Grid
-  The grid type can be changed to square, honeycomb, hex, or none. When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
+  * **Show main view Helix circles/idx:**
+    Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.
+
+  * **Show grid coordinates in side view:**
+    Shows grid coordinates in the side view under the helix index.
 
 
 * Export
@@ -409,6 +468,38 @@ Setting length to a positive integer converts to a loopout and setting a length 
 
   * **DNA sequences:**
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
+
+* Help
+
+  * This contains links to various web sites associated with scadnano, which contain its documentation.
+
+
+
+## Side view menu
+
+In both the side menu and the main menu, hovering the cursor over a most menu items brings up a tooltip explaining the menu item in more detail.
+
+* **Group:**
+  This displays the current groups. Although all helices are displayed at once in the main view, in the side view, only one group is displayed at a time. Using this menu one can switch which group is displayed. These options are also available:
+
+  * **adjust current group:**
+  Adjusts properties of the current group (e.g., grid or pitch angle)
+
+  * **new group:**
+  Creates a new group.
+
+  * **remove current group:**
+  Removes the current group.
+
+* **Grid:**
+  The grid type can be changed to any of:
+  
+  * square
+  * honeycomb
+  * hex
+  * none
+  
+  When converting between them, existing helices are preserved. Converting between square, honeycomb, and hex preserves the integer grid coordinate, but because these each interpret those coordinates differently, the helices will move their absolute position. In contrast, when converting between the three grids and none, the absolute location is preserved as best in can be. Converting from a grid to none simply translates the integer grid coordinate to the real-valued position (in nanometers) it represents. Converting from none to a grid moves the helix to the closest grid location, so it may move some helices if they are not perfectly positioned on a grid coordinate.
 
 
 
@@ -429,17 +520,23 @@ There are different edit modes available, shown on the right side of the screen.
 
   The following are the types of objects that can be selected in the main view.
 
+  - **strand:**
+    The whole strand can be selected. Groups of strands can be copy/pasted or moved, but only if they are all in the same helix group. (Though they can be copied/moved *to* a different helix group.)
+
+  - **domain:**
+    A single bound domain can be selected. Groups of domains can be moved, but only if they are all in the same helix group. (Though they can be moved *to* a different helix group.)
+
+  - **all ends:**
+    Selects all of 5' strand, 3' strand, 5' domain, 3' domain; these are described below.
+
   - **5' strand, 3' strand:**
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
 
   - **5' domain, 3' domain:**
-    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. An important note is that bound domains cannot be selected, but anything one would want to do with them can be done via their ends. For example, deleting a 5'/3' end of a bound domain deletes the whole bound domain. To move the whole bound domain, simply select both of its ends and move them.
+    Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. Ends can be moved, but unlike strands and domains, they can only be moved back and forth along their current helix.
 
   - **crossover, loopout:**
-    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases.[^1] 
-
-  - **strand:**
-    The whole strand can be selected.
+    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.)
 
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
@@ -501,8 +598,8 @@ There are different edit modes available, shown on the right side of the screen.
   It is also the case that some simple information about strands and domains under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
 
 
-
-[^1]: Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.
+* **(m)ove group:**
+  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur.)
 
 
 ## Assigning DNA
@@ -559,6 +656,7 @@ See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a
 
 ## Performance tips
 There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this and save only infrequently.
+
 
 ## Contributing
 If you wish to contribute to scadnano, please see the [CONTRIBUTING document](CONTRIBUTING.md) to contribute to the scadnano web interface. There is also a [CONTRIBUTING document](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/CONTRIBUTING.md) for the scadnano Python package.

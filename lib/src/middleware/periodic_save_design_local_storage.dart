@@ -45,6 +45,5 @@ stop_timer_periodic_design_save_local_storage() {
   if (timer != null) {
     timer.cancel();
     timer = null;
-    print('cancelling timer');
   }
 }

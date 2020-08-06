@@ -4,13 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/grid.dart';
+import '../state/design.dart';
+import '../state/grid.dart';
 
 import '../json_serializable.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
-import 'package:scadnano/src/constants.dart' as constants;
+import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 export_cadnano_or_codenano_file_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
@@ -47,8 +47,11 @@ _save_file_codenano(AppState state) async {
     return;
   }
 
-  if (design.grid != Grid.none) {
-    window.alert('Grid must be set to none to export to codenano. First convert grid to none.');
+  var grids = design.groups.values.map((group) => group.grid).toSet();
+  if (!(grids.length == 1 && grids.first == Grid.none)) {
+    var msg = 'Grid must be set to none for all helix groups to export to codenano. '
+        'First convert all grids to none.';
+    window.alert(msg);
     return;
   }
 

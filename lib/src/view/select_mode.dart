@@ -1,6 +1,6 @@
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
+import '../view/redraw_counter_component_mixin.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';
@@ -39,7 +39,7 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
 
   @override
   render() {
-    var first_button = (Dom.button()
+    var all_ends_button = (Dom.button()
       ..onClick = ((_) => app.dispatch(actions.SelectModesAdd(modes: SelectModeChoice.ends)))
       ..className = 'mode-button ' +
           (props.select_mode_state.modes.containsAll(SelectModeChoice.ends)
@@ -49,21 +49,29 @@ class SelectModeComponent extends UiComponent2<SelectModeProps> with RedrawCount
       ..key = 'all-ends')('all ends');
 
     var modes = props.is_origami ? SelectModeChoice.all_choices : SelectModeChoice.non_origami_choices;
+    var elts_map = {
+      for (var mode in modes)
+        mode: (Dom.button()
+          ..onClick = ((_) => app.dispatch(actions.SelectModeToggle(mode)))
+          ..className = 'mode-button ' +
+              (props.select_mode_state.modes.contains(mode)
+                  ? 'select-mode-button-selected'
+                  : 'select-mode-button-unselected')
+          ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
+          ..key = mode.display_name())(mode.display_name())
+    };
     var elts = [
       (Dom.label()..key = 'label')('Select:'),
-      first_button,
+      elts_map[SelectModeChoice.strand],
+      elts_map[SelectModeChoice.domain],
+      all_ends_button,
       ...[
         for (var mode in modes)
-          (Dom.button()
-            ..onClick = ((_) => app.dispatch(actions.SelectModeToggle(mode)))
-            ..className = 'mode-button ' +
-                (props.select_mode_state.modes.contains(mode)
-                    ? 'select-mode-button-selected'
-                    : 'select-mode-button-unselected')
-            ..addTestId('scadnano.SelectModeComponent.button.${mode.name}')
-            ..key = mode.display_name())(mode.display_name())
+          if (mode != SelectModeChoice.strand && mode != SelectModeChoice.domain)
+            elts_map[mode]
       ],
     ];
+
     return (Dom.div()..id = 'select-mode')(elts);
   }
 }

@@ -6,6 +6,9 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
+import 'transform_by_helix_group.dart';
+import '../state/geometry.dart';
+import '../state/group.dart';
 import '../state/selectable.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
@@ -22,20 +25,6 @@ import '../actions/actions.dart' as actions;
 
 part 'design_main_strand_loopout.over_react.g.dart';
 
-//UiFactory<DesignMainLoopoutProps> ConnectedDesignMainLoopout =
-//    connect<AppState, DesignMainLoopoutProps>(mapStateToPropsWithOwnProps: (state, props) {
-//  bool selected = state.ui_state.selectables_store.selected(props.loopout);
-//  bool selectable = state.ui_state.select_mode_state.modes.contains(SelectModeChoice.loopout);
-//  var prev_ss = props.strand.substrands[props.loopout.prev_substrand_idx];
-//  var next_ss = props.strand.substrands[props.loopout.next_substrand_idx];
-//  return DesignMainLoopout()
-//    ..selected = selected
-//    ..selectable = selectable
-//    ..edit_modes = state.ui_state.edit_modes
-//    ..prev_substrand = prev_ss
-//    ..next_substrand = next_ss;
-//})(DesignMainLoopout);
-
 @Factory()
 UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
 
@@ -51,10 +40,13 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Helix next_helix;
   bool selected;
   BuiltSet<EditModeChoice> edit_modes;
+
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin;
+class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin, TransformByHelixGroupPropsMixin;
 
 @State()
 mixin DesignMainLoopoutState on UiState {
@@ -64,15 +56,13 @@ mixin DesignMainLoopoutState on UiState {
 }
 
 class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutProps, DesignMainLoopoutState>
-    with PureComponent {
+    with PureComponent, TransformByHelixGroup<DesignMainLoopoutProps> {
   @override
   Map get initialState => (newState()..mouse_hover = false);
 
   @override
   render() {
     Color color = props.color;
-
-    bool mouse_hover = state.mouse_hover;
 
     var classname = constants.css_selector_loopout;
     if (props.selected) {
@@ -89,49 +79,50 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     String tooltip = 'loopout: length ${props.loopout.loopout_length}';
 
-    return _hairpin_arc(classname, color, tooltip);
+    bool within_group = props.prev_helix.group == props.next_helix.group;
+    String path_description;
 
-//    if (util.is_hairpin(prev_ss, next_ss)) {
-//      // special case for hairpin so it's not a short straight line
-//      return _hairpin_arc(
-//          prev_ss, next_ss, props.prev_helix, props.next_helix, loopout, classname, color, tooltip);
-//    } else {
-//      String path = crossover_path_description(prev_ss, next_ss, props.helices);
-//      String id = loopout.id();
-//
-//      //XXX: need to use onPointerDown instead of onMouseDown because of the dnd Dart library:
-//      // https://github.com/marcojakob/dart-dnd/issues/27
-//      // perhaps not implemented by Safari though:
-//      // https://love2dev.com/blog/chrome-has-decided-to-implement-pointer-events-and-the-web-rejoices/
-//      return (Dom.path()
-//        ..d = path
-//        ..stroke = color.toHexColor().toCssString()
-//        ..onMouseEnter = (ev) {
-//          setState(newState()..mouse_hover = true);
-//          if (show_mouseover_rect) {
-//            update_mouseover_loopout();
-//          }
-//        }
-//        ..onMouseLeave = ((_) {
-//          setState(newState()..mouse_hover = false);
-//          if (show_mouseover_rect) {
-//            update_mouseover_loopout();
-//          }
-//        })
-//        ..onPointerDown = ((ev) {
-//          if (select_mode && props.selectable) {
-//            loopout.handle_selection_mouse_down(ev.nativeEvent);
-//          }
-//        })
-//        ..onPointerUp = ((ev) {
-//          if (select_mode && props.selectable) {
-//            loopout.handle_selection_mouse_up(ev.nativeEvent);
-//          }
-//        })
-//        ..className = classname
-//        ..id = id
-//        ..key = id)(Dom.svgTitle()(tooltip));
-//    }
+    if (within_group) {
+      path_description = loopout_path_description_within_group(
+          props.prev_helix, props.next_helix, props.prev_domain, props.next_domain, props.loopout, true);
+    } else {
+      path_description = loopout_path_description_between_groups();
+    }
+
+    var path_props = Dom.path()
+      ..className = classname
+      ..stroke = color.toHexColor().toCssString()
+      ..d = path_description
+      ..onMouseEnter = (ev) {
+        setState(newState()..mouse_hover = true);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
+      }
+      ..onMouseLeave = ((_) {
+        setState(newState()..mouse_hover = false);
+        if (edit_mode_is_backbone()) {
+          update_mouseover_loopout();
+        }
+      })
+      ..onPointerDown = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (loopout_selectable(props.loopout)) {
+          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
+      ..key = props.loopout.id()
+      ..id = props.loopout.id();
+
+    if (within_group) {
+      path_props.transform = transform_of_helix(props.prev_helix.idx);
+    }
+
+    return path_props(Dom.svgTitle()(tooltip));
   }
 
   @override
@@ -188,119 +179,200 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
   }
 
-  ReactElement _hairpin_arc(String classname, Color color, String tooltip) {
-    Helix top_helix = props.prev_helix;
-    Helix bot_helix = props.next_helix;
-    Domain top_dom = props.prev_domain;
-    Domain bot_dom = props.next_domain;
-    if (top_helix.idx == bot_helix.idx) {
-      top_helix = bot_helix = props.next_helix;
-      if (!props.prev_domain.forward) {
-        top_dom = props.next_domain;
-        bot_dom = props.prev_domain;
-      }
-    } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
-      top_helix = props.next_helix;
-      bot_helix = props.prev_helix;
-      top_dom = props.next_domain;
-      bot_dom = props.prev_domain;
-    }
-    bool top_dom_is_prev = top_dom == props.prev_domain;
+  String loopout_path_description_between_groups() {
+    int prev_offset = props.prev_domain.dnaend_3p.offset_inclusive;
+    int next_offset = props.next_domain.dnaend_5p.offset_inclusive;
 
-    int top_offset = top_dom_is_prev ? top_dom.offset_3p : top_dom.offset_5p;
-    int bot_offset = top_dom_is_prev ? bot_dom.offset_5p : bot_dom.offset_3p;
-    int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
-    int next_offset = top_dom_is_prev ? bot_offset : top_offset;
+    var prev_group = props.groups[props.prev_helix.group];
+    var next_group = props.groups[props.next_helix.group];
 
-//    var top_svg = top_helix.svg_base_pos(top_offset, top_ss.forward);
-//    var bot_svg = bot_helix.svg_base_pos(bot_offset, bot_ss.forward);
-    var prev_svg = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward);
-    var next_svg = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward);
+    var prev_svg_untransformed = props.prev_helix.svg_base_pos(prev_offset, props.prev_domain.forward);
+    var next_svg_untransformed = props.next_helix.svg_base_pos(next_offset, props.next_domain.forward);
 
-    var w, h;
+    var prev_svg = prev_group.transform_point_main_view(prev_svg_untransformed, props.geometry);
+    var next_svg = next_group.transform_point_main_view(next_svg_untransformed, props.geometry);
 
-    if (top_helix.idx == bot_helix.idx) {
-      w = 1.5 * util.sigmoid(props.loopout.loopout_length - 1) * constants.BASE_WIDTH_SVG;
-      h = 10 * util.sigmoid(props.loopout.loopout_length - 5) * constants.BASE_HEIGHT_SVG;
-    } else {
-      w = 2 * util.sigmoid(props.loopout.loopout_length) * constants.BASE_WIDTH_SVG;
-      h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * constants.BASE_HEIGHT_SVG;
-    }
+    var w = 2 * util.sigmoid(props.loopout.loopout_length) * props.geometry.base_width_svg;
+    var h = 10 * util.sigmoid(props.loopout.loopout_length - 3) * props.geometry.base_height_svg;
 
-    var x_offset1, x_offset2, y_offset1, y_offset2;
-    y_offset1 = prev_svg.y;
-    y_offset2 = next_svg.y;
-    x_offset1 = prev_svg.x;
-    x_offset2 = next_svg.x;
-    if (top_offset == top_dom.end - 1) {
-      x_offset1 += w;
-      x_offset2 += w;
-    } else {
-      x_offset1 -= w;
-      x_offset2 -= w;
-    }
-    if (top_dom_is_prev) {
-      y_offset1 -= h;
-      y_offset2 += h;
-    } else {
-      y_offset1 += h;
-      y_offset2 -= h;
-    }
-//    if (top_ss == props.prev_substrand) {
-//      y_offset1 = top_svg.y - h;
-//      y_offset2 = bot_svg.y + h;
-//      if (top_offset == top_ss.end - 1) {
-//        x_offset1 = top_svg.x + w;
-//        x_offset2 = bot_svg.x + w;
-//      } else {
-//        x_offset1 = top_svg.x - w;
-//        x_offset2 = bot_svg.x - w;
-//      }
-//    } else {
-//      y_offset2 = top_svg.y - h;
-//      y_offset1 = bot_svg.y + h;
-//      if (top_offset == top_ss.end - 1) {
-//        x_offset2 = top_svg.x + w;
-//        x_offset1 = bot_svg.x + w;
-//      } else {
-//        x_offset2 = top_svg.x - w;
-//        x_offset1 = bot_svg.x - w;
-//      }
-//    }
+    // un-rotated
+    var prev_y_offset = prev_svg.y + h;
+    var next_y_offset = next_svg.y - h;
+    var prev_x_offset = prev_svg.x + w;
+    var next_x_offset = next_svg.x + w;
+    var prev_c_unrotated = Point<num>(prev_x_offset, prev_y_offset);
+    var next_c_unrotated = Point<num>(next_x_offset, next_y_offset);
 
-    var c1 = Point<num>(x_offset1, y_offset1);
-    var c2 = Point<num>(x_offset2, y_offset2);
+    // rotated
+    var prev_c = util.rotate(prev_c_unrotated, prev_group.pitch, origin: prev_svg);
+    var next_c = util.rotate(next_c_unrotated, next_group.pitch, origin: next_svg);
 
-    String id = props.loopout.id();
-    return (Dom.path()
-      ..className = classname
-      ..stroke = color.toHexColor().toCssString()
-      ..d = 'M ${prev_svg.x} ${prev_svg.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}'
-      ..onMouseEnter = (ev) {
-        setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
-      }
-      ..onMouseLeave = ((_) {
-        setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
-      })
-      ..onPointerDown = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_down(ev.nativeEvent);
-        }
-      })
-      ..onPointerUp = ((ev) {
-        if (loopout_selectable(props.loopout)) {
-          props.loopout.handle_selection_mouse_up(ev.nativeEvent);
-        }
-      })
-      ..key = id
-      ..id = id)(Dom.svgTitle()(tooltip));
+    var path = 'M ${prev_svg.x} ${prev_svg.y} '
+        'C ${prev_c.x} ${prev_c.y} ${next_c.x} ${next_c.y} '
+        '${next_svg.x} ${next_svg.y}';
+
+    return path;
   }
+}
+
+// This is a function (not a Component method with access to props)
+// so that DesignMainStrandMoving can call it also.
+// The bool [include_start_M] indicates whether to start the path with a command like "M 0 1".
+// When drawing a normal loopout this is needed, but when drawing a moving strand, where all path commands
+// are concatenated together, it is not needed.
+String loopout_path_description_within_group(Helix prev_helix, Helix next_helix, Domain prev_domain,
+    Domain next_domain, Loopout loopout, bool include_start_M) {
+  Helix top_helix = prev_helix;
+  Helix bot_helix = next_helix;
+  Geometry geometry = top_helix.geometry;
+  Domain top_dom = prev_domain;
+  Domain bot_dom = next_domain;
+  if (top_helix.idx == bot_helix.idx) {
+    top_helix = bot_helix = next_helix;
+    if (!prev_domain.forward) {
+      top_dom = next_domain;
+      bot_dom = prev_domain;
+    }
+  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+    top_helix = next_helix;
+    bot_helix = prev_helix;
+    top_dom = next_domain;
+    bot_dom = prev_domain;
+  }
+  bool top_dom_is_prev = top_dom == prev_domain;
+
+  int top_offset = top_dom_is_prev ? top_dom.offset_3p : top_dom.offset_5p;
+  int bot_offset = top_dom_is_prev ? bot_dom.offset_5p : bot_dom.offset_3p;
+  int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
+  int next_offset = top_dom_is_prev ? bot_offset : top_offset;
+
+  var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward);
+  var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward);
+
+  var w, h;
+
+  if (top_helix.idx == bot_helix.idx) {
+    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+  } else {
+    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
+    h = 10 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
+  }
+
+  var x_offset1, x_offset2, y_offset1, y_offset2;
+  y_offset1 = prev_svg.y;
+  y_offset2 = next_svg.y;
+  x_offset1 = prev_svg.x;
+  x_offset2 = next_svg.x;
+  if (top_offset == top_dom.end - 1) {
+    x_offset1 += w;
+    x_offset2 += w;
+  } else {
+    x_offset1 -= w;
+    x_offset2 -= w;
+  }
+  if (top_dom_is_prev) {
+    y_offset1 -= h;
+    y_offset2 += h;
+  } else {
+    y_offset1 += h;
+    y_offset2 -= h;
+  }
+
+  var c1 = Point<num>(x_offset1, y_offset1);
+  var c2 = Point<num>(x_offset2, y_offset2);
+
+  var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+      'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
+
+  return path;
+}
+
+String loopout_path_description_within_group_new(Helix prev_helix, Helix next_helix, Domain prev_domain,
+    Domain next_domain, Loopout loopout, bool include_start_M) {
+  Helix top_helix = prev_helix;
+  Helix bot_helix = next_helix;
+  Geometry geometry = prev_helix.geometry;
+  Domain top_domain = prev_domain;
+  Domain bot_domain = next_domain;
+  if (top_helix.idx == bot_helix.idx) {
+    top_helix = bot_helix = next_helix;
+    if (!prev_domain.forward) {
+      top_domain = next_domain;
+      bot_domain = prev_domain;
+    }
+  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+    top_helix = next_helix;
+    bot_helix = prev_helix;
+    top_domain = next_domain;
+    bot_domain = prev_domain;
+  }
+  bool top_dom_is_prev = top_domain == prev_domain;
+
+  int top_offset = top_dom_is_prev ? top_domain.offset_3p : top_domain.offset_5p;
+  int bot_offset = top_dom_is_prev ? bot_domain.offset_5p : bot_domain.offset_3p;
+  int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
+  int next_offset = top_dom_is_prev ? bot_offset : top_offset;
+
+  var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward);
+  var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward);
+
+  var top_svg = prev_svg;
+  var bot_svg = next_svg;
+  if (top_helix.idx == bot_helix.idx) {
+    if (!prev_domain.forward) {
+      top_svg = next_svg;
+      bot_svg = prev_svg;
+    }
+  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+    top_svg = next_svg;
+    bot_svg = prev_svg;
+  }
+
+  var w, h;
+
+  if (top_helix.idx == bot_helix.idx) {
+    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+    h = 5 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+  } else {
+    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
+    h = 5 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
+  }
+
+  var y_offset_bot = bot_svg.y;
+  var y_offset_top = top_svg.y;
+  var x_offset_bot = bot_svg.x;
+  var x_offset_top = top_svg.x;
+  if (top_offset == top_domain.start) {
+    x_offset_top -= w;
+  } else {
+    x_offset_top += w;
+  }
+  if (bot_offset == bot_domain.start) {
+    x_offset_bot -= w;
+  } else {
+    x_offset_bot += w;
+  }
+  y_offset_top += h;
+  y_offset_bot -= h;
+
+  var c_bot = Point<num>(x_offset_bot, y_offset_bot);
+  var c_top = Point<num>(x_offset_top, y_offset_top);
+
+  var vector = bot_svg - top_svg;
+  num angle_radians_from_x_axis = -atan2(vector.y, vector.x);
+  num angle_degrees_from_x_axis = util.to_degrees(angle_radians_from_x_axis);
+  num angle_degrees_from_y_axis = 90 - angle_degrees_from_x_axis;
+  var c_bot_rot = util.rotate(c_bot, angle_degrees_from_y_axis, origin: prev_svg);
+  var c_top_rot = util.rotate(c_top, angle_degrees_from_y_axis, origin: next_svg);
+  print('top offset = ${top_offset}');
+  print('  angle = ${angle_degrees_from_y_axis}');
+
+  var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+      'C ${c_bot_rot.x} ${c_bot_rot.y} ${c_top_rot.x} ${c_top_rot.y} '
+          '${next_svg.x} ${next_svg.y}';
+
+  return path;
 }
 
 Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {

@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/context_menu.dart';
+import '../state/context_menu.dart';
 import '../actions/actions.dart' as actions;
 
 Reducer<ContextMenu> context_menu_reducer = combineReducers([

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -32,16 +34,13 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       mutually_exclusive_checkbox_groups = [];
     }
     List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
-      for (var group in mutually_exclusive_checkbox_groups)
-        BuiltList<int>(group)
+      for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group)
     ];
     Map<int, BuiltList<int>> disable_when_on_half_built = {
-      for (var idx in disable_when_on.keys)
-        idx: BuiltList<int>(disable_when_on[idx])
+      for (var idx in disable_when_on.keys) idx: BuiltList<int>(disable_when_on[idx])
     };
     Map<int, BuiltList<int>> disable_when_off_half_built = {
-      for (var idx in disable_when_off.keys)
-        idx: BuiltList<int>(disable_when_off[idx])
+      for (var idx in disable_when_off.keys) idx: BuiltList<int>(disable_when_off[idx])
     };
     return Dialog.from((b) => b
       ..title = title
@@ -82,17 +81,17 @@ abstract class DialogItem {
   dynamic get value;
 }
 
-abstract class DialogNumber
+abstract class DialogInteger
     with BuiltJsonSerializable
-    implements DialogItem, Built<DialogNumber, DialogNumberBuilder> {
-  factory DialogNumber.from([void Function(DialogNumberBuilder) updates]) = _$DialogNumber;
+    implements DialogItem, Built<DialogInteger, DialogIntegerBuilder> {
+  factory DialogInteger.from([void Function(DialogIntegerBuilder) updates]) = _$DialogInteger;
 
-  DialogNumber._();
+  DialogInteger._();
 
-  static Serializer<DialogNumber> get serializer => _$dialogNumberSerializer;
+  static Serializer<DialogInteger> get serializer => _$dialogIntegerSerializer;
 
-  factory DialogNumber({String label, num value}) {
-    return DialogNumber.from((b) => b
+  factory DialogInteger({String label, num value}) {
+    return DialogInteger.from((b) => b
       ..label = label
       ..value = value);
   }
@@ -104,18 +103,17 @@ abstract class DialogNumber
   num get value;
 }
 
-abstract class DialogFloatingNumber
+abstract class DialogFloat
     with BuiltJsonSerializable
-    implements DialogItem, Built<DialogFloatingNumber, DialogFloatingNumberBuilder> {
-  factory DialogFloatingNumber.from([void Function(DialogFloatingNumberBuilder) updates]) =
-      _$DialogFloatingNumber;
+    implements DialogItem, Built<DialogFloat, DialogFloatBuilder> {
+  factory DialogFloat.from([void Function(DialogFloatBuilder) updates]) = _$DialogFloat;
 
-  DialogFloatingNumber._();
+  DialogFloat._();
 
-  static Serializer<DialogFloatingNumber> get serializer => _$dialogFloatingNumberSerializer;
+  static Serializer<DialogFloat> get serializer => _$dialogFloatSerializer;
 
-  factory DialogFloatingNumber({String label, num value}) {
-    return DialogFloatingNumber.from((b) => b
+  factory DialogFloat({String label, num value}) {
+    return DialogFloat.from((b) => b
       ..label = label
       ..value = value);
   }
@@ -137,6 +135,9 @@ abstract class DialogText
   static Serializer<DialogText> get serializer => _$dialogTextSerializer;
 
   factory DialogText({String label, int size = null, String value = ''}) {
+    if (size == null) {
+      size = size_from_text(value);
+    }
     return DialogText.from((b) => b
       ..label = label
       ..size = size
@@ -149,9 +150,11 @@ abstract class DialogText
 
   String get value;
 
-  @nullable
   int get size;
 }
+
+// calculate size of text field from its length
+int size_from_text(String value, {int minimum = 20}) => max(minimum, value.length);
 
 abstract class DialogTextArea
     with BuiltJsonSerializable
@@ -242,7 +245,7 @@ abstract class DialogRadio
 
   /************************ end BuiltValue boilerplate ************************/
 
-  factory DialogRadio({String label, BuiltList<String> options, int selected_idx = 0}) {
+  factory DialogRadio({String label, Iterable<String> options, int selected_idx = 0}) {
     return DialogRadio.from((b) => b
       ..options.replace(options)
       ..selected_idx = selected_idx

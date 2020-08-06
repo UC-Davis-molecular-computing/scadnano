@@ -1,18 +1,24 @@
 import 'dart:html';
 
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/geometry.dart';
 
+import '../state/group.dart';
 import '../state/grid_position.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../state/app_state.dart';
 
-/// Check whether user wants to remove helix that has strands on it.
+// check to ensure when switching from Grid.none to a real grid, that each grid_position will get
+// at most one helix (i.e., function mapping real-coordinates to grid-coordinates is 1-1)
 helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
-  if (action is actions.GridChange && !action.grid.is_none() && store.state.design.grid.is_none()) {
+  if (action is actions.GridChange &&
+      !action.grid.is_none() &&
+      store.state.design.groups[action.group_name].grid.is_none()) {
+    Geometry geometry = store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
-      for (var helix in store.state.design.helices.values)
-        helix.idx: util.position3d_to_grid(helix.position, action.grid)
+      for (var helix in store.state.design.helices_in_group(action.group_name).values)
+        helix.idx: util.position3d_to_grid(helix.position, action.grid, geometry)
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
     // if lengths don't match, there's a duplicate grid position
@@ -43,16 +49,4 @@ both closest to grid position (${gp1.h}, ${gp1.v}). They have positions
     }
   }
   next(action);
-}
-
-String message_too_small(int helix_idx, int proposed_offset, int offset_of_strand) {
-  return 'Cannot set minimum offset to ${proposed_offset} on helix $helix_idx '
-      'because there is a strand on that helix with offset ${offset_of_strand}. '
-      'Please choose a smaller minimum offset or delete the strand.';
-}
-
-String message_too_large(int helix_idx, int proposed_offset, int offset_of_strand) {
-  return 'Cannot set maximum offset to ${proposed_offset} on helix $helix_idx '
-      'because there is a strand on that helix with offset ${offset_of_strand}. '
-      'Please choose a larger maximum offset or delete the strand.';
 }

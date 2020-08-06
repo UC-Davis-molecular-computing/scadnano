@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_value/serializer.dart';
 
 import 'package:built_value/built_value.dart';
-import 'package:scadnano/src/serializers.dart';
+import '../serializers.dart';
 import 'grid.dart';
 import '../util.dart' as util;
 

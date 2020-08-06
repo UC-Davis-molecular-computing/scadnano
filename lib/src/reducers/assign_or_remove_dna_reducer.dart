@@ -1,8 +1,8 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/substrand.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
+import '../state/loopout.dart';
+import '../state/substrand.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
@@ -206,7 +206,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
             'to a strand bound to this one). This occurred while directly assigning a DNA '
             'sequence to the strand whose 5\' end is at helix ${ss_from.helix}, and is of '
             'length ${strand_from.dna_length}.';
-        throw IllegalDNADesignError(msg);
+        throw IllegalDesignError(msg);
       }
     }
   }
@@ -226,7 +226,7 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
           '${strand.dna_sequence}, '
           'but you tried to assign a different sequence of length ${seq.length} to '
           'it, which is\n{$seq}.';
-      throw IllegalDNADesignError(msg);
+      throw IllegalDesignError(msg);
     }
   }
   return seq;

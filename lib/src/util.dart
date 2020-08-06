@@ -1,7 +1,6 @@
 @JS()
 library util;
 
-import 'dart:convert';
 import 'dart:html';
 import 'dart:js' as js;
 import 'dart:math';
@@ -9,15 +8,19 @@ import 'dart:async';
 import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/middleware/export_svg.dart';
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/app_ui_state.dart';
-import 'package:scadnano/src/view/design.dart';
+import 'middleware/export_svg.dart';
+import 'state/app_state.dart';
+import 'state/app_ui_state.dart';
+import 'state/domains_move.dart';
+import 'state/group.dart';
+import 'state/strands_move.dart';
+import 'view/design.dart';
 import 'package:tuple/tuple.dart';
 import 'package:quiver/iterables.dart' as quiver;
 
@@ -95,6 +98,50 @@ int color_hex_to_decimal_int(String hex) {
   }
   int d = int.parse(hex, radix: 16);
   return d;
+}
+
+HelixGroup original_group_from_strands_move(Design design, StrandsMove strands_move) {
+  var group_name = original_group_name_from_strands_move(design, strands_move);
+  return design.groups[group_name];
+}
+
+String original_group_name_from_strands_move(Design design, StrandsMove strands_move) {
+  var helix_idx = strands_move.original_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
+}
+
+HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_move) {
+  var group_name = current_group_name_from_strands_move(design, strands_move);
+  return design.groups[group_name];
+}
+
+String current_group_name_from_strands_move(Design design, StrandsMove strands_move) {
+  var helix_idx = strands_move.current_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
+}
+
+HelixGroup original_group_from_domains_move(Design design, DomainsMove domains_move) {
+  var group_name = original_group_name_from_domains_move(design, domains_move);
+  return design.groups[group_name];
+}
+
+String original_group_name_from_domains_move(Design design, DomainsMove domains_move) {
+  var helix_idx = domains_move.original_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
+}
+
+HelixGroup current_group_from_domains_move(Design design, DomainsMove domains_move) {
+  var group_name = current_group_name_from_domains_move(design, domains_move);
+  return design.groups[group_name];
+}
+
+String current_group_name_from_domains_move(Design design, DomainsMove domains_move) {
+  var helix_idx = domains_move.current_address.helix_idx;
+  var helix = design.helices[helix_idx];
+  return helix.group;
 }
 
 const EPSILON = 0.000000001;
@@ -187,11 +234,11 @@ Future<List<DialogItem>> dialog(Dialog dialog) async {
 }
 
 /// Gets grid position of mouse cursor in side view.
-GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y,
+GridPosition grid_position_of_mouse_in_side_view(Grid grid, bool invert_y, Geometry geometry,
     {Point<num> mouse_pos = null, MouseEvent event = null}) {
   SvgSvgElement side_view_elt = querySelector('#${SIDE_VIEW_SVG_ID}') as SvgSvgElement;
   var svg_pos = transformed_svg_point(side_view_elt, false, mouse_pos: mouse_pos, event: event);
-  var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y);
+  var grid_pos = side_view_svg_to_grid(grid, svg_pos, invert_y, geometry);
   return grid_pos;
 }
 
@@ -227,63 +274,85 @@ Version get_version(String version_str) {
   return Version(major, minor, patch);
 }
 
+/// Indicates whether two lists contain the same elements (not necessarily in the same order).
+bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T> elts2) {
+  List<T> list1 = List<T>.from(elts1);
+  List<T> list2 = List<T>.from(elts2);
+  list1.sort();
+  list2.sort();
+  var eq = ListEquality().equals;
+  return eq(list1, list2);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // assign SVG coordinates to helices
 
-Map<int, Helix> helices_assign_svg(Geometry geometry, bool invert_yz, Map<int, Helix> helices, Grid grid,
+Map<int, Helix> helices_assign_svg(
+    Geometry geometry, bool invert_yz, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
   }
 
-  var selected_helices = [
-    for (var helix in helices.values) if (selected_helix_idxs.contains(helix.idx)) helix
-  ];
+  Map<int, Helix> new_helices = Map<int, Helix>.of(helices);
 
-  Map<int, Helix> new_helices = Map<int, Helix>.from(helices);
-  var selected_helices_sorted_by_view_order = List<Helix>.from(selected_helices);
-  selected_helices_sorted_by_view_order.sort((h1, h2) => h1.view_order - h2.view_order);
+  Set<String> group_names = {for (var helix in helices.values) helix.group};
+  Map<String, Map<int, Helix>> selected_helices_by_group = {for (var name in group_names) name: {}};
+  for (int idx in selected_helix_idxs) {
+    var helix = helices[idx];
+    selected_helices_by_group[helix.group][idx] = helix;
+  }
 
-  num prev_y = null;
+  // process by groups because view order only makes sense within a group, and we need
+  // to go in view order
+  for (var group_name in selected_helices_by_group.keys) {
+    HelixGroup group = groups[group_name];
+    var selected_helices_in_group = selected_helices_by_group[group_name].values.toList();
+    var selected_helices_sorted_by_view_order = List<Helix>.from(selected_helices_in_group);
+    selected_helices_sorted_by_view_order.sort(
+        (h1, h2) => group.helices_view_order_inverse[h1.idx] - group.helices_view_order_inverse[h2.idx]);
 
-  var prev_helix = null;
-  for (var helix in selected_helices_sorted_by_view_order) {
-    num x = main_view_svg_x_of_helix(geometry, helix, grid);
-    num y = main_view_svg_y_of_helix(geometry, helix, grid);
-    if (prev_helix != null) {
-      num delta_y;
-      if (grid.is_none()) {
-        var prev_pos = prev_helix.position_;
-        var pos = helix.position_;
-        delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_main_svg_pixels;
-      } else {
-        var prev_grid_position = prev_helix.grid_position;
-        var grid_position = helix.grid_position;
-        delta_y = prev_grid_position.distance_lattice(grid_position, grid) *
-            geometry.distance_between_helices_main_svg;
+    num prev_y = null;
+
+    Helix prev_helix = null;
+    for (var helix in selected_helices_sorted_by_view_order) {
+      num x = main_view_svg_x_of_helix(geometry, helix);
+      num y = main_view_svg_y_of_helix(geometry, helix);
+      if (prev_helix != null) {
+        num delta_y;
+        if (helix.grid.is_none()) {
+          var prev_pos = prev_helix.position_;
+          var pos = helix.position_;
+          delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_svg_pixels;
+        } else {
+          var prev_grid_position = prev_helix.grid_position;
+          var grid_position = helix.grid_position;
+          delta_y = prev_grid_position.distance_lattice(grid_position, helix.grid) *
+              geometry.distance_between_helices_svg;
+        }
+        y = prev_y + delta_y;
       }
-      y = prev_y + delta_y;
-    }
-    prev_y = y;
-    helix = helix.rebuild((b) => b
-      ..geometry.replace(geometry)
-      ..svg_position_ = Point<num>(x, y)
-      ..invert_yz = invert_yz);
-    prev_helix = helix;
+      prev_y = y;
+      helix = helix.rebuild((b) => b
+        ..geometry.replace(geometry)
+        ..svg_position_ = Point<num>(x, y)
+        ..invert_yz = invert_yz);
+      prev_helix = helix;
 
-    new_helices[helix.idx] = helix;
+      new_helices[helix.idx] = helix;
+    }
   }
 
   return new_helices;
 }
 
-num main_view_svg_x_of_helix(Geometry geometry, Helix helix, Grid grid) {
-  num x = helix.position3d().x * geometry.nm_to_main_svg_pixels;
+num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
+  num x = helix.position3d().x * geometry.nm_to_svg_pixels;
   return x;
 }
 
-num main_view_svg_y_of_helix(Geometry geometry, Helix helix, Grid grid) {
-  num y = helix.position3d().y * geometry.nm_to_main_svg_pixels;
+num main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
+  num y = helix.position3d().y * geometry.nm_to_svg_pixels;
   return y;
 }
 
@@ -309,41 +378,106 @@ Tuple2<int, int> repeated_element_indices<T>(List<T> list) {
   return null;
 }
 
+bool left_mouse_button_pressed_during_mouse_event(MouseEvent event) => event.buttons & 1 == 1;
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // transforming of points
 
-/// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
-Helix get_closest_helix(MouseEvent event, Iterable<Helix> helices) {
-  var svg_coord = round_point(svg_position_of_mouse_click(event));
-
-  num svg_y = svg_coord.y;
-  for (Helix helix in helices) {
-    if (helix.svg_position.y <= svg_y && svg_y <= helix.svg_position.y + constants.BASE_HEIGHT_SVG * 2) {
-      return helix;
-    }
-  }
-
-  // didn't find a helix, so we'll find the closest one
-  Helix helix_closest = helices.first;
-  num min_dist = distance_y_coord_to_closest_helix(helix_closest, svg_y);
-  for (Helix helix in helices) {
-    if (distance_y_coord_to_closest_helix(helix, svg_y) < min_dist) {
-      helix_closest = helix;
-      min_dist = distance_y_coord_to_closest_helix(helix, svg_y);
-    }
-  }
-  return helix_closest;
+/// find distance from a point to a rectangle (0 if point is inside rectangle).
+/// Rectangle is defined by an upper-left corner, width and height, and rotation angle.
+/// We first unrotate the point about the upper-left corner,
+/// then calculate using the simpler method for axis-aligned rectangles.
+num distance_to_rectangle(Point<num> point, Point<num> upper_left_corner, num width, num height, num angle) {
+  var distances = xy_distances_to_rectangle(point, upper_left_corner, width, height, angle);
+  return sqrt(distances.x * distances.x + distances.y * distances.y);
 }
 
-num distance_y_coord_to_closest_helix(Helix helix, num y) =>
-    (helix.svg_position.y + constants.BASE_HEIGHT_SVG - y).abs();
+/// Returns (dx,dy) representing distances from point to rectangle. Can be negative to indicate if
+/// point is above or below rectangle, or left or right of it.
+/// This is assuming the rectangle is "unrotated" by -angle.
+Point<num> xy_distances_to_rectangle(
+    Point<num> point, Point<num> upper_left_corner, num width, num height, num angle) {
+  Point<num> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
+  num x_low = upper_left_corner.x;
+  num x_hi = upper_left_corner.x + width;
+  num y_low = upper_left_corner.y;
+  num y_hi = upper_left_corner.y + height;
+  num dx, dy;
+  if (x_low <= unrotated_point.x && unrotated_point.x <= x_hi) {
+    dx = 0;
+  } else {
+    if (unrotated_point.x <= x_low) {
+      dx = unrotated_point.x - x_low;
+    } else {
+      dx = unrotated_point.x - x_hi;
+    }
+  }
+  if (y_low <= unrotated_point.y && unrotated_point.y <= y_hi) {
+    dy = 0;
+  } else {
+    if (unrotated_point.y <= y_low) {
+      dy = unrotated_point.y - y_low;
+    } else {
+      dy = unrotated_point.y - y_hi;
+    }
+  }
+  return Point<num>(dx, dy);
+}
+
+/// Finds closest point in rectangle to [point]. If [point] is inside rectangle, returns [point];
+Point<num> closest_point_in_rectangle(
+    Point<num> point, Point<num> upper_left_corner, num width, num height, num angle) {
+  var distances = xy_distances_to_rectangle(point, upper_left_corner, width, height, angle);
+  Point<num> unrotated_point = rotate(point, -angle, origin: upper_left_corner);
+  num x = unrotated_point.x + distances.x;
+  num y = unrotated_point.y + distances.y;
+  var unrotated_point_in_rectangle = Point<num>(x, y);
+  var rotated_point_in_rectangle = rotate(unrotated_point_in_rectangle, angle, origin: upper_left_corner);
+  return rotated_point_in_rectangle;
+}
+
+/// Return helix where click event occurred, or the closest (e.g. if click was on a crossover).
+Helix find_closest_helix(
+    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
+  var svg_clicked_point = svg_position_of_mouse_click(event);
+
+  num min_dist = null;
+  Helix closest_helix = null;
+  for (var helix in helices) {
+    var group = groups[helix.group];
+    var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
+    var dist = distance_to_rectangle(
+        svg_clicked_point, helix_upper_left_corner, helix.svg_width(), helix.svg_height(), group.pitch);
+    if (min_dist == null || min_dist > dist) {
+      min_dist = dist;
+      closest_helix = helix;
+    }
+  }
+  return closest_helix;
+}
 
 /// Return (closest) helix, offset and direction where click event occurred.
-Address get_closest_address(MouseEvent event, Iterable<Helix> helices) {
-  var svg_coord = round_point(svg_position_of_mouse_click(event));
-  Helix helix = get_closest_helix(event, helices);
-  int offset = helix.svg_x_to_offset(svg_coord.x);
-  bool forward = helix.svg_y_is_forward(svg_coord.y);
+Address find_closest_address(
+    MouseEvent event, Iterable<Helix> helices, BuiltMap<String, HelixGroup> groups, Geometry geometry) {
+  var svg_clicked_point = svg_position_of_mouse_click(event);
+
+  Helix helix = find_closest_helix(event, helices, groups, geometry);
+
+  var group = groups[helix.group];
+  var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
+  var closest_point_in_helix = closest_point_in_rectangle(
+      svg_clicked_point, helix_upper_left_corner, helix.svg_width(), helix.svg_height(), group.pitch);
+
+  var closest_point_in_helix_untransformed =
+      group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);
+
+  int offset = helix.svg_x_to_offset(closest_point_in_helix_untransformed.x);
+  bool forward = helix.svg_y_is_forward(closest_point_in_helix_untransformed.y);
+
+//  print('* get_closest_address *');
+//  print('  closest helix: ${helix.idx}');
+//  print('  offset = ${offset}');
+//  print('  forward = ${forward}');
   return Address(helix_idx: helix.idx, offset: offset, forward: forward);
 }
 
@@ -361,7 +495,8 @@ Point<num> svg_position_of_mouse_click(MouseEvent event) {
 
 Point<num> get_svg_point(MouseEvent event) {
   if (browser.isFirefox) {
-    Element svg_elt = svg_ancestor(event.target);
+    SvgElement target = event.target as SvgElement;
+    Element svg_elt = svg_ancestor(target);
     var rect = svg_elt.getBoundingClientRect().topLeft;
     var offset = event.client - rect;
     return offset;
@@ -372,9 +507,9 @@ Point<num> get_svg_point(MouseEvent event) {
 
 SvgSvgElement svg_ancestor(SvgElement elt) {
   while (!(elt is SvgSvgElement)) {
-    elt = elt.parent;
+    elt = elt.parent as SvgElement;
   }
-  return elt;
+  return elt as SvgSvgElement;
 }
 
 Point<num> rect_to_point(Rect rect) => Point<num>(rect.x, rect.y);
@@ -473,8 +608,7 @@ transform_rect_svg_to_mouse_coord_main_view(Rect rect) {
   transform_rect_svg_to_mouse_coord(rect, current_pan(true), current_zoom(true));
 }
 
-Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y) {
-  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
+Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_yz, Geometry geometry) {
   Point<num> point;
   if (grid == Grid.square) {
     point = Point<num>(gp.h, gp.v);
@@ -486,12 +620,12 @@ Point<num> side_view_grid_to_svg(GridPosition gp, Grid grid, bool invert_y) {
     throw ArgumentError(
         'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  if (invert_y) {
+  if (invert_yz) {
     num z = point.x; // note Point.x is its name in the math library, but in the side view it means z
     num y = point.y;
     point = Point<num>(-z, -y);
   }
-  return point * 2 * radius;
+  return point * geometry.distance_between_helices_svg;
 }
 
 /// see here for definitions: https://www.redblobgames.com/grids/hexagons/
@@ -567,11 +701,19 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 }
 
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
-GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y,
+GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y, Geometry geometry,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num radius = constants.HELIX_RADIUS_SIDE_PIXELS;
-  num z = svg_coord.x / (2 * radius);
-  num y = svg_coord.y / (2 * radius);
+  num z = svg_coord.x / geometry.distance_between_helices_svg;
+  num y = svg_coord.y / geometry.distance_between_helices_svg;
+  GridPosition gp = position_2d_to_grid_position_diameter_1_circles(grid, z, y, coordinate_system);
+  if (invert_y) {
+    gp = GridPosition(-gp.h, -gp.v);
+  }
+  return gp;
+}
+
+GridPosition position_2d_to_grid_position_diameter_1_circles(
+    Grid grid, num z, num y, [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   int h, v;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
@@ -584,13 +726,13 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-//        y += 0.5;
+        //        y += 0.5;
         y -= 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-//        y += cos(2 * pi / 6);
+        //        y += cos(2 * pi / 6);
         y -= cos(2 * pi / 6);
       }
     }
@@ -618,37 +760,43 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
       throw UnsupportedError('coordinate system ${coordinate_system} not supported');
     }
   }
-  if (invert_y) {
-    v = -v;
-    h = -h;
+  var gp = GridPosition(h, v);
+  return gp;
+}
+
+GridPosition position3d_to_grid(Position3D position, Grid grid, Geometry geometry) {
+  var gp = position_2d_to_grid_position_diameter_1_circles(grid, position.z, position.y);
+  return gp;
+}
+
+Position3D grid_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
+  num y, z;
+  if (grid == Grid.square) {
+    z = grid_position.h * geometry.distance_between_helices_nm;
+    y = grid_position.v * geometry.distance_between_helices_nm;
+  } else if (grid == Grid.hex) {
+    Point<num> point = hex_grid_position_to_position2d_diameter_1_circles(grid_position);
+    z = point.x * geometry.distance_between_helices_nm;
+    y = point.y * geometry.distance_between_helices_nm;
+  } else if (grid == Grid.honeycomb) {
+    Point<num> point = honeycomb_grid_position_to_position2d_diameter_1_circles(grid_position);
+    z = point.x * geometry.distance_between_helices_nm;
+    y = point.y * geometry.distance_between_helices_nm;
+  } else {
+    throw ArgumentError(
+        'cannot convert grid coordinates for grid unless it is one of square, hex, or honeycomb');
   }
-  return GridPosition(h, v);
+  return Position3D(x: 0, y: y, z: z);
 }
 
-GridPosition position3d_to_grid(Position3D position, Grid grid) {
-  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
-  // doesn't depend on whether y is going up or down
-  Point<num> svg_coord = position3d_to_side_view_svg(position, false);
-  GridPosition grid_position = side_view_svg_to_grid(grid, svg_coord, false);
-  return grid_position;
-}
-
-Position3D grid_to_position3d(GridPosition grid_position, Grid grid) {
-  // we can pass invert_y=false to both calls because the relation of grid position to 3D position
-  // doesn't depend on whether y is going up or down
-  Point<num> svg_coord = side_view_grid_to_svg(grid_position, grid, false);
-  Position3D position3d = svg_side_view_to_position3d(svg_coord, false);
-  return position3d;
-}
-
-Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y) => Point<num>(
-      position.z * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
-      position.y * (constants.HELIX_RADIUS_SIDE_PIXELS * 2) / 2.5 * (invert_y ? -1 : 1),
+Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
+      position.z * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
     );
 
-Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y) => Position3D(
-      z: svg_pos.x / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
-      y: svg_pos.y / (constants.HELIX_RADIUS_SIDE_PIXELS * 2) * 2.5 * (invert_y ? -1 : 1),
+Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y, Geometry geometry) => Position3D(
+      z: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       x: 0,
     );
 
@@ -660,11 +808,12 @@ save_editor_content_to_js_context(String new_content) {
 }
 
 /// Tries to get value in map associated to key, but raises an exception if the key is not present.
-/// Since this is only used for [Design]s, it throws an [IllegalDNADesignError].
+/// Since this is only used for [Design]s, it throws an [IllegalDesignError].
 /// [legacy_keys] is a list of older key names for this same value that work in addition to [key].
 /// [name] is the name of the class in which we expect to find this key (e.g., we expect to find
 /// "domains" in Strand
-dynamic get_value(Map<String, dynamic> map, String key, String name, {List<String> legacy_keys = const []}) {
+dynamic mandatory_field(Map<String, dynamic> map, String key, String name,
+    {List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
       if (map.containsKey(legacy_key)) {
@@ -675,7 +824,7 @@ dynamic get_value(Map<String, dynamic> map, String key, String name, {List<Strin
     if (legacy_keys.isNotEmpty) {
       msg += '\nThese legacy keys are also supported, but were not found either: ${legacy_keys.join(", ")}';
     }
-    throw IllegalDNADesignError(msg);
+    throw IllegalDesignError(msg);
   } else {
     return map[key];
   }
@@ -687,7 +836,7 @@ dynamic get_value(Map<String, dynamic> map, String key, String name, {List<Strin
 /// If [key] is not present but one of [legacy_keys] is, then that value is used.
 /// If [legacy_transformer] is specified and a legacy key is used, then
 /// [legacy_transformer] is used instead of [transformer]/
-T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_value,
+T optional_field<T, U>(Map<String, dynamic> map, String key, T default_value,
     {T Function(U) transformer = null,
     List<String> legacy_keys = const [],
     T Function(U) legacy_transformer = null}) {
@@ -718,10 +867,10 @@ T get_value_with_default<T, U>(Map<String, dynamic> map, String key, T default_v
 /// Tries to get value in map associated to [key], returning null if [key] is not present.
 /// If transformer is given and the key is found in the map, apply transformer to the associated value
 /// and return it.
-/// This function is needed because calling [get_value_with_default] with default_value = null will result
+/// This function is needed because calling [optional_field] with default_value = null will result
 /// in a type error, since Dart generics type inference will think the return type should be Null
 /// instead of whatever is the type of the value in the map.
-T get_value_with_null_default<T, U>(Map<String, dynamic> map, String key,
+T optional_field_with_null_default<T, U>(Map<String, dynamic> map, String key,
     {T Function(U) transformer = null, List<String> legacy_keys = const []}) {
   if (!map.containsKey(key)) {
     for (var legacy_key in legacy_keys) {
@@ -832,7 +981,7 @@ String blob_type_to_string(BlobType blob_type) {
 }
 
 /// [and_then] is a callback to do if the file save dialog is not canceled and no other error occurs.
-/// Currenly, it doesn't do much good, because it is called whether the user cancels or not. But if someday
+/// Currently, it doesn't do much good, because it is called whether the user cancels or not. But if someday
 /// we get around the issues described here:
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/282
 ///   https://github.com/UC-Davis-molecular-computing/scadnano/issues/292
@@ -860,7 +1009,9 @@ save_file(String default_filename, var content,
     }
 
     Url.revokeObjectUrl(url);
-    and_then();
+    if (and_then != null) {
+      and_then();
+    }
   } on Exception catch (e, stackTrace) {
     _alert_error_saving(e, stackTrace);
   } on Error catch (e, stackTrace) {
@@ -898,6 +1049,9 @@ pprint(Map map) {
   print('}');
 }
 
+String id_domain(Domain domain) =>
+    'domain-H${domain.helix}-S${domain.start}-E${domain.end}-${domain.forward ? 'forward' : 'reverse'}';
+
 String id_insertion(Domain substrand, int offset) =>
     'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
 
@@ -933,18 +1087,26 @@ num rotation_between_helices(Helix helix, Helix helix_other, bool forward, Geome
   if (!forward) {
     rotation = (rotation - geometry.minor_groove_angle) % 360;
   }
-
   return rotation;
+}
+
+/// Rotate [point] about [origin] by [angle_degrees] degrees.
+Point<num> rotate(Point<num> point, num angle_degrees, {Point<num> origin = const Point<num>(0, 0)}) {
+  num angle_radians = to_radians(angle_degrees);
+  var point_relative_to_origin = point - origin;
+  num x = point_relative_to_origin.x * cos(angle_radians) - point_relative_to_origin.y * sin(angle_radians);
+  num y = point_relative_to_origin.x * sin(angle_radians) + point_relative_to_origin.y * cos(angle_radians);
+  var point_rotated_relative_to_origin = Point<num>(x, y);
+  var point_rotated = point_rotated_relative_to_origin + origin;
+  return point_rotated;
 }
 
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 /// Return offset and direction on helix where click event occurred.
-Address get_address_on_helix(MouseEvent event, Helix helix) {
-  var svg_coord = svg_position_of_mouse_click(event);
-  int offset = helix.svg_x_to_offset(svg_coord.x);
-  bool forward = helix.svg_y_is_forward(svg_coord.y);
-  return Address(helix_idx: helix.idx, offset: offset, forward: forward);
+Address get_address_on_helix(MouseEvent event, Helix helix, HelixGroup group, Geometry geometry) {
+  var closest_address = find_closest_address(event, [helix], {helix.group: group}.build(), geometry);
+  return closest_address;
 }
 
 String remove_whitespace_and_uppercase(String string) {
@@ -1085,176 +1247,13 @@ String wc_base(String base) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// intersection geometry
-
-class Box {
-  num height;
-  num width;
-  num x;
-  num y;
-
-  factory Box.from(Rect svg_rect) =>
-      Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
-
-  factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
-
-  Box(this.x, this.y, {num height = null, num width = null, num x2 = null, num y2 = null}) {
-    if (width == null && x2 == null) {
-      throw ArgumentError('at least one of height or x2 must be non-null');
-    } else if (x2 == null) {
-      this.width = width;
-    } else if (width == null) {
-      this.width = x2 - x;
-    }
-
-    if (height == null && y2 == null) {
-      throw ArgumentError('at least one of height or x2 must be non-null');
-    } else if (y2 == null) {
-      this.height = height;
-    } else if (height == null) {
-      this.height = y2 - y;
-    }
-  }
-
-  num get x2 => x + width;
-
-  num get y2 => y + height;
-
-  set x2(num x2new) {
-    width = x2new - x;
-  }
-
-  set y2(num y2new) {
-    height = y2new - y;
-  }
-}
-
-// gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> intersection_list<E>(List<E> elts, List<Box> bboxes, Box select_box) =>
-    generalized_intersection_list(elts, bboxes, select_box, intervals_overlap);
-
-// gets list of elements associated to Selectables that intersect select_box_bbox
-List<E> enclosure_list<E>(Iterable<E> elts, List<Box> bboxes, Box select_box) =>
-    generalized_intersection_list(elts, bboxes, select_box, interval_contained);
-
-// indicates if (l1,h1) intersect (l2,h2) \neq empty
-bool intervals_overlap(num l1, num h1, num l2, num h2) {
-  return h1 >= l2 && h2 >= l1;
-}
-
-// indicates if (l1,h1) \subseteq (l2,h2)
-bool interval_contained(num l1, num h1, num l2, num h2) {
-  return l1 >= l2 && h1 <= h2;
-}
-
-List<E> generalized_intersection_list<E>(
-    Iterable<E> elts, List<Box> bboxes, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
-  if (elts.length != bboxes.length) {
-    throw ArgumentError(
-        'elts (length ${elts.length}) and bboxes (length ${bboxes.length}) must have same length');
-  }
-  List<E> elts_intersecting = [];
-//  for (int i = 0; i < elts.length; i++) {
-  int i = 0;
-  for (E elt in elts) {
-    Box elt_bbox = bboxes[i++];
-    if (boxes_intersect_generalized(elt_bbox, select_box, overlap)) {
-      elts_intersecting.add(elt);
-    }
-  }
-  return elts_intersecting;
-}
-
-bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num l1, num h1, num l2, num h2)) {
-  num elt_x2 = elt_bbox.x + elt_bbox.width;
-  num select_box_x2 = select_box.x + select_box.width;
-  num elt_y2 = elt_bbox.y + elt_bbox.height;
-  num select_box_y2 = select_box.y + select_box.height;
-  return overlap(elt_bbox.x, elt_x2, select_box.x, select_box_x2) &&
-      overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
-}
-
-//// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-//List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
-//  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
-//}
-
-// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<SvgElement> enclosure_list_in_elt(
-    String classname, Rect select_box_bbox, Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_in_elt(
-      classname, select_box_bbox, select_modes, is_origami, interval_contained);
-}
-
-generalized_intersection_list_in_elt(String classname, Rect select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
-  List<SvgElement> elts_intersecting = [];
-
-//  List<Element> selectable_elts = querySelectorAll('.selectable');
-  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
-
-  for (GraphicsElement elt in selectable_elts) {
-    Rect elt_bbox = elt.getBBox();
-//    util.transform_rect_svg_to_mouse_coord_main_view(elt_bbox);
-    if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
-      elts_intersecting.add(elt);
-    }
-  }
-  return elts_intersecting;
-}
-
-List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  List<SelectModeChoice> select_modes_not_scaffold_or_staple = [
-    for (var mode in select_modes)
-      if (mode != SelectModeChoice.scaffold && mode != SelectModeChoice.staple) mode
-  ];
-  if (select_modes_not_scaffold_or_staple.isEmpty) {
-    return [];
-  }
-
-  List<String> selectors = [];
-  if (is_origami &&
-      (!select_modes.contains(SelectModeChoice.scaffold) ||
-          !select_modes.contains(SelectModeChoice.staple))) {
-    if (select_modes.contains(SelectModeChoice.scaffold)) {
-      for (var mode in select_modes_not_scaffold_or_staple) {
-        selectors.add('.${SelectModeChoice.scaffold.css_selector()}.${mode.css_selector()}');
-      }
-    } else if (select_modes.contains(SelectModeChoice.staple)) {
-      for (var mode in select_modes) {
-        selectors.add(':not(.${SelectModeChoice.scaffold.css_selector()}).${mode.css_selector()}');
-      }
-    }
-  } else {
-    // not origami, but origami and both scaffold and staples are selectable, just select anything
-    // with the correct mode. Otherwise use the more complex logic above to pick apart between
-    // parts marked as scaffold versus those that are not.
-    for (var mode in select_modes_not_scaffold_or_staple) {
-      selectors.add('.${mode.css_selector()}');
-    }
-  }
-  List<Element> selectable_elts = querySelectorAll(selectors.join(', '));
-  return selectable_elts;
-}
-
-bool bboxes_intersect_generalized(
-    Rect elt_bbox, Rect select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
-  num elt_x2 = elt_bbox.x + elt_bbox.width;
-  num select_box_x2 = select_box_bbox.x + select_box_bbox.width;
-  num elt_y2 = elt_bbox.y + elt_bbox.height;
-  num select_box_y2 = select_box_bbox.y + select_box_bbox.height;
-  return overlap(elt_bbox.x, elt_x2, select_box_bbox.x, select_box_x2) &&
-      overlap(elt_bbox.y, elt_y2, select_box_bbox.y, select_box_y2);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // unit testing utilities
 
 /// Returns the default state of the app.
 AppState default_state({Grid grid = Grid.none}) {
-  var design = Design((b) => b..grid = grid);
+  var design = Design(grid: grid);
   var ui_state = AppUIState.from_design(design);
-  var state = (DEFAULT_AppStateBuilder
+  var state = (DEFAULT_AppState.toBuilder()
         ..design = design.toBuilder()
         ..ui_state.replace(ui_state)
         ..editor_content = '')
@@ -1394,5 +1393,6 @@ MapBuilder<String, Object> unused_fields_map(Map<String, Object> map, List<Strin
 // asynchronous alert dialog
 
 async_alert(String msg) async {
+  await null;
   Timer(Duration(microseconds: 1), () => window.alert(msg));
 }

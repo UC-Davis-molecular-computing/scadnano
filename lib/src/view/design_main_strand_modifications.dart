@@ -1,10 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/substrand.dart';
-import 'package:scadnano/src/view/design_main_strand_modification_domain.dart';
+
+import 'transform_by_helix_group.dart';
+import '../state/geometry.dart';
+import '../state/group.dart';
+import '../state/domain.dart';
+import '../state/design.dart';
+import '../state/loopout.dart';
+import '../state/substrand.dart';
+import 'design_main_strand_modification_domain.dart';
+import 'pure_component.dart';
 
 import '../state/strand.dart';
 import '../state/helix.dart';
@@ -13,27 +18,36 @@ part 'design_main_strand_modifications.over_react.g.dart';
 
 UiFactory<DesignMainStrandModificationsProps> DesignMainStrandModifications = _$DesignMainStrandModifications;
 
-mixin DesignMainStrandModificationsProps on UiProps {
+mixin DesignMainStrandModificationsPropsMixin on UiProps {
   Strand strand;
+
   BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
+
   BuiltSet<int> side_selected_helix_idxs;
   bool only_display_selected_helices;
   bool display_connector;
   int font_size;
 }
 
-class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStrandModificationsProps> {
+class DesignMainStrandModificationsProps = UiProps
+    with DesignMainStrandModificationsPropsMixin, TransformByHelixGroupPropsMixin;
+
+class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStrandModificationsProps>
+    with PureComponent, TransformByHelixGroup<DesignMainStrandModificationsProps> {
   @override
   render() {
     List<ReactElement> modifications = [];
 
     if (props.strand.modification_5p != null) {
-      var ss = props.strand.first_domain();
-      if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(ss.helix)) {
-        Helix helix_5p = props.helices[ss.helix];
+      var domain = props.strand.first_domain();
+      if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
+        Helix helix_5p = props.helices[domain.helix];
         modifications.add((DesignMainStrandModificationDomain()
-          ..address = Address(helix_idx: helix_5p.idx, offset: ss.offset_5p, forward: ss.forward)
+          ..address = Address(helix_idx: helix_5p.idx, offset: domain.offset_5p, forward: domain.forward)
           ..helix = helix_5p
+          ..transform = transform_of_helix(domain.helix)
           ..modification = props.strand.modification_5p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
@@ -42,12 +56,13 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     }
 
     if (props.strand.modification_3p != null) {
-      var ss = props.strand.last_domain();
-      if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(ss.helix)) {
-        Helix helix_3p = props.helices[ss.helix];
+      var domain = props.strand.last_domain();
+      if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
+        Helix helix_3p = props.helices[domain.helix];
         modifications.add((DesignMainStrandModificationDomain()
-          ..address = Address(helix_idx: helix_3p.idx, offset: ss.offset_3p, forward: ss.forward)
+          ..address = Address(helix_idx: helix_3p.idx, offset: domain.offset_3p, forward: domain.forward)
           ..helix = helix_3p
+          ..transform = transform_of_helix(domain.helix)
           ..modification = props.strand.modification_3p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
@@ -77,13 +92,14 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           modifications.add((DesignMainStrandModificationDomain()
             ..address = Address(helix_idx: helix.idx, offset: offset, forward: ss_with_mod.forward)
             ..helix = helix
+            ..transform = transform_of_helix(ss_with_mod.helix)
             ..modification = props.strand.modifications_int[dna_idx_mod]
             ..font_size = props.font_size
             ..display_connector = props.display_connector
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {
-        throw IllegalDNADesignError('currently unsupported to draw modification on Loopout');
+        throw IllegalDesignError('currently unsupported to draw modification on Loopout');
       }
     }
 

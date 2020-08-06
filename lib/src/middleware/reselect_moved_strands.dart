@@ -1,12 +1,12 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/helix.dart';
+import '../state/design.dart';
+import '../state/helix.dart';
 
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+import '../state/domain.dart';
+import '../state/dna_end.dart';
+import '../state/strand.dart';
+import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
@@ -15,25 +15,37 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
     // only reselect if there is more than 1 selected, otherwise this builds up many selected items
     // as the user repeatedly clicks on one at a time
 
+    Design design = store.state.design;
+
     List<Address> addresses = [];
     StrandsMove strands_move = action.strands_move;
-    BuiltList<int> helices_view_order = store.state.design.helices_view_order;
-    BuiltMap<int, int> helices_view_order_inverse = store.state.design.helices_view_order_inverse;
 
-    // first collect addresses while design.end_to_substrand is still valid
+    var new_address_helix_idx = strands_move.current_address.helix_idx;
+    var new_helix = design.helices[new_address_helix_idx];
+    var new_group = design.groups[new_helix.group];
+
+    var old_address_helix_idx = strands_move.original_address.helix_idx;
+    var old_helix = design.helices[old_address_helix_idx];
+    var old_group = design.groups[old_helix.group];
+
+    BuiltList<int> new_helices_view_order = new_group.helices_view_order;
+    BuiltMap<int, int> old_helices_view_order_inverse = old_group.helices_view_order_inverse;
+
+    // first collect old addresses while design.end_to_substrand is still valid, convert them to
+    // their new addresses so we can look them up
     for (Strand strand in strands_move.strands_moving) {
-      Domain old_substrand = strand.first_domain();
-      DNAEnd old_5p_end = old_substrand.dnaend_5p;
-      int old_helix_view_order = helices_view_order_inverse[old_substrand.helix];
+      Domain old_domain = strand.first_domain();
+      DNAEnd old_5p_end = old_domain.dnaend_5p;
+      int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix];
       int new_helix_view_order = old_helix_view_order + strands_move.delta_view_order;
-      int new_helix_idx = helices_view_order[new_helix_view_order];
+      int new_helix_idx = new_helices_view_order[new_helix_view_order];
       int new_offset = old_5p_end.offset_inclusive + strands_move.delta_offset;
-      var new_forward = strands_move.delta_forward != old_substrand.forward;
+      var new_forward = strands_move.delta_forward != old_domain.forward;
       var address = Address(helix_idx: new_helix_idx, offset: new_offset, forward: new_forward);
       addresses.add(address);
     }
 
-    // then apply action
+    // then apply action to commit the move
     next(action);
 
     // now find new ends at given addresses

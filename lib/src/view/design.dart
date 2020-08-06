@@ -7,26 +7,29 @@ import 'dart:svg' as svg;
 import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
-import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/helix_group_move.dart';
 
-import 'package:scadnano/src/state/domain.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/helix.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/state/strand.dart';
-import 'package:scadnano/src/state/strand_creation.dart';
-import 'package:scadnano/src/state/strands_move.dart';
+import '../state/domain.dart';
+import '../state/dna_ends_move.dart';
+import '../state/edit_mode.dart';
+import '../state/helix.dart';
+import '../state/select_mode.dart';
+import '../state/strand.dart';
+import '../state/strand_creation.dart';
+import '../state/strands_move.dart';
 
 import '../state/app_state.dart';
 import '../app.dart';
 import 'design_context_menu.dart';
 import 'design_dialog_form.dart';
 import 'design_main_error_boundary.dart';
+import 'menu_side.dart';
 import 'view.dart';
 import 'design_side.dart';
 import '../util.dart' as util;
@@ -43,6 +46,7 @@ const DEBUG_PRINT_SIDE_VIEW_MOUSE_POSITION = false;
 
 const FOOTER_ID = 'design-footer-mouse-over';
 const MODES_ID = 'design-mode-buttons';
+const SIDE_VIEW_MENU_ID = 'side-view-menu';
 const SIDE_VIEW_SVG_VIEWPORT_GROUP = 'side-view-svg-viewport';
 const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
@@ -59,6 +63,8 @@ class DesignViewComponent {
   DivElement footer_element = DivElement()..attributes = {'id': FOOTER_ID};
   DivElement modes_element = DivElement()..attributes = {'id': MODES_ID};
   DivElement error_message_pane = DivElement()..attributes = {'id': 'error-message-pane'};
+
+  DivElement side_view_menu = DivElement()..attributes = {'id': SIDE_VIEW_MENU_ID};
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
@@ -129,6 +135,7 @@ class DesignViewComponent {
 
     this.error_message_component = ErrorMessageComponent(error_message_pane);
 
+    side_pane.children.add(side_view_menu);
     side_pane.children.add(side_view_svg);
     main_pane.children.add(main_view_svg);
 
@@ -178,7 +185,7 @@ class DesignViewComponent {
         util.set_allow_pan(event.target is svg.SvgSvgElement);
       });
       //XXX: Dart doesn't have onPointerUp, so we have to trigger from JS,
-      // which calls [main_view_pointer_up] below
+      // which calls [main_view_pointer_up]
 //      view_svg.onMouseUp.listen((event) {
 //        util.set_allow_pan(true);
 //        print('mouse up');
@@ -190,29 +197,102 @@ class DesignViewComponent {
 //      });
     }
 
-    main_view_svg.onMouseMove.listen((event) {
+    main_view_svg.onMouseMove.listen((MouseEvent event) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
+      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
+
       // move potential crossover
       main_view_mouse_position = event.client;
       main_view_move_potential_crossover(event);
 
-      // move selected DNA ends
-      DNAEndsMove moves_store = app.store_dna_ends_move.state;
-      if (moves_store != null) {
-        Helix helix = moves_store.helix;
-        int offset = util.get_address_on_helix(event, helix).offset;
-        int old_offset = moves_store.current_offset;
-        if (offset != old_offset) {
-          app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+      // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
+      if (left_click_down) {
+        // move selected DNA ends
+        DNAEndsMove moves_store = app.store_dna_ends_move.state;
+        if (moves_store != null) {
+          var group_names = group_names_of_ends(moves_store);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            Helix helix = moves_store.helix;
+            var group = app.state.design.groups[helix.group];
+            var geometry = app.state.design.geometry;
+            int offset = util.get_address_on_helix(event, helix, group, geometry).offset;
+            int old_offset = moves_store.current_offset;
+            if (offset != old_offset) {
+              app.dispatch(actions.DNAEndsMoveAdjustOffset(offset: offset));
+            }
+          }
         }
+
+//        print('mouse moved');
+//        HelixGroupMove helix_group_move = app.store_helix_group_move.state;
+//        print('helix_group_move = $helix_group_move');
+//        if (helix_group_move != null) {
+//          Point<num> point =
+//              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
+//          var action = actions.HelixGroupMoveAdjustTranslation(mouse_point: point);
+//          app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
+//        }
       }
 
       // move selected Strands
       StrandsMove strands_move = app.state.ui_state.strands_move;
       if (strands_move != null) {
-        var old_address = strands_move.current_address;
-        var address = util.get_closest_address(event, app.state.design.helices.values);
-        if (address != old_address) {
-          app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+        // ugg... when copy/pasting, the left click doesn't have to be depressed
+        // when moving, it does
+        // paste is stopped from ever getting here (and the user was warned in strands_move_middleware)
+        // if strands were on many groups, so it's safe to execute this, IF copy is true.
+        // If moving, then we rely on the error-checking code next to warn the user
+        // about strands being in multiple groups.
+        if (strands_move.copy || left_click_down) {
+          var group_names = group_names_of_strands(strands_move);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
+                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            var old_address = strands_move.current_address;
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
+                  ]
+                : app.state.design.helices.values;
+            var address = util.find_closest_address(
+                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+            if (address != old_address) {
+              app.dispatch(actions.StrandsMoveAdjustAddress(address: address));
+            }
+          }
+        }
+      }
+
+      // move selected Domains
+      DomainsMove domains_move = app.state.ui_state.domains_move;
+      if (domains_move != null) {
+        if (left_click_down) {
+          var group_names = group_names_of_domains(domains_move);
+          if (group_names.length != 1) {
+            var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
+                'These domains occupy the following helix groups: ${group_names.join(", ")}';
+            window.alert(msg);
+          } else {
+            var old_address = domains_move.current_address;
+            var visible_helices = app.state.ui_state.only_display_selected_helices
+                ? [
+                    for (var helix in app.state.design.helices.values)
+                      if (app.state.ui_state.side_selected_helix_idxs.contains(helix.idx)) helix
+                  ]
+                : app.state.design.helices.values;
+            var address = util.find_closest_address(
+                event, visible_helices, app.state.design.groups, app.state.design.geometry);
+            if (address != old_address) {
+              app.dispatch(actions.DomainsMoveAdjustAddress(address: address));
+            }
+          }
         }
       }
 
@@ -220,7 +300,9 @@ class DesignViewComponent {
       StrandCreation strand_creation = app.state.ui_state.strand_creation;
       if (strand_creation != null) {
         int old_offset = strand_creation.current_offset;
-        int new_offset = util.get_address_on_helix(event, strand_creation.helix).offset;
+        var group = app.state.design.groups[strand_creation.helix.group];
+        var geometry = app.state.design.geometry;
+        int new_offset = util.get_address_on_helix(event, strand_creation.helix, group, geometry).offset;
         var new_address = Address(
             helix_idx: strand_creation.helix.idx, offset: new_offset, forward: strand_creation.forward);
         if (old_offset != new_offset &&
@@ -299,11 +381,14 @@ class DesignViewComponent {
     if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
       app.dispatch(actions.HelixSelectionsClear());
     }
-    if (app.state.ui_state.drawing_potential_crossover) {
+    if (app.state.ui_state.potential_crossover_is_drawing) {
       app.dispatch(actions.PotentialCrossoverRemove());
     }
     if (app.state.ui_state.strands_move != null) {
       app.dispatch(actions.StrandsMoveStop());
+    }
+    if (app.state.ui_state.domains_move != null) {
+      app.dispatch(actions.DomainsMoveStop());
     }
     if (app.state.ui_state.strand_creation != null) {
       app.dispatch(actions.StrandCreateStop());
@@ -318,7 +403,8 @@ class DesignViewComponent {
   }
 
   handle_keyboard_shortcuts(int key, KeyboardEvent ev) {
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+    if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
+            app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) &&
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
@@ -392,14 +478,18 @@ class DesignViewComponent {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
-    bool toggle;
-    if (event.ctrlKey || event.metaKey) {
-      toggle = true;
-    } else if (event.shiftKey) {
-      toggle = false;
-    }
-    if (toggle != null) {
-      app.dispatch(actions.SelectionBoxCreate(point, toggle, is_main_view));
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+      bool toggle;
+      if (event.ctrlKey || event.metaKey) {
+        toggle = true;
+      } else if (event.shiftKey) {
+        toggle = false;
+      }
+      if (toggle != null) {
+        app.dispatch(actions.SelectionBoxCreate(point, toggle, is_main_view));
+      }
+    } else if (is_main_view && app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) {
+      app.dispatch(actions.HelixGroupMoveStart(mouse_point: point));
     }
   }
 
@@ -407,28 +497,39 @@ class DesignViewComponent {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
-    if (event.ctrlKey || event.metaKey || event.shiftKey) {
-      var action = actions.SelectionBoxSizeChange(point, is_main_view);
-      app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+      if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        var action = actions.SelectionBoxSizeChange(point, is_main_view);
+        app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
+      }
+    } else if (is_main_view && app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) {
+      if (event.ctrlKey || event.metaKey || event.shiftKey) {
+        var action = actions.HelixGroupMoveAdjustTranslation(mouse_point: point);
+        app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
+      }
     }
   }
 
   drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    if (app.store_selection_box.state == null) {
-      return;
+    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+      if (app.store_selection_box.state == null) {
+        return;
+      }
+      var action_remove = actions.SelectionBoxRemove(is_main_view);
+      bool toggle = app.store_selection_box.state.toggle;
+      var action_adjust;
+      if (is_main_view) {
+        action_adjust = actions.SelectionsAdjust(toggle);
+      } else {
+        action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+      }
+      // call this first so selection box is still in view when selections are made,
+      // so we can detect intersection
+      app.dispatch(action_adjust);
+      app.dispatch(action_remove);
+    } else if (is_main_view && app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) {
+      app.dispatch(actions.HelixGroupMoveStop());
     }
-    var action_remove = actions.SelectionBoxRemove(is_main_view);
-    bool toggle = app.store_selection_box.state.toggle;
-    var action_adjust;
-    if (is_main_view) {
-      action_adjust = actions.SelectionsAdjust(toggle);
-    } else {
-      action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
-    }
-    // call this first so selection box is still in view when selections are made,
-    // so we can detect intersection
-    app.dispatch(action_adjust);
-    app.dispatch(action_remove);
   }
 
   render(AppState state) {
@@ -486,6 +587,17 @@ class DesignViewComponent {
         this.root_element.children.add(this.context_menu_container);
       }
 
+      // side view menu
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedSideMenu()(),
+          ),
+        ),
+        querySelector('#$SIDE_VIEW_MENU_ID'),
+      );
+
+      // side view svg
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -499,6 +611,7 @@ class DesignViewComponent {
         querySelector('#$SIDE_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
+      // main view
       react_dom.render(
         DesignMainErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -511,7 +624,11 @@ class DesignViewComponent {
                 (ReduxProvider()
                   ..store = app.store_dna_ends_move
                   ..context = app.context_dna_ends_move)(
-                  ConnectedDesignMain()(),
+                  (ReduxProvider()
+                    ..store = app.store_helix_group_move
+                    ..context = app.context_helix_group_move)(
+                    ConnectedDesignMain()(),
+                  ),
                 ),
               ),
             ),
@@ -520,6 +637,7 @@ class DesignViewComponent {
         querySelector('#$MAIN_VIEW_SVG_VIEWPORT_GROUP'),
       );
 
+      // footer
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -529,6 +647,7 @@ class DesignViewComponent {
         this.footer_element,
       );
 
+      // context menu
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -538,6 +657,7 @@ class DesignViewComponent {
         this.context_menu_container,
       );
 
+      // interactive dialog
       react_dom.render(
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
@@ -571,6 +691,7 @@ class DesignViewComponent {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
     var strands =
         BuiltList<Strand>(app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
+
     int min_helix_idx;
     int min_offset;
     bool min_forward;
@@ -615,9 +736,12 @@ class DesignViewComponent {
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
     if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
-      if (!app.state.design.grid.is_none()) {
+      var displayed_group_name = app.state.ui_state.displayed_group_name;
+      var displayed_grid = app.state.design.groups[displayed_group_name].grid;
+      if (!displayed_grid.is_none()) {
         bool invert_y = app.state.ui_state.invert_yz;
-        var new_grid_pos = util.grid_position_of_mouse_in_side_view(app.state.design.grid, invert_y,
+        Geometry geometry = app.state.design.geometry;
+        var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);
         if (app.state.ui_state.side_view_grid_position_mouse_cursor != new_grid_pos) {
           app.dispatch(actions.MouseGridPositionSideUpdate(new_grid_pos));
@@ -639,31 +763,51 @@ class DesignViewComponent {
   }
 }
 
-main_view_pointer_up(MouseEvent event) {
-//  if (app.store_dna_ends_move.state != null || app.state.ui_state.strands_move != null) {
-//    // since this is called from Javascript on a pointerUp event, this stops anything from being selected on
-//    // mouse up, which is the default behavior for selectable elements
-//    event.stopPropagation();
-//  }
+group_names_of_strands(StrandsMove strands_move) =>
+    app.state.design.group_names_of_strands(strands_move.strands_moving);
 
-  if (app.store_dna_ends_move.state != null) {
-    DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+group_names_of_domains(DomainsMove domains_move) =>
+    app.state.design.group_names_of_domains(domains_move.domains_moving);
+
+group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_ends(ends_move.ends_moving);
+
+main_view_pointer_up(MouseEvent event) {
+//  util.set_allow_pan(true);
+
+  DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
+  if (dna_ends_move != null) {
     app.dispatch(actions.DNAEndsMoveStop());
     if (dna_ends_move.is_nontrivial) {
       app.dispatch(actions.DNAEndsMoveCommit(dna_ends_move: dna_ends_move));
     }
   }
 
-  if (app.state.ui_state.strands_move != null) {
-    StrandsMove strands_move = app.state.ui_state.strands_move;
+  HelixGroupMove helix_group_move = app.store_helix_group_move.state;
+  if (helix_group_move != null) {
+    app.dispatch(actions.HelixGroupMoveStop());
+    if (helix_group_move.is_nontrivial) {
+      app.dispatch(actions.HelixGroupMoveCommit(helix_group_move: helix_group_move));
+    }
+  }
+
+  StrandsMove strands_move = app.state.ui_state.strands_move;
+  if (strands_move != null) {
     app.dispatch(actions.StrandsMoveStop());
     if (strands_move.allowable && strands_move.is_nontrivial) {
       app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
     }
   }
 
-  if (app.state.ui_state.strand_creation != null) {
-    StrandCreation strand_creation = app.state.ui_state.strand_creation;
+  DomainsMove domains_move = app.state.ui_state.domains_move;
+  if (domains_move != null) {
+    app.dispatch(actions.DomainsMoveStop());
+    if (domains_move.allowable && domains_move.is_nontrivial) {
+      app.dispatch(actions.DomainsMoveCommit(domains_move: domains_move));
+    }
+  }
+
+  StrandCreation strand_creation = app.state.ui_state.strand_creation;
+  if (strand_creation != null) {
     app.dispatch(actions.StrandCreateStop());
     if (strand_creation.original_offset != strand_creation.current_offset) {
       app.dispatch(actions.StrandCreateCommit(

@@ -96,7 +96,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "../../../node_modules/asap/browser-asap.js":
+/***/ "package:scadnano/src//../../node_modules/asap/browser-asap.js":
 /*!*************************************************************************************!*\
   !*** /Users/christrevino/Workspace/oss/react-dnd/node_modules/asap/browser-asap.js ***!
   \*************************************************************************************/

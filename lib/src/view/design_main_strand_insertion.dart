@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/selectable.dart';
@@ -25,10 +26,11 @@ UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMa
 @Props()
 mixin DesignMainStrandInsertionPropsMixin on UiProps {
   Insertion insertion;
-  Domain substrand;
+  Domain domain;
   Color color;
   Helix helix;
   String id;
+  String transform;
 }
 
 class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
@@ -38,25 +40,31 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     with PureComponent {
   @override
   render() {
-    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.substrand.forward);
+    Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
-    return [insertion_path, insertion_background, text_num_insertions];
+    return (Dom.g()
+      ..className = 'insertion-group'
+      ..transform = props.transform)(
+      insertion_path,
+      insertion_background,
+      text_num_insertions,
+    );
   }
 
   ReactElement _insertion_path() {
-    Domain substrand = props.substrand;
+    Geometry geometry = props.helix.geometry;
     int offset = props.insertion.offset;
     Color color = props.color;
 
-    Point<num> pos = props.helix.svg_base_pos(offset, substrand.forward);
+    Point<num> pos = props.helix.svg_base_pos(offset, props.domain.forward);
 
-    num dx1 = constants.BASE_WIDTH_SVG;
-    num dx2 = 0.5 * constants.BASE_WIDTH_SVG;
-    num dy1 = 2 * constants.BASE_HEIGHT_SVG;
-    num dy2 = 2 * constants.BASE_HEIGHT_SVG;
-    if (substrand.forward) {
+    num dx1 = geometry.base_width_svg;
+    num dx2 = 0.5 * geometry.base_width_svg;
+    num dy1 = 2 * geometry.base_height_svg;
+    num dy2 = 2 * geometry.base_height_svg;
+    if (props.domain.forward) {
       dy1 = -dy1;
       dy2 = -dy2;
       dx1 = -dx1;
@@ -88,34 +96,34 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _text_number_of_insertions(Point<num> pos) {
+    Geometry geometry = props.helix.geometry;
     int offset = props.insertion.offset;
-    Domain substrand = props.substrand;
     Insertion insertion = props.insertion;
 
     // write number of insertions inside insertion loop
     int length = insertion.length;
 
-    var dy_text = '${0.2 * constants.BASE_WIDTH_SVG}';
+    var dy_text = '${0.2 * geometry.base_height_svg}';
     if (browser.isFirefox) {
       // le sigh
-      dy_text = '${0.14 * constants.BASE_WIDTH_SVG}';
+      dy_text = '${0.14 * geometry.base_height_svg}';
     }
 
-    num background_width = constants.BASE_WIDTH_SVG;
-    num background_height = 1.5 * constants.BASE_HEIGHT_SVG;
+    num background_width = geometry.base_width_svg;
+    num background_height = 1.5 * geometry.base_height_svg;
     num background_x = pos.x - background_width / 2;
-    num background_y = pos.y - constants.BASE_HEIGHT_SVG / 2;
-    if (substrand.forward) {
+    num background_y = pos.y - geometry.base_height_svg / 2;
+    if (props.domain.forward) {
       background_y -= background_height;
     } else {
-      background_y += constants.BASE_HEIGHT_SVG;
+      background_y += geometry.base_height_svg;
     }
 
-    String key = 'num-insertion-H${substrand.helix}-${offset}';
+    String key = 'num-insertion-H${props.domain.helix}-${offset}';
     SvgProps text_path_props = Dom.textPath()
       ..startOffset = '50%'
 //      ..href = '#${util.id_insertion(substrand, offset)}'
-      ..xlinkHref = '#${util.id_insertion(substrand, offset)}'
+      ..xlinkHref = '#${util.id_insertion(props.domain, offset)}'
       ..className = 'insertion-length';
 
 //    return (Dom.text()
@@ -141,9 +149,10 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
   }
 
   ReactElement _insertion_background(Point<num> pos) {
-    String key_background = 'insertion-background-H${props.substrand.helix}-${props.insertion.offset}';
-    num background_width = constants.BASE_WIDTH_SVG;
-    num background_height = constants.BASE_HEIGHT_SVG;
+    Geometry geometry = props.helix.geometry;
+    String key_background = 'insertion-background-H${props.domain.helix}-${props.insertion.offset}';
+    num background_width = geometry.base_width_svg;
+    num background_height = geometry.base_height_svg;
     num background_x = pos.x - background_width / 2;
     num background_y = pos.y - background_height / 2;
     return (Dom.rect()
@@ -154,7 +163,7 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       ..height = background_height
       ..onClick = (_) {
         if (edit_mode_is_insertion()) {
-          app.dispatch(actions.InsertionRemove(domain: props.substrand, insertion: props.insertion));
+          app.dispatch(actions.InsertionRemove(domain: props.domain, insertion: props.insertion));
         }
       }
       ..key = key_background)();
@@ -167,6 +176,6 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
       return;
     }
     app.dispatch(actions.InsertionLengthChange(
-        domain: props.substrand, insertion: props.insertion, length: new_length));
+        domain: props.domain, insertion: props.insertion, length: new_length));
   }
 }

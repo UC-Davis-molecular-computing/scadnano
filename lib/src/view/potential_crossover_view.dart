@@ -2,7 +2,7 @@
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/over_react.dart';
 
-import 'package:scadnano/src/state/potential_crossover.dart';
+import '../state/potential_crossover.dart';
 import '../app.dart';
 
 part 'potential_crossover_view.over_react.g.dart';

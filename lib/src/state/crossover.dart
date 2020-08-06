@@ -1,5 +1,5 @@
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/state/strand_part.dart';
+import '../state/strand_part.dart';
 
 import '../serializers.dart';
 import 'linker.dart';

@@ -2,8 +2,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 
-import 'package:scadnano/src/serializers.dart';
-import 'package:scadnano/src/state/select_mode.dart';
+import '../serializers.dart';
+import '../state/select_mode.dart';
 import '../json_serializable.dart';
 import 'linker.dart';
 import 'selectable.dart';
@@ -66,8 +66,8 @@ abstract class Loopout
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
     var name = 'Loopout';
-    int loopout_length = util.get_value(json_map, constants.loopout_key, name);
-    Object label = util.get_value_with_null_default(json_map, constants.label_key);
+    int loopout_length = util.mandatory_field(json_map, constants.loopout_key, name);
+    Object label = util.optional_field_with_null_default(json_map, constants.label_key);
     return LoopoutBuilder()
       ..loopout_length = loopout_length
       ..label = label

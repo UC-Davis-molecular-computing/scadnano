@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/dialog.dart';
+import '../state/dialog.dart';
 
 import '../app.dart';
 import '../state/app_state.dart';
@@ -158,6 +158,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           ..disabled = disabled
           ..value = item.value
           ..size = item.size
+//          ..width = '${item.size}ch'
           ..onChange = (SyntheticFormEvent e) {
             var new_responses = state.responses.toBuilder();
             String new_value = e.target.value;
@@ -183,7 +184,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogNumber) {
+    } else if (item is DialogInteger) {
       return Dom.label()(
         '${item.label}: ',
         (Dom.input()
@@ -195,12 +196,12 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             var new_responses = state.responses.toBuilder();
             num new_value = int.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogNumber response = state.responses[dialog_item_idx];
+            DialogInteger response = state.responses[dialog_item_idx];
             new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogFloatingNumber) {
+    } else if (item is DialogFloat) {
       return Dom.label()(
         '${item.label}: ',
         (Dom.input()
@@ -213,7 +214,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             var new_responses = state.responses.toBuilder();
             num new_value = double.tryParse(e.target.value);
             if (new_value == null) return;
-            DialogFloatingNumber response = state.responses[dialog_item_idx];
+            DialogFloat response = state.responses[dialog_item_idx];
             new_responses[dialog_item_idx] = response.rebuild((b) => b.value = new_value);
             setState(newState()..responses = new_responses.build());
           })(),

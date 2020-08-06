@@ -3,22 +3,28 @@ import 'dart:html';
 import 'package:built_collection/src/set.dart';
 import 'package:redux/redux.dart';
 
-import 'package:scadnano/src/state/app_state.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/select_mode.dart';
+import '../state/app_state.dart';
+import '../state/design.dart';
+import '../state/edit_mode.dart';
+import '../state/select_mode.dart';
 
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 
-const selectable_css_style_non_domain_end = {
+const selectable_css_style_non_domain_or_end = {
   'filter': 'url("#shadow")',
+  'stroke-width': '5pt', // makes thicker when selected so easier to see
 };
 
-const selectable_css_style_domain_end = {
+const selectable_css_style_domain = {
+  'stroke': 'hotpink',
+  'stroke-width': '5pt', // makes thicker when selected so easier to see
+};
+
+const selectable_css_style_end = {
   'filter': 'url("#shadow")',
   'stroke': 'black',
-  'stroke-width': '0.5px',
+  'stroke-width': '1pt',
   'visibility': 'visible',
 };
 
@@ -49,25 +55,37 @@ set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_mod
       edit_mode_is_select && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
-    set_strand_part_selectable_css_style_rules(select_modes,
-        all_parts_selectable: all_parts_selectable,
-        staple_parts_selectable: staple_parts_selectable,
-        scaffold_parts_selectable: scaffold_parts_selectable,
-        select_mode_choice: select_mode_choice,
-        is_origami: is_origami);
+    set_strand_part_selectable_css_style_rules(
+      select_modes,
+      all_parts_selectable: all_parts_selectable,
+      staple_parts_selectable: staple_parts_selectable,
+      scaffold_parts_selectable: scaffold_parts_selectable,
+      select_mode_choice: select_mode_choice,
+      is_origami: is_origami,
+      edit_mode_is_select: edit_mode_is_select,
+    );
   }
 }
 
-set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_modes,
-    {bool all_parts_selectable,
-    bool staple_parts_selectable,
-    bool scaffold_parts_selectable,
-    SelectModeChoice select_mode_choice,
-    bool is_origami}) {
+set_strand_part_selectable_css_style_rules(
+  BuiltSet<SelectModeChoice> select_modes, {
+  bool all_parts_selectable,
+  bool staple_parts_selectable,
+  bool scaffold_parts_selectable,
+  SelectModeChoice select_mode_choice,
+  bool is_origami,
+  bool edit_mode_is_select,
+}) {
   bool select_mode_contains_part = select_modes.contains(select_mode_choice);
-  var selectable_css_style_this_choice = SelectModeChoice.ends.contains(select_mode_choice)
-      ? selectable_css_style_domain_end
-      : selectable_css_style_non_domain_end;
+  var selectable_css_style_this_choice;
+
+  if (SelectModeChoice.ends.contains(select_mode_choice)) {
+    selectable_css_style_this_choice = selectable_css_style_end;
+  } else if (SelectModeChoice.domain == select_mode_choice) {
+    selectable_css_style_this_choice = selectable_css_style_domain;
+  } else {
+    selectable_css_style_this_choice = selectable_css_style_non_domain_or_end;
+  }
 
   var all_strand_selector = '.${select_mode_choice.css_selector()}:hover';
   var staple_only_selector =
@@ -75,7 +93,7 @@ set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_mod
   var scaffold_selector =
       '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
 
-  if (!select_mode_contains_part) {
+  if (!edit_mode_is_select || !select_mode_contains_part) {
     css_class_remove_style(all_strand_selector);
     css_class_remove_style(staple_only_selector);
     css_class_remove_style(scaffold_selector);

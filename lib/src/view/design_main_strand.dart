@@ -5,6 +5,9 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 
+import 'transform_by_helix_group.dart';
+import '../state/geometry.dart';
+import '../state/group.dart';
 import '../state/dialog.dart';
 import '../state/dna_end.dart';
 import '../state/helix.dart';
@@ -40,9 +43,13 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<DNAEnd> selected_ends_in_strand;
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
+  BuiltSet<Domain> selected_domains_in_strand;
+
+  BuiltMap<int, Helix> helices;
+  BuiltMap<String, HelixGroup> groups;
+  Geometry geometry;
 
   bool selected;
-  BuiltMap<int, Helix> helices;
   bool drawing_potential_crossover;
   bool show_modifications;
   bool moving_dna_ends;
@@ -54,10 +61,11 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool invert_y;
 }
 
-class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin;
+class DesignMainStrandProps = UiProps with DesignMainStrandPropsMixin, TransformByHelixGroupPropsMixin;
 
 @Component2()
-class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with PureComponent {
+class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
+    with PureComponent, TransformByHelixGroup<DesignMainStrandProps> {
   @override
   render() {
     bool selected = props.selected;
@@ -84,21 +92,27 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         ..strand = props.strand
         ..key = 'strand-paths'
         ..helices = props.helices
+        ..groups = props.groups
+        ..currently_moving = props.currently_moving
         ..selected_ends_in_strand = props.selected_ends_in_strand
         ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
         ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
+        ..selected_domains_in_strand = props.selected_domains_in_strand
         ..context_menu_strand = context_menu_strand
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..strand_tooltip = tooltip_text(props.strand)
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
+        ..geometry = props.geometry
         ..only_display_selected_helices = props.only_display_selected_helices)(),
-      _insertions(props.strand, props.strand.color),
-      _deletions(props.strand),
+      _insertions(),
+      _deletions(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
           ..helices = props.helices
+          ..groups = props.groups
+          ..geometry = props.geometry
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
           ..font_size = props.modification_font_size
@@ -114,7 +128,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         // select/deselect
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
-        var address = util.get_closest_address(event, props.helices.values);
+        var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
         app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
       }
     }
@@ -135,18 +149,19 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
   assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
       props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
-  ReactElement _insertions(Strand strand, Color color) {
+  ReactElement _insertions() {
     List<ReactElement> paths = [];
-    for (Domain domain in strand.domains()) {
+    for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var insertion in domain.insertions) {
           String id = util.id_insertion(domain, insertion.offset);
           paths.add((DesignMainStrandInsertion()
             ..insertion = insertion
-            ..substrand = domain
+            ..domain = domain
             ..helix = helix
-            ..color = color
+            ..color = props.strand.color
+            ..transform = transform_of_helix(domain.helix)
             ..id = id
             ..key = id)());
         }
@@ -159,18 +174,28 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
           ..className = 'insertions')(paths);
   }
 
-  ReactElement _deletions(Strand strand) {
+  /// Assuming props contain helices mapping idx to Helix, groups mapping group names to groups,
+  /// returns CSS transform String that can be passed to SVG components that need to be transformed
+  /// specific to a HelixGroup.
+  String compute_helix_transform(int helix_idx) {
+    Helix helix = props.helices[helix_idx];
+    var group = props.groups[helix.group];
+    var transform_str = group.transform_str(props.geometry);
+    return transform_str;
+  }
+
+  ReactElement _deletions() {
     List<ReactElement> paths = [];
-    for (Domain substrand in strand.domains()) {
-      Helix helix = props.helices[substrand.helix];
-      if (should_draw_domain(
-          substrand, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var deletion in substrand.deletions) {
-          String id = util.id_deletion(substrand, deletion);
+    for (Domain domain in props.strand.domains()) {
+      Helix helix = props.helices[domain.helix];
+      if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
+        for (var deletion in domain.deletions) {
+          String id = util.id_deletion(domain, deletion);
           paths.add((DesignMainStrandDeletion()
-            ..domain = substrand
+            ..domain = domain
             ..deletion = deletion
             ..helix = helix
+            ..transform = transform_of_helix(domain.helix)
             ..key = id)());
         }
       }
@@ -192,7 +217,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
   }
 
-  mirror(bool horizontal, bool reverse_polarity) {
+  reflect(bool horizontal, bool reverse_polarity) {
     var selected_strands = app.state.ui_state.selectables_store.selected_strands;
     List<Strand> strands;
     if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == props.strand) {
@@ -206,7 +231,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         strands = selected_strands.toList();
       }
     }
-    app.dispatch(actions.StrandsMirror(
+    app.dispatch(actions.StrandsReflect(
         strands: strands.build(), horizontal: horizontal, reverse_polarity: reverse_polarity));
   }
 
@@ -238,7 +263,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps> with
         ),
         ContextMenuItem(
           title: 'reflect horizontally',
-          on_click: () => mirror(true, false),
+          on_click: () => reflect(true, false),
           tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 without reversing polarity "vertically"
@@ -254,7 +279,7 @@ after:
         ),
         ContextMenuItem(
           title: 'reflect horizontally (reverse vertical polarity)',
-          on_click: () => mirror(true, true),
+          on_click: () => reflect(true, true),
           tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 with polarity reversed "vertically"
@@ -270,7 +295,7 @@ after:
         ),
         ContextMenuItem(
           title: 'reflect vertically',
-          on_click: () => mirror(false, false),
+          on_click: () => reflect(false, false),
           tooltip: '''\
 replace strand(s) with vertical mirror image, 
 without reversing polarity "vertically"
@@ -284,7 +309,7 @@ after:
         ),
         ContextMenuItem(
           title: 'reflect vertically (reverse vertical polarity)',
-          on_click: () => mirror(false, true),
+          on_click: () => reflect(false, true),
           tooltip: '''\
 replace strand(s) with vertical mirror image, 
 with polarity reversed "vertically"
@@ -361,7 +386,7 @@ Future<void> ask_for_assign_dna_sequence(
     DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
     DialogCheckbox(label: 'use predefined DNA sequence'),
     DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.names),
-    DialogNumber(label: 'rotation of predefined DNA sequence', value: 5587),
+    DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587),
     DialogCheckbox(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
@@ -380,7 +405,7 @@ Future<void> ask_for_assign_dna_sequence(
   bool use_predefined_dna_sequence = (results[1] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
     String predefined_sequence_name = (results[2] as DialogRadio).value;
-    int rotation = (results[3] as DialogNumber).value;
+    int rotation = (results[3] as DialogInteger).value;
     dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_name, rotation);
   } else {
     dna_sequence = (results[0] as DialogTextArea).value;

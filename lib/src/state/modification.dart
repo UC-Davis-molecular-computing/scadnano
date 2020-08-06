@@ -1,7 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/state/design.dart';
+import '../state/design.dart';
 
 import '../json_serializable.dart';
 import '../serializers.dart';
@@ -47,7 +47,7 @@ abstract class Modification {
     } else if (location == "internal") {
       mod = ModificationInternal.from_json(json_map).rebuild((b) => b.unused_fields = unused_fields);
     } else {
-      throw IllegalDNADesignError('unknown Modification location "${location}"');
+      throw IllegalDesignError('unknown Modification location "${location}"');
     }
 
     return mod;

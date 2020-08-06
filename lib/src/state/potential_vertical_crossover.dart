@@ -24,15 +24,16 @@ abstract class PotentialVerticalCrossover
     int offset,
     bool forward_top,
     String color,
-    Domain substrand_top,
-    Domain substrand_bot,
+    Domain domain_top,
+    Domain domain_bot,
     DNAEnd dna_end_top,
     DNAEnd dna_end_bot,
   }) = _$PotentialVerticalCrossover._;
 
-  /************************ end BuiltValue boilerplate ************************/
   @memoized
   int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
 
   int get helix_idx_top;
 
@@ -44,9 +45,9 @@ abstract class PotentialVerticalCrossover
 
   String get color;
 
-  Domain get substrand_top;
+  Domain get domain_top;
 
-  Domain get substrand_bot;
+  Domain get domain_bot;
 
   DNAEnd get dna_end_top;
 

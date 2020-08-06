@@ -9,15 +9,17 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:platform_detect/platform_detect.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dev_tools/redux_dev_tools.dart';
-import 'package:scadnano/src/middleware/all_middleware.dart';
 import 'package:over_react/over_react.dart' as react;
 
-import 'package:scadnano/src/middleware/throttle.dart';
-import 'package:scadnano/src/state/dna_ends_move.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
+import 'middleware/all_middleware.dart';
+import 'middleware/throttle.dart';
+import 'state/dna_ends_move.dart';
+import 'state/helix_group_move.dart';
+import 'state/local_storage_design_choice.dart';
+import 'state/potential_crossover.dart';
 import 'actions/actions.dart';
 import 'reducers/dna_ends_move_reducer.dart';
+import 'reducers/helix_group_move_reducer.dart';
 import 'reducers/potential_crossover_reducer.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
@@ -26,10 +28,8 @@ import 'view/design.dart';
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
 import 'middleware/local_storage.dart';
-import 'middleware/all_middleware.dart';
 import 'util.dart' as util;
 import 'actions/actions.dart' as actions;
-import 'dna_sequence_constants.dart';
 
 //import 'test.dart';
 //import 'constants.dart' as constants;
@@ -47,8 +47,7 @@ const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 const DEBUG_SELECT = false;
 
 test_stuff() async {
-  print("m13p7249 rotated 5587: ${DNASequencePredefined.dna_sequence_by_name('M13p7249')}");
-  print("m13p7249 unrotated: ${DNASequencePredefined.dna_sequence_by_name('M13p7249', 0)}");
+
 }
 
 /// One instance of this class contains the global variables needed by all parts of the app.
@@ -59,12 +58,14 @@ class App {
   Store store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
-  Store store_selection_box;
+  Store<SelectionBox> store_selection_box;
   var context_selection_box = createContext();
-  Store store_potential_crossover;
+  Store<PotentialCrossover> store_potential_crossover;
   var context_potential_crossover = createContext();
-  Store store_dna_ends_move;
+  Store<DNAEndsMove> store_dna_ends_move;
   var context_dna_ends_move = createContext();
+  Store<HelixGroupMove> store_helix_group_move;
+  var context_helix_group_move = createContext();
 
   // for optimization; don't want to dispatch Actions changing model on every keypress
   // This is updated in view/design.dart; consider moving it higher-level.
@@ -111,6 +112,9 @@ class App {
 
     store_dna_ends_move = Store<DNAEndsMove>(optimized_dna_ends_move_reducer,
         initialState: null, middleware: [throttle_middleware]);
+
+    store_helix_group_move = Store<HelixGroupMove>(optimized_helix_group_move_reducer,
+        initialState: null, middleware: [throttle_middleware]);
   }
 
   Future<T> disable_keyboard_shortcuts_while<T>(Future<T> f()) async {
@@ -147,6 +151,11 @@ class App {
         underlying_action is actions.DNAEndsMoveStop) {
       store_dna_ends_move.dispatch(action);
     }
+    if (underlying_action is actions.HelixGroupMoveCreate ||
+        underlying_action is actions.HelixGroupMoveAdjustTranslation ||
+        underlying_action is actions.HelixGroupMoveStop) {
+      store_helix_group_move.dispatch(action);
+    }
   }
 
   setup_warning_before_unload() {
@@ -178,8 +187,8 @@ warn_wrong_browser() {
         'scadnano does not currently support this browser. '
         'Please use Chrome or Firefox instead.';
     window.alert(msg);
+    print('current browser: ${browser.name}');
   }
-  print('current browser: ${browser.name}');
 }
 
 /// Return null if browser is fine.

@@ -6,8 +6,11 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
 
-
+import 'state/domains_move.dart';
+import 'state/helix_group_move.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
+
+import 'state/group.dart';
 import 'actions/actions.dart';
 import 'dna_sequence_constants.dart';
 import 'state/local_storage_design_choice.dart';
@@ -24,6 +27,7 @@ import 'state/potential_crossover.dart';
 import 'state/potential_vertical_crossover.dart';
 import 'state/selectable.dart';
 import 'state/app_ui_state.dart';
+import 'state/app_ui_state_storables.dart';
 import 'state/strand_creation.dart';
 import 'state/strands_move.dart';
 import 'state/grid.dart';
@@ -43,10 +47,20 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  HelixGroupMove,
+  HelixGroupMoveStart,
+  HelixGroupMoveCreate,
+  HelixGroupMoveAdjustTranslation,
+  HelixGroupMoveStop,
+  HelixGroupMoveCommit,
+  GroupDisplayedChange,
+  GroupAdd,
+  GroupRemove,
+  GroupChange,
   LocalStorageDesignOption,
   LocalStorageDesignChoice,
   LocalStorageDesignChoiceSet,
-  StrandsMirror,
+  StrandsReflect,
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,
   ShowHelixCirclesMainViewSet,
@@ -69,6 +83,7 @@ part 'serializers.g.dart';
   SelectionBoxRemove,
   MouseoverParams,
   Helix,
+  HelixGroup,
   Domain,
   Strand,
   Geometry,
@@ -79,7 +94,7 @@ part 'serializers.g.dart';
   Position3D,
   Point,
   AppUIState,
-  AppUIStateStorable,
+  AppUIStateStorables,
   SelectablesStore,
   SelectionBox,
   SelectModeChoice,
@@ -102,6 +117,7 @@ part 'serializers.g.dart';
   HelixSelect,
   SelectionsAdjust,
   SelectionsClear,
+  SelectOrToggleItems,
   DeleteAllSelected,
   SelectAll,
   SelectAllSelectable,
@@ -112,11 +128,17 @@ part 'serializers.g.dart';
   EditModeChoice,
   EditModeToggle,
   EditModesSet,
+  GeometrySet,
   HelixAdd,
   HelixRemove,
   HelixRemoveAllSelected,
+  HelixMinOffsetSetByDomains,
+  HelixMaxOffsetSetByDomains,
+  HelixMinOffsetSetByDomainsAll,
+  HelixMaxOffsetSetByDomainsAll,
   HelixOffsetChange,
   HelixOffsetChangeAll,
+  HelixIdxsChange,
   HelixMajorTickDistanceChange,
   HelixMajorTickDistanceChangeAll,
   HelixMajorTicksChange,
@@ -165,6 +187,11 @@ part 'serializers.g.dart';
   StrandsMoveStop,
   StrandsMoveAdjustAddress,
   StrandsMoveCommit,
+  DomainsMove,
+  DomainsMoveStartSelectedDomains,
+  DomainsMoveStop,
+  DomainsMoveAdjustAddress,
+  DomainsMoveCommit,
   GridChange,
   ThrottledActionFast,
   ThrottledActionNonFast,
@@ -177,8 +204,8 @@ part 'serializers.g.dart';
   Dialog,
   DialogItem,
   DialogText,
-  DialogNumber,
-  DialogFloatingNumber,
+  DialogInteger,
+  DialogFloat,
   DialogTextArea,
   DialogCheckbox,
   DialogSelect,

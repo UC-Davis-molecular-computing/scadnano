@@ -17,9 +17,6 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   num get z;
 
-  @memoized
-  int get hashCode;
-
   factory Position3D.from_json(Map<String, dynamic> map) {
     if (map.containsKey('x') && map.containsKey('y') && map.containsKey('z')) {
       return Position3D(x: map['x'], y: map['y'], z: map['z']);
@@ -40,6 +37,23 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
     return Position3D.from_json(map);
   }
 
+  to_json_serializable({bool suppress_indent = false}) => {'x': x, 'y': y, 'z': z};
+
+  num distance_xy(Position3D other) => util.norm_l2(x - other.x, y - other.y);
+
+  num distance_zy(Position3D other) => util.norm_l2(z - other.z, y - other.y);
+
+  static Position3D origin = Position3D();
+
+  @override
+  Position3D operator *(num scalar) => Position3D(x: x * scalar, y: y * scalar, z: z * scalar);
+
+  @override
+  Position3D operator +(Position3D other) => Position3D(x: x + other.x, y: y + other.y, z: z + other.z);
+
+  String xy([int digits_precision = 1]) =>
+      '(${x.toStringAsFixed(digits_precision)}, ${y.toStringAsFixed(digits_precision)})';
+
   /************************ begin BuiltValue boilerplate ************************/
   factory Position3D({num x = 0, num y = 0, num z = 0}) => Position3D.from((b) => b
     ..x = x
@@ -52,9 +66,6 @@ abstract class Position3D with BuiltJsonSerializable implements Built<Position3D
 
   static Serializer<Position3D> get serializer => _$position3DSerializer;
 
-  to_json_serializable({bool suppress_indent = false}) => {'x': x, 'y': y, 'z': z};
-
-  num distance_xy(Position3D other) => util.norm_l2(x - other.x, y - other.y);
-
-  num distance_zy(Position3D other) => util.norm_l2(z - other.z, y - other.y);
+  @memoized
+  int get hashCode;
 }

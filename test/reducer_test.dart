@@ -2,16 +2,14 @@
 // import 'dart:io';
 
 import 'dart:math';
-
-import 'package:scadnano/src/state/geometry.dart';
-import 'package:test/test.dart';
-
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 
+import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/reducers/potential_crossover_reducer.dart';
@@ -40,6 +38,7 @@ import 'package:scadnano/src/state/mouseover_data.dart';
 import 'package:scadnano/src/extension_methods.dart';
 import 'package:scadnano/src/util.dart' as util;
 import 'package:scadnano/src/constants.dart' as constants;
+
 import 'utils.dart';
 
 main() {
@@ -220,7 +219,7 @@ main() {
     final correct_helix =
         new Helix(grid_position: grid_position, idx: 0, grid: Grid.square, geometry: geometry);
     var correct_helices =
-        util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, Grid.square);
+        util.helices_assign_svg(geometry, false, {correct_helix.idx: correct_helix}, state.design.groups);
     expect(state.design.helices, BuiltMap<int, Helix>(correct_helices));
   });
 
@@ -1155,8 +1154,7 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_deletion_design =
-      Design.from_json(jsonDecode(simple_helix_with_deletion_json));
+  Design simple_helix_with_deletion_design = Design.from_json(jsonDecode(simple_helix_with_deletion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1275,8 +1273,7 @@ main() {
   ]
  }
   ''';
-  Design simple_helix_with_insertion_design =
-      Design.from_json(jsonDecode(simple_helix_with_insertion_json));
+  Design simple_helix_with_insertion_design = Design.from_json(jsonDecode(simple_helix_with_insertion_json));
   //     0     8      16      24        32
   // 0  [------>[-----X------->[-------->
   //    <------]<-----X-------]<--------]
@@ -1758,8 +1755,7 @@ main() {
   ]
  }
   ''';
-  Design two_helices_join_inner_strands =
-      Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
+  Design two_helices_join_inner_strands = Design.from_json(jsonDecode(two_helices_join_inner_strands_json));
   test('pencil should connect a 3p end to a 5p end', () {
     AppState state = app_state_from_design(two_helices_design);
 
@@ -1877,26 +1873,19 @@ main() {
     AppState original_state = app_state_from_design(two_helices_design);
 
     AppState final_state = app_state_reducer(original_state, HelixRemove(0));
-
-    UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design]));
+    Design final_design = final_state.design;
 
     Geometry geometry = two_helices_design.geometry;
 
     Helix helix1 = two_helices_design.helices[1];
-    num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_main_svg;
+    num svg_y_helix_1 = helix1.grid_position.v * geometry.distance_between_helices_svg;
 
-    Helix new_helix1 = helix1.rebuild((b) => b
-      ..svg_position_ = Point(0, svg_y_helix_1)
-      ..view_order = 0);
+    Helix new_helix1 = helix1.rebuild((b) => b..svg_position_ = Point(0, svg_y_helix_1));
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b..removeRange(0, 2));
-    Design new_design =
+    Design expected_design =
         two_helices_design.rebuild((b) => b..helices.replace({1: new_helix1})..strands.replace(new_strands));
 
-    AppState expected_state = original_state.rebuild((b) => b
-      ..design.replace(new_design)
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(final_state, expected_state);
+    expect_design_equal(final_design, expected_design);
   });
 
   test('remove helices from DNA design', () {
@@ -1956,7 +1945,7 @@ main() {
     ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
-        .rebuild((b) => b..ui_state.side_selected_helix_idxs.replace([0, 2]));
+        .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([0, 2]));
 
     AppState actual_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
@@ -2020,7 +2009,7 @@ main() {
     ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
-        .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
+        .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
 
     AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
@@ -2038,7 +2027,12 @@ main() {
  {
   "version": "''' +
       constants.CURRENT_VERSION +
-      r'''", "grid": "square", "helices": [ {"grid_position": [0, 0], "idx": 0}, {"grid_position": [0, 1], "idx": 4} ],
+      r'''", 
+  "grid": "square", 
+  "helices": [ 
+    {"grid_position": [0, 0], "idx": 0}, 
+    {"grid_position": [0, 1], "idx": 4} 
+  ],
   "strands": [
     {
       "domains": [
@@ -2065,6 +2059,7 @@ main() {
   ''';
   Design two_helices_with_helix_idx_gap_design =
       Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
+
   test('add new helix be one higher than max id', () {
     AppState state = app_state_from_design(two_helices_with_helix_idx_gap_design);
 
@@ -2137,7 +2132,7 @@ main() {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     AppState actual_state = app_state_reducer(
         initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
-    AppState expect_state = initial_state.rebuild((b) => b.ui_state.moving_dna_ends = true);
+    AppState expect_state = initial_state.rebuild((b) => b.ui_state.dna_ends_are_moving = true);
     expect_app_state_equal(actual_state, expect_state);
   });
 
@@ -2575,8 +2570,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo().rebuild(
-        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
+    expected_undo_redo = UndoRedo()
+        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
     expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2678,8 +2673,8 @@ main() {
     expect_app_state_equal(final_state, expected_state);
 
     // First Undo.
-    expected_undo_redo = UndoRedo().rebuild(
-        (b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
+    expected_undo_redo = UndoRedo()
+        .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
     expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
       ..ui_state.changed_since_last_save = true
       ..undo_redo.replace(expected_undo_redo));
@@ -2720,8 +2715,7 @@ main() {
 ]
 }
 ''';
-  Design simple_helix_no_seq_smaller_design =
-      Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
+  Design simple_helix_no_seq_smaller_design = Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
   test('Dragging end less than helix min offset (see issue #77)', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
     Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
@@ -3052,6 +3046,15 @@ main() {
     });
   });
 
+  test('clicking_out_of_select_mode_unselects_strands', () {
+    SelectablesStore edit_mode_store = SelectablesStore().select(two_helices_design.strands[0]);
+    AppState initial_state = app_state_from_design(two_helices_design)
+        .rebuild((b) => b..ui_state.storables.edit_modes.replace([EditModeChoice.select]));
+    initial_state.ui_state.selectables_store.select(two_helices_design.strands[0]);
+    AppState final_state = app_state_reducer(initial_state, EditModeToggle(EditModeChoice.pencil));
+    expect(final_state.ui_state.selectables_store, edit_mode_store.unselect(two_helices_design.strands[0]));
+  });
+
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
       SelectModeState modes =
@@ -3242,20 +3245,14 @@ main() {
 
     test('Test_SetOnlyDisplaySelectedHelices', () {
       AppState initial_state = app_state_from_design(two_helices_design)
-          .rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
-
-      AppState expected_state_after_set_true =
-          initial_state.rebuild((b) => b..ui_state.storables.only_display_selected_helices = true);
+          .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
 
       AppState final_state = app_state_reducer(initial_state, SetOnlyDisplaySelectedHelices(true));
       expect(final_state.ui_state.only_display_selected_helices, true);
-      expect_app_state_equal(final_state, expected_state_after_set_true);
 
       // Setting back to false should reset state back to initial state.
       final_state = app_state_reducer(final_state, SetOnlyDisplaySelectedHelices(false));
       expect(final_state.ui_state.only_display_selected_helices, false);
-
-      expect_app_state_equal(final_state, initial_state);
     });
   });
 
@@ -3514,7 +3511,6 @@ main() {
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
-      int offset = 12;
       Domain domain = two_helices_design.strands[2].domains()[0];
 
       mouseoverParams = MouseoverParams(1, 13, true);
@@ -3580,10 +3576,6 @@ main() {
       MouseoverParams mouseoverParams = MouseoverParams(1, 12, true);
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
-
-      Helix helix = two_helices_design.helices[1];
-      int offset = 12;
-      Domain domain = two_helices_design.strands[2].domains()[0];
 
       state = app_state_reducer(state, MouseoverDataClear());
 
@@ -3858,7 +3850,7 @@ main() {
     Strand strand0 = two_helices_join_inner_strands.strands[0];
     Strand strand1 = two_helices_join_inner_strands.strands[1];
     Strand strand2 = two_helices_join_inner_strands.strands[2];
-    test('Select and delete strands', () {
+    test('select_and_delete_strands', () {
       AppState state = app_state_from_design(two_helices_join_inner_strands);
       BuiltList<Selectable> selectables = [strand0, strand1].toBuiltList();
 
@@ -4091,7 +4083,7 @@ main() {
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state =
-          state.rebuild((b) => b..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+          state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
       expect_app_state_equal(state, expected_state);
     });
 
@@ -4108,7 +4100,7 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1]));
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
       expect_app_state_equal(state, expected_state);
 
       // clear should reset helix positions (but keep only display selected helices true).
@@ -4121,8 +4113,8 @@ main() {
     var MARGIN = 1;
     test('HelixSelectionAdjust', () {
       // Creating a box that wraps around the grid from (0, 0) to (1, 0) to select helix 0
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = state.design.geometry.helix_radius_svg + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
@@ -4130,8 +4122,8 @@ main() {
 
     test('HelixSelectionAdjust_with_toggle_on', () {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -4144,15 +4136,15 @@ main() {
       state = app_state_reducer(state, HelixSelect(0, true));
 
       // Unselect 0 and select 1 and 2
-      var x = constants.HELIX_RADIUS_SIDE_PIXELS + MARGIN;
-      var y = 2 * constants.HELIX_RADIUS_SIDE_PIXELS * 3 + MARGIN;
+      var x = state.design.geometry.helix_radius_svg + MARGIN;
+      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
 
       AppState expected_state = state.rebuild((b) => b
         ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
       expect_app_state_equal(state, expected_state);
     });
   });
@@ -4539,7 +4531,7 @@ main() {
 
       // Test AppState reducer
       state = app_state_reducer(state, action);
-      AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = true);
+      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = true);
       expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
@@ -4567,7 +4559,7 @@ main() {
       Action action = PotentialCrossoverRemove();
 
       // Test AppState reducer
-      AppState expected_state = state.rebuild((b) => b.ui_state.drawing_potential_crossover = false);
+      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = false);
       state = app_state_reducer(state, action);
       expect_app_state_equal(state, expected_state);
 
@@ -4616,13 +4608,10 @@ main() {
       ]
     }
     ''';
-    Design two_helices_with_empty_offsets =
-        Design.from_json(jsonDecode(two_helices_with_empty_offsets_json));
+    Design two_helices_with_empty_offsets = Design.from_json(jsonDecode(two_helices_with_empty_offsets_json));
     AppState state = app_state_from_design(two_helices_with_empty_offsets);
     StrandsMove strandsMove = null;
 
-    Helix helix0 = two_helices_with_empty_offsets.helices.values.first;
-    Helix helix1 = two_helices_with_empty_offsets.helices.values.last;
     Strand strand1 = two_helices_with_empty_offsets.strands[1];
     Strand strand2 = two_helices_with_empty_offsets.strands[2];
     test('StrandsMoveStart (no copy)', () {
@@ -4652,10 +4641,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4794,10 +4781,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix1.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4931,10 +4916,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: false);
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -5014,10 +4997,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5060,10 +5041,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5105,10 +5084,8 @@ main() {
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
-          original_helix_idx: helix0.idx,
           helices: state.design.helices,
-          helices_view_order: state.design.helices_view_order,
-          helices_view_order_inverse: state.design.helices_view_order_inverse,
+          groups: state.design.groups,
           copy: false);
 
       // start move
@@ -5501,62 +5478,62 @@ main() {
   group('Grid change tests: ', () {
     test('GridChange square to hex', () {
       AppState state = app_state_from_design(two_helices_design);
-      state = app_state_reducer(state, GridChange(grid: Grid.hex));
+      state = app_state_reducer(state, GridChange(grid: Grid.hex, group_name: constants.default_group_name));
 
       List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
+          two_helices_design.helices.map_values((_, h) => h.toBuilder()).values.toList();
       for (int i = 0; i < helices_builder.length; i++) {
         helices_builder[i].grid = Grid.hex;
       }
       BuiltMap<int, Helix> new_helices =
           {for (var helix in helices_builder) helix.idx: helix.build()}.build();
-      Design expected_design = two_helices_design.rebuild((b) => b
-        ..grid = Grid.hex
-        ..helices.replace(new_helices));
+      Design expected_design = two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expected_design = expected_design.set_grid(Grid.hex);
       expect_design_equal(state.design, expected_design);
     });
 
     test('GridChange square to none', () {
       AppState state = app_state_from_design(two_helices_design);
       Grid grid = Grid.none;
-      state = app_state_reducer(state, GridChange(grid: grid));
+      state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      List<HelixBuilder> helices_builder =
-          two_helices_design.helices.map_values((h) => h.toBuilder()).values.toList();
-      for (int i = 0; i < helices_builder.length; i++) {
-        GridPosition gridPosition = helices_builder[i].grid_position.build();
-        helices_builder[i]
-          ..grid = grid
-          ..position_.replace(util.grid_to_position3d(gridPosition, Grid.square))
-          ..grid_position = null;
-      }
-      BuiltMap<int, Helix> new_helices =
-          {for (var helix in helices_builder) helix.idx: helix.build()}.build();
-      Design expected_design = two_helices_design.rebuild((b) => b
-        ..grid = grid
-        ..helices.replace(new_helices));
-      expect_design_equal(state.design, expected_design);
+      var expected_position_h0 = util.grid_to_position3d(
+          two_helices_design.helices[0].grid_position, Grid.square, two_helices_design.geometry);
+      var expected_position_h1 = util.grid_to_position3d(
+          two_helices_design.helices[1].grid_position, Grid.square, two_helices_design.geometry);
+
+      expect(state.design.default_group().grid, Grid.none);
+      num eps = 0.0001;
+      expect(state.design.helices[0].position3d().x, closeTo(expected_position_h0.x, eps));
+      expect(state.design.helices[0].position3d().y, closeTo(expected_position_h0.y, eps));
+      expect(state.design.helices[0].position3d().z, closeTo(expected_position_h0.z, eps));
+      expect(state.design.helices[1].position3d().x, closeTo(expected_position_h1.x, eps));
+      expect(state.design.helices[1].position3d().y, closeTo(expected_position_h1.y, eps));
+      expect(state.design.helices[1].position3d().z, closeTo(expected_position_h1.z, eps));
     });
 
     test('GridChange_none_to_square', () {
       AppState state = app_state_from_design(no_grid_two_helices_design);
       Grid grid = Grid.square;
 
-      state = app_state_reducer(state, GridChange(grid: grid));
+      state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
       Helix original_helix0 = no_grid_two_helices_design.helices[0];
       Helix original_helix1 = no_grid_two_helices_design.helices[1];
+      Geometry geometry = no_grid_two_helices_design.geometry;
       Position3D expected_position0 = original_helix0.position3d();
       Position3D expected_position1 = original_helix1.position3d();
       // Since positions start out with positive x coordinates, but grid positions set these based
       // on min_offset, x coordinates should become 0.
       expected_position0 =
-          expected_position0.rebuild((b) => b.x = original_helix0.min_offset * constants.BASE_WIDTH_SVG);
+          expected_position0.rebuild((b) => b.x = original_helix0.min_offset * geometry.base_width_svg);
       expected_position1 =
-          expected_position1.rebuild((b) => b.x = original_helix1.min_offset * constants.BASE_WIDTH_SVG);
+          expected_position1.rebuild((b) => b.x = original_helix1.min_offset * geometry.base_width_svg);
 
-      GridPosition expected_grid_position0 = util.position3d_to_grid(expected_position0, grid);
-      GridPosition expected_grid_position1 = util.position3d_to_grid(expected_position1, grid);
+      GridPosition expected_grid_position0 =
+          util.position3d_to_grid(expected_position0, grid, no_grid_two_helices_design.geometry);
+      GridPosition expected_grid_position1 =
+          util.position3d_to_grid(expected_position1, grid, no_grid_two_helices_design.geometry);
 
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
@@ -5570,11 +5547,11 @@ main() {
       Map<int, Helix> new_helices = {0: new_helix0, 1: new_helix1};
       // need to reassign SVG here since original design had positive x Position3D, which means
       // positive svi_position.x
-      new_helices = util.helices_assign_svg(no_grid_two_helices_design.geometry, false, new_helices, grid);
+      new_helices = util.helices_assign_svg(
+          no_grid_two_helices_design.geometry, false, new_helices, state.design.groups);
 
-      Design expected_design = no_grid_two_helices_design.rebuild((b) => b
-        ..helices.replace(new_helices)
-        ..grid = grid);
+      Design expected_design = no_grid_two_helices_design.rebuild((b) => b..helices.replace(new_helices));
+      expected_design = expected_design.set_grid(grid);
 
       expect_design_equal(state.design, expected_design);
     });
@@ -5613,9 +5590,9 @@ main() {
     Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..svg_position_ = svg_position0);
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
@@ -5635,9 +5612,9 @@ main() {
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5665,9 +5642,9 @@ main() {
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_main_svg_pixels;
-    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_main_svg_pixels,
-        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_main_svg_pixels);
+    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)
@@ -5704,7 +5681,8 @@ main() {
 
     var built_expected_helices = expected_helices.build().toMap();
     var geometry = two_helices_design.geometry;
-    built_expected_helices = util.helices_assign_svg(geometry, false, built_expected_helices, Grid.square);
+    built_expected_helices =
+        util.helices_assign_svg(geometry, false, built_expected_helices, state.design.groups);
 
     AppState expected_state = state.rebuild((b) => b
       ..design.helices.replace(built_expected_helices)
@@ -5769,12 +5747,13 @@ main() {
     Design out_of_order_design = Design.from_json(json.decode(out_of_order_json));
     test('helices_view_order', () {
       BuiltList<int> expected_helices_view_order = BuiltList<int>([12, 15, 17, 13]);
-      expect(out_of_order_design.helices_view_order, expected_helices_view_order);
+      expect(out_of_order_design.default_group().helices_view_order, expected_helices_view_order);
     });
     test('helices_view_order', () {
       BuiltMap<int, int> expected_helices_view_order_inverse =
           BuiltMap<int, int>({12: 0, 13: 3, 15: 1, 17: 2});
-      expect(out_of_order_design.helices_view_order_inverse, expected_helices_view_order_inverse);
+      expect(out_of_order_design.default_group().helices_view_order_inverse,
+          expected_helices_view_order_inverse);
     });
   });
 
@@ -5871,8 +5850,7 @@ main() {
       ]
     }
     ''';
-    Design many_helices_modification_design =
-        Design.from_json(json.decode(many_helices_modification_json));
+    Design many_helices_modification_design = Design.from_json(json.decode(many_helices_modification_json));
     AppState initial_state = app_state_from_design(many_helices_modification_design);
 
     Crossover crossover23 =
@@ -5986,8 +5964,7 @@ main() {
 
       expect_app_state_equal(state, expected_state);
 
-      Crossover crossover56 =
-          expected_state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+      Crossover crossover56 = expected_state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
       // Delete crossover between 5 and 6.
       //    B     Cy3   B
       // 0  [-----------------
@@ -7120,19 +7097,17 @@ main() {
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
-      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.default_group().helices_view_order;
       BuiltMap<int, int> helices_view_order_inverse =
-          many_helices_modifications_split.helices_view_order_inverse;
+          many_helices_modifications_split.default_group().helices_view_order_inverse;
       bool copy = false;
 
       StrandsMove strands_move = StrandsMove(
         strands_moving: strands_moving,
         all_strands: all_strands,
         original_address: original_address,
-        original_helix_idx: original_helix_idx,
-        helices: helices,
-        helices_view_order: helices_view_order,
-        helices_view_order_inverse: helices_view_order_inverse,
+        helices: state.design.helices,
+        groups: state.design.groups,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
@@ -7322,19 +7297,17 @@ main() {
       Address original_address = Address(forward: false, helix_idx: 3, offset: 8);
       int original_helix_idx = 3;
       BuiltMap<int, Helix> helices = many_helices_modifications_split.helices;
-      BuiltList<int> helices_view_order = many_helices_modifications_split.helices_view_order;
+      BuiltList<int> helices_view_order = many_helices_modifications_split.default_group().helices_view_order;
       BuiltMap<int, int> helices_view_order_inverse =
-          many_helices_modifications_split.helices_view_order_inverse;
+          many_helices_modifications_split.default_group().helices_view_order_inverse;
       bool copy = true;
 
       StrandsMove strands_move = StrandsMove(
         strands_moving: strands_moving,
         all_strands: all_strands,
         original_address: original_address,
-        original_helix_idx: original_helix_idx,
-        helices: helices,
-        helices_view_order: helices_view_order,
-        helices_view_order_inverse: helices_view_order_inverse,
+        helices: state.design.helices,
+        groups: state.design.groups,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 

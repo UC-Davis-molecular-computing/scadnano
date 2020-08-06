@@ -5,21 +5,23 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/edit_mode.dart';
-import 'package:scadnano/src/state/example_designs.dart';
-import 'package:scadnano/src/state/export_dna_format.dart';
-import 'package:scadnano/src/state/grid.dart';
-import 'package:scadnano/src/state/local_storage_design_choice.dart';
-import 'package:scadnano/src/state/select_mode.dart';
-import 'package:scadnano/src/view/menu_number.dart';
-import 'package:scadnano/src/view/redraw_counter_component_mixin.dart';
-import 'package:scadnano/src/view/react_bootstrap.dart';
-import 'package:scadnano/src/constants.dart' as constants;
+import 'package:quiver/iterables.dart';
+import 'package:scadnano/src/state/geometry.dart';
+import '../state/dialog.dart';
+import '../state/edit_mode.dart';
+import '../state/example_designs.dart';
+import '../state/export_dna_format.dart';
+import '../state/grid.dart';
+import '../state/local_storage_design_choice.dart';
+import '../state/select_mode.dart';
+import '../view/menu_number.dart';
+import '../view/redraw_counter_component_mixin.dart';
+import '../view/react_bootstrap.dart';
+import '../constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
-import 'package:scadnano/src/view/menu_boolean.dart';
-import 'package:scadnano/src/view/menu_dropdown_item.dart';
-import 'package:scadnano/src/view/menu_form_file.dart';
+import '../view/menu_boolean.dart';
+import '../view/menu_dropdown_item.dart';
+import '../view/menu_form_file.dart';
 
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -29,39 +31,43 @@ import '../util.dart' as util;
 part 'menu.over_react.g.dart';
 
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
-  mapStateToProps: (state) => (Menu()
-    ..show_dna = state.ui_state.show_dna
-    ..show_modifications = state.ui_state.show_modifications
-    ..show_mismatches = state.ui_state.show_mismatches
-    ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
-    ..autofit = state.ui_state.autofit
-    ..only_display_selected_helices = state.ui_state.only_display_selected_helices
-    ..grid = state.design?.grid
-    ..example_designs = state.ui_state.example_designs
-    ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
-    ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
-    ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
-    ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-        app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-        app.state.ui_state.selectables_store.selected_items.isNotEmpty)
-    ..modification_font_size = state.ui_state.modification_font_size
-    ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
-    ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
-    ..modification_display_connector = state.ui_state.modification_display_connector
-    ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
-    ..display_base_offsets_of_major_ticks_only_first_helix =
-        state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
-    ..display_major_tick_widths = state.ui_state.display_major_tick_widths
-    ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-    ..invert_yz = state.ui_state.invert_yz
-    ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
-    ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
-    ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
-    ..local_storage_design_choice = state.ui_state.local_storage_design_choice
-    ..default_crossover_type_scaffold_for_setting_helix_rolls =
-        state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
-    ..default_crossover_type_staple_for_setting_helix_rolls =
-        state.ui_state.default_crossover_type_staple_for_setting_helix_rolls),
+  mapStateToProps: (AppState state) {
+    return (Menu()
+      ..geometry = state.design.geometry
+      ..no_grid_is_none = state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..show_dna = state.ui_state.show_dna
+      ..show_modifications = state.ui_state.show_modifications
+      ..show_mismatches = state.ui_state.show_mismatches
+      ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
+      ..autofit = state.ui_state.autofit
+      ..only_display_selected_helices = state.ui_state.only_display_selected_helices
+//    ..grid = state.design?.grid
+      ..example_designs = state.ui_state.example_designs
+      ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
+      ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
+      ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
+      ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+          app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
+          app.state.ui_state.selectables_store.selected_items.isNotEmpty)
+      ..modification_font_size = state.ui_state.modification_font_size
+      ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
+      ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
+      ..modification_display_connector = state.ui_state.modification_display_connector
+      ..display_of_major_ticks_offsets = state.ui_state.display_base_offsets_of_major_ticks
+      ..display_base_offsets_of_major_ticks_only_first_helix =
+          state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
+      ..display_major_tick_widths = state.ui_state.display_major_tick_widths
+      ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
+      ..invert_yz = state.ui_state.invert_yz
+      ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
+      ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
+      ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
+      ..local_storage_design_choice = state.ui_state.local_storage_design_choice
+      ..default_crossover_type_scaffold_for_setting_helix_rolls =
+          state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
+      ..default_crossover_type_staple_for_setting_helix_rolls =
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
+  },
   // Used for component test.
   forwardRef: true,
 )(Menu);
@@ -69,6 +75,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
 UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
+  bool no_grid_is_none;
   bool show_dna;
   bool show_modifications;
   num modification_font_size;
@@ -79,7 +86,6 @@ mixin MenuPropsMixin on UiProps {
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
-  Grid grid;
   ExampleDesigns example_designs;
   bool design_has_insertions_or_deletions;
   bool undo_stack_empty;
@@ -96,6 +102,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
+  Geometry geometry;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -127,10 +134,8 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       file_menu(),
       edit_menu(),
       view_menu(),
-      grid_menu(),
       export_menu(),
       help_menu(),
-//      dummy_button(),
     );
   }
 
@@ -146,6 +151,9 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
       'Dummy',
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// file menu
 
   file_menu() {
     return NavDropdown({
@@ -199,6 +207,60 @@ really want to exit without saving.'''
     ]);
   }
 
+  List<ReactElement> file_menu_save_design_local_storage_options() => [
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
+          ..display = 'Save design in localStorage on every edit'
+          ..tooltip = '''\
+On every edit, save current design in localStorage (in your web browser).
+
+Disabling this minimizes the time needed to render large designs.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
+          ..key = 'save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
+          ..display = 'Save design in localStorage before exiting'
+          ..tooltip = '''\
+Before exiting, save current design in localStorage (in your web browser). 
+For large designs, this is faster than saving on every edit, but if the browser crashes, 
+all changes made will be lost, so it is not as safe as storing on every edit.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
+          ..key = 'save-dna-design-in-local-storage-on-exit')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
+          ..display = 'Do not save design in localStorage'
+          ..tooltip = '''\
+Never saves the design in localStorage.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..key = 'never-save-dna-design-in-local-storage')(),
+        (MenuBoolean()
+          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
+          ..display = 'Save design in localStorage periodically'
+          ..tooltip = '''\
+Every <period> seconds, save current design in localStorage (in your web browser). 
+Also saves before exiting.
+This is safer than never saving, or saving only before exiting, but will not save edits
+that occurred between the last edit and a browser crash.'''
+          ..onChange = ((_) => props.dispatch(
+              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
+          ..key = 'save-dna-design-in-local-storage-periodically')(),
+        (MenuNumber()
+          ..display = 'period (seconds)'
+          ..min_value = 1
+          ..default_value = props.local_storage_design_choice.period_seconds
+          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
+          ..tooltip = 'Number of seconds between saving design to localStorage.'
+          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
+              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
+      ];
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// edit menu
+
   edit_menu() {
     return NavDropdown(
       {
@@ -233,7 +295,7 @@ really want to exit without saving.'''
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
-        ..display = 'Pasted Strands Keep Original Color'
+        ..display = 'Pasted strands keep original color'
         ..tooltip = '''\
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
@@ -242,7 +304,7 @@ If unchecked, then a new color is generated.'''
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
-        ..display = 'Inline Insertions/Deletions'
+        ..display = 'Inline insertions/deletions'
         ..disabled = !props.design_has_insertions_or_deletions
         ..tooltip = ''
             '''
@@ -253,17 +315,17 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
         ..display = 'Set helix coordinates based on crossovers'
-        ..disabled = props.grid != Grid.none
+        ..disabled = props.no_grid_is_none
         ..tooltip = '''\
 The grid must be set to none to enable this.
 
 Select some crossovers and some helices. If no helices are selected, then all
-helices are processed. At most one crossover between pairs of adjacent (in 
-view order) helices can be selected. If a pair of adjacent helices has no 
-crossover selected, it is assumed to be the first crossover.  
+helices are processed. At most one crossover between pairs of adjacent (in
+view order) helices can be selected. If a pair of adjacent helices has no
+crossover selected, it is assumed to be the first crossover.
 
-New grid coordinates are calculated based on the crossovers to ensure that each 
-pair of adjacent helices has crossover angles that point the backbone angles 
+New grid coordinates are calculated based on the crossovers to ensure that each
+pair of adjacent helices has crossover angles that point the backbone angles
 directly at the adjoining helix.''')(),
       (MenuBoolean()
         ..value = props.default_crossover_type_scaffold_for_setting_helix_rolls
@@ -310,8 +372,33 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
           }
         })(),
       DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => ask_for_geometry(props.geometry))
+        ..display = 'Set geometric parameters'
+        ..tooltip = '''\
+Set geometric parameters affecting how the design is displayed.
+
+- rise per base pair: This is the number of nanometers a single base pair occupies (i.e., width in main view)
+                      default ${constants.default_rise_per_base_pair} nm
+
+- helix radius:       The radius of a helix in nanometers.
+                      default ${constants.default_helix_radius} nm
+
+- inter-helix gap:    The distance between two adjacent helices. The value 2*helix_radius+inter_helix_gap
+                      is the distance between the centers of two adjacent helices.
+                      default ${constants.default_inter_helix_gap} nm
+
+- bases per turn:     The number of bases in a single full turn of DNA.
+                      default ${constants.default_bases_per_turn}
+
+- minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction
+                      of its long axis.
+                      default ${constants.default_minor_groove_angle} degrees''')(),
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// view menu
 
   view_menu() {
     var elts = [
@@ -499,26 +586,8 @@ Shows grid coordinates in the side view under the helix index.'''
     ];
   }
 
-  grid_menu() {
-    return NavDropdown(
-      {
-        'title': 'Grid',
-        'id': 'grid-nav-dropdown',
-      },
-      [
-        for (var grid in Grid.values)
-          DropdownItem(
-            {
-              'active': grid == props.grid,
-              'disabled': grid == props.grid,
-              'key': grid.toString(),
-              'onClick': ((ev) => props.dispatch(actions.GridChange(grid: grid))),
-            },
-            grid.toString(),
-          )
-      ],
-    );
-  }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// export menu
 
   export_menu() {
     return NavDropdown(
@@ -537,6 +606,9 @@ Shows grid coordinates in the side view under the helix index.'''
         ..display = 'DNA Sequences')(),
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// help menu
 
   help_menu() {
     return NavDropdown(
@@ -580,8 +652,25 @@ Shows grid coordinates in the side view under the helix index.'''
         },
         'Python Scripting API',
       ),
+      DropdownItem(
+        {
+          'href': 'https://scadnano.org/dev',
+          'target': '_blank',
+          'title': '''\
+Development version of scadnano, located at https://scadnano.org/dev.
+
+This is updated more frequently than the main site at https://scadnano.org.
+
+This includes open issues that have been handled in the dev branch but not the main branch:
+https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev'''
+        },
+        'scadnano dev version',
+      ),
     );
   }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// helper methods
 
   Future<void> export_dna() async {
     // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
@@ -622,57 +711,42 @@ Shows grid coordinates in the side view under the helix index.'''
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
+}
 
-  List<ReactElement> file_menu_save_design_local_storage_options() => [
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
-          ..display = 'Save design in localStorage on every edit'
-          ..tooltip = '''\
-On every edit, save current design in localStorage (in your web browser).
+Future<void> ask_for_geometry(Geometry geometry) async {
+  int rise_per_base_pair_idx = 0;
+  int helix_radius_idx = 1;
+  int inter_helix_gap_idx = 2;
+  int bases_per_turn_idx = 3;
+  int minor_groove_angle_idx = 4;
 
-Disabling this minimizes the time needed to render large designs.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
-          ..key = 'save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
-          ..display = 'Save design in localStorage before exiting'
-          ..tooltip = '''\
-Before exiting, save current design in localStorage (in your web browser). 
-This is much faster than saving on every edit, but if the browser crashes, 
-all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
-          ..key = 'save-dna-design-in-local-storage-on-exit')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
-          ..display = 'Do not save design in localStorage'
-          ..tooltip = '''\
-Never saves the design in localStorage.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
-          ..key = 'never-save-dna-design-in-local-storage')(),
-        (MenuBoolean()
-          ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
-          ..display = 'Save design in localStorage periodically'
-          ..tooltip = '''\
-Every <period> seconds, save current design in localStorage (in your web browser). 
-Also saves before exiting.
-This is safer than never saving, or saving only before exiting, but will not save edits
-that occurred between the last edit and a browser crash.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
-          ..key = 'save-dna-design-in-local-storage-periodically')(),
-        (MenuNumber()
-          ..display = 'period (seconds)'
-          ..min_value = 1
-          ..default_value = props.local_storage_design_choice.period_seconds
-          ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
-          ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
-          ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
-      ];
+  var items = List<DialogItem>(5);
+  items[rise_per_base_pair_idx] =
+      DialogFloat(label: 'rise per base pair (nm)', value: geometry.rise_per_base_pair);
+  items[helix_radius_idx] = DialogFloat(label: 'helix radius (nm)', value: geometry.helix_radius);
+  items[inter_helix_gap_idx] = DialogFloat(label: 'inter helix gap (nm)', value: geometry.inter_helix_gap);
+  items[bases_per_turn_idx] = DialogFloat(label: 'bases per turn', value: geometry.bases_per_turn);
+  items[minor_groove_angle_idx] =
+      DialogFloat(label: 'minor groove angle (degrees)', value: geometry.minor_groove_angle);
+
+  var dialog = Dialog(title: 'adjust geometric parameters', items: items);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  double rise_per_base_pair = (results[rise_per_base_pair_idx] as DialogFloat).value;
+  double helix_radius = (results[helix_radius_idx] as DialogFloat).value;
+  double inter_helix_gap = (results[inter_helix_gap_idx] as DialogFloat).value;
+  double bases_per_turn = (results[bases_per_turn_idx] as DialogFloat).value;
+  double minor_groove_angle = (results[minor_groove_angle_idx] as DialogFloat).value;
+
+  var new_geometry = Geometry(
+    rise_per_base_pair: rise_per_base_pair,
+    helix_radius: helix_radius,
+    inter_helix_gap: inter_helix_gap,
+    bases_per_turn: bases_per_turn,
+    minor_groove_angle: minor_groove_angle,
+  );
+  app.dispatch(actions.GeometrySet(geometry: new_geometry));
 }
 
 request_load_file_from_file_chooser(

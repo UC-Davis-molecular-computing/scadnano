@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/potential_crossover.dart';
+import '../state/potential_crossover.dart';
 
 import '../actions/actions.dart' as actions;
 

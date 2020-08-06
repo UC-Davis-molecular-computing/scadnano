@@ -1,5 +1,5 @@
-import 'package:scadnano/src/state/loopout.dart';
-import 'package:scadnano/src/state/strand.dart';
+import '../state/loopout.dart';
+import '../state/strand.dart';
 
 import '../actions/actions.dart' as actions;
 

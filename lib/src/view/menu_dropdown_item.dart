@@ -1,5 +1,5 @@
 import 'package:over_react/over_react.dart';
-import 'package:scadnano/src/view/react_bootstrap.dart';
+import '../view/react_bootstrap.dart';
 
 part 'menu_dropdown_item.over_react.g.dart';
 
@@ -10,6 +10,7 @@ mixin MenuDropdownItemPropsMixin on UiProps {
   dynamic Function(SyntheticMouseEvent) on_click;
   String keyboard_shortcut;
   bool disabled;
+  bool active;
   String tooltip;
 }
 
@@ -17,11 +18,13 @@ class MenuDropdownItemProps = UiProps with MenuDropdownItemPropsMixin;
 
 class MenuDropdownItemComponent extends UiComponent2<MenuDropdownItemProps> {
   @override
-  get defaultProps => (newProps()..disabled = false);
+  get defaultProps => (newProps()..disabled = false..active=false);
+
   @override
   render() {
     var dropdown_item = DropdownItem(
       {
+        'active': props.active,
         'disabled': props.disabled,
         'onClick': props.on_click,
       },
