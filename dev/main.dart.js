@@ -1894,7 +1894,7 @@ auP:function(a,b){return J.R(a).sfh(a,b)},
 auQ:function(a,b){return J.R(a).seu(a,b)},
 AD:function(a,b){return J.R(a).saC(a,b)},
 ahn:function(a,b){return J.R(a).sml(a,b)},
-aho:function(a,b){return J.R(a).sa5(a,b)},
+aho:function(a,b){return J.R(a).sa4(a,b)},
 auR:function(a,b){return J.ai(a).sE(a,b)},
 auS:function(a,b){return J.R(a).sw_(a,b)},
 auT:function(a,b){return J.R(a).sw2(a,b)},
@@ -5153,7 +5153,7 @@ _.a=null
 _.a$=b0
 _.b$=b1},
 t5:function t5(a,b,c,d){var _=this
-_.a4=null
+_.a5=null
 _.r1$=a
 _.r2$=b
 _.rx$=c
@@ -5201,7 +5201,7 @@ _.a=null
 _.a$=d
 _.b$=e},
 tb:function tb(a,b,c,d){var _=this
-_.a4=null
+_.a5=null
 _.r1$=a
 _.r2$=b
 _.rx$=c
@@ -6716,7 +6716,7 @@ _.dq=c
 _.n=d
 _.aL=e
 _.eR=f
-_.a4=g
+_.a5=g
 _.eS=_.ex=null
 _.mw=h
 _.dr=_.d1=_.aQ=_.a7=_.fT=_.e3=_.jZ=_.fS=_.jY=_.jX=null},
@@ -7579,7 +7579,7 @@ _.a=null
 _.a$=d
 _.b$=e},
 td:function td(a,b,c,d){var _=this
-_.a4=null
+_.a5=null
 _.r1$=a
 _.r2$=b
 _.rx$=c
@@ -7725,7 +7725,7 @@ ta:function ta(a,b,c){var _=this
 _.n=_.ih=_.c9=null
 _.aL=a
 _.eR=b
-_.a4=null
+_.a5=null
 _.Q$=c
 _.d=_.c=_.b=null},
 zX:function zX(){},
@@ -9077,7 +9077,7 @@ g.appendChild(t.a.a(m))}J.ae9(m)
 g=G.l2()
 g.toString
 if(g===$.kd())J.p7(m);(self.URL||self.webkitURL).revokeObjectURL(n)
-c.$0()}catch(a0){g=H.P(a0)
+if(c!=null)c.$0()}catch(a0){g=H.P(a0)
 if(t.IT.b(g)){l=g
 k=H.cp(a0)
 e="error while saving file: "+H.d(l)+E.ad1(k)
@@ -11259,7 +11259,7 @@ s.glZ(a)
 s.gcC(a)
 s.gmK(a)
 s.gmL(a)
-s.ga5(a)
+s.ga4(a)
 s.gfs(a)
 s.gcD(a)
 s.ghE(a)
@@ -12509,7 +12509,7 @@ _.a=null
 _.a$=c
 _.b$=d},
 rY:function rY(a,b,c,d){var _=this
-_.a4=null
+_.a5=null
 _.r1$=a
 _.r2$=b
 _.rx$=c
@@ -15935,7 +15935,7 @@ _.a=null
 _.a$=e
 _.b$=f},
 rX:function rX(a,b,c,d){var _=this
-_.a4=null
+_.a5=null
 _.r1$=a
 _.r2$=b
 _.rx$=c
@@ -16747,7 +16747,7 @@ _.dq$=e
 _.n$=f
 _.aL$=g
 _.eR$=h
-_.a4$=i
+_.a5$=i
 _.ex$=j
 _.eS$=k
 _.mw$=l
@@ -16775,7 +16775,7 @@ _.dq$=e
 _.n$=f
 _.aL$=g
 _.eR$=h
-_.a4$=i
+_.a5$=i
 _.ex$=j
 _.eS$=k
 _.mw$=l
@@ -18484,7 +18484,7 @@ gfh:function(a){return a.dartComponentVersion},
 sfh:function(a,b){return a.dartComponentVersion=b},
 gbj:function(a){return a.type},
 gi:function(a){return a.props},
-ga5:function(a){return a.key},
+ga4:function(a){return a.key},
 gb1:function(a){return a.children},
 gma:function(a){return a.dartComponent},
 gK:function(a){return a.state},
@@ -18492,7 +18492,7 @@ sK:function(a,b){return a.state=b},
 cd:function(a,b){return a.setState(b)},
 gl_:function(a){return a.Provider},
 gkZ:function(a){return a.Consumer},
-sa5:function(a,b){return a.key=b},
+sa4:function(a,b){return a.key=b},
 gfc:function(a){return a.componentStack},
 geu:function(a){return a.dartStackTrace},
 seu:function(a,b){return a.dartStackTrace=b},
@@ -22989,7 +22989,7 @@ glY:function(a){return this.Y(a,H.ac("glY","glY",1,[],[],0))},
 glZ:function(a){return this.Y(a,H.ac("glZ","glZ",1,[],[],0))},
 gmK:function(a){return this.Y(a,H.ac("gmK","gmK",1,[],[],0))},
 gmL:function(a){return this.Y(a,H.ac("gmL","gmL",1,[],[],0))},
-ga5:function(a){return this.Y(a,H.ac("ga5","ga5",1,[],[],0))},
+ga4:function(a){return this.Y(a,H.ac("ga4","ga4",1,[],[],0))},
 gfs:function(a){return this.Y(a,H.ac("gfs","gfs",1,[],[],0))},
 ghE:function(a){return this.Y(a,H.ac("ghE","ghE",1,[],[],0))},
 gm1:function(a){return this.Y(a,H.ac("gm1","gm1",1,[],[],0))},
@@ -26097,7 +26097,7 @@ if(p>=q.length)return H.h(q,p)
 q[p]=0}if(512>=s.length)return H.h(s,512)
 s[512]=1
 o.fS=o.a7=o.e3=o.fT=0},
-oH:function(a,b){var s,r,q,p,o,n=this.a4,m=n.length
+oH:function(a,b){var s,r,q,p,o,n=this.a5,m=n.length
 if(b<0||b>=m)return H.h(n,b)
 s=n[b]
 r=b<<1>>>0
@@ -26853,7 +26853,7 @@ T.ja.prototype={}
 T.zI.prototype={
 zM:function(a5){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b=this,a=b.a,a0=b.c,a1=a0.a,a2=a0.b,a3=a0.c,a4=a0.e
 for(a0=a5.eR,s=a0.length,r=0;r<=15;++r){if(r>=s)return H.h(a0,r)
-a0[r]=0}q=a5.a4
+a0[r]=0}q=a5.a5
 p=C.bd.j(q,a5.eS)*2+1
 o=a.length
 if(p<0||p>=o)return H.h(a,p)
@@ -26927,7 +26927,7 @@ a[l]=r}--h}}},
 nI:function(a0){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=e.a,c=e.c,b=c.a,a=c.d
 a0.ex=0
 a0.eS=573
-for(c=a0.a4,s=c.length,r=a0.mw,q=r.length,p=0,o=-1;p<a;++p){n=p*2
+for(c=a0.a5,s=c.length,r=a0.mw,q=r.length,p=0,o=-1;p<a;++p){n=p*2
 m=d.length
 if(n>=m)return H.h(d,n)
 if(d[n]!==0){n=a0.ex
@@ -29642,7 +29642,7 @@ s.zE(a,b)
 if(s.a7.gmS()!=null)s.a7.qm(a,b)},
 aB:function(a){var s,r
 if(H.i(this.aQ.gcl())){s=A.bt(t.B.a($.l4),null)
-s.sa5(0,"ohnoes")
+s.sa4(0,"ohnoes")
 s.hk(u.fw)
 return s.$0()}s=E.age().$0()
 s.hk("RecoverableErrorBoundary")
@@ -29793,7 +29793,7 @@ l.sef(r)
 m.cd(0,l)
 m.AZ()}},
 AK:function(a,b){var s,r,q=A.bt(t.B.a($.l4),null)
-q.sa5(0,"ohnoes")
+q.sa4(0,"ohnoes")
 q.hk(u.fw)
 s=this.n
 if(s==null)s=""
@@ -29805,7 +29805,7 @@ s.h("u.V*").a(r)
 J.m(q.gcv(),"dangerouslySetInnerHTML",r)
 return q.$0()},
 AZ:function(){var s,r,q,p,o=this
-if(o.a4!=null)return
+if(o.a5!=null)return
 s=o.c9
 s=s.gi(s).j(0,u.kq)
 if(s==null)s=null
@@ -29818,14 +29818,14 @@ if(q.e===C.aW)H.c(P.am("Disposable.getManagedTimer not allowed, object is dispos
 if(q.b.a.a!==0)H.c(P.am("Disposable.getManagedTimer not allowed, object is already disposed"))
 p=L.ayX(s,r)
 q.yN(p)
-o.a4=p},
+o.a5=p},
 u1:function(){var s,r=this
 r.n=null
 r.szD(H.a([],t.i))
 r.syW(H.a([],t.jb))
-s=r.a4
+s=r.a5
 if(s!=null){s.b.cM(0)
-s.o3()}r.a4=null},
+s.o3()}r.a5=null},
 gAj:function(){if(this.c9.gft()!=null)return this.c9.gft().a
 var s=this.c9.geC()
 return s==null?"over_react.ErrorBoundary":s},
@@ -29882,7 +29882,7 @@ scl:function(a){this.ie$=H.F(a)},
 sef:function(a){this.ig$=H.F(a)}}
 E.RB.prototype={}
 Q.a0x.prototype={
-sa5:function(a,b){var s=this.gi(this)
+sa4:function(a,b){var s=this.gi(this)
 J.m(s,"key",b==null?null:J.a_(b))},
 gb1:function(a){var s=J.r(this.gi(this),"children")
 if(s==null)s=null
@@ -48147,7 +48147,7 @@ k.title=j
 k.onClick=n.a(new S.UW(m))
 k.className="context-menu-item"
 m=m.a
-l.sa5(0,m)
+l.sa4(0,m)
 C.a.l(p,l.$1(m))}return r.$1(q.$1(p))}}
 S.UW.prototype={
 $1:function(a){t.R.a(a)
@@ -48227,7 +48227,7 @@ h=new L.J(h)
 j=new A.i2(j,h,c,c)
 j.gS()
 h.a.className="dialog-form-item"
-j.sa5(0,k.ghA(k))
+j.sa4(0,k.ghA(k))
 f=l+1
 C.a.l(r,j.$1(d.Ca(k,l,i)))}q=A.bt(p.a($.l4),c)
 q.sak(0,a0)
@@ -48239,12 +48239,12 @@ o.sak(0,a1)
 s=H.a([],s)
 n=A.bt(p.a($.ano),c)
 n.sak(0,a2)
-n.sa5(0,a2)
+n.sa4(0,a2)
 C.a.l(s,n.$1(d.a7.geQ().a))
 for(n=r.length,e=0;e<r.length;r.length===n||(0,H.av)(r),++e)C.a.l(s,r[e])
 n=A.bt(p.a($.p_),c)
 n.sak(0,"dialog-buttons")
-n.sa5(0,"buttons")
+n.sa4(0,"buttons")
 m=A.bt(p.a($.nL),c)
 m.sbj(0,"submit")
 m.sa2(0,"OK")
@@ -48309,7 +48309,7 @@ k=n.a($.aml)
 j={}
 k=new A.i2(k,new L.J(j),h,h)
 k.gS()
-k.sa5(0,"br-"+m)
+k.sa4(0,"br-"+m)
 C.a.l(o,k.$0())
 k=n.a($.nL)
 j={}
@@ -48324,13 +48324,13 @@ j.name=r
 j.checked=q===m
 j.value=l
 j.onChange=p.a(new S.V8(i,a,b))
-k.sa5(0,""+m)
+k.sa4(0,""+m)
 C.a.l(o,k.$0())
 k=n.a($.l7)
 j={}
 k=new A.i2(k,new L.J(j),h,h)
 k.gS()
-k.sa5(0,"label-"+m)
+k.sa4(0,"label-"+m)
 C.a.l(o,k.$1(l));++m}s=A.bt(n.a($.l4),h)
 s.sak(0,"radio-left")
 return s.$2(H.d(r)+": ",o)}return h},
@@ -48757,7 +48757,7 @@ m=g.n
 m=m.gi(m).j(0,u.T)
 m=H.F(m==null?f:m)
 J.m(o.gi(r),u.z,m)
-o.sa5(r,"helices")
+o.sa4(r,"helices")
 C.a.l(s,r.$0())
 r=g.n
 r=r.gi(r).j(0,"DesignMainPropsMixin.show_mismatches")
@@ -48770,7 +48770,7 @@ o=g.n.gd8()
 J.m(m.gi(r),u.br,o)
 o=n.a(g.n.gcq())
 J.m(m.gi(r),u.f,o)
-m.sa5(r,"mismatches")
+m.sa4(r,"mismatches")
 C.a.l(s,r.$0())}r=$.aoN().$0()
 J.aho(r,"strands")
 C.a.l(s,r.$0())
@@ -48795,7 +48795,7 @@ o=q.a(g.n.gbV().e)
 J.m(m.gi(r),u.m,o)
 o=g.n.gbV().b
 J.m(m.gi(r),u.w,o)
-m.sa5(r,"potential-vertical-crossovers")
+m.sa4(r,"potential-vertical-crossovers")
 C.a.l(s,r.$0())}if(g.n.geI()!=null){r=R.amI().$0()
 o=g.n.geI().a
 r.toString
@@ -48821,7 +48821,7 @@ j=t.X
 i=t.c
 r.sZ(A.bK(P.ao([l,J.r(o.b,k)],j,i),j,i))
 m.sV(r,g.n.gbV().b)
-m.sa5(r,"strand-creating")
+m.sa4(r,"strand-creating")
 C.a.l(s,r.$0())}if(H.i(g.n.gfC())){r=M.amx().$0()
 o=g.n.gbV().c
 r.toString
@@ -48851,19 +48851,19 @@ t.SA.a(q)
 J.m(p.gi(r),u.li,q)
 q=g.n.gd8()
 J.m(p.gi(r),u.G,q)
-p.sa5(r,"dna-sequences")
+p.sa4(r,"dna-sequences")
 C.a.l(s,r.$0())}r=$.aoT().$0()
 r.toString
 q=J.R(r)
 J.m(q.gi(r),"PotentialCrossoverViewProps.id","potential-crossover-main")
-q.sa5(r,"potential-crossover")
+q.sa4(r,"potential-crossover")
 C.a.l(s,r.$0())
 r=$.agN().$0()
 r.skU(new V.Va())
 r.svz(!0)
 q=J.R(r)
 q.saF(r,"selection-box-main")
-q.sa5(r,"selection-box")
+q.sa4(r,"selection-box")
 C.a.l(s,r.$0())
 if(g.n.ge2().b.J(0,C.I)){r=Z.amD().$0()
 r.sX(g.n.gbV().c)
@@ -48874,7 +48874,7 @@ p=g.n.gd8()
 J.m(q.gi(r),u.hw,p)
 p=n.a(g.n.gcq())
 J.m(q.gi(r),u.e,p)
-q.sa5(r,"mouseover-rect")
+q.sa4(r,"mouseover-rect")
 C.a.l(s,r.$0())}r=g.n
 r=r.gi(r).j(0,u.dG)
 if(H.i(H.F(r==null?f:r))){r=$.aoR().$0()
@@ -48887,7 +48887,7 @@ q=g.n.gd8()
 J.m(n.gi(r),u.cJ,q)
 q=g.n.ghc()
 J.m(n.gi(r),"HelixGroupMovingProps.show_helix_circles",q)
-n.sa5(r,"helix-group-moving")
+n.sa4(r,"helix-group-moving")
 C.a.l(s,r.$0())}r=$.aoM().$0()
 J.aho(r,"domains-moving")
 C.a.l(s,r.$0())
@@ -49018,7 +49018,7 @@ b1={}
 b1=new L.J(b1)
 a9=new A.eD(a9,b1,c4,c4)
 a9.gS()
-a9.sa5(0,b0)
+a9.sa4(0,b0)
 b1=b1.a
 b1.id=b0
 b1.className="dna-seq"
@@ -49069,7 +49069,7 @@ a6=new L.J(a6)
 a4=new A.eD(a4,a6,c4,c4)
 a4.gS()
 a9="insertion-H"+H.d(a0)+"-O"+H.d(b)+"-"
-a4.sa5(0,"textelt-"+(a9+(f?c8:c9)))
+a4.sa4(0,"textelt-"+(a9+(f?c8:c9)))
 a6.a.dy=b4
 C.a.l(d,a4.$1(b8.$1(b3)))}a=m.a($.bI)
 a4={}
@@ -49080,7 +49080,7 @@ a4=a4.a
 a4.transform=c3.dv(a0)
 a4.className="dna-seq-on-domain-group"
 a7="domain-H"+H.d(a0)+"-S"+a8+"-E"+a7+"-"
-a.sa5(0,a7+(f?c8:c9))
+a.sa4(0,a7+(f?c8:c9))
 C.a.l(r,a.$1(d))}}else{o.a(e)
 f=c3.n
 f=f.gi(f).j(0,c5)
@@ -49161,7 +49161,7 @@ if(typeof a6!=="number")return a6.F();--a6}else a6=b9.c
 a=f+H.d(a6)+"-H"+H.d(a)+","
 if(H.i(c0.b))f=c0.c
 else{f=c0.d
-if(typeof f!=="number")return f.F();--f}a0.sa5(0,a+H.d(f))
+if(typeof f!=="number")return f.F();--f}a0.sa4(0,a+H.d(f))
 a4.a.dy=b4
 C.a.l(r,a0.$1(b8.$1(b3)))}}++g}d0=A.aH(m.a($.bI),c4)
 d0.sak(0,"strand-dna-sequence")
@@ -49275,7 +49275,7 @@ k=i.n
 k=k.gi(k).j(0,u.F)
 k=q.a(k==null?h:k)
 J.m(j.gi(l),u.d1,k)
-j.sa5(l,m.p(0))
+j.sa4(l,m.p(0))
 m=i.n
 m=m.gi(m).j(0,u.G)
 m=H.F(m==null?h:m)
@@ -49558,7 +49558,7 @@ e=a3.n
 e=e.gi(e).j(0,"DesignMainDomainsMovingProps.geometry")
 e=p.a(e==null?a4:e)
 J.m(f.gi(g),"TransformByHelixGroupPropsMixin.geometry",e)
-f.sa5(g,J.a_(h))
+f.sa4(g,J.a_(h))
 C.a.l(r,g.$0())}return s.$1(r)}}
 Y.a7w.prototype={
 $0:function(){return new Y.rx(null)},
@@ -49770,7 +49770,7 @@ if(H.i(H.F(a4==null?a8:a4))){a4=a7.n
 a4=a4.gi(a4).j(0,u.z)
 a4=H.i(H.F(a4==null?a8:a4))||a2===c}else a4=!1
 J.m(a3.gi(d),u.N,a4)
-a3.sa5(d,J.a_(a))
+a3.sa4(d,J.a_(a))
 b.push(d.$0())}}h=n.a($.bI)
 d={}
 d=new L.J(d)
@@ -49792,7 +49792,7 @@ a3=a3.c
 if(typeof a3!=="number")return a3.ai()
 a6=X.iJ(a4*a,a5*a,a3*a)
 d.transform="translate("+H.d(a6.a)+", "+H.d(a6.b)+") rotate("+H.d(g.d)+")"
-h.sa5(0,H.d(i))
+h.sa4(0,H.d(i))
 p.push(h.$1(b))}s=A.aH(n.a($.bI),a8)
 s.sak(0,"helices-main-view")
 return s.$1(p)}}
@@ -49863,30 +49863,30 @@ g.saF(0,"main-view-helix-circle-"+H.d(c.aL.gae().a))
 g.suO(0,H.d(a5))
 g.suP(0,H.d(s))
 g.sqz(0,H.d(a4.geU()))
-g.sa5(0,a)
+g.sa4(0,a)
 h.push(g.$0())}if(H.i(c.aL.ghc())){g=A.aH(q.a($.l9),b)
 g.sak(0,a0)
 g.saF(0,"main-view-helix-text-"+H.d(c.aL.gae().a))
 g.seH(0,H.d(a5))
 g.sec(0,H.d(s))
-g.sa5(0,a0)
+g.sa4(0,a0)
 h.push(g.$1(H.d(j)))}g=A.aH(q.a($.bI),b)
 g.sak(0,a1)
-g.sa5(0,a1)
+g.sa4(0,a1)
 f=A.aH(q.a($.mM),b)
 f.sak(0,"helix-lines helix-horz-line")
 f.sfg(0,l)
-f.sa5(0,"helix-horz-lines")
+f.sa4(0,"helix-horz-lines")
 f=f.$0()
 e=A.aH(q.a($.mM),b)
 e.sak(0,"helix-lines helix-vert-minor-line")
 e.sfg(0,k.j(0,"minor"))
-e.sa5(0,"helix-vert-minor-lines")
+e.sa4(0,"helix-vert-minor-lines")
 e=e.$0()
 d=A.aH(q.a($.mM),b)
 d.sak(0,"helix-lines helix-vert-major-line")
 d.sfg(0,k.j(0,"major"))
-d.sa5(0,"helix-vert-major-lines")
+d.sa4(0,"helix-vert-major-lines")
 h.push(g.$3(f,e,d.$0()))
 g=c.aL
 g=g.gi(g).j(0,u.n)
@@ -49901,7 +49901,7 @@ q.sec(0,a3.gc3().b)
 q.sbG(0,H.d(a7*r))
 q.sbE(0,H.d(a6*2))
 q.sak(0,a2)
-q.sa5(0,a2)
+q.sa4(0,a2)
 h.push(q.$0())
 return i.$1(h)},
 hp:function(){var s,r,q,p,o,n,m=this
@@ -49948,10 +49948,10 @@ l=l.gi(l).j(0,u.oc)
 n.fontSize=H.d(H.b_(l==null?j:l))
 n.dominantBaseline="baseline"
 n.textAnchor="middle"
-o.sa5(0,"main-view-helix-major-tick-offset-"+H.d(m))
+o.sa4(0,"main-view-helix-major-tick-offset-"+H.d(m))
 r.push(o.$1(p))}g=A.aH(f.a($.bI),j)
 g.sak(0,i)
-g.sa5(0,i)
+g.sa4(0,i)
 return g.$1(r)},
 Al:function(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d=this,c=null,b="DesignMainHelixProps.helix",a="major-tick-widths-group",a0=d.aL.gae().lW(),a1=d.aL.gae().gc3().b,a2=d.aL.gae().c.gbi()
 if(typeof a1!=="number")return a1.I()
@@ -50004,10 +50004,10 @@ f=f.gi(f).j(0,u.c7)
 j.fontSize=H.d(H.b_(f==null?c:f))
 j.dominantBaseline="hanging"
 j.textAnchor="middle"
-g.sa5(0,"main-view-helix-major-tick-distance-"+H.d(e))
+g.sa4(0,"main-view-helix-major-tick-distance-"+H.d(e))
 C.a.a8(q,[g.$1(h)])}a1=A.aH(a2.a($.bI),c)
 a1.sak(0,a)
-a1.sa5(0,a)
+a1.sa4(0,a)
 return a1.$1(q)},
 Bb:function(a){var s,r,q,p,o,n,m="DesignMainHelixProps.helix",l=a.lW(),k=t.i,j=H.a([],k),i=H.a([],k),h=a.gc3().b,g=a.ch
 k=a.Q
@@ -50154,30 +50154,30 @@ aB:function(a){var s=this.zh(),r=A.aH(t.B.a($.bI),null)
 r.sak(0,"mismatches-main-view")
 return r.$1(s)},
 zh:function(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5=this,a6=null,a7="DesignMainMismatchesProps.design",a8=t.u,a9=H.a([],a8),b0=P.dz(t.X)
-for(s=a5.n.gbV().d.a,s=new J.L(s,s.length,H.W(s).h("L<1>")),r=t.B,q=t.f,p=t.C,o=t.A,n=t.w,m=t.Oq;s.m();)for(l=s.d.be(),k=l.length,j=0;j<l.length;l.length===k||(0,H.av)(l),++j){i=l[j]
+for(s=a5.n.gbV().d.a,s=new J.L(s,s.length,H.W(s).h("L<1>")),r=t.f,q=t.C,p=t.A,o=t.w,n=t.Oq,m=t.B;s.m();)for(l=s.d.be(),k=l.length,j=0;j<l.length;l.length===k||(0,H.av)(l),++j){i=l[j]
 h=a5.n
 h=h.gi(h).j(0,a7)
-h=q.a(h==null?a6:h)
+h=r.a(h==null?a6:h)
 h.toString
-n.a(i)
+o.a(i)
 g=h.id
 if(g==null){g=N.aw.prototype.gCi.call(h)
 h.syu(g)
 h=g}else h=g
 f=J.r(h.b,i)
-if(f==null)f=S.bG(C.d,m)
+if(f==null)f=S.bG(C.d,n)
 e=H.a([],a8)
 for(h=f.a,h=new J.L(h,h.length,H.W(h).h("L<1>"));h.m();){g=h.d
 d=a5.n
 d=d.gi(d).j(0,a7)
-d=q.a(d==null?a6:d).c
+d=r.a(d==null?a6:d).c
 c=i.a
 b=J.r(d.b,c)
 d=a5.n
 d=d.gi(d).j(0,u.br)
 if(H.i(H.F(d==null?a6:d))){d=a5.n
 d=d.gi(d).j(0,u.f)
-d=p.a(d==null?a6:d)
+d=q.a(d==null?a6:d)
 c=b.a
 c=d.b.J(0,c)
 d=c}else d=!0
@@ -50188,48 +50188,50 @@ a0=a.p(0)+";"+H.d(d)
 if(!b0.J(0,a0)){b0.l(0,a0)
 g=L.amB().$0()
 g.toString
-o.a(a)
+p.a(a)
 c=J.R(g)
 J.m(c.gi(g),"DesignMainMismatchProps.base_svg_pos",a)
 a1=a5.n
 a1=a1.gi(a1).j(0,a7)
-a1=q.a(a1==null?a6:a1).b
+a1=r.a(a1==null?a6:a1).b
 J.m(c.gi(g),"DesignMainMismatchProps.geometry",a1)
 J.m(c.gi(g),"DesignMainMismatchProps.forward",d)
-c.sa5(g,a0)
+c.sa4(g,a0)
 C.a.l(e,g.$0())}}}h=a5.n
 h=h.gi(h).j(0,a7)
-h=q.a(h==null?a6:h).c
+h=r.a(h==null?a6:h).c
 g=i.a
 b=J.r(h.b,g)
-g=a5.n
-g=g.gi(g).j(0,a7)
-h=q.a(g==null?a6:g).e
-g=b.d
-a2=J.r(h.b,g)
-g=a5.n
-g=g.gi(g).j(0,a7)
-h=q.a(g==null?a6:g).b
-g=a2.c
-d=h.cy
-h=d==null?h.cy=N.bu.prototype.gcQ.call(h):d
-d=g.a
-if(typeof d!=="number")return d.ai()
-c=g.b
+h=a5.n
+h=h.gi(h).j(0,a7)
+h=r.a(h==null?a6:h).e
+d=b.d
+a2=J.r(h.b,d)
+d=a5.n
+d=d.gi(d).j(0,a7)
+h=r.a(d==null?a6:d).b
+d=a2.c
+c=h.cy
+h=c==null?h.cy=N.bu.prototype.gcQ.call(h):c
+c=d.a
 if(typeof c!=="number")return c.ai()
-g=g.c
-if(typeof g!=="number")return g.ai()
-a3=X.iJ(d*h,c*h,g*h)
+a1=d.b
+if(typeof a1!=="number")return a1.ai()
+d=d.c
+if(typeof d!=="number")return d.ai()
+a3=X.iJ(c*h,a1*h,d*h)
 a4="translate("+H.d(a3.a)+", "+H.d(a3.b)+") rotate("+H.d(a2.d)+")"
-h=r.a($.bI)
-g={}
-g=new L.J(g)
-h=new A.eD(h,g,a6,a6)
+if(e.length!==0){h=m.a($.bI)
+d={}
+d=new L.J(d)
+h=new A.eD(h,d,a6,a6)
 h.gS()
-g=g.a
-g.transform=a4
-g.className="mismatch-components-in-domain"
-C.a.l(a9,h.$1(e))}return a9}}
+d=d.a
+d.transform=a4
+d.className="mismatch-components-in-domain"
+g="domain-H"+H.d(g)+"-S"+H.d(i.c)+"-E"+H.d(i.d)+"-"
+h.sa4(0,g+(H.i(i.b)?"forward":"reverse"))
+C.a.l(a9,h.$1(e))}}return a9}}
 V.a7r.prototype={
 $0:function(){return new V.rD(null)},
 $C:"$0",
@@ -50285,7 +50287,7 @@ j=M.amE().$0()
 j.toString
 i=J.R(j)
 J.m(i.gi(j),"DesignMainMouseoverRectHelixProps.helix",h)
-i.sa5(j,h.a)
+i.sa4(j,h.a)
 C.a.l(k,j.$0())}}if(k.length!==0){m=o.a($.bI)
 j={}
 j=new L.J(j)
@@ -50294,7 +50296,7 @@ m.gS()
 j=j.a
 j.className="mouseover-rectangle-main-view-group-"+H.d(n)
 j.transform=l
-m.sa5(0,n)
+m.sa4(0,n)
 C.a.l(c,m.$1(k))}}}d=A.aH(o.a($.bI),f)
 d.saF(0,e)
 d.sak(0,e)
@@ -50564,7 +50566,7 @@ e=e.gi(e).j(0,u.w)
 e=n.a(e==null?a1:e)
 J.m(f.gi(g),"TransformByHelixGroupPropsMixin.geometry",e)
 j=j.x
-f.sa5(g,C.c.I("end-"+(H.i(j.b)?"5p":"3p")+"-",j.f))
+f.sa4(g,C.c.I("end-"+(H.i(j.b)?"5p":"3p")+"-",j.f))
 C.a.l(a2,g.$0())}}a3=A.aH(t.B.a($.bI),a1)
 a3.sak(0,"potential-vertical-crossovers")
 return a3.$1(a2)}}
@@ -50633,7 +50635,7 @@ o=h.n.gax()
 p.toString
 n=J.R(p)
 J.m(n.gi(p),"DesignMainStrandPathsPropsMixin.strand",o)
-n.sa5(p,"strand-paths")
+n.sa4(p,"strand-paths")
 p.sX(h.n.gX())
 p.sZ(h.n.gZ())
 o=h.n.guN()
@@ -50727,7 +50729,7 @@ o=h.n
 o=o.gi(o).j(0,u.ig)
 o=H.F(o==null?g:o)
 J.m(m.gi(p),u.Q,o)
-m.sa5(p,"modifications")
+m.sa4(p,"modifications")
 C.a.l(q,p.$0())}return f.$1(q)},
 q1:function(a){var s,r,q,p,o=this,n=t.O.a(t.mC.a(a).Q)
 if(n.button===0){s=o.n.gax()
@@ -50779,10 +50781,10 @@ J.m(e.gi(g),u.i5,h)
 h=d.dv(k)
 J.m(e.gi(g),u.e9,h)
 J.m(e.gi(g),"DesignMainStrandInsertionPropsMixin.id",f)
-e.sa5(g,f)
+e.sa4(g,f)
 C.a.l(a,g.$0())}}if(a.length===0)s=c
 else{s=A.aH(t.B.a($.bI),c)
-s.sa5(0,b)
+s.sa4(0,b)
 s.sak(0,b)
 s=s.$1(a)}return s},
 zq:function(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=null,c="deletions",b=H.a([],t.u)
@@ -50808,10 +50810,10 @@ J.m(f.gi(h),u.hr,i)
 J.m(f.gi(h),"DesignMainStrandDeletionPropsMixin.helix",k)
 i=e.dv(l)
 J.m(f.gi(h),u.m8,i)
-f.sa5(h,g)
+f.sa4(h,g)
 C.a.l(b,h.$0())}}if(b.length===0)s=d
 else{s=A.aH(t.B.a($.bI),d)
-s.sa5(0,c)
+s.sa4(0,c)
 s.sak(0,c)
 s=s.$1(b)}return s},
 Iq:function(){$.G().cO(new M.Vt(this),t.n)},
@@ -50986,7 +50988,7 @@ i.skz(0,H.d(r.a))
 i.skB(0,H.d(r.b))
 i.skA(0,H.d(q.a))
 i.skC(0,H.d(q.b))
-i.sa5(0,"line")
+i.sa4(0,"line")
 i.sak(0,"domain-line")
 i=i.$0()
 s=A.abP().$0()
@@ -51141,7 +51143,7 @@ a2.smU(0,new Q.Vw(a3))
 a2.sfu(new Q.Vx(a3))
 a2.shC(new Q.Vy(a3))
 a2.saF(0,a1)
-a2.sa5(0,a1)
+a2.sa4(0,a1)
 if(p)a2.sbF(0,a3.dv(a3.a7.geE().a))
 return a2.$0()},
 hp:function(){var s=this.a7.ge_()
@@ -51348,7 +51350,7 @@ k.sec(0,r-n/2)
 k.sbG(0,o)
 k.sbE(0,n)
 k.scE(0,new A.Vz(j))
-k.sa5(0,l)
+k.sa4(0,l)
 k=k.$0()
 q=A.aH(q.a($.mM),i)
 q.sak(0,"deletion-cross")
@@ -51356,7 +51358,7 @@ q.sij(0,"none")
 q.sfg(0,p)
 q.scE(0,new A.VA(j))
 q.saF(0,m)
-q.sa5(0,m)
+q.sa4(0,m)
 return s.$2(k,q.$0())}}
 A.Vz.prototype={
 $1:function(a){var s,r,q
@@ -51450,7 +51452,7 @@ j.scN(0,o.gcN(o))
 j.sjh(r)
 j.sd2(0,s)
 j.saF(0,p.e4(0))
-j.sa5(0,"nonmoving-end")
+j.sa4(0,"nonmoving-end")
 i=$.aoQ().$0()
 J.m(i.gi(i),"EndMovingProps.dna_end",p)
 J.m(i.gi(i),"EndMovingProps.helix",m)
@@ -51460,7 +51462,7 @@ J.m(i.gi(i),"EndMovingProps.color",o)
 J.m(i.gi(i),"EndMovingProps.forward",s)
 s=h.n.gbN()
 J.m(i.gi(i),"EndMovingProps.is_5p",s)
-i.sa5(0,"moving-end")
+i.sa4(0,"moving-end")
 s=A.aH(t.B.a($.bI),g)
 s.sak(0,"dna-ends")
 o=h.n
@@ -51694,7 +51696,7 @@ r.skB(0,H.d(q.b))
 r.skA(0,H.d(p.a))
 r.skC(0,H.d(p.b))
 r.saF(0,i)
-r.sa5(0,i)
+r.sa4(0,i)
 k=A.aH(k.a($.p0),l)
 n=(s?"forward":"reverse")+" domain:\n    length="+j.bn()+"\n    helix="+H.d(j.a)+"\n    start="+H.d(j.c)+"\n    end="+H.d(j.d)
 s=j.z
@@ -51888,7 +51890,7 @@ s.sfg(0,"M "+H.d(l)+" "+H.d(k)+" C "+j+" "+e+", "+i+" "+d+", "+h+" "+d+" C "+g+"
 a0=c.n
 s.saF(0,a0.gaF(a0))
 a0=c.n
-s.sa5(0,a0.gaF(a0))
+s.sa4(0,a0.gaF(a0))
 return s.$0()},
 B4:function(a){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=null
 t.A.a(a)
@@ -51920,7 +51922,7 @@ g="insertion-H"+H.d(k.a)+"-O"+H.d(r)+"-"
 h.swq("#"+(g+(H.i(k.b)?"forward":"reverse")))
 h.sak(0,"insertion-length")
 g=A.aH(l.a($.bI),d)
-g.sa5(0,i)
+g.sa4(0,i)
 f=A.aH(l.a($.oY),d)
 f.seH(0,o-n/2)
 f.sec(0,j)
@@ -51928,13 +51930,13 @@ f.sbG(0,n)
 f.sbE(0,m)
 f.sak(0,"insertion-background")
 f.scE(0,new A.VD(e))
-f.sa5(0,"rect")
+f.sa4(0,"rect")
 f=f.$0()
 l=A.aH(l.a($.l9),d)
 l.scE(0,new A.VE(e))
 l.sCo(0,p)
 l.saF(0,i)
-l.sa5(0,"text")
+l.sa4(0,"text")
 return g.$2(f,l.$1(h.$1(H.d(q))))},
 A9:function(a){var s,r,q,p,o,n,m,l=this
 t.A.a(a)
@@ -51954,7 +51956,7 @@ m.sec(0,n-o/2)
 m.sbG(0,p)
 m.sbE(0,o)
 m.scE(0,new A.VB(l))
-m.sa5(0,q)
+m.sa4(0,q)
 return m.$0()},
 i7:function(){var s=0,r=P.bc(t.z),q,p=this,o,n,m
 var $async$i7=P.bd(function(a,b){if(a===1)return P.b9(b,r)
@@ -52162,7 +52164,7 @@ c3.shC(new R.Vh(c4))
 c6=c4.a7.gcn()
 f=c6.c
 if(typeof f!=="number")return f.I()
-c3.sa5(0,"loopout-"+(f+1)+"-"+H.d(c6.f))
+c3.sa4(0,"loopout-"+(f+1)+"-"+H.d(c6.f))
 c6=c4.a7.gcn()
 f=c6.c
 if(typeof f!=="number")return f.I()
@@ -52381,7 +52383,7 @@ r.skB(0,m)
 r.skA(0,q)
 if(typeof m!=="number")return m.I()
 r.skC(0,m+n)
-r.sa5(0,"connector")
+r.sa4(0,"connector")
 C.a.l(p,r.$0())}C.a.l(p,l.ou(j,l.n.gbk().c,s))
 return i.$1(p)}}},
 tl:function(a,b){var s,r,q,p,o,n,m
@@ -52401,7 +52403,7 @@ q=o+-(q/3)
 m=m+H.d(q)+","
 if(typeof n!=="number")return n.I()
 p.sqw(0,m+H.d(n+r)+" "+H.d(o)+","+H.d(n+2*r)+" "+H.d(q)+","+H.d(n+3*r)+" "+H.d(o)+","+H.d(n+4*r))
-p.sa5(0,"connector")
+p.sa4(0,"connector")
 return p.$0()},
 ou:function(a,b,c){var s,r,q,p,o,n
 t.A.a(a)
@@ -52422,7 +52424,7 @@ n=a.b
 if(c){if(typeof n!=="number")return n.I()
 n+=r}q.sec(0,n)
 q.sv5(o)
-q.sa5(0,"mod")
+q.sa4(0,"mod")
 return q.$1(this.n.giv().gmo())}}
 U.a7H.prototype={
 $0:function(){return new U.rN(null)},
@@ -52493,7 +52495,7 @@ m.sbF(r,a0.dv(q))
 r.siv(a0.n.gax().e)
 r.sk_(a0.n.gk_())
 r.sjk(a0.n.gjk())
-m.sa5(r,"5'")
+m.sa4(r,"5'")
 C.a.l(a3,r.$0())}}if(a0.n.gax().f!=null){s=a0.n.gax().d6()
 if(H.i(a0.n.gd8())){r=a0.n.gcq()
 q=s.a
@@ -52514,7 +52516,7 @@ m.sbF(r,a0.dv(q))
 r.siv(a0.n.gax().f)
 r.sk_(a0.n.gk_())
 r.sjk(a0.n.gjk())
-m.sa5(r,"3'")
+m.sa4(r,"3'")
 C.a.l(a3,r.$0())}}for(r=a0.n.gax().r,r=J.H(r.ga_(r)),q=t.U,o=t.C,n=t.Y9,m=t.b;r.m();){k=r.gq(r)
 j=a0.n
 j=j.gi(j).j(0,a2)
@@ -52564,7 +52566,7 @@ j=a0.n
 j=j.gi(j).j(0,u.Q)
 j=H.F(j==null?a1:j)
 J.m(a.gi(e),u.O,j)
-a.sa5(e,"internal-"+k)
+a.sa4(e,"internal-"+k)
 C.a.l(a3,e.$0())}}else if(h instanceof G.ck)throw H.b(N.cO("currently unsupported to draw modification on Loopout"))}if(a3.length===0)r=a1
 else{r=A.aH(t.B.a($.bI),a1)
 r.sak(0,"modifications")
@@ -52707,7 +52709,7 @@ a7=c8.n
 a7=a7.gi(a7).j(0,u.lT)
 a7=H.o(a7==null?c9:a7)
 J.m(a4.gi(a0),u.hv,a7)
-a4.sa5(a0,"bound-substrand-"+a)
+a4.sa4(a0,"bound-substrand-"+a)
 C.a.l(r,a0.$0())
 a0=H.i(a1.b)
 if(a0){a4=a1.db
@@ -52759,7 +52761,7 @@ b5=c8.n
 b5=b5.gi(b5).j(0,u.mr)
 b5=H.F(b5==null?c9:b5)
 J.m(b4.gi(b1),u.r,b5)
-b4.sa5(b1,b2)
+b4.sa4(b1,b2)
 C.a.l(q,b1.$0())}}b=a5}else if(a1 instanceof G.ck){a2=a+1
 if(a2>=a0)return H.h(d7,a2)
 b6=o.a(d7[a2])
@@ -52808,7 +52810,7 @@ J.m(a2.gi(a0),"DesignMainLoopoutPropsMixin.prev_domain",b7)
 J.m(a2.gi(a0),"DesignMainLoopoutPropsMixin.next_domain",b6)
 J.m(a2.gi(a0),"DesignMainLoopoutPropsMixin.prev_helix",b8)
 J.m(a2.gi(a0),"DesignMainLoopoutPropsMixin.next_helix",b9)
-a2.sa5(a0,"loopout-"+a)
+a2.sa4(a0,"loopout-"+a)
 C.a.l(r,a0.$0())}}}for(n=d6.gfe().a,n=new J.L(n,n.length,H.W(n).h("L<1>")),l=t.Vs,c1=0;n.m();){j=n.d
 c2=o.a(C.a.j(d7,j.a))
 c3=o.a(C.a.j(d7,j.b))
@@ -52855,7 +52857,7 @@ h=c8.n
 h=h.gi(h).j(0,d5)
 h=m.a(h==null?c9:h)
 J.m(i.gi(j),d5,h)
-i.sa5(j,"crossover-paths-"+(c6-1))
+i.sa4(j,"crossover-paths-"+(c6-1))
 C.a.l(r,j.$0())
 c1=c6}}return C.a.I(r,q)}}
 B.a7I.prototype={
@@ -53072,7 +53074,7 @@ a=a8.n
 a=a.gi(a).j(0,"DesignMainStrandsProps.geometry")
 a=s.a(a==null?a9:a)
 J.m(c.gi(d),"TransformByHelixGroupPropsMixin.geometry",a)
-c.sa5(d,f.p(0))
+c.sa4(d,f.p(0))
 C.a.l(b2,d.$0())}b3=A.aH(t.B.a($.bI),a9)
 b3.sak(0,"strands-main-view")
 return b3.$1(b2)}}
@@ -53208,7 +53210,7 @@ J.m(j.gi(k),"DesignSideHelixProps.selected",g)
 i=r.j(0,i)
 J.m(j.gi(k),"DesignSideHelixProps.mouseover_data",i)
 l=l.r
-j.sa5(k,H.d(l==null?h:l))
+j.sa4(k,H.d(l==null?h:l))
 q.push(k.$0())}s=P.bS(o)
 for(r=e.n.gX(),r=J.H(r.ga9(r));r.m();)s.l(0,r.gq(r).e)
 if(e.n.giw()==null)f=e.n.gnk()!=null&&!s.J(0,e.n.gnk())
@@ -53231,17 +53233,17 @@ n=e.n.gnk()
 J.m(m.gi(o),u.C,n)
 n=t.A.a(e.n.giw())
 J.m(m.gi(o),u.hF,n)
-m.sa5(o,"potential-helix")
+m.sa4(o,"potential-helix")
 C.a.l(p,o.$0())}s=A.aH(s.a($.bI),d)
 s.sak(0,c)
-s.sa5(0,c)
+s.sa4(0,c)
 C.a.l(p,s.$1(q))
 q=$.agN().$0()
 q.skU(new U.VG())
 q.svz(!1)
 s=J.R(q)
 s.saF(q,"selection-box-side")
-s.sa5(q,"selection-box")
+s.sa4(q,"selection-box")
 C.a.l(p,q.$0())
 return r.$1(p)}}
 U.VG.prototype={
@@ -53321,20 +53323,20 @@ p.sak(0,s)
 p.sqz(0,H.d(j.n.gae().c.geU()))
 p.scE(0,new B.VH(j))
 p.saF(0,"side-view-helix-circle-"+H.d(j.n.gae().a))
-p.sa5(0,"circle")
+p.sa4(0,"circle")
 m=A.aH(r.a($.p0),i)
-m.sa5(0,"circle-tooltip")
+m.sa4(0,"circle-tooltip")
 C.a.l(h,p.$1(m.$1(o)))
 m=A.aH(r.a($.l9),i)
 m.she(0,P.a8(t.X,t.z))
 m.sak(0,"side-view-helix-text")
 m.saF(0,"side-view-helix-text-"+H.d(j.n.gae().a))
 m.scE(0,new B.VI(j))
-m.sa5(0,"text-idx")
+m.sa4(0,"text-idx")
 p=j.n.gae()
 p=J.a_(p.a)
 l=A.aH(r.a($.p0),i)
-l.sa5(0,"text-idx-tooltip")
+l.sa4(0,"text-idx-tooltip")
 C.a.l(h,m.$2(p,l.$1(o)))
 p=j.n
 p=p.gi(p).j(0,u.kG)
@@ -53343,9 +53345,9 @@ p.sve(0,10)
 p.sv5("text-before-edge")
 p.sIv("middle")
 p.sec(0,j.n.gae().c.geU()/2)
-p.sa5(0,"text-grid-position")
+p.sa4(0,"text-grid-position")
 C.a.l(h,p.$1(n))}p=A.aH(r.a($.p0),i)
-p.sa5(0,"text-grid-position-tooltip")
+p.sa4(0,"text-grid-position-tooltip")
 C.a.l(h,p.$1(o))
 if(j.n.gh0()!=null){p=O.amT().$0()
 m=j.n.gae().c.geU()
@@ -53359,7 +53361,7 @@ m=m.gi(m).j(0,"DesignSideHelixProps.invert_y")
 m=H.F(m==null?i:m)
 J.m(l.gi(p),"DesignSideRotationProps.invert_y",m)
 l.sak(p,"side-view-helix-rotation")
-l.sa5(p,"rotation")
+l.sa4(p,"rotation")
 C.a.l(h,p.$0())}k=E.ans(j.n.gae().e8(),j.n.gae().cx,j.n.gae().c)
 r=A.aH(r.a($.bI),i)
 r.sbF(0,"translate("+H.d(k.a)+" "+H.d(k.b)+")")
@@ -53642,32 +53644,32 @@ return r},
 $S:381}
 Z.eS.prototype={$ij:1,$iN:1}
 Z.up.prototype={
-aB:function(a){var s,r,q,p=null,o=M.amU().$0(),n=this.a4
+aB:function(a){var s,r,q,p=null,o=M.amU().$0(),n=this.a5
 n=n.gi(n).j(0,"EditAndSelectModesProps.edit_modes")
 if(n==null)n=p
 t.CV.a(n)
 o.toString
 s=J.R(o)
 J.m(s.gi(o),"EditModeProps.modes",n)
-s.sa5(o,"edit-modes")
+s.sa4(o,"edit-modes")
 o=o.$0()
 s=A.bt(t.B.a($.l4),p)
 s.sak(0,"fixed-horizontal-separator")
-s.sa5(0,"modes-separator")
+s.sa4(0,"modes-separator")
 s=s.$0()
 n=D.anC().$0()
-r=this.a4
+r=this.a5
 r=r.gi(r).j(0,u.dQ)
 if(r==null)r=p
 t.NH.a(r)
 n.toString
 q=J.R(n)
 J.m(q.gi(n),"SelectModePropsMixin.select_mode_state",r)
-r=this.a4
+r=this.a5
 r=r.gi(r).j(0,"EditAndSelectModesProps.is_origami")
 r=H.F(r==null?p:r)
 J.m(q.gi(n),"SelectModePropsMixin.is_origami",r)
-q.sa5(n,"select-modes")
+q.sa4(n,"select-modes")
 return H.a([o,s,n.$0()],t.u)}}
 Z.a8d.prototype={
 $0:function(){return new Z.rX(1,new P.bO(new P.aP($.aK,t.un),t.Sk),0,null)},
@@ -53683,9 +53685,9 @@ gi:function(a){return this.cx}}
 Z.Fe.prototype={
 gi:function(a){return this.cx}}
 Z.rX.prototype={
-gi:function(a){return this.a4},
+gi:function(a){return this.a5},
 si:function(a,b){this.b=b
-this.a4=Z.a3Q(R.b7(b))},
+this.a5=Z.a3Q(R.b7(b))},
 av:function(a){return Z.a3Q(a)},
 gay:function(){return C.dg.ga9(C.dg)}}
 Z.ST.prototype={}
@@ -53706,7 +53708,7 @@ o.saF(0,"edit-mode")
 s=t.u
 r=H.a([],s)
 p=A.bt(p.a($.l7),null)
-p.sa5(0,"label")
+p.sa4(0,"label")
 C.a.l(r,p.$1("Edit mode:"))
 p=H.a([],s)
 for(s=$.asv().b,s=s.ga6(s);s.m();)C.a.l(p,this.yV(s.gq(s)))
@@ -53716,13 +53718,13 @@ for(;q<p.length;p.length===s||(0,H.av)(p),++q)C.a.l(r,p[q])
 return o.$1(r)},
 yV:function(a){var s,r,q=A.bt(t.B.a($.S1),null)
 q.scE(0,new M.WT(a))
-s=this.a4
+s=this.a5
 s=s.gi(s).j(0,"EditModeProps.modes")
 if(s==null)s=null
 q.sak(0,"mode-button "+(t.CV.a(s).b.J(0,a)?"edit-mode-button-selected":"edit-mode-button-unselected"))
 r=a.a
 q.hk("scadnano.EditModeComponent.button."+r)
-q.sa5(0,r)
+q.sa4(0,r)
 return q.$1(a.ib())}}
 M.WT.prototype={
 $1:function(a){t.R.a(a)
@@ -53743,9 +53745,9 @@ gi:function(a){return this.Q}}
 M.Fg.prototype={
 gi:function(a){return this.Q}}
 M.rY.prototype={
-gi:function(a){return this.a4},
+gi:function(a){return this.a5},
 si:function(a,b){this.b=b
-this.a4=M.a3R(R.b7(b))},
+this.a5=M.a3R(R.b7(b))},
 av:function(a){return M.a3R(a)},
 gay:function(){return C.dz.ga9(C.dz)}}
 M.SU.prototype={}
@@ -54068,7 +54070,7 @@ J.m(m.gi(n),"DesignMainHelixProps.show_helix_circles",k)
 J.m(m.gi(n),u.W,!1)
 J.m(m.gi(n),u.n,!1)
 J.m(m.gi(n),u.N,!1)
-m.sa5(n,J.a_(l.a))
+m.sa4(n,J.a_(l.a))
 p.push(n.$0())}}j=g.n.gd3().gm9()
 i=g.n.gd3().b.a0(new O.XC(j))
 s=g.n.gd3()
@@ -54076,7 +54078,7 @@ h=i.w9(s.gV(s))
 s=A.aH(t.B.a($.bI),f)
 s.sak(0,"helix-group-moving-"+H.d(g.n.gd3().a))
 s.sbF(0,h)
-s.sa5(0,H.d(g.n.gd3().a))
+s.sa4(0,H.d(g.n.gd3().a))
 return s.$1(p)}}
 O.XC.prototype={
 $1:function(a){a.gf_(a).v(0,this.a)
@@ -54200,7 +54202,7 @@ H5:function(){var s,r,q,p,o=this,n="open-form-file",m=$.p2(),l=t.z,k=P.ao(["titl
 i.scF(new D.ZP(o))
 s=J.R(i)
 s.saC(i,"\ud83d\udcc4 Load example")
-s.sa5(i,"load-example")
+s.sa4(i,"load-example")
 j.push(i.$0())
 i=O.agp().$0()
 s=J.R(i)
@@ -54212,7 +54214,7 @@ s.sur(i,new H.aB(r,q.h("n*(1)").a(new D.ZQ()),q.h("aB<1,n*>")).an(0,","))
 s.sb_(i,new D.ZR())
 s.saC(i,"\ud83d\udcc2 Open...")
 J.m(s.gi(i),"MenuFormFileProps.keyboard_shortcut","Ctrl+O")
-s.sa5(i,n)
+s.sa4(i,n)
 j.push(i.$0())
 i=$.p1()
 j.push(i.$1(P.ao(["key","divider-file-load"],l,l)))
@@ -54221,15 +54223,15 @@ s.scF(new D.ZS(o))
 q=J.R(s)
 q.saC(s,"\ud83d\udcbe Save...")
 s.seA("Ctrl+S")
-q.sa5(s,"save-file")
+q.sa4(s,"save-file")
 j.push(s.$0())
 s=Z.cY().$0()
 q=J.R(s)
-q.sa2(s,o.a4.gwg())
+q.sa2(s,o.a5.gwg())
 q.saC(s,"Warn on exit if unsaved")
 s.sb6("If checked, before attempting to close or refresh the page, if the design has \nchanged since it was last saved, a warning dialog is displayed to ask if you\nreally want to exit without saving.")
 q.sb_(s,new D.ZT(o))
-q.sa5(s,"warn-on-exit-if-unsaved")
+q.sa4(s,"warn-on-exit-if-unsaved")
 j.push(s.$0())
 j.push(i.$1(P.ao(["key","divider-save"],l,l)))
 s=O.agp().$0()
@@ -54238,70 +54240,70 @@ q.saF(s,"import-cadnano-form-file")
 q.sur(s,".json")
 q.sb_(s,new D.ZU())
 q.saC(s,"Import cadnano v2")
-q.sa5(s,"import-cadnano")
+q.sa4(s,"import-cadnano")
 j.push(s.$0())
 s=N.db().$0()
 s.scF(new D.ZV(o))
 q=J.R(s)
 q.saC(s,"Export cadnano v2")
-q.sa5(s,"export-cadnano")
+q.sa4(s,"export-cadnano")
 j.push(s.$0())
 s=N.db().$0()
 s.scF(new D.ZW(o))
 q=J.R(s)
 q.saC(s,"Export codenano")
-q.sa5(s,"export-codenano")
+q.sa4(s,"export-codenano")
 j.push(s.$0())
 j.push(i.$1(P.ao(["key","divider-export"],l,l)))
 for(l=o.H6(),p=0;p<5;++p)j.push(l[p])
 return m.$2(k,j)},
 H6:function(){var s,r,q,p,o=this,n=Z.cY().$0(),m=J.R(n)
-m.sa2(n,o.a4.gdM().a===C.av)
+m.sa2(n,o.a5.gdM().a===C.av)
 m.saC(n,"Save design in localStorage on every edit")
 n.sb6("On every edit, save current design in localStorage (in your web browser).\n\nDisabling this minimizes the time needed to render large designs.")
 m.sb_(n,new D.ZX(o))
-m.sa5(n,"save-dna-design-in-local-storage")
+m.sa4(n,"save-dna-design-in-local-storage")
 n=n.$0()
 m=Z.cY().$0()
 s=J.R(m)
-s.sa2(m,o.a4.gdM().a===C.bc)
+s.sa2(m,o.a5.gdM().a===C.bc)
 s.saC(m,"Save design in localStorage before exiting")
 m.sb6("Before exiting, save current design in localStorage (in your web browser). \nFor large designs, this is faster than saving on every edit, but if the browser crashes, \nall changes made will be lost, so it is not as safe as storing on every edit.")
 s.sb_(m,new D.ZY(o))
-s.sa5(m,"save-dna-design-in-local-storage-on-exit")
+s.sa4(m,"save-dna-design-in-local-storage-on-exit")
 m=m.$0()
 s=Z.cY().$0()
 r=J.R(s)
-r.sa2(s,o.a4.gdM().a===C.bO)
+r.sa2(s,o.a5.gdM().a===C.bO)
 r.saC(s,"Do not save design in localStorage")
 s.sb6("Never saves the design in localStorage.")
 r.sb_(s,new D.ZZ(o))
-r.sa5(s,"never-save-dna-design-in-local-storage")
+r.sa4(s,"never-save-dna-design-in-local-storage")
 s=s.$0()
 r=Z.cY().$0()
 q=J.R(r)
-q.sa2(r,o.a4.gdM().a===C.ar)
+q.sa2(r,o.a5.gdM().a===C.ar)
 q.saC(r,"Save design in localStorage periodically")
 r.sb6("Every <period> seconds, save current design in localStorage (in your web browser). \nAlso saves before exiting.\nThis is safer than never saving, or saving only before exiting, but will not save edits\nthat occurred between the last edit and a browser crash.")
 q.sb_(r,new D.a__(o))
-q.sa5(r,"save-dna-design-in-local-storage-periodically")
+q.sa4(r,"save-dna-design-in-local-storage-periodically")
 r=r.$0()
 q=M.Sd().$0()
 p=J.R(q)
 p.saC(q,"period (seconds)")
 q.svE(1)
-q.smf(o.a4.gdM().b)
-q.seV(o.a4.gdM().a!==C.ar)
+q.smf(o.a5.gdM().b)
+q.seV(o.a5.gdM().a!==C.ar)
 q.sb6("Number of seconds between saving design to localStorage.")
 q.siz(new D.a_0(o))
-p.sa5(q,"period-of-save-dna-design-in-local-storage-periodically")
+p.sa4(q,"period-of-save-dna-design-in-local-storage-periodically")
 return H.a([n,m,s,r,q.$0()],t.u)},
 Cp:function(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e=this,d=null,c=$.p2(),b=t.z,a=P.ao(["title","Edit","id","edit-nav-dropdown"],b,b),a0=N.db().$0()
 a0.scF(new D.ZB(e))
 s=J.R(a0)
 s.saC(a0,"Undo")
 a0.seA("Ctrl+Z")
-r=e.a4
+r=e.a5
 r=r.gi(r).j(0,"MenuPropsMixin.undo_stack_empty")
 s.sdH(a0,H.F(r==null?d:r))
 a0=a0.$0()
@@ -54310,7 +54312,7 @@ s.scF(new D.ZC(e))
 r=J.R(s)
 r.saC(s,"Redo")
 s.seA("Ctrl+Shift+Z")
-q=e.a4
+q=e.a5
 q=q.gi(q).j(0,"MenuPropsMixin.redo_stack_empty")
 r.sdH(s,H.F(q==null?d:q))
 s=s.$0()
@@ -54321,7 +54323,7 @@ p.scF(new D.ZD(e))
 o=J.R(p)
 o.saC(p,"Copy")
 p.seA("Ctrl+C")
-o.sdH(p,!H.i(e.a4.gv8()))
+o.sdH(p,!H.i(e.a5.gv8()))
 p=p.$0()
 o=N.db().$0()
 o.scF(new D.ZE())
@@ -54331,7 +54333,7 @@ o=o.$0()
 n=r.$1(P.a8(b,b))
 m=Z.cY().$0()
 l=J.R(m)
-l.sa2(m,e.a4.gro())
+l.sa2(m,e.a5.gro())
 l.saC(m,"Pasted strands keep original color")
 m.sb6("If checked, when copying and pasting a strand, the color is preserved.\nIf unchecked, then a new color is generated.")
 l.sb_(m,new D.ZF(e))
@@ -54341,7 +54343,7 @@ k=N.db().$0()
 k.scF(new D.ZG(e))
 j=J.R(k)
 j.saC(k,"Inline insertions/deletions")
-i=e.a4
+i=e.a5
 i=i.gi(i).j(0,u.a2)
 j.sdH(k,!H.i(H.F(i==null?d:i)))
 k.sb6("Remove insertions and deletions from the design and replace them with domains\nwhose lengths correspond to the true strand length. Also moves major tick \nmarks on helices so that they are adjacent to the same bases as before.")
@@ -54351,21 +54353,21 @@ i=N.db().$0()
 i.scF(new D.ZH(e))
 h=J.R(i)
 h.saC(i,"Set helix coordinates based on crossovers")
-g=e.a4
+g=e.a5
 g=g.gi(g).j(0,"MenuPropsMixin.no_grid_is_none")
 h.sdH(i,H.F(g==null?d:g))
 i.sb6("The grid must be set to none to enable this.\n\nSelect some crossovers and some helices. If no helices are selected, then all\nhelices are processed. At most one crossover between pairs of adjacent (in\nview order) helices can be selected. If a pair of adjacent helices has no\ncrossover selected, it is assumed to be the first crossover.\n\nNew grid coordinates are calculated based on the crossovers to ensure that each\npair of adjacent helices has crossover angles that point the backbone angles\ndirectly at the adjoining helix.")
 i=i.$0()
 h=Z.cY().$0()
 g=J.R(h)
-g.sa2(h,e.a4.gmd())
+g.sa2(h,e.a5.gmd())
 g.saC(h,"default to leftmost scaffold crossover")
 h.sb6('When selecting "Set helix coordinates based on crossovers", if two adjacent \nhelices do not have a crossover selected, determines which types to select \nautomatically.\n\nIf this is checked and "default to leftmost staple crossover" is unchecked,\nthen the leftmost scaffold crossover will be used.\n\nIf both are checked, the leftmost crossover of any type will be used.\n\nIgnored if design is not an origami (i.e., does not have at least one scaffold).')
 g.sb_(h,new D.ZI(e))
 h=h.$0()
 g=Z.cY().$0()
 f=J.R(g)
-f.sa2(g,e.a4.gme())
+f.sa2(g,e.a5.gme())
 f.saC(g,"default to leftmost staple crossover")
 g.sb6('When selecting "Set helix coordinates based on crossovers", if two adjacent \nhelices do not have a crossover selected, determines which types to select \nautomatically.\n\nIf this is checked and "default to leftmost scaffold crossover" is unchecked,\nthen the leftmost staple crossover will be used.\n\nIf both are checked, the leftmost crossover of any type will be used.\n\nIgnored if design is not an origami (i.e., does not have at least one scaffold).')
 f.sb_(g,new D.ZJ(e))
@@ -54389,144 +54391,144 @@ o.push($.p1().$1(P.ao(["key","divider-major-tick-widths"],s,s)))
 for(q=p.IH(),r=0;r<5;++r)o.push(q[r])
 return $.p2().$2(P.ao(["title","View","id","view-nav-dropdown"],s,s),o)},
 IJ:function(){var s,r=this,q=Z.cY().$0(),p=J.R(q)
-p.sa2(q,r.a4.gfC())
+p.sa2(q,r.a5.gfC())
 p.saC(q,"Show DNA Sequences")
 q.sb6("Show DNA sequences that have been assigned to strands. In a large design, this\ncan slow down the performance of panning and zooming navigation, so uncheck it\nto speed up navigation.")
 p.sb_(q,new D.a_f(r))
-p.sa5(q,"show-dna-sequences")
+p.sa4(q,"show-dna-sequences")
 q=q.$0()
 p=Z.cY().$0()
 s=J.R(p)
-s.sa2(p,r.a4.grl())
+s.sa2(p,r.a5.grl())
 s.saC(p,"Show DNA Base Mismatches")
 p.sb6("Show mismatches between DNA assigned to one strand and the strand on the same\nhelix with the opposite orientation.")
 s.sb_(p,new D.a_g(r))
-s.sa5(p,"show-mismatches")
+s.sa4(p,"show-mismatches")
 return[q,p.$0()]},
 II:function(){var s,r,q,p=this,o=Z.cY().$0(),n=J.R(o)
-n.sa2(o,p.a4.gkQ())
+n.sa2(o,p.a5.gkQ())
 n.saC(o,"Show Modifications")
 o.sb6("Check to show DNA modifications (e.g., biotins, fluorophores).")
 n.sb_(o,new D.a_c(p))
-n.sa5(o,"show-mods")
+n.sa4(o,"show-mods")
 o=o.$0()
 n=Z.cY().$0()
 s=J.R(n)
-s.sa2(n,p.a4.gvF())
-n.seV(!H.i(p.a4.gkQ()))
+s.sa2(n,p.a5.gvF())
+n.seV(!H.i(p.a5.gkQ()))
 s.saC(n,"Display Modification Connector")
 n.sb6("Check to display DNA modification connectors.")
 s.sb_(n,new D.a_d(p))
-s.sa5(n,"display-mod-connector")
+s.sa4(n,"display-mod-connector")
 n=n.$0()
 s=M.Sd().$0()
 r=J.R(s)
 r.saC(s,"Modification font size")
-q=p.a4
+q=p.a5
 q=q.gi(q).j(0,"MenuPropsMixin.modification_font_size")
 s.smf(H.b_(q==null?null:q))
-s.seV(!H.i(p.a4.gkQ()))
+s.seV(!H.i(p.a5.gkQ()))
 s.sb6("Adjust to change the font size of text display for modifications.")
 s.siz(new D.a_e(p))
-r.sa5(s,"mod-font-size")
+r.sa4(s,"mod-font-size")
 return[o,n,s.$0()]},
 IF:function(){var s,r,q,p=this,o=Z.cY().$0(),n=J.R(o)
-n.sa2(o,p.a4.gmn())
+n.sa2(o,p.a5.gmn())
 n.saC(o,"Display Major Tick Offsets")
 o.sb6("Display the integer base offset to the right of each major tick, on the first helix.")
 n.sb_(o,new D.a_1(p))
-n.sa5(o,"display-major-tick-offsets")
+n.sa4(o,"display-major-tick-offsets")
 o=o.$0()
 n=Z.cY().$0()
 s=J.R(n)
-s.sa2(n,!H.i(p.a4.guU()))
-n.seV(!H.i(p.a4.gmn()))
+s.sa2(n,!H.i(p.a5.guU()))
+n.seV(!H.i(p.a5.gmn()))
 s.saC(n,"... On All Helices")
 n.sb6("Display the integer base offset to the right of each major tick, for all helices.")
 s.sb_(n,new D.a_2(p))
-s.sa5(n,"display-major-tick-offsets-on-all-helices")
+s.sa4(n,"display-major-tick-offsets-on-all-helices")
 n=n.$0()
 s=M.Sd().$0()
 r=J.R(s)
 r.saC(s,"Major tick offset font size")
-q=p.a4
+q=p.a5
 q=q.gi(q).j(0,u.a8)
 s.smf(H.b_(q==null?null:q))
-s.seV(!H.i(p.a4.gmn()))
+s.seV(!H.i(p.a5.gmn()))
 s.sb6(u.jA)
 s.siz(new D.a_3(p))
-r.sa5(s,"major-tick-offset-font-size")
+r.sa4(s,"major-tick-offset-font-size")
 return[o,n,s.$0()]},
 IG:function(){var s,r,q,p=this,o=Z.cY().$0(),n=J.R(o)
-n.sa2(o,p.a4.gmm())
+n.sa2(o,p.a5.gmm())
 n.saC(o,"Display Major Tick Widths")
 o.sb6("Display the number of bases between each adjacent pair of major ticks, on the first helix.")
 n.sb_(o,new D.a_4(p))
-n.sa5(o,"display-major-tick-widths")
+n.sa4(o,"display-major-tick-widths")
 o=o.$0()
 n=Z.cY().$0()
 s=J.R(n)
-s.sa2(n,p.a4.guV())
-n.seV(!H.i(p.a4.gmm()))
+s.sa2(n,p.a5.guV())
+n.seV(!H.i(p.a5.gmm()))
 s.saC(n,"...On All Helices")
 n.sb6("Display the number of bases between each adjacent pair of major ticks, on all helices.")
 s.sb_(n,new D.a_5(p))
-s.sa5(n,"display-major-tick-widths-on-all-helices")
+s.sa4(n,"display-major-tick-widths-on-all-helices")
 n=n.$0()
 s=M.Sd().$0()
 r=J.R(s)
 r.saC(s,"Major tick width font size")
-q=p.a4
+q=p.a5
 q=q.gi(q).j(0,u.hm)
 s.smf(H.b_(q==null?null:q))
-s.seV(!H.i(p.a4.gmm()))
+s.seV(!H.i(p.a5.gmm()))
 s.sb6(u.jA)
 s.siz(new D.a_6(p))
-r.sa5(s,"major-tick-width-font-size")
+r.sa4(s,"major-tick-width-font-size")
 return[o,n,s.$0()]},
 IH:function(){var s,r,q,p,o=this,n="display-only-selected-helices",m="invert-yz-axes",l="show-helix-circles-main-view",k="show-grid-coordinates-side-view",j=Z.cY().$0(),i=J.R(j)
-i.sa2(j,o.a4.guw())
+i.sa2(j,o.a5.guw())
 i.saC(j,"Auto-fit On Loading New Design")
 j.sb6("When loading a new design, the side and main views will be translated to show \nthe lowest-index helix in the upper-left. otherwise, after loading the design, \nyou may not be able to see it because it is translated off the screen.\n\nYou may want to uncheck this when working on a design with the scripting \nlibrary. In that case, when repeatedly re-running the script to modify the \ndesign and then re-loading it, it is preferable to keep the design centered \nat the same location you had before, in order to be able to see the same part \nof the design you were looking at before changing the script.")
 i.sc0(j,"center-on-load")
 i.sb_(j,new D.a_7(o))
-i.sa5(j,"autofit-on-loading-new-design")
+i.sa4(j,"autofit-on-loading-new-design")
 j=j.$0()
 i=Z.cY().$0()
 s=J.R(i)
-s.sa2(i,o.a4.gd8())
+s.sa2(i,o.a5.gd8())
 s.saC(i,"Display only selected helices")
 i.sb6("Only helices selected in the side view are displayed in the main view.")
 s.sc0(i,n)
 s.sb_(i,new D.a_8(o))
-s.sa5(i,n)
+s.sa4(i,n)
 i=i.$0()
 s=Z.cY().$0()
 r=J.R(s)
-r.sa2(s,o.a4.gvx())
+r.sa2(s,o.a5.gvx())
 r.saC(s,"Invert y- and z-axes")
 s.sb6('In the main view, invert the y-axis, and in the side view, invert both the \ny-axis and the z-axis. \n\nIf unchecked, then use "screen coordinates", where increasing y moves down. \n\nIf checked, then use Cartesian coordinates where increasing y moves up. \nAlso invert the z-axis to maintain chirality, so this has the net effect of \nrotating the side view by 180 degrees.')
 r.sc0(s,m)
 r.sb_(s,new D.a_9(o))
-r.sa5(s,m)
+r.sa4(s,m)
 s=s.$0()
 r=Z.cY().$0()
 q=J.R(r)
-q.sa2(r,o.a4.grk())
+q.sa2(r,o.a5.grk())
 q.saC(r,"Show main view Helix circles/idx")
 r.sb6("Shows helix circles and idx's in main view. You may want to hide them for\ndesigns that have overlapping non-parallel helices.")
 q.sc0(r,l)
 q.sb_(r,new D.a_a(o))
-q.sa5(r,l)
+q.sa4(r,l)
 r=r.$0()
 q=Z.cY().$0()
 p=J.R(q)
-p.sa2(q,o.a4.grj())
+p.sa2(q,o.a5.grj())
 p.saC(q,"Show grid coordinates in side view")
 q.sb6("Shows grid coordinates in the side view under the helix index.")
 p.sc0(q,k)
 p.sb_(q,new D.a_b(o))
-p.sa5(q,k)
+p.sa4(q,k)
 return H.a([j,i,s,r,q.$0()],t.u)},
 CE:function(){var s,r,q,p=$.p2(),o=t.z
 o=P.ao(["title","Export","id","export-nav-dropdown"],o,o)
@@ -54559,12 +54561,12 @@ m=J.ahq(m.j(0,1),1)
 if(0>=m.length){q=H.h(m,0)
 s=1
 break}n=D.avH(m[0])
-p.a4.T(U.ajW(n,k==="true"))
+p.a5.T(U.ajW(n,k==="true"))
 case 1:return P.ba(q,r)}})
 return P.bb($async$mu,r)},
 mJ:function(){var s=0,r=P.bc(t.n),q,p=this,o,n,m
 var $async$mJ=P.bd(function(a,b){if(a===1)return P.b9(b,r)
-while(true)switch(s){case 0:m=p.a4
+while(true)switch(s){case 0:m=p.a5
 m=m.gi(m).j(0,"MenuPropsMixin.example_designs")
 if(m==null)m=null
 s=3
@@ -54572,7 +54574,7 @@ return P.bF(E.eI(E.fL(null,null,H.a([E.aen("designs",t.qX.a(m).b,0)],t.ud),null,
 case 3:o=b
 if(o==null){s=1
 break}n=t.Uo.a(J.r(o,0)).b
-p.a4.T(U.ajV(n))
+p.a5.T(U.ajV(n))
 case 1:return P.ba(q,r)}})
 return P.bb($async$mJ,r)}}
 D.ZP.prototype={
@@ -54587,12 +54589,12 @@ $1:function(a){return D.any(t.wM.a(t.o.a(a).ch),D.aG3())},
 $S:6}
 D.ZS.prototype={
 $1:function(a){t.R.a(a)
-return this.a.a4.T(U.akA())},
+return this.a.a5.T(U.akA())},
 $S:3}
 D.ZT.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.akV(!H.i(s.gwg())))},
 $S:6}
 D.ZU.prototype={
@@ -54601,56 +54603,56 @@ $S:6}
 D.ZV.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 t.dZ.a(null)
 return s.T(new U.uB().k())},
 $S:3}
 D.ZW.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 t.IJ.a(null)
 return s.T(new U.uC().k())},
 $S:3}
 D.ZX.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.y7(s.gdM().Ix()))},
 $S:6}
 D.ZY.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.y7(s.gdM().Iy()))},
 $S:6}
 D.ZZ.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.y7(s.gdM().Iw()))},
 $S:6}
 D.a__.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.y7(s.gdM().Iz()))},
 $S:6}
 D.a_0.prototype={
 $1:function(a){H.b_(a)
-return this.a.a4.T(U.y7(Y.aeL(C.ar,H.M(a))))},
+return this.a.a5.T(U.y7(Y.aeL(C.ar,H.M(a))))},
 $S:53}
 D.ZB.prototype={
 $1:function(a){t.R.a(a)
-return this.a.a4.T(U.aiQ())},
+return this.a.a5.T(U.aiQ())},
 $S:3}
 D.ZC.prototype={
 $1:function(a){t.R.a(a)
-return this.a.a4.T(U.aiB())},
+return this.a.a5.T(U.aiB())},
 $S:3}
 D.ZD.prototype={
 $1:function(a){t.R.a(a)
-if(H.i(this.a.a4.gv8()))window.dispatchEvent(W.aia("keydown",!0,67).a)},
+if(H.i(this.a.a5.gv8()))window.dispatchEvent(W.aia("keydown",!0,67).a)},
 $S:17}
 D.ZE.prototype={
 $1:function(a){t.R.a(a)
@@ -54659,20 +54661,20 @@ $S:390}
 D.ZF.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.akO(!H.i(s.gro())))},
 $S:6}
 D.ZG.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 t.P3.a(null)
 return s.T(new U.uR().k())},
 $S:3}
 D.ZH.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 t.zr.a(null)
 return s.T(new U.uG().k())},
 $S:3}
@@ -54680,119 +54682,119 @@ D.ZI.prototype={
 $1:function(a){var s,r
 t.o.a(a)
 s=this.a
-if(H.i(s.a4.gme())){r=s.a4
-r.T(U.af8(!H.i(r.gmd()),s.a4.gme()))}},
+if(H.i(s.a5.gme())){r=s.a5
+r.T(U.af8(!H.i(r.gmd()),s.a5.gme()))}},
 $S:19}
 D.ZJ.prototype={
 $1:function(a){var s,r
 t.o.a(a)
 s=this.a
-if(H.i(s.a4.gmd())){r=s.a4
-r.T(U.af8(r.gmd(),!H.i(s.a4.gme())))}},
+if(H.i(s.a5.gmd())){r=s.a5
+r.T(U.af8(r.gmd(),!H.i(s.a5.gme())))}},
 $S:19}
 D.ZK.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 return D.a7c(s.gV(s))},
 $S:55}
 D.a_f.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awX(!H.i(s.gfC())))},
 $S:6}
 D.a_g.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 s.T(U.awY(!H.i(s.grl())))},
 $S:19}
 D.a_c.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awZ(!H.i(s.gkQ())))},
 $S:6}
 D.a_d.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awV(!H.i(s.gvF())))},
 $S:6}
 D.a_e.prototype={
 $1:function(a){H.b_(a)
-return this.a.a4.T(U.awl(a))},
+return this.a.a5.T(U.awl(a))},
 $S:53}
 D.a_1.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.avB(!H.i(s.gmn())))},
 $S:6}
 D.a_2.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awR(!H.i(s.guU())))},
 $S:6}
 D.a_3.prototype={
 $1:function(a){H.b_(a)
-return this.a.a4.T(U.awh(a))},
+return this.a.a5.T(U.awh(a))},
 $S:53}
 D.a_4.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awT(!H.i(s.gmm())))},
 $S:6}
 D.a_5.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awS(!H.i(s.guV())))},
 $S:6}
 D.a_6.prototype={
 $1:function(a){H.b_(a)
-return this.a.a4.T(U.awi(a))},
+return this.a.a5.T(U.awi(a))},
 $S:53}
 D.a_7.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.aj5(!H.i(s.guw())))},
 $S:6}
 D.a_8.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.awW(!H.i(s.gd8())))},
 $S:6}
 D.a_9.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.ake(!H.i(s.gvx())))},
 $S:6}
 D.a_a.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.akH(!H.i(s.grk())))},
 $S:6}
 D.a_b.prototype={
 $1:function(a){var s
 t.o.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.akG(!H.i(s.grj())))},
 $S:6}
 D.ZM.prototype={
 $1:function(a){t.R.a(a)
-return this.a.a4.T(U.afa(C.cs))},
+return this.a.a5.T(U.afa(C.cs))},
 $S:3}
 D.ZN.prototype={
 $1:function(a){t.R.a(a)
-return this.a.a4.T(U.afa(C.cr))},
+return this.a.a5.T(U.afa(C.cr))},
 $S:3}
 D.ZO.prototype={
 $1:function(a){t.R.a(a)
@@ -54824,9 +54826,9 @@ gi:function(a){return this.dq}}
 D.FB.prototype={
 gi:function(a){return this.dq}}
 D.t5.prototype={
-gi:function(a){return this.a4},
+gi:function(a){return this.a5},
 si:function(a,b){this.b=b
-this.a4=D.a40(R.b7(b))},
+this.a5=D.a40(R.b7(b))},
 av:function(a){return D.a40(a)},
 gay:function(){return C.bR.ga9(C.bR)}}
 D.T2.prototype={
@@ -55184,49 +55186,49 @@ Q.hr.prototype={}
 Q.vM.prototype={
 ghq:function(){var s=t.yW.a(P.v5([C.eT],t.X7)),r=t.Cv.h("dn.U*"),q=s.$ti
 return new H.d3(s,q.W(r).h("1(2)").a(C.tp.gmy()),q.h("@<1>").W(r).h("d3<1,2>"))},
-aB:function(a){var s,r=this,q=J.aM(r.a4.gZ().b)
+aB:function(a){var s,r=this,q=J.aM(r.a5.gZ().b)
 if(typeof q!=="number")return q.au()
-q=q>1||r.a4.gfQ()!=="default_group"
+q=q>1||r.a5.gfQ()!=="default_group"
 s=t.z
-if(q)return $.ae5().$4(P.ao(["bg","light","expand","lg"],s,s),$.agV().$2(P.ao(["key","side-menu-display-title"],s,s),r.a4.gfQ()),r.r6(),r.r4())
+if(q)return $.ae5().$4(P.ao(["bg","light","expand","lg"],s,s),$.agV().$2(P.ao(["key","side-menu-display-title"],s,s),r.a5.gfQ()),r.r6(),r.r4())
 else return $.ae5().$3(P.ao(["bg","light","expand","lg"],s,s),r.r6(),r.r4())},
 r6:function(){var s,r,q,p,o,n,m=this,l="SideMenuPropsMixin.displayed_group_name",k=[]
-for(s=m.a4.gZ(),s=J.H(s.ga_(s)),r=t.sG;s.m();){q=s.gq(s)
+for(s=m.a5.gZ(),s=J.H(s.ga_(s)),r=t.sG;s.m();){q=s.gq(s)
 p=N.db().$0()
 p.toString
 o=r.a(new Q.a1v(q))
 n=J.R(p)
 J.m(n.gi(p),"MenuDropdownItemPropsMixin.on_click",o)
 J.m(n.gi(p),"MenuDropdownItemPropsMixin.display",q)
-o=m.a4
+o=m.a5
 o=o.gi(o).j(0,l)
 o=H.o(o==null?null:o)
 J.m(n.gi(p),"MenuDropdownItemPropsMixin.active",q==o)
-o=m.a4
+o=m.a5
 o=o.gi(o).j(0,l)
 o=H.o(o==null?null:o)
 J.m(n.gi(p),"MenuDropdownItemPropsMixin.disabled",q==o)
-n.sa5(p,"key_for_group_name:"+H.d(q))
+n.sa4(p,"key_for_group_name:"+H.d(q))
 k.push(p.$0())}s=t.z
 r=$.p1().$1(P.ao(["key","divider-add-remove"],s,s))
 q=N.db().$0()
 p=J.R(q)
 p.saC(q,"adjust current group")
 q.scF(new Q.a1w(m))
-p.sa5(q,"adjust-current-group")
+p.sa4(q,"adjust-current-group")
 q=q.$0()
 p=N.db().$0()
 o=J.R(p)
 o.saC(p,"new group")
 p.scF(new Q.a1x(m))
-o.sa5(p,"new-group")
+o.sa4(p,"new-group")
 p=p.$0()
 o=N.db().$0()
 n=J.R(o)
 n.saC(o,"remove current group")
-n.sdH(o,J.aM(m.a4.gZ().b)===1)
+n.sdH(o,J.aM(m.a5.gZ().b)===1)
 o.scF(new Q.a1y(m))
-n.sa5(o,"remove-current-group")
+n.sa4(o,"remove-current-group")
 C.a.a8(k,[r,q,p,o.$0()])
 return $.p2().$2(P.ao(["title","Group","id","group-nav-dropdown"],s,s),k)},
 r4:function(){var s,r,q,p,o,n,m,l,k,j,i=this,h=null,g="SideMenuPropsMixin.groups",f="SideMenuPropsMixin.displayed_group_name",e=$.p2(),d=t.z
@@ -55239,25 +55241,25 @@ l=m.p(o)
 n.toString
 k=J.R(n)
 J.m(k.gi(n),"MenuDropdownItemPropsMixin.display",l)
-l=i.a4
+l=i.a5
 l=l.gi(l).j(0,g)
 l=p.a(l==null?h:l)
-j=i.a4
+j=i.a5
 j=j.gi(j).j(0,f)
 j=H.o(j==null?h:j)
 j=J.r(l.b,j).a
 J.m(k.gi(n),"MenuDropdownItemPropsMixin.active",o==j)
-j=i.a4
+j=i.a5
 j=j.gi(j).j(0,g)
 l=p.a(j==null?h:j)
-j=i.a4
+j=i.a5
 j=j.gi(j).j(0,f)
 j=H.o(j==null?h:j)
 j=J.r(l.b,j).a
 J.m(k.gi(n),"MenuDropdownItemPropsMixin.disabled",o==j)
 j=q.a(new Q.a1u(i,o))
 J.m(k.gi(n),"MenuDropdownItemPropsMixin.on_click",j)
-k.sa5(n,m.p(o))
+k.sa4(n,m.p(o))
 C.a.l(s,n.$0())}return e.$2(d,s)},
 lR:function(a){return this.Bw(t.SS.a(a))},
 Bw:function(a){var s=0,r=P.bc(t.n),q,p,o,n,m,l,k
@@ -55281,14 +55283,14 @@ case 1:return P.ba(q,r)}})
 return P.bb($async$lR,r)},
 lS:function(){var s=0,r=P.bc(t.z),q,p=this,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,b0,b1
 var $async$lS=P.bd(function(b2,b3){if(b2===1)return P.b9(b3,r)
-while(true)$async$outer:switch(s){case 0:a8=p.a4.gZ()
-a9=p.a4.gfQ()
+while(true)$async$outer:switch(s){case 0:a8=p.a5.gZ()
+a9=p.a5.gfQ()
 b0=J.r(a8.b,a9)
 b1=b0.a
 a9=new Array(8)
 a9.fixed$length=Array
 o=H.a(a9,t.ud)
-C.a.w(o,0,E.pD("name",p.a4.gfQ()))
+C.a.w(o,0,E.pD("name",p.a5.gfQ()))
 a9=b0.c
 C.a.w(o,1,E.eR("x",a9.a))
 C.a.w(o,2,E.eR("y",a9.b))
@@ -55306,9 +55308,9 @@ if(n==null){s=1
 break}m=J.ai(n)
 l=t._v
 k=J.mT(l.a(m.j(n,0)).b)
-j=p.a4.gZ()
+j=p.a5.gZ()
 i=j.ga_(j)
-if(k!==p.a4.gfQ()&&J.c_(i,k)){h="Cannot use name "+k+u.e1
+if(k!==p.a5.gfQ()&&J.c_(i,k)){h="Cannot use name "+k+u.e1
 C.p.aH(window,h)
 s=1
 break}g=new Q.aA(!0,a8,H.A(a9).h("aA<I.E*>"))
@@ -55334,7 +55336,7 @@ a4=a8.a(m.j(n,4)).b
 a5=a8.a(m.j(n,5)).b
 a6=a8.a(m.j(n,6)).b
 a7=O.aex(b1,e,a4,X.iJ(a1,a2,a3),a5,a6)
-$.G().T(U.ak_(a7,k,p.a4.gfQ()))
+$.G().T(U.ak_(a7,k,p.a5.gfQ()))
 case 1:return P.ba(q,r)}})
 return P.bb($async$lS,r)}}
 Q.a1v.prototype={
@@ -55349,17 +55351,17 @@ Q.a1x.prototype={
 $1:function(a){var s,r
 t.R.a(a)
 s=this.a
-r=s.a4.gZ()
+r=s.a5.gZ()
 return s.lR(r.ga_(r))},
 $S:55}
 Q.a1y.prototype={
 $1:function(a){t.R.a(a)
-return $.G().T(U.ak1(this.a.a4.gfQ()))},
+return $.G().T(U.ak1(this.a.a5.gfQ()))},
 $S:3}
 Q.a1u.prototype={
 $1:function(a){var s
 t.R.a(a)
-s=this.a.a4
+s=this.a.a5
 return s.T(U.ajY(this.b,s.gfQ()))},
 $S:3}
 Q.a7X.prototype={
@@ -55377,9 +55379,9 @@ gi:function(a){return this.ch}}
 Q.FM.prototype={
 gi:function(a){return this.ch}}
 Q.td.prototype={
-gi:function(a){return this.a4},
+gi:function(a){return this.a5},
 si:function(a,b){this.b=b
-this.a4=Q.a45(R.b7(b))},
+this.a5=Q.a45(R.b7(b))},
 av:function(a){return Q.a45(a)},
 gay:function(){return C.bS.ga9(C.bS)}}
 Q.T6.prototype={
@@ -55474,13 +55476,13 @@ ghq:function(){var s=t.yW.a(P.v5([C.eP],t.X7)),r=t.Cv.h("dn.U*"),q=s.$ti
 return new H.d3(s,q.W(r).h("1(2)").a(C.tn.gmy()),q.h("@<1>").W(r).h("d3<1,2>"))},
 aB:function(a){var s,r,q,p,o,n,m,l,k,j,i,h,g=null,f="select-mode-button-selected",e="select-mode-button-unselected",d=t.B,c=A.bt(d.a($.S1),g)
 c.scE(0,new D.a0H())
-s=this.a4.giL().a
+s=this.a5.giL().a
 r=$.p4()
 c.sak(0,"mode-button "+(s.b.eN(r)?f:e))
 c.hk("scadnano.SelectModeComponent.button.all_ends")
-c.sa5(0,"all-ends")
+c.sa4(0,"all-ends")
 q=c.$1("all ends")
-c=this.a4
+c=this.a5
 c=c.gi(c).j(0,"SelectModePropsMixin.is_origami")
 p=H.i(H.F(c==null?g:c))?$.ap9():$.agW()
 c=P.a8(t.v,t.t9)
@@ -55492,15 +55494,15 @@ k=new A.i2(k,j,g,g)
 k.gS()
 j=j.a
 j.onClick=m.a(new D.a0I(l))
-i=this.a4
+i=this.a5
 i=i.gi(i).j(0,"SelectModePropsMixin.select_mode_state")
 j.className="mode-button "+(n.a(i==null?g:i).a.b.J(0,l)?f:e)
 k.hk("scadnano.SelectModeComponent.button."+l.a)
-k.sa5(0,l.ib())
+k.sa4(0,l.ib())
 c.w(0,l,k.$1(l.ib()))}o=t.u
 n=H.a([],o)
 m=A.bt(d.a($.l7),g)
-m.sa5(0,"label")
+m.sa4(0,"label")
 C.a.l(n,m.$1("Select:"))
 C.a.l(n,c.j(0,C.C))
 C.a.l(n,c.j(0,C.K))
@@ -55536,9 +55538,9 @@ gi:function(a){return this.ch}}
 D.FI.prototype={
 gi:function(a){return this.ch}}
 D.tb.prototype={
-gi:function(a){return this.a4},
+gi:function(a){return this.a5},
 si:function(a,b){this.b=b
-this.a4=D.a43(R.b7(b))},
+this.a5=D.a43(R.b7(b))},
 av:function(a){return D.a43(a)},
 gay:function(){return C.bQ.ga9(C.bQ)}}
 D.T4.prototype={
