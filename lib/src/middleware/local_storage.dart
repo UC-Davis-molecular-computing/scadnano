@@ -54,10 +54,13 @@ restore(Storable storable) {
   try {
     _restore(storable);
   } catch (e, stackTrace) {
-    print('ERROR: loading ${storable} from localStorage, encountered this error:'
+    var error_message =
+    'ERROR: loading ${storable} from localStorage, encountered this error:'
         '\n${e.toString()}'
         '\n\nstack trace:'
-        '\n\n${stackTrace}');
+        '\n\n${stackTrace}';
+    print(error_message);
+    app.dispatch(actions.ErrorMessageSet(error_message));
   }
 }
 
@@ -77,8 +80,8 @@ _restore(Storable storable) {
       try {
         storables = standard_serializers.deserialize(storable_json_map);
       } catch (e, stackTrace) {
-        print('ERROR: in loading design from localStorage, encountered this error trying to load '
-            'app_ui_state_storables, so a default filename has been chosen:'
+        print('ERROR: in loading storables from localStorage in order to find loaded_filename for design, '
+            'encountered this error, so a default filename has been chosen:'
             '\n${e.toString()}'
             '\n\nstack trace:'
             '\n\n${stackTrace}');
@@ -89,7 +92,17 @@ _restore(Storable storable) {
           write_local_storage: false);
     } else if (storable == Storable.app_ui_state_storables) {
       var storable_json_map = json.decode(json_str);
-      AppUIStateStorables storables = standard_serializers.deserialize(storable_json_map);
+      AppUIStateStorables storables;
+      try {
+        storables = standard_serializers.deserialize(storable_json_map);
+      } catch (e, stackTrace) {
+        print('ERROR: in loading storables from localStorage, encountered this error trying to load '
+            'app_ui_state_storables, so using defaults for UI settings:'
+            '\n${e.toString()}'
+            '\n\nstack trace:'
+            '\n\n${stackTrace}');
+        storables = DEFAULT_AppUIStateStorable;
+      }
       action = actions.SetAppUIStateStorable(storables);
       // TODO(benlee12): Ugly because this forces design to be loaded before the app
       // state because the filename could be overwritten.
@@ -97,7 +110,7 @@ _restore(Storable storable) {
     }
 
     if (action != null) {
-      app.dispatch(action);
+      app.dispatch_async(action);
     }
   }
 }

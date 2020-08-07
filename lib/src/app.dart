@@ -125,6 +125,7 @@ class App {
   }
 
   dispatch_async(Action action) async {
+    await null;
     dispatch(action);
   }
 

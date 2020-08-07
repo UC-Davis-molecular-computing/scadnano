@@ -33,8 +33,9 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
-      ..geometry = state.design.geometry
-      ..no_grid_is_none = state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..geometry = state.design?.geometry
+      ..no_grid_is_none =
+          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
