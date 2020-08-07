@@ -185,7 +185,7 @@ It is instructive to see how that example design is represented as a `.sc` file
 }
 ```
 
-The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md#example) shows Python code that produces this design.
+The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package#example) shows Python code that produces this design.
 
 
 

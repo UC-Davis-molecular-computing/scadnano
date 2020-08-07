@@ -118,22 +118,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   @override
   componentDidMount() {
     if (props.show_helix_circles) {
-      var id = group_id();
-//      for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
+      var elt = querySelector('#${group_id()}');
       elt.addEventListener('contextmenu', on_context_menu);
-//      }
     }
   }
 
   @override
   componentWillUnmount() {
     if (props.show_helix_circles) {
-      var id = group_id();
-//      for (var id in [helix_circle_id(), helix_text_id()]) {
-        var elt = querySelector('#${id}');
-        elt.removeEventListener('contextmenu', on_context_menu);
-//      }
+      var elt = querySelector('#${group_id()}');
+      elt.removeEventListener('contextmenu', on_context_menu);
     }
     super.componentWillUnmount();
   }
@@ -225,7 +219,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..key = 'major-tick-widths-group')(offset_texts_elements);
   }
 
-
   String _horz_line_paths(Helix helix) {
     num width = helix.svg_width();
     num height = helix.svg_height();
@@ -269,7 +262,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
   }
-
 }
 
 Point<num> helix_main_view_translation(Helix helix) {
