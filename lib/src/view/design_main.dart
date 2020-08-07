@@ -187,6 +187,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.design.helices
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..groups = props.design.groups
           ..geometry = props.design.geometry
           ..only_display_selected_helices = props.only_display_selected_helices

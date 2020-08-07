@@ -24,6 +24,7 @@ mixin DesignMainMouseoverRectHelicesPropsMixin on UiProps {
 
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
+  bool helix_change_apply_to_all;
 }
 
 class DesignMainMouseoverRectHelicesProps = UiProps
@@ -45,6 +46,7 @@ class DesignMainMouseoverRectHelicesComponent extends UiComponent2<DesignMainMou
             Helix helix = props.helices[helix_idx];
             rect_elts.add((DesignMainMouseoverRectHelix()
               ..helix = helix
+              ..helix_change_apply_to_all = props.helix_change_apply_to_all
               ..key = helix.idx)());
           }
         }
