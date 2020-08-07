@@ -667,6 +667,16 @@ https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20de
         },
         'scadnano dev version',
       ),
+      DropdownItem(
+        {
+          'href':
+          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
+          'target': '_blank',
+          //TODO: figure out how to give a DropdownItem a tooltip
+//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+        },
+        'Version ${constants.CURRENT_VERSION} release notes',
+      ),
     );
   }
 
