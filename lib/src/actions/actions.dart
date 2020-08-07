@@ -540,10 +540,11 @@ abstract class SetOnlyDisplaySelectedHelices
         Action,
         SvgPngCacheInvalidatingAction,
         Built<SetOnlyDisplaySelectedHelices, SetOnlyDisplaySelectedHelicesBuilder> {
-  bool get show;
+  bool get only_display_selected_helices;
 
-  factory SetOnlyDisplaySelectedHelices(bool show) =>
-      SetOnlyDisplaySelectedHelices.from((b) => b..show = show);
+  factory SetOnlyDisplaySelectedHelices(bool only_display_selected_helices) =>
+      SetOnlyDisplaySelectedHelices.from(
+          (b) => b..only_display_selected_helices = only_display_selected_helices);
 
   /************************ begin BuiltValue boilerplate ************************/
   factory SetOnlyDisplaySelectedHelices.from([void Function(SetOnlyDisplaySelectedHelicesBuilder) updates]) =

@@ -436,15 +436,15 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 // invert y axis
 BuiltMap<int, Helix> invert_yz_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.InvertYZSet action) {
-  var new_helices = reassign_svg_positions(state, helices);
+  var new_helices = reassign_svg_positions(state, helices, invert_yz: action.invert_yz);
   return new_helices;
 }
 
 // This is needed when the whole AppUIStateStorables is set, since it also changes invert_yz
 BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
-  var new_helices =
-      reassign_svg_positions(state, helices, selected_helix_idxs: action.storables.side_selected_helix_idxs);
+  var new_helices = reassign_svg_positions(state, helices,
+      selected_helix_idxs: action.storables.side_selected_helix_idxs, invert_yz: action.storables.invert_yz);
   return new_helices;
 }
 
@@ -494,16 +494,19 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated)
 
+///XXX: this uses state to get [geometry] and [invert_yz] values, but be careful because if those values
+/// are changing in the action, then state will not yet have been updated to the new value; in that case
+/// assign them explicitly in the parameter list; e.g., see [invert_yz_set_helices_reducer]
 BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix> helices,
-    {BuiltSet<int> selected_helix_idxs = null}) {
+    {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_yz = null}) {
   if (helices.length == 0) {
     return helices;
   }
   if (selected_helix_idxs == null && state.ui_state.only_display_selected_helices) {
     selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
   }
-  Geometry geometry = state.design.geometry;
-  bool invert_yz = state.ui_state.invert_yz;
+  invert_yz ??= state.ui_state.invert_yz;
+  geometry ??= state.design.geometry;
   BuiltMap<String, HelixGroup> groups = state.design.groups;
   Map<int, Helix> helices_map = helices.toMap();
   helices_map = util.helices_assign_svg(geometry, invert_yz, helices_map, groups,
@@ -543,7 +546,7 @@ BuiltMap<int, Helix> helix_selections_clear_helices_reducer(
 
 BuiltMap<int, Helix> set_only_display_selected_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetOnlyDisplaySelectedHelices action) {
-  if (action.show) {
+  if (action.only_display_selected_helices) {
     return reassign_svg_positions(state, helices);
   } else {
     var all_helix_idxs = BuiltSet<int>(state.design.helices.keys);
