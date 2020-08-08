@@ -49,10 +49,10 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
       int offset = mouseover_data.offset;
       text = 'helix: ${idx}, offset: ${offset}';
       if (mouseover_data.domain != null) {
-        int substrand_length = mouseover_data.domain.dna_length();
+        int domain_length = mouseover_data.domain.dna_length();
         var strand = props.strand_first_mouseover_data;
         text += (', ' +
-            'substrand length: ${substrand_length}, ' +
+            'domain length: ${domain_length}, ' +
             'strand length: ${strand.dna_length()}, ' +
             (strand.idt != null ? 'strand IDT name: ${strand.idt.name}' : ''));
         ;
