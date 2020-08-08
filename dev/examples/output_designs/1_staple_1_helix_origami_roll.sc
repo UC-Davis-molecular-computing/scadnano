@@ -1,5 +1,5 @@
 {
-  "version": "0.9.11",
+  "version": "0.11.0",
   "grid": "square",
   "helices": [
     {"grid_position": [0, 0], "roll": 90}

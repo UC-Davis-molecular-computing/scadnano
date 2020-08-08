@@ -136,6 +136,6 @@ def add_crossovers(design: sc.Design):
     design.add_crossovers(crossovers)
 
 
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     design = create_design()
     design.write_scadnano_file(directory='output_designs')
