@@ -48590,7 +48590,7 @@ l=this.m
 l=l.gi(l).j(0,u.d)
 if(l==null)l=m
 t.U.a(l)
-n=", "+("substrand length: "+o+", ")+("strand length: "+l.bo()+", ")
+n=", "+("domain length: "+o+", ")+("strand length: "+l.bo()+", ")
 l=l.c
 p+=n+(l!=null?"strand IDT name: "+H.d(l.a):"")}}else{l=this.m
 l=l.gi(l).j(0,"DesignFooterProps.loaded_filename")
