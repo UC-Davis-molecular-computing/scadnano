@@ -56,6 +56,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
+        ..show_loopout_length_main_view = state.ui_state.show_loopout_length_main_view
         ..display_base_offsets_of_major_ticks_only_first_helix =
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
@@ -94,6 +95,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool display_major_tick_widths_all_helices;
   bool show_helix_circles;
   bool helix_group_is_moving;
+  bool show_loopout_length_main_view;
 }
 
 @Props()
@@ -161,7 +163,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           }.build()
           ..geometry = props.design.geometry
           ..key = 'strand-creating')(),
-      if (props.show_dna)
+      if (props.show_dna || props.show_loopout_length_main_view)
         (DesignMainDNASequences()
           ..helices = props.design.helices
           ..groups = props.design.groups
@@ -172,6 +174,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..show_dna = props.show_dna
+          ..show_loopout_length_main_view = props.show_loopout_length_main_view
           ..key = 'dna-sequences')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'

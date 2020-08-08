@@ -62,6 +62,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
+      ..show_loopout_length_main_view = state.ui_state.show_loopout_length_main_view
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
@@ -99,6 +100,7 @@ mixin MenuPropsMixin on UiProps {
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
+  bool show_loopout_length_main_view;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -583,6 +585,15 @@ Shows grid coordinates in the side view under the helix index.'''
         ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
             show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
+      (MenuBoolean()
+        ..value = props.show_loopout_length_main_view
+        ..display = 'Show loopout length in main view'
+        ..tooltip = '''\
+Loopout length is anchored to loopout when selected in main view.'''
+        ..name = 'show-loopout-length-main-view'
+        ..onChange = ((_) => props.dispatch(actions.ShowLoopoutLengthMainViewSet(
+            show_loopout_length_main_view: !props.show_loopout_length_main_view)))
+        ..key = 'show-loopout-length-main-view')(),
     ];
   }
 

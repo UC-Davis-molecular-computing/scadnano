@@ -27,6 +27,8 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
+  bool show_dna;
+  bool show_loopout_length_main_view;
 }
 
 class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
@@ -63,6 +65,22 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
           ..xlinkHref = props.dna_sequence_png_uri
           ..id = 'dna-sequences-main-view-png')(),
       );
+    } else if(props.show_loopout_length_main_view){
+       return (Dom.g()..className = 'dna-sequences-main-view')([
+        for (Strand strand in props.strands)
+          if (strand.dna_sequence != null)
+            (DesignMainDNASequence()
+              ..helices = props.helices
+              ..groups = props.groups
+              ..geometry = props.geometry
+              ..strand = strand
+              ..side_selected_helix_idxs = props.side_selected_helix_idxs
+              ..key = strand.toString()
+              ..only_display_selected_helices = props.only_display_selected_helices
+              ..show_dna = props.show_dna
+              ..show_loopout_length_main_view = props.show_loopout_length_main_view
+              ..className = 'strand-dna-sequence-elts')()
+     ]);
     } else {
       // DNA sequence svg.
       return (Dom.g()..className = 'dna-sequences-main-view')([
@@ -76,6 +94,8 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
               ..side_selected_helix_idxs = props.side_selected_helix_idxs
               ..key = strand.toString()
               ..only_display_selected_helices = props.only_display_selected_helices
+              ..show_dna = props.show_dna
+              ..show_loopout_length_main_view = props.show_loopout_length_main_view
               ..className = 'strand-dna-sequence-elts')()
       ]);
     }
