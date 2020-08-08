@@ -7,7 +7,7 @@ def create_design():
     return design
 
 
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     design = create_design()
     design.write_scadnano_file(directory='output_designs')
     design.write_idt_bulk_input_file(directory='idt')

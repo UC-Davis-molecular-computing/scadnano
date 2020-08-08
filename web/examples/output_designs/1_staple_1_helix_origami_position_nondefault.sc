@@ -1,6 +1,6 @@
 {
-  "version": "0.9.11",
-  "grid": "square",
+  "version": "0.11.0",
+  "grid": "none",
   "helices": [
     {
       "position": {"x": 1, "y": 2, "z": 3},
