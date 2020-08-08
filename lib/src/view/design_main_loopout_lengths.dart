@@ -12,11 +12,11 @@ import 'pure_component.dart';
 import '../constants.dart' as constants;
 import 'design_main_dna_sequence.dart';
 
-part 'design_main_dna_sequences.over_react.g.dart';
+part 'design_main_loopout_lengths.over_react.g.dart';
 
-UiFactory<DesignMainDNASequencesProps> DesignMainDNASequences = _$DesignMainDNASequences;
+UiFactory<DesignMainLoopoutLengthsProps> DesignMainLoopoutLengths = _$DesignMainLoopoutLengths;
 
-mixin DesignMainDNASequencesProps on UiProps {
+mixin DesignMainLoopoutLengthsProps on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
@@ -31,7 +31,8 @@ mixin DesignMainDNASequencesProps on UiProps {
   bool show_loopout_length;
 }
 
-class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequencesProps> with PureComponent {
+class DesignMainLoopoutLengthsComponent extends UiComponent2<DesignMainLoopoutLengthsProps>
+    with PureComponent {
   /// This method is used to handle the `disable_png_cache_until_action_completes` prop.
   /// If this prop is not null, then it dispatches the prop action before disabling it.
   @override
@@ -48,25 +49,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
 
   @override
   render() {
-    bool should_use_png_dna_sequence = use_png(props.dna_sequence_png_uri, props.is_zoom_above_threshold,
-        props.disable_png_cache_until_action_completes);
-
-    if (should_use_png_dna_sequence) {
-      // DNA sequence png.
-      return (Dom.g()
-            ..className = 'dna-sequences-main-view'
-            ..pointerEvents = 'none'
-            ..transform =
-                'translate(-${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})'
-//        ..x = -constants.DNA_SEQUENCE_HORIZONTAL_OFFSET
-//        ..y = -constants.DNA_SEQUENCE_VERTICAL_OFFSET
-          )(
-        (Dom.image()
-          ..xlinkHref = props.dna_sequence_png_uri
-          ..id = 'dna-sequences-main-view-png')(),
-      );
-    } else {
-      // DNA sequence svg.
+    if (props.show_loopout_length) {
       return (Dom.g()..className = 'dna-sequences-main-view')([
         for (Strand strand in props.strands)
           if (strand.dna_sequence != null)

@@ -12,6 +12,7 @@ import '../state/edit_mode.dart';
 import '../state/potential_vertical_crossover.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
+import 'design_main_loopout_lengths.dart';
 import 'design_main_strand_creating.dart';
 import 'design_main_mismatches.dart';
 import 'design_main_helices.dart';
@@ -33,8 +34,7 @@ final USING_REACT_DND = false;
 UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainProps>(
   mapStateToProps: (state) {
     if (state.has_error()) {
-      return (DesignMain()
-        ..has_error = true);
+      return (DesignMain()..has_error = true);
     } else {
       return (DesignMain()
         ..design = state.design
@@ -56,13 +56,12 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
         ..display_base_offsets_of_major_ticks = state.ui_state.display_base_offsets_of_major_ticks
-        ..show_loopout_length_main_view = state.ui_state.show_loopout_length_main_view
+        ..show_loopout_length = state.ui_state.show_loopout_length
         ..display_base_offsets_of_major_ticks_only_first_helix =
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-        ..helix_group_is_moving = state.ui_state.helix_group_is_moving
-      );
+        ..helix_group_is_moving = state.ui_state.helix_group_is_moving);
     }
   },
 )(DesignMain);
@@ -95,7 +94,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool display_major_tick_widths_all_helices;
   bool show_helix_circles;
   bool helix_group_is_moving;
-  bool show_loopout_length_main_view;
+  bool show_loopout_length;
 }
 
 @Props()
@@ -112,8 +111,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       return null;
     }
 
-    ReactElement main_elt = (Dom.g()
-      ..id = 'main-view-group')([
+    ReactElement main_elt = (Dom.g()..id = 'main-view-group')([
       (DesignMainHelices()
         ..helices = props.design.helices
         ..groups = props.design.groups
@@ -138,8 +136,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mismatches')(),
-      (ConnectedDesignMainStrands()
-        ..key = 'strands')(),
+      (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
         (DesignMainPotentialVerticalCrossovers()
@@ -163,7 +160,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           }.build()
           ..geometry = props.design.geometry
           ..key = 'strand-creating')(),
-      if (props.show_dna || props.show_loopout_length_main_view)
+      if (props.show_dna)
         (DesignMainDNASequences()
           ..helices = props.design.helices
           ..groups = props.design.groups
@@ -175,8 +172,22 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_dna = props.show_dna
-          ..show_loopout_length_main_view = props.show_loopout_length_main_view
+          ..show_loopout_length = props.show_loopout_length
           ..key = 'dna-sequences')(),
+      if (props.show_loopout_length)
+        (DesignMainLoopoutLengths()
+          ..helices = props.design.helices
+          ..groups = props.design.groups
+          ..geometry = props.design.geometry
+          ..strands = props.design.strands
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..dna_sequence_png_uri = props.dna_sequence_png_uri
+          ..is_zoom_above_threshold = props.is_zoom_above_threshold
+          ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..show_dna = props.show_dna
+          ..show_loopout_length = props.show_loopout_length
+          ..key = 'loopout-length')(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),
@@ -201,8 +212,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_helix_circles = props.show_helix_circles
           ..key = 'helix-group-moving')(),
-      (ConnectedDesignMainDomainsMoving()
-        ..key = 'domains-moving')(),
+      (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
     ]);
 
     if (USING_REACT_DND) {

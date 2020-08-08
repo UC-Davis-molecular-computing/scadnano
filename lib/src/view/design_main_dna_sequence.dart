@@ -28,7 +28,7 @@ mixin DesignMainDNASequencePropsMixin on UiProps {
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
-  bool show_loopout_length_main_view;
+  bool show_loopout_length;
   bool show_dna;
 }
 
@@ -50,19 +50,19 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       var substrand = this.props.strand.substrands[i];
       if (substrand.is_domain()) {
         if (should_draw_domain(substrand, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          if(props.show_loopout_length_main_view == false || (props.show_dna && props.show_loopout_length_main_view)){
-          var domain = substrand as Domain;
-          List<ReactElement> domain_elts = [];
-          domain_elts.add(this._dna_sequence_on_domain(domain));
-          for (var insertion in domain.insertions) {
-            int offset = insertion.offset;
-            int length = insertion.length;
-            domain_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
-          }
-          dna_sequence_elts.add((Dom.g()
-            ..transform = transform_of_helix(domain.helix)
-            ..className = 'dna-seq-on-domain-group'
-            ..key = util.id_domain(domain))(domain_elts));
+          if (props.show_loopout_length == false || (props.show_dna && props.show_loopout_length)) {
+            var domain = substrand as Domain;
+            List<ReactElement> domain_elts = [];
+            domain_elts.add(this._dna_sequence_on_domain(domain));
+            for (var insertion in domain.insertions) {
+              int offset = insertion.offset;
+              int length = insertion.length;
+              domain_elts.add(this._dna_sequence_on_insertion(domain, offset, length));
+            }
+            dna_sequence_elts.add((Dom.g()
+              ..transform = transform_of_helix(domain.helix)
+              ..className = 'dna-seq-on-domain-group'
+              ..key = util.id_domain(domain))(domain_elts));
           }
         }
       } else {
@@ -73,11 +73,11 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
         Domain next_dom = this.props.strand.substrands[i + 1];
         if (should_draw_domain(prev_dom, side_selected_helix_idxs, props.only_display_selected_helices) &&
             should_draw_domain(next_dom, side_selected_helix_idxs, props.only_display_selected_helices)) {
-          if(props.show_loopout_length_main_view && (props.show_dna == false)){
-              dna_sequence_elts.add(this._loopout_length(loopout, prev_dom, next_dom));
-          }else if((props.show_loopout_length_main_view == false) && props.show_dna){
+          if (props.show_loopout_length && (props.show_dna == false)) {
+            dna_sequence_elts.add(this._loopout_length(loopout, prev_dom, next_dom));
+          } else if ((props.show_loopout_length == false) && props.show_dna) {
             dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_dom, next_dom));
-          }else{
+          } else {
             dna_sequence_elts.add(this._dna_sequence_on_loopout(loopout, prev_dom, next_dom));
             dna_sequence_elts.add(this._loopout_length(loopout, prev_dom, next_dom));
           }
@@ -186,7 +186,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
       ..dy = dy)(text_path_props(subseq));
   }
 
-ReactElement _loopout_length(Loopout loopout, Domain prev_domain, Domain next_domain) {
+  ReactElement _loopout_length(Loopout loopout, Domain prev_domain, Domain next_domain) {
     var start_offset = '50%';
     var dy = 0.1 * props.geometry.base_width_svg;
     Map<String, dynamic> style_map = {'fontSize': '${10}px'};
@@ -197,12 +197,12 @@ ReactElement _loopout_length(Loopout loopout, Domain prev_domain, Domain next_do
       ..xlinkHref = '#${loopout.id()}'
       ..startOffset = start_offset
       ..style = style_map);
-    return(Dom.text()
+    return (Dom.text()
       ..rotate = -180
       ..key = 'loopout-length-'
           'H${prev_domain.helix},${prev_domain.offset_3p}-'
           'H${next_domain.helix},${next_domain.offset_5p}'
-      ..dy = dy) (text_path_props(loopout_length));
+      ..dy = dy)(text_path_props(loopout_length));
   }
 }
 

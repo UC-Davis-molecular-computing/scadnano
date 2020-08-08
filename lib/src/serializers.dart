@@ -47,7 +47,7 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
-  ShowLoopoutLengthMainViewSet,
+  ShowLoopoutLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,
   HelixGroupMoveCreate,

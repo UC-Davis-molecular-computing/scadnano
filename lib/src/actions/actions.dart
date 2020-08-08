@@ -2442,20 +2442,20 @@ abstract class ShowGridCoordinatesSideViewSet
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // show or hide grid coordinates in side view
 
-abstract class ShowLoopoutLengthMainViewSet
+abstract class ShowLoopoutLengthSet
     with BuiltJsonSerializable
     implements
-        Built<ShowLoopoutLengthMainViewSet, ShowLoopoutLengthMainViewSetBuilder> {
-  bool get show_loopout_length_main_view;
+        Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
+  bool get show_loopout_length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowLoopoutLengthMainViewSet({bool show_loopout_length_main_view}) =
-      _$ShowLoopoutLengthMainViewSet._;
+  factory ShowLoopoutLengthSet({bool show_loopout_length}) =
+      _$ShowLoopoutLengthSet._;
 
-  ShowLoopoutLengthMainViewSet._();
+  ShowLoopoutLengthSet._();
 
-  static Serializer<ShowLoopoutLengthMainViewSet> get serializer =>
-      _$showLoopoutLengthMainViewSetSerializer;
+  static Serializer<ShowLoopoutLengthSet> get serializer =>
+      _$showLoopoutLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
