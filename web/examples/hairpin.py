@@ -13,6 +13,6 @@ def create_design():
     return design
 
 
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     the_design = create_design()
     the_design.write_scadnano_file(directory='output_designs')

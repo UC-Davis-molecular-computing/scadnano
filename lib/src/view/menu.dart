@@ -33,8 +33,9 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
-      ..geometry = state.design.geometry
-      ..no_grid_is_none = state.design.groups.values.every((group) => group.grid != Grid.none)
+      ..geometry = state.design?.geometry
+      ..no_grid_is_none =
+          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
@@ -676,6 +677,16 @@ This includes open issues that have been handled in the dev branch but not the m
 https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev'''
         },
         'scadnano dev version',
+      ),
+      DropdownItem(
+        {
+          'href':
+          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
+          'target': '_blank',
+          //TODO: figure out how to give a DropdownItem a tooltip
+//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+        },
+        'Version ${constants.CURRENT_VERSION} release notes',
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.11.0";
+const String CURRENT_VERSION = "0.11.2";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
@@ -335,6 +335,7 @@ const css_selector_strand_creating = 'strand-creating';
 const css_selector_end_5p_strand_creating = '5p-strand-creating';
 const css_selector_end_3p_strand_creating = '3p-strand-creating';
 
+const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';

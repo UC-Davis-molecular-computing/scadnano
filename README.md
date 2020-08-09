@@ -185,7 +185,7 @@ It is instructive to see how that example design is represented as a `.sc` file
 }
 ```
 
-The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/README.md#example) shows Python code that produces this design.
+The [scripting library README](https://github.com/UC-Davis-molecular-computing/scadnano-python-package#example) shows Python code that produces this design.
 
 
 
@@ -542,6 +542,8 @@ There are different edit modes available, shown on the right side of the screen.
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
 
     It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
+
+  Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
 
   
 * **(p)encil:**

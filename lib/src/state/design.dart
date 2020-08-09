@@ -138,6 +138,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
+  HelixGroup group_of_helix_idx(int helix_idx) {
+    Helix helix = helices[helix_idx];
+    HelixGroup group = groups[helix.group];
+    return group;
+  }
+
+  HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
+
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
     var groups_of_domains = {for (int helix_idx in helix_idxs_of_domains) helices[helix_idx].group};

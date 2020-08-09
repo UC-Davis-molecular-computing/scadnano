@@ -55,21 +55,27 @@ set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_mod
       edit_mode_is_select && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
-    set_strand_part_selectable_css_style_rules(select_modes,
-        all_parts_selectable: all_parts_selectable,
-        staple_parts_selectable: staple_parts_selectable,
-        scaffold_parts_selectable: scaffold_parts_selectable,
-        select_mode_choice: select_mode_choice,
-        is_origami: is_origami);
+    set_strand_part_selectable_css_style_rules(
+      select_modes,
+      all_parts_selectable: all_parts_selectable,
+      staple_parts_selectable: staple_parts_selectable,
+      scaffold_parts_selectable: scaffold_parts_selectable,
+      select_mode_choice: select_mode_choice,
+      is_origami: is_origami,
+      edit_mode_is_select: edit_mode_is_select,
+    );
   }
 }
 
-set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_modes,
-    {bool all_parts_selectable,
-    bool staple_parts_selectable,
-    bool scaffold_parts_selectable,
-    SelectModeChoice select_mode_choice,
-    bool is_origami}) {
+set_strand_part_selectable_css_style_rules(
+  BuiltSet<SelectModeChoice> select_modes, {
+  bool all_parts_selectable,
+  bool staple_parts_selectable,
+  bool scaffold_parts_selectable,
+  SelectModeChoice select_mode_choice,
+  bool is_origami,
+  bool edit_mode_is_select,
+}) {
   bool select_mode_contains_part = select_modes.contains(select_mode_choice);
   var selectable_css_style_this_choice;
 
@@ -87,7 +93,7 @@ set_strand_part_selectable_css_style_rules(BuiltSet<SelectModeChoice> select_mod
   var scaffold_selector =
       '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
 
-  if (!select_mode_contains_part) {
+  if (!edit_mode_is_select || !select_mode_contains_part) {
     css_class_remove_style(all_strand_selector);
     css_class_remove_style(staple_only_selector);
     css_class_remove_style(scaffold_selector);

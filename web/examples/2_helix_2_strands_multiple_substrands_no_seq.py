@@ -21,6 +21,6 @@ def create_design():
 
 
 # If running from the command line, call main() manually and write design to scadnano file.
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     design = create_design()
     design.write_scadnano_file(directory='output_designs')

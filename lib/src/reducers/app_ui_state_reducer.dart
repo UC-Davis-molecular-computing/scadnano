@@ -117,7 +117,9 @@ num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet 
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
+bool invert_yz_reducer(bool _, actions.InvertYZSet action)
+{print('setting invert_yz to ${action.invert_yz}'); return action.invert_yz;}
+//=> action.invert_yz;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
@@ -150,7 +152,7 @@ bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit
 bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
 
 bool only_display_selected_helices_reducer(bool _, actions.SetOnlyDisplaySelectedHelices action) =>
-    action.show;
+    action.only_display_selected_helices;
 
 bool default_crossover_type_scaffold_for_setting_helix_rolls_reducer(
         bool _, actions.DefaultCrossoverTypeForSettingHelixRollsSet action) =>

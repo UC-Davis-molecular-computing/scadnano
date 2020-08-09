@@ -237,7 +237,7 @@ def add_biotins(design: sc.Design, word: str):
             staple.set_modification_5p(biotin_mod_5p)
 
 
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     for word in ['beth', 'yim', 'will', 'you', 'marry', 'me', 'yes']:
         the_design = create_design()
         add_biotins(the_design, word)

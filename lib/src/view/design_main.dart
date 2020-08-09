@@ -21,6 +21,7 @@ import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
 import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
+import 'design_main_strands_moving.dart';
 import 'helix_group_moving.dart';
 import 'potential_crossover_view.dart';
 import 'selection_box_view.dart';
@@ -191,6 +192,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
       if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.design.helices
+          ..helix_change_apply_to_all = props.helix_change_apply_to_all
           ..groups = props.design.groups
           ..geometry = props.design.geometry
           ..only_display_selected_helices = props.only_display_selected_helices
@@ -202,7 +204,10 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_helix_circles = props.show_helix_circles
           ..key = 'helix-group-moving')(),
-      (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
+      (ConnectedDesignMainStrandsMoving()
+        ..key = 'strands-moving')(),
+      (ConnectedDesignMainDomainsMoving()
+        ..key = 'domains-moving')(),
     ]);
 
     if (USING_REACT_DND) {
