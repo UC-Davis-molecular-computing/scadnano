@@ -171,21 +171,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..show_dna = props.show_dna
-          ..show_loopout_length = props.show_loopout_length
           ..key = 'dna-sequences')(),
       if (props.show_loopout_length)
         (DesignMainLoopoutLengths()
-          ..helices = props.design.helices
-          ..groups = props.design.groups
           ..geometry = props.design.geometry
           ..strands = props.design.strands
-          ..side_selected_helix_idxs = props.side_selected_helix_idxs
-          ..dna_sequence_png_uri = props.dna_sequence_png_uri
-          ..is_zoom_above_threshold = props.is_zoom_above_threshold
-          ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
-          ..only_display_selected_helices = props.only_display_selected_helices
-          ..show_dna = props.show_dna
           ..show_loopout_length = props.show_loopout_length
           ..key = 'loopout-length')(),
       (ConnectedPotentialCrossoverView()

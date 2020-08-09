@@ -2,12 +2,14 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/loopout.dart';
 import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../state/helix.dart';
 import '../util.dart';
 
 import '../state/strand.dart';
+import 'design_main_loopout_length.dart';
 import 'pure_component.dart';
 import '../constants.dart' as constants;
 import 'design_main_dna_sequence.dart';
@@ -17,53 +19,24 @@ part 'design_main_loopout_lengths.over_react.g.dart';
 UiFactory<DesignMainLoopoutLengthsProps> DesignMainLoopoutLengths = _$DesignMainLoopoutLengths;
 
 mixin DesignMainLoopoutLengthsProps on UiProps {
-  BuiltMap<int, Helix> helices;
-  BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
-
   BuiltList<Strand> strands;
-  BuiltSet<int> side_selected_helix_idxs;
-  String dna_sequence_png_uri;
-  bool is_zoom_above_threshold;
-  actions.Action disable_png_cache_until_action_completes;
-  bool only_display_selected_helices;
-  bool show_dna;
   bool show_loopout_length;
 }
 
 class DesignMainLoopoutLengthsComponent extends UiComponent2<DesignMainLoopoutLengthsProps>
     with PureComponent {
-  /// This method is used to handle the `disable_png_cache_until_action_completes` prop.
-  /// If this prop is not null, then it dispatches the prop action before disabling it.
-  @override
-  void componentDidUpdate(Map prevProps, Map prevState, [snapshot]) {
-    var action_to_complete = props.disable_png_cache_until_action_completes;
-
-    if (action_to_complete != null) {
-      app.dispatch(action_to_complete);
-
-      // After exporting svg, re-enable png caching.
-      app.dispatch(actions.SetDisablePngCacheUntilActionCompletes(null));
-    }
-  }
-
   @override
   render() {
     if (props.show_loopout_length) {
-      return (Dom.g()..className = 'dna-sequences-main-view')([
+      return (Dom.g()..className = 'loopout-length-main-view')([
         for (Strand strand in props.strands)
-          if (strand.dna_sequence != null)
-            (DesignMainDNASequence()
-              ..helices = props.helices
-              ..groups = props.groups
+          for (Loopout loopout in strand.loopouts())
+            (DesignMainLoopout()
               ..geometry = props.geometry
-              ..strand = strand
-              ..side_selected_helix_idxs = props.side_selected_helix_idxs
-              ..key = strand.toString()
-              ..only_display_selected_helices = props.only_display_selected_helices
-              ..show_dna = props.show_dna
-              ..show_loopout_length = props.show_loopout_length
-              ..className = 'strand-dna-sequence-elts')()
+              ..key = loopout.toString()
+              ..loopout = loopout
+              ..className = 'strand-loopout-length-elts')()
       ]);
     }
   }
