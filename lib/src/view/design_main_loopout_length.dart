@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/view/design_main_strand_loopout.dart';
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 import 'package:tuple/tuple.dart';
+import '../constants.dart' as constants;
 
 import '../state/helix.dart';
 import 'package:scadnano/src/state/geometry.dart';
@@ -44,7 +45,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
     var loopout_length = loopout.loopout_length.toString().split('').reversed.join('');
 
     SvgProps text_path_props = (Dom.textPath()
-      ..className = 'dna-seq-loopout'
+      ..className = constants.css_selector_loopout_length
       ..xlinkHref = '#${loopout.id()}'
       ..startOffset = start_offset
       ..style = style_map);

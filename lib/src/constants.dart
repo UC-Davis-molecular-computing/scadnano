@@ -326,6 +326,7 @@ const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
 const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
+const css_selector_loopout_length = 'loopout-length';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';
