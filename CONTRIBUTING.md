@@ -115,17 +115,17 @@ Confusingly, React has its own notion of "state", which is separate from the Red
 
 The basic idea is that the entire application can be thought of as consisting of three parts:
 
-1. **State**, all the information needed for the application.
+1. **State**, an immutable object representing all the information the application needs to remember.
 
 2. **View**, a function that takes the state as input and produces HTML code (i.e., a view that the user can see on the screen) as output.
 
-3. **Update**, a function that modifies the state (more accurately, creates a new state from the old state).
+3. **Update**, a function that modifies the state (more accurately, since state is immutable, creates a new state from the old state).
 
 The idea of *unidirectional data flow* is that information flow (or if you like, causality) goes like this: 
 
 state &rarr; view &rarr; update &rarr; state
 
-and never in the reverse direction. In other words, view is a function of the state (i.e., the state directly influences the view, but nothing in the view every directly influences the state), user interaction with the view (and some other asynchronous events such as files loading) cause an update (but update code never modifies the view directly), and updating alters the state (which is in turn what triggers the view to be re-rendered).
+and never in the reverse direction. In other words, view is a function of the state (i.e., the state directly influences the view, but nothing in the view ever directly influences the state), user interaction with the view (and some other asynchronous events such as files loading) cause an update (but update code never modifies the view directly), and updating alters the state (which is in turn what triggers the view to be re-rendered).
 
 The last part is the trickiest to get correct when writing GUI code, so it is handled automatically by React and Redux.
 
@@ -150,11 +150,11 @@ We get into more detail below.
     If the app were pure React/Redux, the entire view itself would be a single React component, which contains only other React components. Because of the current use of libraries such as [svg-pan-zoom](https://github.com/ariutta/svg-pan-zoom) that are not React, the top-level view is implemented manually in Dart (using the `dart:html` package), but some nodes in the view tree are React components, and those subtrees implement the pure React/Redux ideas.
 
 3. **Reducers (a.k.a. update):**
-    Reducers are how the state updates in response user interactio, or more generally, "the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
+    Reducers are how the state updates in response user interaction, or more generally, "the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
 
     The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in. 
     
-    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux (by calling a function called `dispatch`), which in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated.
+    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated.
 
     Actions, like the objects of the state, are themselves immutable instances of built_value.
 
@@ -261,9 +261,9 @@ webdev serve --release
 ## General recipe for adding features
 As described above, the use of React and Redux is intended to reduce the number of bugs, by a clean separation of 
 
-- **state:** What is the current state of the program, including not only the Design, but all other aspects such as UI state. This is represented by an instance of `AppState`.
+- **state:** What is the current state of the program, including not only the Design, but all other aspects such as UI state. This is represented by an instance of `AppState`, containing other objects, all defined in the directory lib/src/state.
 
-- **view:** What does the visual interface look like, as a function of the model. This is represented by React components.
+- **view:** What does the visual interface look like, as a function of the model. This is represented by React components in the directory lib/src/view.
 
 - **update:** How should the model change in response to something, most typically the user interfacing with the view. This is implemented by the function `app_state_reducer` in lib/src/reducers/app_state_reducer.dart.
 
@@ -275,7 +275,7 @@ For many typical features one would want to add that involve changing some aspec
     Most of the time, existing data types can be used, so this is rarely needed. But sometimes you will need a new data type to describe some part of the state. For "modification font size", this is unnecessary (it is represented by an `int`), but examples of custom data types that capture state information are `Design`, `Strand`, and other parts of the design, as well as `AppUIState` and things under it such as `EditModeChoice` and `LocalStorageDesignChoice`.
 
 2. **create Action class**: 
-    In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the object they modify. Otherwise, if the action were called `ModificationFontSizeSet`, and so were others like it, then everything "setting" a field would be grouped together, even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart for more examples.)
+    In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together, even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart for more examples.)
 
     **WARNING about serialization of built types:** (Note this applies not only to Actions, but any built_value type you create.) Although one of the advantages of the built_value library is that it "automatically" creates a JSON serialization mechanism, it's not fully automatic. You must add the name of the new Action to the large list of classes at the top of the file /lib/src/serializers.dart, in the annotation `@SerializersFor(`. For some reason this cannot be automated (see https://github.com/google/built_value.dart/issues/758). If you don't add this, then using [Redux DevTools](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#using-redux-devtools) won't work, which uses the built_value and built_collection serialization to display Redux state when debugging in the browser. You must also remember to add a line like this in the class definition (the name on the right side of the `=>` must be exactly the class name, with first letter lowercase, with `Serializer` appended):
 
@@ -285,11 +285,11 @@ For many typical features one would want to add that involve changing some aspec
 
     Some other rules to follow when creating Actions:
 
-    If this is data that will be stored in localStorage (this is the case for most view options, such as checkboxes to control whether DNA/modifications/etc. are visible, font sizes, etc.), then this Action must implement `AppUIStateStorableAction`. (We can make this requirement go away by closing issue #386.)
+    If this is data that will be stored in localStorage (this is the case for most view options, such as checkboxes to control whether DNA/modifications/etc. are visible, font sizes, etc.), then this Action must implement `AppUIStateStorableAction`. (We can make this requirement go away by closing [issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386).)
 
     Any action that will result in the DNA sequences being drawn in a different place (e.g., inverting the y-axis or removing a helix), should implement `SvgPngCacheInvalidatingAction`.
 
-    Any Action modifying the `Design` should implement `UndoableAction`. (Issue #386 is intended to handle this also.) This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new `Design` is loaded from a file, which changes the `Design`, but is not an undo-able action.)
+    Any Action modifying the `Design` should implement `UndoableAction`. ([Issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386) is intended to handle this also.) This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new `Design` is loaded from a file, which changes the `Design`, but is not an undo-able action.)
 
 3. **if necessary, add new data fields the app state**: 
     Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`. Particularly for "UI state" (aspects of the state that control how things look, but are not stored in the `Design`), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. 
@@ -328,7 +328,7 @@ For many typical features one would want to add that involve changing some aspec
     However, there should be only one `NoIndent` along any path from leaf to root in the object tree.
     
     **WARNING about built types:**
-    One thing that isn't obvious is that the built_collection classes are not "naturally" JSON serializable in this way (they use their own custom serializer, but cannot simply be given to the (`jsonEncode` function)[https://api.dart.dev/stable/2.8.4/dart-convert/jsonEncode.html]), so when constructing a serializable object in `to_json_serializable`, you cannot write a built_collection. It must be converted to a standard collection, e.g., `my_built_list.toList()`. Failing to do this results in frustrating and hard-to-track-down warnings of this form: 
+    One thing that isn't obvious is that the built_collection classes are not "naturally" JSON serializable in this way (they use their own custom serializer, but cannot simply be given to the (`jsonEncode` function)[https://api.dart.dev/stable/2.8.4/dart-convert/jsonEncode.html]), so when constructing a serializable object in `to_json_serializable`, you cannot put a built_collection object directly. It must be converted to a standard collection, e.g., `my_built_list.toList()`. Failing to do this results in frustrating and hard-to-track-down warnings of this form: 
   
     ```
     OverReactReduxDevToolsMiddleware [WARNING]: Converting object to an encodable object failed: Instance of '_$36AppState'
@@ -342,7 +342,7 @@ For many typical features one would want to add that involve changing some aspec
 5. **create reducer for updating state in response to Action**: 
     This is the code that takes as input the old state and the Action and produces the new state. The top-level reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally this top-level reducer is not modified directly. Through a series of composition, all reducers are called indirectly when `app_state_reducer` is called. The main ones called by `app_state_reducer` are `design_reducer`, `design_global_reducer`, `ui_state_local_reducer`, and `ui_state_global_reducer`. See below, and the source code comments in app_state_reducer.dart, for an explanation of the different between a "local" and "global" reducer.
 
-    The most straightforward way to add a new reducer to this composition is to find a "sibling" reducer, i.e., a reducer modifying a field that is another field in the same class where you just added a field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`, so for guidance we can look and see what is the reducer for any other field in `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer` in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
+    The most straightforward way to add a new reducer to this composition is to find a "sibling" reducer to imitate, i.e., a reducer modifying a field that is another field in the same class where you just added a field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`, so for guidance we can look and see what is the reducer for any other field in `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer` in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
 
     Not all reducers follow the same pattern as this. Some only need to access the data they are modifying, which we call "local" reducers. Sometimes not even that: when changing `app.state.ui_state.storables.modification_font_size` to a new value, it doesn't matter what the old value is, so even though it is a parameter in the reducer: 
     ```dart
