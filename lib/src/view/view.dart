@@ -70,6 +70,8 @@ class View {
     var menu_design_separator = DivElement()..attributes = {'class': FIXED_HORIZONTAL_SEPARATOR};
     this.root_element.children.add(menu_design_separator);
     this.root_element.children.add(this.design_and_modes_buttons_container_element);
+    // DEBUG the virtual canvas for svg-png-caching, uncomment this, used in utils.dart
+    // this.root_element.children.add(CanvasElement(width: 100, height: 100)..id='canvas-dev');
 
     this.design_and_modes_buttons_container_element.children.add(design_element);
     var design_mode_separator = DivElement()..attributes = {'class': FIXED_VERTICAL_SEPARATOR};

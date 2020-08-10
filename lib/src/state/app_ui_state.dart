@@ -78,6 +78,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// PNG image of dna sequence used for svg caching
   @nullable
   String get dna_sequence_png_uri;
+  num get dna_sequence_png_horizontal_offset;
+  num get dna_sequence_png_vertical_offset;
 
   /// If this is `null`, png-caching runs normally.
   /// Otherwise, disable png-caching (if a png would otherwise be used)
@@ -176,6 +178,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.assign_complement_to_bound_strands_default = true;
     b.warn_on_change_strand_dna_assign_default = true;
     b.dna_sequence_png_uri = null;
+    b.dna_sequence_png_horizontal_offset = 0;
+    b.dna_sequence_png_vertical_offset = 0;
     b.disable_png_cache_until_action_completes = null;
     b.is_zoom_above_threshold = false;
     b.storables.replace(DEFAULT_AppUIStateStorable);

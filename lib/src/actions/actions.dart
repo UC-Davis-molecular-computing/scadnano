@@ -2467,9 +2467,15 @@ abstract class LoadDnaSequenceImageUri
     implements Action, Built<LoadDnaSequenceImageUri, LoadDnaSequenceImageUriBuilder> {
   @nullable
   String get uri;
+  num get dna_sequence_png_horizontal_offset;
+  num get dna_sequence_png_vertical_offset;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDnaSequenceImageUri(String uri) => LoadDnaSequenceImageUri.from((b) => b..uri = uri);
+  factory LoadDnaSequenceImageUri(String uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) => LoadDnaSequenceImageUri.from((b) => b
+    ..uri = uri
+    ..dna_sequence_png_horizontal_offset=dna_sequence_png_horizontal_offset
+    ..dna_sequence_png_vertical_offset=dna_sequence_png_vertical_offset
+  );
 
   factory LoadDnaSequenceImageUri.from([void Function(LoadDnaSequenceImageUriBuilder) updates]) =
       _$LoadDnaSequenceImageUri;
