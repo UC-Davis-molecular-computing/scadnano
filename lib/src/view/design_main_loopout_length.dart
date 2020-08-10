@@ -1,22 +1,9 @@
-import 'dart:html';
-import 'dart:math';
-
 import 'package:over_react/over_react.dart';
-import 'package:built_collection/built_collection.dart';
-import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/view/design_main_strand_loopout.dart';
-import 'package:scadnano/src/view/transform_by_helix_group.dart';
-import 'package:tuple/tuple.dart';
-import '../constants.dart' as constants;
 
-import '../state/helix.dart';
+import '../constants.dart' as constants;
 import 'package:scadnano/src/state/geometry.dart';
-import '../state/strand.dart';
-import '../state/domain.dart';
 import '../state/loopout.dart';
 import 'pure_component.dart';
-import '../util.dart' as util;
 
 part 'design_main_loopout_length.over_react.g.dart';
 
@@ -51,8 +38,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
       ..style = style_map);
     return (Dom.text()
       ..rotate = 180
-      ..key = 'loopout-length-'
-          'H${props.loopout.id()},'
+      ..key = props.loopout.id()
       ..dy = dy)(text_path_props(loopout_length));
   }
 }
