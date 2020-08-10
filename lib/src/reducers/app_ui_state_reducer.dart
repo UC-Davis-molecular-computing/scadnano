@@ -56,6 +56,8 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
           ui_state.warn_on_change_strand_dna_assign_default, action)
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
   ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
+  ..dna_sequence_png_horizontal_offset = dna_sequence_horizontal_offset_reducer(ui_state.dna_sequence_png_horizontal_offset, action)
+  ..dna_sequence_png_vertical_offset = dna_sequence_vertical_offset_reducer(ui_state.dna_sequence_png_vertical_offset, action)
   ..disable_png_cache_until_action_completes =
       disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
   ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
@@ -292,9 +294,26 @@ String load_dna_sequence_image_uri(String _, actions.LoadDnaSequenceImageUri act
   return action.uri;
 }
 
+num load_dna_sequence_png_horizontal_offset(num _, actions.LoadDnaSequenceImageUri action) {
+  return action.dna_sequence_png_horizontal_offset;
+}
+
+num load_dna_sequence_png_vertical_offset(num _, actions.LoadDnaSequenceImageUri action) {
+  return action.dna_sequence_png_vertical_offset;
+}
+
 Reducer<String> dna_sequence_png_uri_reducer = combineReducers([
   TypedReducer<String, actions.LoadDnaSequenceImageUri>(load_dna_sequence_image_uri),
 ]);
+
+Reducer<num> dna_sequence_horizontal_offset_reducer = combineReducers([
+  TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_horizontal_offset),
+]);
+
+Reducer<num> dna_sequence_vertical_offset_reducer = combineReducers([
+  TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_vertical_offset),
+]);
+
 
 actions.Action set_disable_png_cache_until_action_completes(
     actions.Action _, actions.SetDisablePngCacheUntilActionCompletes action) {

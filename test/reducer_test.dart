@@ -5698,8 +5698,12 @@ main() {
       AppState old_state = app_state_from_design(two_helices_design);
       String uri = 'test_uri';
 
-      AppState new_state = app_state_reducer(old_state, LoadDnaSequenceImageUri(uri));
-      AppState exp_state = old_state.rebuild((b) => b..ui_state.dna_sequence_png_uri = uri);
+      AppState new_state = app_state_reducer(old_state, LoadDnaSequenceImageUri(uri, 20, 30));
+      AppState exp_state = old_state.rebuild((b) => b
+        ..ui_state.dna_sequence_png_uri = uri
+        ..ui_state.dna_sequence_png_horizontal_offset = 20
+        ..ui_state.dna_sequence_png_vertical_offset = 30
+      );
 
       expect_app_state_equal(new_state, exp_state);
     });

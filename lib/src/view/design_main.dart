@@ -53,6 +53,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..show_dna = state.ui_state.show_dna
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
+        ..dna_sequence_png_horizontal_offset = state.ui_state.dna_sequence_png_horizontal_offset
+        ..dna_sequence_png_vertical_offset = state.ui_state.dna_sequence_png_vertical_offset
         ..disable_png_cache_until_action_completes = state.ui_state.disable_png_cache_until_action_completes
         ..is_zoom_above_threshold = state.ui_state.is_zoom_above_threshold
         ..only_display_selected_helices = state.ui_state.only_display_selected_helices
@@ -85,6 +87,8 @@ mixin DesignMainPropsMixin on UiProps {
   num major_tick_width_font_size;
   bool drawing_potential_crossover;
   String dna_sequence_png_uri;
+  num dna_sequence_png_horizontal_offset;
+  num dna_sequence_png_vertical_offset;
   actions.Action disable_png_cache_until_action_completes;
   bool is_zoom_above_threshold;
   bool only_display_selected_helices;
@@ -169,6 +173,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..strands = props.design.strands
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..dna_sequence_png_uri = props.dna_sequence_png_uri
+          ..dna_sequence_png_horizontal_offset = props.dna_sequence_png_horizontal_offset
+          ..dna_sequence_png_vertical_offset = props.dna_sequence_png_vertical_offset
           ..is_zoom_above_threshold = props.is_zoom_above_threshold
           ..disable_png_cache_until_action_completes = props.disable_png_cache_until_action_completes
           ..only_display_selected_helices = props.only_display_selected_helices

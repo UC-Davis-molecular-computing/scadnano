@@ -1307,8 +1307,11 @@ void svg_to_png_data() {
 
   // Translates dna_sequence_element_copy down so that it's Blob uri captures the topmost dna sequence
   // inside of it's view box.
+  Rect bbox = dna_sequence_element.getBBox();
+  num dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x;
+  num dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y;
   dna_sequence_element_copy.setAttribute('transform',
-      'translate(${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, ${constants.DNA_SEQUENCE_VERTICAL_OFFSET})');
+      'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
 
   // Append copy to svg wrapper element.
   svg.children.add(strands_element_copy);
@@ -1316,9 +1319,8 @@ void svg_to_png_data() {
 
   // Firefox requires explicit size on svg to draw on canvas.
   // https://stackoverflow.com/questions/34706891/canvas-draw-image-issue-on-firefox-works-well-in-chrome
-  Rect bbox = dna_sequence_element.getBBox();
-  var svg_width = (bbox.width + bbox.x + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
-  var svg_height = (bbox.height + bbox.y + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
+  var svg_width = (bbox.width +  constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
+  var svg_height = (bbox.height + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
   svg.setAttribute('width', svg_width.toString());
   svg.setAttribute('height', svg_height.toString());
 
@@ -1339,6 +1341,7 @@ void svg_to_png_data() {
   // });
 
   // IF (DEBUGGING)
+  // Uncomment out canvas-dev element in view.dart to use
   // CanvasElement canvas = document.getElementById('canvas-dev');
   // ELSE
   CanvasElement canvas = document.createElement('canvas');
@@ -1360,7 +1363,7 @@ void svg_to_png_data() {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
-    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri));
+    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, dna_sequence_png_horizontal_offset, dna_sequence_png_vertical_offset));
   });
 }
 
