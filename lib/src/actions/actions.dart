@@ -2441,6 +2441,25 @@ abstract class ShowGridCoordinatesSideViewSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// show or hide grid coordinates in side view
+
+abstract class ShowLoopoutLengthSet
+    with BuiltJsonSerializable
+    implements
+        Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
+  bool get show_loopout_length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowLoopoutLengthSet({bool show_loopout_length}) =
+      _$ShowLoopoutLengthSet._;
+
+  ShowLoopoutLengthSet._();
+
+  static Serializer<ShowLoopoutLengthSet> get serializer =>
+      _$showLoopoutLengthSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // load dna sequence png
 
 abstract class LoadDnaSequenceImageUri

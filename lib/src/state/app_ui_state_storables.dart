@@ -66,6 +66,8 @@ abstract class AppUIStateStorables
 
   bool get show_grid_coordinates_side_view;
 
+  bool get show_loopout_length;
+
   bool get default_crossover_type_scaffold_for_setting_helix_rolls;
 
   bool get default_crossover_type_staple_for_setting_helix_rolls;
@@ -101,6 +103,7 @@ abstract class AppUIStateStorables
     b.warn_on_exit_if_unsaved = true;
     b.show_helix_circles_main_view = true;
     b.show_grid_coordinates_side_view = false;
+    b.show_loopout_length = false;
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
     b.displayed_group_name = constants.default_group_name;
