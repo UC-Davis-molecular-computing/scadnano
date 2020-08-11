@@ -4112,9 +4112,9 @@ main() {
     // Distance from selection box to enclosing helix.
     var MARGIN = 1;
     test('HelixSelectionAdjust', () {
-      // Creating a box that wraps around the grid from (0, 0) to (1, 0) to select helix 0
-      var x = state.design.geometry.helix_radius_svg + MARGIN;
-      var y = state.design.geometry.helix_radius_svg + MARGIN;
+      // Create box that wraps around the grid from (-radius, -radius) to (radius, radius) to select helix 0
+      var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
+      var y = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -y), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [0].toBuiltList());
@@ -4122,8 +4122,8 @@ main() {
 
     test('HelixSelectionAdjust_with_toggle_on', () {
       // Currently, 0 is selected, so selecting all helices should unselect 0 and select 1 and 2
-      var x = state.design.geometry.helix_radius_svg + MARGIN;
-      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
+      var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
+      var y = state.design.geometry.distance_between_helices_svg * 3.0 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -4136,8 +4136,8 @@ main() {
       state = app_state_reducer(state, HelixSelect(0, true));
 
       // Unselect 0 and select 1 and 2
-      var x = state.design.geometry.helix_radius_svg + MARGIN;
-      var y = 2 * state.design.geometry.helix_radius_svg * 3 + MARGIN;
+      var x = state.design.geometry.distance_between_helices_svg / 2.0 + MARGIN;
+      var y = state.design.geometry.distance_between_helices_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
       expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
@@ -5702,8 +5702,7 @@ main() {
       AppState exp_state = old_state.rebuild((b) => b
         ..ui_state.dna_sequence_png_uri = uri
         ..ui_state.dna_sequence_png_horizontal_offset = 20
-        ..ui_state.dna_sequence_png_vertical_offset = 30
-      );
+        ..ui_state.dna_sequence_png_vertical_offset = 30);
 
       expect_app_state_equal(new_state, exp_state);
     });
