@@ -73,6 +73,12 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156000688-1"></script>
     <script>
+        var host = window.location.hostname;
+        if (host == 'localhost') { // disable GA:
+            console.log('host = ' + host);
+            console.log('disabling Google analytics because host is local');
+            window['ga-disable-UA-156000688-1'] = true; // enter your tracking ID
+        }
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
