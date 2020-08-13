@@ -4,23 +4,21 @@ import 'dart:html';
 import 'dart:math';
 
 import 'package:over_react/over_react.dart';
-import 'package:over_react/over_react_redux.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/view/pure_component.dart';
-import '../state/edit_mode.dart';
 
-import '../state/app_state.dart';
+import '../state/context_menu.dart';
 import '../app.dart';
 import '../state/mouseover_data.dart';
 import '../state/helix.dart';
 import '../util.dart' as util;
 import '../actions/actions.dart' as actions;
-import 'design_main_helix.dart';
+import '../constants.dart' as constants;
+import 'pure_component.dart';
+import 'helix_context_menu.dart';
 
 part 'design_main_mouseover_rect_helix.over_react.g.dart';
 
-const _ID_PREFIX = 'helix-mouseover';
-const _CLASS = 'helix-mouseover';
+const _ID_PREFIX = 'helix-mouseover-invisible-rect';
 
 const DEBUG_PRINT_MOUSEOVER = false;
 //const DEBUG_PRINT_MOUSEOVER = true;
@@ -40,14 +38,13 @@ UiFactory<DesignMainMouseoverRectHelixProps> DesignMainMouseoverRectHelix = _$De
 
 mixin DesignMainMouseoverRectHelixProps on UiProps {
   Helix helix;
+  bool helix_change_apply_to_all;
 }
 
 class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouseoverRectHelixProps>
     with PureComponent {
   @override
   render() {
-    String id = '$_ID_PREFIX-${props.helix.idx}';
-
     var width = props.helix.svg_width();
     var height = props.helix.svg_height();
 
@@ -62,8 +59,34 @@ class DesignMainMouseoverRectHelixComponent extends UiComponent2<DesignMainMouse
       // otherwise the callback is not updated until render executes again
       ..onMouseEnter = ((event) => update_mouseover(event, props.helix))
       ..onMouseMove = ((event) => update_mouseover(event, props.helix))
-      ..id = id
-      ..className = _CLASS)();
+      ..id = group_id()
+      ..className = constants.css_selector_helix__mouseover_invisible_rectangle)();
+  }
+
+  String group_id() => '${_ID_PREFIX}-${props.helix.idx}';
+
+  @override
+  componentDidMount() {
+    var elt = querySelector('#${group_id()}');
+    elt.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var elt = querySelector('#${group_id()}');
+    elt.removeEventListener('contextmenu', on_context_menu);
+    super.componentWillUnmount();
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(
+              items: context_menu_helix(props.helix, props.helix_change_apply_to_all).build(),
+              position: event.page)));
+    }
   }
 }
 

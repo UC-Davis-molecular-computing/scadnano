@@ -5,7 +5,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.11.2";
+const String CURRENT_VERSION = "0.11.3";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
@@ -120,7 +120,7 @@ const default_rise_per_base_pair = 0.332;
 const default_helix_radius = 1.0;
 const default_bases_per_turn = 10.5;
 const default_minor_groove_angle = 150.0;
-const default_inter_helix_gap = 0.5;
+const default_inter_helix_gap = 1.0;
 
 /////////////////////////////////////////////////////////////
 // JSON keys
@@ -326,6 +326,7 @@ const css_selector_end_3p_strand = 'three-prime-end-last-substrand';
 const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
+const css_selector_loopout_length = 'loopout-length';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';
@@ -334,6 +335,7 @@ const css_selector_strand_creating = 'strand-creating';
 const css_selector_end_5p_strand_creating = '5p-strand-creating';
 const css_selector_end_3p_strand_creating = '3p-strand-creating';
 
+const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';

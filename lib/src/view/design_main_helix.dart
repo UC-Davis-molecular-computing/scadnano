@@ -36,24 +36,27 @@ mixin DesignMainHelixProps on UiProps {
 }
 
 class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with PureComponent {
+  String group_id() => 'helix-main-view-${props.helix.idx}';
+
   @override
   render() {
-    Helix helix = props.helix;
-    Geometry geometry = helix.geometry;
+    Geometry geometry = props.helix.geometry;
 
     // for helix circles
     var cx = -(2 * geometry.base_width_svg + geometry.distance_between_helices_svg / 2);
-    var cy = helix.svg_position.y + helix.svg_height() / 2.0;
+    var cy = props.helix.svg_position.y + props.helix.svg_height() / 2.0;
 
     // for helix horizontal lines
-    num width = helix.svg_width();
-    num height = helix.svg_height();
+    num width = props.helix.svg_width();
+    num height = props.helix.svg_height();
 
-    var horz_line_paths = _horz_line_paths(helix);
-    var vert_line_paths = _vert_line_paths(helix);
-    int idx = helix.idx;
+    var horz_line_paths = _horz_line_paths(props.helix);
+    var vert_line_paths = _vert_line_paths(props.helix);
+    int idx = props.helix.idx;
 
-    return (Dom.g()..className = 'helix-main-view')([
+    return (Dom.g()
+      ..id = group_id()
+      ..className = 'helix-main-view')([
       if (props.show_helix_circles)
         (Dom.circle()
           ..className = 'main-view-helix-circle'
@@ -101,8 +104,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
-        ..x = helix.svg_position.x
-        ..y = helix.svg_position.y
+        ..x = props.helix.svg_position.x
+        ..y = props.helix.svg_position.y
         ..width = '$width'
         ..height = '$height'
         ..className = 'helix-invisible-rect'
@@ -115,20 +118,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   @override
   componentDidMount() {
     if (props.show_helix_circles) {
-      for (var id in [helix_circle_id(), helix_text_id()]) {
-        var elt = querySelector('#${id}');
-        elt.addEventListener('contextmenu', on_context_menu);
-      }
+      var elt = querySelector('#${group_id()}');
+      elt.addEventListener('contextmenu', on_context_menu);
     }
   }
 
   @override
   componentWillUnmount() {
     if (props.show_helix_circles) {
-      for (var id in [helix_circle_id(), helix_text_id()]) {
-        var elt = querySelector('#${id}');
-        elt.removeEventListener('contextmenu', on_context_menu);
-      }
+      var elt = querySelector('#${group_id()}');
+      elt.removeEventListener('contextmenu', on_context_menu);
     }
     super.componentWillUnmount();
   }
@@ -220,7 +219,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
       ..key = 'major-tick-widths-group')(offset_texts_elements);
   }
 
-
   String _horz_line_paths(Helix helix) {
     num width = helix.svg_width();
     num height = helix.svg_height();
@@ -264,7 +262,6 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
 
     return {'minor': path_cmds_vert_minor.join(' '), 'major': path_cmds_vert_major.join(' ')};
   }
-
 }
 
 Point<num> helix_main_view_translation(Helix helix) {

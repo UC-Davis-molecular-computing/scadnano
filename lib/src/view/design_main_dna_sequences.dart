@@ -24,6 +24,8 @@ mixin DesignMainDNASequencesProps on UiProps {
   BuiltList<Strand> strands;
   BuiltSet<int> side_selected_helix_idxs;
   String dna_sequence_png_uri;
+  num dna_sequence_png_horizontal_offset;
+  num dna_sequence_png_vertical_offset;
   bool is_zoom_above_threshold;
   actions.Action disable_png_cache_until_action_completes;
   bool only_display_selected_helices;
@@ -55,7 +57,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
             ..className = 'dna-sequences-main-view'
             ..pointerEvents = 'none'
             ..transform =
-                'translate(-${constants.DNA_SEQUENCE_HORIZONTAL_OFFSET}, -${constants.DNA_SEQUENCE_VERTICAL_OFFSET})'
+                'translate(-${props.dna_sequence_png_horizontal_offset}, -${props.dna_sequence_png_vertical_offset})'
 //        ..x = -constants.DNA_SEQUENCE_HORIZONTAL_OFFSET
 //        ..y = -constants.DNA_SEQUENCE_VERTICAL_OFFSET
           )(

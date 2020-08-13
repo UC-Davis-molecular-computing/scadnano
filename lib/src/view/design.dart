@@ -13,6 +13,7 @@ import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 
 import '../state/domain.dart';
@@ -692,25 +693,34 @@ class DesignViewComponent {
     var strands =
         BuiltList<Strand>(app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
 
-    int min_helix_idx;
+    int extreme_helix_view_order; // max if invert_yz; min if not
+    int extreme_helix_idx;
     int min_offset;
     bool min_forward;
     for (Strand strand in strands) {
-      for (Domain substrand in strand.domains()) {
-        if (min_helix_idx == null || min_helix_idx > substrand.helix) {
-          min_helix_idx = substrand.helix;
-          min_offset = substrand.start; // reset this absolutely since helix got smaller
-          min_forward = substrand.forward; //
-        } else if (min_offset == null || (min_helix_idx == substrand.helix && min_offset > substrand.start)) {
-          min_offset = substrand.start;
-          min_forward = substrand.forward;
+      for (Domain domain in strand.domains()) {
+        HelixGroup group = app.state.design.group_of_domain(domain);
+        int helix_view_order = group.helices_view_order_inverse[domain.helix];
+        bool helix_is_more_extreme = extreme_helix_view_order == null ||
+            (app.state.ui_state.invert_yz
+                ? extreme_helix_view_order < helix_view_order
+                : extreme_helix_view_order > helix_view_order);
+        if (helix_is_more_extreme) {
+          extreme_helix_view_order = helix_view_order;
+          extreme_helix_idx = domain.helix;
+          min_offset = domain.start; // reset this absolutely since helix got smaller
+          min_forward = domain.forward; //
+        } else if (min_offset == null ||
+            (extreme_helix_view_order == helix_view_order && min_offset > domain.start)) {
+          min_offset = domain.start;
+          min_forward = domain.forward;
         }
       }
     }
 
     copy_action = actions.StrandsMoveStart(
         strands: strands,
-        address: Address(helix_idx: min_helix_idx, offset: min_offset, forward: min_forward),
+        address: Address(helix_idx: extreme_helix_idx, offset: min_offset, forward: min_forward),
         copy: true);
   }
 

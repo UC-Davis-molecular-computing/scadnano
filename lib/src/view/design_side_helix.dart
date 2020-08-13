@@ -104,29 +104,29 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
     Position3D pos3d = props.helix.position3d();
     Point<num> center = util.position3d_to_side_view_svg(pos3d, props.helix.invert_yz, props.helix.geometry);
 
-    return (Dom.g()..transform = 'translate(${center.x} ${center.y})')(children);
+    return (Dom.g()
+      ..transform = 'translate(${center.x} ${center.y})'
+      ..id = group_id())(children);
   }
 
   String helix_circle_id() => 'side-view-helix-circle-${props.helix.idx}';
 
   String helix_text_id() => 'side-view-helix-text-${props.helix.idx}';
 
+  String group_id() => 'helix-side-view-${props.helix.idx}';
+
   // needed for capturing right-click events with React:
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.addEventListener('contextmenu', on_context_menu);
-    }
+    var elt = querySelector('#${group_id()}');
+    elt.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    for (var id in [helix_circle_id(), helix_text_id()]) {
-      var elt = querySelector('#${id}');
-      elt.removeEventListener('contextmenu', on_context_menu);
-    }
+    var elt = querySelector('#${group_id()}');
+    elt.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
 

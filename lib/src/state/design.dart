@@ -40,13 +40,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// If [num_helices] is specified, helices are automatically populated with reasonable defaults based
   /// on the grid.
-  factory Design({Iterable<Helix> helices, Grid grid = Grid.none, int num_helices}) {
+  factory Design({Iterable<Helix> helices, Grid grid = Grid.none, int num_helices, Geometry geometry}) {
     if (helices != null && num_helices != null) {
       throw IllegalDesignError('cannot specify both helices and num_helices:\n'
           'num_helices = ${num_helices}\n'
           'helices = ${helices}');
     }
-    var default_geometry = Geometry();
+    geometry ??= Geometry();
     if (helices == null) {
       if (num_helices == null) {
         helices = List<Helix>();
@@ -56,16 +56,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             Helix(
               idx: idx,
               grid: grid,
-              geometry: default_geometry,
+              geometry: geometry,
               grid_position: grid == Grid.none ? null : default_grid_position(idx),
-              position: grid != Grid.none ? null : default_position(default_geometry, idx),
+              position: grid != Grid.none ? null : default_position(geometry, idx),
             )
         ];
       }
     }
     var helices_map = {for (var helix in helices) helix.idx: helix};
     return Design.from((b) => b
-      ..geometry.replace(default_geometry)
+      ..geometry.replace(geometry)
       ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
         ..grid = grid
         ..helices_view_order.replace(helices_map.keys))
@@ -137,6 +137,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     return map.build();
   }
+
+  HelixGroup group_of_helix_idx(int helix_idx) {
+    Helix helix = helices[helix_idx];
+    HelixGroup group = groups[helix.group];
+    return group;
+  }
+
+  HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
