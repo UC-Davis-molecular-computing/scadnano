@@ -49,6 +49,7 @@ examples/copy-from-python-package.sh
 examples/empty.py
 examples/hairpin.py
 examples/helices_out_of_order_nonconsecutive.py
+examples/helix_groups.py
 examples/hex_lattice_10x10.py
 examples/hex_lattice_10x10_with_negative.py
 examples/honeycomb_lattice_10x10.py
@@ -97,6 +98,7 @@ examples/output_designs/_error_json_file_not_a_map.sc
 examples/output_designs/empty.sc
 examples/output_designs/hairpin.sc
 examples/output_designs/helices_out_of_order_nonconsecutive.sc
+examples/output_designs/helix_groups.sc
 examples/output_designs/hex_lattice_10x10.sc
 examples/output_designs/hex_lattice_10x10_with_negative.sc
 examples/output_designs/honeycomb_lattice_10x10.sc

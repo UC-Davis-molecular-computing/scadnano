@@ -248,7 +248,7 @@ def assign_dna_to_unzipper_toeholds(design):
         design.assign_dna(strand, seq)
 
 
-if not sc.in_browser() and __name__ == '__main__':
+if __name__ == '__main__':
     the_design = create_design()
     the_design.write_scadnano_file(directory='output_designs')
     the_design.write_idt_bulk_input_file(directory='idt')
