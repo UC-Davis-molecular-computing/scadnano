@@ -1363,7 +1363,7 @@ void svg_to_png_data() {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
-    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, dna_sequence_png_horizontal_offset, dna_sequence_png_vertical_offset));
+    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
   });
 }
 

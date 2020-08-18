@@ -57,7 +57,7 @@ class DesignMainDNASequencesComponent extends UiComponent2<DesignMainDNASequence
             ..className = 'dna-sequences-main-view'
             ..pointerEvents = 'none'
             ..transform =
-                'translate(-${props.dna_sequence_png_horizontal_offset}, -${props.dna_sequence_png_vertical_offset})'
+                'translate(${props.dna_sequence_png_horizontal_offset}, ${props.dna_sequence_png_vertical_offset})'
 //        ..x = -constants.DNA_SEQUENCE_HORIZONTAL_OFFSET
 //        ..y = -constants.DNA_SEQUENCE_VERTICAL_OFFSET
           )(
