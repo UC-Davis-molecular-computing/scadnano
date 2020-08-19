@@ -153,11 +153,11 @@ class DesignMainStrandCrossoverComponent
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
+          context_menu: ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
     }
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+  List<ContextMenuItem> context_menu_crossover(Strand strand) => [
         ContextMenuItem(
           title: 'convert to loopout',
           on_click: convert_crossover_to_loopout,
