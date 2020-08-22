@@ -46,7 +46,8 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   bool origami_type_is_selectable;
   String strand_tooltip;
   bool only_display_selected_helices;
-  List<ContextMenuItem> Function(Strand strand) context_menu_strand;
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address, bool is_5p})
+      context_menu_strand;
 }
 
 class DesignMainStrandPathsProps = UiProps
@@ -119,6 +120,8 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
               ..geometry = props.geometry
               ..is_scaffold = props.strand.is_scaffold
               ..selected = end_selected
+              ..strand = strand
+              ..context_menu_strand = props.context_menu_strand
               ..moving_this_dna_end = props.moving_dna_ends && end_selected
               ..drawing_potential_crossover = props.drawing_potential_crossover
               ..key = key)());

@@ -47,6 +47,9 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ModificationEdit,
+  ModificationRemove,
+  ModificationAdd,
   ShowLoopoutLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,

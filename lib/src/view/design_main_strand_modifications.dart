@@ -51,6 +51,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..modification = props.strand.modification_5p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
+          ..strand = props.strand
           ..key = "5'")());
       }
     }
@@ -66,6 +67,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           ..modification = props.strand.modification_3p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
+          ..strand = props.strand
           ..key = "3'")());
       }
     }
@@ -96,6 +98,8 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
             ..modification = props.strand.modifications_int[dna_idx_mod]
             ..font_size = props.font_size
             ..display_connector = props.display_connector
+            ..dna_idx_mod = dna_idx_mod
+            ..strand = props.strand
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {
