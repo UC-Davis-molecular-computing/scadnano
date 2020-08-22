@@ -394,8 +394,15 @@ Future<void> ask_for_add_modification(Strand strand,
       (is_5p != null && domain == null && address == null));
   bool is_end = is_5p != null;
   int strand_dna_idx = null;
+  int selected_index = 2;
   if (!is_end) {
     strand_dna_idx = clicked_strand_dna_idx(domain, address, strand);
+  } else {
+    if (is_5p) {
+      selected_index = 1;
+    } else {
+      selected_index = 0;
+    }
   }
 
   int modification_type_idx = 0;
@@ -405,7 +412,9 @@ Future<void> ask_for_add_modification(Strand strand,
   int index_of_dna_base_idx = 4;
   var items = List<DialogItem>(5);
   items[modification_type_idx] = DialogRadio(
-      label: 'modification type', options: {"modification_3'", "modification_5'", "modification_int"});
+      label: 'modification type',
+      options: {"modification_3'", "modification_5'", "modification_int"},
+      selected_idx: selected_index);
   items[display_text_idx] = DialogText(label: 'display text', value: "");
   items[id_idx] = DialogText(label: 'id', value: "");
   items[idt_text_idx] = DialogText(label: 'idt text', value: "");
