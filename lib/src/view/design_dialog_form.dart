@@ -63,7 +63,7 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
           DialogItem check = state.responses[check_idx];
           if (check.value == false) {
             disabled = true;
-          } else if(check.value != 'modification_int'){
+          } else if(check.value != 'internal'){
             disabled = true;
           }
         }

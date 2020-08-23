@@ -413,7 +413,7 @@ Future<void> ask_for_add_modification(Strand strand,
   var items = List<DialogItem>(5);
   items[modification_type_idx] = DialogRadio(
       label: 'modification type',
-      options: {"modification_3'", "modification_5'", "modification_int"},
+      options: {"3'", "5'", "internal"},
       selected_idx: selected_index);
   items[display_text_idx] = DialogText(label: 'display text', value: "");
   items[id_idx] = DialogText(label: 'id', value: "");
@@ -433,10 +433,10 @@ Future<void> ask_for_add_modification(Strand strand,
   int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
 
   Modification mod;
-  if (modification_type == "modification_3'") {
+  if (modification_type == "3'") {
     mod = Modification3Prime(
         display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
-  } else if (modification_type == "modification_5'") {
+  } else if (modification_type == "5'") {
     mod = Modification5Prime(
         display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
   } else {
