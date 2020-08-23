@@ -421,7 +421,9 @@ Future<void> ask_for_add_modification(Strand strand,
   items[index_of_dna_base_idx] =
       DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
 
-  var dialog = Dialog(title: 'add modification', items: items);
+  var dialog = Dialog(title: 'add modification', items: items, disable_when_off: {
+    index_of_dna_base_idx: [modification_type_idx],
+  });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
   String modification_type = (results[modification_type_idx] as DialogRadio).value;

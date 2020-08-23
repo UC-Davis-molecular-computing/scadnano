@@ -60,8 +60,10 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       if (props.dialog.disable_when_off.containsKey(component_idx)) {
         BuiltList<int> check_idxs = props.dialog.disable_when_off[component_idx];
         for (int check_idx in check_idxs) {
-          DialogCheckbox check = state.responses[check_idx];
+          DialogItem check = state.responses[check_idx];
           if (check.value == false) {
+            disabled = true;
+          } else if(check.value != 'modification_int'){
             disabled = true;
           }
         }
