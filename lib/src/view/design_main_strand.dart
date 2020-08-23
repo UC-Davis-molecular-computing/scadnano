@@ -4,6 +4,7 @@ import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/modification.dart';
 
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
@@ -149,6 +150,9 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
   assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
       props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
 
+  add_modification(Domain domain, Address address, bool is_5p) => app
+      .disable_keyboard_shortcuts_while(() => ask_for_add_modification(props.strand, domain, address, is_5p));
+
   ReactElement _insertions() {
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains()) {
@@ -243,7 +247,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
         ContextMenuItem(
           title: 'assign DNA',
           on_click: assign_dna,
@@ -253,6 +257,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
             title: 'remove DNA',
             on_click: remove_dna,
           ),
+        ContextMenuItem(
+          title: 'add modification',
+          on_click: () => add_modification(domain, address, is_5p),
+        ),
         ContextMenuItem(
           title: strand.is_scaffold ? 'set as non-scaffold' : 'set as scaffold',
           on_click: set_scaffold,
@@ -378,6 +386,79 @@ class DNARemoveOptions {
   bool remove_all; // remove from all strands in design
 
   DNARemoveOptions({this.remove_complements = false, this.remove_all = false});
+}
+
+Future<void> ask_for_add_modification(Strand strand,
+    [Domain domain = null, Address address = null, bool is_5p = null]) async {
+  assert((is_5p == null && domain != null && address != null) ||
+      (is_5p != null && domain == null && address == null));
+  bool is_end = is_5p != null;
+  int strand_dna_idx = null;
+  int selected_index = 2;
+  if (!is_end) {
+    strand_dna_idx = clicked_strand_dna_idx(domain, address, strand);
+  } else {
+    if (is_5p) {
+      selected_index = 1;
+    } else {
+      selected_index = 0;
+    }
+  }
+
+  int modification_type_idx = 0;
+  int display_text_idx = 1;
+  int id_idx = 2;
+  int idt_text_idx = 3;
+  int index_of_dna_base_idx = 4;
+  var items = List<DialogItem>(5);
+  items[modification_type_idx] = DialogRadio(
+      label: 'modification type',
+      options: {"3'", "5'", "internal"},
+      selected_idx: selected_index);
+  items[display_text_idx] = DialogText(label: 'display text', value: "");
+  items[id_idx] = DialogText(label: 'id', value: "");
+  items[idt_text_idx] = DialogText(label: 'idt text', value: "");
+  items[index_of_dna_base_idx] =
+      DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
+
+  var dialog = Dialog(title: 'add modification', items: items, disable_when_off: {
+    index_of_dna_base_idx: [modification_type_idx],
+  });
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+  String modification_type = (results[modification_type_idx] as DialogRadio).value;
+  String display_text = (results[display_text_idx] as DialogText).value;
+  String id = (results[id_idx] as DialogText).value;
+  String idt_text = (results[idt_text_idx] as DialogText).value;
+  int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
+
+  Modification mod;
+  if (modification_type == "3'") {
+    mod = Modification3Prime(
+        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+  } else if (modification_type == "5'") {
+    mod = Modification5Prime(
+        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+  } else {
+    mod = ModificationInternal(
+        display_text: display_text,
+        id: id,
+        idt_text: idt_text,
+        allowed_bases: null,
+        unused_fields: BuiltMap<String, Object>());
+  }
+  app.dispatch(actions.ModificationAdd(strand: strand, modification: mod, strand_dna_idx: index_of_dna_base));
+}
+
+int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
+  int strand_dna_idx = 0;
+  int domain_dna_idx = domain.substrand_offset_to_substrand_dna_idx(address.offset, address.forward);
+  int index_of_domain_in_strand = strand.substrands.indexOf(domain);
+  for (int i = 0; i < index_of_domain_in_strand; i++) {
+    strand_dna_idx += strand.substrands[i].dna_length();
+  }
+  strand_dna_idx += domain_dna_idx;
+  return strand_dna_idx;
 }
 
 Future<void> ask_for_assign_dna_sequence(

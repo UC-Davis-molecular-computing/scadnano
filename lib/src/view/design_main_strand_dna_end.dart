@@ -4,8 +4,11 @@ import 'dart:math';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/strand.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../state/selectable.dart';
 import '../state/dna_end.dart';
@@ -27,6 +30,7 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
+  Strand strand;
   Domain domain;
   Color color;
   bool is_5p;
@@ -37,6 +41,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   HelixGroup group;
   Geometry geometry;
   bool selected;
+  List<ContextMenuItem> Function(Strand strand, {bool is_5p}) context_menu_strand;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
@@ -112,6 +117,41 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       end_props(),
       end_moving_props(),
     );
+  }
+
+  @override
+  componentDidMount() {
+    var element;
+    if (props.is_5p) {
+      element = querySelector('#${props.domain.dnaend_5p.id()}');
+    } else {
+      element = querySelector('#${props.domain.dnaend_3p.id()}');
+    }
+    element.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var element;
+    if (props.is_5p) {
+      element = querySelector('#${props.domain.dnaend_5p.id()}');
+    } else {
+      element = querySelector('#${props.domain.dnaend_3p.id()}');
+    }
+    element.removeEventListener('contextmenu', on_context_menu);
+    super.componentWillUnmount();
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(
+              items: props.context_menu_strand(props.strand, is_5p: props.is_5p).build(),
+              position: event.page)));
+    }
   }
 
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {

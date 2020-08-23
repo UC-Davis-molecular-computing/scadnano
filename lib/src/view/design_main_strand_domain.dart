@@ -35,7 +35,7 @@ mixin DesignMainDomainPropsMixin on UiProps {
   String strand_tooltip;
   Strand strand;
   String transform;
-  List<ContextMenuItem> Function(Strand strand) context_menu_strand;
+  List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address}) context_menu_strand;
   bool currently_moving;
   bool selected;
 
@@ -151,9 +151,12 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     if (!event.shiftKey) {
       event.preventDefault();
       event.stopPropagation();
+      Address address =
+          util.get_address_on_helix(event, props.helix, props.groups[props.helix.group], props.geometry);
       app.dispatch(actions.ContextMenuShow(
-          context_menu:
-              ContextMenu(items: props.context_menu_strand(props.strand).build(), position: event.page)));
+          context_menu: ContextMenu(
+              items: props.context_menu_strand(props.strand, domain: props.domain, address: address).build(),
+              position: event.page)));
     }
   }
 }

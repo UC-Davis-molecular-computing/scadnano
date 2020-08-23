@@ -25,6 +25,7 @@ import '../state/grid.dart';
 import '../state/helix.dart';
 import '../state/local_storage_design_choice.dart';
 import '../state/loopout.dart';
+import '../state/modification.dart';
 import '../state/position3d.dart';
 import '../state/potential_crossover.dart';
 import '../state/selectable.dart';
@@ -2107,6 +2108,68 @@ abstract class DeletionRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification add
+abstract class ModificationAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationAdd, ModificationAddBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationAdd({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationAdd._;
+
+  ModificationAdd._();
+
+  static Serializer<ModificationAdd> get serializer => _$modificationAddSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification remove
+abstract class ModificationRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationRemove, ModificationRemoveBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationRemove({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationRemove._;
+
+  ModificationRemove._();
+
+  static Serializer<ModificationRemove> get serializer => _$modificationRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification edit
+abstract class ModificationEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationEdit, ModificationEditBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationEdit({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationEdit._;
+
+  ModificationEdit._();
+
+  static Serializer<ModificationEdit> get serializer => _$modificationEditSerializer;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change
 
 abstract class GridChange
@@ -2445,18 +2508,15 @@ abstract class ShowGridCoordinatesSideViewSet
 
 abstract class ShowLoopoutLengthSet
     with BuiltJsonSerializable
-    implements
-        Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
+    implements Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
   bool get show_loopout_length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowLoopoutLengthSet({bool show_loopout_length}) =
-      _$ShowLoopoutLengthSet._;
+  factory ShowLoopoutLengthSet({bool show_loopout_length}) = _$ShowLoopoutLengthSet._;
 
   ShowLoopoutLengthSet._();
 
-  static Serializer<ShowLoopoutLengthSet> get serializer =>
-      _$showLoopoutLengthSetSerializer;
+  static Serializer<ShowLoopoutLengthSet> get serializer => _$showLoopoutLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2471,11 +2531,12 @@ abstract class LoadDnaSequenceImageUri
   num get dna_sequence_png_vertical_offset;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDnaSequenceImageUri(String uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) => LoadDnaSequenceImageUri.from((b) => b
-    ..uri = uri
-    ..dna_sequence_png_horizontal_offset=dna_sequence_png_horizontal_offset
-    ..dna_sequence_png_vertical_offset=dna_sequence_png_vertical_offset
-  );
+  factory LoadDnaSequenceImageUri(
+          String uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) =>
+      LoadDnaSequenceImageUri.from((b) => b
+        ..uri = uri
+        ..dna_sequence_png_horizontal_offset = dna_sequence_png_horizontal_offset
+        ..dna_sequence_png_vertical_offset = dna_sequence_png_vertical_offset);
 
   factory LoadDnaSequenceImageUri.from([void Function(LoadDnaSequenceImageUriBuilder) updates]) =
       _$LoadDnaSequenceImageUri;

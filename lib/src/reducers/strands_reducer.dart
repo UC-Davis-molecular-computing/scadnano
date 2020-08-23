@@ -5,6 +5,7 @@ import 'package:color/color.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/group.dart';
@@ -404,7 +405,51 @@ BuiltList<Strand> strands_single_strand_reducer(
 Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
+  TypedReducer<Strand, actions.ModificationAdd>(add_modification_reducer),
+  TypedReducer<Strand, actions.ModificationRemove>(remove_modification_reducer),
+  TypedReducer<Strand, actions.ModificationEdit>(edit_modification_reducer),
 ]);
+
+Strand add_modification_reducer(Strand strand, actions.ModificationAdd action) {
+  Strand strand_with_new_modification;
+  // first overwrite this strand in the builder list
+  if (action.modification is ModificationInternal) {
+    strand_with_new_modification =
+        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx] = action.modification);
+  } else if (action.modification is Modification3Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_3p.replace(action.modification));
+  } else if (action.modification is Modification5Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_5p.replace(action.modification));
+  }
+  return strand_with_new_modification;
+}
+
+Strand remove_modification_reducer(Strand strand, actions.ModificationRemove action) {
+  Strand strand_with_new_modification;
+  // first overwrite this strand in the builder list
+  if (action.modification is ModificationInternal) {
+    strand_with_new_modification = strand.rebuild((m) => m.modifications_int.remove(action.strand_dna_idx));
+  } else if (action.modification is Modification3Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_3p = null);
+  } else if (action.modification is Modification5Prime) {
+    strand_with_new_modification = strand.rebuild((m) => m.modification_5p = null);
+  }
+  return strand_with_new_modification;
+}
+
+Strand edit_modification_reducer(Strand strand, actions.ModificationEdit action) {
+  Strand strand_with_edited_modification;
+  // first overwrite this strand in the builder list
+  if (action.modification is ModificationInternal) {
+    strand_with_edited_modification =
+        strand.rebuild((m) => m.modifications_int[action.strand_dna_idx] = action.modification);
+  } else if (action.modification is Modification3Prime) {
+    strand_with_edited_modification = strand.rebuild((m) => m.modification_3p.replace(action.modification));
+  } else if (action.modification is Modification5Prime) {
+    strand_with_edited_modification = strand.rebuild((m) => m.modification_5p.replace(action.modification));
+  }
+  return strand_with_edited_modification;
+}
 
 Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
   Color new_color = action.is_scaffold ? util.ColorCycler.scaffold_color : util.color_cycler.next();
