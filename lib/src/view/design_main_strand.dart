@@ -421,7 +421,7 @@ Future<void> ask_for_add_modification(Strand strand,
   items[index_of_dna_base_idx] =
       DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
 
-  var dialog = Dialog(title: 'add modification', items: items, disable_when_off: {
+  var dialog = Dialog(title: 'add modification', items: items, disable_when_any_checkboxes_off: {
     index_of_dna_base_idx: [modification_type_idx],
   });
   List<DialogItem> results = await util.dialog(dialog);
@@ -472,9 +472,9 @@ Future<void> ask_for_assign_dna_sequence(
         label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
     DialogCheckbox(
         label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
-  ], disable_when_on: {
+  ], disable_when_any_checkboxes_on: {
     0: [1]
-  }, disable_when_off: {
+  }, disable_when_any_checkboxes_off: {
     2: [1],
     3: [1],
   });

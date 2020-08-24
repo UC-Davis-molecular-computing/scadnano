@@ -23,7 +23,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[min_set_by_domain_idx] = DialogCheckbox(label: 'set minimum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
 
-    var dialog = Dialog(title: 'adjust helix minimum offset', items: items, disable_when_on: {
+    var dialog = Dialog(title: 'adjust helix minimum offset', items: items, disable_when_any_checkboxes_on: {
       min_idx: [min_set_by_domain_idx],
     });
     List<DialogItem> results = await util.dialog(dialog);
@@ -48,8 +48,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
       if (apply_to_all) {
         app.dispatch(actions.HelixOffsetChangeAll(min_offset: min_offset));
       } else {
-        app.dispatch(
-            actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset));
+        app.dispatch(actions.HelixOffsetChange(helix_idx: helix.idx, min_offset: min_offset));
       }
     }
   }
@@ -64,7 +63,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[max_set_by_domain_idx] = DialogCheckbox(label: 'set maximum by existing domains', value: false);
     items[apply_to_all_idx] = DialogCheckbox(label: 'apply to all helices', value: helix_change_apply_to_all);
 
-    var dialog = Dialog(title: 'adjust helix maximum offset', items: items, disable_when_on: {
+    var dialog = Dialog(title: 'adjust helix maximum offset', items: items, disable_when_any_checkboxes_on: {
       max_idx: [max_set_by_domain_idx],
     });
     List<DialogItem> results = await util.dialog(dialog);
@@ -89,8 +88,7 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
       if (apply_to_all) {
         app.dispatch(actions.HelixOffsetChangeAll(max_offset: max_offset));
       } else {
-        app.dispatch(
-            actions.HelixOffsetChange(helix_idx: helix.idx, max_offset: max_offset));
+        app.dispatch(actions.HelixOffsetChange(helix_idx: helix.idx, max_offset: max_offset));
       }
     }
   }
@@ -140,27 +138,27 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
       default_periodic_distances = [default_regular_distance];
     }
 
-    int regular_spacing_enabled_idx = 0;
+    int regular_spacing_checkbox_idx = 0;
     int regular_spacing_distance_idx = 1;
     int major_tick_start_idx = 2;
-    int periodic_spacing_enabled_idx = 3;
+    int periodic_spacing_checkbox_idx = 3;
     int periodic_spacing_distances_idx = 4;
-    int major_ticks_enabled_idx = 5;
+    int major_ticks_checkbox_idx = 5;
     int major_ticks_distances_idx = 6;
     int apply_to_all_idx = 7;
     int apply_to_some_idx = 8;
     int apply_to_some_helices_idx = 9;
     List<DialogItem> items = List<DialogItem>(10);
-    items[regular_spacing_enabled_idx] =
+    items[regular_spacing_checkbox_idx] =
         DialogCheckbox(label: 'regular spacing', value: helix.has_major_tick_distance());
     items[regular_spacing_distance_idx] =
         DialogInteger(label: 'regular distance', value: default_regular_distance);
     items[major_tick_start_idx] = DialogInteger(label: 'starting major tick', value: default_start);
-    items[periodic_spacing_enabled_idx] =
+    items[periodic_spacing_checkbox_idx] =
         DialogCheckbox(label: 'periodic spacing', value: helix.has_major_tick_periodic_distances());
     items[periodic_spacing_distances_idx] =
         DialogText(label: 'periodic distances', value: "${default_periodic_distances.join(' ')}");
-    items[major_ticks_enabled_idx] =
+    items[major_ticks_checkbox_idx] =
         DialogCheckbox(label: 'explicit list of major tick spacing', value: helix.has_major_ticks());
     items[major_ticks_distances_idx] = DialogText(
         label: 'distances (space-separated)',
@@ -169,25 +167,31 @@ List<ContextMenuItem> context_menu_helix(Helix helix, bool helix_change_apply_to
     items[apply_to_some_idx] = DialogCheckbox(label: 'apply to some', value: helix_change_apply_to_all);
     items[apply_to_some_helices_idx] = DialogText(label: 'helices (space-separated)', value: "");
 
-    var dialog = Dialog(title: 'adjust helix tick marks', items: items, disable_when_off: {
-      regular_spacing_distance_idx: [regular_spacing_enabled_idx],
-      periodic_spacing_distances_idx: [periodic_spacing_enabled_idx],
-      major_ticks_distances_idx: [major_ticks_enabled_idx],
-    }, disable_when_on: {
-      major_tick_start_idx: [major_ticks_enabled_idx],
-    }, mutually_exclusive_checkbox_groups: [
-      [regular_spacing_enabled_idx, periodic_spacing_enabled_idx, major_ticks_enabled_idx],
-      [apply_to_all_idx, apply_to_some_idx],
-    ]);
+    var dialog = Dialog(
+      title: 'adjust helix tick marks',
+      items: items,
+      disable_when_any_checkboxes_off: {
+        regular_spacing_distance_idx: [regular_spacing_checkbox_idx],
+        periodic_spacing_distances_idx: [periodic_spacing_checkbox_idx],
+        major_ticks_distances_idx: [major_ticks_checkbox_idx],
+      },
+      disable_when_any_checkboxes_on: {
+        major_tick_start_idx: [major_ticks_checkbox_idx],
+      },
+      mutually_exclusive_checkbox_groups: [
+        [regular_spacing_checkbox_idx, periodic_spacing_checkbox_idx, major_ticks_checkbox_idx],
+        [apply_to_all_idx, apply_to_some_idx],
+      ],
+    );
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) {
       return;
     }
 
-    bool use_major_tick_distance = (results[regular_spacing_enabled_idx] as DialogCheckbox).value;
-    bool use_major_tick_periodic_distances = (results[periodic_spacing_enabled_idx] as DialogCheckbox).value;
-    bool use_major_ticks = (results[major_ticks_enabled_idx] as DialogCheckbox).value;
+    bool use_major_tick_distance = (results[regular_spacing_checkbox_idx] as DialogCheckbox).value;
+    bool use_major_tick_periodic_distances = (results[periodic_spacing_checkbox_idx] as DialogCheckbox).value;
+    bool use_major_ticks = (results[major_ticks_checkbox_idx] as DialogCheckbox).value;
     if (!(use_major_tick_distance || use_major_tick_periodic_distances || use_major_ticks)) {
       return;
     }

@@ -51,27 +51,31 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
+    var dialog = props.dialog;
+    print(dialog);
+
     int component_idx = 0;
     List<ReactElement> components = [];
     for (var item in state.responses) {
       bool disabled = false;
 
       // disable if checkbox in disable_when_off to which this maps is false
-      if (props.dialog.disable_when_off.containsKey(component_idx)) {
-        BuiltList<int> check_idxs = props.dialog.disable_when_off[component_idx];
+      if (props.dialog.disable_when_any_checkboxes_off.containsKey(component_idx)) {
+        BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
           DialogItem check = state.responses[check_idx];
           if (check.value == false) {
             disabled = true;
-          } else if(check.value != 'internal'){
-            disabled = true;
           }
+//          else if (check.value != 'internal') {
+//            disabled = true;
+//          }
         }
       }
 
       // disable if checkbox in disable_when_on to which this maps is true
-      if (props.dialog.disable_when_on.containsKey(component_idx)) {
-        BuiltList<int> check_idxs = props.dialog.disable_when_on[component_idx];
+      if (props.dialog.disable_when_any_checkboxes_on.containsKey(component_idx)) {
+        BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.responses[check_idx];
           if (check.value == true) {
