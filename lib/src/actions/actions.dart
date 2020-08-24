@@ -1251,7 +1251,7 @@ abstract class HelixMajorTickPeriodicDistancesChangeAll
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix change min/max offsets
+// Helix change index
 
 abstract class HelixIdxsChange
     with BuiltJsonSerializable, UndoableAction

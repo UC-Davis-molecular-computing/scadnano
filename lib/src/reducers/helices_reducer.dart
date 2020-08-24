@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/group.dart';
@@ -95,6 +94,8 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
   var helices = design.helices.toMap();
   var strands = design.strands.toList();
 
+  Map<String, HelixGroup> new_groups = change_groups(action, helices, design);
+
   // change helices
   for (int old_idx in action.idx_replacements.keys) {
     int new_idx = action.idx_replacements[old_idx];
@@ -127,9 +128,54 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
 
   //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
 
-  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, design.groups);
+  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, new_groups.build());
   design = design.rebuild((b) => b..helices.replace(helices)..strands.replace(strands));
   return design;
+}
+
+Map<String, HelixGroup> change_groups(actions.HelixIdxsChange action, Map<int, Helix> helices, Design design) {
+  // initialize with default view order to be the same as before the idx change
+  Map<int, int> new_view_order = {};
+  for (int old_idx in action.idx_replacements.keys) {
+    var helix = helices[old_idx];
+    var group = design.groups[helix.group];
+    int view_order = group.helices_view_order_inverse[old_idx];
+    new_view_order[old_idx] = view_order;
+  }
+
+  var new_groups = design.groups.toMap();
+  // see if view orders should be updated
+  for (var group_name in design.groups.keys) {
+    var group = design.groups[group_name];
+    var helix_idxs_in_group = design.helix_idxs_in_group[group_name];
+    bool group_changing =
+        action.idx_replacements.keys.toSet().intersection(helix_idxs_in_group.toSet()).isNotEmpty;
+
+    if (group_changing) {
+      // if group is changing, see if helices_view_order is default;
+      // if so, adjust new view order to maintain that the view order is still the default (idxs in order)
+      bool previous_is_default = util.helices_view_order_is_default(helix_idxs_in_group, group);
+
+      // first update helices_view_order to contain new idxs
+      List<int> helices_view_order_new = group.helices_view_order.toList();
+      for (int old_idx in action.idx_replacements.keys) {
+        int order_old_idx = group.helices_view_order_inverse[old_idx];
+        if (order_old_idx != null) {
+          int new_idx = action.idx_replacements[old_idx];
+          helices_view_order_new[order_old_idx] = new_idx;
+        }
+      }
+
+      // then make default if previous was default
+      if (previous_is_default) {
+        helices_view_order_new.sort();
+      }
+
+      var new_group = group.rebuild((b) => b..helices_view_order.replace(helices_view_order_new));
+      new_groups[group_name] = new_group;
+    }
+  }
+  return new_groups;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
