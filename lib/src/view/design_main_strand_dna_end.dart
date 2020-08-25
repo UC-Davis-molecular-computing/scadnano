@@ -159,7 +159,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     if (end_selectable(dna_end)) {
       // select end
       MouseEvent event = event_synthetic.nativeEvent;
-      if(event.button == 2){
+      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
         return;
       }
       dna_end.handle_selection_mouse_down(event);
