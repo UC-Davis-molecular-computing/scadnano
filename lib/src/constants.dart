@@ -65,6 +65,7 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
+const default_domain_label_font_size = 10;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
@@ -327,6 +328,9 @@ const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
 const css_selector_loopout_length = 'loopout-length';
+
+const css_selector_domain_label = 'domain-label';
+const css_selector_loopout_label = 'loopout-label';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

@@ -56,8 +56,10 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
           ui_state.warn_on_change_strand_dna_assign_default, action)
   ..mouseover_datas.replace(mouseover_data_reducer(ui_state.mouseover_datas, action))
   ..dna_sequence_png_uri = dna_sequence_png_uri_reducer(ui_state.dna_sequence_png_uri, action)
-  ..dna_sequence_png_horizontal_offset = dna_sequence_horizontal_offset_reducer(ui_state.dna_sequence_png_horizontal_offset, action)
-  ..dna_sequence_png_vertical_offset = dna_sequence_vertical_offset_reducer(ui_state.dna_sequence_png_vertical_offset, action)
+  ..dna_sequence_png_horizontal_offset =
+      dna_sequence_horizontal_offset_reducer(ui_state.dna_sequence_png_horizontal_offset, action)
+  ..dna_sequence_png_vertical_offset =
+      dna_sequence_vertical_offset_reducer(ui_state.dna_sequence_png_vertical_offset, action)
   ..disable_png_cache_until_action_completes =
       disable_png_cache_until_action_completes(ui_state.disable_png_cache_until_action_completes, action)
   ..is_zoom_above_threshold = is_zoom_above_threshold_reducer(ui_state.is_zoom_above_threshold, action));
@@ -106,6 +108,8 @@ bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveSt
 
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
+bool show_domain_labels_reducer(bool _, actions.ShowDomainLabelsSet action) => action.show;
+
 bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
 
 bool modification_display_connector_reducer(bool _, actions.SetModificationDisplayConnector action) =>
@@ -113,15 +117,15 @@ bool modification_display_connector_reducer(bool _, actions.SetModificationDispl
 
 num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action) => action.font_size;
 
+num domain_label_font_size_reducer(num _, actions.DomainLabelFontSizeSet action) => action.font_size;
+
 num major_tick_offset_font_size_reducer(num _, actions.MajorTickOffsetFontSizeSet action) => action.font_size;
 
 num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet action) => action.font_size;
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool invert_yz_reducer(bool _, actions.InvertYZSet action)
-{print('setting invert_yz to ${action.invert_yz}'); return action.invert_yz;}
-//=> action.invert_yz;
+bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
@@ -131,8 +135,7 @@ bool show_helix_circles_main_view_reducer(bool _, actions.ShowHelixCirclesMainVi
 bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinatesSideViewSet action) =>
     action.show_grid_coordinates_side_view;
 
-bool show_loopout_length_reducer(bool _, actions.ShowLoopoutLengthSet action) =>
-    action.show_loopout_length;
+bool show_loopout_length_reducer(bool _, actions.ShowLoopoutLengthSet action) => action.show_loopout_length;
 
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
@@ -241,6 +244,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
     ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
     ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
+    ..show_domain_labels = TypedReducer<bool, actions.ShowDomainLabelsSet>(show_domain_labels_reducer)(
+        storables.show_domain_labels, action)
     ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
         storables.show_modifications, action)
     ..modification_display_connector =
@@ -248,21 +253,24 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.modification_display_connector, action)
     ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
         storables.modification_font_size, action)
-    ..major_tick_offset_font_size = TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
-        storables.major_tick_offset_font_size, action)
-    ..major_tick_width_font_size = TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
-        storables.major_tick_width_font_size, action)
+    ..domain_label_font_size = TypedReducer<num, actions.DomainLabelFontSizeSet>(domain_label_font_size_reducer)(
+        storables.domain_label_font_size, action)
+    ..major_tick_offset_font_size =
+        TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
+            storables.major_tick_offset_font_size, action)
+    ..major_tick_width_font_size =
+        TypedReducer<num, actions.MajorTickWidthFontSizeSet>(major_tick_width_font_size_reducer)(
+            storables.major_tick_width_font_size, action)
     ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
         storables.show_mismatches, action)
     ..invert_yz = TypedReducer<bool, actions.InvertYZSet>(invert_yz_reducer)(storables.invert_yz, action)
-    ..warn_on_exit_if_unsaved = TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
-        storables.warn_on_exit_if_unsaved, action)
-    ..show_helix_circles_main_view = TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(
-        storables.show_helix_circles_main_view, action)
-    ..show_grid_coordinates_side_view =
-        TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
-    ..show_loopout_length =
-        TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(storables.show_loopout_length, action)
+    ..warn_on_exit_if_unsaved =
+        TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
+            storables.warn_on_exit_if_unsaved, action)
+    ..show_helix_circles_main_view =
+        TypedReducer<bool, actions.ShowHelixCirclesMainViewSet>(show_helix_circles_main_view_reducer)(storables.show_helix_circles_main_view, action)
+    ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
+    ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(storables.show_loopout_length, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
     ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
@@ -313,7 +321,6 @@ Reducer<num> dna_sequence_horizontal_offset_reducer = combineReducers([
 Reducer<num> dna_sequence_vertical_offset_reducer = combineReducers([
   TypedReducer<num, actions.LoadDnaSequenceImageUri>(load_dna_sequence_png_vertical_offset),
 ]);
-
 
 actions.Action set_disable_png_cache_until_action_completes(
     actions.Action _, actions.SetDisablePngCacheUntilActionCompletes action) {

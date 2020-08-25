@@ -26,6 +26,8 @@ abstract class AppUIStateStorables
 
   bool get show_dna;
 
+  bool get show_domain_labels;
+
   bool get show_modifications;
 
   bool get show_mismatches;
@@ -37,6 +39,8 @@ abstract class AppUIStateStorables
   bool get only_display_selected_helices;
 
   num get modification_font_size;
+
+  num get domain_label_font_size;
 
   num get major_tick_offset_font_size;
 
@@ -84,11 +88,13 @@ abstract class AppUIStateStorables
     b.side_selected_helix_idxs = SetBuilder<int>();
     b.autofit = true;
     b.show_dna = false;
+    b.show_domain_labels = false;
     b.show_modifications = true;
     b.show_mismatches = false;
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.modification_font_size = constants.default_modification_font_size;
+    b.domain_label_font_size = constants.default_domain_label_font_size;
     b.major_tick_offset_font_size = constants.default_major_tick_offset_font_size;
     b.major_tick_width_font_size = constants.default_major_tick_width_font_size;
     b.modification_display_connector = true;

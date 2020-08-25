@@ -145,7 +145,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
     var length = subseq.length;
 
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_width_svg}';
+    var dy = '${0.1 * props.geometry.base_height_svg}';
 
     Tuple2<num, num> ls_fs;
     if (util.is_hairpin(prev_domain, next_domain)) {

@@ -78,7 +78,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   /// PNG image of dna sequence used for svg caching
   @nullable
   String get dna_sequence_png_uri;
+
   num get dna_sequence_png_horizontal_offset;
+
   num get dna_sequence_png_vertical_offset;
 
   /// If this is `null`, png-caching runs normally.
@@ -95,6 +97,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get only_display_selected_helices => storables.only_display_selected_helices;
 
   num get modification_font_size => storables.modification_font_size;
+
+  num get domain_label_font_size => storables.domain_label_font_size;
 
   bool get modification_display_connector => storables.modification_display_connector;
 
@@ -119,6 +123,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   String get loaded_script_filename => storables.loaded_script_filename;
 
   bool get show_dna => storables.show_dna;
+
+  bool get show_domain_labels => storables.show_domain_labels;
 
   bool get show_modifications => storables.show_modifications;
 

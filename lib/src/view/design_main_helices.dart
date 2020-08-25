@@ -25,6 +25,7 @@ mixin DesignMainHelicesProps on UiProps {
   bool only_display_selected_helices;
   bool helix_change_apply_to_all;
   bool show_dna;
+  bool show_domain_labels;
   bool display_base_offsets_of_major_ticks;
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
@@ -69,6 +70,7 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
             ..major_tick_width_font_size = props.major_tick_width_font_size
             ..helix_change_apply_to_all = props.helix_change_apply_to_all
             ..show_dna = props.show_dna
+            ..show_domain_labels = props.show_domain_labels
             ..show_helix_circles = props.show_helix_circles
             ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks &&
                 (!props.display_base_offsets_of_major_ticks_only_first_helix ||

@@ -40,6 +40,7 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Helix next_helix;
   bool selected;
   BuiltSet<EditModeChoice> edit_modes;
+  bool show_domain_labels;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -83,8 +84,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     String path_description;
 
     if (within_group) {
-      path_description = loopout_path_description_within_group(
-          props.prev_helix, props.next_helix, props.prev_domain, props.next_domain, props.loopout, true);
+      path_description = loopout_path_description_within_group(props.prev_helix, props.next_helix,
+          props.prev_domain, props.next_domain, props.loopout, true, props.show_domain_labels);
     } else {
       path_description = loopout_path_description_between_groups();
     }
@@ -221,7 +222,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 // When drawing a normal loopout this is needed, but when drawing a moving strand, where all path commands
 // are concatenated together, it is not needed.
 String loopout_path_description_within_group(Helix prev_helix, Helix next_helix, Domain prev_domain,
-    Domain next_domain, Loopout loopout, bool include_start_M) {
+    Domain next_domain, Loopout loopout, bool include_start_M, bool show_domain_labels) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
   Geometry geometry = top_helix.geometry;
@@ -253,7 +254,11 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
 
   if (top_helix.idx == bot_helix.idx) {
     w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
-    h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+    if (show_domain_labels) {
+      h = 10 * util.sigmoid(loopout.loopout_length) * geometry.base_height_svg;
+    } else {
+      h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+    }
   } else {
     w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
     h = 10 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
@@ -288,92 +293,94 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
   return path;
 }
 
-String loopout_path_description_within_group_new(Helix prev_helix, Helix next_helix, Domain prev_domain,
-    Domain next_domain, Loopout loopout, bool include_start_M) {
-  Helix top_helix = prev_helix;
-  Helix bot_helix = next_helix;
-  Geometry geometry = prev_helix.geometry;
-  Domain top_domain = prev_domain;
-  Domain bot_domain = next_domain;
-  if (top_helix.idx == bot_helix.idx) {
-    top_helix = bot_helix = next_helix;
-    if (!prev_domain.forward) {
-      top_domain = next_domain;
-      bot_domain = prev_domain;
-    }
-  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
-    top_helix = next_helix;
-    bot_helix = prev_helix;
-    top_domain = next_domain;
-    bot_domain = prev_domain;
-  }
-  bool top_dom_is_prev = top_domain == prev_domain;
-
-  int top_offset = top_dom_is_prev ? top_domain.offset_3p : top_domain.offset_5p;
-  int bot_offset = top_dom_is_prev ? bot_domain.offset_5p : bot_domain.offset_3p;
-  int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
-  int next_offset = top_dom_is_prev ? bot_offset : top_offset;
-
-  var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward);
-  var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward);
-
-  var top_svg = prev_svg;
-  var bot_svg = next_svg;
-  if (top_helix.idx == bot_helix.idx) {
-    if (!prev_domain.forward) {
-      top_svg = next_svg;
-      bot_svg = prev_svg;
-    }
-  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
-    top_svg = next_svg;
-    bot_svg = prev_svg;
-  }
-
-  var w, h;
-
-  if (top_helix.idx == bot_helix.idx) {
-    w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
-    h = 5 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
-  } else {
-    w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
-    h = 5 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
-  }
-
-  var y_offset_bot = bot_svg.y;
-  var y_offset_top = top_svg.y;
-  var x_offset_bot = bot_svg.x;
-  var x_offset_top = top_svg.x;
-  if (top_offset == top_domain.start) {
-    x_offset_top -= w;
-  } else {
-    x_offset_top += w;
-  }
-  if (bot_offset == bot_domain.start) {
-    x_offset_bot -= w;
-  } else {
-    x_offset_bot += w;
-  }
-  y_offset_top += h;
-  y_offset_bot -= h;
-
-  var c_bot = Point<num>(x_offset_bot, y_offset_bot);
-  var c_top = Point<num>(x_offset_top, y_offset_top);
-
-  var vector = bot_svg - top_svg;
-  num angle_radians_from_x_axis = -atan2(vector.y, vector.x);
-  num angle_degrees_from_x_axis = util.to_degrees(angle_radians_from_x_axis);
-  num angle_degrees_from_y_axis = 90 - angle_degrees_from_x_axis;
-  var c_bot_rot = util.rotate(c_bot, angle_degrees_from_y_axis, origin: prev_svg);
-  var c_top_rot = util.rotate(c_top, angle_degrees_from_y_axis, origin: next_svg);
-  print('top offset = ${top_offset}');
-  print('  angle = ${angle_degrees_from_y_axis}');
-
-  var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
-      'C ${c_bot_rot.x} ${c_bot_rot.y} ${c_top_rot.x} ${c_top_rot.y} '
-          '${next_svg.x} ${next_svg.y}';
-
-  return path;
-}
+// String loopout_path_description_within_group_new(Helix prev_helix, Helix next_helix, Domain prev_domain,
+//     Domain next_domain, Loopout loopout, bool include_start_M) {
+//   Helix top_helix = prev_helix;
+//   Helix bot_helix = next_helix;
+//   Geometry geometry = prev_helix.geometry;
+//   Domain top_domain = prev_domain;
+//   Domain bot_domain = next_domain;
+//   if (top_helix.idx == bot_helix.idx) {
+//     top_helix = bot_helix = next_helix;
+//     if (!prev_domain.forward) {
+//       top_domain = next_domain;
+//       bot_domain = prev_domain;
+//     }
+//   } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+//     top_helix = next_helix;
+//     bot_helix = prev_helix;
+//     top_domain = next_domain;
+//     bot_domain = prev_domain;
+//   }
+//   bool top_dom_is_prev = top_domain == prev_domain;
+//
+//   int top_offset = top_dom_is_prev ? top_domain.offset_3p : top_domain.offset_5p;
+//   int bot_offset = top_dom_is_prev ? bot_domain.offset_5p : bot_domain.offset_3p;
+//   int prev_offset = top_dom_is_prev ? top_offset : bot_offset;
+//   int next_offset = top_dom_is_prev ? bot_offset : top_offset;
+//
+//   var prev_svg = prev_helix.svg_base_pos(prev_offset, prev_domain.forward);
+//   var next_svg = next_helix.svg_base_pos(next_offset, next_domain.forward);
+//
+//   var top_svg = prev_svg;
+//   var bot_svg = next_svg;
+//   if (top_helix.idx == bot_helix.idx) {
+//     if (!prev_domain.forward) {
+//       top_svg = next_svg;
+//       bot_svg = prev_svg;
+//     }
+//   } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+//     top_svg = next_svg;
+//     bot_svg = prev_svg;
+//   }
+//
+//   var w, h;
+//
+//   if (top_helix.idx == bot_helix.idx) {
+//     w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
+//     // h = 5 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
+//     h = 5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_height_svg;
+//     print('h = $h');
+//   } else {
+//     w = 2 * util.sigmoid(loopout.loopout_length) * geometry.base_width_svg;
+//     h = 5 * util.sigmoid(loopout.loopout_length - 3) * geometry.base_height_svg;
+//   }
+//
+//   var y_offset_bot = bot_svg.y;
+//   var y_offset_top = top_svg.y;
+//   var x_offset_bot = bot_svg.x;
+//   var x_offset_top = top_svg.x;
+//   if (top_offset == top_domain.start) {
+//     x_offset_top -= w;
+//   } else {
+//     x_offset_top += w;
+//   }
+//   if (bot_offset == bot_domain.start) {
+//     x_offset_bot -= w;
+//   } else {
+//     x_offset_bot += w;
+//   }
+//   y_offset_top += h;
+//   y_offset_bot -= h;
+//
+//   var c_bot = Point<num>(x_offset_bot, y_offset_bot);
+//   var c_top = Point<num>(x_offset_top, y_offset_top);
+//
+//   var vector = bot_svg - top_svg;
+//   num angle_radians_from_x_axis = -atan2(vector.y, vector.x);
+//   num angle_degrees_from_x_axis = util.to_degrees(angle_radians_from_x_axis);
+//   num angle_degrees_from_y_axis = 90 - angle_degrees_from_x_axis;
+//   var c_bot_rot = util.rotate(c_bot, angle_degrees_from_y_axis, origin: prev_svg);
+//   var c_top_rot = util.rotate(c_top, angle_degrees_from_y_axis, origin: next_svg);
+//   print('top offset = ${top_offset}');
+//   print('  angle = ${angle_degrees_from_y_axis}');
+//
+//   var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+//       'C ${c_bot_rot.x} ${c_bot_rot.y} ${c_top_rot.x} ${c_top_rot.y} '
+//           '${next_svg.x} ${next_svg.y}';
+//
+//   return path;
+// }
 
 Future<int> ask_for_length(String title, {int current_length, int lower_bound}) async {
   // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html

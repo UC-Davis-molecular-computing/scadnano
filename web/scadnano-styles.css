@@ -359,6 +359,10 @@ html, body {
 /*    cursor: grabbing;*/
 /*}*/
 
+.domain-label-text {
+    text-anchor: middle;
+}
+
 .selection-box {
     stroke: dimgray;
     fill: gray;
@@ -585,6 +589,18 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .dna-seq-loopout {
     font-family: "Consolas", "Lucida Console", "Courier New", monospace;
     font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+    white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.loopout-label{
     text-anchor: middle;
     pointer-events: none;
     dominant-baseline: ideographic;

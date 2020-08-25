@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification.dart';
 
+import 'design_main_strand_labels.dart';
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -52,13 +53,16 @@ mixin DesignMainStrandPropsMixin on UiProps {
 
   bool selected;
   bool drawing_potential_crossover;
-  bool show_modifications;
   bool moving_dna_ends;
   bool currently_moving;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool modification_display_connector;
-  int modification_font_size;
+  bool show_dna;
+  bool show_modifications;
+  bool show_domain_labels;
+  num modification_font_size;
+  num domain_label_font_size;
   bool invert_y;
 }
 
@@ -92,6 +96,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       (DesignMainStrandPaths()
         ..strand = props.strand
         ..key = 'strand-paths'
+        ..show_domain_labels = props.show_domain_labels
         ..helices = props.helices
         ..groups = props.groups
         ..currently_moving = props.currently_moving
@@ -108,6 +113,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
+      if (props.show_domain_labels)
+        (DesignMainStrandLabels()
+          ..strand = props.strand
+          ..helices = props.helices
+          ..groups = props.groups
+          ..geometry = props.geometry
+          ..show_dna = props.show_dna
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..font_size = props.domain_label_font_size
+          ..key = 'domain-labels')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -118,7 +134,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..only_display_selected_helices = props.only_display_selected_helices
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
-          ..key = 'modifications')()
+          ..key = 'modifications')(),
     ]);
   }
 
@@ -412,9 +428,7 @@ Future<void> ask_for_add_modification(Strand strand,
   int index_of_dna_base_idx = 4;
   var items = List<DialogItem>(5);
   items[modification_type_idx] = DialogRadio(
-      label: 'modification type',
-      options: {"3'", "5'", "internal"},
-      selected_idx: selected_index);
+      label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
   items[display_text_idx] = DialogText(label: 'display text', value: "");
   items[id_idx] = DialogText(label: 'id', value: "");
   items[idt_text_idx] = DialogText(label: 'idt text', value: "");

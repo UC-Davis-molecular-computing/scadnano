@@ -313,7 +313,7 @@ abstract class SelectModesSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Show/hide DNA/modifications/mismatches/editor
+// Show/hide DNA/modifications/mismatches/domain labels/editor
 abstract class SetAppUIStateStorable
     with BuiltJsonSerializable
     implements Action, Built<SetAppUIStateStorable, SetAppUIStateStorableBuilder> {
@@ -344,6 +344,22 @@ abstract class ShowDNASet with BuiltJsonSerializable implements Action, Built<Sh
   static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
 }
 
+abstract class ShowDomainLabelsSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainLabelsSet, ShowDomainLabelsSetBuilder> {
+  bool get show;
+
+  factory ShowDomainLabelsSet(bool show) => ShowDomainLabelsSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainLabelsSet.from([void Function(ShowDomainLabelsSetBuilder) updates]) =
+      _$ShowDomainLabelsSet;
+
+  ShowDomainLabelsSet._();
+
+  static Serializer<ShowDomainLabelsSet> get serializer => _$showDomainLabelsSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -358,6 +374,19 @@ abstract class ShowModificationsSet
   ShowModificationsSet._();
 
   static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
+}
+
+abstract class DomainLabelFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<DomainLabelFontSizeSet, DomainLabelFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainLabelFontSizeSet({num font_size}) = _$DomainLabelFontSizeSet._;
+
+  DomainLabelFontSizeSet._();
+
+  static Serializer<DomainLabelFontSizeSet> get serializer => _$domainLabelFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet
@@ -2527,7 +2556,9 @@ abstract class LoadDnaSequenceImageUri
     implements Action, Built<LoadDnaSequenceImageUri, LoadDnaSequenceImageUriBuilder> {
   @nullable
   String get uri;
+
   num get dna_sequence_png_horizontal_offset;
+
   num get dna_sequence_png_vertical_offset;
 
   /************************ begin BuiltValue boilerplate ************************/

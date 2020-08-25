@@ -20,9 +20,6 @@ abstract class Modification {
 
   BuiltMap<String, Object> get unused_fields;
 
-  @memoized
-  int get hashCode;
-
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false});
 
   Modification set_id(String id);
@@ -52,6 +49,9 @@ abstract class Modification {
 
     return mod;
   }
+
+  @memoized
+  int get hashCode;
 }
 
 abstract class Modification5Prime
