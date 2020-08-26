@@ -171,6 +171,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
       MouseEvent event = event_synthetic.nativeEvent;
+      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+        return;
+      }
       dna_end.handle_selection_mouse_up(event);
     }
   }
