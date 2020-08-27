@@ -1,5 +1,4 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -206,7 +205,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // can only connect opposite type ends with crossover
         return;
       }
-      //FIXME: can we avoid this global variable access? probably not since there's multiple stores
+
       app.dispatch(actions.PotentialCrossoverRemove());
       if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
           (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {

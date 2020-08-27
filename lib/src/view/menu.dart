@@ -516,7 +516,7 @@ be converted to a string using JSON.'''
             !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
-        ..display = 'Major tick offset font size'
+        ..display = 'major tick offset font size'
         ..default_value = props.major_tick_offset_font_size
         ..hide = !props.display_of_major_ticks_offsets
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
