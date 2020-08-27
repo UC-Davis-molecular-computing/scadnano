@@ -636,13 +636,13 @@ When selected, the length of each loopout is displayed next to it.'''
       },
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
-        ..display = 'SVG Side View')(),
+        ..display = 'SVG side view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
-        ..display = 'SVG Main View')(),
+        ..display = 'SVG main view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
-        ..display = 'DNA Sequences')(),
+        ..display = 'DNA sequences')(),
     );
   }
 
@@ -660,21 +660,21 @@ When selected, the length of each loopout is displayed next to it.'''
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
           'target': '_blank',
         },
-        'Web Interface Help',
+        'Web interface help',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Web Interface Tutorial',
+        'Web interface tutorial',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
-        'Python Scripting Help',
+        'Python scripting help',
       ),
       DropdownItem(
         {
@@ -682,14 +682,14 @@ When selected, the length of each loopout is displayed next to it.'''
               'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Python Scripting Tutorial',
+        'Python scripting tutorial',
       ),
       DropdownItem(
         {
           'href': 'https://scadnano-python-package.readthedocs.io',
           'target': '_blank',
         },
-        'Python Scripting API',
+        'Python scripting API',
       ),
       DropdownItem(
         {
@@ -698,10 +698,12 @@ When selected, the length of each loopout is displayed next to it.'''
           'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
-This is updated more frequently than the main site at https://scadnano.org.
+This site is updated more frequently than the main site at https://scadnano.org.
 
 This includes open issues that have been handled in the dev branch but not the main branch:
-https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev'''
+https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev
+
+However, it may be less stable than the main site.'''
         },
         'scadnano dev version',
       ),
