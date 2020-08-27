@@ -159,6 +159,8 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     if (end_selectable(dna_end)) {
       // select end
       MouseEvent event = event_synthetic.nativeEvent;
+      //On a mac event.button is: 0-left, 1-middle, 2-right.
+      //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets called on a right or middle click.
       if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
         return;
       }
@@ -171,6 +173,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
       MouseEvent event = event_synthetic.nativeEvent;
+      //On a mac event.button is: 0-left, 1-middle, 2-right.
+      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+        return;
+      }
       dna_end.handle_selection_mouse_up(event);
     }
   }
