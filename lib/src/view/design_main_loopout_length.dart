@@ -1,4 +1,5 @@
 import 'package:over_react/over_react.dart';
+import 'package:platform_detect/platform_detect.dart';
 
 import '../constants.dart' as constants;
 import 'package:scadnano/src/state/geometry.dart';
@@ -26,8 +27,12 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
 
   ReactElement _loopout_length() {
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_width_svg}';
+    var dx = '${0}';
 
+    if(browser.isFirefox){
+      dx = '${0.55 * props.geometry.base_height_svg}';
+    }
+    
     Map<String, dynamic> style_map = {'fontSize': '${9}px'};
     var loopout_length = props.loopout.loopout_length.toString().split('').reversed.join('');
 
@@ -39,6 +44,6 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
     return (Dom.text()
       ..rotate = 180
       ..key = props.loopout.id()
-      ..dy = dy)(text_path_props(loopout_length));
+      ..dx = dx)(text_path_props(loopout_length));
   }
 }
