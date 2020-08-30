@@ -75,6 +75,9 @@ Following [semantic versioning](https://semver.org/), version numbers are major.
 
 Please report issues in the web interface at the [scadnano web interface GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano/issues), and report issues in the Python scripting library at the [scadnano Python package GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
+If you find an existing issue that you would like to see handled, please "vote" for it with the GitHub "thumbs up" on the top comment describing the issue:
+
+![](images/github-vote.png)
 
 
 ## Tutorial
