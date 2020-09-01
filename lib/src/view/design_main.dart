@@ -42,6 +42,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..potential_vertical_crossovers = state.design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
+        ..domain_label_font_size = state.ui_state.domain_label_font_size
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
         ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
         ..has_error = state.has_error()
@@ -51,6 +52,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
         ..show_dna = state.ui_state.show_dna
+        ..show_domain_labels = state.ui_state.show_domain_labels
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..dna_sequence_png_horizontal_offset = state.ui_state.dna_sequence_png_horizontal_offset
@@ -83,6 +85,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool has_error;
   bool show_mismatches;
   bool show_dna;
+  bool show_domain_labels;
+  num domain_label_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool drawing_potential_crossover;
@@ -128,6 +132,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
+        ..show_domain_labels = props.show_domain_labels
         ..show_helix_circles = props.show_helix_circles
         ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
         ..display_base_offsets_of_major_ticks_only_first_helix =

@@ -11,7 +11,12 @@ part 'edit_mode.g.dart';
 class EditModeChoice extends EnumClass {
   const EditModeChoice._(String name) : super(name);
 
+  @memoized
+  int get hashCode;
+
   static Serializer<EditModeChoice> get serializer => _$editModeChoiceSerializer;
+
+  /******************** end BuiltValue boilerplate *********************/
 
   static const EditModeChoice select = _$select;
   static const EditModeChoice pencil = _$pencil; // used to join two Domains with Crossover
@@ -104,9 +109,6 @@ class EditModeChoice extends EnumClass {
 
   @override
   String toString() => display_name();
-
-  @memoized
-  int get hashCode;
 
   static EditModeChoice from_json(String the_name) {
     for (var val in values) {

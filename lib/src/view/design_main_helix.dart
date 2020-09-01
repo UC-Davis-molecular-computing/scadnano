@@ -30,6 +30,7 @@ mixin DesignMainHelixProps on UiProps {
   num major_tick_width_font_size;
   bool helix_change_apply_to_all;
   bool show_dna;
+  bool show_domain_labels;
   bool display_base_offsets_of_major_ticks;
   bool display_major_tick_widths;
   bool show_helix_circles;
@@ -88,10 +89,8 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
           ..d = vert_line_paths['major']
           ..key = 'helix-vert-major-lines')(),
       ),
-      if (props.display_base_offsets_of_major_ticks)
-        _major_tick_offsets_svg_group(),
-      if (props.display_major_tick_widths)
-        _major_tick_widths_svg_group(),
+      if (props.display_base_offsets_of_major_ticks) _major_tick_offsets_svg_group(),
+      if (props.display_major_tick_widths) _major_tick_widths_svg_group(),
 //      if (props.strand_create_enabled)
       (Dom.rect()
 //          ..onClick = start_strand_create
@@ -152,16 +151,19 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   _major_tick_offsets_svg_group() {
     List<int> major_ticks = props.helix.calculate_major_ticks();
 
-//    var y = -DISTANCE_OFFSET_DISPLAY_FROM_HELIX - (props.show_dna ? constants.BASE_HEIGHT_SVG : 0);
-
-    num y = props.helix.svg_position.y -
-        (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + (props.show_dna ? props.helix.geometry.base_height_svg : 0));
+    // offset if DNA sequences and/or domain labels are present
+    num offset = 0;
+    if (props.show_dna) {
+      offset += props.helix.geometry.base_height_svg;
+    }
+    if (props.show_domain_labels) {
+      offset += 1.2 * props.helix.geometry.base_height_svg;
+    }
+    num y = props.helix.svg_position.y - (DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset);
 
     var offset_texts_elements = [];
     for (int offset in major_ticks) {
       var x = (offset + 0.5) * props.helix.geometry.base_width_svg;
-//      Point<num> pos = helix.svg_base_pos(offset, true);
-//      num x = pos.x;
       var text_element = (Dom.text()
         ..className = 'main-view-helix-major-tick-offset-text'
         ..x = '$x'
@@ -182,10 +184,16 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   _major_tick_widths_svg_group() {
     List<int> major_ticks = props.helix.calculate_major_ticks();
 
-    num y = props.helix.svg_position.y +
-        props.helix.svg_height() +
-        DISTANCE_OFFSET_DISPLAY_FROM_HELIX +
-        (props.show_dna ? props.helix.geometry.base_height_svg : 0);
+    // offset if DNA sequences and/or domain labels are present
+    num offset = 0;
+    if (props.show_dna) {
+      offset += props.helix.geometry.base_height_svg;
+    }
+    if (props.show_domain_labels) {
+      offset += props.helix.geometry.base_height_svg;
+    }
+    num y =
+        props.helix.svg_position.y + props.helix.svg_height() + DISTANCE_OFFSET_DISPLAY_FROM_HELIX + offset;
 
     var offset_texts_elements = [];
     Map<num, int> map_offset_to_distance = {};

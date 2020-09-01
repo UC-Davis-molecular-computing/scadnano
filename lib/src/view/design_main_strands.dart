@@ -22,7 +22,6 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..groups = state.design.groups
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
-    ..show_modifications = state.ui_state.show_modifications
     ..currently_moving = state.ui_state.strands_move != null ||
         state.ui_state.domains_move != null ||
         state.ui_state.dna_ends_are_moving
@@ -31,8 +30,12 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
     ..warn_on_change_strand_dna_assign_default = state.ui_state.warn_on_change_strand_dna_assign_default
     ..only_display_selected_helices = state.ui_state.only_display_selected_helices
+    ..show_dna = state.ui_state.show_dna
+    ..show_modifications = state.ui_state.show_modifications
     ..modification_font_size = state.ui_state.modification_font_size
     ..modification_display_connector = state.ui_state.modification_display_connector
+    ..show_domain_labels = state.ui_state.show_domain_labels
+    ..domain_label_font_size = state.ui_state.domain_label_font_size
     ..geometry = state.design.geometry;
 })(DesignMainStrands);
 
@@ -44,7 +47,11 @@ mixin DesignMainStrandsProps on UiProps {
   BuiltMap<String, HelixGroup> groups;
   BuiltSet<int> side_selected_helix_idxs;
   SelectablesStore selectables_store;
+  bool show_dna;
   bool show_modifications;
+  bool show_domain_labels;
+  num modification_font_size;
+  num domain_label_font_size;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool currently_moving;
@@ -52,7 +59,6 @@ mixin DesignMainStrandsProps on UiProps {
   bool warn_on_change_strand_dna_assign_default;
   bool only_display_selected_helices;
   bool modification_display_connector;
-  num modification_font_size;
   Geometry geometry;
 }
 
@@ -85,15 +91,18 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..selected_crossovers_in_strand = selected_crossovers_in_strand
         ..selected_loopouts_in_strand = selected_loopouts_in_strand
         ..selected_domains_in_strand = selected_domains_in_strand
-        ..show_modifications = props.show_modifications
         ..currently_moving = props.currently_moving
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default
         ..warn_on_change_strand_dna_assign_default = props.warn_on_change_strand_dna_assign_default
         ..only_display_selected_helices = props.only_display_selected_helices
+        ..show_dna = props.show_dna
+        ..show_modifications = props.show_modifications
+        ..show_domain_labels = props.show_domain_labels
         ..modification_font_size = props.modification_font_size
         ..modification_display_connector = props.modification_display_connector
+        ..domain_label_font_size = props.domain_label_font_size
         ..geometry = props.geometry
         ..key = strand.toString())());
     }

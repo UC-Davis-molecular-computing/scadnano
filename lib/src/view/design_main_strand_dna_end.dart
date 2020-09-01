@@ -1,11 +1,13 @@
 import 'dart:html';
-import 'dart:math';
 
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
 import 'package:react/react.dart' as react;
+import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
+import 'package:scadnano/src/state/strand.dart';
+import 'package:built_collection/built_collection.dart';
 
 import '../state/selectable.dart';
 import '../state/dna_end.dart';
@@ -27,6 +29,7 @@ UiFactory<DesignMainDNAEndProps> DesignMainDNAEnd = _$DesignMainDNAEnd;
 
 @Props()
 mixin DesignMainDNAEndPropsMixin on UiProps {
+  Strand strand;
   Domain domain;
   Color color;
   bool is_5p;
@@ -37,6 +40,7 @@ mixin DesignMainDNAEndPropsMixin on UiProps {
   HelixGroup group;
   Geometry geometry;
   bool selected;
+  List<ContextMenuItem> Function(Strand strand, {bool is_5p}) context_menu_strand;
   bool drawing_potential_crossover;
   bool moving_this_dna_end;
 }
@@ -114,11 +118,51 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     );
   }
 
+  @override
+  componentDidMount() {
+    var element;
+    if (props.is_5p) {
+      element = querySelector('#${props.domain.dnaend_5p.id()}');
+    } else {
+      element = querySelector('#${props.domain.dnaend_3p.id()}');
+    }
+    element.addEventListener('contextmenu', on_context_menu);
+  }
+
+  @override
+  componentWillUnmount() {
+    var element;
+    if (props.is_5p) {
+      element = querySelector('#${props.domain.dnaend_5p.id()}');
+    } else {
+      element = querySelector('#${props.domain.dnaend_3p.id()}');
+    }
+    element.removeEventListener('contextmenu', on_context_menu);
+    super.componentWillUnmount();
+  }
+
+  on_context_menu(Event ev) {
+    MouseEvent event = ev;
+    if (!event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      app.dispatch(actions.ContextMenuShow(
+          context_menu: ContextMenu(
+              items: props.context_menu_strand(props.strand, is_5p: props.is_5p).build(),
+              position: event.page)));
+    }
+  }
+
 //  handle_end_click_select_and_or_move(react.SyntheticPointerEvent event) {
   handle_end_click_select_and_or_move_start(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
       // select end
       MouseEvent event = event_synthetic.nativeEvent;
+      //On a mac event.button is: 0-left, 1-middle, 2-right.
+      //On chrome mac, only handle_end_click_ligate_or_potential_crossover gets called on a right or middle click.
+      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+        return;
+      }
       dna_end.handle_selection_mouse_down(event);
       // set up drag detection for moving DNA ends
       app.dispatch(actions.DNAEndsMoveStart(offset: dna_end.offset_inclusive, helix: props.helix));
@@ -128,6 +172,10 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   handle_end_pointer_up_select(react.SyntheticPointerEvent event_synthetic) {
     if (end_selectable(dna_end)) {
       MouseEvent event = event_synthetic.nativeEvent;
+      //On a mac event.button is: 0-left, 1-middle, 2-right.
+      if (event.button == constants.RIGHT_CLICK_BUTTON || event.button == constants.MIDDLE_CLICK_BUTTON) {
+        return;
+      }
       dna_end.handle_selection_mouse_up(event);
     }
   }
@@ -157,7 +205,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
         // can only connect opposite type ends with crossover
         return;
       }
-      //FIXME: can we avoid this global variable access? probably not since there's multiple stores
+
       app.dispatch(actions.PotentialCrossoverRemove());
       if ((is_first && potential_crossover.dna_end_first_click.substrand_is_last) ||
           (is_last && potential_crossover.dna_end_first_click.substrand_is_first)) {

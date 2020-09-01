@@ -122,7 +122,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         var prev_helix = props.helices[prev_domain.helix];
         var next_helix = props.helices[next_domain.helix];
         var loopout_path_desc = loopout_path_description_within_group(
-            prev_helix, next_helix, prev_domain, next_domain, loopout, false);
+            prev_helix, next_helix, prev_domain, next_domain, loopout, false, false);
         path_cmds.add(loopout_path_desc);
         helix = props.helices[next_domain.helix]; // need to update this for next domain line to be draw
       }

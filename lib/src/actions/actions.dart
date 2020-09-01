@@ -25,6 +25,7 @@ import '../state/grid.dart';
 import '../state/helix.dart';
 import '../state/local_storage_design_choice.dart';
 import '../state/loopout.dart';
+import '../state/modification.dart';
 import '../state/position3d.dart';
 import '../state/potential_crossover.dart';
 import '../state/selectable.dart';
@@ -312,7 +313,7 @@ abstract class SelectModesSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Show/hide DNA/modifications/mismatches/editor
+// Show/hide DNA/modifications/mismatches/domain labels/editor
 abstract class SetAppUIStateStorable
     with BuiltJsonSerializable
     implements Action, Built<SetAppUIStateStorable, SetAppUIStateStorableBuilder> {
@@ -343,6 +344,22 @@ abstract class ShowDNASet with BuiltJsonSerializable implements Action, Built<Sh
   static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
 }
 
+abstract class ShowDomainNamesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainNamesSet, ShowDomainNamesSetBuilder> {
+  bool get show;
+
+  factory ShowDomainNamesSet(bool show) => ShowDomainNamesSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) =
+      _$ShowDomainNamesSet;
+
+  ShowDomainNamesSet._();
+
+  static Serializer<ShowDomainNamesSet> get serializer => _$showDomainNamesSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -357,6 +374,19 @@ abstract class ShowModificationsSet
   ShowModificationsSet._();
 
   static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
+}
+
+abstract class DomainNameFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<DomainNameFontSizeSet, DomainNameFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory DomainNameFontSizeSet({num font_size}) = _$DomainNameFontSizeSet._;
+
+  DomainNameFontSizeSet._();
+
+  static Serializer<DomainNameFontSizeSet> get serializer => _$domainNameFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet
@@ -1250,7 +1280,7 @@ abstract class HelixMajorTickPeriodicDistancesChangeAll
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helix change min/max offsets
+// Helix change index
 
 abstract class HelixIdxsChange
     with BuiltJsonSerializable, UndoableAction
@@ -2107,6 +2137,68 @@ abstract class DeletionRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification add
+abstract class ModificationAdd
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationAdd, ModificationAddBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationAdd({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationAdd._;
+
+  ModificationAdd._();
+
+  static Serializer<ModificationAdd> get serializer => _$modificationAddSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification remove
+abstract class ModificationRemove
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationRemove, ModificationRemoveBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationRemove({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationRemove._;
+
+  ModificationRemove._();
+
+  static Serializer<ModificationRemove> get serializer => _$modificationRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// modification edit
+abstract class ModificationEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<ModificationEdit, ModificationEditBuilder> {
+  Strand get strand;
+
+  Modification get modification;
+
+  @nullable
+  int get strand_dna_idx;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationEdit({Strand strand, Modification modification, int strand_dna_idx}) =
+      _$ModificationEdit._;
+
+  ModificationEdit._();
+
+  static Serializer<ModificationEdit> get serializer => _$modificationEditSerializer;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change
 
 abstract class GridChange
@@ -2445,18 +2537,15 @@ abstract class ShowGridCoordinatesSideViewSet
 
 abstract class ShowLoopoutLengthSet
     with BuiltJsonSerializable
-    implements
-        Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
+    implements Built<ShowLoopoutLengthSet, ShowLoopoutLengthSetBuilder> {
   bool get show_loopout_length;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowLoopoutLengthSet({bool show_loopout_length}) =
-      _$ShowLoopoutLengthSet._;
+  factory ShowLoopoutLengthSet({bool show_loopout_length}) = _$ShowLoopoutLengthSet._;
 
   ShowLoopoutLengthSet._();
 
-  static Serializer<ShowLoopoutLengthSet> get serializer =>
-      _$showLoopoutLengthSetSerializer;
+  static Serializer<ShowLoopoutLengthSet> get serializer => _$showLoopoutLengthSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2467,15 +2556,18 @@ abstract class LoadDnaSequenceImageUri
     implements Action, Built<LoadDnaSequenceImageUri, LoadDnaSequenceImageUriBuilder> {
   @nullable
   String get uri;
+
   num get dna_sequence_png_horizontal_offset;
+
   num get dna_sequence_png_vertical_offset;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDnaSequenceImageUri(String uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) => LoadDnaSequenceImageUri.from((b) => b
-    ..uri = uri
-    ..dna_sequence_png_horizontal_offset=dna_sequence_png_horizontal_offset
-    ..dna_sequence_png_vertical_offset=dna_sequence_png_vertical_offset
-  );
+  factory LoadDnaSequenceImageUri(
+          String uri, num dna_sequence_png_horizontal_offset, num dna_sequence_png_vertical_offset) =>
+      LoadDnaSequenceImageUri.from((b) => b
+        ..uri = uri
+        ..dna_sequence_png_horizontal_offset = dna_sequence_png_horizontal_offset
+        ..dna_sequence_png_vertical_offset = dna_sequence_png_vertical_offset);
 
   factory LoadDnaSequenceImageUri.from([void Function(LoadDnaSequenceImageUriBuilder) updates]) =
       _$LoadDnaSequenceImageUri;

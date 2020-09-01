@@ -4,8 +4,12 @@ import '../state/strand.dart';
 import '../actions/actions.dart' as actions;
 
 Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrossoverToLoopout action) {
-  Loopout loopout_new = Loopout(action.length, action.crossover.prev_domain_idx,
-      action.crossover.next_domain_idx + 1, strand.is_scaffold);
+  Loopout loopout_new = Loopout(
+    loopout_length: action.length,
+    prev_domain_idx: action.crossover.prev_domain_idx,
+    next_domain_idx: action.crossover.next_domain_idx + 1,
+    is_scaffold: strand.is_scaffold,
+  );
   var substrands_builder = strand.substrands.toBuilder();
   substrands_builder.insert(action.crossover.next_domain_idx, loopout_new);
   strand = strand.rebuild((s) => s..substrands = substrands_builder);

@@ -47,6 +47,9 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ModificationEdit,
+  ModificationRemove,
+  ModificationAdd,
   ShowLoopoutLengthSet,
   HelixGroupMove,
   HelixGroupMoveStart,
@@ -70,6 +73,7 @@ part 'serializers.g.dart';
   SelectModesAdd,
   SelectionBox,
   ShowDNASet,
+  ShowDomainNamesSet,
   ShowModificationsSet,
   ShowMismatchesSet,
   SetShowEditor,
@@ -233,6 +237,7 @@ part 'serializers.g.dart';
   InvertYZSet,
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
+  DomainNameFontSizeSet,
   MajorTickOffsetFontSizeSet,
   MajorTickWidthFontSizeSet,
   HelicesPositionsSetBasedOnCrossovers,

@@ -27,6 +27,15 @@ abstract class Strand
     implements Built<Strand, StrandBuilder> {
   Strand._();
 
+  factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
+
+  static Serializer<Strand> get serializer => _$strandSerializer;
+
+  @memoized
+  int get hashCode;
+
+  /************************ end BuiltValue boilerplate ************************/
+
   //FIXME: this is not pure since it consults util.color_cycler
   factory Strand(
     Iterable<Substrand> substrands, {
@@ -37,6 +46,7 @@ abstract class Strand
     Modification5Prime modification_5p = null,
     Modification3Prime modification_3p = null,
     Map<int, ModificationInternal> modifications_int = const {},
+    String name = null,
     Object label = null,
   }) {
     if (color == null) {
@@ -52,18 +62,13 @@ abstract class Strand
       ..modification_3p = modification_3p?.toBuilder()
       ..modifications_int.replace(modifications_int)
       ..is_scaffold = is_scaffold
+      ..name = name
       ..label = label
       ..unused_fields = MapBuilder<String, Object>({}));
 
     strand = strand.initialize();
     return strand;
   }
-
-  factory Strand.from([void Function(StrandBuilder) updates]) = _$Strand;
-
-  static Serializer<Strand> get serializer => _$strandSerializer;
-
-  /************************ end BuiltValue boilerplate ************************/
 
   //FIXME: remove prev_ and next_ from Loopout so they don't need to be recalculated
 
@@ -152,13 +157,13 @@ abstract class Strand
   Color get color;
 
   @nullable
+  String get name;
+
+  @nullable
   @BuiltValueField(serialize: false)
   Object get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
-
-  @memoized
-  int get hashCode;
 
   /// Returns list of same length as substrands, indicating for each substrand,
   /// the internal modifications on that substrand.
@@ -282,9 +287,15 @@ abstract class Strand
 //    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
 //  }
 
-  List<Domain> domains() => [for (var ss in this.substrands) if (ss.is_domain()) ss as Domain];
+  List<Domain> domains() => [
+        for (var ss in this.substrands)
+          if (ss.is_domain()) ss as Domain
+      ];
 
-  List<Loopout> loopouts() => [for (var ss in this.substrands) if (ss.is_loopout()) ss];
+  List<Loopout> loopouts() => [
+        for (var ss in this.substrands)
+          if (ss.is_loopout()) ss
+      ];
 
   List<DNAEnd> ends_5p_not_first() => [for (var ss in domains().sublist(1)) ss.dnaend_5p];
 
@@ -302,7 +313,9 @@ abstract class Strand
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     var json_map = Map<String, dynamic>();
 
-    json_map.addAll(unused_fields.toMap());
+    if (this.name != null) {
+      json_map[constants.name_key] = name;
+    }
 
     if (this.color != null) {
       json_map[constants.color_key] = color.toHexColor().toCssString();
@@ -343,6 +356,8 @@ abstract class Strand
     if (label != null) {
       json_map[constants.label_key] = label;
     }
+
+    json_map.addAll(unused_fields.toMap());
 
     return json_map;
   }
@@ -414,7 +429,7 @@ abstract class Strand
         ssb.is_last = (i == substrand_jsons.length - 1);
         int num_insertions = Domain.num_insertions_in_list(ssb.insertions.build());
         int dna_length = ssb.end - ssb.start + num_insertions - ssb.deletions.length;
-        ssb.is_scaffold=is_scaffold;
+        ssb.is_scaffold = is_scaffold;
         end_idx_ss = start_idx_ss + dna_length;
         domains[i] = ssb.build();
       } else {
@@ -458,6 +473,8 @@ abstract class Strand
         ? parse_json_color(json_map[constants.color_key])
         : DEFAULT_STRAND_COLOR;
 
+    String name = util.optional_field_with_null_default(json_map, constants.name_key);
+
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
@@ -465,6 +482,7 @@ abstract class Strand
     Strand strand = Strand(
       substrands,
       color: color,
+      name: name,
       is_scaffold: is_scaffold,
       dna_sequence: dna_sequence,
       label: label,

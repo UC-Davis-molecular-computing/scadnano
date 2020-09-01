@@ -5,7 +5,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.11.3";
+const String CURRENT_VERSION = "0.12.0";
 const String INITIAL_VERSION = "0.1.0";
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
@@ -65,6 +65,7 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
+const default_domain_label_font_size = 10;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
@@ -207,7 +208,8 @@ final helix_keys = [
 // https://github.com/dart-lang/sdk/issues/20574
 // https://github.com/dart-lang/sdk/issues/21625
 
-// label key used in Strand, Domain, and Loopout
+// name and label key used in Strand, Domain, and Loopout
+const name_key = 'name';
 const label_key = 'label';
 
 // Strand keys
@@ -327,6 +329,11 @@ const css_selector_end_5p_domain = 'five-prime-end';
 const css_selector_end_3p_domain = 'three-prime-end';
 const css_selector_end_parent_group = 'dna-ends';
 const css_selector_loopout_length = 'loopout-length';
+
+const css_selector_domain_name = 'domain-name';
+const css_selector_domain_name_text = 'domain-name-text';
+const css_selector_loopout_name = 'loopout-name';
+const css_selector_loopout_name_text = 'loopout-name-text';
 
 const css_selector_domain_moving = 'domain-line-moving';
 const css_selector_disallowed = 'disallowed';

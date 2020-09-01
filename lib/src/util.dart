@@ -1101,6 +1101,16 @@ Point<num> rotate(Point<num> point, num angle_degrees, {Point<num> origin = cons
   return point_rotated;
 }
 
+
+bool helices_view_order_is_default(BuiltList<int> helix_idxs, HelixGroup group) {
+  var default_helices_view_order = List<int>.from(helix_idxs);
+  default_helices_view_order.sort();
+  var helices_view_order = group.helices_view_order.toList();
+  var eq = const ListEquality().equals;
+  bool helices_view_order_is_default = eq(helices_view_order, default_helices_view_order);
+  return helices_view_order_is_default;
+}
+
 List<int> identity_permutation(int length) => [for (int i = 0; i < length; i++) i];
 
 /// Return offset and direction on helix where click event occurred.
@@ -1363,7 +1373,7 @@ void svg_to_png_data() {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
-    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, dna_sequence_png_horizontal_offset, dna_sequence_png_vertical_offset));
+    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
   });
 }
 

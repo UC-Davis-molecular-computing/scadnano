@@ -37,6 +37,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
+      ..show_domain_names = state.ui_state.show_domain_labels
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
@@ -51,6 +52,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
           app.state.ui_state.selectables_store.selected_items.isNotEmpty)
       ..modification_font_size = state.ui_state.modification_font_size
+      ..domain_name_font_size = state.ui_state.domain_label_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
       ..modification_display_connector = state.ui_state.modification_display_connector
@@ -79,8 +81,10 @@ UiFactory<MenuProps> Menu = _$Menu;
 mixin MenuPropsMixin on UiProps {
   bool no_grid_is_none;
   bool show_dna;
+  bool show_domain_names;
   bool show_modifications;
   num modification_font_size;
+  num domain_name_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool modification_display_connector;
@@ -407,6 +411,8 @@ Set geometric parameters affecting how the design is displayed.
     var elts = [
       ...view_menu_show_dna(),
       DropdownDivider({'key': 'divider-show-dna'}),
+      ...view_menu_show_labels(),
+      DropdownDivider({'key': 'divider-show-labels'}),
       ...view_menu_mods(),
       DropdownDivider({'key': 'divider-mods'}),
       ...view_menu_display_major_tick_offsets(),
@@ -425,7 +431,7 @@ Set geometric parameters affecting how the design is displayed.
     return [
       (MenuBoolean()
         ..value = props.show_dna
-        ..display = 'Show DNA Sequences'
+        ..display = 'Show DNA sequences'
         ..tooltip = '''\
 Show DNA sequences that have been assigned to strands. In a large design, this
 can slow down the performance of panning and zooming navigation, so uncheck it
@@ -434,7 +440,7 @@ to speed up navigation.'''
         ..key = 'show-dna-sequences')(),
       (MenuBoolean()
         ..value = props.show_mismatches
-        ..display = 'Show DNA Base Mismatches'
+        ..display = 'Show DNA base mismatches'
         ..tooltip = '''\
 Show mismatches between DNA assigned to one strand and the strand on the same
 helix with the opposite orientation.'''
@@ -445,18 +451,37 @@ helix with the opposite orientation.'''
     ];
   }
 
+  List view_menu_show_labels() {
+    return [
+      (MenuBoolean()
+        ..value = props.show_domain_names
+        ..display = 'Show domain names'
+        ..tooltip = 'Show domain and loopout names.'
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainNamesSet(!props.show_domain_names)))
+        ..key = 'show-domain-name')(),
+      (MenuNumber()
+        ..display = 'domain name font size'
+        ..default_value = props.domain_name_font_size
+        ..hide = !props.show_domain_names
+        ..tooltip = 'Adjust to change the font size of domain and loopout name.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
+        ..key = 'domain-label-font-size')(),
+    ];
+  }
+
   List view_menu_mods() {
     return [
       (MenuBoolean()
         ..value = props.show_modifications
-        ..display = 'Show Modifications'
+        ..display = 'Show modifications'
         ..tooltip = 'Check to show DNA modifications (e.g., biotins, fluorophores).'
         ..onChange = ((_) => props.dispatch(actions.ShowModificationsSet(!props.show_modifications)))
         ..key = 'show-mods')(),
       (MenuBoolean()
         ..value = props.modification_display_connector
         ..hide = !props.show_modifications
-        ..display = 'Display Modification Connector'
+        ..display = 'Display modification connector'
         ..tooltip = 'Check to display DNA modification connectors.'
         ..onChange = ((_) =>
             props.dispatch(actions.SetModificationDisplayConnector(!props.modification_display_connector)))
@@ -475,7 +500,7 @@ helix with the opposite orientation.'''
     return [
       (MenuBoolean()
         ..value = props.display_of_major_ticks_offsets
-        ..display = 'Display Major Tick Offsets'
+        ..display = 'Display major tick offsets'
         ..tooltip = 'Display the integer base offset to the right of each major tick, on the first helix.'
         ..onChange = ((_) =>
             props.dispatch(actions.DisplayMajorTicksOffsetsSet(!props.display_of_major_ticks_offsets)))
@@ -483,13 +508,13 @@ helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = !props.display_base_offsets_of_major_ticks_only_first_helix
         ..hide = !props.display_of_major_ticks_offsets
-        ..display = '... On All Helices'
+        ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
         ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
             !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
-        ..display = 'Major tick offset font size'
+        ..display = 'major tick offset font size'
         ..default_value = props.major_tick_offset_font_size
         ..hide = !props.display_of_major_ticks_offsets
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
@@ -502,7 +527,7 @@ helix with the opposite orientation.'''
     return [
       (MenuBoolean()
         ..value = props.display_major_tick_widths
-        ..display = 'Display Major Tick Widths'
+        ..display = 'Display major tick widths'
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange =
@@ -511,7 +536,7 @@ helix with the opposite orientation.'''
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
-        ..display = '...On All Helices'
+        ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
         ..onChange = ((_) => props.dispatch(
             actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
@@ -530,7 +555,7 @@ helix with the opposite orientation.'''
     return [
       (MenuBoolean()
         ..value = props.autofit
-        ..display = 'Auto-fit On Loading New Design'
+        ..display = 'Auto-fit on loading new design'
         ..tooltip = '''\
 When loading a new design, the side and main views will be translated to show 
 the lowest-index helix in the upper-left. otherwise, after loading the design, 
@@ -569,7 +594,7 @@ rotating the side view by 180 degrees.'''
         ..key = 'invert-yz-axes')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
-        ..display = 'Show main view Helix circles/idx'
+        ..display = 'Show main view helix circles/idx'
         ..tooltip = '''\
 Shows helix circles and idx's in main view. You may want to hide them for
 designs that have overlapping non-parallel helices.'''
@@ -609,13 +634,13 @@ When selected, the length of each loopout is displayed next to it.'''
       },
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.side)))
-        ..display = 'SVG Side View')(),
+        ..display = 'SVG side view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.ExportSvg(type: actions.ExportSvgType.main)))
-        ..display = 'SVG Main View')(),
+        ..display = 'SVG main view')(),
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
-        ..display = 'DNA Sequences')(),
+        ..display = 'DNA sequences')(),
     );
   }
 
@@ -633,21 +658,21 @@ When selected, the length of each loopout is displayed next to it.'''
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano#readme',
           'target': '_blank',
         },
-        'Web Interface Help',
+        'Web interface help',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Web Interface Tutorial',
+        'Web interface tutorial',
       ),
       DropdownItem(
         {
           'href': 'https://github.com/UC-Davis-molecular-computing/scadnano-python-package#readme',
           'target': '_blank',
         },
-        'Python Scripting Help',
+        'Python scripting help',
       ),
       DropdownItem(
         {
@@ -655,14 +680,14 @@ When selected, the length of each loopout is displayed next to it.'''
               'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
-        'Python Scripting Tutorial',
+        'Python scripting tutorial',
       ),
       DropdownItem(
         {
           'href': 'https://scadnano-python-package.readthedocs.io',
           'target': '_blank',
         },
-        'Python Scripting API',
+        'Python scripting API',
       ),
       DropdownItem(
         {
@@ -671,17 +696,19 @@ When selected, the length of each loopout is displayed next to it.'''
           'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
-This is updated more frequently than the main site at https://scadnano.org.
+This site is updated more frequently than the main site at https://scadnano.org.
 
 This includes open issues that have been handled in the dev branch but not the main branch:
-https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev'''
+https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev
+
+However, it may be less stable than the main site.'''
         },
         'scadnano dev version',
       ),
       DropdownItem(
         {
           'href':
-          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
+              'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
 //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'

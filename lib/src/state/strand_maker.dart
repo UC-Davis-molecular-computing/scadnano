@@ -46,7 +46,12 @@ class StrandMaker {
 
   StrandMaker to(int offset) {
     if (this.loopout_length != null) {
-      Loopout loopout = Loopout(this.loopout_length, this.current_offset, offset, this.is_scaffold);
+      Loopout loopout = Loopout(
+        loopout_length: loopout_length,
+        prev_domain_idx: current_offset,
+        next_domain_idx: offset,
+        is_scaffold: is_scaffold,
+      );
       this.substrands.add(loopout);
       this.loopout_length = null;
     }

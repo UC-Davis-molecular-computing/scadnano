@@ -127,7 +127,7 @@ main() {
         ..strands.add(Strand([
           Domain(helix: 0, forward: true, start: 0, end: 10, is_scaffold: false),
           Domain(helix: 1, forward: false, start: 5, end: 10, is_scaffold: false),
-          Loopout(3, 0, 2, false),
+          Loopout(loopout_length: 3, prev_domain_idx: 0, next_domain_idx: 2, is_scaffold: false),
           Domain(helix: 2, forward: true, start: 5, end: 15, is_scaffold: false),
         ], color: Color.rgb(247, 67, 8))));
       expect(actual_design.strands, expected_design.strands);

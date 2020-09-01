@@ -75,6 +75,9 @@ Following [semantic versioning](https://semver.org/), version numbers are major.
 
 Please report issues in the web interface at the [scadnano web interface GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano/issues), and report issues in the Python scripting library at the [scadnano Python package GitHub repository](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/issues).
 
+If you find an existing issue that you would like to see handled, please "vote" for it with the GitHub "thumbs up" on the top comment describing the issue:
+
+![](images/github-vote.png)
 
 
 ## Tutorial
@@ -250,8 +253,8 @@ Unlike cadnano, a scaffold strand can have either direction on any helix.
 When there is at least one scaffold, all non-scaffold strands are called *staples*.
 The general idea behind DNA origami is that every staple strand binds only to a scaffold, never to another staple.
 Neither does any scaffold bind to another scaffold or itself.
-However, neither of these conventions is enforced by scadnano, and there are legitimate reasons to want non-scaffold strands to bind to each other (e.g., for DNA [walkers](https://www.ncbi.nlm.nih.gov/pubmed/20463734) or [circuits](https://www.nature.com/articles/nnano.2017.127) on the surface of an origami).
-See the [original paper](https://www.nature.com/articles/nature04586) for more detailed instructions for designing DNA origami.
+However, neither of these conventions is enforced by scadnano, and there are legitimate reasons to want non-scaffold strands to bind to each other (e.g., for DNA [walkers](https://www.doi.org/10.1038/nature09026) or [circuits](https://doi.org/10.1038/nnano.2017.127) on the surface of an origami).
+See the [original paper](https://doi.org/10.1038/nature04586) for more detailed instructions for designing DNA origami.
 
 A strand can have an optional DNA sequence.
 Of course, since the whole point of this software is to help design DNA structures, at some point a DNA sequence should be assigned to some of the strands.

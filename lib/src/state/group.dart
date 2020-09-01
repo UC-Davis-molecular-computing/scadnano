@@ -81,11 +81,8 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
 
     json_map[constants.grid_key] = grid.name;
 
-    var default_helices_view_order = List<int>.from(helix_idxs);
-    default_helices_view_order.sort();
-    var helices_view_order_to_write = helices_view_order.toList();
-    var eq = const ListEquality().equals;
-    if (!eq(helices_view_order_to_write, default_helices_view_order)) {
+    if (!util.helices_view_order_is_default(helix_idxs, this)) {
+      var helices_view_order_to_write = helices_view_order.toList();
       json_map[constants.helices_view_order_key] =
           suppress_indent ? NoIndent(helices_view_order_to_write) : helices_view_order_to_write;
     }

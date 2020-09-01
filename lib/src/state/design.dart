@@ -119,7 +119,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
     var helix_idxs_of_selected_strands = {
-      for (var strand in selected_strands) for (var domain in strand.domains()) domain.helix
+      for (var strand in selected_strands)
+        for (var domain in strand.domains()) domain.helix
     };
     var groups_of_selected_strands = {
       for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
@@ -620,9 +621,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Map<String, dynamic> group_map = {};
       for (var name in groups.keys) {
         var group = groups[name];
-        var helix_idxs_in_group = [for (var helix in helices.values) if (helix.group == name) helix.idx];
-        group_map[name] =
-            group.to_json_serializable(suppress_indent: suppress_indent, helix_idxs: helix_idxs_in_group);
+        group_map[name] = group.to_json_serializable(
+            suppress_indent: suppress_indent, helix_idxs: helix_idxs_in_group[name]);
       }
       json_map[constants.groups_key] = group_map;
     }
@@ -678,12 +678,18 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   // set of all modifications in this design
   BuiltSet<Modification> _all_modifications() {
-    var mods_5p = BuiltSet<Modification>(
-        {for (var strand in strands) if (strand.modification_5p != null) strand.modification_5p});
-    var mods_3p = BuiltSet<Modification>(
-        {for (var strand in strands) if (strand.modification_3p != null) strand.modification_3p});
-    var mods_int = BuiltSet<Modification>(
-        {for (var strand in strands) for (var mod in strand.modifications_int.values) mod});
+    var mods_5p = BuiltSet<Modification>({
+      for (var strand in strands)
+        if (strand.modification_5p != null) strand.modification_5p
+    });
+    var mods_3p = BuiltSet<Modification>({
+      for (var strand in strands)
+        if (strand.modification_3p != null) strand.modification_3p
+    });
+    var mods_int = BuiltSet<Modification>({
+      for (var strand in strands)
+        for (var mod in strand.modifications_int.values) mod
+    });
     return mods_5p.union(mods_3p).union(mods_int);
   }
 
@@ -1193,8 +1199,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
-  BuiltList<Domain> get all_domains =>
-      [for (var strand in strands) for (var domain in strand.domains()) domain].build();
+  BuiltList<Domain> get all_domains => [
+        for (var strand in strands)
+          for (var domain in strand.domains()) domain
+      ].build();
 
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
