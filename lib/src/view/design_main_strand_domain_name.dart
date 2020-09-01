@@ -1,19 +1,18 @@
 import 'dart:math';
 
-import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 
 import '../state/geometry.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
-
 import '../state/helix.dart';
+import '../constants.dart' as constants;
 
-part 'design_main_strand_domain_label.over_react.g.dart';
+part 'design_main_strand_domain_name.over_react.g.dart';
 
-UiFactory<DesignMainStrandDomainLabelProps> DesignMainStrandDomainLabel = _$DesignMainStrandDomainLabel;
+UiFactory<DesignMainStrandDomainNameProps> DesignMainStrandDomainName = _$DesignMainStrandDomainName;
 
-mixin DesignMainStrandDomainLabelPropsMixin on UiProps {
+mixin DesignMainStrandDomainNamePropsMixin on UiProps {
   Domain domain;
   Helix helix;
   Geometry geometry;
@@ -23,20 +22,12 @@ mixin DesignMainStrandDomainLabelPropsMixin on UiProps {
   String transform;
 }
 
-class DesignMainStrandDomainLabelProps = UiProps with DesignMainStrandDomainLabelPropsMixin;
+class DesignMainStrandDomainNameProps = UiProps with DesignMainStrandDomainNamePropsMixin;
 
-class DesignMainStrandDomainLabelsComponent extends UiComponent2<DesignMainStrandDomainLabelProps>
+class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandDomainNameProps>
     with PureComponent {
   @override
   render() {
-    var label = props.domain.label;
-    String label_str;
-    if (label is String) {
-      label_str = label;
-    } else {
-      label_str = label.toString();
-    }
-
     Point<num> start_svg = props.helix.svg_base_pos(props.domain.start, props.domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward);
     Point<num> mid_svg = (start_svg + end_svg) * 0.5;
@@ -56,6 +47,6 @@ class DesignMainStrandDomainLabelsComponent extends UiComponent2<DesignMainStran
       ..transform = props.transform
       ..fontSize = props.font_size
       ..dominantBaseline = baseline
-      ..className = 'domain-label-text')(label_str);
+      ..className = constants.css_selector_domain_name_text)(props.domain.name);
   }
 }

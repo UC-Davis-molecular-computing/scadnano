@@ -6,7 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification.dart';
 
-import 'design_main_strand_labels.dart';
+import 'design_main_strand_names.dart';
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
@@ -114,7 +114,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       _insertions(),
       _deletions(),
       if (props.show_domain_labels)
-        (DesignMainStrandLabels()
+        (DesignMainStrandNames()
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -378,6 +378,7 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
+    ('    name=${strand.name}\n' ?? '\n') +
     "    length=${strand.dna_length()}\n" +
     "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +

@@ -58,6 +58,11 @@ abstract class Domain
 
   factory Domain.from([void Function(DomainBuilder) updates]) = _$Domain;
 
+  @memoized
+  int get hashCode;
+
+  /******************************* end built_value boilerplate ************************************/
+
   // named argument constructor
   factory Domain(
       {int helix,
@@ -69,6 +74,7 @@ abstract class Domain
       String dna_sequence,
       String strand_id,
       bool is_scaffold,
+      String name = null,
       Object label = null,
       bool is_first = false,
       bool is_last = false}) {
@@ -85,6 +91,7 @@ abstract class Domain
       ..end = end
       ..deletions.replace(deletions)
       ..insertions.replace(insertions)
+      ..name = name
       ..label = label
       ..dna_sequence = dna_sequence
       ..strand_id = strand_id
@@ -93,11 +100,6 @@ abstract class Domain
       ..is_scaffold = is_scaffold
       ..unused_fields.replace({}));
   }
-
-  @memoized
-  int get hashCode;
-
-  /******************************* end built_value boilerplate ************************************/
 
   int get helix;
 
@@ -116,6 +118,9 @@ abstract class Domain
   bool get is_last;
 
   bool get is_scaffold;
+
+  @nullable
+  String get name;
 
   @nullable
   @BuiltValueField(serialize: false)
@@ -171,12 +176,14 @@ abstract class Domain
   String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
-    var json_map = {
-      constants.helix_idx_key: this.helix,
-      constants.forward_key: this.forward,
-      constants.start_key: this.start,
-      constants.end_key: this.end,
-    };
+    Map<String, dynamic> json_map = {};
+    if (name != null) {
+      json_map[constants.name_key] = name;
+    }
+    json_map[constants.helix_idx_key] = helix;
+    json_map[constants.forward_key] = forward;
+    json_map[constants.start_key] = start;
+    json_map[constants.end_key] = end;
     if (this.deletions.isNotEmpty) {
       json_map[constants.deletions_key] = List<dynamic>.from(this.deletions);
     }
@@ -197,15 +204,16 @@ abstract class Domain
   }
 
   static DomainBuilder from_json(Map<String, dynamic> json_map) {
-    var name = 'Substrand';
-    var forward = util.mandatory_field(json_map, constants.forward_key, name,
+    var class_name = 'Substrand';
+    var forward = util.mandatory_field(json_map, constants.forward_key, class_name,
         legacy_keys: constants.legacy_forward_keys);
-    var helix = util.mandatory_field(json_map, constants.helix_idx_key, name);
-    var start = util.mandatory_field(json_map, constants.start_key, name);
-    var end = util.mandatory_field(json_map, constants.end_key, name);
+    var helix = util.mandatory_field(json_map, constants.helix_idx_key, class_name);
+    var start = util.mandatory_field(json_map, constants.start_key, class_name);
+    var end = util.mandatory_field(json_map, constants.end_key, class_name);
     var deletions = List<int>.from(util.optional_field(json_map, constants.deletions_key, []));
     var insertions = parse_json_insertions(util.optional_field(json_map, constants.insertions_key, []));
 
+    String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
@@ -217,6 +225,7 @@ abstract class Domain
       ..end = end
       ..deletions = ListBuilder<int>(deletions)
       ..insertions = ListBuilder<Insertion>(insertions)
+      ..name = name
       ..label = label
       ..unused_fields = unused_fields;
   }

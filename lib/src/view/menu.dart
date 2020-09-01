@@ -37,7 +37,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_labels = state.ui_state.show_domain_labels
+      ..show_domain_names = state.ui_state.show_domain_labels
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
@@ -52,7 +52,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
           app.state.ui_state.selectables_store.selected_items.isNotEmpty)
       ..modification_font_size = state.ui_state.modification_font_size
-      ..domain_label_font_size = state.ui_state.domain_label_font_size
+      ..domain_name_font_size = state.ui_state.domain_label_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
       ..modification_display_connector = state.ui_state.modification_display_connector
@@ -81,10 +81,10 @@ UiFactory<MenuProps> Menu = _$Menu;
 mixin MenuPropsMixin on UiProps {
   bool no_grid_is_none;
   bool show_dna;
-  bool show_domain_labels;
+  bool show_domain_names;
   bool show_modifications;
   num modification_font_size;
-  num domain_label_font_size;
+  num domain_name_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool modification_display_connector;
@@ -454,20 +454,18 @@ helix with the opposite orientation.'''
   List view_menu_show_labels() {
     return [
       (MenuBoolean()
-        ..value = props.show_domain_labels
-        ..display = 'Show domain labels'
-        ..tooltip = '''\
-Show Domain labels. If they are of type String, the String will be displayed. Otherwise the objected will 
-be converted to a string using JSON.'''
-        ..onChange = ((_) => props.dispatch(actions.ShowDomainLabelsSet(!props.show_domain_labels)))
-        ..key = 'show-domain-label')(),
+        ..value = props.show_domain_names
+        ..display = 'Show domain names'
+        ..tooltip = 'Show domain and loopout names.'
+        ..onChange = ((_) => props.dispatch(actions.ShowDomainNamesSet(!props.show_domain_names)))
+        ..key = 'show-domain-name')(),
       (MenuNumber()
-        ..display = 'domain label font size'
-        ..default_value = props.domain_label_font_size
-        ..hide = !props.show_domain_labels
-        ..tooltip = 'Adjust to change the font size of major tick offsets.'
+        ..display = 'domain name font size'
+        ..default_value = props.domain_name_font_size
+        ..hide = !props.show_domain_names
+        ..tooltip = 'Adjust to change the font size of domain and loopout name.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.DomainLabelFontSizeSet(font_size: font_size)))
+            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-label-font-size')(),
     ];
   }

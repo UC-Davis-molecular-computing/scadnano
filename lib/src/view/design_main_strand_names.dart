@@ -7,18 +7,18 @@ import '../state/group.dart';
 import '../state/domain.dart';
 import '../state/loopout.dart';
 import 'design_main_strand_paths.dart';
-import 'design_main_strand_domain_label.dart';
-import 'design_main_strand_loopout_label.dart';
+import 'design_main_strand_domain_name.dart';
+import 'design_main_strand_loopout_name.dart';
 import 'pure_component.dart';
 import '../state/strand.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
 
-part 'design_main_strand_labels.over_react.g.dart';
+part 'design_main_strand_names.over_react.g.dart';
 
-UiFactory<DesignMainStrandLabelsProps> DesignMainStrandLabels = _$DesignMainStrandLabels;
+UiFactory<DesignMainStrandNamesProps> DesignMainStrandNames = _$DesignMainStrandNames;
 
-mixin DesignMainStrandLabelsPropsMixin on UiProps {
+mixin DesignMainStrandNamesPropsMixin on UiProps {
   Strand strand;
 
   BuiltMap<int, Helix> helices;
@@ -31,14 +31,14 @@ mixin DesignMainStrandLabelsPropsMixin on UiProps {
   bool show_dna;
 }
 
-class DesignMainStrandLabelsProps = UiProps
-    with DesignMainStrandLabelsPropsMixin, TransformByHelixGroupPropsMixin;
+class DesignMainStrandNamesProps = UiProps
+    with DesignMainStrandNamesPropsMixin, TransformByHelixGroupPropsMixin;
 
-class DesignMainStrandLabelsComponent extends UiComponent2<DesignMainStrandLabelsProps>
-    with PureComponent, TransformByHelixGroup<DesignMainStrandLabelsProps> {
+class DesignMainStrandNamesComponent extends UiComponent2<DesignMainStrandNamesProps>
+    with PureComponent, TransformByHelixGroup<DesignMainStrandNamesProps> {
   @override
   render() {
-    List<ReactElement> labels = [];
+    List<ReactElement> names = [];
 
     int i = 0;
     for (var substrand in props.strand.substrands) {
@@ -46,17 +46,17 @@ class DesignMainStrandLabelsComponent extends UiComponent2<DesignMainStrandLabel
         Domain domain = substrand;
         bool draw_domain = should_draw_domain(
             domain.helix, props.side_selected_helix_idxs, props.only_display_selected_helices);
-        if (draw_domain && domain.label != null) {
+        if (draw_domain && domain.name != null) {
           Helix helix = props.helices[substrand.helix];
-          labels.add((DesignMainStrandDomainLabel()
+          names.add((DesignMainStrandDomainName()
             ..domain = substrand
             ..helix = helix
             ..geometry = props.geometry
             ..font_size = props.font_size
             ..transform = transform_of_helix(domain.helix)
             ..show_dna = props.show_dna
-            ..className = constants.css_selector_domain_label
-            ..key = "domain-label-$i")());
+            ..className = constants.css_selector_domain_name
+            ..key = "domain-name-$i")());
         }
       } else if (substrand is Loopout) {
         Loopout loopout = substrand;
@@ -66,16 +66,16 @@ class DesignMainStrandLabelsComponent extends UiComponent2<DesignMainStrandLabel
         int next_helix_idx = next_domain.helix;
         bool draw_loopout = should_draw_loopout(prev_helix_idx, next_helix_idx,
             props.side_selected_helix_idxs, props.only_display_selected_helices);
-        if (draw_loopout && loopout.label != null) {
-          labels.add((DesignMainStrandLoopoutLabel()
+        if (draw_loopout && loopout.name != null) {
+          names.add((DesignMainStrandLoopoutName()
             ..loopout = loopout
             ..prev_domain = prev_domain
             ..next_domain = next_domain
             ..geometry = props.geometry
             ..font_size = props.font_size
             ..show_dna = props.show_dna
-            ..className = constants.css_selector_loopout_label
-            ..key = "loopout-label-$i")());
+            ..className = constants.css_selector_loopout_name
+            ..key = "loopout-name-$i")());
         }
       } else {
         throw AssertionError('substrand must be Domain or Loopout');
@@ -83,7 +83,7 @@ class DesignMainStrandLabelsComponent extends UiComponent2<DesignMainStrandLabel
       i++;
     }
 
-    return labels.isEmpty ? null : (Dom.g()
-      ..className = 'domain-labels')(labels);
+    return names.isEmpty ? null : (Dom.g()
+      ..className = 'domain-names')(names);
   }
 }

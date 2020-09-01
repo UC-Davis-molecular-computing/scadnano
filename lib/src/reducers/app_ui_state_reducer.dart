@@ -108,7 +108,7 @@ bool helix_group_move_stop_app_ui_state_reducer(bool _, actions.HelixGroupMoveSt
 
 bool show_dna_reducer(bool _, actions.ShowDNASet action) => action.show;
 
-bool show_domain_labels_reducer(bool _, actions.ShowDomainLabelsSet action) => action.show;
+bool show_domain_labels_reducer(bool _, actions.ShowDomainNamesSet action) => action.show;
 
 bool show_modifications_reducer(bool _, actions.ShowModificationsSet action) => action.show;
 
@@ -117,7 +117,7 @@ bool modification_display_connector_reducer(bool _, actions.SetModificationDispl
 
 num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action) => action.font_size;
 
-num domain_label_font_size_reducer(num _, actions.DomainLabelFontSizeSet action) => action.font_size;
+num domain_label_font_size_reducer(num _, actions.DomainNameFontSizeSet action) => action.font_size;
 
 num major_tick_offset_font_size_reducer(num _, actions.MajorTickOffsetFontSizeSet action) => action.font_size;
 
@@ -244,7 +244,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..select_mode_state.replace(select_mode_state_reducer(storables.select_mode_state, action))
     ..edit_modes.replace(edit_modes_reducer(storables.edit_modes, action))
     ..show_dna = TypedReducer<bool, actions.ShowDNASet>(show_dna_reducer)(storables.show_dna, action)
-    ..show_domain_labels = TypedReducer<bool, actions.ShowDomainLabelsSet>(show_domain_labels_reducer)(
+    ..show_domain_labels = TypedReducer<bool, actions.ShowDomainNamesSet>(show_domain_labels_reducer)(
         storables.show_domain_labels, action)
     ..show_modifications = TypedReducer<bool, actions.ShowModificationsSet>(show_modifications_reducer)(
         storables.show_modifications, action)
@@ -253,7 +253,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.modification_display_connector, action)
     ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(modification_font_size_reducer)(
         storables.modification_font_size, action)
-    ..domain_label_font_size = TypedReducer<num, actions.DomainLabelFontSizeSet>(domain_label_font_size_reducer)(
+    ..domain_label_font_size = TypedReducer<num, actions.DomainNameFontSizeSet>(domain_label_font_size_reducer)(
         storables.domain_label_font_size, action)
     ..major_tick_offset_font_size =
         TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(

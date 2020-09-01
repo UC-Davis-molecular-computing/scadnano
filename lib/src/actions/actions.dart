@@ -344,20 +344,20 @@ abstract class ShowDNASet with BuiltJsonSerializable implements Action, Built<Sh
   static Serializer<ShowDNASet> get serializer => _$showDNASetSerializer;
 }
 
-abstract class ShowDomainLabelsSet
+abstract class ShowDomainNamesSet
     with BuiltJsonSerializable
-    implements Action, Built<ShowDomainLabelsSet, ShowDomainLabelsSetBuilder> {
+    implements Action, Built<ShowDomainNamesSet, ShowDomainNamesSetBuilder> {
   bool get show;
 
-  factory ShowDomainLabelsSet(bool show) => ShowDomainLabelsSet.from((b) => b..show = show);
+  factory ShowDomainNamesSet(bool show) => ShowDomainNamesSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowDomainLabelsSet.from([void Function(ShowDomainLabelsSetBuilder) updates]) =
-      _$ShowDomainLabelsSet;
+  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) =
+      _$ShowDomainNamesSet;
 
-  ShowDomainLabelsSet._();
+  ShowDomainNamesSet._();
 
-  static Serializer<ShowDomainLabelsSet> get serializer => _$showDomainLabelsSetSerializer;
+  static Serializer<ShowDomainNamesSet> get serializer => _$showDomainNamesSetSerializer;
 }
 
 abstract class ShowModificationsSet
@@ -376,17 +376,17 @@ abstract class ShowModificationsSet
   static Serializer<ShowModificationsSet> get serializer => _$showModificationsSetSerializer;
 }
 
-abstract class DomainLabelFontSizeSet
+abstract class DomainNameFontSizeSet
     with BuiltJsonSerializable
-    implements Action, Built<DomainLabelFontSizeSet, DomainLabelFontSizeSetBuilder> {
+    implements Action, Built<DomainNameFontSizeSet, DomainNameFontSizeSetBuilder> {
   num get font_size;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DomainLabelFontSizeSet({num font_size}) = _$DomainLabelFontSizeSet._;
+  factory DomainNameFontSizeSet({num font_size}) = _$DomainNameFontSizeSet._;
 
-  DomainLabelFontSizeSet._();
+  DomainNameFontSizeSet._();
 
-  static Serializer<DomainLabelFontSizeSet> get serializer => _$domainLabelFontSizeSetSerializer;
+  static Serializer<DomainNameFontSizeSet> get serializer => _$domainNameFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet

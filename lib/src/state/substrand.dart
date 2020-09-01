@@ -14,6 +14,7 @@ abstract class Substrand implements JSONSerializable, StrandPart {
 
   toJson();
 
-  Object get label;
+  String get name;
 
+  Object get label;
 }

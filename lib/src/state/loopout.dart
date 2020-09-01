@@ -18,13 +18,6 @@ part 'loopout.g.dart';
 abstract class Loopout
     with Selectable, BuiltJsonSerializable, UnusedFields
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
-  factory Loopout(int loopout_length, int prev_domain_idx, int next_domain_idx, bool is_scaffold) => Loopout.from((b) => b
-    ..loopout_length = loopout_length
-    ..prev_domain_idx = prev_domain_idx
-    ..next_domain_idx = next_domain_idx
-    ..is_scaffold = is_scaffold
-    ..unused_fields = MapBuilder<String, Object>({}));
-
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
 
   Loopout._();
@@ -36,7 +29,27 @@ abstract class Loopout
 
   /************************ end BuiltValue boilerplate ************************/
 
+  factory Loopout({
+    int loopout_length,
+    int prev_domain_idx,
+    int next_domain_idx,
+    bool is_scaffold,
+    String name,
+    Object label,
+  }) =>
+      Loopout.from((b) => b
+        ..loopout_length = loopout_length
+        ..prev_domain_idx = prev_domain_idx
+        ..next_domain_idx = next_domain_idx
+        ..is_scaffold = is_scaffold
+        ..name = name
+        ..label = label
+        ..unused_fields = MapBuilder<String, Object>({}));
+
   int get loopout_length;
+
+  @nullable
+  String get name;
 
   @nullable
   @BuiltValueField(serialize: false)
@@ -65,11 +78,13 @@ abstract class Loopout
   int dna_length() => this.loopout_length;
 
   static LoopoutBuilder from_json(Map<String, dynamic> json_map) {
-    var name = 'Loopout';
-    int loopout_length = util.mandatory_field(json_map, constants.loopout_key, name);
+    var class_name = 'Loopout';
+    int loopout_length = util.mandatory_field(json_map, constants.loopout_key, class_name);
+    String name = util.optional_field_with_null_default(json_map, constants.name_key);
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
     return LoopoutBuilder()
       ..loopout_length = loopout_length
+      ..name = name
       ..label = label
       ..unused_fields = util.unused_fields_map(json_map, constants.loopout_keys);
   }
@@ -78,6 +93,9 @@ abstract class Loopout
     Map<String, Object> json_map = {
       constants.loopout_key: loopout_length,
     };
+    if (name != null) {
+      json_map[constants.name_key] = name;
+    }
     if (label != null) {
       json_map[constants.label_key] = label;
     }
