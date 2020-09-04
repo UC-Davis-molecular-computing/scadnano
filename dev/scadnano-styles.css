@@ -600,7 +600,7 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
     white-space: pre; /* needed to display multiple space symbols in a row */
 }
 
-.loopout-label{
+.loopout-name {
     text-anchor: middle;
     pointer-events: none;
     dominant-baseline: ideographic;
