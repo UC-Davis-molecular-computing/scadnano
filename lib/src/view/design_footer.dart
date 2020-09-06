@@ -15,15 +15,14 @@ UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFoo
     BuiltList<MouseoverData> mouseover_datas = state.ui_state.mouseover_datas;
     MouseoverData first_mouseover_data =
         mouseover_datas.isNotEmpty ? state.ui_state.mouseover_datas.first : null;
-    Strand strand_first_mouseover_data = mouseover_datas.isNotEmpty
-        ? state.design.substrand_to_strand[first_mouseover_data.domain]
-        : null;
+    Strand strand_first_mouseover_data =
+        mouseover_datas.isNotEmpty ? state.design.substrand_to_strand[first_mouseover_data.domain] : null;
     String loaded_filename = state.ui_state.loaded_filename;
     return (DesignFooter()
       ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
       ..mouseover_datas = state.ui_state.mouseover_datas
       ..strand_first_mouseover_data = strand_first_mouseover_data
-    ..loaded_filename = loaded_filename);
+      ..loaded_filename = loaded_filename);
   },
 )(DesignFooter);
 
@@ -54,7 +53,8 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         text += (', ' +
             'domain length: ${domain_length}, ' +
             'strand length: ${strand.dna_length()}, ' +
-            (strand.idt != null ? 'strand IDT name: ${strand.idt.name}' : ''));
+            (strand.idt != null ? 'strand IDT name: ${strand.idt.name}' : '') +
+            (strand.name != null ? 'strand name: ${strand.name}' : ''));
         ;
       }
     } else {
