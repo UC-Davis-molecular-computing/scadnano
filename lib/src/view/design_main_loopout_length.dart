@@ -8,16 +8,16 @@ import 'pure_component.dart';
 
 part 'design_main_loopout_length.over_react.g.dart';
 
-UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
+UiFactory<DesignMainLoopoutLengthProps> DesignMainLoopoutLength = _$DesignMainLoopoutLength;
 
-mixin DesignMainLoopoutPropsMixin on UiProps {
+mixin DesignMainLoopoutLengthPropsMixin on UiProps {
   Geometry geometry;
   Loopout loopout;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin;
+class DesignMainLoopoutLengthProps = UiProps with DesignMainLoopoutLengthPropsMixin;
 
-class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> with PureComponent {
+class DesignMainLoopoutLengthComponent extends UiComponent2<DesignMainLoopoutLengthProps> with PureComponent {
   @override
   render() {
     List<ReactElement> loopout_length_elts = [];
@@ -29,7 +29,7 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
     var start_offset = '50%';
     var dx = '${0}';
 
-    if(browser.isFirefox){
+    if (browser.isFirefox) {
       dx = '${0.55 * props.geometry.base_height_svg}';
     }
     

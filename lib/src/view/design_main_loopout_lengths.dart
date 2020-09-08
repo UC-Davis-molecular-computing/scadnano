@@ -32,7 +32,7 @@ class DesignMainLoopoutLengthsComponent extends UiComponent2<DesignMainLoopoutLe
       return (Dom.g()..className = 'loopout-length-main-view')([
         for (Strand strand in props.strands)
           for (Loopout loopout in strand.loopouts())
-            (DesignMainLoopout()
+            (DesignMainLoopoutLength()
               ..geometry = props.geometry
               ..key = loopout.toString()
               ..loopout = loopout
