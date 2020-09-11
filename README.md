@@ -289,7 +289,7 @@ honeycomb grid (this matches the coordinate system used by cadnano for the honey
 
 ![](doc-images/grid_honeycomb.svg)
 
-hexagonal grid (note that although the honeycomb grid is a subset of the hex grid, they use a different coordinate system; e.g., note the differing relative positions of (-1,-1) and (0,-1) in each). This is called the "odd-q" coordinate system here: https://www.redblobgames.com/grids/hexagons/:
+hexagonal grid (note that although the honeycomb grid is a subset of the hex grid, they use a different coordinate system; e.g., note the differing relative positions of (1,1) and (2,1) in each). This is called the "odd-q" coordinate system here: https://www.redblobgames.com/grids/hexagons/:
 
 ![](doc-images/grid_hex.svg)
 
@@ -330,7 +330,7 @@ Pressing Ctrl+Z will undo the last action that changed the design.
 Pressing Shift+Ctrl+Z will redo it.
 
 **Right-click:**
-Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click. (**Note for cadnano users:** Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand.)
+Some items can be right-clicked (or Ctrl-clicked on Mac) to bring up a context menu. **Note for cadnano users:** Some features of cadnano are available in this way, for example assigning a DNA sequence or a color to a strand. For such items the browser's normal right-click is disabled. To see the browser's normal right-click menu on such items, press Shift + right-click.
 
 Right-clicking on a crossover or loopout lets one toggle between a crossover or loopout or change the length of a loopout. 
 Setting length to a positive integer converts to a loopout and setting a length of 0 converts a loopout to a crossover.
