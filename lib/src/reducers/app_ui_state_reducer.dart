@@ -215,7 +215,7 @@ AppUIStateStorables app_ui_state_storable_global_reducer(
   // storables object and not just slices
   if (action is actions.SetAppUIStateStorable) {
     AppUIStateStorables storables = action.storables;
-    if (!state.design.groups.containsKey(action.storables.displayed_group_name)) {
+    if (state.design != null && !state.design.groups.containsKey(action.storables.displayed_group_name)) {
       // if displayed_group_name does not exist, must pick a new one
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
     }
