@@ -15,6 +15,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 import 'unused_fields.dart';
+import 'design.dart';
 
 part 'domain.g.dart';
 
@@ -220,6 +221,22 @@ abstract class Domain
 
     deletions = util.remove_duplicates(deletions);
     insertions = util.remove_duplicates(insertions);
+    for (int i=0; i<insertions.length; i++) {
+      for (int j=i+1; j<insertions.length; j++) {
+        var ins1 = insertions[i];
+        var ins2 = insertions[j];
+        if (ins1.offset == ins2.offset) {
+          assert(ins1.length != ins2.length);
+          throw IllegalDesignError('two insertions on a ${forward? "forward": "reverse"} domain at '
+              '\n  helix=${helix}'
+              '\n  start=${start}'
+              '\n  end=${end}'
+              '\nhave the same offset but different lengths:'
+              '\n${ins1}'
+              '\n${ins2}');
+        }
+      }
+    }
 
     return DomainBuilder()
       ..forward = forward

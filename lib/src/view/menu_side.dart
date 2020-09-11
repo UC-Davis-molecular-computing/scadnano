@@ -23,7 +23,7 @@ part 'menu_side.over_react.g.dart';
 
 UiFactory<SideMenuProps> ConnectedSideMenu = connect<AppState, SideMenuProps>(
   mapStateToProps: (state) => (SideMenu()
-    ..groups = state.design.groups
+    ..groups = state.design?.groups
     ..displayed_group_name = state.ui_state.displayed_group_name),
   // Used for component test.
   forwardRef: true,
@@ -44,6 +44,10 @@ class SideMenuComponent extends UiComponent2<SideMenuProps> with RedrawCounterMi
 
   @override
   render() {
+    if (props.groups == null) {
+      return null;
+    }
+
     if (props.groups.length > 1 || props.displayed_group_name != constants.default_group_name) {
       return Navbar(
         {
