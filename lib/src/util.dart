@@ -7,6 +7,7 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:svg' hide Point, ImageElement;
 import 'dart:typed_data';
+import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:built_collection/built_collection.dart';
@@ -1052,11 +1053,11 @@ pprint(Map map) {
 String id_domain(Domain domain) =>
     'domain-H${domain.helix}-S${domain.start}-E${domain.end}-${domain.forward ? 'forward' : 'reverse'}';
 
-String id_insertion(Domain substrand, int offset) =>
-    'insertion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
+String id_insertion(Domain domain, int offset) =>
+    'insertion-H${domain.helix}-O${offset}-${domain.forward ? 'forward' : 'reverse'}';
 
-String id_deletion(Domain substrand, int offset) =>
-    'deletion-H${substrand.helix}-O${offset}-${substrand.forward ? 'forward' : 'reverse'}';
+String id_deletion(Domain domain, int offset) =>
+    'deletion-H${domain.helix}-O${offset}-${domain.forward ? 'forward' : 'reverse'}';
 
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
   Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};
@@ -1409,3 +1410,9 @@ async_alert(String msg) async {
   await null;
   Timer(Duration(microseconds: 1), () => window.alert(msg));
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// detect duplicates in list
+
+List<T> remove_duplicates<T>(Iterable<T> list) => LinkedHashSet<T>.from(list).toList();
+

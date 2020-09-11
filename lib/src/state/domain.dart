@@ -218,21 +218,24 @@ abstract class Domain
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 
+    deletions = util.remove_duplicates(deletions);
+    insertions = util.remove_duplicates(insertions);
+
     return DomainBuilder()
       ..forward = forward
       ..helix = helix
       ..start = start
       ..end = end
-      ..deletions = ListBuilder<int>(deletions)
-      ..insertions = ListBuilder<Insertion>(insertions)
+      ..deletions.replace(deletions)
+      ..insertions.replace(insertions)
       ..name = name
       ..label = label
       ..unused_fields = unused_fields;
   }
 
-  static BuiltList<Insertion> parse_json_insertions(json_encoded_insertions) {
+  static List<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
-    return BuiltList<Insertion>(json_encoded_insertions.map((list) => Insertion(list[0], list[1])));
+    return List<Insertion>.from(json_encoded_insertions.map((list) => Insertion(list[0], list[1])));
   }
 
   /// 5' end, INCLUSIVE
