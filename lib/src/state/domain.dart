@@ -227,14 +227,40 @@ abstract class Domain
         var ins2 = insertions[j];
         if (ins1.offset == ins2.offset) {
           assert(ins1.length != ins2.length);
-          throw IllegalDesignError('two insertions on a ${forward? "forward": "reverse"} domain at '
-              '\n  helix=${helix}'
-              '\n  start=${start}'
-              '\n  end=${end}'
-              '\nhave the same offset but different lengths:'
+          throw IllegalDesignError('two insertions on a domain have the same offset but different lengths:'
               '\n${ins1}'
-              '\n${ins2}');
+              '\n${ins2}'
+          '\n${pre_domain_description(helix, forward, start, end)}');
         }
+      }
+    }
+
+    for (int deletion in deletions) {
+      if (deletion < start) {
+        throw IllegalDesignError('deletion ${deletion} cannot be less than offset ${start}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (deletion >= end) {
+        throw IllegalDesignError('deletion ${deletion} cannot be greater than or equal to offset ${end}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+    }
+
+    for (Insertion insertion in insertions) {
+      if (insertion.offset < start) {
+        throw IllegalDesignError('insertion offset ${insertion.offset} '
+            'cannot be less than start offset ${start}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (insertion.offset >= end) {
+        throw IllegalDesignError('insertion offset ${insertion.offset} '
+            'cannot be greater than or equal to end offset ${end}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (insertion.length <= 0) {
+        throw IllegalDesignError('insertion length ${insertion.length} '
+            'cannot be less than or equal to 0.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
       }
     }
 
@@ -249,6 +275,12 @@ abstract class Domain
       ..label = label
       ..unused_fields = unused_fields;
   }
+
+  static String pre_domain_description(int helix, bool forward, int start, int end) =>
+      'This occurred on a ${forward? "forward": "reverse"} Domain with'
+          '\n  helix = ${helix}'
+          '\n  start = ${start}'
+          '\n  end   = ${end}.';
 
   static List<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
