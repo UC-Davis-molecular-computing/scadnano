@@ -12,9 +12,10 @@ import '../state/edit_mode.dart';
 import '../state/potential_vertical_crossover.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
+import 'design_main_domain_name_mismatches.dart';
 import 'design_main_loopout_lengths.dart';
 import 'design_main_strand_creating.dart';
-import 'design_main_mismatches.dart';
+import 'design_main_dna_mismatches.dart';
 import 'design_main_helices.dart';
 import 'design_main_potential_vertical_crossovers.dart';
 import 'design_main_strands.dart';
@@ -51,6 +52,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..strand_creation = state.ui_state.strand_creation
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
+        ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
         ..show_dna = state.ui_state.show_dna
         ..show_domain_labels = state.ui_state.show_domain_labels
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
@@ -84,6 +86,7 @@ mixin DesignMainPropsMixin on UiProps {
   StrandCreation strand_creation;
   bool has_error;
   bool show_mismatches;
+  bool show_domain_name_mismatches;
   bool show_dna;
   bool show_domain_labels;
   num domain_label_font_size;
@@ -141,11 +144,17 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
         ..key = 'helices')(),
       if (props.show_mismatches)
-        (DesignMainMismatches()
+        (DesignMainDNAMismatches()
           ..design = props.design
           ..only_display_selected_helices = props.only_display_selected_helices
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..key = 'mismatches')(),
+      if (props.show_domain_name_mismatches)
+        (DesignMainDomainNameMismatches()
+          ..design = props.design
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..key = 'domain-name-mismatches')(),
       (ConnectedDesignMainStrands()..key = 'strands')(),
       // after strands so can click when crossover overlaps potential crossover
       if (props.edit_modes.contains(EditModeChoice.pencil) && !props.drawing_potential_crossover)
@@ -215,10 +224,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..only_display_selected_helices = props.only_display_selected_helices
           ..show_helix_circles = props.show_helix_circles
           ..key = 'helix-group-moving')(),
-      (ConnectedDesignMainStrandsMoving()
-        ..key = 'strands-moving')(),
-      (ConnectedDesignMainDomainsMoving()
-        ..key = 'domains-moving')(),
+      (ConnectedDesignMainStrandsMoving()..key = 'strands-moving')(),
+      (ConnectedDesignMainDomainsMoving()..key = 'domains-moving')(),
     ]);
 
     if (USING_REACT_DND) {

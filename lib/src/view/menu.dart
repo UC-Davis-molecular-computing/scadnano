@@ -40,6 +40,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_domain_names = state.ui_state.show_domain_labels
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
+      ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
@@ -89,6 +90,7 @@ mixin MenuPropsMixin on UiProps {
   num major_tick_width_font_size;
   bool modification_display_connector;
   bool show_mismatches;
+  bool show_domain_name_mismatches;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -467,6 +469,16 @@ helix with the opposite orientation.'''
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-label-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_domain_name_mismatches
+        ..display = 'Show domain name mismatches'
+        ..tooltip = '''\
+Show mismatches between domain names assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        }
+        ..key = 'show-domain-name-mismatches')(),
     ];
   }
 

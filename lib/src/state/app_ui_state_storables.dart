@@ -32,6 +32,8 @@ abstract class AppUIStateStorables
 
   bool get show_mismatches;
 
+  bool get show_domain_name_mistmatches;
+
   bool get show_editor;
 
   /// True if only selected helices in the side view should be displayed in the
@@ -91,6 +93,7 @@ abstract class AppUIStateStorables
     b.show_domain_labels = false;
     b.show_modifications = true;
     b.show_mismatches = false;
+    b.show_domain_name_mistmatches = false;
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.modification_font_size = constants.default_modification_font_size;
