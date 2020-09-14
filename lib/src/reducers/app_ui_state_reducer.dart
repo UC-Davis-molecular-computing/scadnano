@@ -125,7 +125,7 @@ num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet 
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
-bool show_domain_name_mistmatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) => action.show_domain_name_mistmatches;
+bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) => action.show_domain_name_mismatches;
 
 bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
 
@@ -265,8 +265,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.major_tick_width_font_size, action)
     ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
         storables.show_mismatches, action)
-    ..show_domain_name_mistmatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mistmatches_reducer)(
-        storables.show_domain_name_mistmatches, action)
+    ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
+        storables.show_domain_name_mismatches, action)
     ..invert_yz = TypedReducer<bool, actions.InvertYZSet>(invert_yz_reducer)(storables.invert_yz, action)
     ..warn_on_exit_if_unsaved =
         TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(

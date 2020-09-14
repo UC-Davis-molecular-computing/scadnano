@@ -476,9 +476,9 @@ abstract class ShowMismatchesSet
 abstract class ShowDomainNameMismatchesSet
     with BuiltJsonSerializable
     implements Action, Built<ShowDomainNameMismatchesSet, ShowDomainNameMismatchesSetBuilder> {
-  bool get show_domain_name_mistmatches;
+  bool get show_domain_name_mismatches;
 
-  factory ShowDomainNameMismatchesSet(bool show_domain_name_mistmatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mistmatches = show_domain_name_mistmatches);
+  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
 
   /************************ begin BuiltValue boilerplate ************************/
   factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) = _$ShowDomainNameMismatchesSet;
