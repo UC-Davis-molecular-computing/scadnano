@@ -47,6 +47,7 @@ import 'state/crossover.dart';
 part 'serializers.g.dart';
 
 @SerializersFor([
+  ShowDomainNameMismatchesSet,
   ModificationEdit,
   ModificationRemove,
   ModificationAdd,

@@ -473,6 +473,21 @@ abstract class ShowMismatchesSet
   static Serializer<ShowMismatchesSet> get serializer => _$showMismatchesSetSerializer;
 }
 
+abstract class ShowDomainNameMismatchesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainNameMismatchesSet, ShowDomainNameMismatchesSetBuilder> {
+  bool get show_domain_name_mismatches;
+
+  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) = _$ShowDomainNameMismatchesSet;
+
+  ShowDomainNameMismatchesSet._();
+
+  static Serializer<ShowDomainNameMismatchesSet> get serializer => _$showDomainNameMismatchesSetSerializer;
+}
+
 abstract class SetShowEditor
     with BuiltJsonSerializable
     implements Action, Built<SetShowEditor, SetShowEditorBuilder> {
