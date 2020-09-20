@@ -27,10 +27,11 @@ class DesignMainLoopoutLengthComponent extends UiComponent2<DesignMainLoopoutLen
 
   ReactElement _loopout_length() {
     var start_offset = '50%';
-    var dx = '${0}';
+    var translate_x = '${0}';
 
     if (browser.isFirefox) {
-      dx = '${0.55 * props.geometry.base_height_svg}';
+      //dominant-baseline does not align normally on Firefox
+      translate_x = '${props.geometry.base_height_svg / 2}';
     }
     
     Map<String, dynamic> style_map = {'fontSize': '${9}px'};
@@ -42,8 +43,8 @@ class DesignMainLoopoutLengthComponent extends UiComponent2<DesignMainLoopoutLen
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
+      ..transform = 'translate(${0}, ${translate_x})'
       ..rotate = 180
-      ..key = props.loopout.id()
-      ..dx = dx)(text_path_props(loopout_length));
+      ..key = props.loopout.id())(text_path_props(loopout_length));
   }
 }
