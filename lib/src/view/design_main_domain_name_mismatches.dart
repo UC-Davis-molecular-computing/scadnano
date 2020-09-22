@@ -42,7 +42,7 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
         List<Domain> substrands = props.design.substrands_on_helix_at(i, j).toList();
         if (substrands.length >= 2) {
           if (substrands[0].overlaps(substrands[1])) {
-            if (_check_if_mismatch(substrands[0], substrands[1])) {
+            if (_has_mismatch(substrands[0], substrands[1])) {
               for (int k = 0; k < substrands.length; k++) {
                 if (!addedSubstrands.contains(substrands[k])) {
                   addedSubstrands.add(substrands[k]);
@@ -71,7 +71,10 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
     return mismatch_components;
   }
 
-  bool _check_if_mismatch(Domain substrand1, Domain substrand2) {
+  bool _has_mismatch(Domain substrand1, Domain substrand2) {
+    if (substrand1.name == null || substrand2.name == null) {
+      return false;
+    }
     if (substrand1.name.contains('*') == substrand2.name.contains('*')) {
       return true;
     }
