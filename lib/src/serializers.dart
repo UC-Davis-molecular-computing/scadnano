@@ -219,6 +219,8 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   StrandColorSet,
+  StrandColorPickerShow,
+  StrandColorPickerHide,
   StrandPasteKeepColorSet,
   ExampleDesigns,
   ExampleDesignsLoad,

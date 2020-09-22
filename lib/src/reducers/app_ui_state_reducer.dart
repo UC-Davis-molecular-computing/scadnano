@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/strand.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -44,6 +45,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+  ..strand_color_picker_strand = strand_color_picker_strand_reducer(ui_state.strand_color_picker_strand, action)?.toBuilder()
   ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(ui_state.helix_change_apply_to_all, action)
   ..example_designs.replace(
       TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(
@@ -369,6 +371,18 @@ Point<num> side_view_mouse_pos_update_reducer(Point<num> _, actions.MousePositio
     action.svg_pos;
 
 Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePositionSideClear action) => null;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// strand color picker
+
+Reducer<Strand> strand_color_picker_strand_reducer = combineReducers([
+  TypedReducer<Strand, actions.StrandColorPickerShow>(strand_color_picker_strand_show_reducer),
+  TypedReducer<Strand, actions.StrandColorPickerHide>(strand_color_picker_strand_hide_reducer),
+]);
+
+Strand strand_color_picker_strand_show_reducer(Strand _, actions.StrandColorPickerShow action) => action.strand;
+Strand strand_color_picker_strand_hide_reducer(Strand _, actions.StrandColorPickerHide action) => null;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
