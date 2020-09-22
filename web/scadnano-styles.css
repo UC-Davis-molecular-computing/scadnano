@@ -436,11 +436,7 @@ html, body {
     fill: lightgray;
 }
 
-/* excluding domain lines until I can figure out this issue where they disappear.
-https://stackoverflow.com/questions/36284828/svg-adding-shadow-filter-makes-straight-line-invisible
-https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-line-in-svg-makes-it-disappear
-*/
-.selected:not(.domain-line) {
+.selected {
     filter: url("#shadow");
 }
 
