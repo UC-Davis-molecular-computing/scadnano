@@ -1,4 +1,5 @@
 import 'package:over_react/over_react.dart';
+import 'package:platform_detect/platform_detect.dart';
 
 import '../constants.dart' as constants;
 import 'package:scadnano/src/state/geometry.dart';
@@ -7,16 +8,16 @@ import 'pure_component.dart';
 
 part 'design_main_loopout_length.over_react.g.dart';
 
-UiFactory<DesignMainLoopoutProps> DesignMainLoopout = _$DesignMainLoopout;
+UiFactory<DesignMainLoopoutLengthProps> DesignMainLoopoutLength = _$DesignMainLoopoutLength;
 
-mixin DesignMainLoopoutPropsMixin on UiProps {
+mixin DesignMainLoopoutLengthPropsMixin on UiProps {
   Geometry geometry;
   Loopout loopout;
 }
 
-class DesignMainLoopoutProps = UiProps with DesignMainLoopoutPropsMixin;
+class DesignMainLoopoutLengthProps = UiProps with DesignMainLoopoutLengthPropsMixin;
 
-class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> with PureComponent {
+class DesignMainLoopoutLengthComponent extends UiComponent2<DesignMainLoopoutLengthProps> with PureComponent {
   @override
   render() {
     List<ReactElement> loopout_length_elts = [];
@@ -26,8 +27,13 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
 
   ReactElement _loopout_length() {
     var start_offset = '50%';
-    var dy = '${0.1 * props.geometry.base_width_svg}';
+    var translate_x = '${0}';
 
+    if (browser.isFirefox) {
+      //dominant-baseline does not align normally on Firefox
+      translate_x = '${props.geometry.base_height_svg / 2}';
+    }
+    
     Map<String, dynamic> style_map = {'fontSize': '${9}px'};
     var loopout_length = props.loopout.loopout_length.toString().split('').reversed.join('');
 
@@ -37,8 +43,8 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
+      ..transform = 'translate(${0}, ${translate_x})'
       ..rotate = 180
-      ..key = props.loopout.id()
-      ..dy = dy)(text_path_props(loopout_length));
+      ..key = props.loopout.id())(text_path_props(loopout_length));
   }
 }
