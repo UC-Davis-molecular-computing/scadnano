@@ -65,6 +65,7 @@ part 'serializers.g.dart';
   LocalStorageDesignOption,
   LocalStorageDesignChoice,
   LocalStorageDesignChoiceSet,
+  ClearHelixSelectionWhenLoadingNewDesignSet,
   StrandsReflect,
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,

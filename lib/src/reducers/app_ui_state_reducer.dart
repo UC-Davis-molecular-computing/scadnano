@@ -195,6 +195,8 @@ LocalStorageDesignChoice local_storage_design_choice_reducer(
         LocalStorageDesignChoice _, actions.LocalStorageDesignChoiceSet action) =>
     action.choice.period_seconds > 0 ? action.choice : action.choice.change_period(1);
 
+bool clear_helix_selection_when_loading_new_design_set_reducer(bool _, actions.ClearHelixSelectionWhenLoadingNewDesignSet action) => action.clear;
+
 bool changed_since_last_save_undoable_action_reducer(
         bool changed_since_last_save, actions.UndoableAction action) =>
     true;
@@ -278,6 +280,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
     ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(storables.show_loopout_length, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
+    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
     ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
     ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)

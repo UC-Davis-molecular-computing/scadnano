@@ -80,6 +80,8 @@ abstract class AppUIStateStorables
 
   LocalStorageDesignChoice get local_storage_design_choice;
 
+  bool get clear_helix_selection_when_loading_new_design;
+
   String get displayed_group_name;
 
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
@@ -117,6 +119,7 @@ abstract class AppUIStateStorables
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
     b.displayed_group_name = constants.default_group_name;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
+    b.clear_helix_selection_when_loading_new_design = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

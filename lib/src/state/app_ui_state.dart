@@ -170,6 +170,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
+  bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);
     b.selection_box_displayed_main = false;
