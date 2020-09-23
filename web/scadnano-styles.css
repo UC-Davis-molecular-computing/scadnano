@@ -198,7 +198,19 @@ html, body {
     border-radius: 2px;
 }
 
+#strand-color-picker-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
 
+.chrome-picker {
+    border: none !important;
+    background: #F9F9F9 !important;
+    box-shadow: none !important;
+}
 /*.panes-container {*/
 /*  display: flex;*/
 /*  width: 100%;*/

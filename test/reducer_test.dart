@@ -7319,6 +7319,28 @@ main() {
       expect_app_state_equal(state, expected_state);
     });
   });
+
+  group('Test strand color picker actions:', () {
+    test('StrandColorPickerShow', () {
+      AppState initial_state = app_state_from_design(two_helices_design);
+      Strand strand = two_helices_design.strands.first;
+      AppState final_state = app_state_reducer(initial_state, StrandColorPickerShow(strand: strand));
+
+      expect(final_state.ui_state.strand_color_picker_strand, strand);
+    });
+
+    test('StrandColorPickerHide', () {
+      Strand strand = two_helices_design.strands.first;
+      AppState initial_state = app_state_from_design(two_helices_design).rebuild((b) => b
+        ..ui_state.strand_color_picker_strand = strand.toBuilder()
+      );
+
+      AppState final_state = app_state_reducer(initial_state, StrandColorPickerHide());
+
+      expect(final_state.ui_state.strand_color_picker_strand, null);
+    });
+  });
+
 }
 
 AppState make_ends_selectable(AppState actual_state) {

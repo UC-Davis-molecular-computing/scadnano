@@ -15,6 +15,7 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/domain.dart';
 import '../state/dna_ends_move.dart';
@@ -69,6 +70,7 @@ class DesignViewComponent {
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
+  DivElement strand_color_picker_container = DivElement()..attributes = {'id': 'strand-color-picker-container'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -126,6 +128,7 @@ class DesignViewComponent {
     this.root_element.children.add(design_above_footer_pane);
     this.root_element.children.add(this.context_menu_container);
     this.root_element.children.add(this.dialog_form_container);
+    this.root_element.children.add(this.strand_color_picker_container);
     this.root_element.children.add(this.footer_separator);
     this.root_element.children.add(this.footer_element);
 
@@ -163,13 +166,20 @@ class DesignViewComponent {
   };
 
   handle_keyboard_mouse_events() {
-    // put away context menu if click occured anywhere outside of it
     document.onClick.listen((MouseEvent event) {
       Element target = event.target;
+      // put away context menu if click occurred anywhere outside of it
       if (app.state.ui_state.context_menu != null) {
         var context_menu_elt = querySelector('#context-menu');
         if (context_menu_elt != null && !context_menu_elt.contains(target)) {
           app.dispatch(actions.ContextMenuHide());
+        }
+      }
+      // put away strand color picker if click occurred anywhere outside of it
+      if (app.state.ui_state.strand_color_picker_strand != null) {
+        var strand_color_picker_elt = querySelector('#strand-color-picker');
+        if (strand_color_picker_elt != null && !strand_color_picker_elt.contains(target)) {
+          app.dispatch(actions.StrandColorPickerHide());
         }
       }
     });
@@ -539,6 +549,7 @@ class DesignViewComponent {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
         this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.strand_color_picker_container);
       }
       this.error_message_component.render(state.error_message);
 
@@ -585,6 +596,7 @@ class DesignViewComponent {
         this.root_element.children.add(this.footer_separator);
         this.root_element.children.add(this.footer_element);
         this.root_element.children.add(this.dialog_form_container);
+        this.root_element.children.add(this.strand_color_picker_container);
         this.root_element.children.add(this.context_menu_container);
       }
 
@@ -666,6 +678,14 @@ class DesignViewComponent {
           ),
         ),
         this.dialog_form_container,
+      );
+
+      react_dom.render(
+        over_react_components.ErrorBoundary()(
+          (ReduxProvider()..store = app.store)(
+            ConnectedStrandColorPicker()(),
+          ),
+        ), this.strand_color_picker_container
       );
 
       if (!svg_panzoom_has_been_set_up) {

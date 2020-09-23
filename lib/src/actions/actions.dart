@@ -2344,6 +2344,30 @@ abstract class ContextMenuHide
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// strand color picker
+
+abstract class StrandColorPickerShow with BuiltJsonSerializable implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandColorPickerShow({Strand strand}) = _$StrandColorPickerShow._;
+
+  StrandColorPickerShow._();
+
+  static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
+}
+
+abstract class StrandColorPickerHide with BuiltJsonSerializable implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
+  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) = _$StrandColorPickerHide;
+
+  StrandColorPickerHide._();
+
+  static Serializer<StrandColorPickerHide> get serializer => _$strandColorPickerHideSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // scaffold set/unset
 
 abstract class SingleStrandAction implements Action {

@@ -283,7 +283,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ),
         ContextMenuItem(
           title: 'set color',
-          on_click: set_color,
+          on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))
         ),
         ContextMenuItem(
           title: 'reflect horizontally',
