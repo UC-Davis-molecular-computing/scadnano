@@ -231,6 +231,22 @@ abstract class LocalStorageDesignChoiceSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Clear helix selection when loading new design
+
+abstract class ClearHelixSelectionWhenLoadingNewDesignSet
+    with BuiltJsonSerializable
+    implements Action, Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
+  bool get clear;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) = _$ClearHelixSelectionWhenLoadingNewDesignSet._;
+
+  ClearHelixSelectionWhenLoadingNewDesignSet._();
+
+  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer => _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Edit modes
 
 abstract class EditModeToggle

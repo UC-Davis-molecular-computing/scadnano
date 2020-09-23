@@ -51,11 +51,17 @@ AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
       ..ui_state.changed_since_last_save = false
       ..error_message = error_message);
   } else if (design_new != null) {
-    // remove selected helices from
-    BuiltSet<int> side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
-    if (state.design != null && design_new.helices.length < state.design.helices.length) {
-      side_selected_helix_idxs =
-          side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
+    BuiltSet<int> side_selected_helix_idxs = BuiltSet<int>();
+
+    // Select helices if "clear helix selection when loading new design" is disabled
+    if (!state.ui_state.clear_helix_selection_when_loading_new_design) {
+      side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
+
+      // remove selected helices from
+      if (state.design != null && design_new.helices.length < state.design.helices.length) {
+        side_selected_helix_idxs =
+            side_selected_helix_idxs.rebuild((s) => s.removeWhere((idx) => idx >= design_new.helices.length));
+      }
     }
 
     var new_selectables_store = SelectablesStore();

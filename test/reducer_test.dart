@@ -3055,6 +3055,16 @@ main() {
     expect(final_state.ui_state.selectables_store, edit_mode_store.unselect(two_helices_design.strands[0]));
   });
 
+  group('File Menu tests:', () {
+    test('ClearHelixSelectionWhenLoadingNewDesignSet', () {
+      AppState initial_state = app_state_from_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, ClearHelixSelectionWhenLoadingNewDesignSet(clear: true));
+      expect(final_state.ui_state.clear_helix_selection_when_loading_new_design, true);
+      final_state = app_state_reducer(final_state, ClearHelixSelectionWhenLoadingNewDesignSet(clear: false));
+      expect(final_state.ui_state.clear_helix_selection_when_loading_new_design, false);
+    });
+  });
+
   group('Select modes tests: ', () {
     test('SelectModeToggle_to_toggle_off', () {
       SelectModeState modes =
@@ -4146,6 +4156,33 @@ main() {
         ..ui_state.storables.only_display_selected_helices = true
         ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
       expect_app_state_equal(state, expected_state);
+    });
+
+    test('Helix selection clears after load', () {
+      AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = true
+      );
+      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
+      expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>());
+    });
+
+    test('Helix selection saved after load', () {
+      AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false
+      );
+      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_strand_json, filename: 'test.sc'));
+      expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>([0, 2]));
+    });
+
+    test('Helix selection saved after load (remove extraneous selected helices)', () {
+      AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
+        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false
+      );
+      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
+      expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>([0]));
     });
   });
 
