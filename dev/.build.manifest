@@ -222,6 +222,7 @@ external-libs/pyodide/webencodings.js
 external-libs/pyodide/webworker.js
 external-libs/pyodide/webworker_dev.js
 external-libs/react-bootstrap.js
+external-libs/react-color.min.js
 external-libs/react-dnd/ReactDnD.js
 external-libs/react-dnd/ReactDnD.min.js
 external-libs/react-dnd/ReactDnDHTML5Backend.js
