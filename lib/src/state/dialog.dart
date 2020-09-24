@@ -23,24 +23,43 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       Iterable<DialogItem> items,
       Iterable<Iterable<int>> mutually_exclusive_checkbox_groups = const [],
       Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
+      Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {}}) {
+
     List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
       for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group)
     ];
-    Map<int, BuiltList<int>> disable_when_on_half_built = {
+    Map<int, BuiltList<int>> disable_when_any_checkboxes_on_half_built = {
       for (var idx in disable_when_any_checkboxes_on.keys)
         idx: BuiltList<int>(disable_when_any_checkboxes_on[idx])
     };
-    Map<int, BuiltList<int>> disable_when_off_half_built = {
+    Map<int, BuiltList<int>> disable_when_any_checkboxes_off_half_built = {
       for (var idx in disable_when_any_checkboxes_off.keys)
         idx: BuiltList<int>(disable_when_any_checkboxes_off[idx])
     };
+
+
+    Map<int, Map<int, BuiltList<String>>> disable_when_any_radio_button_selected_quarter_built = {};
+    for (int idx in disable_when_any_radio_button_selected.keys) {
+      disable_when_any_radio_button_selected_quarter_built[idx] = {};
+      for (int radio_idx in disable_when_any_radio_button_selected[idx].keys) {
+        disable_when_any_radio_button_selected_quarter_built[idx][radio_idx] =
+            disable_when_any_radio_button_selected[idx][radio_idx].toBuiltList();
+      }
+    };
+
+    Map<int, BuiltMap<int, BuiltList<String>>> disable_when_any_radio_button_selected_half_built = {
+      for (int idx in disable_when_any_radio_button_selected_quarter_built.keys)
+        idx: disable_when_any_radio_button_selected_quarter_built[idx].build()
+    };
+
     return Dialog.from((b) => b
       ..title = title
       ..items.replace(items)
       ..mutually_exclusive_checkbox_groups.replace(mutually_exclusive_checkbox_groups_half_built)
-      ..disable_when_any_checkboxes_on.replace(disable_when_on_half_built)
-      ..disable_when_any_checkboxes_off.replace(disable_when_off_half_built));
+      ..disable_when_any_radio_button_selected.replace(disable_when_any_radio_button_selected_half_built)
+      ..disable_when_any_checkboxes_on.replace(disable_when_any_checkboxes_on_half_built)
+      ..disable_when_any_checkboxes_off.replace(disable_when_any_checkboxes_off_half_built));
   }
 
   /************************ end BuiltValue boilerplate ************************/
@@ -53,12 +72,17 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
   // and whenever one is switched on, the others will turn off.
   BuiltList<BuiltList<int>> get mutually_exclusive_checkbox_groups;
 
-  // if disable_when_on[i] == [j_1,j_2,...j_k], then
+  // if disable_when_any_radio_button_selected[i][j] == ['abc', 'def'], then
+  // when DialogRadio at index j (starting at 0 in items) have either 'abc' or 'def' selected,
+  // the DialogItem at index i should be disabled
+  BuiltMap<int, BuiltMap<int, Iterable<String>>> get disable_when_any_radio_button_selected;
+
+  // if disable_when_any_checkboxes_on[i] == [j_1,j_2,...j_k], then
   // when DialogCheckbox at any of indices j_1,j_2,...,j_k (starting at 0 in items) are CHECKED,
   // the DialogItem at index i should be disabled
   BuiltMap<int, BuiltList<int>> get disable_when_any_checkboxes_on;
 
-  // if disable_when_on[i] == [j_1,j_2,...j_k], then
+  // if disable_when_any_checkboxes_off[i] == [j_1,j_2,...j_k], then
   // when DialogCheckbox at any of indices j_1,j_2,...,j_k (starting at 0 in items) are UNCHECKED,
   // the DialogItem at index i should be disabled
   BuiltMap<int, BuiltList<int>> get disable_when_any_checkboxes_off;

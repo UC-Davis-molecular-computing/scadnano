@@ -282,9 +282,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           on_click: set_scaffold,
         ),
         ContextMenuItem(
-          title: 'set color',
-          on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))
-        ),
+            title: 'set color',
+            on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
         ContextMenuItem(
           title: 'reflect horizontally',
           on_click: () => reflect(true, false),
@@ -436,9 +435,13 @@ Future<void> ask_for_add_modification(Strand strand,
   items[index_of_dna_base_idx] =
       DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
 
-  var dialog = Dialog(title: 'add modification', items: items, disable_when_any_checkboxes_off: {
-    index_of_dna_base_idx: [modification_type_idx],
+  // don't allow to modify index of DNA base when 3' or 5' is selected
+  var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
+    index_of_dna_base_idx: {
+      modification_type_idx: ["3'", "5'"]
+    },
   });
+
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
   String modification_type = (results[modification_type_idx] as DialogRadio).value;

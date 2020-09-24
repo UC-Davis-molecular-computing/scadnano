@@ -51,35 +51,49 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
       return null;
     }
 
-    var dialog = props.dialog;
-    print(dialog);
+    // var dialog = props.dialog;
+    // print(dialog);
 
     int component_idx = 0;
     List<ReactElement> components = [];
     for (var item in state.responses) {
       bool disabled = false;
 
-      // disable if checkbox in disable_when_off to which this maps is false
+      // disable if radio button in disable_when_any_radio_button_selected to which this has forbidden value
+      if (props.dialog.disable_when_any_radio_button_selected.containsKey(component_idx)) {
+        BuiltMap<int, BuiltList<String>> radio_idx_maps =
+            props.dialog.disable_when_any_radio_button_selected[component_idx];
+        for (int radio_idx in radio_idx_maps.keys) {
+          BuiltList<String> forbidden_values = radio_idx_maps[radio_idx];
+          DialogRadio radio = state.responses[radio_idx];
+          String selected_value = radio.options[radio.selected_idx];
+          if (forbidden_values.contains(selected_value)) {
+            disabled = true;
+            break;
+          }
+        }
+      }
+
+      // disable if checkbox in disable_when_any_checkboxes_off to which this maps is false
       if (props.dialog.disable_when_any_checkboxes_off.containsKey(component_idx)) {
         BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_off[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.responses[check_idx];
           if (check.value == false) {
             disabled = true;
+            break;
           }
-//          else if (check.value != 'internal') {
-//            disabled = true;
-//          }
         }
       }
 
-      // disable if checkbox in disable_when_on to which this maps is true
+      // disable if checkbox in disable_when_any_checkboxes_on to which this maps is true
       if (props.dialog.disable_when_any_checkboxes_on.containsKey(component_idx)) {
         BuiltList<int> check_idxs = props.dialog.disable_when_any_checkboxes_on[component_idx];
         for (int check_idx in check_idxs) {
           DialogCheckbox check = state.responses[check_idx];
           if (check.value == true) {
             disabled = true;
+            break;
           }
         }
       }
