@@ -60,5 +60,4 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
     }
     return mismatch_components;
   }
-
 }
