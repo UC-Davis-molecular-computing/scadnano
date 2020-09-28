@@ -492,7 +492,7 @@ abstract class Domain
   bool overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
-        this.compute_overlap(other).item1 >= 0);
+        this.compute_overlap(other) != null);
   }
 
   Tuple2<int, int> compute_overlap(Domain other) {
@@ -500,7 +500,7 @@ abstract class Domain
     int overlap_end = min(this.end, other.end);
     if (overlap_start >= overlap_end) {
       // overlap is empty
-      return Tuple2<int, int>(-1, -1);
+      return null;
     }
     return Tuple2<int, int>(overlap_start, overlap_end);
   }

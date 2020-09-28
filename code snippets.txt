@@ -92,6 +92,9 @@ abstract class $CLASS_NAME$
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  @memoized
+  int get hashCode;
 }
 
 
@@ -109,6 +112,9 @@ abstract class $CLASS_NAME$
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  @memoized
+  int get hashCode;
 }
 
 
@@ -124,6 +130,9 @@ abstract class $CLASS_NAME$
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
   
   factory $CLASS_NAME$({$FIELD_TYPE$ $FIELD_NAME$}) = _$$$CLASS_NAME$._;
+  
+  @memoized
+  int get hashCode;
   
   /************************ end BuiltValue boilerplate ************************/
 
@@ -142,6 +151,9 @@ abstract class $CLASS_NAME$ implements Built<$CLASS_NAME$, $CLASS_NAME$Builder> 
   $CLASS_NAME$._();
 
   factory $CLASS_NAME$([void Function($CLASS_NAME$Builder) updates]) = _$$$CLASS_NAME$;  
+  
+  @memoized
+  int get hashCode;
   /************************ end BuiltValue boilerplate ************************/
 }
 
@@ -168,6 +180,9 @@ abstract class $CLASS_NAME$
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  @memoized
+  int get hashCode;
 }
 
 
@@ -184,6 +199,9 @@ abstract class $CLASS_NAME$
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  @memoized
+  int get hashCode;
   /************************ end BuiltValue boilerplate ************************/
 
   $FIELD_TYPE$ get $FIELD_NAME$;
@@ -203,4 +221,7 @@ abstract class $CLASS_NAME$
   $CLASS_NAME$._();
   
   static Serializer<$CLASS_NAME$> get serializer => _$$$LOWER_CLASS_NAME$Serializer; 
+  
+  @memoized
+  int get hashCode;
 }

@@ -32,7 +32,7 @@ class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatc
     Set<String> keys = {};
     for (Strand strand in props.design.strands) {
       for (Domain domain in strand.domains()) {
-        BuiltList<Mismatch> mismatches = props.design.mismatches_on_domain(domain);
+        BuiltList<Mismatch> mismatches = props.design.dna_mismatches_on_domain(domain);
 
         List<ReactElement> domain_components = [];
         for (Mismatch mismatch in mismatches) {

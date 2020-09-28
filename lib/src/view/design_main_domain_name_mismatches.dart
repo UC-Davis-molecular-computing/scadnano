@@ -1,10 +1,9 @@
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/group.dart';
-import 'package:scadnano/src/state/helix.dart';
+import 'package:tuple/tuple.dart';
 
+import '../state/domain_name_mismatch.dart';
 import '../state/design.dart';
-import '../state/strand.dart';
 import '../state/domain.dart';
 import 'pure_component.dart';
 import 'design_main_mismatch.dart';
@@ -32,69 +31,34 @@ class DesignMainDomainNameMismatchesComponent extends UiComponent2<DesignMainDom
   List<ReactElement> _create_mismatch_components() {
     List<ReactElement> mismatch_components = [];
 
-    for (int i = 0; i < props.design.helices.length; i++) {
-      //props.design.helices.length - 1?
-      int distance = props.design.helices[i].calculate_major_ticks()[1] -
-          props.design.helices[i].calculate_major_ticks()[0];
-      List<Domain> addedSubstrands = [];
-      for (int j = 0; j <= props.design.max_offset - 1; j += distance) {
-        List<ReactElement> domain_components = [];
-        List<Domain> substrands = props.design.substrands_on_helix_at(i, j).toList();
-        if (substrands.length >= 2) {
-          if (substrands[0].overlaps(substrands[1])) {
-            if (_has_mismatch(substrands[0], substrands[1])) {
-              for (int k = 0; k < substrands.length; k++) {
-                if (!addedSubstrands.contains(substrands[k])) {
-                  addedSubstrands.add(substrands[k]);
-                  double offset = (substrands[k].start + substrands[k].end) / 2;
-                  var base_svg_pos =
-                      props.design.helices[i].svg_base_pos(offset.toInt(), substrands[k].forward);
-                  String key = '${base_svg_pos};${substrands[k].forward}';
-                  var mismatch_component = (DesignMainMismatch()
-                    ..base_svg_pos = base_svg_pos
-                    ..geometry = props.design.geometry
-                    ..forward = substrands[k].forward
-                    ..key = key)();
-                  domain_components.add(mismatch_component);
-                  if (domain_components.isNotEmpty) {
-                    mismatch_components.add((Dom.g()
-                      ..className = 'mismatch-components-in-domain'
-                      ..key = util.id_domain(substrands[k]))(domain_components));
-                  }
-                }
-              }
-            }
-          }
+    for (var helix in props.design.helices.values) {
+      if (props.only_display_selected_helices && !props.side_selected_helix_idxs.contains(helix.idx)) {
+        continue;
+      }
+
+      BuiltList<DomainNameMismatch> domain_name_mismatches = props.design.domain_name_mismatches[helix.idx];
+
+      for (var domain_name_mismatch in domain_name_mismatches) {
+        Domain forward_domain = domain_name_mismatch.forward_domain;
+        Domain reverse_domain = domain_name_mismatch.reverse_domain;
+        Tuple2<int, int> overlap = forward_domain.compute_overlap(reverse_domain);
+        assert(overlap != null);
+        // draw mismatch stars at midpoint of overlap of domains
+        int mid = (overlap.item1 + overlap.item2) ~/ 2;
+        for (Domain domain in [forward_domain, reverse_domain]) {
+          var base_svg_pos = helix.svg_base_pos(mid, domain.forward);
+          String key = '${domain.helix};${domain.forward};${domain.start};${mid};${domain.end}';
+          var mismatch_component = (DesignMainMismatch()
+            ..base_svg_pos = base_svg_pos
+            ..geometry = props.design.geometry
+            ..forward = domain.forward
+            ..key = key)();
+          mismatch_components.add(mismatch_component);
         }
       }
+
     }
     return mismatch_components;
   }
 
-  bool _has_mismatch(Domain substrand1, Domain substrand2) {
-    if (substrand1.name == null || substrand2.name == null) {
-      return false;
-    }
-    if (substrand1.name.contains('*') == substrand2.name.contains('*')) {
-      return true;
-    }
-    String s1name = substrand1.name;
-    String s2name = substrand2.name;
-    if (substrand1.name.contains('*')) {
-      s1name = substrand1.name.replaceAll('*', '');
-    }
-    if (substrand2.name.contains('*')) {
-      s2name = substrand2.name.replaceAll('*', '');
-    }
-
-    if (s1name != s2name) {
-      return true;
-    } else if (substrand1.start != substrand2.start) {
-      return true;
-    } else if (substrand1.end != substrand2.end) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }

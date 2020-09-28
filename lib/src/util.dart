@@ -145,6 +145,25 @@ String current_group_name_from_domains_move(Design design, DomainsMove domains_m
   return helix.group;
 }
 
+int binary_search<T>(List<T> list, T value, int compare(T v1, T v2)) =>
+    binary_search_rec(list, value, compare, 0, list.length - 1);
+
+int binary_search_rec<T>(List<T> list, T value, int compare(T v1, T v2), int min, int max) {
+  if (min > max) {
+    return null;
+  }
+
+  final int mid = (max + min) ~/ 2;
+
+  if (compare(value, list[mid]) < 0) {
+    return binary_search_rec(list, value, compare, min, mid - 1);
+  } else if (compare(value, list[mid]) > 0) {
+    return binary_search_rec(list, value, compare, mid + 1, max);
+  } else {
+    return mid;
+  }
+}
+
 const EPSILON = 0.000000001;
 
 /// Tests if [x1] and [x2] are within [epsilon] of each other.
@@ -713,8 +732,8 @@ GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_
   return gp;
 }
 
-GridPosition position_2d_to_grid_position_diameter_1_circles(
-    Grid grid, num z, num y, [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
+GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, num y,
+    [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   int h, v;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
@@ -1102,7 +1121,6 @@ Point<num> rotate(Point<num> point, num angle_degrees, {Point<num> origin = cons
   return point_rotated;
 }
 
-
 bool helices_view_order_is_default(BuiltList<int> helix_idxs, HelixGroup group) {
   var default_helices_view_order = List<int>.from(helix_idxs);
   default_helices_view_order.sort();
@@ -1321,8 +1339,8 @@ void svg_to_png_data() {
   Rect bbox = dna_sequence_element.getBBox();
   num dna_sequence_png_horizontal_offset = constants.DNA_SEQUENCE_HORIZONTAL_OFFSET - bbox.x;
   num dna_sequence_png_vertical_offset = constants.DNA_SEQUENCE_VERTICAL_OFFSET - bbox.y;
-  dna_sequence_element_copy.setAttribute('transform',
-      'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
+  dna_sequence_element_copy.setAttribute(
+      'transform', 'translate(${dna_sequence_png_horizontal_offset}, ${dna_sequence_png_vertical_offset})');
 
   // Append copy to svg wrapper element.
   svg.children.add(strands_element_copy);
@@ -1330,7 +1348,7 @@ void svg_to_png_data() {
 
   // Firefox requires explicit size on svg to draw on canvas.
   // https://stackoverflow.com/questions/34706891/canvas-draw-image-issue-on-firefox-works-well-in-chrome
-  var svg_width = (bbox.width +  constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
+  var svg_width = (bbox.width + constants.DNA_SEQUENCE_HORIZONTAL_OFFSET).toInt();
   var svg_height = (bbox.height + constants.DNA_SEQUENCE_VERTICAL_OFFSET).toInt();
   svg.setAttribute('width', svg_width.toString());
   svg.setAttribute('height', svg_height.toString());
@@ -1374,7 +1392,8 @@ void svg_to_png_data() {
     ctx.drawImage(img, 0, 0);
     Url.revokeObjectUrl(url);
     String img_uri = canvas.toDataUrl('image/png');
-    app.dispatch(actions.LoadDnaSequenceImageUri(img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
+    app.dispatch(actions.LoadDnaSequenceImageUri(
+        img_uri, -dna_sequence_png_horizontal_offset, -dna_sequence_png_vertical_offset));
   });
 }
 
@@ -1415,4 +1434,3 @@ async_alert(String msg) async {
 // detect duplicates in list
 
 List<T> remove_duplicates<T>(Iterable<T> list) => LinkedHashSet<T>.from(list).toList();
-

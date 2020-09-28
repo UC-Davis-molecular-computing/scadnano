@@ -123,9 +123,9 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   BuiltSet<Domain> substrands_adjacent;
   DNAEnd strand_end;
   if (dna_end_clicked.is_start)
-    substrands_adjacent = state.design.substrands_on_helix_at(helix, offset - 1);
+    substrands_adjacent = state.design.domains_on_helix_at(helix, offset - 1);
   else
-    substrands_adjacent = state.design.substrands_on_helix_at(helix, offset);
+    substrands_adjacent = state.design.domains_on_helix_at(helix, offset);
   for (var substrand_adj in substrands_adjacent) {
     Strand strand_adj = state.design.substrand_to_strand[substrand_adj];
     var ends = strand.ligatable_ends_with(strand_adj);

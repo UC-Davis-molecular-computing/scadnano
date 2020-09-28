@@ -26,6 +26,7 @@ import '../util.dart' as util;
 import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
+import 'domain_name_mismatch.dart';
 import '../extension_methods.dart';
 
 part 'design.g.dart';
@@ -427,9 +428,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltList<int> get helix_idxs => helices.keys.toBuiltList();
 
   @memoized
-  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_substrands {
-    return construct_helix_idx_to_substrands_map(strands, helix_idxs);
-  }
+  BuiltMap<int, BuiltList<Domain>> get helix_idx_to_domains =>
+      construct_helix_idx_to_domains_map(strands, helix_idxs);
 
   @memoized
   BuiltMap<GridPosition, dynamic> get gp_to_helix {
@@ -1157,28 +1157,10 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return null;
   }
 
-//  void _ensure_other_substrand_same_deletion_or_insertion(
-//      Domain substrand, Domain other_ss, int offset) {
-//    if (substrand.deletions.contains(offset) && !other_ss.deletions.contains(offset)) {
-//      throw UnsupportedError('cannot yet handle one strand having deletion at an offset but the overlapping '
-//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-//          'occupying offset intervals\n'
-//          '(${substrand.start}, ${substrand.end}) and\n'
-//          '(${other_ss.start}, ${other_ss.end})');
-//    }
-//    if (substrand.contains_insertion_at(offset) && !other_ss.contains_insertion_at(offset)) {
-//      throw UnsupportedError('cannot yet handle one strand having insertion at an offset but the overlapping '
-//          'strand does not\nThis was found between the substrands on helix ${substrand.helix} '
-//          'occupying offset intervals\n'
-//          '(${substrand.start}, ${substrand.end}) and\n'
-//          '(${other_ss.start}, ${other_ss.end})');
-//    }
-//  }
-
-  /// Return list of mismatches in substrand where the base is mismatched with the overlapping substrand.
+  /// Return list of DNA mismatches in substrand where the base is mismatched with the overlapping substrand.
   /// If a mismatch occurs outside an insertion, within_insertion = -1).
   /// If a mismatch occurs in an insertion, within_insertion = relative position within insertion (0,1,...)).
-  BuiltList<Mismatch> mismatches_on_domain(Domain domain) {
+  BuiltList<Mismatch> dna_mismatches_on_domain(Domain domain) {
     var ret = this.domain_mismatches_map[domain];
     if (ret == null) {
       ret = BuiltList<Mismatch>();
@@ -1186,16 +1168,86 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return ret;
   }
 
-  /// Return set of substrands on the Helix with the given index.
-  BuiltList<Domain> domains_on_helix(int helix_idx) => helix_idx_to_substrands[helix_idx];
+  /// Return set of domains on the Helix with the given index.
+  /// If [forward] is specified, then only domains in that direction are returned.
+  List<Domain> domains_on_helix(int helix_idx, {bool forward = null}) {
+    List<Domain> domains = helix_idx_to_domains[helix_idx].toList();
+    if (forward != null) {
+      domains = domains.where((Domain domain) => domain.forward == forward).toList();
+    }
+    return domains;
+  }
 
-  /// Return set of substrands on the helices with the given helix_idxs.
+  List<Domain> domains_on_helix_overlapping(Domain domain, {bool forward = null}) {
+    var domains = domains_on_helix(domain.helix, forward: forward);
+    domains.removeWhere((Domain other_domain) => !domain.overlaps(other_domain));
+    return domains;
+  }
+
+  /// Return set of domains on the helices with the given helix_idxs.
   BuiltList<Domain> domains_on_helices(Iterable<int> helix_idxs) {
     ListBuilder<Domain> list_builder = ListBuilder<Domain>();
     for (var helix_idx in helix_idxs) {
       list_builder.addAll(domains_on_helix(helix_idx));
     }
     return list_builder.build();
+  }
+
+  /// Indicates whether domains mismatch, either because they overlap but not on exactly the same offsets,
+  /// or they overlap perfectly but their domain names are not complementary.
+  static bool domains_mismatch(Domain forward_domain, Domain reverse_domain) {
+    if (!forward_domain.overlaps(reverse_domain)) {
+      return false;
+    }
+    if (forward_domain.start != reverse_domain.start) {
+      return true;
+    }
+    if (forward_domain.end != reverse_domain.end) {
+      return true;
+    }
+    if (forward_domain.name == null || reverse_domain == null) {
+      return false;
+    }
+    return !domain_names_complementary(forward_domain.name, reverse_domain.name);
+  }
+
+  static bool domain_names_complementary(String name1, String name2) {
+    if (name1.length > name2.length) {
+      String swap = name1;
+      name1 = name2;
+      name2 = swap;
+    }
+    return name1 + '*' == name2;
+  }
+
+  @memoized
+  BuiltMap<int, BuiltList<DomainNameMismatch>> get domain_name_mismatches {
+    Map<int, List<DomainNameMismatch>> mismatches = {for (int helix_idx in helices.keys) helix_idx: []};
+
+    for (int helix_idx in helices.keys) {
+      List<Domain> forward_domains = domains_on_helix(helix_idx, forward: true).toList();
+      forward_domains.removeWhere((Domain domain) => domain.name == null);
+      for (Domain forward_domain in forward_domains) {
+        List<Domain> reverse_domains = domains_on_helix_overlapping(forward_domain, forward: false);
+        for (var reverse_domain in reverse_domains) {
+          if (reverse_domain != null && reverse_domain.name != null) {
+            if (domains_mismatch(forward_domain, reverse_domain)) {
+              var mismatch = DomainNameMismatch(
+                helix_idx: helix_idx,
+                forward_domain: forward_domain,
+                reverse_domain: reverse_domain,
+              );
+              mismatches[helix_idx].add(mismatch);
+            }
+          }
+        }
+      }
+    }
+
+    Map<int, BuiltList<DomainNameMismatch>> mismatches_half_built = {
+      for (int helix_idx in mismatches.keys) helix_idx: mismatches[helix_idx].build()
+    };
+    return mismatches_half_built.build();
   }
 
   @memoized
@@ -1206,20 +1258,20 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
 
-  /// Return [Substrand]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
-  BuiltSet<Domain> substrands_on_helix_at(int helix_idx, int offset) {
+  /// Return [Domain]s at [offset], INCLUSIVE on left and EXCLUSIVE on right.
+  BuiltSet<Domain> domains_on_helix_at(int helix_idx, int offset) {
     var substrands_at_offset = SetBuilder<Domain>({
-      for (var substrand in this.helix_idx_to_substrands[helix_idx])
+      for (var substrand in this.helix_idx_to_domains[helix_idx])
         if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
   }
 
-  /// Return [Substrand] at [address], INCLUSIVE, or null if there is none.
-  Domain substrand_on_helix_at(Address address) {
-    for (var substrand in this.helix_idx_to_substrands[address.helix_idx]) {
-      if (substrand.contains_offset(address.offset) && substrand.forward == address.forward) {
-        return substrand;
+  /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
+  Domain domain_on_helix_at(Address address) {
+    for (var domain in this.helix_idx_to_domains[address.helix_idx]) {
+      if (domain.contains_offset(address.offset) && domain.forward == address.forward) {
+        return domain;
       }
     }
     return null;
@@ -1229,7 +1281,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   List<Domain> _other_substrands_overlapping(Domain substrand) {
     List<Domain> ret = [];
     var helix = this.helices[substrand.helix];
-    for (var other_ss in helix_idx_to_substrands[helix.idx]) {
+    for (var other_ss in helix_idx_to_domains[helix.idx]) {
       if (substrand.overlaps(other_ss)) {
         ret.add(other_ss);
       }
@@ -1248,7 +1300,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
 
     List<Domain> substrands_intersecting = [];
-    for (var ss in this.helix_idx_to_substrands[helix.idx]) {
+    for (var ss in this.helix_idx_to_domains[helix.idx]) {
       if (start < ss.end && ss.start <= end) {
         substrands_intersecting.add(ss);
       }
@@ -1317,7 +1369,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool helix_has_nondefault_max_offset(Helix helix) {
     int max_ss_offset = -1;
-    for (var ss in this.helix_idx_to_substrands[helix.idx]) {
+    for (var ss in this.helix_idx_to_domains[helix.idx]) {
       if (max_ss_offset < ss.end) {
         max_ss_offset = ss.end;
       }
@@ -1327,7 +1379,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   bool helix_has_nondefault_min_offset(Helix helix) {
     int min_ss_offset = -1;
-    for (var ss in this.helix_idx_to_substrands[helix.idx]) {
+    for (var ss in this.helix_idx_to_domains[helix.idx]) {
       if (min_ss_offset > ss.start) {
         min_ss_offset = ss.start;
       }
@@ -1335,7 +1387,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return helix.min_offset != min_ss_offset;
   }
 
-  bool helix_has_substrands(Helix helix) => this.helix_idx_to_substrands[helix.idx].isNotEmpty;
+  bool helix_has_substrands(Helix helix) => this.helix_idx_to_domains[helix.idx].isNotEmpty;
 
 //  /// Returns a map mapping view_order to helix_idx.
 //  @memoized
@@ -1348,11 +1400,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 //    return view_orders.toBuiltList();
 //  }
 
-  bool is_occupied(Address address) => substrand_on_helix_at(address) != null;
+  bool is_occupied(Address address) => domain_on_helix_at(address) != null;
 
   @memoized
   int max_offset_of_strands_at(int helix_idx) {
-    var substrands = helix_idx_to_substrands[helix_idx];
+    var substrands = helix_idx_to_domains[helix_idx];
     int max_offset =
         substrands.isEmpty ? 0 : substrands.first.end; // in case of no substrands, max offset is 0
     for (var substrand in substrands) {
@@ -1363,7 +1415,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   @memoized
   int min_offset_of_strands_at(int helix_idx) {
-    var substrands = helix_idx_to_substrands[helix_idx];
+    var substrands = helix_idx_to_domains[helix_idx];
     int min_offset =
         substrands.isEmpty ? 0 : substrands.first.start; // in case of no substrands, min offset is 0
     for (var substrand in substrands) {
@@ -1485,7 +1537,7 @@ check_helices_view_order_is_bijection(Iterable<int> helices_view_order_, Iterabl
   }
 }
 
-BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<Strand> strands,
+BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_domains_map(Iterable<Strand> strands,
     [Iterable<int> helix_idxs = null]) {
   var helix_idx_to_substrands = Map<int, List<Domain>>();
 
@@ -1510,7 +1562,8 @@ BuiltMap<int, BuiltList<Domain>> construct_helix_idx_to_substrands_map(Iterable<
 
   var helix_idx_to_substrands_builtset_builder = Map<int, BuiltList<Domain>>();
   for (var helix_idx in helix_idx_to_substrands.keys) {
-    // sort by start offset; since the intervals are disjoint, this sorts them by end as well
+    // sort by start offset; since the intervals are disjoint in a given direction,
+    // this sorts them by end as well (within a direction)
     var substrands = helix_idx_to_substrands[helix_idx];
     substrands.sort((ss1, ss2) => ss1.start - ss2.start);
     helix_idx_to_substrands_builtset_builder[helix_idx] = substrands.build();
@@ -1531,7 +1584,7 @@ _ensure_helix_idxs_unique(List<int> helix_indices, List<HelixBuilder> helix_buil
 }
 
 set_helices_min_max_offsets(Map<int, HelixBuilder> helix_builders, Iterable<Strand> strands) {
-  var helix_idx_to_substrands = construct_helix_idx_to_substrands_map(strands, helix_builders.keys);
+  var helix_idx_to_substrands = construct_helix_idx_to_domains_map(strands, helix_builders.keys);
 
   for (int idx in helix_builders.keys) {
     HelixBuilder helix_builder = helix_builders[idx];
