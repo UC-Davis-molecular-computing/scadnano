@@ -53,8 +53,8 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         text += (', ' +
             'domain length: ${domain_length}, ' +
             'strand length: ${strand.dna_length()}, ' +
-            (strand.idt != null ? 'strand IDT name: ${strand.idt.name}' : '') +
-            (strand.name != null ? 'strand name: ${strand.name}' : ''));
+            (strand.idt != null ? 'strand IDT name: ${strand.idt.name} ' : '') +
+            (strand.name != null ? 'strand name: ${strand.name} ' : ''));
         ;
       }
     } else {
