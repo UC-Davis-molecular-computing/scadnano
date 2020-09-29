@@ -231,6 +231,22 @@ abstract class LocalStorageDesignChoiceSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Clear helix selection when loading new design
+
+abstract class ClearHelixSelectionWhenLoadingNewDesignSet
+    with BuiltJsonSerializable
+    implements Action, Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
+  bool get clear;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) = _$ClearHelixSelectionWhenLoadingNewDesignSet._;
+
+  ClearHelixSelectionWhenLoadingNewDesignSet._();
+
+  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer => _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Edit modes
 
 abstract class EditModeToggle
@@ -471,6 +487,21 @@ abstract class ShowMismatchesSet
   ShowMismatchesSet._();
 
   static Serializer<ShowMismatchesSet> get serializer => _$showMismatchesSetSerializer;
+}
+
+abstract class ShowDomainNameMismatchesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowDomainNameMismatchesSet, ShowDomainNameMismatchesSetBuilder> {
+  bool get show_domain_name_mismatches;
+
+  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) = _$ShowDomainNameMismatchesSet;
+
+  ShowDomainNameMismatchesSet._();
+
+  static Serializer<ShowDomainNameMismatchesSet> get serializer => _$showDomainNameMismatchesSetSerializer;
 }
 
 abstract class SetShowEditor
@@ -2326,6 +2357,30 @@ abstract class ContextMenuHide
   ContextMenuHide._();
 
   static Serializer<ContextMenuHide> get serializer => _$contextMenuHideSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// strand color picker
+
+abstract class StrandColorPickerShow with BuiltJsonSerializable implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandColorPickerShow({Strand strand}) = _$StrandColorPickerShow._;
+
+  StrandColorPickerShow._();
+
+  static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
+}
+
+abstract class StrandColorPickerHide with BuiltJsonSerializable implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
+  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) = _$StrandColorPickerHide;
+
+  StrandColorPickerHide._();
+
+  static Serializer<StrandColorPickerHide> get serializer => _$strandColorPickerHideSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

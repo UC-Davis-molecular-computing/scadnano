@@ -19,6 +19,7 @@ import 'mouseover_data.dart';
 import 'select_mode_state.dart';
 import 'edit_mode.dart';
 import 'selectable.dart';
+import 'strand.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
 import 'helix_group_move.dart';
@@ -59,6 +60,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   @nullable
   Dialog get dialog;
+
+  @nullable // null indicates that strand color picker is not being used
+  Strand get strand_color_picker_strand;
 
   @nullable
   StrandCreation get strand_creation;
@@ -130,6 +134,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_mismatches => storables.show_mismatches;
 
+  bool get show_domain_name_mismatches => storables.show_domain_name_mismatches;
+
   bool get show_editor => storables.show_editor;
 
   bool get autofit => storables.autofit;
@@ -164,6 +170,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
+  bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.mouseover_datas.replace([]);
     b.selection_box_displayed_main = false;
@@ -178,6 +186,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.strands_move = null;
     b.context_menu = null;
     b.dialog = null;
+    b.strand_color_picker_strand = null;
     b.strand_creation = null;
     b.helix_change_apply_to_all = false;
     b.example_designs = DEFAULT_example_designs_builder;

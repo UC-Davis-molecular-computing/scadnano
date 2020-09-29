@@ -15,6 +15,86 @@ import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/util.dart' as util;
 
 main() {
+
+  test('duplicate_deletions_in_JSON_removed', () {
+    var json_str = '''
+{
+  "grid": "square",
+  "helices": [
+    {
+      "max_offset": 100,
+      "grid_position": [0, 0]
+    }
+  ],
+  "strands": [
+    {
+      "domains": [
+        {"helix": 0, "forward": true, "start": 0, "end": 8, "deletions": [5, 5, 7]}
+      ]
+    }
+  ]
+}    
+''';
+    var json_map = jsonDecode(json_str);
+    var design = Design.from_json(json_map);
+    var deletions = design.strands[0].domains()[0].deletions;
+    expect(2, deletions.length);
+    expect(5, deletions[0]);
+    expect(7, deletions[1]);
+  });
+
+  test('duplicate_insertions_in_JSON_removed', () {
+    var json_str = '''
+{
+  "grid": "square",
+  "helices": [
+    {
+      "max_offset": 100,
+      "grid_position": [0, 0]
+    }
+  ],
+  "strands": [
+    {
+      "domains": [
+        {"helix": 0, "forward": true, "start": 0, "end": 8, "insertions": [[5,2], [5,2], [7,3]]}
+      ]
+    }
+  ]
+}    
+''';
+    var json_map = jsonDecode(json_str);
+    var design = Design.from_json(json_map);
+    var insertions = design.strands[0].domains()[0].insertions;
+    expect(2, insertions.length);
+    expect(5, insertions[0].offset);
+    expect(2, insertions[0].length);
+    expect(7, insertions[1].offset);
+    expect(3, insertions[1].length);
+  });
+
+  test('duplicate_insertions_with_contradictory_length_in_JSON_throws_exception', () {
+    var json_str = '''
+{
+  "grid": "square",
+  "helices": [
+    {
+      "max_offset": 100,
+      "grid_position": [0, 0]
+    }
+  ],
+  "strands": [
+    {
+      "domains": [
+        {"helix": 0, "forward": true, "start": 0, "end": 8, "insertions": [[5,2], [5,3], [7,3]]}
+      ]
+    }
+  ]
+}    
+''';
+    var json_map = jsonDecode(json_str);
+    expect(() => Design.from_json(json_map), throwsException);
+  });
+
   test('util_deltas_starting_0', () {
     List<int> nums = [0, 2, 3, 5, 7, 11, 13];
     List<int> expected_deltas = [0, 2, 1, 2, 2, 4, 2];

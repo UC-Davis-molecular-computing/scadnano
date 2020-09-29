@@ -15,6 +15,7 @@ import '../constants.dart' as constants;
 import '../util.dart' as util;
 import 'substrand.dart';
 import 'unused_fields.dart';
+import 'design.dart';
 
 part 'domain.g.dart';
 
@@ -218,21 +219,72 @@ abstract class Domain
 
     var unused_fields = util.unused_fields_map(json_map, constants.domain_keys);
 
+    deletions = util.remove_duplicates(deletions);
+    insertions = util.remove_duplicates(insertions);
+    for (int i=0; i<insertions.length; i++) {
+      for (int j=i+1; j<insertions.length; j++) {
+        var ins1 = insertions[i];
+        var ins2 = insertions[j];
+        if (ins1.offset == ins2.offset) {
+          assert(ins1.length != ins2.length);
+          throw IllegalDesignError('two insertions on a domain have the same offset but different lengths:'
+              '\n${ins1}'
+              '\n${ins2}'
+          '\n${pre_domain_description(helix, forward, start, end)}');
+        }
+      }
+    }
+
+    for (int deletion in deletions) {
+      if (deletion < start) {
+        throw IllegalDesignError('deletion ${deletion} cannot be less than offset ${start}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (deletion >= end) {
+        throw IllegalDesignError('deletion ${deletion} cannot be greater than or equal to offset ${end}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+    }
+
+    for (Insertion insertion in insertions) {
+      if (insertion.offset < start) {
+        throw IllegalDesignError('insertion offset ${insertion.offset} '
+            'cannot be less than start offset ${start}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (insertion.offset >= end) {
+        throw IllegalDesignError('insertion offset ${insertion.offset} '
+            'cannot be greater than or equal to end offset ${end}.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+      if (insertion.length <= 0) {
+        throw IllegalDesignError('insertion length ${insertion.length} '
+            'cannot be less than or equal to 0.\n'
+            '\n${pre_domain_description(helix, forward, start, end)}');
+      }
+    }
+
     return DomainBuilder()
       ..forward = forward
       ..helix = helix
       ..start = start
       ..end = end
-      ..deletions = ListBuilder<int>(deletions)
-      ..insertions = ListBuilder<Insertion>(insertions)
+      ..deletions.replace(deletions)
+      ..insertions.replace(insertions)
       ..name = name
       ..label = label
       ..unused_fields = unused_fields;
   }
 
-  static BuiltList<Insertion> parse_json_insertions(json_encoded_insertions) {
+  static String pre_domain_description(int helix, bool forward, int start, int end) =>
+      'This occurred on a ${forward? "forward": "reverse"} Domain with'
+          '\n  helix = ${helix}'
+          '\n  start = ${start}'
+          '\n  end   = ${end}.';
+
+  static List<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List
-    return BuiltList<Insertion>(json_encoded_insertions.map((list) => Insertion(list[0], list[1])));
+    return List<Insertion>.from(json_encoded_insertions.map((list) => Insertion(list[0], list[1])));
   }
 
   /// 5' end, INCLUSIVE
@@ -440,7 +492,7 @@ abstract class Domain
   bool overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
-        this.compute_overlap(other).item1 >= 0);
+        this.compute_overlap(other) != null);
   }
 
   Tuple2<int, int> compute_overlap(Domain other) {
@@ -448,7 +500,7 @@ abstract class Domain
     int overlap_end = min(this.end, other.end);
     if (overlap_start >= overlap_end) {
       // overlap is empty
-      return Tuple2<int, int>(-1, -1);
+      return null;
     }
     return Tuple2<int, int>(overlap_start, overlap_end);
   }

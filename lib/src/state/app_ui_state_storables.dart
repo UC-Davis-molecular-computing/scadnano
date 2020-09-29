@@ -32,6 +32,8 @@ abstract class AppUIStateStorables
 
   bool get show_mismatches;
 
+  bool get show_domain_name_mismatches;
+
   bool get show_editor;
 
   /// True if only selected helices in the side view should be displayed in the
@@ -78,6 +80,8 @@ abstract class AppUIStateStorables
 
   LocalStorageDesignChoice get local_storage_design_choice;
 
+  bool get clear_helix_selection_when_loading_new_design;
+
   String get displayed_group_name;
 
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
@@ -91,6 +95,7 @@ abstract class AppUIStateStorables
     b.show_domain_labels = false;
     b.show_modifications = true;
     b.show_mismatches = false;
+    b.show_domain_name_mismatches = false;
     b.show_editor = false;
     b.only_display_selected_helices = false;
     b.modification_font_size = constants.default_modification_font_size;
@@ -114,6 +119,7 @@ abstract class AppUIStateStorables
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
     b.displayed_group_name = constants.default_group_name;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
+    b.clear_helix_selection_when_loading_new_design = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

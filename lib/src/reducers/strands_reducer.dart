@@ -359,8 +359,8 @@ BuiltList<Strand> strand_create(
 
   // skip creating Strand if one is already there
   //FIXME: this doesn't seem necessary anymore, given how we've done this error checking while creating
-  var existing_substrands_start = state.design.substrands_on_helix_at(helix_idx, start);
-  var existing_substrands_end = state.design.substrands_on_helix_at(helix_idx, end - 1);
+  var existing_substrands_start = state.design.domains_on_helix_at(helix_idx, start);
+  var existing_substrands_end = state.design.domains_on_helix_at(helix_idx, end - 1);
   for (var ss in existing_substrands_start.union(existing_substrands_end)) {
     if (ss.forward == forward) {
       return strands;

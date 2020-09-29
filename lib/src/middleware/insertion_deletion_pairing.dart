@@ -22,7 +22,7 @@ insertion_deletion_pairing_middleware(Store<AppState> store, dynamic action, Nex
 }
 
 Domain find_paired_substrand(Design design, Domain substrand, int offset) {
-  var other_substrands = design.substrands_on_helix_at(substrand.helix, offset);
+  var other_substrands = design.domains_on_helix_at(substrand.helix, offset);
   for (var other_ss in other_substrands) {
     if (other_ss != substrand) {
       assert(other_ss.forward != substrand.forward);

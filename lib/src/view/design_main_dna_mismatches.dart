@@ -10,17 +10,17 @@ import 'pure_component.dart';
 import 'design_main_mismatch.dart';
 import '../util.dart' as util;
 
-part 'design_main_mismatches.over_react.g.dart';
+part 'design_main_dna_mismatches.over_react.g.dart';
 
-UiFactory<DesignMainMismatchesProps> DesignMainMismatches = _$DesignMainMismatches;
+UiFactory<DesignMainDNAMismatchesProps> DesignMainDNAMismatches = _$DesignMainDNAMismatches;
 
-mixin DesignMainMismatchesProps on UiProps {
+mixin DesignMainDNAMismatchesProps on UiProps {
   Design design;
   bool only_display_selected_helices;
   BuiltSet<int> side_selected_helix_idxs;
 }
 
-class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesProps> with PureComponent {
+class DesignMainDNAMismatchesComponent extends UiComponent2<DesignMainDNAMismatchesProps> with PureComponent {
   @override
   render() {
     List<ReactElement> mismatch_components = this._create_mismatch_components();
@@ -32,7 +32,7 @@ class DesignMainMismatchesComponent extends UiComponent2<DesignMainMismatchesPro
     Set<String> keys = {};
     for (Strand strand in props.design.strands) {
       for (Domain domain in strand.domains()) {
-        BuiltList<Mismatch> mismatches = props.design.mismatches_on_domain(domain);
+        BuiltList<Mismatch> mismatches = props.design.dna_mismatches_on_domain(domain);
 
         List<ReactElement> domain_components = [];
         for (Mismatch mismatch in mismatches) {

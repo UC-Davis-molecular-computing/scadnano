@@ -89,7 +89,7 @@ bool in_bounds(Design design, StrandsMove strands_move) {
 
   // look for offset out of bounds
   for (int original_helix_idx in design.helices.keys) {
-    var domains_moving = construct_helix_idx_to_substrands_map(
+    var domains_moving = construct_helix_idx_to_domains_map(
         strands_move.strands_moving, design.helices.keys)[original_helix_idx];
     if (domains_moving.isEmpty) continue;
 
@@ -126,9 +126,9 @@ bool is_allowable(Design design, StrandsMove strands_move) {
   bool delta_forward = strands_move.delta_forward;
 
   var helix_idx_to_substrands_moving =
-      construct_helix_idx_to_substrands_map(strands_move.strands_moving, design.helices.keys);
+      construct_helix_idx_to_domains_map(strands_move.strands_moving, design.helices.keys);
   var helix_idx_to_substrands_fixed =
-      construct_helix_idx_to_substrands_map(strands_move.strands_fixed, design.helices.keys);
+      construct_helix_idx_to_domains_map(strands_move.strands_fixed, design.helices.keys);
 
   for (int original_helix_idx in design.helices.keys) {
     var domains_moving = helix_idx_to_substrands_moving[original_helix_idx];

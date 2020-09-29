@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/strand.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -44,6 +45,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebui
       side_view_position_mouse_cursor_reducer(ui_state.side_view_position_mouse_cursor, action)
   ..context_menu = context_menu_reducer(ui_state.context_menu, action)?.toBuilder()
   ..dialog = dialog_reducer(ui_state.dialog, action)?.toBuilder()
+  ..strand_color_picker_strand = strand_color_picker_strand_reducer(ui_state.strand_color_picker_strand, action)?.toBuilder()
   ..helix_change_apply_to_all = helix_change_apply_to_all_reducer(ui_state.helix_change_apply_to_all, action)
   ..example_designs.replace(
       TypedReducer<ExampleDesigns, actions.ExampleDesignsLoad>(example_designs_idx_set_reducer)(
@@ -125,6 +127,8 @@ num major_tick_width_font_size_reducer(num _, actions.MajorTickWidthFontSizeSet 
 
 bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action.show;
 
+bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) => action.show_domain_name_mismatches;
+
 bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
@@ -191,6 +195,8 @@ LocalStorageDesignChoice local_storage_design_choice_reducer(
         LocalStorageDesignChoice _, actions.LocalStorageDesignChoiceSet action) =>
     action.choice.period_seconds > 0 ? action.choice : action.choice.change_period(1);
 
+bool clear_helix_selection_when_loading_new_design_set_reducer(bool _, actions.ClearHelixSelectionWhenLoadingNewDesignSet action) => action.clear;
+
 bool changed_since_last_save_undoable_action_reducer(
         bool changed_since_last_save, actions.UndoableAction action) =>
     true;
@@ -215,7 +221,7 @@ AppUIStateStorables app_ui_state_storable_global_reducer(
   // storables object and not just slices
   if (action is actions.SetAppUIStateStorable) {
     AppUIStateStorables storables = action.storables;
-    if (!state.design.groups.containsKey(action.storables.displayed_group_name)) {
+    if (state.design != null && !state.design.groups.containsKey(action.storables.displayed_group_name)) {
       // if displayed_group_name does not exist, must pick a new one
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
     }
@@ -263,6 +269,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
             storables.major_tick_width_font_size, action)
     ..show_mismatches = TypedReducer<bool, actions.ShowMismatchesSet>(show_mismatches_reducer)(
         storables.show_mismatches, action)
+    ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
+        storables.show_domain_name_mismatches, action)
     ..invert_yz = TypedReducer<bool, actions.InvertYZSet>(invert_yz_reducer)(storables.invert_yz, action)
     ..warn_on_exit_if_unsaved =
         TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
@@ -272,6 +280,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..show_grid_coordinates_side_view = TypedReducer<bool, actions.ShowGridCoordinatesSideViewSet>(show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
     ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(storables.show_loopout_length, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice, actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(storables.local_storage_design_choice, action).toBuilder()
+    ..clear_helix_selection_when_loading_new_design = TypedReducer<bool, actions.ClearHelixSelectionWhenLoadingNewDesignSet>(clear_helix_selection_when_loading_new_design_set_reducer)(storables.clear_helix_selection_when_loading_new_design, action)
     ..strand_paste_keep_color = TypedReducer<bool, actions.StrandPasteKeepColorSet>(strand_paste_keep_color_reducer)(storables.strand_paste_keep_color, action)
     ..autofit = TypedReducer<bool, actions.AutofitSet>(center_on_load_reducer)(storables.autofit, action)
     ..show_editor = TypedReducer<bool, actions.SetShowEditor>(show_editor_reducer)(storables.show_editor, action)
@@ -365,6 +374,18 @@ Point<num> side_view_mouse_pos_update_reducer(Point<num> _, actions.MousePositio
     action.svg_pos;
 
 Point<num> side_view_mouse_pos_clear_reducer(Point<num> _, actions.MousePositionSideClear action) => null;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// strand color picker
+
+Reducer<Strand> strand_color_picker_strand_reducer = combineReducers([
+  TypedReducer<Strand, actions.StrandColorPickerShow>(strand_color_picker_strand_show_reducer),
+  TypedReducer<Strand, actions.StrandColorPickerHide>(strand_color_picker_strand_hide_reducer),
+]);
+
+Strand strand_color_picker_strand_show_reducer(Strand _, actions.StrandColorPickerShow action) => action.strand;
+Strand strand_color_picker_strand_hide_reducer(Strand _, actions.StrandColorPickerHide action) => null;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

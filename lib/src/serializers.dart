@@ -43,10 +43,13 @@ import 'state/selection_box.dart';
 import 'state/select_mode_state.dart';
 import 'state/strand.dart';
 import 'state/crossover.dart';
+import 'state/domain_name_mismatch.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor([
+  DomainNameMismatch,
+  ShowDomainNameMismatchesSet,
   ModificationEdit,
   ModificationRemove,
   ModificationAdd,
@@ -64,6 +67,7 @@ part 'serializers.g.dart';
   LocalStorageDesignOption,
   LocalStorageDesignChoice,
   LocalStorageDesignChoiceSet,
+  ClearHelixSelectionWhenLoadingNewDesignSet,
   StrandsReflect,
   ReplaceStrands,
   ShowGridCoordinatesSideViewSet,
@@ -218,6 +222,8 @@ part 'serializers.g.dart';
   DialogShow,
   DialogHide,
   StrandColorSet,
+  StrandColorPickerShow,
+  StrandColorPickerHide,
   StrandPasteKeepColorSet,
   ExampleDesigns,
   ExampleDesignsLoad,

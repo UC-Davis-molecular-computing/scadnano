@@ -40,6 +40,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_domain_names = state.ui_state.show_domain_labels
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
+      ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
@@ -67,6 +68,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_loopout_length = state.ui_state.show_loopout_length
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
+      ..clear_helix_selection_when_loading_new_design = state.ui_state.clear_helix_selection_when_loading_new_design
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
@@ -89,6 +91,7 @@ mixin MenuPropsMixin on UiProps {
   num major_tick_width_font_size;
   bool modification_display_connector;
   bool show_mismatches;
+  bool show_domain_name_mismatches;
   bool strand_paste_keep_color;
   bool autofit;
   bool only_display_selected_helices;
@@ -109,6 +112,7 @@ mixin MenuPropsMixin on UiProps {
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
+  bool clear_helix_selection_when_loading_new_design;
   Geometry geometry;
 }
 
@@ -211,6 +215,17 @@ really want to exit without saving.'''
         ..key = 'export-codenano')(),
       DropdownDivider({'key': 'divider-export'}),
       ...file_menu_save_design_local_storage_options(),
+      DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
+      (MenuBoolean()
+        ..value = props.clear_helix_selection_when_loading_new_design
+        ..display = 'Clear helix selection when loading new design'
+        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..tooltip = '''\
+If checked, the selected helices will be clear when loading a new design.
+Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
+design will be selected (based on helix index) on the loaded design.'''
+        ..key = 'clear-helix-selection-when-loading-new-design'
+      )(),
     ]);
   }
 
@@ -467,6 +482,16 @@ helix with the opposite orientation.'''
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-label-font-size')(),
+      (MenuBoolean()
+        ..value = props.show_domain_name_mismatches
+        ..display = 'Show domain name mismatches'
+        ..tooltip = '''\
+Show mismatches between domain names assigned to one strand and the strand on the same
+helix with the opposite orientation.'''
+        ..onChange = (_) {
+          props.dispatch(actions.ShowDomainNameMismatchesSet(!props.show_domain_name_mismatches));
+        }
+        ..key = 'show-domain-name-mismatches')(),
     ];
   }
 
