@@ -272,7 +272,7 @@ All built_value classes should use the mixin `BuiltJsonSerializable`, which is d
 For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
 
 1. **create new state data types if necessary**: 
-    Most of the time, existing data types can be used, so this is rarely needed. But sometimes you will need a new data type to describe some part of the state. For "modification font size", this is unnecessary (it is represented by an `int`), but examples of custom data types that capture state information are `Design`, `Strand`, and other parts of the design, as well as `AppUIState` and things under it such as `EditModeChoice` and `LocalStorageDesignChoice`.
+    Most of the time, existing data types can be used, so this is rarely needed. But sometimes you will need a new data type to describe some part of the state. For "modification font size", this is unnecessary (it is represented by the builtin type `num`), but examples of custom data types that capture state information are `Design`, `Strand`, and other parts of the design, as well as `AppUIState` and things under it such as `EditModeChoice` and `LocalStorageDesignChoice`.
 
 2. **create Action class**: 
     In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together, even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart for more examples.)
@@ -325,7 +325,7 @@ For many typical features one would want to add that involve changing some aspec
       "grid_position" = [0, 1],
     ```
 
-    However, there should be only one `NoIndent` along any path from leaf to root in the object tree.
+    However, there should be only *one* `NoIndent` along any path from leaf to root in the object tree. Otherwise, you will get an error stating that Dart does not know how to serialize an object of type `NoIndent`.
     
     **WARNING about built types:**
     One thing that isn't obvious is that the built_collection classes are not "naturally" JSON serializable in this way (they use their own custom serializer, but cannot simply be given to the (`jsonEncode` function)[https://api.dart.dev/stable/2.8.4/dart-convert/jsonEncode.html]), so when constructing a serializable object in `to_json_serializable`, you cannot put a built_collection object directly. It must be converted to a standard collection, e.g., `my_built_list.toList()`. Failing to do this results in frustrating and hard-to-track-down warnings of this form: 
