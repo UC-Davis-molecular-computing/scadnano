@@ -54,7 +54,6 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool selected;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool currently_moving;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool modification_display_connector;
@@ -99,7 +98,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..show_domain_labels = props.show_domain_labels
         ..helices = props.helices
         ..groups = props.groups
-        ..currently_moving = props.currently_moving
         ..selected_ends_in_strand = props.selected_ends_in_strand
         ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
         ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
@@ -157,7 +155,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      if (strand_selectable(props.strand) && !props.currently_moving) {
+      bool currently_moving = app.state.ui_state.strands_move != null ||
+          app.state.ui_state.domains_move != null ||
+          app.state.ui_state.dna_ends_are_moving;
+      if (strand_selectable(props.strand) && !currently_moving) {
         props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
       }
     }
