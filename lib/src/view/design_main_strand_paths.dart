@@ -40,7 +40,6 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
 
-  bool currently_moving;
   bool show_domain_labels;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
@@ -97,7 +96,6 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
           paths.add((DesignMainDomain()
             ..domain = domain
             ..strand = props.strand
-            ..currently_moving = props.currently_moving
             ..transform = transform_of_helix(domain.helix)
             ..context_menu_strand = props.context_menu_strand
             ..color = strand.color
