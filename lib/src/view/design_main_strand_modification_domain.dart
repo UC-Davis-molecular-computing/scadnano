@@ -37,10 +37,11 @@ class DesignMainStrandModificationDomainComponent
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
     bool display_connector = props.display_connector;
+    String html_id = props.modification.html_id(props.address);
     if (props.modification is Modification5Prime) {
       return (Dom.g()
         ..className = "'modification-5'"
-        ..id = "modification-" + props.modification.id + "-" + props.address.offset.toString()
+        ..id = html_id
         ..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
@@ -48,7 +49,7 @@ class DesignMainStrandModificationDomainComponent
     } else if (props.modification is Modification3Prime) {
       return (Dom.g()
         ..className = "'modification-3'"
-        ..id = "modification-" + props.modification.id + "-" + props.address.offset.toString()
+        ..id = html_id
         ..transform = props.transform)([
         if (display_connector) _end_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
@@ -56,7 +57,7 @@ class DesignMainStrandModificationDomainComponent
     } else {
       return (Dom.g()
         ..className = 'modification-internal'
-        ..id = "modification-" + props.modification.id + "-" + props.address.offset.toString()
+        ..id = html_id
         ..transform = props.transform)([
         if (display_connector) _internal_connector(pos, props.address.forward),
         _modification_svg(pos, props.address.forward, display_connector),
@@ -66,15 +67,13 @@ class DesignMainStrandModificationDomainComponent
 
   @override
   componentDidMount() {
-    var element = querySelector(
-        '#${"modification-" + props.modification.id.replaceAll('/', '\\/') + "-" + props.address.offset.toString()}');
+    var element = querySelector('#${props.modification.html_id(props.address)}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector(
-        '#${"modification-" + props.modification.id.replaceAll('/', '\\/') + "-" + props.address.offset.toString()}');
+    var element = querySelector('#${props.modification.html_id(props.address)}');
     element.removeEventListener('contextmenu', on_context_menu);
   }
 

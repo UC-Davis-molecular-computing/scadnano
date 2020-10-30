@@ -36,6 +36,8 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
   int get offset;
 
   bool get forward;
+
+  String toString() => 'H${helix_idx}-${forward ? "F" : "R"}-${offset}';
 }
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
@@ -128,8 +130,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   Point<num> get svg_position_;
 
-  Point<num> get svg_position =>
-      invert_yz ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
+  Point<num> get svg_position => invert_yz ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;
@@ -368,10 +369,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     helix_builder.major_tick_start =
         util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
     helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
-    helix_builder.roll =
-        util.optional_field(json_map, constants.roll_key, constants.default_roll);
-    helix_builder.pitch =
-        util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
+    helix_builder.roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
+    helix_builder.pitch = util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
     helix_builder.yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
     if (json_map.containsKey(constants.major_tick_distance_key) &&

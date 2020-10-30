@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:scadnano/src/state/helix.dart';
 import '../state/design.dart';
 
 import '../json_serializable.dart';
@@ -52,7 +53,12 @@ abstract class Modification {
 
   @memoized
   int get hashCode;
+
+  String html_id(Address address);
 }
+
+String mod_html_id(Modification modification, Address address) =>
+    "modification-${modification.id.replaceAll('/', '')}-${address}";
 
 abstract class Modification5Prime
     with BuiltJsonSerializable, UnusedFields
@@ -67,6 +73,9 @@ abstract class Modification5Prime
 
   static Serializer<Modification5Prime> get serializer => _$modification5PrimeSerializer;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get display_text;
@@ -78,8 +87,7 @@ abstract class Modification5Prime
 
   String get idt_text;
 
-  @memoized
-  int get hashCode;
+  String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 
@@ -98,10 +106,7 @@ abstract class Modification5Prime
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification5Prime(
-        display_text: display_text,
-        id: id,
-        idt_text: idt_text,
-        unused_fields: unused_fields);
+        display_text: display_text, id: id, idt_text: idt_text, unused_fields: unused_fields);
   }
 }
 
@@ -118,6 +123,9 @@ abstract class Modification3Prime
 
   static Serializer<Modification3Prime> get serializer => _$modification3PrimeSerializer;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get display_text;
@@ -129,8 +137,7 @@ abstract class Modification3Prime
 
   String get idt_text;
 
-  @memoized
-  int get hashCode;
+  String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 
@@ -149,10 +156,7 @@ abstract class Modification3Prime
     var unused_fields = util.unused_fields_map(json_map, constants.modification_keys).build();
 
     return Modification3Prime(
-        display_text: display_text,
-        id: id,
-        idt_text: idt_text,
-        unused_fields: unused_fields);
+        display_text: display_text, id: id, idt_text: idt_text, unused_fields: unused_fields);
   }
 }
 
@@ -173,6 +177,9 @@ abstract class ModificationInternal
       BuiltSet<String> allowed_bases,
       BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get display_text;
@@ -186,6 +193,8 @@ abstract class ModificationInternal
 
   @nullable
   BuiltSet<String> get allowed_bases;
+
+  String html_id(Address address) => mod_html_id(this, address);
 
   Modification set_id(String id) => rebuild((b) => b..id = id);
 
