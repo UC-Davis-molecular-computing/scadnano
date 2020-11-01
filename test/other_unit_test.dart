@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/grid.dart';
 import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:test/test.dart';
 
@@ -15,6 +16,26 @@ import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/util.dart' as util;
 
 main() {
+
+  test('util.position3d_to_grid_position', () {
+    var grid = Grid.square;
+    var geometry = Geometry(helix_radius: 2.0, inter_helix_gap: 1.0);
+
+    var position11 = Position3D(x: 0.0, y: 3.0, z: 3.0);
+    var grid_position11_actual = util.position3d_to_grid_position(position11, grid, geometry);
+    var grid_position11_expected = GridPosition(1, 1);
+    expect(grid_position11_expected, grid_position11_actual);
+
+    var position00 = Position3D(x: 0.0, y: 0.0, z: 0.0);
+    var grid_position00_actual = util.position3d_to_grid_position(position00, grid, geometry);
+    var grid_position00_expected = GridPosition(0, 0);
+    expect(grid_position00_expected, grid_position00_actual);
+
+    var position21 = Position3D(x: 0.0, y: 2.5, z: 5.0);
+    var grid_position21_actual = util.position3d_to_grid_position(position21, grid, geometry);
+    var grid_position21_expected = GridPosition(1, 1);
+    expect(grid_position21_expected, grid_position21_actual);
+  });
 
   test('duplicate_deletions_in_JSON_removed', () {
     var json_str = '''
