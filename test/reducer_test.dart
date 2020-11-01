@@ -5534,9 +5534,9 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      var expected_position_h0 = util.grid_to_position3d(
+      var expected_position_h0 = util.grid_position_to_position3d(
           two_helices_design.helices[0].grid_position, Grid.square, two_helices_design.geometry);
-      var expected_position_h1 = util.grid_to_position3d(
+      var expected_position_h1 = util.grid_position_to_position3d(
           two_helices_design.helices[1].grid_position, Grid.square, two_helices_design.geometry);
 
       expect(state.design.default_group().grid, Grid.none);
@@ -5568,9 +5568,9 @@ main() {
           expected_position1.rebuild((b) => b.x = original_helix1.min_offset * geometry.base_width_svg);
 
       GridPosition expected_grid_position0 =
-          util.position3d_to_grid(expected_position0, grid, no_grid_two_helices_design.geometry);
+          util.position3d_to_grid_position(expected_position0, grid, no_grid_two_helices_design.geometry);
       GridPosition expected_grid_position1 =
-          util.position3d_to_grid(expected_position1, grid, no_grid_two_helices_design.geometry);
+          util.position3d_to_grid_position(expected_position1, grid, no_grid_two_helices_design.geometry);
 
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid

@@ -135,7 +135,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   Position3D get position_;
 
-  Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid, geometry);
+  Position3D get position => position_ ?? util.grid_position_to_position3d(grid_position, grid, geometry);
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
   double get roll;

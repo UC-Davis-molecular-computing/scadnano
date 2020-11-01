@@ -746,13 +746,11 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, n
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-        //        y += 0.5;
         y -= 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-        //        y += cos(2 * pi / 6);
         y -= cos(2 * pi / 6);
       }
     }
@@ -784,12 +782,14 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, n
   return gp;
 }
 
-GridPosition position3d_to_grid(Position3D position, Grid grid, Geometry geometry) {
-  var gp = position_2d_to_grid_position_diameter_1_circles(grid, position.z, position.y);
+GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometry geometry) {
+  var position_normalized_diameter_1 = position * (1.0 / geometry.distance_between_helices_nm);
+  var gp = position_2d_to_grid_position_diameter_1_circles(grid,
+      position_normalized_diameter_1.z, position_normalized_diameter_1.y);
   return gp;
 }
 
-Position3D grid_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
+Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
   num y, z;
   if (grid == Grid.square) {
     z = grid_position.h * geometry.distance_between_helices_nm;
