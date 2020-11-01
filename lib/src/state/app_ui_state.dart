@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:scadnano/src/state/modification.dart';
 import '../actions/actions.dart';
 import '../state/local_storage_design_choice.dart';
 
@@ -22,7 +23,6 @@ import 'selectable.dart';
 import 'strand.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
-import 'helix_group_move.dart';
 
 part 'app_ui_state.g.dart';
 
@@ -53,6 +53,18 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   bool get helix_change_apply_to_all;
+
+  // last 5' modification that was added (for populating new add modification dialogs)
+  @nullable
+  Modification5Prime get last_mod_5p;
+
+  // last 3' modification that was added (for populating new add modification dialogs)
+  @nullable
+  Modification3Prime get last_mod_3p;
+
+  // last internal modification that was added (for populating new add modification dialogs)
+  @nullable
+  ModificationInternal get last_mod_int;
 
   BuiltList<MouseoverData> get mouseover_datas;
 
@@ -173,6 +185,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
+    b.last_mod_5p = null;
+    b.last_mod_3p = null;
+    b.last_mod_int = null;
     b.mouseover_datas.replace([]);
     b.selection_box_displayed_main = false;
     b.selection_box_displayed_side = false;

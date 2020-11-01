@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
@@ -18,7 +18,6 @@ import '../reducers/edit_modes_reducer.dart';
 import '../actions/actions.dart' as actions;
 import 'dialog_reducer.dart';
 import 'domains_move_reducer.dart';
-import 'helix_group_move_reducer.dart';
 import 'strand_creation_reducer.dart';
 import 'strands_move_reducer.dart';
 import 'util_reducer.dart';
@@ -33,6 +32,12 @@ import 'mouseover_datas_reducer.dart';
 AppUIState ui_state_local_reducer(AppUIState ui_state, action) => ui_state.rebuild((u) => u
   ..storables.replace(app_ui_state_storable_local_reducer(ui_state.storables, action))
   ..changed_since_last_save = changed_since_last_save_reducer(ui_state.changed_since_last_save, action)
+  ..last_mod_5p = TypedReducer<Modification5Prime, actions.ModificationAdd>(
+      last_mod_5p_modification_add_reducer)(ui_state.last_mod_5p, action)?.toBuilder()
+  ..last_mod_3p = TypedReducer<Modification3Prime, actions.ModificationAdd>(
+      last_mod_3p_modification_add_reducer)(ui_state.last_mod_3p, action)?.toBuilder()
+  ..last_mod_int = TypedReducer<ModificationInternal, actions.ModificationAdd>(
+      last_mod_int_modification_add_reducer)(ui_state.last_mod_int, action)?.toBuilder()
   ..potential_crossover_is_drawing =
       drawing_potential_crossover_reducer(ui_state.potential_crossover_is_drawing, action)
   ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
@@ -303,6 +308,22 @@ String displayed_group_name_change_displayed_group_reducer(String _, actions.Gro
 
 String displayed_group_name_change_name_reducer(String displayed_group_name, actions.GroupChange action) =>
     displayed_group_name == action.old_name ? action.new_name : displayed_group_name;
+
+
+Modification5Prime last_mod_5p_modification_add_reducer(
+    Modification5Prime modification,
+    actions.ModificationAdd action) =>
+  action.modification is Modification5Prime? action.modification: modification;
+
+Modification3Prime last_mod_3p_modification_add_reducer(
+    Modification3Prime modification,
+    actions.ModificationAdd action) =>
+  action.modification is Modification3Prime? action.modification: modification;
+
+ModificationInternal last_mod_int_modification_add_reducer(
+    ModificationInternal modification,
+    actions.ModificationAdd action) =>
+  action.modification is ModificationInternal? action.modification: modification;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // svg-png-caching

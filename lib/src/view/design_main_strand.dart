@@ -430,9 +430,33 @@ Future<void> ask_for_add_modification(Strand strand,
   var items = List<DialogItem>(5);
   items[modification_type_idx] = DialogRadio(
       label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
-  items[display_text_idx] = DialogText(label: 'display text', value: "");
-  items[id_idx] = DialogText(label: 'id', value: "");
-  items[idt_text_idx] = DialogText(label: 'idt text', value: "");
+
+  String initial_display_text = "";
+  String initial_id = "";
+  String initial_idt_text = "";
+
+  // if there is a last mod of this type, it auto-populates the dialog inputs
+  Modification last_mod;
+  if (selected_index == 0) {// 3' mod
+    last_mod = app.state.ui_state.last_mod_3p;
+  } else if (selected_index == 1) { // 5' mod
+    last_mod = app.state.ui_state.last_mod_5p;
+  } else if (selected_index == 2) { // internal mod
+    last_mod = app.state.ui_state.last_mod_int;
+  } else {
+    throw AssertionError('should be unreachable');
+  }
+  if (last_mod != null) {
+    initial_display_text = last_mod.display_text;
+    initial_id = last_mod.id;
+    initial_idt_text = last_mod.idt_text;
+  }
+
+
+  items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
+  items[id_idx] = DialogText(label: 'id', value: initial_id);
+  items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+
   items[index_of_dna_base_idx] =
       DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
 
