@@ -134,6 +134,7 @@ part 'serializers.g.dart';
   Loopout,
   LoopoutLengthChange,
   ConvertCrossoverToLoopout,
+  ConvertCrossoversToLoopouts,
   EditModeChoice,
   EditModeToggle,
   EditModesSet,

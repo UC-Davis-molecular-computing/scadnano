@@ -14,6 +14,7 @@ import 'select_mode.dart';
 import 'edit_mode.dart';
 import 'strand.dart';
 import '../app.dart';
+import '../constants.dart' as constants;
 
 part 'selectable.g.dart';
 
@@ -144,11 +145,13 @@ mixin Selectable {
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
 //  handle_selection(react.SyntheticPointerEvent event) {
   handle_selection_mouse_down(MouseEvent event) {
-    if (event.ctrlKey || event.metaKey) {
-      app.dispatch(actions.Select(this, toggle: true));
-    } else {
-      // add to selection on mouse down
-      app.dispatch(actions.Select(this, toggle: false));
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (event.ctrlKey || event.metaKey) {
+        app.dispatch(actions.Select(this, toggle: true));
+      } else {
+        // add to selection on mouse down
+        app.dispatch(actions.Select(this, toggle: false));
+      }
     }
   }
 
@@ -157,8 +160,10 @@ mixin Selectable {
   // Shift or Ctrl key, so if we deselected whenever the user clicks without those keys, we would not be
   // able to move multiple items.
   handle_selection_mouse_up(MouseEvent event) {
-    if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
-      app.dispatch(actions.Select(this, toggle: false, only: true));
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
+        app.dispatch(actions.Select(this, toggle: false, only: true));
+      }
     }
   }
 }

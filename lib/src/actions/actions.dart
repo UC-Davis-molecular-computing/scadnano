@@ -1540,6 +1540,27 @@ abstract class ConvertCrossoverToLoopout
   static Serializer<ConvertCrossoverToLoopout> get serializer => _$convertCrossoverToLoopoutSerializer;
 }
 
+abstract class ConvertCrossoversToLoopouts
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<ConvertCrossoversToLoopouts, ConvertCrossoversToLoopoutsBuilder> {
+  BuiltList<Crossover> get crossovers;
+
+  int get length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConvertCrossoversToLoopouts(Iterable<Crossover> crossovers, int length) =>
+      ConvertCrossoversToLoopouts.from((b) => b
+        ..crossovers.replace(crossovers)
+        ..length = length);
+
+  factory ConvertCrossoversToLoopouts.from([void Function(ConvertCrossoversToLoopoutsBuilder) updates]) =
+      _$ConvertCrossoversToLoopouts;
+
+  ConvertCrossoversToLoopouts._();
+
+  static Serializer<ConvertCrossoversToLoopouts> get serializer => _$convertCrossoversToLoopoutsSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // nick/join
 

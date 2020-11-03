@@ -955,33 +955,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   _check_loopouts_not_consecutive_or_singletons_or_zero_length() {
     for (var strand in strands) {
-      Design._check_loopout_not_singleton(strand);
-      Design._check_two_consecutive_loopouts(strand);
-      Design._check_loopouts_length(strand);
-    }
-  }
-
-  static _check_loopout_not_singleton(Strand strand) {
-    if (strand.substrands.length == 1 && strand.first_domain().is_loopout()) {
-      throw StrandError(strand, 'strand cannot have a single Loopout as its only domain');
-    }
-  }
-
-  static _check_two_consecutive_loopouts(Strand strand) {
-    for (int i = 0; i < strand.substrands.length - 1; i++) {
-      var domain1 = strand.substrands[i];
-      var domain2 = strand.substrands[i + 1];
-      if (domain1.is_loopout() && domain2.is_loopout()) {
-        throw StrandError(strand, 'cannot have two consecutive Loopouts in a strand');
-      }
-    }
-  }
-
-  static _check_loopouts_length(Strand strand) {
-    for (var loopout in strand.loopouts()) {
-      if (loopout.loopout_length <= 0) {
-        throw StrandError(strand, 'loopout length must be positive but is ${loopout.loopout_length}');
-      }
+      strand.check_loopout_not_singleton();
+      strand.check_two_consecutive_loopouts();
+      strand.check_loopouts_length();
     }
   }
 

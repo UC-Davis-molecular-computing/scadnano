@@ -201,6 +201,13 @@ class DesignMainStrandCrossoverComponent
     if (new_length == null || new_length == 0) {
       return;
     }
-    app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
+    var selected_crossovers = app.state.ui_state.selectables_store.selected_crossovers;
+    actions.UndoableAction action;
+    if (selected_crossovers.length > 0) {
+      action = actions.ConvertCrossoversToLoopouts(selected_crossovers, new_length);
+    } else {
+      action = actions.ConvertCrossoverToLoopout(props.crossover, new_length);
+    }
+    app.dispatch(action);
   }
 }
