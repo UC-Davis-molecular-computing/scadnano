@@ -64,10 +64,17 @@ abstract class Modification5Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification5Prime, Modification5PrimeBuilder>, Modification {
   factory Modification5Prime(
-      {String display_text,
-      String id,
-      String idt_text,
-      BuiltMap<String, Object> unused_fields}) = _$Modification5Prime._;
+      {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
+    String id_to_assign = id ?? idt_text;
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+    return Modification5Prime.from((b) => b
+      ..display_text = display_text
+      ..idt_text = idt_text
+      ..id = id_to_assign
+      ..unused_fields.replace(unused_fields_to_assign));
+  }
+
+  factory Modification5Prime.from([void Function(Modification5PrimeBuilder) updates]) = _$Modification5Prime;
 
   Modification5Prime._();
 
@@ -114,10 +121,17 @@ abstract class Modification3Prime
     with BuiltJsonSerializable, UnusedFields
     implements Built<Modification3Prime, Modification3PrimeBuilder>, Modification {
   factory Modification3Prime(
-      {String display_text,
-      String id,
-      String idt_text,
-      BuiltMap<String, Object> unused_fields}) = _$Modification3Prime._;
+      {String display_text, String id, String idt_text, BuiltMap<String, Object> unused_fields}) {
+    String id_to_assign = id ?? idt_text;
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+    return Modification3Prime.from((b) => b
+      ..display_text = display_text
+      ..idt_text = idt_text
+      ..id = id_to_assign
+      ..unused_fields.replace(unused_fields_to_assign));
+  }
+
+  factory Modification3Prime.from([void Function(Modification3PrimeBuilder) updates]) = _$Modification3Prime;
 
   Modification3Prime._();
 
@@ -163,6 +177,22 @@ abstract class Modification3Prime
 abstract class ModificationInternal
     with BuiltJsonSerializable, UnusedFields
     implements Built<ModificationInternal, ModificationInternalBuilder>, Modification {
+  factory ModificationInternal(
+      {String display_text,
+      String id,
+      String idt_text,
+      BuiltSet<String> allowed_bases,
+      BuiltMap<String, Object> unused_fields}) {
+    String id_to_assign = id ?? idt_text;
+    var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
+    return ModificationInternal.from((b) => b
+      ..display_text = display_text
+      ..idt_text = idt_text
+      ..id = id_to_assign
+      ..allowed_bases.replace(allowed_bases)
+      ..unused_fields.replace(unused_fields_to_assign));
+  }
+
   factory ModificationInternal.from([void Function(ModificationInternalBuilder) updates]) =
       _$ModificationInternal;
 
@@ -170,12 +200,12 @@ abstract class ModificationInternal
 
   static Serializer<ModificationInternal> get serializer => _$modificationInternalSerializer;
 
-  factory ModificationInternal(
-      {String display_text,
-      String id,
-      String idt_text,
-      BuiltSet<String> allowed_bases,
-      BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
+  // factory ModificationInternal(
+  //     {String display_text,
+  //     String id,
+  //     String idt_text,
+  //     BuiltSet<String> allowed_bases,
+  //     BuiltMap<String, Object> unused_fields}) = _$ModificationInternal._;
 
   @memoized
   int get hashCode;

@@ -18,6 +18,9 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
 
   static Serializer<Dialog> get serializer => _$dialogSerializer;
 
+  @memoized
+  int get hashCode;
+
   factory Dialog(
       {String title,
       Iterable<DialogItem> items,
