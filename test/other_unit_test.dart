@@ -15,6 +15,8 @@ import 'package:test/test.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/util.dart' as util;
 
+import 'utils.dart';
+
 main() {
 
   test('util.position3d_to_grid_position', () {
@@ -178,12 +180,12 @@ main() {
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-//    expect(design.helices[0].position3d().x, 30);
-//    expect(design.helices[0].position3d().y, 60);
-//    expect(design.helices[0].position3d().z, 10);
-//    expect(design.helices[1].position3d().x, 50);
-//    expect(design.helices[1].position3d().y, 80);
-//    expect(design.helices[1].position3d().z, 20);
+   expect(design.helices[0].position3d().x, 30);
+   expect(design.helices[0].position3d().y, 60);
+   expect(design.helices[0].position3d().z, 10);
+   expect(design.helices[1].position3d().x, 50);
+   expect(design.helices[1].position3d().y, 80);
+   expect(design.helices[1].position3d().z, 20);
   });
 
   group('strand_maker_tests', () {
@@ -381,5 +383,27 @@ main() {
         ], color: Color.rgb(247, 67, 8))));
       expect(actual_design.strands, expected_design.strands);
     });
+  });
+
+  // Issue: https://github.com/UC-Davis-molecular-computing/scadnano/issues/497
+  test('design with min_offset should set major_tick_distance values', () {
+    String four_helix_min_offsets_nonzero_design = """
+    {
+      "grid": "square",
+      "helices": [
+        {"max_offset": 30, "grid_position": [0, 0]},
+        {"min_offset": 1, "max_offset": 30, "grid_position": [0, 1]},
+        {"min_offset": 2, "max_offset": 30, "grid_position": [0, 2]},
+        {"min_offset": 3, "max_offset": 30, "grid_position": [0, 3]}
+      ],
+      "strands": []
+    }
+    """;
+    Design design = Design.from_json(jsonDecode(four_helix_min_offsets_nonzero_design), false);
+
+    expect(design.helices[0].major_tick_start, 0);
+    expect(design.helices[1].major_tick_start, 1);
+    expect(design.helices[2].major_tick_start, 2);
+    expect(design.helices[3].major_tick_start, 3);
   });
 }

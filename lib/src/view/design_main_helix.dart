@@ -230,7 +230,7 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
   String _horz_line_paths(Helix helix) {
     num width = helix.svg_width();
     num height = helix.svg_height();
-    num x_start = helix.svg_position.x;
+    num x_start = helix.min_offset *  props.helix.geometry.base_width_svg;
     num x_end = x_start + width;
     num y_start = helix.svg_position.y;
     num y_mid = y_start + height / 2.0;

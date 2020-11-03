@@ -724,7 +724,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_yz = false]) {
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
     if (json_map == null) return null;
 
     _check_mutually_exclusive_fields(json_map);
@@ -732,6 +732,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var design_builder = DesignBuilder();
 
     design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
+
+    // prior to version 0.13.0, x and z had the opposite role
+    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
 
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
@@ -756,7 +759,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (helix_builder.idx == null) {
         helix_builder.idx = idx;
       }
-      helix_builder.invert_yz = invert_yz;
+      helix_builder.invert_xy = invert_xy;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
@@ -814,6 +817,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
 
+    // Swap x and z coordinates if needed
+    if (position_x_z_should_swap) {
+      for (var helix_builder in helix_builders_list) {
+        if (grid_is_none && !using_groups || using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
+          // prior to version 0.13.0, x and z had the opposite role
+          num swap = helix_builder.position_.x;
+          helix_builder.position_.x = helix_builder.position_.z;
+          helix_builder.position_.z = swap;
+        }
+      }
+      for (var group_builder in group_builders_map.values) {
+        num swap = group_builder.position.x;
+        group_builder.position.x = group_builder.position.z;
+        group_builder.position.z = swap;
+      }
+    }
+
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
@@ -825,7 +845,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, invert_yz, helices, groups_map.build());
+    helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
     design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -1605,9 +1625,9 @@ set_helices_min_max_offsets(Map<int, HelixBuilder> helix_builders, Iterable<Stra
         min_offset = 0;
       }
       helix_builder.min_offset = min_offset;
-      if (helix_builder.major_tick_start == null) {
-        helix_builder.major_tick_start = min_offset;
-      }
+    }
+    if (helix_builder.major_tick_start == null) {
+      helix_builder.major_tick_start = helix_builder.min_offset;
     }
   }
 }

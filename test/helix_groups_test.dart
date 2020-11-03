@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/position3d.dart';
 import 'package:test/test.dart';
 
 import 'package:scadnano/src/actions/actions.dart';
@@ -202,7 +203,6 @@ main() {
   group('group_with_4_helix_groups', () {
     var json_str = '''
 {
-  "version": "0.10.1",
   "groups": {
     "north": {
       "position": {"x": 0, "y": -200, "z": 0},
@@ -457,5 +457,97 @@ main() {
     expect(design.default_group().helices_view_order, [12, 15, 17, 13].build());
     expect(
         design.default_group().helices_view_order_inverse, {12: 0, 15: 1, 17: 2, 13: 3}.build());
+  });
+
+  test('x_and_z_coordinates_of_group_and_none_grid_helices_should_swap_for_early_version', () {
+    String json_str = r'''
+      {
+        "version": "0.12.0",
+        "groups": {
+          "east": {
+            "position": {"x": 3, "y": 0, "z": 100},
+            "pitch": 45,
+            "grid": "square"
+          },
+          "west": {
+            "position": {"x": 4, "y": 0, "z": 5},
+            "grid": "none"
+          }
+        },
+        "helices": [
+          {
+            "group": "west",
+            "max_offset": 26,
+            "position": {"x": 6, "y": 8, "z": 7},
+            "idx": 8
+          },
+          {
+            "group": "west",
+            "max_offset": 27,
+            "position": {"x": 2, "y": 2.5, "z": 1},
+            "idx": 9
+          },
+          {"group": "east", "max_offset": 22, "grid_position": [0, 0], "idx": 13},
+          {"group": "east", "max_offset": 23, "grid_position": [0, 1], "idx": 15}
+        ],
+        "strands": []
+      }
+    ''';
+    var json_map = jsonDecode(json_str);
+    var design = Design.from_json(json_map);
+    var e = 'east';
+    var w = 'west';
+    var groups = design.groups;
+
+    expect(groups.length, 2);
+
+    expect(groups[w].helices_view_order, [8, 9]);
+    expect(groups[e].helices_view_order, [13, 15]);
+
+    expect(groups[e].grid, Grid.square);
+    expect(groups[w].grid, Grid.none);
+
+    num eps = 0.000001;
+    expect(groups[e].pitch, closeTo(45, eps));
+    expect(groups[w].pitch, closeTo(0, eps));
+
+    Map<String, dynamic> json_map_export = design.to_json_serializable(suppress_indent: false);
+    expect(json_map_export.containsKey(constants.groups_key), true);
+
+    Map<String, dynamic> groups_map = json_map_export[constants.groups_key];
+    expect(groups_map.length, 2);
+
+    Set<String> names = groups_map.keys.toSet();
+    expect(names, {e, w});
+
+    Map<String, dynamic> group_e = groups_map[e];
+    Map<String, dynamic> group_w = groups_map[w];
+
+    // x and z coordinates should be swapped
+    Map<String, dynamic> pos_e = group_e[constants.position_key];
+    expect(pos_e['x'], closeTo(100, eps));
+    expect(pos_e['y'], closeTo(0, eps));
+    expect(pos_e['z'], closeTo(3, eps));
+
+    // x and z coordinates should be swapped
+    Map<String, dynamic> pos_w = group_w[constants.position_key];
+    expect(pos_w['x'], closeTo(5, eps));
+    expect(pos_w['y'], closeTo(0, eps));
+    expect(pos_w['z'], closeTo(4, eps));
+
+    expect(group_e[constants.grid_key], Grid.square.name);
+    expect(group_w[constants.grid_key], Grid.none.name);
+
+    // if pitch is 0, that's the default, so won't get written to JSON
+    expect(group_e[constants.pitch_key], closeTo(45, eps));
+    expect(group_w[constants.pitch_key], null);
+
+    // test auto-assignment of grid_positions based on helices view order
+    expect(design.helices[13].grid_position, GridPosition(0, 0));
+    expect(design.helices[15].grid_position, GridPosition(0, 1));
+
+    // test that x and z cordinate swapped for helices in helix group using none grid
+    expect(design.helices[8].position, Position3D(x: 7, y: 8, z: 6));
+    expect(design.helices[9].position, Position3D(x: 1, y: 2.5, z: 2));
   });
 }

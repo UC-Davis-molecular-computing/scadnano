@@ -722,7 +722,7 @@ class DesignViewComponent {
         HelixGroup group = app.state.design.group_of_domain(domain);
         int helix_view_order = group.helices_view_order_inverse[domain.helix];
         bool helix_is_more_extreme = extreme_helix_view_order == null ||
-            (app.state.ui_state.invert_yz
+            (app.state.ui_state.invert_xy
                 ? extreme_helix_view_order < helix_view_order
                 : extreme_helix_view_order > helix_view_order);
         if (helix_is_more_extreme) {
@@ -769,7 +769,7 @@ class DesignViewComponent {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
       if (!displayed_grid.is_none()) {
-        bool invert_y = app.state.ui_state.invert_yz;
+        bool invert_y = app.state.ui_state.invert_xy;
         Geometry geometry = app.state.design.geometry;
         var new_grid_pos = util.grid_position_of_mouse_in_side_view(displayed_grid, invert_y, geometry,
             mouse_pos: mouse_pos, event: event);

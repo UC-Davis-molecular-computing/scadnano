@@ -73,7 +73,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,
-    bool invert_yz = false,
+    bool invert_xy = false,
     Position3D position = null,
     Point<num> svg_position = null,
     String group = constants.default_group_name,
@@ -92,7 +92,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..roll = roll
       ..pitch = pitch
       ..yaw = yaw
-      ..invert_yz = invert_yz
+      ..invert_xy = invert_xy
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
@@ -105,7 +105,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     b.roll = constants.default_roll;
     b.pitch = constants.default_pitch;
     b.yaw = constants.default_yaw;
-    b.invert_yz = false;
+    b.invert_xy = false;
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -130,7 +130,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   @nullable
   Point<num> get svg_position_;
 
-  Point<num> get svg_position => invert_yz ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
+  Point<num> get svg_position =>
+      invert_xy ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;
@@ -152,7 +153,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
 
-  bool get invert_yz;
+  bool get invert_xy;
 
   // If regular or periodic distances are used, this is the starting offset
   int get major_tick_start;

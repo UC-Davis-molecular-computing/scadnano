@@ -5627,9 +5627,9 @@ main() {
     Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(30, 60) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(20 - 10, 80 - 60) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..svg_position_ = svg_position0);
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
@@ -5649,9 +5649,9 @@ main() {
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(130, 30) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(20 - 40, 80 - 30) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5679,9 +5679,9 @@ main() {
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(10, 160) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(500 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(300 - 200, 280 - 160) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)

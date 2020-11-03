@@ -43,10 +43,10 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
 
   /// Unitless distance between between two grid positions, assuming each position is a circle of diameter 1.
   num distance_lattice(GridPosition other, Grid grid) {
-    num z_diff;
+    num x_diff;
     num y_diff;
     if (grid == Grid.square) {
-      z_diff = h - other.h;
+      x_diff = h - other.h;
       y_diff = v - other.v;
     } else if (grid == Grid.hex || grid == Grid.honeycomb) {
       var pos;
@@ -58,12 +58,12 @@ abstract class GridPosition with BuiltJsonSerializable implements Built<GridPosi
         pos = util.honeycomb_grid_position_to_position2d_diameter_1_circles(this);
         other_pos = util.honeycomb_grid_position_to_position2d_diameter_1_circles(other);
       }
-      z_diff = other_pos.x - pos.x;
+      x_diff = other_pos.x - pos.x;
       y_diff = other_pos.y - pos.y;
     } else {
       throw ArgumentError('grid cannot be Grid.none to evaluate distance');
     }
-    return sqrt(z_diff * z_diff + y_diff * y_diff);
+    return sqrt(x_diff * x_diff + y_diff * y_diff);
   }
 
   /************************ begin BuiltValue boilerplate ************************/
