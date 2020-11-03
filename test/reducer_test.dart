@@ -5797,7 +5797,7 @@ main() {
     });
   });
 
-  group('Test strand editing with modifications -- split', () {
+  group('strand_editing_with_modifications_split', () {
     // many_helices_modification.dna
     //    B     Cy3   B
     // 0  [-----------------
