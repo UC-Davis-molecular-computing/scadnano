@@ -186,7 +186,6 @@ abstract class ModificationInternal
     String id_to_assign = id ?? idt_text;
     var unused_fields_to_assign = unused_fields ?? BuiltMap<String, Object>();
     var allowed_bases_to_assign = allowed_bases ?? BuiltSet<String>(['A', 'C', 'G', 'T']);
-    // print('allowed_bases: ${allowed_bases}');
     return ModificationInternal.from((b) => b
       ..display_text = display_text
       ..idt_text = idt_text
