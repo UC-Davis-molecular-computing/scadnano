@@ -126,8 +126,6 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
     }
   }
 
-  //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
-
   helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, new_groups.build());
   design = design
       .rebuild((b) => b..groups.replace(new_groups)..helices.replace(helices)..strands.replace(strands));
