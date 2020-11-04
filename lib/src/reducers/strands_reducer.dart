@@ -49,6 +49,8 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
       join_strands_by_crossover_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoversToLoopouts>(
       convert_crossovers_to_loopouts_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
+      loopouts_length_change_reducer),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {

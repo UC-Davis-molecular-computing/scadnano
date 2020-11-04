@@ -1517,6 +1517,26 @@ abstract class LoopoutLengthChange
   static Serializer<LoopoutLengthChange> get serializer => _$loopoutLengthChangeSerializer;
 }
 
+abstract class LoopoutsLengthChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<LoopoutsLengthChange, LoopoutsLengthChangeBuilder> {
+  BuiltList<Loopout> get loopouts;
+
+  int get length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoopoutsLengthChange(Iterable<Loopout> loopouts, int length) => LoopoutsLengthChange.from((b) => b
+    ..loopouts.replace(loopouts)
+    ..length = length);
+
+  factory LoopoutsLengthChange.from([void Function(LoopoutsLengthChangeBuilder) updates]) =
+      _$LoopoutsLengthChange;
+
+  LoopoutsLengthChange._();
+
+  static Serializer<LoopoutsLengthChange> get serializer => _$loopoutsLengthChangeSerializer;
+}
+
 abstract class ConvertCrossoverToLoopout
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {

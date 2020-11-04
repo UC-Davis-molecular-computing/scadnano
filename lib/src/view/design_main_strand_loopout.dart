@@ -177,7 +177,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (new_length == null || new_length == props.loopout.loopout_length) {
       return;
     }
-    app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
+    var selected_loopouts = app.state.ui_state.selectables_store.selected_loopouts;
+    actions.UndoableAction action;
+    if (selected_loopouts.length > 0) {
+      action = actions.LoopoutsLengthChange(selected_loopouts, new_length);
+    } else {
+      action = actions.LoopoutLengthChange(props.loopout, new_length);
+    }
+    app.dispatch(action);
   }
 
   String loopout_path_description_between_groups() {

@@ -17,6 +17,7 @@ Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrosso
   var substrands_builder = strand.substrands.toBuilder();
   substrands_builder.insert(action.crossover.next_domain_idx, loopout_new);
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  strand = strand.initialize();
   return strand;
 }
 
@@ -64,6 +65,59 @@ BuiltList<Strand> convert_crossovers_to_loopouts_reducer(BuiltList<Strand> stran
   return strands_builder.build();
 }
 
+BuiltList<Strand> loopouts_length_change_reducer(BuiltList<Strand> strands,
+    AppState state, actions.LoopoutsLengthChange action) {
+  Map<String, List<Loopout>> loopouts_on_strand_id = {};
+  for (var loopout in action.loopouts) {
+    String strand_id = loopout.strand_id;
+    if (!loopouts_on_strand_id.containsKey(strand_id)) {
+      loopouts_on_strand_id[strand_id] = [];
+    }
+    loopouts_on_strand_id[strand_id].add(loopout);
+  }
+
+  var strands_builder = strands.toBuilder();
+  for (String strand_id in loopouts_on_strand_id.keys) {
+    Strand strand = state.design.strands_by_id[strand_id];
+    int strand_idx = strands.indexOf(strand);
+    var substrands = strand.substrands.toList();
+
+    List<Loopout> loopouts = loopouts_on_strand_id[strand_id];
+    // must sort by crossover order for this logic to work with num_crossovers_processed_on_strand variable
+    loopouts.sort((c1, c2) => c1.prev_domain_idx - c2.prev_domain_idx);
+    for (var loopout in loopouts) {
+      int loopout_idx = substrands.indexOf(loopout);
+      if (action.length > 0) {
+        // shorten length of existing loopout
+        Loopout loopout_new = loopout.rebuild((l) => l..loopout_length = action.length);
+        substrands[loopout_idx] = loopout_new;
+      } else if (action.length == 0) {
+        // convert to crossover by removing loopout
+        substrands.removeAt(loopout_idx);
+      }
+    }
+    var new_strand = strand.rebuild((s) => s..substrands.replace(substrands));
+    new_strand = new_strand.initialize();
+    strands_builder[strand_idx] = new_strand;
+  }
+
+  return strands_builder.build();
+
+  // var substrands_builder = strand.substrands.toBuilder();
+  // int loopout_idx = strand.substrands.indexOf(action.loopout);
+  // var substrands_builder = strand.substrands.toBuilder();
+  // if (action.length > 0) {
+  //   // shorten length of existing loopout
+  //   Loopout loopout_new = action.loopout.rebuild((l) => l..loopout_length = action.length);
+  //   substrands_builder[loopout_idx] = loopout_new;
+  // } else if (action.length == 0) {
+  //   // convert to crossover by removing loopout
+  //   substrands_builder.removeAt(loopout_idx);
+  // }
+  // strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  // return strand;
+}
+
 Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange action) {
   int loopout_idx = strand.substrands.indexOf(action.loopout);
   var substrands_builder = strand.substrands.toBuilder();
@@ -76,5 +130,6 @@ Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange 
     substrands_builder.removeAt(loopout_idx);
   }
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  strand = strand.initialize();
   return strand;
 }
