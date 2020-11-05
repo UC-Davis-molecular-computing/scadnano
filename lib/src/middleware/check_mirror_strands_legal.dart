@@ -64,10 +64,14 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
 // the ReplaceStrands action replaces them "in place" where the index of the original strand was.
 List<Strand> horizontal_reflection_of_strands(
     Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
-  int min_offset =
-      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.start].min;
-  int max_offset =
-      [for (var strand in strands_to_mirror) for (var domain in strand.domains()) domain.end].max;
+  int min_offset = [
+    for (var strand in strands_to_mirror)
+      for (var domain in strand.domains()) domain.start
+  ].min;
+  int max_offset = [
+    for (var strand in strands_to_mirror)
+      for (var domain in strand.domains()) domain.end
+  ].max;
 
   List<Strand> mirrored_strands = [];
   for (var strand in strands_to_mirror) {
@@ -77,6 +81,8 @@ List<Strand> horizontal_reflection_of_strands(
       if (domain is Domain) {
         int reflected_start = reflect_between_min_and_max(domain.start, min_offset, max_offset);
         int reflected_end = reflect_between_min_and_max(domain.end, min_offset, max_offset);
+        List<int> reflected_deletions = reflect_deletions(domain, min_offset, max_offset);
+        List<Insertion> reflected_insertions = reflect_insertions(domain, min_offset, max_offset);
 
         bool is_first =
             (i == 0 && !reverse_polarity) || (i == mirrored_substrands.length - 1 && reverse_polarity);
@@ -88,6 +94,8 @@ List<Strand> horizontal_reflection_of_strands(
           ..start = reflected_end
           ..end = reflected_start
           ..forward = reverse_polarity ? domain.forward : !domain.forward
+          ..deletions.replace(reflected_deletions)
+          ..insertions.replace(reflected_insertions)
           ..is_first = is_first
           ..is_last = is_last);
       }
@@ -102,13 +110,35 @@ List<Strand> horizontal_reflection_of_strands(
   return mirrored_strands;
 }
 
+List<int> reflect_deletions(Domain domain, int min_offset, int max_offset) {
+  List<int> reflected_deletions = [];
+  for (var deletion in domain.deletions) {
+    var reflected_deletion = reflect_between_min_and_max(deletion, min_offset, max_offset);
+    reflected_deletions.add(reflected_deletion);
+  }
+  reflected_deletions.sort();
+  return reflected_deletions;
+}
+
+List<Insertion> reflect_insertions(Domain domain, int min_offset, int max_offset) {
+  List<Insertion> reflected_insertions = [];
+  for (var insertion in domain.insertions) {
+    var reflected_offset = reflect_between_min_and_max(insertion.offset, min_offset, max_offset);
+    var reflected_insertion = insertion.rebuild((b) => b..offset = reflected_offset);
+    reflected_insertions.add(reflected_insertion);
+  }
+  reflected_insertions.sort((i1, i2) => i1.offset - i2.offset);
+  return reflected_insertions;
+}
+
 int reflect_between_min_and_max(int number, int min_num, int max_num) => max_num - number + min_num;
 
 List<Strand> vertical_reflection_of_strands(
     HelixGroup group, List<Strand> strands_to_reflect, bool reverse_polarity) {
   // helix idxs occupied by strands
   var helix_idxs_involved = {
-    for (var strand in strands_to_reflect) for (var domain in strand.domains()) domain.helix
+    for (var strand in strands_to_reflect)
+      for (var domain in strand.domains()) domain.helix
   };
   // vertical display order of those helices, sorted
   var helix_orders_involved = [for (int idx in helix_idxs_involved) group.helices_view_order_inverse[idx]];
