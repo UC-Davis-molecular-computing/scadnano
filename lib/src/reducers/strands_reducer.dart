@@ -9,7 +9,7 @@ import 'package:scadnano/src/state/modification.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/group.dart';
-import '../middleware/insertion_deletion_pairing.dart';
+import '../middleware/insertion_deletion_batching.dart';
 import '../state/app_state.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
@@ -299,7 +299,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
               .map((i) => i.offset)
               .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
-            Domain other_ss = find_paired_substrand(design, bound_ss, offset);
+            Domain other_ss = find_paired_domain(design, bound_ss, offset);
             if (other_ss != null) {
               Strand other_strand = design.substrand_to_strand[other_ss];
               int other_ss_idx = other_strand.substrands.indexOf(other_ss);

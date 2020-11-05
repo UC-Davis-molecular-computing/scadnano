@@ -146,7 +146,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return group;
   }
 
+  String group_name_of_helix_idx(int helix_idx) {
+    Helix helix = helices[helix_idx];
+    return helix.group;
+  }
+
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
+
+  String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -1241,6 +1248,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
+  }
+
+  /// Return [Domain]s at [offset], excluding the start and offset
+  BuiltSet<Domain> domains_on_helix_at_offset_internal(int helix_idx, int offset) {
+    var domains_at_offset = SetBuilder<Domain>({
+      for (var domain in this.helix_idx_to_domains[helix_idx])
+        if (domain.contains_offset(offset) && offset != domain.start && offset != domain.end - 1) domain
+    });
+    return domains_at_offset.build();
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.

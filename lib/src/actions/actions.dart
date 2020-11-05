@@ -235,15 +235,19 @@ abstract class LocalStorageDesignChoiceSet
 
 abstract class ClearHelixSelectionWhenLoadingNewDesignSet
     with BuiltJsonSerializable
-    implements Action, Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
+    implements
+        Action,
+        Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
   bool get clear;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) = _$ClearHelixSelectionWhenLoadingNewDesignSet._;
+  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) =
+      _$ClearHelixSelectionWhenLoadingNewDesignSet._;
 
   ClearHelixSelectionWhenLoadingNewDesignSet._();
 
-  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer => _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
+  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer =>
+      _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,8 +372,7 @@ abstract class ShowDomainNamesSet
   factory ShowDomainNamesSet(bool show) => ShowDomainNamesSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) =
-      _$ShowDomainNamesSet;
+  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) = _$ShowDomainNamesSet;
 
   ShowDomainNamesSet._();
 
@@ -494,10 +497,12 @@ abstract class ShowDomainNameMismatchesSet
     implements Action, Built<ShowDomainNameMismatchesSet, ShowDomainNameMismatchesSetBuilder> {
   bool get show_domain_name_mismatches;
 
-  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
+  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) =>
+      ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) = _$ShowDomainNameMismatchesSet;
+  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) =
+      _$ShowDomainNameMismatchesSet;
 
   ShowDomainNameMismatchesSet._();
 
@@ -2093,9 +2098,11 @@ abstract class InsertionOrDeletionAction implements UndoableAction, StrandPartAc
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part; // => substrand;
 
-  InsertionOrDeletionAction clone_for_adjacent_substrand(Domain other_domain);
+  InsertionOrDeletionAction clone_for_other_domain(Domain other_domain);
 }
 
 abstract class InsertionAdd
@@ -2105,12 +2112,14 @@ abstract class InsertionAdd
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  InsertionAdd clone_for_adjacent_substrand(Domain domain) => InsertionAdd(domain: domain, offset: offset);
+  InsertionAdd clone_for_other_domain(Domain domain) => rebuild((b) => b..domain.replace(domain));
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionAdd({Domain domain, int offset}) = _$InsertionAdd._;
+  factory InsertionAdd({Domain domain, int offset, bool all_helices}) = _$InsertionAdd._;
 
   InsertionAdd._();
 
@@ -2126,18 +2135,31 @@ abstract class InsertionLengthChange
 
   int get length;
 
+  bool get all_helices;
+
   int get offset => insertion.offset;
 
   StrandPart get strand_part => domain;
 
-  InsertionLengthChange clone_for_adjacent_substrand(Domain other_domain) => InsertionLengthChange(
+  InsertionLengthChange clone_for_other_domain(Domain other_domain) => InsertionLengthChange(
         domain: other_domain,
         insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
         length: length,
       );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) = _$InsertionLengthChange._;
+  factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) {
+    return InsertionLengthChange.from((b) => b
+      ..domain.replace(domain)
+      ..insertion.replace(insertion)
+      ..length = length
+      ..all_helices = false);
+  }
+
+  factory InsertionLengthChange.from([void Function(InsertionLengthChangeBuilder) updates]) =
+      _$InsertionLengthChange;
+
+  // factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) = _$InsertionLengthChange._;
 
   InsertionLengthChange._();
 
@@ -2151,13 +2173,14 @@ abstract class DeletionAdd
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  DeletionAdd clone_for_adjacent_substrand(Domain other_domain) =>
-      DeletionAdd(domain: other_domain, offset: offset);
+  DeletionAdd clone_for_other_domain(Domain domain) => rebuild((b) => b..domain.replace(domain));
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionAdd({Domain domain, int offset}) = _$DeletionAdd._;
+  factory DeletionAdd({Domain domain, int offset, bool all_helices}) = _$DeletionAdd._;
 
   DeletionAdd._();
 
@@ -2171,17 +2194,26 @@ abstract class InsertionRemove
 
   Insertion get insertion;
 
+  bool get all_helices;
+
   int get offset => insertion.offset;
 
   StrandPart get strand_part => domain;
 
-  InsertionRemove clone_for_adjacent_substrand(Domain other_domain) => InsertionRemove(
+  InsertionRemove clone_for_other_domain(Domain other_domain) => InsertionRemove(
         domain: other_domain,
         insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
       );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionRemove({Domain domain, Insertion insertion}) = _$InsertionRemove._;
+  factory InsertionRemove({Domain domain, Insertion insertion}) {
+    return InsertionRemove.from((b) => b
+      ..domain.replace(domain)
+      ..insertion.replace(insertion)
+      ..all_helices = false);
+  }
+
+  factory InsertionRemove.from([void Function(InsertionRemoveBuilder) updates]) = _$InsertionRemove;
 
   InsertionRemove._();
 
@@ -2195,13 +2227,24 @@ abstract class DeletionRemove
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  DeletionRemove clone_for_adjacent_substrand(Domain other_domain) =>
+  DeletionRemove clone_for_other_domain(Domain other_domain) =>
       DeletionRemove(domain: other_domain, offset: offset);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionRemove({Domain domain, int offset}) = _$DeletionRemove._;
+  factory DeletionRemove({Domain domain, int offset}) {
+    return DeletionRemove.from((b) => b
+      ..domain.replace(domain)
+      ..offset = offset
+      ..all_helices = false);
+  }
+
+  factory DeletionRemove.from([void Function(DeletionRemoveBuilder) updates]) = _$DeletionRemove;
+
+  // factory DeletionRemove({Domain domain, int offset}) = _$DeletionRemove._;
 
   DeletionRemove._();
 
@@ -2403,7 +2446,9 @@ abstract class ContextMenuHide
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strand color picker
 
-abstract class StrandColorPickerShow with BuiltJsonSerializable implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+abstract class StrandColorPickerShow
+    with BuiltJsonSerializable
+    implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2414,10 +2459,14 @@ abstract class StrandColorPickerShow with BuiltJsonSerializable implements Actio
   static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
 }
 
-abstract class StrandColorPickerHide with BuiltJsonSerializable implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+abstract class StrandColorPickerHide
+    with BuiltJsonSerializable
+    implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
-  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) = _$StrandColorPickerHide;
+
+  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) =
+      _$StrandColorPickerHide;
 
   StrandColorPickerHide._();
 

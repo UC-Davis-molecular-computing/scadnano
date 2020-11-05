@@ -5,14 +5,38 @@ import '../state/strand.dart';
 import '../state/substrand.dart';
 
 Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionAction action) {
-  Domain substrand = action.domain;
-  int ss_idx = strand.substrands.indexOf(substrand);
+  Domain domain = action.domain;
+
+  //XXX: we can't simply look for the domain using indexOf, which uses == to test for equality.
+  // The reason is that if we are processing multiple deletions (or insertions),
+  // and if there is a DNA sequence assigned, then processing the first deletion will shift
+  // the DNA sequence forward or backward, making the Domains unequal. Instead we check for stuff that
+  // could not have changed as a result of this batch processing: helix, direction, start, end.
+  int dom_idx = 0;
+  bool found = false;
+  for (var ss in strand.substrands) {
+    if (ss is Domain &&
+        ss.helix == domain.helix &&
+        ss.forward == domain.forward &&
+        ss.start == domain.start &&
+        ss.end == domain.end) {
+      found = true;
+      break;
+    }
+    dom_idx++;
+  }
+  if (!found) {
+    print('WARNING: could not find domain ${domain} on strand substrands: ${strand.substrands} '
+        'when implementing action ${action}');
+    return strand;
+  }
+
   List<Substrand> substrands = strand.substrands.toList();
-  substrands[ss_idx] = insertion_deletion_substrand_reducer(substrand, action);
+  substrands[dom_idx] = insertion_deletion_domain_reducer(domain, action);
   return strand.rebuild((b) => b..substrands.replace(substrands));
 }
 
-Reducer<Domain> insertion_deletion_substrand_reducer = combineReducers([
+Reducer<Domain> insertion_deletion_domain_reducer = combineReducers([
   TypedReducer<Domain, actions.InsertionLengthChange>(insertion_length_change_reducer),
   TypedReducer<Domain, actions.InsertionAdd>(insertion_add_reducer),
   TypedReducer<Domain, actions.InsertionRemove>(insertion_remove_reducer),
@@ -20,35 +44,41 @@ Reducer<Domain> insertion_deletion_substrand_reducer = combineReducers([
   TypedReducer<Domain, actions.DeletionRemove>(deletion_remove_reducer),
 ]);
 
-Domain insertion_length_change_reducer(
-    Domain substrand, actions.InsertionLengthChange action) {
-  List<Insertion> insertions = substrand.insertions.toList();
+Domain insertion_length_change_reducer(Domain domain, actions.InsertionLengthChange action) {
+  List<Insertion> insertions = domain.insertions.toList();
   int idx = insertions.indexOf(action.insertion);
   Insertion changed_insertion = action.insertion.rebuild((i) => i..length = action.length);
   insertions[idx] = changed_insertion;
-  return substrand.rebuild((b) => b..insertions.replace(insertions));
+  return domain.rebuild((b) => b..insertions.replace(insertions));
 }
 
-Domain insertion_add_reducer(Domain substrand, actions.InsertionAdd action) {
-  List<Insertion> insertions = substrand.insertions.toList();
-  insertions.add(Insertion(action.offset, 1));
-  return substrand.rebuild((b) => b..insertions.replace(insertions));
+Domain insertion_add_reducer(Domain domain, actions.InsertionAdd action) {
+  List<Insertion> insertions = domain.insertions.toList();
+  List<int> insertion_offsets = [for (var insertion in insertions) insertion.offset];
+  if (!insertion_offsets.contains(action.offset)) {
+    insertions.add(Insertion(action.offset, 1));
+    insertions.sort((i1, i2) => i1.offset - i2.offset);
+  }
+  return domain.rebuild((b) => b..insertions.replace(insertions));
 }
 
-Domain insertion_remove_reducer(Domain substrand, actions.InsertionRemove action) {
-  List<Insertion> insertions = substrand.insertions.toList();
+Domain insertion_remove_reducer(Domain domain, actions.InsertionRemove action) {
+  List<Insertion> insertions = domain.insertions.toList();
   insertions.remove(action.insertion);
-  return substrand.rebuild((b) => b..insertions.replace(insertions));
+  return domain.rebuild((b) => b..insertions.replace(insertions));
 }
 
-Domain deletion_add_reducer(Domain substrand, actions.DeletionAdd action) {
-  List<int> deletions = substrand.deletions.toList();
-  deletions.add(action.offset);
-  return substrand.rebuild((b) => b..deletions.replace(deletions));
+Domain deletion_add_reducer(Domain domain, actions.DeletionAdd action) {
+  List<int> deletions = domain.deletions.toList();
+  if (!deletions.contains(action.offset)) {
+    deletions.add(action.offset);
+    deletions.sort();
+  }
+  return domain.rebuild((b) => b..deletions.replace(deletions));
 }
 
-Domain deletion_remove_reducer(Domain substrand, actions.DeletionRemove action) {
-  List<int> deletions = substrand.deletions.toList();
+Domain deletion_remove_reducer(Domain domain, actions.DeletionRemove action) {
+  List<int> deletions = domain.deletions.toList();
   deletions.remove(action.offset);
-  return substrand.rebuild((b) => b..deletions.replace(deletions));
+  return domain.rebuild((b) => b..deletions.replace(deletions));
 }

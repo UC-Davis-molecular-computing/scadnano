@@ -578,7 +578,11 @@ There are different edit modes available, shown on the right side of the screen.
   then adding/removing an insertion/deletion at that offset adds/removes on both bound domains.
   The Python scripting library lets one specify insertions/deletions on one bound domain but not the other, 
   but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
-  (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
+  (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other domain, and then move the first domain back.)
+
+  A useful shortcut is to press Ctrl while clicking a Domain in deletion (respectively, insertion) mode. 
+  If Ctrl is pressed while clicking on a domain, then deletions (respectively, insertions) will be added at *all* domains on all helices in the same HelixGroup that overlap the same offset (unless that offset is the start or end of the domain, which is disallowed from having a deletion/insertion).
+  This helps to implement, for example, twist correction in DNA origami (see https://doi.org/10.1038/nchem.1070 for a description), where vertical "columns" of deletions need to be added to every domain in every helix at a given offset.
 
   *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
 

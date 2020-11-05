@@ -14,7 +14,7 @@ import 'helix_grid_change.dart';
 import 'helix_hide_all.dart';
 import 'helix_idxs_change.dart';
 import 'helix_offsets_change.dart';
-import 'insertion_deletion_pairing.dart';
+import 'insertion_deletion_batching.dart';
 import 'load_file.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
@@ -55,7 +55,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   reselect_moved_dna_ends_middleware,
   reselect_moved_strands_middleware,
   selections_intersect_box_compute_middleware,
-  insertion_deletion_pairing_middleware,
+  insertion_deletion_batching_middleware,
   adjust_grid_position_middleware,
   invalidate_png_middleware,
   check_reflect_strands_legal_middleware,
