@@ -46,6 +46,8 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
   BuiltSet<Domain> selected_domains_in_strand;
+  BuiltSet<SelectableDeletion> selected_deletions_in_strand;
+  BuiltSet<SelectableInsertion> selected_insertions_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -175,16 +177,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var insertion in domain.insertions) {
-          String id = util.id_insertion(domain, insertion.offset);
+        for (var selectable_insertion in domain.selectable_insertions) {
           paths.add((DesignMainStrandInsertion()
-            ..insertion = insertion
-            ..domain = domain
+            ..selectable_insertion = selectable_insertion
+            ..selected = props.selected_insertions_in_strand.contains(selectable_insertion)
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
-            ..id = id
-            ..key = id)());
+            ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
     }
@@ -210,12 +210,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var deletion in domain.deletions) {
-          String id = util.id_deletion(domain, deletion);
+        for (var selectable_deletion in domain.selectable_deletions) {
+          String id = util.id_deletion(domain, selectable_deletion.offset);
           paths.add((DesignMainStrandDeletion()
-            ..domain = domain
-            ..deletion = deletion
+            ..selectable_deletion = selectable_deletion
             ..helix = helix
+            ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
             ..key = id)());
         }

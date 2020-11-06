@@ -94,7 +94,7 @@ class DesignMainStrandCrossoverComponent
 //      update_mouseover_crossover();
 //    }
 
-    String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
+    // String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     var path_props = Dom.path()
       ..d = path
@@ -153,7 +153,8 @@ class DesignMainStrandCrossoverComponent
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
+          context_menu:
+              ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
     }
   }
 

@@ -346,6 +346,8 @@ const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';
+const css_selector_insertion_group = 'insertion-group';
+const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
 

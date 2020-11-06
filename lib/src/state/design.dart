@@ -295,6 +295,32 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<String, SelectableDeletion> get deletions_by_id {
+    var builder = MapBuilder<String, SelectableDeletion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var deletion in domain.selectable_deletions) {
+          builder[deletion.id()] = deletion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableInsertion> get insertions_by_id {
+    var builder = MapBuilder<String, SelectableInsertion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var insertion in domain.selectable_insertions) {
+          builder[insertion.id()] = insertion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
@@ -357,7 +383,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
-    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id, domains_by_id]) {
+    for (var map_small in [
+      strands_by_id,
+      loopouts_by_id,
+      crossovers_by_id,
+      ends_by_id,
+      domains_by_id,
+      deletions_by_id,
+      insertions_by_id,
+    ]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];
         map[key] = obj;

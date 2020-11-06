@@ -35,6 +35,14 @@ BuiltList<Strand> delete_all_reducer(
   } else if (select_mode_state.domains_selectable()) {
     var domains = List<Domain>.from(items.where((item) => item is Domain));
     strands = remove_domains(strands, state, domains);
+  } else if (select_mode_state.deletions_selectable() || select_mode_state.insertions_selectable()) {
+    var deletions = select_mode_state.deletions_selectable()
+        ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
+        : [];
+    var insertions = select_mode_state.insertions_selectable()
+        ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
+        : [];
+    strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
   }
 
   return strands;
@@ -210,7 +218,7 @@ BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iter
     strand_to_substrands[strand].add(substrand);
   }
 
-  // remove crossovers one strand at a time
+  // remove domains one strand at a time
   for (var strand in strand_to_substrands.keys) {
     strands_to_remove.add(strand);
     var split_strands = _remove_domains_from_strand(strand, strand_to_substrands[strand]);
@@ -258,4 +266,61 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> substrands_t
   }
 
   return create_new_strands_from_substrand_lists(substrands_list, strand);
+}
+
+BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, AppState state,
+    List<SelectableDeletion> deletions, List<SelectableInsertion> insertions) {
+  // collect all deletions/insertions for each strand
+
+  Map<Strand, Map<Domain, Set<SelectableDeletion>>> strand_to_deletions = {};
+  Map<Strand, Map<Domain, Set<SelectableInsertion>>> strand_to_insertions = {};
+  for (var strand in strands) {
+    strand_to_deletions[strand] = {};
+    strand_to_insertions[strand] = {};
+    for (var domain in strand.domains()) {
+      strand_to_deletions[strand][domain] = {};
+      strand_to_insertions[strand][domain] = {};
+    }
+  }
+  for (var deletion in deletions) {
+    var strand = state.design.substrand_to_strand[deletion.domain];
+    strand_to_deletions[strand][deletion.domain].add(deletion);
+  }
+  for (var insertion in insertions) {
+    var strand = state.design.substrand_to_strand[insertion.domain];
+    strand_to_insertions[strand][insertion.domain].add(insertion);
+  }
+
+  // remove deletions/insertions one strand at a time
+  // need to do deletions and insertions at the same time because Domain built object will be invalidated
+  // after removing one of them.
+  var new_strands = strands.toList();
+  for (int i = 0; i < strands.length; i++) {
+    Strand strand = strands[i];
+    var substrands = strand.substrands.toList();
+    for (int j = 0; j < substrands.length; j++) {
+      if (substrands[j] is Domain) {
+        var domain = substrands[j] as Domain;
+        var deletions = strand_to_deletions[strand][domain];
+        var insertions = strand_to_insertions[strand][domain];
+        var deletions_offsets_to_remove = {for (var deletion in deletions) deletion.offset};
+        var insertions_offsets_to_remove = {for (var insertion in insertions) insertion.insertion.offset};
+        if (deletions_offsets_to_remove.isNotEmpty || insertions_offsets_to_remove.isNotEmpty) {
+          var deletions_existing = domain.deletions.toList();
+          var insertions_existing = domain.insertions.toList();
+          deletions_existing.removeWhere((offset) => deletions_offsets_to_remove.contains(offset));
+          insertions_existing
+              .removeWhere((insertion) => insertions_offsets_to_remove.contains(insertion.offset));
+          domain = domain.rebuild(
+              (b) => b..deletions.replace(deletions_existing)..insertions.replace(insertions_existing));
+          substrands[j] = domain;
+        }
+      }
+    }
+    strand = strand.rebuild((b) => b..substrands.replace(substrands));
+    strand = strand.initialize();
+    new_strands[i] = strand;
+  }
+
+  return new_strands.build();
 }

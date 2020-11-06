@@ -25,12 +25,14 @@ UiFactory<DesignMainStrandInsertionProps> DesignMainStrandInsertion = _$DesignMa
 
 @Props()
 mixin DesignMainStrandInsertionPropsMixin on UiProps {
-  Insertion insertion;
-  Domain domain;
-  Color color;
+  SelectableInsertion selectable_insertion;
   Helix helix;
-  String id;
   String transform;
+  Color color;
+  bool selected;
+
+  Insertion get insertion => selectable_insertion.insertion;
+  Domain get domain => selectable_insertion.domain;
 }
 
 class DesignMainStrandInsertionProps = UiProps with DesignMainStrandInsertionPropsMixin;
@@ -40,12 +42,31 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
     with PureComponent {
   @override
   render() {
+
+    var classname = constants.css_selector_insertion_group;
+    if (props.selected) {
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.selectable_insertion.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
+    }
+
     Point<num> pos = props.helix.svg_base_pos(props.insertion.offset, props.domain.forward);
     ReactElement insertion_background = _insertion_background(pos);
     ReactElement insertion_path = _insertion_path();
     ReactElement text_num_insertions = _text_number_of_insertions(pos);
     return (Dom.g()
-      ..className = 'insertion-group'
+      ..className = classname
+      ..onPointerDown = ((ev) {
+        if (insertion_selectable(props.selectable_insertion)) {
+          props.selectable_insertion.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (insertion_selectable(props.selectable_insertion)) {
+          props.selectable_insertion.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
       ..transform = props.transform)(
       insertion_path,
       insertion_background,
@@ -83,14 +104,14 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
 
 //  String key = 'insertion-H${substrand.helix}-${offset}';
     ReactElement insertion_path = (Dom.path()
-      ..onClick = ((_) => change_insertion_length())
+      // ..onClick = ((_) => change_insertion_length())
       ..className = constants.css_selector_insertion
       ..stroke = color.toHexColor().toCssString()
       ..fill = 'none'
       ..d = 'M $x0 $y0 '
           'C $x1 $y1, $x2 $y2, $x3 $y2 '
           'C $x4 $y2, $x5 $y1, $x0 $y0 '
-      ..id = props.id
+      ..id = props.selectable_insertion.id()
       ..key = props.id)();
     return insertion_path;
   }
@@ -139,12 +160,12 @@ class DesignMainStrandInsertionComponent extends UiComponent2<DesignMainStrandIn
           ..width = background_width
           ..height = background_height
           ..className = 'insertion-background'
-          ..onClick = ((_) => change_insertion_length())
+          // ..onClick = ((_) => change_insertion_length())
           ..key = 'rect')(),
         (Dom.text()
-          ..onClick = ((_) => change_insertion_length())
+          // ..onClick = ((_) => change_insertion_length())
           ..dy = dy_text
-          ..id = key
+          // ..id = props.selectable_insertion.id()
           ..key = 'text')(text_path_props('${length}')));
   }
 
