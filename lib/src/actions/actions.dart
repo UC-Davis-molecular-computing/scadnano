@@ -11,6 +11,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:tuple/tuple.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -2164,6 +2165,34 @@ abstract class InsertionLengthChange
   InsertionLengthChange._();
 
   static Serializer<InsertionLengthChange> get serializer => _$insertionLengthChangeSerializer;
+}
+
+abstract class InsertionsLengthChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<InsertionsLengthChange, InsertionsLengthChangeBuilder> {
+  BuiltList<Insertion> get insertions;
+
+  BuiltList<Domain> get domains;
+
+  int get length;
+
+  bool get all_helices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InsertionsLengthChange({Iterable<Insertion> insertions, Iterable<Domain> domains, int length}) {
+    return InsertionsLengthChange.from((b) => b
+      ..insertions.replace(insertions)
+      ..domains.replace(domains)
+      ..length = length
+      ..all_helices = false);
+  }
+
+  factory InsertionsLengthChange.from([void Function(InsertionsLengthChangeBuilder) updates]) =
+      _$InsertionsLengthChange;
+
+  InsertionsLengthChange._();
+
+  static Serializer<InsertionsLengthChange> get serializer => _$insertionsLengthChangeSerializer;
 }
 
 abstract class DeletionAdd

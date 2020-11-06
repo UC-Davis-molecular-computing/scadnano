@@ -165,11 +165,11 @@ class DesignMainStrandCrossoverComponent
         ),
         ContextMenuItem(
           title: 'unstrain backbone here',
-          on_click: handle_crossover_click,
+          on_click: unstrain_backbone_at_crossover,
         ),
       ];
 
-  handle_crossover_click() {
+  unstrain_backbone_at_crossover() {
     Domain prev_domain = props.prev_domain;
     Domain next_domain = props.next_domain;
     List<actions.UndoableAction> roll_actions = [];
@@ -202,6 +202,7 @@ class DesignMainStrandCrossoverComponent
     if (new_length == null || new_length == 0) {
       return;
     }
+
     var selected_crossovers = app.state.ui_state.selectables_store.selected_crossovers;
     actions.UndoableAction action;
     if (selected_crossovers.length > 0) {

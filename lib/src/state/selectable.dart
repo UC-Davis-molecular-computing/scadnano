@@ -224,6 +224,11 @@ abstract class SelectableInsertion
 
   String id() => util.id_insertion(domain, insertion.offset);
 
+  // needed to have an ID separate from the curve ID (used for selection box),
+  // which is used to intercept the context menu on any right-click in the whole group;
+  // see componentDidMount and componentWillUnmount in design_main_strand_insertion.dart
+  String id_group() => id() + '-group';
+
   /************************ begin BuiltValue boilerplate ************************/
 
   factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) = _$SelectableInsertion._;

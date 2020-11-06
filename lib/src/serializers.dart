@@ -183,6 +183,7 @@ part 'serializers.g.dart';
   InsertionRemove,
   DeletionRemove,
   InsertionLengthChange,
+  InsertionsLengthChange,
   StrandCreation,
   StrandCreateStart,
   StrandCreateAdjustOffset,

@@ -51,6 +51,8 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
       convert_crossovers_to_loopouts_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
       loopouts_length_change_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(
+      insertions_length_change_reducer),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
@@ -465,3 +467,4 @@ Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
 
 Strand strand_color_set_reducer(Strand strand, actions.StrandColorSet action) =>
     strand.rebuild((b) => b..color = action.color);
+

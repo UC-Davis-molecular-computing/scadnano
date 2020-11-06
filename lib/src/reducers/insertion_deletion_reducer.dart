@@ -1,4 +1,7 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/app_state.dart';
+import 'package:tuple/tuple.dart';
 import '../actions/actions.dart' as actions;
 import '../state/domain.dart';
 import '../state/strand.dart';
@@ -37,20 +40,12 @@ Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionActi
 }
 
 Reducer<Domain> insertion_deletion_domain_reducer = combineReducers([
-  TypedReducer<Domain, actions.InsertionLengthChange>(insertion_length_change_reducer),
   TypedReducer<Domain, actions.InsertionAdd>(insertion_add_reducer),
   TypedReducer<Domain, actions.InsertionRemove>(insertion_remove_reducer),
   TypedReducer<Domain, actions.DeletionAdd>(deletion_add_reducer),
   TypedReducer<Domain, actions.DeletionRemove>(deletion_remove_reducer),
+  TypedReducer<Domain, actions.InsertionLengthChange>(insertion_length_change_reducer),
 ]);
-
-Domain insertion_length_change_reducer(Domain domain, actions.InsertionLengthChange action) {
-  List<Insertion> insertions = domain.insertions.toList();
-  int idx = insertions.indexOf(action.insertion);
-  Insertion changed_insertion = action.insertion.rebuild((i) => i..length = action.length);
-  insertions[idx] = changed_insertion;
-  return domain.rebuild((b) => b..insertions.replace(insertions));
-}
 
 Domain insertion_add_reducer(Domain domain, actions.InsertionAdd action) {
   List<Insertion> insertions = domain.insertions.toList();
@@ -81,4 +76,62 @@ Domain deletion_remove_reducer(Domain domain, actions.DeletionRemove action) {
   List<int> deletions = domain.deletions.toList();
   deletions.remove(action.offset);
   return domain.rebuild((b) => b..deletions.replace(deletions));
+}
+
+Domain insertion_length_change_reducer(Domain domain, actions.InsertionLengthChange action) {
+  List<Insertion> insertions = domain.insertions.toList();
+  int idx = insertions.indexOf(action.insertion);
+  Insertion changed_insertion = action.insertion.rebuild((i) => i..length = action.length);
+  insertions[idx] = changed_insertion;
+  return domain.rebuild((b) => b..insertions.replace(insertions));
+}
+
+BuiltList<Strand> insertions_length_change_reducer(
+    BuiltList<Strand> strands, AppState state, actions.InsertionsLengthChange action) {
+  assert(action.insertions.length == action.domains.length);
+
+  Map<String, Map<Domain, List<Insertion>>> insertions_on_strand_id_domain = {};
+  for (int i=0; i<action.insertions.length; i++) {
+    Insertion insertion = action.insertions[i];
+    Domain domain = action.domains[i];
+
+    String strand_id = domain.strand_id;
+    if (!insertions_on_strand_id_domain.containsKey(strand_id)) {
+      insertions_on_strand_id_domain[strand_id] = {};
+    }
+
+    Map<Domain, List<Insertion>> insertions_on_domain = insertions_on_strand_id_domain[strand_id];
+    if (!insertions_on_domain.containsKey(domain)) {
+      insertions_on_domain[domain] = [];
+    }
+    insertions_on_domain[domain].add(insertion);
+  }
+
+  var strands_builder = strands.toBuilder();
+  for (String strand_id in insertions_on_strand_id_domain.keys) {
+    Strand strand = state.design.strands_by_id[strand_id];
+    int strand_idx = strands.indexOf(strand);
+
+    var substrands = strand.substrands.toList();
+
+    Map<Domain, List<Insertion>> insertions_on_domains = insertions_on_strand_id_domain[strand_id];
+    for (Domain domain in insertions_on_domains.keys) {
+      List<Insertion> insertions_to_change = insertions_on_domains[domain];
+      List<Insertion> existing_insertions = domain.insertions.toList();
+      for (Insertion insertion in insertions_to_change) {
+        int idx = existing_insertions.indexOf(insertion);
+        Insertion new_insertion = insertion.rebuild((b) => b..length=action.length);
+        existing_insertions[idx] = new_insertion;
+      }
+      Domain new_domain = domain.rebuild((b) => b..insertions.replace(existing_insertions));
+      int domain_idx = substrands.indexOf(domain);
+      substrands[domain_idx] = new_domain;
+    }
+
+    var new_strand = strand.rebuild((s) => s..substrands.replace(substrands));
+    new_strand = new_strand.initialize();
+    strands_builder[strand_idx] = new_strand;
+  }
+
+  return strands_builder.build();
 }
