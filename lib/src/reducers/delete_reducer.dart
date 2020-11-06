@@ -36,10 +36,10 @@ BuiltList<Strand> delete_all_reducer(
     var domains = List<Domain>.from(items.where((item) => item is Domain));
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.deletions_selectable() || select_mode_state.insertions_selectable()) {
-    var deletions = select_mode_state.deletions_selectable()
+    List<SelectableDeletion> deletions = select_mode_state.deletions_selectable()
         ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
         : [];
-    var insertions = select_mode_state.insertions_selectable()
+    List<SelectableInsertion> insertions = select_mode_state.insertions_selectable()
         ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
         : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
