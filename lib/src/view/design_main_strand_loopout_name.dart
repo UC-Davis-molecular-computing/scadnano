@@ -45,7 +45,7 @@ class DesignMainStrandLoopoutNameComponent extends UiComponent2<DesignMainStrand
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = constants.css_selector_loopout_name
-      ..xlinkHref = '#${props.loopout.id()}'
+      ..xlinkHref = '#${props.loopout.id}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()

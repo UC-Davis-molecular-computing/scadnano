@@ -77,6 +77,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
       var selected_domains_in_strand = props.selectables_store.selected_domains_in_strand(strand);
       var selected_deletions_in_strand = props.selectables_store.selected_deletions_in_strand(strand);
       var selected_insertions_in_strand = props.selectables_store.selected_insertions_in_strand(strand);
+      var selected_modifications_in_strand = props.selectables_store.selected_modifications_in_strand(strand);
 
       elts.add((DesignMainStrand()
         ..strand = strand
@@ -91,6 +92,7 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..selected_domains_in_strand = selected_domains_in_strand
         ..selected_deletions_in_strand = selected_deletions_in_strand
         ..selected_insertions_in_strand = selected_insertions_in_strand
+        ..selected_modifications_in_strand = selected_modifications_in_strand
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default

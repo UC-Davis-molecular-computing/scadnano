@@ -11,6 +11,7 @@ import 'domain.dart';
 import 'helix.dart';
 import 'loopout.dart';
 import 'dna_end.dart';
+import 'modification.dart';
 import 'select_mode.dart';
 import 'edit_mode.dart';
 import 'strand.dart';
@@ -55,6 +56,10 @@ abstract class SelectablesStore
   @memoized
   BuiltSet<SelectableInsertion> get selected_insertions =>
       BuiltSet<SelectableInsertion>.from(selected_items.where((s) => s is SelectableInsertion));
+
+  @memoized
+  BuiltSet<SelectableModification> get selected_modifications =>
+      BuiltSet<SelectableModification>.from(selected_items.where((s) => s is SelectableModification));
 
   bool get isEmpty => selected_items.isEmpty;
 
@@ -163,6 +168,18 @@ abstract class SelectablesStore
     return insertions.build();
   }
 
+  BuiltSet<SelectableModification> selected_modifications_in_strand(Strand strand) {
+    Set<SelectableModification> modifications = {};
+
+    for (var mod_selected in selected_modifications) {
+      if (mod_selected.strand_id == strand.id) {
+        modifications.add(mod_selected);
+      }
+    }
+
+    return modifications.build();
+  }
+
   /************************ begin BuiltValue boilerplate ************************/
   SelectablesStore._();
 
@@ -175,7 +192,7 @@ abstract class SelectablesStore
 }
 
 abstract class SelectableDeletion
-    with Selectable, BuiltJsonSerializable
+    with SelectableMixin, BuiltJsonSerializable
     implements Built<SelectableDeletion, SelectableDeletionBuilder> {
   int get offset;
 
@@ -185,17 +202,17 @@ abstract class SelectableDeletion
 
   String get strand_id => domain.strand_id;
 
-  SelectModeChoice select_mode() => SelectModeChoice.deletion;
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.deletion;
 
   Address get address => Address(helix_idx: domain.helix, offset: offset, forward: domain.forward);
 
-  String id() => util.id_deletion(domain, offset);
+  @memoized
+  String get id => util.id_deletion(domain, offset);
 
   /************************ begin BuiltValue boilerplate ************************/
 
   factory SelectableDeletion({int offset, Domain domain, bool is_scaffold}) = _$SelectableDeletion._;
-
-  // {return SelectableDeletion.from((b) => b..offset = offset..domain.replace(domain));}
 
   factory SelectableDeletion.from([void Function(SelectableDeletionBuilder) updates]) = _$SelectableDeletion;
 
@@ -208,7 +225,7 @@ abstract class SelectableDeletion
 }
 
 abstract class SelectableInsertion
-    with Selectable, BuiltJsonSerializable
+    with SelectableMixin, BuiltJsonSerializable
     implements Built<SelectableInsertion, SelectableInsertionBuilder> {
   Insertion get insertion;
 
@@ -218,22 +235,24 @@ abstract class SelectableInsertion
 
   String get strand_id => domain.strand_id;
 
-  SelectModeChoice select_mode() => SelectModeChoice.insertion;
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.insertion;
 
   Address get address => Address(helix_idx: domain.helix, offset: insertion.offset, forward: domain.forward);
 
-  String id() => util.id_insertion(domain, insertion.offset);
+  @memoized
+  String get id => util.id_insertion(domain, insertion.offset);
 
   // needed to have an ID separate from the curve ID (used for selection box),
   // which is used to intercept the context menu on any right-click in the whole group;
   // see componentDidMount and componentWillUnmount in design_main_strand_insertion.dart
-  String id_group() => id() + '-group';
+  @memoized
+  String get id_group => id + '-group';
 
   /************************ begin BuiltValue boilerplate ************************/
 
-  factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) = _$SelectableInsertion._;
-
-  // {return SelectableDeletion.from((b) => b..offset = offset..domain.replace(domain));}
+  factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) =
+      _$SelectableInsertion._;
 
   factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
       _$SelectableInsertion;
@@ -246,13 +265,149 @@ abstract class SelectableInsertion
   int get hashCode;
 }
 
-/// Represents a part of the Model that represents a part of the View that is Selectable.
-mixin Selectable {
+abstract class SelectableModification implements Selectable {
+  Modification get modification;
+
+  Strand get strand;
+
+  Address get address;
+
+  bool get is_scaffold => strand.is_scaffold;
+
+  @memoized
+  String get strand_id => strand.id;
+
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.modification;
+}
+
+abstract class SelectableModification5Prime
+    with SelectableModification, SelectableMixin, BuiltJsonSerializable
+    implements Built<SelectableModification5Prime, SelectableModification5PrimeBuilder> {
+  Modification5Prime get modification;
+
+  Strand get strand;
+
+  @memoized
+  Address get address {
+    var dom = strand.first_domain();
+    return Address(helix_idx: dom.helix, offset: dom.offset_5p, forward: dom.forward);
+  }
+
+  @memoized
+  String get id => util.id_modification_5p(strand, modification);
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory SelectableModification5Prime({Modification5Prime modification, Strand strand}) =
+      _$SelectableModification5Prime._;
+
+  factory SelectableModification5Prime.from([void Function(SelectableModification5PrimeBuilder) updates]) =
+      _$SelectableModification5Prime;
+
+  SelectableModification5Prime._();
+
+  static Serializer<SelectableModification5Prime> get serializer => _$selectableModification5PrimeSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectableModification3Prime
+    with SelectableModification, SelectableMixin, BuiltJsonSerializable
+    implements Built<SelectableModification3Prime, SelectableModification3PrimeBuilder> {
+  Modification3Prime get modification;
+
+  Strand get strand;
+
+  @memoized
+  Address get address {
+    var dom = strand.last_domain();
+    return Address(helix_idx: dom.helix, offset: dom.offset_3p, forward: dom.forward);
+  }
+
+  @memoized
+  String get id => util.id_modification_3p(strand, modification);
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory SelectableModification3Prime({Modification3Prime modification, Strand strand}) =
+      _$SelectableModification3Prime._;
+
+  factory SelectableModification3Prime.from([void Function(SelectableModification3PrimeBuilder) updates]) =
+      _$SelectableModification3Prime;
+
+  SelectableModification3Prime._();
+
+  static Serializer<SelectableModification3Prime> get serializer => _$selectableModification3PrimeSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectableModificationInternal
+    with SelectableModification, SelectableMixin, BuiltJsonSerializable
+    implements Built<SelectableModificationInternal, SelectableModificationInternalBuilder> {
+  ModificationInternal get modification;
+
+  Strand get strand;
+
+  Domain get domain;
+
+  int get dna_idx;
+
+  int get offset {
+    int dna_idx_ss = dna_idx - strand.get_seq_start_idx(domain);
+    return domain.substrand_dna_idx_to_substrand_offset(dna_idx_ss, domain.forward);
+  }
+
+  @memoized
+  Address get address => Address(helix_idx: domain.helix, offset: offset, forward: domain.forward);
+
+  @memoized
+  String get id => util.id_modification_int(strand, modification, address);
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory SelectableModificationInternal(
+      {ModificationInternal modification,
+      Strand strand,
+      Domain domain,
+      int dna_idx}) = _$SelectableModificationInternal._;
+
+  factory SelectableModificationInternal.from(
+      [void Function(SelectableModificationInternalBuilder) updates]) = _$SelectableModificationInternal;
+
+  SelectableModificationInternal._();
+
+  static Serializer<SelectableModificationInternal> get serializer =>
+      _$selectableModificationInternalSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class Selectable {
   /// Subclasses must define this to be used to associate view element to state object through CSS selector.
-  String id();
+  String get id;
 
   /// Subclasses must define this to be able to be selectively selected.
-  SelectModeChoice select_mode();
+  SelectModeChoice get select_mode;
+
+  bool get is_scaffold;
+
+  handle_selection_mouse_down(MouseEvent event);
+
+  handle_selection_mouse_up(MouseEvent event);
+}
+
+/// Represents a part of the Model that represents a part of the View that is Selectable.
+mixin SelectableMixin implements Selectable {
+  /// Subclasses must define this to be used to associate view element to state object through CSS selector.
+  String get id;
+
+  /// Subclasses must define this to be able to be selectively selected.
+  SelectModeChoice get select_mode;
 
   bool get is_scaffold;
 
@@ -333,6 +488,11 @@ bool insertion_selectable(SelectableInsertion insertion) =>
     edit_mode_is_select() &&
     select_modes().contains(SelectModeChoice.insertion) &&
     origami_type_selectable(insertion);
+
+bool modification_selectable(SelectableModification modification) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.modification) &&
+    origami_type_selectable(modification);
 
 bool end_selectable(DNAEnd end) =>
     edit_mode_is_select() && end_type_selectable(end) && origami_type_selectable(end);

@@ -51,7 +51,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   @override
   render() {
     Domain domain = props.domain;
-    String id = domain.id();
+    String id = domain.id;
 
     Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
@@ -137,13 +137,13 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    var element = querySelector('#${props.domain.id()}');
+    var element = querySelector('#${props.domain.id}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.domain.id()}');
+    var element = querySelector('#${props.domain.id}');
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }

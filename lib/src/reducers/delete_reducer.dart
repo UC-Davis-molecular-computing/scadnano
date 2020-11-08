@@ -43,6 +43,10 @@ BuiltList<Strand> delete_all_reducer(
         ? List<SelectableInsertion>.from(items.where((item) => item is SelectableInsertion))
         : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
+  } else if (select_mode_state.modifications_selectable()) {
+    var modifications =
+        List<SelectableModification>.from(items.where((item) => item is SelectableModification));
+    strands = remove_modifications(strands, state, modifications);
   }
 
   return strands;
@@ -271,7 +275,6 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> substrands_t
 BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, AppState state,
     List<SelectableDeletion> deletions, List<SelectableInsertion> insertions) {
   // collect all deletions/insertions for each strand
-
   Map<Strand, Map<Domain, Set<SelectableDeletion>>> strand_to_deletions = {};
   Map<Strand, Map<Domain, Set<SelectableInsertion>>> strand_to_insertions = {};
   for (var strand in strands) {
@@ -320,6 +323,55 @@ BuiltList<Strand> remove_deletions_and_insertions(BuiltList<Strand> strands, App
     strand = strand.rebuild((b) => b..substrands.replace(substrands));
     strand = strand.initialize();
     new_strands[i] = strand;
+  }
+
+  return new_strands.build();
+}
+
+BuiltList<Strand> remove_modifications(
+    BuiltList<Strand> strands, AppState state, List<SelectableModification> modifications) {
+  // collect all modifications for each strand
+  Map<String, Set<SelectableModification>> strand_id_to_mods = {};
+  for (var mod in modifications) {
+    if (!strand_id_to_mods.containsKey(mod.strand.id)) {
+      strand_id_to_mods[mod.strand.id] = {};
+    }
+    strand_id_to_mods[mod.strand.id].add(mod);
+  }
+
+  var new_strands = strands.toList();
+  List<String> strand_ids = [for (var strand in strands) strand.id];
+  for (String strand_id in strand_id_to_mods.keys) {
+    Set<SelectableModification> selectable_mods = strand_id_to_mods[strand_id];
+    int strand_idx = strand_ids.indexOf(strand_id);
+    Strand strand = strands[strand_idx];
+
+    Map<int, ModificationInternal> mods_int = strand.modifications_int.toMap();
+
+    bool remove_5p = false;
+    bool remove_3p = false;
+    for (var selectable_mod in selectable_mods) {
+      if (selectable_mod is SelectableModification5Prime) {
+        remove_5p = true;
+      } else if (selectable_mod is SelectableModification3Prime) {
+        remove_3p = true;
+      } else if (selectable_mod is SelectableModificationInternal) {
+        mods_int.remove(selectable_mod.dna_idx);
+      }
+    }
+
+    strand = strand.rebuild((b) {
+      if (remove_5p){
+        b.modification_5p = null;
+      }
+      if (remove_3p){
+        b.modification_3p = null;
+      }
+      b.modifications_int.replace(mods_int);
+    });
+
+    strand = strand.initialize();
+    new_strands[strand_idx] = strand;
   }
 
   return new_strands.build();

@@ -23,7 +23,7 @@ import 'unused_fields.dart';
 part 'strand.g.dart';
 
 abstract class Strand
-    with Selectable, BuiltJsonSerializable, UnusedFields
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields
     implements Built<Strand, StrandBuilder> {
   Strand._();
 
@@ -106,7 +106,7 @@ abstract class Strand
       strand = strand.set_dna_sequence(dna_sequence);
     }
 
-    String id = strand.id();
+    String id = strand.id;
     int idx = 0;
     bool updated = false;
     var substrands_new = strand.substrands.toBuilder();
@@ -196,6 +196,94 @@ abstract class Strand
   Object get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
+
+  @memoized
+  BuiltList<SelectableDeletion> get selectable_deletions => [
+        for (var domain in domains())
+          for (var deletion in domain.selectable_deletions) deletion
+      ].build();
+
+  @memoized
+  BuiltList<SelectableInsertion> get selectable_insertions => [
+        for (var domain in domains())
+          for (var insertion in domain.selectable_insertions) insertion
+      ].build();
+
+  @memoized
+  SelectableModification5Prime get selectable_modification_5p => modification_5p == null
+      ? null
+      : SelectableModification5Prime(modification: modification_5p, strand: this);
+
+  @memoized
+  SelectableModification3Prime get selectable_modification_3p => modification_3p == null
+      ? null
+      : SelectableModification3Prime(modification: modification_3p, strand: this);
+
+  @memoized
+  BuiltList<SelectableModificationInternal> get selectable_modifications_int {
+    List<SelectableModificationInternal> mods = [];
+    for (int i = 0; i < substrands.length; i++) {
+      var substrand = substrands[i];
+      if (substrand is Domain) {
+        // TODO: support displaying mods on loopouts eventually
+        BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand[i];
+        for (int dna_idx_ss in mods_on_ss.keys) {
+          var mod = mods_on_ss[dna_idx_ss];
+          int dna_idx = get_seq_start_idx(substrand) + dna_idx_ss;
+          var selectable_mod = SelectableModificationInternal(
+              modification: mod, strand: this, domain: substrand, dna_idx: dna_idx);
+          mods.add(selectable_mod);
+        }
+      }
+    }
+    return mods.build();
+  }
+
+  @memoized
+  BuiltList<Selectable> get selectable_modifications {
+    List<Selectable> mods = [];
+    if (selectable_modification_5p != null) {
+      mods.add(selectable_modification_5p);
+    }
+    if (selectable_modification_3p != null) {
+      mods.add(selectable_modification_3p);
+    }
+    var mods_int = List<Selectable>.from(selectable_modifications_int_by_dna_idx.values);
+    mods.addAll(mods_int);
+    return mods.build();
+  }
+
+  @memoized
+  BuiltMap<int, SelectableModificationInternal> get selectable_modifications_int_by_dna_idx {
+    Map<int, SelectableModificationInternal> mods = {};
+    for (int i = 0; i < substrands.length; i++) {
+      var substrand = substrands[i];
+      if (substrand is Domain) {
+        // TODO: support displaying mods on loopouts eventually
+        BuiltMap<int, ModificationInternal> mods_on_ss = internal_modifications_on_substrand_absolute_idx[i];
+        for (int dna_idx in mods_on_ss.keys) {
+          var mod = mods_on_ss[dna_idx];
+          var selectable_mod = SelectableModificationInternal(
+              modification: mod, strand: this, domain: substrand, dna_idx: dna_idx);
+          mods[dna_idx] = selectable_mod;
+        }
+      }
+    }
+    return mods.build();
+  }
+
+  @memoized
+  BuiltList<SelectableModification> get all_modifications_selectable {
+    List<SelectableModification> mods = [];
+    if (selectable_modification_5p != null) {
+      mods.add(selectable_modification_5p);
+    }
+    if (selectable_modification_3p != null) {
+      mods.add(selectable_modification_3p);
+    }
+    mods.addAll(selectable_modifications_int);
+    return mods.build();
+  }
 
   /// Returns list of same length as substrands, indicating for each substrand,
   /// the internal modifications on that substrand.
@@ -297,16 +385,18 @@ abstract class Strand
     Set<Crossover> ret = {};
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is Domain && substrands[i + 1] is Domain) {
-        ret.add(Crossover(i, i + 1, id(), is_scaffold));
+        ret.add(Crossover(i, i + 1, id, is_scaffold));
       }
     }
 
     return BuiltList<Crossover>(ret);
   }
 
-  SelectModeChoice select_mode() => SelectModeChoice.strand;
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.strand;
 
-  String id() {
+  @memoized
+  String get id {
     var first_dom = this.first_domain();
     return id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
   }

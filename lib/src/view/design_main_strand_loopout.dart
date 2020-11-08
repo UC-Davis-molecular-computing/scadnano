@@ -116,8 +116,8 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
           props.loopout.handle_selection_mouse_up(ev.nativeEvent);
         }
       })
-      ..key = props.loopout.id()
-      ..id = props.loopout.id();
+      ..key = props.loopout.id
+      ..id = props.loopout.id;
 
     if (within_group) {
       path_props.transform = transform_of_helix(props.prev_helix.idx);
@@ -128,13 +128,13 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.loopout.id()}');
+    var element = querySelector('#${props.loopout.id}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.loopout.id()}');
+    var element = querySelector('#${props.loopout.id}');
     element.removeEventListener('contextmenu', on_context_menu);
   }
 

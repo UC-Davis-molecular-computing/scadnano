@@ -256,7 +256,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Strand> get strands_by_id {
     var builder = MapBuilder<String, Strand>();
     for (var strand in strands) {
-      builder[strand.id()] = strand;
+      builder[strand.id] = strand;
     }
     return builder.build();
   }
@@ -266,7 +266,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
       for (var domain in strand.domains()) {
-        builder[domain.id()] = domain;
+        builder[domain.id] = domain;
       }
     }
     return builder.build();
@@ -277,7 +277,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Loopout>();
     for (var strand in strands) {
       for (var loopout in strand.loopouts()) {
-        builder[loopout.id()] = loopout;
+        builder[loopout.id] = loopout;
       }
     }
     return builder.build();
@@ -288,7 +288,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Crossover>();
     for (var strand in strands) {
       for (var crossover in strand.crossovers) {
-        builder[crossover.id()] = crossover;
+        builder[crossover.id] = crossover;
       }
     }
     return builder.build();
@@ -300,7 +300,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var strand in strands) {
       for (var domain in strand.domains()) {
         for (var deletion in domain.selectable_deletions) {
-          builder[deletion.id()] = deletion;
+          builder[deletion.id] = deletion;
         }
       }
     }
@@ -313,8 +313,19 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var strand in strands) {
       for (var domain in strand.domains()) {
         for (var insertion in domain.selectable_insertions) {
-          builder[insertion.id()] = insertion;
+          builder[insertion.id] = insertion;
         }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableModification> get modifications_by_id {
+    var builder = MapBuilder<String, SelectableModification>();
+    for (var strand in strands) {
+      for (var mod in strand.selectable_modifications) {
+        builder[mod.id] = mod;
       }
     }
     return builder.build();
@@ -325,8 +336,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       for (var domain in strand.domains()) {
-        builder[domain.dnaend_start.id()] = domain.dnaend_start;
-        builder[domain.dnaend_end.id()] = domain.dnaend_end;
+        builder[domain.dnaend_start.id] = domain.dnaend_start;
+        builder[domain.dnaend_end.id] = domain.dnaend_end;
       }
     }
     return builder.build();
@@ -337,7 +348,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       var end = strand.dnaend_5p;
-      builder[end.id()] = end;
+      builder[end.id] = end;
     }
     return builder.build();
   }
@@ -347,7 +358,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       var end = strand.dnaend_3p;
-      builder[end.id()] = end;
+      builder[end.id] = end;
     }
     return builder.build();
   }
@@ -359,7 +370,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var domain in strand.domains()) {
         var end = domain.dnaend_5p;
         if (!domain.is_first) {
-          builder[end.id()] = end;
+          builder[end.id] = end;
         }
       }
     }
@@ -373,7 +384,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var domain in strand.domains()) {
         var end = domain.dnaend_3p;
         if (!domain.is_last) {
-          builder[end.id()] = end;
+          builder[end.id] = end;
         }
       }
     }
@@ -391,6 +402,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       domains_by_id,
       deletions_by_id,
       insertions_by_id,
+      modifications_by_id,
     ]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];

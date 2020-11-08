@@ -2324,6 +2324,7 @@ abstract class ModificationRemove
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // modification edit
+
 abstract class ModificationEdit
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<ModificationEdit, ModificationEditBuilder> {
@@ -2342,6 +2343,73 @@ abstract class ModificationEdit
 
   static Serializer<ModificationEdit> get serializer => _$modificationEditSerializer;
 }
+
+abstract class Modifications5PrimeEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<Modifications5PrimeEdit, Modifications5PrimeEditBuilder> {
+  BuiltList<SelectableModification5Prime> get modifications;
+
+  Modification5Prime get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Modifications5PrimeEdit(
+      {Iterable<SelectableModification5Prime> modifications, Modification5Prime new_modification}) {
+    return Modifications5PrimeEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory Modifications5PrimeEdit.from([void Function(Modifications5PrimeEditBuilder) updates]) =
+      _$Modifications5PrimeEdit;
+
+  Modifications5PrimeEdit._();
+
+  static Serializer<Modifications5PrimeEdit> get serializer => _$modifications5PrimeEditSerializer;
+}
+
+abstract class Modifications3PrimeEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<Modifications3PrimeEdit, Modifications3PrimeEditBuilder> {
+  BuiltList<SelectableModification3Prime> get modifications;
+
+  Modification3Prime get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Modifications3PrimeEdit(
+      {Iterable<SelectableModification3Prime> modifications, Modification3Prime new_modification}) {
+    return Modifications3PrimeEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory Modifications3PrimeEdit.from([void Function(Modifications3PrimeEditBuilder) updates]) =
+      _$Modifications3PrimeEdit;
+
+  Modifications3PrimeEdit._();
+
+  static Serializer<Modifications3PrimeEdit> get serializer => _$modifications3PrimeEditSerializer;
+}
+
+abstract class ModificationsInternalEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<ModificationsInternalEdit, ModificationsInternalEditBuilder> {
+  BuiltList<SelectableModificationInternal> get modifications;
+
+  ModificationInternal get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationsInternalEdit(
+      {Iterable<SelectableModificationInternal> modifications, ModificationInternal new_modification}) {
+    return ModificationsInternalEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory ModificationsInternalEdit.from([void Function(ModificationsInternalEditBuilder) updates]) =
+      _$ModificationsInternalEdit;
+
+  ModificationsInternalEdit._();
+
+  static Serializer<ModificationsInternalEdit> get serializer => _$modificationsInternalEditSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change
 

@@ -202,7 +202,7 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   Strand strand_to = state.design.end_to_strand(dna_end_to);
   if (strand_from == strand_to) {
     // circular Strands not supported
-    print('WARNING: circular strands not supported, so I cannot connect strand ${strand_to.id()} to itself.');
+    print('WARNING: circular strands not supported, so I cannot connect strand ${strand_to.id} to itself.');
     return strands;
   }
   Strand strand_first_clicked = first_clicked_is_from ? strand_from : strand_to;
@@ -217,7 +217,7 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   last_domain_from = last_domain_from.rebuild((b) => b..is_last = false);
   first_domain_to = first_domain_to.rebuild((b) => b
     ..is_first = false
-    ..strand_id = strand_to.id());
+    ..strand_id = strand_to.id);
 
   // put back into Substrand lists
   substrands_from[last_idx_from] = last_domain_from;

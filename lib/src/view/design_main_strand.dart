@@ -48,6 +48,7 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<Domain> selected_domains_in_strand;
   BuiltSet<SelectableDeletion> selected_deletions_in_strand;
   BuiltSet<SelectableInsertion> selected_insertions_in_strand;
+  BuiltSet<SelectableModification> selected_modifications_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -89,7 +90,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
 
     return (Dom.g()
-      ..id = props.strand.id()
+      ..id = props.strand.id
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
 //      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
@@ -132,6 +133,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..geometry = props.geometry
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
           ..key = 'modifications')(),

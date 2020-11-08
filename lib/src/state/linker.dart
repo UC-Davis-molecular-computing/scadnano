@@ -1,3 +1,5 @@
+import 'package:built_value/built_value.dart';
+
 import 'select_mode.dart';
 
 /// Implemented by both [Crossover] and [Loopout].
@@ -8,7 +10,9 @@ abstract class Linker {
 
   String get strand_id;
 
-  SelectModeChoice select_mode();
+  @memoized
+  SelectModeChoice get select_mode;
 
-  String id();
+  @memoized
+  String get id;
 }
