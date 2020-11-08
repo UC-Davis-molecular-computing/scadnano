@@ -169,7 +169,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   @memoized
   Position3D get default_position {
-    num x = min_offset * geometry.rise_per_base_pair;
+    num z = min_offset * geometry.rise_per_base_pair;
 
     // normalized so helices are diameter 1
     Point<num> point_zy;
@@ -184,7 +184,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     num y = point_zy.y * geometry.distance_between_helices_nm;
-    num z = point_zy.x * geometry.distance_between_helices_nm;
+    num x = point_zy.x * geometry.distance_between_helices_nm;
     Position3D pos = Position3D(x: x, y: y, z: z);
     return pos;
   }
@@ -202,13 +202,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return default_position;
   }
 
-  /// Calculates z-y angle in degrees, according to position3d(), from this [Helix] to [other].
+  /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
   num angle_to(Helix other) {
     var pos1 = position3d();
     var pos2 = other.position3d();
-    num z = pos2.z - pos1.z;
+    num x = pos2.x - pos1.x;
     num y = pos2.y - pos1.y;
-    num angle_radians = (atan2(z, -y)) % (2 * pi); // using SVG "reverse y" coordinates
+    num angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
     return util.to_degrees(angle_radians);
   }
 
