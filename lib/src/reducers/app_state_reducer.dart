@@ -50,9 +50,11 @@ AppState app_state_reducer(AppState state, action) {
     ..ui_state.replace(ui_state_global_reducer(state.ui_state, original_state, action)));
 
   // Batch actions are grouped together but should just have one entry on the undo stack.
-  // So we set a variable telling the Undo reducer not to put anything on the stack for any of these atomic actions.
+  // So we set a variable telling the Undo reducer not to put anything on the stack
+  // for any of these atomic actions.
   // However, it has already put something on the stack above for the BatchAction itself.
-  // This seems like it belongs in undo_redo_reducer, but the logic was tricky to handle, so we make a special case.
+  // This seems like it belongs in undo_redo_reducer, but the logic was tricky to handle,
+  // so we make a special case.
   if (action is actions.BatchAction) {
     for (actions.UndoableAction atomic_action in action.actions) {
       state = app_state_reducer(state, actions.SkipUndo(atomic_action));

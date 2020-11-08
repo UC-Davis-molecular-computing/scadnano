@@ -8,12 +8,15 @@ import '../serializers.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
 import 'domain.dart';
+import 'helix.dart';
 import 'loopout.dart';
 import 'dna_end.dart';
 import 'select_mode.dart';
 import 'edit_mode.dart';
 import 'strand.dart';
 import '../app.dart';
+import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'selectable.g.dart';
 
@@ -44,6 +47,14 @@ abstract class SelectablesStore
 
   @memoized
   BuiltSet<DNAEnd> get selected_dna_ends => BuiltSet<DNAEnd>.from(selected_items.where((s) => s is DNAEnd));
+
+  @memoized
+  BuiltSet<SelectableDeletion> get selected_deletions =>
+      BuiltSet<SelectableDeletion>.from(selected_items.where((s) => s is SelectableDeletion));
+
+  @memoized
+  BuiltSet<SelectableInsertion> get selected_insertions =>
+      BuiltSet<SelectableInsertion>.from(selected_items.where((s) => s is SelectableInsertion));
 
   bool get isEmpty => selected_items.isEmpty;
 
@@ -105,18 +116,52 @@ abstract class SelectablesStore
 
   BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
         for (var domain in strand.domains())
-          for (var end in [domain.dnaend_5p, domain.dnaend_3p]) if (selected_dna_ends.contains(end)) end
+          for (var end in [domain.dnaend_5p, domain.dnaend_3p])
+            if (selected_dna_ends.contains(end)) end
       }.build();
 
   BuiltSet<Crossover> selected_crossovers_in_strand(Strand strand) => {
-        for (var crossover in strand.crossovers) if (selected_crossovers.contains(crossover)) crossover
+        for (var crossover in strand.crossovers)
+          if (selected_crossovers.contains(crossover)) crossover
       }.build();
 
-  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) =>
-      {for (var loopout in strand.loopouts()) if (selected_loopouts.contains(loopout)) loopout}.build();
+  BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
+        for (var loopout in strand.loopouts())
+          if (selected_loopouts.contains(loopout)) loopout
+      }.build();
 
-  BuiltSet<Domain> selected_domains_in_strand(Strand strand) =>
-      {for (var domain in strand.domains()) if (selected_domains.contains(domain)) domain}.build();
+  BuiltSet<Domain> selected_domains_in_strand(Strand strand) => {
+        for (var domain in strand.domains())
+          if (selected_domains.contains(domain)) domain
+      }.build();
+
+  BuiltSet<SelectableDeletion> selected_deletions_in_strand(Strand strand) {
+    Set<SelectableDeletion> deletions = {};
+    for (var domain in strand.domains()) {
+      for (int offset in domain.deletions) {
+        for (var deletion in selected_deletions) {
+          if (deletion.offset == offset && deletion.domain == domain) {
+            deletions.add(deletion);
+          }
+        }
+      }
+    }
+    return deletions.build();
+  }
+
+  BuiltSet<SelectableInsertion> selected_insertions_in_strand(Strand strand) {
+    Set<SelectableInsertion> insertions = {};
+    for (var domain in strand.domains()) {
+      for (Insertion insertion in domain.insertions) {
+        for (var selectable_insertion in selected_insertions) {
+          if (selectable_insertion.insertion == insertion && selectable_insertion.domain == domain) {
+            insertions.add(selectable_insertion);
+          }
+        }
+      }
+    }
+    return insertions.build();
+  }
 
   /************************ begin BuiltValue boilerplate ************************/
   SelectablesStore._();
@@ -124,6 +169,78 @@ abstract class SelectablesStore
   factory SelectablesStore([void Function(SelectablesStoreBuilder) updates]) = _$SelectablesStore;
 
   static Serializer<SelectablesStore> get serializer => _$selectablesStoreSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectableDeletion
+    with Selectable, BuiltJsonSerializable
+    implements Built<SelectableDeletion, SelectableDeletionBuilder> {
+  int get offset;
+
+  Domain get domain;
+
+  bool get is_scaffold;
+
+  String get strand_id => domain.strand_id;
+
+  SelectModeChoice select_mode() => SelectModeChoice.deletion;
+
+  Address get address => Address(helix_idx: domain.helix, offset: offset, forward: domain.forward);
+
+  String id() => util.id_deletion(domain, offset);
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory SelectableDeletion({int offset, Domain domain, bool is_scaffold}) = _$SelectableDeletion._;
+
+  // {return SelectableDeletion.from((b) => b..offset = offset..domain.replace(domain));}
+
+  factory SelectableDeletion.from([void Function(SelectableDeletionBuilder) updates]) = _$SelectableDeletion;
+
+  SelectableDeletion._();
+
+  static Serializer<SelectableDeletion> get serializer => _$selectableDeletionSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectableInsertion
+    with Selectable, BuiltJsonSerializable
+    implements Built<SelectableInsertion, SelectableInsertionBuilder> {
+  Insertion get insertion;
+
+  Domain get domain;
+
+  bool get is_scaffold;
+
+  String get strand_id => domain.strand_id;
+
+  SelectModeChoice select_mode() => SelectModeChoice.insertion;
+
+  Address get address => Address(helix_idx: domain.helix, offset: insertion.offset, forward: domain.forward);
+
+  String id() => util.id_insertion(domain, insertion.offset);
+
+  // needed to have an ID separate from the curve ID (used for selection box),
+  // which is used to intercept the context menu on any right-click in the whole group;
+  // see componentDidMount and componentWillUnmount in design_main_strand_insertion.dart
+  String id_group() => id() + '-group';
+
+  /************************ begin BuiltValue boilerplate ************************/
+
+  factory SelectableInsertion({Insertion insertion, Domain domain, bool is_scaffold}) = _$SelectableInsertion._;
+
+  // {return SelectableDeletion.from((b) => b..offset = offset..domain.replace(domain));}
+
+  factory SelectableInsertion.from([void Function(SelectableInsertionBuilder) updates]) =
+      _$SelectableInsertion;
+
+  SelectableInsertion._();
+
+  static Serializer<SelectableInsertion> get serializer => _$selectableInsertionSerializer;
 
   @memoized
   int get hashCode;
@@ -144,11 +261,13 @@ mixin Selectable {
   // ctrlKey, metaKey, and shiftKey properties we need to check for.
 //  handle_selection(react.SyntheticPointerEvent event) {
   handle_selection_mouse_down(MouseEvent event) {
-    if (event.ctrlKey || event.metaKey) {
-      app.dispatch(actions.Select(this, toggle: true));
-    } else {
-      // add to selection on mouse down
-      app.dispatch(actions.Select(this, toggle: false));
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (event.ctrlKey || event.metaKey) {
+        app.dispatch(actions.Select(this, toggle: true));
+      } else {
+        // add to selection on mouse down
+        app.dispatch(actions.Select(this, toggle: false));
+      }
     }
   }
 
@@ -157,8 +276,10 @@ mixin Selectable {
   // Shift or Ctrl key, so if we deselected whenever the user clicks without those keys, we would not be
   // able to move multiple items.
   handle_selection_mouse_up(MouseEvent event) {
-    if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
-      app.dispatch(actions.Select(this, toggle: false, only: true));
+    if (event.button == constants.LEFT_CLICK_BUTTON) {
+      if (!(event.ctrlKey || event.metaKey || event.shiftKey)) {
+        app.dispatch(actions.Select(this, toggle: false, only: true));
+      }
     }
   }
 }
@@ -202,6 +323,16 @@ bool loopout_selectable(Loopout loopout) =>
     edit_mode_is_select() &&
     select_modes().contains(SelectModeChoice.loopout) &&
     origami_type_selectable(loopout);
+
+bool deletion_selectable(SelectableDeletion deletion) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.deletion) &&
+    origami_type_selectable(deletion);
+
+bool insertion_selectable(SelectableInsertion insertion) =>
+    edit_mode_is_select() &&
+    select_modes().contains(SelectModeChoice.insertion) &&
+    origami_type_selectable(insertion);
 
 bool end_selectable(DNAEnd end) =>
     edit_mode_is_select() && end_type_selectable(end) && origami_type_selectable(end);

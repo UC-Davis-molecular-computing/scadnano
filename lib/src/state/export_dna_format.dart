@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
@@ -134,11 +135,21 @@ idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
   int plate = 1;
   int excel_row = 1;
   String plate_name = 'plate${plate}';
-  int num_wells_per_plate = rows_of(plate_type).length * cols_of(plate_type).length;
-  int num_plates_needed = 1 + strands.length ~/ num_wells_per_plate;
+
+  int num_strands_per_plate = num_wells_per_plate(plate_type);
+  int num_plates_needed = strands.length ~/ num_strands_per_plate;
+  if (strands.length % num_strands_per_plate != 0) {
+    num_plates_needed++;
+  }
+  int min_strands_per_plate = min_wells_per_plate(plate_type);
+
+  int num_strands_plates_except_final = max(0, (num_plates_needed - 1) * num_strands_per_plate);
+  int num_strands_final_plate = strands.length - num_strands_plates_except_final;
+  bool final_plate_less_than_min_required = num_strands_final_plate < min_strands_per_plate;
 
   if (num_plates_needed > 10) {
-    throw ExportDNAException('To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
+    throw ExportDNAException(
+        'To put ${strands.length} strands into ${plate_type == PlateType.wells96 ? 96 : 384}-well plates '
         'requires ${num_plates_needed} plates.\n'
         'It is currently unsupported to create more than 10 plates in a single design.\n'
         'Please file an issue requesting this feature here: '
@@ -150,17 +161,31 @@ idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
   List<int> bytes = Uint8List.view(data);
   var decoder = SpreadsheetDecoder.decodeBytes(bytes, update: true, verify: true);
 
+  int num_strands_remaining = strands.length;
+  bool on_final_plate = num_plates_needed == 1;
   for (var strand in strands) {
     var well = plate_coord.well();
     decoder.insertRow(plate_name, excel_row);
     decoder.updateCell(plate_name, 0, excel_row, well);
     decoder.updateCell(plate_name, 1, excel_row, strand.export_name());
     decoder.updateCell(plate_name, 2, excel_row, sequence_null_aware(strand));
-    plate_coord.increment();
+    num_strands_remaining--;
+
+    // IDT will not make a plate with < 24 strands for 96-well plate or < 96 strands for 384-well plate.
+    // So if we would have fewer than that many on the last plate, shift some from the penultimate plate.
+    if (!on_final_plate &&
+        final_plate_less_than_min_required &&
+        num_strands_remaining == min_strands_per_plate) {
+      plate_coord.advance_to_next_plate();
+    } else {
+      plate_coord.increment();
+    }
+
     if (plate != plate_coord.plate) {
       plate = plate_coord.plate;
       plate_name = 'plate${plate}';
       excel_row = 1;
+      on_final_plate = true;
       //TODO: add a new table with name plate_name; for now we hardcode the number of plates in advance
       // https://github.com/sestegra/spreadsheet_decoder/issues/20
 //      worksheet = self._add_new_excel_plate_sheet(plate_name, workbook);
@@ -174,6 +199,30 @@ idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
 }
 
 enum PlateType { wells96, wells384, none }
+
+int num_wells_per_plate(PlateType plate_type) {
+  switch (plate_type) {
+    case PlateType.wells96:
+      return 96;
+    case PlateType.wells384:
+      return 384;
+    case PlateType.none:
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
+  }
+  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
+}
+
+int min_wells_per_plate(PlateType plate_type) {
+  switch (plate_type) {
+    case PlateType.wells96:
+      return 24;
+    case PlateType.wells384:
+      return 96;
+    case PlateType.none:
+      throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
+  }
+  throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
+}
 
 List<String> rows_of(PlateType plate_type) {
   switch (plate_type) {
@@ -217,6 +266,12 @@ class _PlateCoordinate {
         plate++;
       }
     }
+  }
+
+  advance_to_next_plate() {
+    row_idx = 0;
+    col_idx = 0;
+    plate++;
   }
 
   String row() => rows_of(plate_type)[row_idx];

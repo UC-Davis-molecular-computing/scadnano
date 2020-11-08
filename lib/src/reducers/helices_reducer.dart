@@ -129,11 +129,13 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
   //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
 
   helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_xy, helices, new_groups.build());
-  design = design.rebuild((b) => b..helices.replace(helices)..strands.replace(strands));
+  design = design
+      .rebuild((b) => b..groups.replace(new_groups)..helices.replace(helices)..strands.replace(strands));
   return design;
 }
 
-Map<String, HelixGroup> change_groups(actions.HelixIdxsChange action, Map<int, Helix> helices, Design design) {
+Map<String, HelixGroup> change_groups(
+    actions.HelixIdxsChange action, Map<int, Helix> helices, Design design) {
   // initialize with default view order to be the same as before the idx change
   Map<int, int> new_view_order = {};
   for (int old_idx in action.idx_replacements.keys) {
@@ -175,6 +177,7 @@ Map<String, HelixGroup> change_groups(actions.HelixIdxsChange action, Map<int, H
       new_groups[group_name] = new_group;
     }
   }
+
   return new_groups;
 }
 

@@ -46,6 +46,8 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
   BuiltSet<Domain> selected_domains_in_strand;
+  BuiltSet<SelectableDeletion> selected_deletions_in_strand;
+  BuiltSet<SelectableInsertion> selected_insertions_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -175,16 +177,14 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var insertion in domain.insertions) {
-          String id = util.id_insertion(domain, insertion.offset);
+        for (var selectable_insertion in domain.selectable_insertions) {
           paths.add((DesignMainStrandInsertion()
-            ..insertion = insertion
-            ..domain = domain
+            ..selectable_insertion = selectable_insertion
+            ..selected = props.selected_insertions_in_strand.contains(selectable_insertion)
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
-            ..id = id
-            ..key = id)());
+            ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
     }
@@ -210,12 +210,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var deletion in domain.deletions) {
-          String id = util.id_deletion(domain, deletion);
+        for (var selectable_deletion in domain.selectable_deletions) {
+          String id = util.id_deletion(domain, selectable_deletion.offset);
           paths.add((DesignMainStrandDeletion()
-            ..domain = domain
-            ..deletion = deletion
+            ..selectable_deletion = selectable_deletion
             ..helix = helix
+            ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
             ..key = id)());
         }
@@ -424,38 +424,40 @@ Future<void> ask_for_add_modification(Strand strand,
 
   int modification_type_idx = 0;
   int display_text_idx = 1;
-  int id_idx = 2;
-  int idt_text_idx = 3;
-  int index_of_dna_base_idx = 4;
-  var items = List<DialogItem>(5);
+  int idt_text_idx = 2;
+  int index_of_dna_base_idx = 3;
+  // int id_idx = 4;
+  var items = List<DialogItem>(4);
   items[modification_type_idx] = DialogRadio(
       label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
 
   String initial_display_text = "";
-  String initial_id = "";
   String initial_idt_text = "";
+  // String initial_id = "";
 
   // if there is a last mod of this type, it auto-populates the dialog inputs
   Modification last_mod;
-  if (selected_index == 0) {// 3' mod
+  if (selected_index == 0) {
+    // 3' mod
     last_mod = app.state.ui_state.last_mod_3p;
-  } else if (selected_index == 1) { // 5' mod
+  } else if (selected_index == 1) {
+    // 5' mod
     last_mod = app.state.ui_state.last_mod_5p;
-  } else if (selected_index == 2) { // internal mod
+  } else if (selected_index == 2) {
+    // internal mod
     last_mod = app.state.ui_state.last_mod_int;
   } else {
     throw AssertionError('should be unreachable');
   }
   if (last_mod != null) {
     initial_display_text = last_mod.display_text;
-    initial_id = last_mod.id;
     initial_idt_text = last_mod.idt_text;
+    // initial_id = last_mod.id;
   }
 
-
   items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
-  items[id_idx] = DialogText(label: 'id', value: initial_id);
   items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+  // items[id_idx] = DialogText(label: 'id', value: initial_id);
 
   items[index_of_dna_base_idx] =
       DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
@@ -471,24 +473,27 @@ Future<void> ask_for_add_modification(Strand strand,
   if (results == null) return;
   String modification_type = (results[modification_type_idx] as DialogRadio).value;
   String display_text = (results[display_text_idx] as DialogText).value;
-  String id = (results[id_idx] as DialogText).value;
+  // String id = (results[id_idx] as DialogText).value;
   String idt_text = (results[idt_text_idx] as DialogText).value;
   int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
 
   Modification mod;
   if (modification_type == "3'") {
     mod = Modification3Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text);
   } else if (modification_type == "5'") {
     mod = Modification5Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+        //id: id,
+        display_text: display_text,
+        idt_text: idt_text);
   } else {
     mod = ModificationInternal(
-        display_text: display_text,
-        id: id,
-        idt_text: idt_text,
-        allowed_bases: null,
-        unused_fields: BuiltMap<String, Object>());
+      // id: id,
+      display_text: display_text,
+      idt_text: idt_text,
+    );
   }
   app.dispatch(actions.ModificationAdd(strand: strand, modification: mod, strand_dna_idx: index_of_dna_base));
 }

@@ -177,7 +177,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     if (new_length == null || new_length == props.loopout.loopout_length) {
       return;
     }
-    app.dispatch(actions.LoopoutLengthChange(props.loopout, new_length));
+    var selected_loopouts = app.state.ui_state.selectables_store.selected_loopouts;
+    actions.UndoableAction action;
+    if (selected_loopouts.length > 0) {
+      action = actions.LoopoutsLengthChange(selected_loopouts, new_length);
+    } else {
+      action = actions.LoopoutLengthChange(props.loopout, new_length);
+    }
+    app.dispatch(action);
   }
 
   String loopout_path_description_between_groups() {
@@ -222,18 +229,15 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 // When drawing a normal loopout this is needed, but when drawing a moving strand, where all path commands
 // are concatenated together, it is not needed.
 String loopout_path_description_within_group(Helix prev_helix, Helix next_helix, Domain prev_domain,
-    Domain next_domain, Loopout loopout, bool include_start_M, bool show_domain_labels) {
+    Domain next_domain, Loopout loopout, bool include_start_M, bool show_loopout_labels) {
   Helix top_helix = prev_helix;
   Helix bot_helix = next_helix;
   Geometry geometry = top_helix.geometry;
   Domain top_dom = prev_domain;
   Domain bot_dom = next_domain;
-  if (top_helix.idx == bot_helix.idx) {
-    top_helix = bot_helix = next_helix;
-    if (!prev_domain.forward) {
-      top_dom = next_domain;
-      bot_dom = prev_domain;
-    }
+  if (top_helix.idx == bot_helix.idx && top_dom.forward == bot_dom.forward) {
+    return loopout_path_description_same_helix_same_direction(
+        loopout, prev_helix, prev_domain, next_domain, include_start_M, show_loopout_labels);
   } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
     top_helix = next_helix;
     bot_helix = prev_helix;
@@ -254,7 +258,7 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
 
   if (top_helix.idx == bot_helix.idx) {
     w = 1.5 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_width_svg;
-    if (show_domain_labels) {
+    if (show_loopout_labels) {
       h = 10 * util.sigmoid(loopout.loopout_length) * geometry.base_height_svg;
     } else {
       h = 10 * util.sigmoid(loopout.loopout_length - 5) * geometry.base_height_svg;
@@ -288,6 +292,63 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
   var c2 = Point<num>(x_offset2, y_offset2);
 
   var path = (include_start_M ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
+      'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
+
+  return path;
+}
+
+String loopout_path_description_same_helix_same_direction(Loopout loopout, Helix helix, Domain prev_domain,
+    Domain next_domain, bool include_start_m, bool show_loopout_labels) {
+  Geometry geometry = helix.geometry;
+  int prev_offset = prev_domain.offset_3p;
+  int next_offset = next_domain.offset_5p;
+  bool forward = prev_domain.forward;
+  var prev_svg = helix.svg_base_pos(prev_offset, forward);
+  var next_svg = helix.svg_base_pos(next_offset, forward);
+
+  int left_offset = prev_offset;
+  int right_offset = next_offset;
+  var left_svg = prev_svg;
+  var right_svg = next_svg;
+  bool left_is_prev = left_offset < right_offset;
+  if (!left_is_prev) {
+    left_offset = next_offset;
+    right_offset = prev_offset;
+    left_svg = next_svg;
+    right_svg = prev_svg;
+  }
+
+  num x_distance = right_svg.x - left_svg.x;
+  num h = 3 * util.sigmoid(loopout.loopout_length - 1) * geometry.base_height_svg;
+  num length = loopout.loopout_length;
+  if (!show_loopout_labels) {
+    length -= 5;
+  }
+
+  // taking cubed root of x distance for intermediate bezier points seems to place curve at
+  // about a constant offset from x coordinates of ends the loopout is connecting
+  num w = 2 * pow(x_distance, 1.0 / 3.0) * util.sigmoid(length) * geometry.base_width_svg;
+
+  num left_x = left_svg.x - w;
+  num right_x = right_svg.x + w;
+  num y = left_svg.y;
+
+  if (forward) {
+    y -= h;
+  } else {
+    y += h;
+  }
+
+  var c1 = Point<num>(left_x, y);
+  var c2 = Point<num>(right_x, y);
+
+  if (!left_is_prev) {
+    var swap = c1;
+    c1 = c2;
+    c2 = swap;
+  }
+
+  var path = (include_start_m ? 'M ${prev_svg.x} ${prev_svg.y} ' : '') +
       'C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${next_svg.x} ${next_svg.y}';
 
   return path;

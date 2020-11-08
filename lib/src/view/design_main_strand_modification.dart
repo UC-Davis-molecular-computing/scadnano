@@ -14,12 +14,11 @@ import '../state/strand.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
 
-part 'design_main_strand_modification_domain.over_react.g.dart';
+part 'design_main_strand_modification.over_react.g.dart';
 
-UiFactory<DesignMainStrandModificationDomainProps> DesignMainStrandModificationDomain =
-    _$DesignMainStrandModificationDomain;
+UiFactory<DesignMainStrandModificationProps> DesignMainStrandModification = _$DesignMainStrandModification;
 
-mixin DesignMainStrandModificationDomainProps on UiProps {
+mixin DesignMainStrandModificationProps on UiProps {
   Strand strand;
   int dna_idx_mod;
   Address address;
@@ -31,38 +30,31 @@ mixin DesignMainStrandModificationDomainProps on UiProps {
   String transform;
 }
 
-class DesignMainStrandModificationDomainComponent
-    extends UiComponent2<DesignMainStrandModificationDomainProps> {
+class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
   @override
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
     bool display_connector = props.display_connector;
     String html_id = props.modification.html_id(props.address);
+
+    String classname;
     if (props.modification is Modification5Prime) {
-      return (Dom.g()
-        ..className = "'modification-5'"
-        ..id = html_id
-        ..transform = props.transform)([
-        if (display_connector) _end_connector(pos, props.address.forward),
-        _modification_svg(pos, props.address.forward, display_connector),
-      ]);
+      classname = "modification-5'";
     } else if (props.modification is Modification3Prime) {
-      return (Dom.g()
-        ..className = "'modification-3'"
-        ..id = html_id
-        ..transform = props.transform)([
-        if (display_connector) _end_connector(pos, props.address.forward),
-        _modification_svg(pos, props.address.forward, display_connector),
-      ]);
+      classname = "modification-3'";
     } else {
-      return (Dom.g()
-        ..className = 'modification-internal'
-        ..id = html_id
-        ..transform = props.transform)([
-        if (display_connector) _internal_connector(pos, props.address.forward),
-        _modification_svg(pos, props.address.forward, display_connector),
-      ]);
+      classname = "modification-internal";
     }
+
+    var elements = [
+      if (display_connector) _end_connector(pos, props.address.forward),
+      _modification_svg(pos, props.address.forward, display_connector),
+    ];
+
+    return (Dom.g()
+      ..className = classname
+      ..id = html_id
+      ..transform = props.transform)(elements);
   }
 
   @override
@@ -99,35 +91,33 @@ class DesignMainStrandModificationDomainComponent
 
   edit_modification() async {
     int display_text_idx = 0;
-    int id_idx = 1;
-    int idt_text_idx = 2;
-    var items = List<DialogItem>(3);
+    int idt_text_idx = 1;
+    // int id_idx = 2;
+    var items = List<DialogItem>(2);
     items[display_text_idx] = DialogText(label: 'display text', value: props.modification.display_text);
-    items[id_idx] = DialogText(label: 'id', value: props.modification.id);
     items[idt_text_idx] = DialogText(label: 'idt text', value: props.modification.idt_text);
+    // items[id_idx] = DialogText(label: 'id', value: props.modification.id);
 
     var dialog = Dialog(title: 'edit modification', items: items);
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
     String display_text = (results[display_text_idx] as DialogText).value;
-    String id = (results[id_idx] as DialogText).value;
     String idt_text = (results[idt_text_idx] as DialogText).value;
+    // String id = (results[id_idx] as DialogText).value;
 
     Modification mod;
     if (props.modification is Modification3Prime) {
-      mod = Modification3Prime(
-          display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+      mod = Modification3Prime( //id: id,
+          display_text: display_text, idt_text: idt_text);
     } else if (props.modification is Modification5Prime) {
-      mod = Modification5Prime(
-          display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
+      mod = Modification5Prime( //id: id,
+          display_text: display_text, idt_text: idt_text);
     } else {
       mod = ModificationInternal(
+          // id: props.modification.id,
           display_text: display_text,
-          id: props.modification.id,
-          idt_text: props.modification.idt_text,
-          allowed_bases: null,
-          unused_fields: BuiltMap<String, Object>());
+          idt_text: props.modification.idt_text);
     }
     app.dispatch(
         actions.ModificationEdit(strand: props.strand, modification: mod, strand_dna_idx: props.dna_idx_mod));

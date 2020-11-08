@@ -562,25 +562,27 @@ There are different edit modes available, shown on the right side of the screen.
   Technically these operations are unnecessary, but they are faster than creating/moving/deleting domains in some circumstances. In nick mode, clicking on a bound domain will split it into two at that position. Ligate mode does the reverse operation: if two bound domains point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
 
 * **(i)nsertion / (d)eletion:**
-  These have the same meaning as in cadnano. 
+  These have the same meaning as in cadnano, where they are called "loops" and "skips", respectively. 
   They are a visual trick used to allow bound domains to appear to be one length in the main view of scadnano, while actually having a different length. 
   Normally, each offset (small white square outlined in gray on a helix) represents a single base. 
   Clicking on a bound domain in insertion/deletion mode adds an insertion/deletion at that offset. 
   Clicking an existing insertion/deletion removes it. 
   (Note that this requires clicking in the small square where the bound domain is drawn; 
-  clicking on an insertion outside of that square allows one to change its length.) 
+  clicking on an insertion outside of that square has no effect.) 
   If a deletion appears at that position, then it does not correspond to any DNA base. 
   If an insertion appears at that position, it has a *length*, which is a positive integer, 
   and the number of bases represented by that position is actually *length*+1. 
   In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
-  Currently, if one offset on a helix has two bound domains (going in opposite directions), 
+  If one offset on a helix has two bound domains (going in opposite directions), 
   then adding/removing an insertion/deletion at that offset adds/removes on both bound domains.
-  The Python scripting library lets one specify insertions/deletions on one bound domain but not the other, 
-  but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
-  (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
+  If you want only one of the domains to have the insertion/deletion, then click in Insertion/Deletion mode to add to both, switch to Select mode, select the unwanted one, and press the Delete key.
 
-  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
+  A useful shortcut allows one to add many insertions/deletions to the same offset on all helices (in a helix group). 
+  If the Ctrl key is pressed while clicking on a domain in Deletion/Insertion mode, then deletions/insertions will be added at *all* domains on all helices in the same helix group that overlap the same offset (unless that offset is the start or end of the domain, which is disallowed from having a deletion/insertion).
+  This helps to implement, for example, twist correction in DNA origami (see https://doi.org/10.1038/nchem.1070 for a description), where vertical "columns" of deletions need to be added to every domain in every helix at a given offset.
+
+  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, in scadnano, insertions and deletions are associated to a bound domain. If the domain (or the whole strand) moves, the insertions/deletions move along with it.
 
 * **(b)ackbone:**
   This shows information in the side view about the roll of the helix when the pointer is over an offset of that helix in the main view, 

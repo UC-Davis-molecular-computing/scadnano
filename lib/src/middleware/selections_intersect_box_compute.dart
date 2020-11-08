@@ -30,7 +30,8 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
 
     //XXX: Firefox does not have getIntersectionList or getEnclosureList
     // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
-    // Besides, it didn't work well in Chrome and I basically had to implement it myself based on bounding boxes.
+    // Besides, it didn't work well in Chrome and I
+    // basically had to implement it myself based on bounding boxes.
 
     bool is_origami = state.design.is_origami;
     var select_modes = state.ui_state.select_mode_state.modes;

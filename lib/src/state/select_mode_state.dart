@@ -41,6 +41,12 @@ abstract class SelectModeState implements Built<SelectModeState, SelectModeState
   bool domains_selectable() =>
       modes.contains(SelectModeChoice.domain);
 
+  bool deletions_selectable() =>
+      modes.contains(SelectModeChoice.deletion);
+
+  bool insertions_selectable() =>
+      modes.contains(SelectModeChoice.insertion);
+
   String to_json() {
     List<String> lst = [for (var mode in modes) mode.name];
     var js = jsonEncode(lst);

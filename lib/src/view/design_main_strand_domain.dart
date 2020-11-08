@@ -98,9 +98,9 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
         }
         app.dispatch(actions.Nick(domain: domain, offset: offset));
       } else if (edit_mode_is_insertion()) {
-        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
+        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
       } else if (edit_mode_is_deletion()) {
-        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
+        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
       }
     }
   }

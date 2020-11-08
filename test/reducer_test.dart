@@ -5255,6 +5255,11 @@ main() {
   });
 
   group('insertion/deletion', () {
+    //TODO: add some unit tests that test this when DNA sequences are on the domains, and both domains
+    // having the deletion/insertion added are part of the same strand (e.g., a hairpin);
+    // this caused a bug because adding the first deletion shifts the DNA sequence, which caused the
+    // second domain to be unequal to its previous self in some internal equality check in the reducer
+    // (bug has been fixed but it's good if the unit tests catch it)
     test('InsertionAdd', () {
       // Before
       //     0               16
@@ -5270,9 +5275,9 @@ main() {
 
       int offset = 8;
       Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0));
+      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0, all_helices: false));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1));
+      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
         "version": "''' +
@@ -5353,9 +5358,9 @@ main() {
 
       int offset = 8;
       Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0));
+      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0, all_helices: false));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1));
+      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
         "version": "''' +
@@ -5797,7 +5802,7 @@ main() {
     });
   });
 
-  group('Test strand editing with modifications -- split', () {
+  group('strand_editing_with_modifications_split', () {
     // many_helices_modification.dna
     //    B     Cy3   B
     // 0  [-----------------

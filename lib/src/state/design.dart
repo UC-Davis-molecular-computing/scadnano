@@ -146,7 +146,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return group;
   }
 
+  String group_name_of_helix_idx(int helix_idx) {
+    Helix helix = helices[helix_idx];
+    return helix.group;
+  }
+
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
+
+  String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -288,6 +295,32 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   @memoized
+  BuiltMap<String, SelectableDeletion> get deletions_by_id {
+    var builder = MapBuilder<String, SelectableDeletion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var deletion in domain.selectable_deletions) {
+          builder[deletion.id()] = deletion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableInsertion> get insertions_by_id {
+    var builder = MapBuilder<String, SelectableInsertion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var insertion in domain.selectable_insertions) {
+          builder[insertion.id()] = insertion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
@@ -350,7 +383,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
-    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id, domains_by_id]) {
+    for (var map_small in [
+      strands_by_id,
+      loopouts_by_id,
+      crossovers_by_id,
+      ends_by_id,
+      domains_by_id,
+      deletions_by_id,
+      insertions_by_id,
+    ]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];
         map[key] = obj;
@@ -975,33 +1016,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   _check_loopouts_not_consecutive_or_singletons_or_zero_length() {
     for (var strand in strands) {
-      Design._check_loopout_not_singleton(strand);
-      Design._check_two_consecutive_loopouts(strand);
-      Design._check_loopouts_length(strand);
-    }
-  }
-
-  static _check_loopout_not_singleton(Strand strand) {
-    if (strand.substrands.length == 1 && strand.first_domain().is_loopout()) {
-      throw StrandError(strand, 'strand cannot have a single Loopout as its only domain');
-    }
-  }
-
-  static _check_two_consecutive_loopouts(Strand strand) {
-    for (int i = 0; i < strand.substrands.length - 1; i++) {
-      var domain1 = strand.substrands[i];
-      var domain2 = strand.substrands[i + 1];
-      if (domain1.is_loopout() && domain2.is_loopout()) {
-        throw StrandError(strand, 'cannot have two consecutive Loopouts in a strand');
-      }
-    }
-  }
-
-  static _check_loopouts_length(Strand strand) {
-    for (var loopout in strand.loopouts()) {
-      if (loopout.loopout_length <= 0) {
-        throw StrandError(strand, 'loopout length must be positive but is ${loopout.loopout_length}');
-      }
+      strand.check_loopout_not_singleton();
+      strand.check_two_consecutive_loopouts();
+      strand.check_loopouts_length();
     }
   }
 
@@ -1285,6 +1302,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
+  }
+
+  /// Return [Domain]s at [offset], excluding the start and offset
+  BuiltSet<Domain> domains_on_helix_at_offset_internal(int helix_idx, int offset) {
+    var domains_at_offset = SetBuilder<Domain>({
+      for (var domain in this.helix_idx_to_domains[helix_idx])
+        if (domain.contains_offset(offset) && offset != domain.start && offset != domain.end - 1) domain
+    });
+    return domains_at_offset.build();
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.

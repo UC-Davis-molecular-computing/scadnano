@@ -160,6 +160,19 @@ abstract class Domain
       substrand_is_last: is_last,
       substrand_id: id());
 
+  @memoized
+  BuiltList<SelectableDeletion> get selectable_deletions => [
+        for (int deletion in deletions)
+          SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold)
+      ].build();
+
+
+  @memoized
+  BuiltList<SelectableInsertion> get selectable_insertions => [
+        for (var insertion in insertions)
+          SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold)
+      ].build();
+
   Domain set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
   Domain set_end(int end_new) => rebuild((ss) => ss..end = end_new);
@@ -221,8 +234,8 @@ abstract class Domain
 
     deletions = util.remove_duplicates(deletions);
     insertions = util.remove_duplicates(insertions);
-    for (int i=0; i<insertions.length; i++) {
-      for (int j=i+1; j<insertions.length; j++) {
+    for (int i = 0; i < insertions.length; i++) {
+      for (int j = i + 1; j < insertions.length; j++) {
         var ins1 = insertions[i];
         var ins2 = insertions[j];
         if (ins1.offset == ins2.offset) {
@@ -230,7 +243,7 @@ abstract class Domain
           throw IllegalDesignError('two insertions on a domain have the same offset but different lengths:'
               '\n${ins1}'
               '\n${ins2}'
-          '\n${pre_domain_description(helix, forward, start, end)}');
+              '\n${pre_domain_description(helix, forward, start, end)}');
         }
       }
     }
@@ -277,10 +290,10 @@ abstract class Domain
   }
 
   static String pre_domain_description(int helix, bool forward, int start, int end) =>
-      'This occurred on a ${forward? "forward": "reverse"} Domain with'
-          '\n  helix = ${helix}'
-          '\n  start = ${start}'
-          '\n  end   = ${end}.';
+      'This occurred on a ${forward ? "forward" : "reverse"} Domain with'
+      '\n  helix = ${helix}'
+      '\n  start = ${start}'
+      '\n  end   = ${end}.';
 
   static List<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List

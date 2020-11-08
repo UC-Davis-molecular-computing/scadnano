@@ -8,7 +8,7 @@ import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/loopout.dart';
 import '../state/substrand.dart';
-import 'design_main_strand_modification_domain.dart';
+import 'design_main_strand_modification.dart';
 import 'pure_component.dart';
 
 import '../state/strand.dart';
@@ -44,7 +44,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.first_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_5p = props.helices[domain.helix];
-        modifications.add((DesignMainStrandModificationDomain()
+        modifications.add((DesignMainStrandModification()
           ..address = Address(helix_idx: helix_5p.idx, offset: domain.offset_5p, forward: domain.forward)
           ..helix = helix_5p
           ..transform = transform_of_helix(domain.helix)
@@ -60,7 +60,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.last_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_3p = props.helices[domain.helix];
-        modifications.add((DesignMainStrandModificationDomain()
+        modifications.add((DesignMainStrandModification()
           ..address = Address(helix_idx: helix_3p.idx, offset: domain.offset_3p, forward: domain.forward)
           ..helix = helix_3p
           ..transform = transform_of_helix(domain.helix)
@@ -91,7 +91,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
           int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
           int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
           Helix helix = props.helices[ss_with_mod.helix];
-          modifications.add((DesignMainStrandModificationDomain()
+          modifications.add((DesignMainStrandModification()
             ..address = Address(helix_idx: helix.idx, offset: offset, forward: ss_with_mod.forward)
             ..helix = helix
             ..transform = transform_of_helix(ss_with_mod.helix)
