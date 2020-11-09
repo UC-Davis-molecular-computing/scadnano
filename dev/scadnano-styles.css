@@ -472,6 +472,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected.crossover-curve,
 .selected.loopout-curve,
 .selected.insertion-curve,
+.selected.deletion-cross,
+.selected.modification,
 .selected.domain-line {
     stroke: hotpink;
     stroke-width: 5pt;
@@ -492,6 +494,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected .crossover-curve,
 .selected .loopout-curve,
 .selected .insertion-curve,
+.selected .deletion-cross,
+.selected .modification,
 .selected .domain-line {
     stroke: hotpink;
     stroke-width: 5pt;

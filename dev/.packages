@@ -21,6 +21,7 @@ built_value_generator:packages/built_value_generator/
 charcode:packages/charcode/
 checked_yaml:packages/checked_yaml/
 cli_repl:packages/cli_repl/
+cli_util:packages/cli_util/
 code_builder:packages/code_builder/
 codemirror:packages/codemirror/
 collection:packages/collection/
