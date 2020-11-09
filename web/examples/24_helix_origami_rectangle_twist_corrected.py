@@ -5,8 +5,7 @@ def create_design():
     design = precursor_scaffolds()
     add_scaffold_nicks(design)
     add_scaffold_crossovers(design)
-    scaffold = design.strands[0]
-    scaffold.set_scaffold()
+    design.strands[0].set_scaffold()
     add_precursor_staples(design)
     add_staple_nicks(design)
     add_staple_crossovers(design)

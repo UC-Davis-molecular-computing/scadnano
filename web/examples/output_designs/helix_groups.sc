@@ -1,12 +1,12 @@
 {
-  "version": "0.11.0",
+  "version": "0.13.0",
   "groups": {
     "north": {
       "position": {"x": 0, "y": -10, "z": 0},
       "grid": "honeycomb"
     },
     "east": {
-      "position": {"x": 10, "y": 0, "z": 0},
+      "position": {"x": 0, "y": 0, "z": 10},
       "grid": "square"
     },
     "south": {
@@ -15,11 +15,11 @@
       "helices_view_order": [7, 6]
     },
     "west": {
-      "position": {"x": -10, "y": 0, "z": 0},
+      "position": {"x": 0, "y": 0, "z": -10},
       "grid": "none"
     },
     "r": {
-      "position": {"x": 10, "y": 10, "z": 0},
+      "position": {"x": 0, "y": 10, "z": 10},
       "pitch": 45,
       "grid": "square"
     }
@@ -33,18 +33,8 @@
     {"group": "north", "max_offset": 16, "grid_position": [-1, 0], "idx": 5},
     {"group": "south", "max_offset": 24, "grid_position": [0, 1], "idx": 6},
     {"group": "south", "max_offset": 25, "grid_position": [0, 0], "idx": 7},
-    {
-      "group": "west",
-      "max_offset": 26,
-      "position": {"x": 0, "y": 0, "z": 0},
-      "idx": 8
-    },
-    {
-      "group": "west",
-      "max_offset": 27,
-      "position": {"x": 0, "y": 3, "z": 0},
-      "idx": 9
-    },
+    {"group": "west", "max_offset": 26, "position": {"x": 0, "y": 0, "z": 0}, "idx": 8},
+    {"group": "west", "max_offset": 27, "position": {"x": 0, "y": 3, "z": 0}, "idx": 9},
     {"group": "r", "max_offset": 26, "grid_position": [0, 0], "idx": 10},
     {"group": "r", "max_offset": 27, "grid_position": [0, 1], "idx": 11},
     {"group": "east", "max_offset": 22, "grid_position": [0, 0], "idx": 13},
