@@ -447,11 +447,11 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **display only selected helices:**
     This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "stretching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
 
-  * **invert y- and z-axes:**
-    In the main view, invert the y-axis, and in the side view, invert both the y-axis and the z-axis. 
-    If unchecked, then use "screen coordinates", where increasing y moves down. 
-    If checked, then use Cartesian coordinates where increasing y moves up. 
-    Also invert the z-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
+  * **invert y- and x-axes:**
+    In the main view, invert the y-axis, and in the side view, invert both the x-axis and the y-axis.
+    If unchecked, then use "screen coordinates", where increasing y moves down.
+    If checked, then use Cartesian coordinates where increasing y moves up.
+    Also invert the x-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
   * **Show main view Helix circles/idx:**
     Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.

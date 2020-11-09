@@ -6,11 +6,11 @@ def create_design():
     helices = [
         sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=0, y=0, z=0),
                  min_offset=0),
-        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=0, y=3, z=3),
+        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=3, y=3, z=0),
                  min_offset=8),
-        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=2.5, y=-3, z=8),
+        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=8, y=-3, z=2.5),
                  min_offset=0),
-        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=2.5, y=1, z=11),
+        sc.Helix(major_tick_distance=4, max_offset=length, position=sc.Position3D(x=11, y=1, z=2.5),
                  min_offset=8),
     ]
     design = sc.Design(helices=helices, strands=[

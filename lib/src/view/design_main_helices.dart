@@ -53,8 +53,8 @@ class DesignMainHelicesComponent extends UiComponent2<DesignMainHelicesProps> wi
       }
 
       int min_helix_idx = helix_idxs_in_group.min;
-      bool invert_yz = props.helices[min_helix_idx].invert_yz;
-      int first_helix_view_order = invert_yz ? helix_idxs_in_group.length - 1 : 0;
+      bool invert_xy = props.helices[min_helix_idx].invert_xy;
+      int first_helix_view_order = invert_xy ? helix_idxs_in_group.length - 1 : 0;
 
       var children = [];
       for (int helix_idx in helix_idxs_in_group) {

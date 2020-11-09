@@ -134,7 +134,7 @@ bool show_mismatches_reducer(bool _, actions.ShowMismatchesSet action) => action
 
 bool show_domain_name_mismatches_reducer(bool _, actions.ShowDomainNameMismatchesSet action) => action.show_domain_name_mismatches;
 
-bool invert_yz_reducer(bool _, actions.InvertYZSet action) => action.invert_yz;
+bool invert_xy_reducer(bool _, actions.InvertXYSet action) => action.invert_xy;
 
 bool warn_on_exit_if_unsaved_reducer(bool _, actions.WarnOnExitIfUnsavedSet action) => action.warn;
 
@@ -276,7 +276,7 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         storables.show_mismatches, action)
     ..show_domain_name_mismatches = TypedReducer<bool, actions.ShowDomainNameMismatchesSet>(show_domain_name_mismatches_reducer)(
         storables.show_domain_name_mismatches, action)
-    ..invert_yz = TypedReducer<bool, actions.InvertYZSet>(invert_yz_reducer)(storables.invert_yz, action)
+    ..invert_yz = TypedReducer<bool, actions.InvertXYSet>(invert_xy_reducer)(storables.invert_yz, action)
     ..warn_on_exit_if_unsaved =
         TypedReducer<bool, actions.WarnOnExitIfUnsavedSet>(warn_on_exit_if_unsaved_reducer)(
             storables.warn_on_exit_if_unsaved, action)
