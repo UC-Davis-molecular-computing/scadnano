@@ -534,12 +534,22 @@ There are different edit modes available, shown on the right side of the screen.
 
   - **5' strand, 3' strand:**
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
+    
+    If many 5'/3' ends are selected, then one can add a 5'/3' modification to all of them by right-clicking and selecting "add modification". This will add only to the type of modification picked. For example, if both 5' and 3' ends are selected, and a 5' modification is added, then only the 5' ends are modified.
 
   - **5' domain, 3' domain:**
     Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. Ends can be moved, but unlike strands and domains, they can only be moved back and forth along their current helix.
 
   - **crossover, loopout:**
     Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.)
+
+    If many crossovers/loopouts are selected, all the crossovers can be converted to loopouts (or vice versa) by right-clicking on one fo them and picking "convert to loopout" (or "change loopout length" if a loopout; changing to length 0 converts it to a crossover).
+
+  - **deletion, insertion:**
+    Deletions and insertions can be selected and deleted in batch by pressing the Delete key. Also, one can change the length of all selected insertions by right-clicking on one of them and selecting the option to change insertion length.
+
+  - **modification:**
+    If many modifications are selected, they can be deleted at once by pressing the Delete key (or right-clicking and selecting "remove modification"). Those of a similar type (5', 3', or internal) can be modified in batch by right-clicking on one of them and selecting "edit modification".
 
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
@@ -576,7 +586,7 @@ There are different edit modes available, shown on the right side of the screen.
 
   If one offset on a helix has two bound domains (going in opposite directions), 
   then adding/removing an insertion/deletion at that offset adds/removes on both bound domains.
-  If you want only one of the domains to have the insertion/deletion, then click in Insertion/Deletion mode to add to both, switch to Select mode, select the unwanted one, and press the Delete key.
+  If you want only one of the domains to have the insertion/deletion, then click while in insertion/deletion edit mode to add to both, switch to Select mode, select the unwanted one, and press the Delete key.
 
   A useful shortcut allows one to add many insertions/deletions to the same offset on all helices (in a helix group). 
   If the Ctrl key is pressed while clicking on a domain in Deletion/Insertion mode, then deletions/insertions will be added at *all* domains on all helices in the same helix group that overlap the same offset (unless that offset is the start or end of the domain, which is disallowed from having a deletion/insertion).
@@ -606,7 +616,7 @@ There are different edit modes available, shown on the right side of the screen.
 
 
 * **(m)ove group:**
-  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur.)
+  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur, without changing the position of any helix group.)
 
 
 ## Assigning DNA
