@@ -15,6 +15,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';
@@ -784,8 +785,8 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num x, n
 
 GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometry geometry) {
   var position_normalized_diameter_1 = position * (1.0 / geometry.distance_between_helices_nm);
-  var gp = position_2d_to_grid_position_diameter_1_circles(grid,
-      position_normalized_diameter_1.z, position_normalized_diameter_1.y);
+  var gp = position_2d_to_grid_position_diameter_1_circles(
+      grid, position_normalized_diameter_1.z, position_normalized_diameter_1.y);
   return gp;
 }
 
@@ -1077,6 +1078,14 @@ String id_insertion(Domain domain, int offset) =>
 
 String id_deletion(Domain domain, int offset) =>
     'deletion-H${domain.helix}-O${offset}-${domain.forward ? 'forward' : 'reverse'}';
+
+String id_modification_5p(Strand strand, Modification5Prime mod) => 'modification-5p-${strand.id}';
+
+String id_modification_3p(Strand strand, Modification3Prime mod) => 'modification-3p-${strand.id}';
+
+String id_modification_int(Strand strand, ModificationInternal mod, Address address) =>
+    'modification-int-H${address.helix_idx}-${address.offset}-'
+    '${address.forward ? "forward" : "reverse"}-${strand.id}';
 
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
   Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};

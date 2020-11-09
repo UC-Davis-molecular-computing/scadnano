@@ -7,7 +7,7 @@ import 'selectable.dart';
 
 part 'dna_end.g.dart';
 
-abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
+abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Built<DNAEnd, DNAEndBuilder> {
   factory DNAEnd(
           {int offset,
           bool is_5p,
@@ -53,7 +53,8 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
 
 //  DNAEnd(this.is_5p, this.substrand_is_first, this.substrand_is_last, this.substrand_id);
 
-  SelectModeChoice select_mode() {
+  @memoized
+  SelectModeChoice get select_mode {
     if (is_5p) {
       if (substrand_is_first) {
         return SelectModeChoice.end_5p_strand;
@@ -69,5 +70,6 @@ abstract class DNAEnd with Selectable, BuiltJsonSerializable implements Built<DN
     }
   }
 
-  String id() => 'end-' + (is_5p ? '5p' : '3p') + '-' + substrand_id;
+  @memoized
+  String get id => 'end-' + (is_5p ? '5p' : '3p') + '-' + substrand_id;
 }

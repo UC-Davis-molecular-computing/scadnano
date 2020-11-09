@@ -33,12 +33,12 @@ class DesignMainLoopoutComponent extends UiComponent2<DesignMainLoopoutProps> wi
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = constants.css_selector_loopout_length
-      ..xlinkHref = '#${props.loopout.id()}'
+      ..xlinkHref = '#${props.loopout.id}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()
       ..rotate = 180
-      ..key = props.loopout.id()
+      ..key = props.loopout.id
       ..dy = dy)(text_path_props(loopout_length));
   }
 }

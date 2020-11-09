@@ -34,6 +34,7 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
           SelectModeChoice.domain,
           SelectModeChoice.deletion,
           SelectModeChoice.insertion,
+          SelectModeChoice.modification,
         ]);
       } else if (mode == SelectModeChoice.domain) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
@@ -42,6 +43,7 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
               SelectModeChoice.loopout,
               SelectModeChoice.deletion,
               SelectModeChoice.insertion,
+              SelectModeChoice.modification,
             ]);
       } else if (mode == SelectModeChoice.deletion || mode == SelectModeChoice.insertion) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
@@ -49,6 +51,16 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
               SelectModeChoice.crossover,
               SelectModeChoice.loopout,
               SelectModeChoice.domain,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.modification) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
             ]);
       }
     }
@@ -72,6 +84,7 @@ SelectModeState add_select_modes_reducer(SelectModeState state, actions.SelectMo
               SelectModeChoice.domain,
               SelectModeChoice.deletion,
               SelectModeChoice.insertion,
+              SelectModeChoice.modification,
             ]);
       } else if (SelectModeChoice.ends.contains(mode)) {
         new_state = new_state.remove_modes([
@@ -80,6 +93,7 @@ SelectModeState add_select_modes_reducer(SelectModeState state, actions.SelectMo
           SelectModeChoice.domain,
           SelectModeChoice.deletion,
           SelectModeChoice.insertion,
+          SelectModeChoice.modification,
         ]);
       } else if (mode == SelectModeChoice.domain) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
@@ -88,13 +102,24 @@ SelectModeState add_select_modes_reducer(SelectModeState state, actions.SelectMo
               SelectModeChoice.loopout,
               SelectModeChoice.deletion,
               SelectModeChoice.insertion,
+              SelectModeChoice.modification,
             ]);
-      }else if (mode == SelectModeChoice.deletion || mode == SelectModeChoice.insertion) {
+      } else if (mode == SelectModeChoice.deletion || mode == SelectModeChoice.insertion) {
         new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
             [
               SelectModeChoice.crossover,
               SelectModeChoice.loopout,
               SelectModeChoice.domain,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.modification) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
             ]);
       }
     }

@@ -16,7 +16,7 @@ import 'unused_fields.dart';
 part 'loopout.g.dart';
 
 abstract class Loopout
-    with Selectable, BuiltJsonSerializable, UnusedFields
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields
     implements Built<Loopout, LoopoutBuilder>, Substrand, Linker, StrandPart {
   factory Loopout.from([void Function(LoopoutBuilder) updates]) = _$Loopout;
 
@@ -71,9 +71,11 @@ abstract class Loopout
 
   bool is_loopout() => true;
 
-  SelectModeChoice select_mode() => SelectModeChoice.loopout;
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.loopout;
 
-  String id() => 'loopout-${prev_domain_idx + 1}-${strand_id}';
+  @memoized
+  String get id => 'loopout-${prev_domain_idx + 1}-${strand_id}';
 
   int dna_length() => this.loopout_length;
 

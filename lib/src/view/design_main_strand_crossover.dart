@@ -82,7 +82,7 @@ class DesignMainStrandCrossoverComponent
     }
 
     var color = strand.color.toHexColor().toCssString();
-    var id = crossover.id();
+    var id = crossover.id;
 
     //XXX: I believe this was here so that when the crossover was clicked to set the Helix rolls at
     // each other (what we call "unstrain backbone here", the updated rolls would immediately display
@@ -135,14 +135,14 @@ class DesignMainStrandCrossoverComponent
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.crossover.id()}');
+    var element = querySelector('#${props.crossover.id}');
     element.addEventListener('contextmenu', on_context_menu);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.crossover.id()}');
+    var element = querySelector('#${props.crossover.id}');
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }

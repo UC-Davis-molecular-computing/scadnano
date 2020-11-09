@@ -165,7 +165,7 @@ class DesignMainDNASequenceComponent extends UiComponent2<DesignMainDNASequenceP
 
     SvgProps text_path_props = (Dom.textPath()
       ..className = classname_dna_sequence + '-loopout'
-      ..xlinkHref = '#${loopout.id()}'
+      ..xlinkHref = '#${loopout.id}'
       ..startOffset = start_offset
       ..style = style_map);
     return (Dom.text()

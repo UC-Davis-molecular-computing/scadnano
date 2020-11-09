@@ -97,7 +97,7 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..color = props.color
       ..classname = classname
       ..forward = substrand.forward
-      ..id = dna_end.id()
+      ..id = dna_end.id
       ..key = 'nonmoving-end';
 
     // draw avatar of moving DNA end if it is moving
@@ -122,9 +122,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   componentDidMount() {
     var element;
     if (props.is_5p) {
-      element = querySelector('#${props.domain.dnaend_5p.id()}');
+      element = querySelector('#${props.domain.dnaend_5p.id}');
     } else {
-      element = querySelector('#${props.domain.dnaend_3p.id()}');
+      element = querySelector('#${props.domain.dnaend_3p.id}');
     }
     element.addEventListener('contextmenu', on_context_menu);
   }
@@ -133,9 +133,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
   componentWillUnmount() {
     var element;
     if (props.is_5p) {
-      element = querySelector('#${props.domain.dnaend_5p.id()}');
+      element = querySelector('#${props.domain.dnaend_5p.id}');
     } else {
-      element = querySelector('#${props.domain.dnaend_3p.id()}');
+      element = querySelector('#${props.domain.dnaend_3p.id}');
     }
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();

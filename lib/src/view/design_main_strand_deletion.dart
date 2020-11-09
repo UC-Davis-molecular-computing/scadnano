@@ -98,7 +98,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
               app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
             }
           })
-          ..id = props.selectable_deletion.id()
+          ..id = props.selectable_deletion.id
           ..key = key)());
   }
 }

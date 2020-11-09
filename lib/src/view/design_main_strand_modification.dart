@@ -5,6 +5,7 @@ import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/context_menu.dart';
 import 'package:scadnano/src/state/dialog.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import '../state/modification.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
@@ -19,15 +20,22 @@ part 'design_main_strand_modification.over_react.g.dart';
 UiFactory<DesignMainStrandModificationProps> DesignMainStrandModification = _$DesignMainStrandModification;
 
 mixin DesignMainStrandModificationProps on UiProps {
-  Strand strand;
   int dna_idx_mod;
-  Address address;
   Helix helix;
-  Modification modification;
   bool display_connector;
   int font_size;
   bool invert_y;
   String transform;
+
+  SelectableModification selectable_modification;
+
+  Strand get strand => selectable_modification.strand;
+
+  Modification get modification => selectable_modification.modification;
+
+  Address get address => selectable_modification.address;
+
+  bool selected;
 }
 
 class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStrandModificationProps> {
@@ -35,15 +43,21 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
   render() {
     Point<num> pos = props.helix.svg_base_pos(props.address.offset, props.address.forward);
     bool display_connector = props.display_connector;
-    String html_id = props.modification.html_id(props.address);
 
-    String classname;
+    String classname = constants.css_selector_modification;
     if (props.modification is Modification5Prime) {
-      classname = "modification-5'";
+      classname += " 5'";
     } else if (props.modification is Modification3Prime) {
-      classname = "modification-3'";
+      classname += " 3'";
     } else {
-      classname = "modification-internal";
+      classname += " internal";
+    }
+
+    if (props.selected) {
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.strand.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
     }
 
     var elements = [
@@ -51,21 +65,34 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       _modification_svg(pos, props.address.forward, display_connector),
     ];
 
+    // String id = props.modification.html_id(props.address);
+    String id = props.selectable_modification.id;
+
     return (Dom.g()
+      ..onPointerDown = ((ev) {
+        if (modification_selectable(props.selectable_modification)) {
+          props.selectable_modification.handle_selection_mouse_down(ev.nativeEvent);
+        }
+      })
+      ..onPointerUp = ((ev) {
+        if (modification_selectable(props.selectable_modification)) {
+          props.selectable_modification.handle_selection_mouse_up(ev.nativeEvent);
+        }
+      })
       ..className = classname
-      ..id = html_id
+      ..id = id
       ..transform = props.transform)(elements);
   }
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.modification.html_id(props.address)}');
+    var element = querySelector('#${props.selectable_modification.id}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.modification.html_id(props.address)}');
+    var element = querySelector('#${props.selectable_modification.id}');
     element.removeEventListener('contextmenu', on_context_menu);
   }
 
@@ -75,18 +102,35 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_strand(props.strand).build(), position: event.page)));
+          context_menu:
+              ContextMenu(items: context_menu_modification(props.strand).build(), position: event.page)));
     }
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand) => [
+  List<ContextMenuItem> context_menu_modification(Strand strand) => [
         ContextMenuItem(title: 'remove modification', on_click: remove_modification),
         ContextMenuItem(title: 'edit modification', on_click: edit_modification),
       ];
 
   remove_modification() {
-    app.dispatch(actions.ModificationRemove(
-        strand: props.strand, modification: props.modification, strand_dna_idx: props.dna_idx_mod));
+    List<SelectableModification> selectable_mods =
+    app.state.ui_state.selectables_store.selected_modifications.toList();
+    if (!selectable_mods.contains(props.selectable_modification)) {
+      selectable_mods.add(props.selectable_modification);
+    }
+
+    actions.UndoableAction action;
+    if (selectable_mods.length == 1) {
+      action = actions.ModificationRemove(
+          strand: props.strand, modification: props.modification, strand_dna_idx: props.dna_idx_mod);
+    } else if (selectable_mods.length > 1) {
+      action = actions.DeleteAllSelected();
+    } else {
+      print('WARNING: selectable_mods should have at least one element in it by this line');
+      return;
+    }
+
+    app.dispatch(action);
   }
 
   edit_modification() async {
@@ -106,21 +150,60 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
     String idt_text = (results[idt_text_idx] as DialogText).value;
     // String id = (results[id_idx] as DialogText).value;
 
-    Modification mod;
+    Modification new_mod;
     if (props.modification is Modification3Prime) {
-      mod = Modification3Prime( //id: id,
-          display_text: display_text, idt_text: idt_text);
+      new_mod = Modification3Prime(
+          //id: id,
+          display_text: display_text,
+          idt_text: idt_text);
     } else if (props.modification is Modification5Prime) {
-      mod = Modification5Prime( //id: id,
-          display_text: display_text, idt_text: idt_text);
+      new_mod = Modification5Prime(
+          //id: id,
+          display_text: display_text,
+          idt_text: idt_text);
     } else {
-      mod = ModificationInternal(
+      new_mod = ModificationInternal(
           // id: props.modification.id,
           display_text: display_text,
           idt_text: props.modification.idt_text);
     }
-    app.dispatch(
-        actions.ModificationEdit(strand: props.strand, modification: mod, strand_dna_idx: props.dna_idx_mod));
+
+    List<SelectableModification> selectable_mods =
+        app.state.ui_state.selectables_store.selected_modifications.toList();
+    if (!selectable_mods.contains(props.selectable_modification)) {
+      selectable_mods.add(props.selectable_modification);
+    }
+
+    actions.UndoableAction action;
+    if (selectable_mods.length == 1) {
+      action = actions.ModificationEdit(
+          strand: props.strand, modification: new_mod, strand_dna_idx: props.dna_idx_mod);
+    } else if (selectable_mods.length > 1) {
+      if (new_mod is Modification5Prime) {
+        var selectable_mods_5p = List<SelectableModification5Prime>.from(
+            selectable_mods.where((mod) => mod is SelectableModification5Prime));
+        var new_mod_5p = new_mod as Modification5Prime;
+        action =
+            actions.Modifications5PrimeEdit(modifications: selectable_mods_5p, new_modification: new_mod_5p);
+      } else if (new_mod is Modification3Prime) {
+        var selectable_mods_3p = List<SelectableModification3Prime>.from(
+            selectable_mods.where((mod) => mod is SelectableModification3Prime));
+        var new_mod_3p = new_mod as Modification3Prime;
+        action =
+            actions.Modifications3PrimeEdit(modifications: selectable_mods_3p, new_modification: new_mod_3p);
+      } else if (new_mod is ModificationInternal) {
+        var selectable_mods_int = List<SelectableModificationInternal>.from(
+            selectable_mods.where((mod) => mod is SelectableModificationInternal));
+        var new_mod_int = new_mod as ModificationInternal;
+        action = actions.ModificationsInternalEdit(
+            modifications: selectable_mods_int, new_modification: new_mod_int);
+      }
+    } else {
+      print('WARNING: selectable_mods should have at least one element in it by this line');
+      return;
+    }
+
+    app.dispatch(action);
   }
 
   ReactElement _end_connector(Point<num> pos, bool forward) {
@@ -140,18 +223,18 @@ class DesignMainStrandModificationComponent extends UiComponent2<DesignMainStran
       ..key = 'connector')();
   }
 
-  ReactElement _internal_connector(Point<num> pos, bool forward) {
-    num y_delta = y_delta_mod();
-    double y_del_small = (forward ? -y_delta : y_delta).toDouble();
-    return (Dom.line()
-      ..stroke = 'black'
-      ..strokeWidth = 2
-      ..x1 = pos.x
-      ..y1 = pos.y
-      ..x2 = pos.x
-      ..y2 = pos.y + y_del_small
-      ..key = 'connector')();
-  }
+  // ReactElement _internal_connector(Point<num> pos, bool forward) {
+  //   num y_delta = y_delta_mod();
+  //   double y_del_small = (forward ? -y_delta : y_delta).toDouble();
+  //   return (Dom.line()
+  //     ..stroke = 'black'
+  //     ..strokeWidth = 2
+  //     ..x1 = pos.x
+  //     ..y1 = pos.y
+  //     ..x2 = pos.x
+  //     ..y2 = pos.y + y_del_small
+  //     ..key = 'connector')();
+  // }
 
   ReactElement _modification_svg(Point<num> pos, bool forward, bool display_connector) {
     num y_delta = y_delta_mod();

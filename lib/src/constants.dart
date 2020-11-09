@@ -344,6 +344,10 @@ const css_selector_end_3p_strand_creating = '3p-strand-creating';
 
 const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 
+// const css_selector_modification = 'modification-text';
+// const css_selector_modification_group = 'modification';
+const css_selector_modification = 'modification';
+
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';
 const css_selector_insertion_group = 'insertion-group';
