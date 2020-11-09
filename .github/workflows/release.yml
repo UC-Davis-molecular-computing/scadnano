@@ -8,14 +8,14 @@ on:
 jobs:
   release:
     name: "Release"
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-18.04
 
     steps:
       # ...
       - name: "Build & test"
         run: |
           echo "done!"
-      - uses: "marvinpinto/action-automatic-releases@latest"
+      - uses: "marvinpinto/action-automatic-releases@v1.1.0"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"

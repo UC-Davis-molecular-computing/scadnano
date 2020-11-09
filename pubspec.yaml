@@ -4,7 +4,7 @@ description: A web-based scriptable cadnano (see https://cadnano.org/ for origin
 #author: David Doty <doty@ucdavis.edu>
 
 environment:
-  sdk: ^2.10.0
+  sdk: ^2.9.0
 
 dependencies:
   analyzer: '>=0.35.0 <0.40.0'
@@ -31,7 +31,7 @@ dependencies:
 
 dev_dependencies:
   built_value_generator: ^7.0.0
-  build_runner: ^1.6.2
+  build_runner: ^1.10.1
   build_test: ^1.0.0
   build_web_compilers: ^2.3.0
   over_react_test: ^2.9.0
@@ -41,6 +41,10 @@ dev_dependencies:
 analyzer:
   plugins:
     - over_react
+
+# Fix analyzer issue: https://github.com/flutter/flutter/issues/62240
+# dependency_overrides:
+#   analyzer: '0.39.14'
 
 #dependency_overrides:
 #  built_value:
