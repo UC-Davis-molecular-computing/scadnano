@@ -5,6 +5,7 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
+// WARNING: Do not modify line below, except for the version string.
 const String CURRENT_VERSION = "0.13.0";
 const String INITIAL_VERSION = "0.1.0";
 

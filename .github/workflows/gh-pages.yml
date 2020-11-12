@@ -40,6 +40,15 @@ jobs:
       - name: Build into gh-pages repo
         run: PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo
       
+      - name: Retrieve version
+        run: export VERSION=$(cat lib/src/constants.dart | grep  "const String CURRENT_VERSION = .*" | grep -oP "\d+\.\d+\.\d+")
+      - name: Build into gh-pages-repo/VERSION
+        run: |
+         if [ "$VERSION" != "" ]; then
+            PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/$VERSION
+         else
+            echo "::warning deploying VERSION skipped because VERSION number could not be found"
+         fi
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
