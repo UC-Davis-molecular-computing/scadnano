@@ -243,7 +243,9 @@ otherwise these roles are reversed.
 There is implicitly a crossover between adjacent bound domains in a strand.
 Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) domain in between two bound domains.
 Currently, two loopouts cannot be consecutive (and this will remain a requirement),
-and a loopout cannot be the first or last domain of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
+and a loopout cannot be the first or last domain of a strand.
+This constraint may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34). 
+For now, if you need to put a single-stranded overhang at the end of a strand, a good solution is to add a 5' or 3' modification whose idt_text (see description of modifications below) is the DNA sequence you want to assign.
 
 Bound domains may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions* (called *loops* in cadnano), explained below.
 
