@@ -561,15 +561,15 @@ There are different edit modes available, shown on the right side of the screen.
   Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
 
 * **(r)ope select:**
-  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. Then click several points to define a polygon. 
+  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. While holding down the Shift or Ctrl key, click several points to define a polygon. 
 
   ![](images/screenshot-polygon.png)
 
-  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle below), and a larger (*n*+1)-gon showing what the new polygon would be if another click happens. The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red, and clicking will have no effect:
+  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle below), and an (*n*+1)-gon showing what the new polygon would be if another click happens. (In this example the (*n*+1)-gon is larger, but it can be smaller, for instance if the mouse cursor were between the triangle's hypotenuse and its lower-left vertex.) The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red, and clicking will have no effect:
 
   ![](images/screenshot-polygon-illegal.png)
 
-  Lifting up on the Shift/Ctrl key will select items within the smaller polygon.
+  Lifting up on the Shift or Ctrl key will select items within the *n*-gon (the darker polygon).
 
   You can also select individual objects by clicking them while in rope select mode. However, Shift/Ctrl+clicking multiple items is awkward in rope select mode, since it will start drawing a polygon. So it is suggested to use select mode to select many items by clicking individually on each of them while holding the Shift key.
   
