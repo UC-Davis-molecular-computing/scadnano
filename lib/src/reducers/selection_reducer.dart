@@ -112,6 +112,7 @@ Reducer<SelectablesStore> selectables_store_local_reducer = combineReducers([
   TypedReducer<SelectablesStore, actions.DesignChangingAction>(design_changing_action_reducer),
   TypedReducer<SelectablesStore, actions.SelectModeToggle>(selections_clear_reducer),
   TypedReducer<SelectablesStore, actions.SelectModesSet>(selections_clear_reducer),
+  TypedReducer<SelectablesStore, actions.SelectModesAdd>(selections_clear_reducer),
 ]);
 
 // because the DNADesign changed, some selected items may no longer be valid
