@@ -1,8 +1,11 @@
-import 'dart:html';
-import 'dart:svg';
+import 'dart:html' hide Rectangle;
+import 'dart:math';
+import 'dart:svg' as svg;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:tuple/tuple.dart';
 
 import '../state/select_mode.dart';
 import '../state/selection_box.dart';
@@ -11,36 +14,55 @@ import '../state/selectable.dart';
 import '../view/design.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
-import '../constants.dart' as constants;
+import '../util.dart' as util;
+import '../extension_methods.dart';
 
 //XXX: This seems to require middleware to handle cleanly.
 // It seems difficult to put enough state into AppState to reliably detect when one SVG element
 // overlaps another in a way that is robust to future changes in how we draw.
 // Maybe figure out some way to do this with middleware so the reducer can remain pure.
 selections_intersect_box_compute_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action is actions.SelectionsAdjust) {
+  if (action is actions.SelectionsAdjustMainView) {
     var state = store.state;
     var selectables_store = state.ui_state.selectables_store;
-    RectElement select_box = querySelector('#selection-box-main') as RectElement;
-    if (select_box == null) {
-      return selectables_store;
-    }
-
-    Rectangle<num> select_box_bbox = select_box.getBoundingClientRect();
-
-    //XXX: Firefox does not have getIntersectionList or getEnclosureList
-    // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
-    // Besides, it didn't work well in Chrome and I
-    // basically had to implement it myself based on bounding boxes.
 
     bool is_origami = state.design.is_origami;
     var select_modes = state.ui_state.select_mode_state.modes;
-    Set<SvgElement> elts_overlapping =
-        enclosure_list_in_elt(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
+
+    Set<svg.SvgElement> elts_overlapping;
+    if (action.box) {
+      // use selection box
+      svg.RectElement select_box = querySelector('#selection-box-main') as svg.RectElement;
+      if (select_box == null) {
+        return selectables_store;
+      }
+
+      Rectangle<num> select_box_bbox = select_box.getBoundingClientRect();
+
+      //XXX: Firefox does not have getIntersectionList or getEnclosureList
+      // (no progress for 10 years on that: https://bugzilla.mozilla.org/show_bug.cgi?id=501421)
+      // Besides, it didn't work well in Chrome and I
+      // basically had to implement it myself based on bounding boxes.
+
+      elts_overlapping =
+          elements_intersecting_box(MAIN_VIEW_SVG_ID, select_box_bbox, select_modes, is_origami).toSet();
+    } else {
+      // use selection rope
+      svg.PolygonElement rope_elt = querySelector('#selection-rope-main') as svg.PolygonElement;
+      if (rope_elt == null) {
+        print('no selection rope found, so not changing selections');
+        return;
+      }
+
+      List<Point<num>> points = points_of_polygon_elt(rope_elt);
+      elts_overlapping =
+          elements_intersecting_polygon(MAIN_VIEW_SVG_ID, points, select_modes, is_origami).toSet();
+    }
 
     var selectable_by_id = state.design.selectable_by_id;
     List<Selectable> overlapping_now = [
-      for (var elt in elts_overlapping) if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
+      for (var elt in elts_overlapping)
+        if (selectable_by_id.containsKey(elt.id)) selectable_by_id[elt.id]
     ];
 
     List<Selectable> overlapping_now_select_mode_enabled = [];
@@ -57,57 +79,141 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
   }
 }
 
-//// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-//List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
-//  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
-//}
+/// Get points in SVG polygon element as list of math.Point<num>
+/// Note that rope_elt.points are after the SVG transforms have been applied, so we have to undo them.
+List<Point<num>> points_of_polygon_elt(svg.PolygonElement rope_elt) {
+  svg.PointList point_list = rope_elt.points; // SVG representation
+  List<svg.Point> points_svg = [for (int i = 0; i < point_list.length; i++) point_list.getItem(i)];
+  List<Point<num>> points = [for (var point_svg in points_svg) Point<num>(point_svg.x, point_svg.y)];
+  return points;
+}
+
+/// gets list of elements associated to Selectables that intersect selection rope [rope]
+/// (described as list of points in non-self-intersecting polygon) in elements with classname
+List<svg.SvgElement> elements_intersecting_polygon(
+    String classname, List<Point<num>> polygon, Iterable<SelectModeChoice> select_modes, bool is_origami) {
+  return generalized_intersection_list_polygon(
+      classname, polygon, select_modes, is_origami, polygon_contains_rect);
+}
 
 // gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
-List<SvgElement> enclosure_list_in_elt(String classname, Rectangle<num> select_box_bbox,
+List<svg.SvgElement> elements_intersecting_box(String classname, Rectangle<num> select_box_bbox,
     Iterable<SelectModeChoice> select_modes, bool is_origami) {
-  return generalized_intersection_list_in_elt(
+  return generalized_intersection_list_box(
       classname, select_box_bbox, select_modes, is_origami, interval_contained);
 }
 
-//XXX: It's simpler to check whether the bounding rectangle in "browser viewport coordinates",
-// i.e., elt.getBoundingClientRect()
-// (instead of "transformed SVG coordinates") contains the getBoundingClientRect() rectangle of the
-// selection box. Here's why it's not straightforward to use getBBox() for both, even though that was
-// sufficient before we implemented HelixGroups and the ability to transform them.
-//
-// Three kinds of GraphicsElements are selectable:
-// - strands (SVG g object)
-// - loopouts/crossovers (SVG path)
-// - DNA ends (SVG rect and polygon)
-//
-// Strands have no transform applied to them, other than the one applied to the whole g element directly
-// under the svgsvg element, which is also applied to the selection box, so no need to correct for that.
-//   (CSS class "strand")
-//
-// Loopouts and crossovers have a transform applied directly to their path
-//   (CSS class "loopout-curve" or "crossover-curve")
-//
-// DNAEnds have a transform applied to the parent group
-//   (CSS class "dna-ends")
-//
-// We cannot simply try to use getCtm() to undo these transforms on these specific elements, because that
-// would also undo all transforms all the way up to the root SVG element. But the selection box itself
-// had the top-level g transform (for panning and zooming) applied to it. So the simplest thing is just
-// to call getBoundingClientRect() on *everything*, which essentially untransforms all of them all the
-// way up to the root of the whole DOM and gives absolute coordinates within the browser's viewport.
-
-generalized_intersection_list_in_elt(String classname, Rectangle<num> select_box_bbox,
-    Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
-  List<SvgElement> elts_intersecting = [];
+/// Like generalized_intersection_list_box, but where selection is described by a polygon instead of rect.
+generalized_intersection_list_polygon(
+    String classname,
+    List<Point<num>> polygon,
+    Iterable<SelectModeChoice> select_modes,
+    bool is_origami,
+    bool overlap(List<Point<num>> polygon, Rectangle<num> rect)) {
+  List<svg.SvgElement> elts_intersecting = [];
   List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
 
-  for (GraphicsElement elt in selectable_elts) {
+  for (svg.GraphicsElement elt in selectable_elts) {
+    // getBBox uses SVG coordinates, same as those in the polygon, whereas get getBoundingClientRect()
+    // uses coordinates within the "viewport"
+    svg.Rect elt_bbox_svg_rect = elt.getBBox();
+    Rectangle<num> elt_bbox = util.svg_rect_to_rectangle(elt_bbox_svg_rect);
+    if (overlap(polygon, elt_bbox)) {
+      elts_intersecting.add(elt);
+    }
+  }
+  return elts_intersecting;
+}
+
+/// Generalized because it takes a function [overlap] that indicates,
+/// TODO: clean up the description below; not accurate. [overlap] deals with x/y coordinates individually
+/// given two intervals described by
+/// the arguments [l1], [h1] (describing the selectable SVG element's bounding box),
+/// and [l2], [h2] (describing the selection box), whether those rectangles overlap
+/// (so can specify either just intersection,
+/// or the default interval contained, that the second completely contains the first)
+generalized_intersection_list_box(String classname, Rectangle<num> select_box_bbox,
+    Iterable<SelectModeChoice> select_modes, bool is_origami, bool overlap(num l1, num h1, num l2, num h2)) {
+  List<svg.SvgElement> elts_intersecting = [];
+  List<Element> selectable_elts = find_selectable_elements(select_modes, is_origami);
+
+  for (svg.GraphicsElement elt in selectable_elts) {
     Rectangle<num> elt_bbox = elt.getBoundingClientRect();
     if (bboxes_intersect_generalized(elt_bbox, select_box_bbox, overlap)) {
       elts_intersecting.add(elt);
     }
   }
   return elts_intersecting;
+}
+
+bool bboxes_intersect_generalized(
+    Rectangle<num> elt_bbox, Rectangle<num> select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
+  num elt_x2 = elt_bbox.left + elt_bbox.width;
+  num elt_y2 = elt_bbox.top + elt_bbox.height;
+  num select_box_x2 = select_box_bbox.left + select_box_bbox.width;
+  num select_box_y2 = select_box_bbox.top + select_box_bbox.height;
+  return overlap(elt_bbox.left, elt_x2, select_box_bbox.left, select_box_x2) &&
+      overlap(elt_bbox.top, elt_y2, select_box_bbox.top, select_box_y2);
+}
+
+// indicates if real line interval (l1,h1) \subseteq (l2,h2)
+bool interval_contained(num l1, num h1, num l2, num h2) {
+  return l1 >= l2 && h1 <= h2;
+}
+
+/// indicates if polygon completely contains rectangle, i.e., it contains all 4 corner points
+bool polygon_contains_rect(List<Point<num>> polygon, Rectangle<num> rect) {
+  num x1 = rect.left;
+  num y1 = rect.top;
+  num x2 = x1 + rect.width;
+  num y2 = y1 + rect.height;
+  var up_left = Point<num>(x1, y1);
+  var up_right = Point<num>(x2, y1);
+  var low_left = Point<num>(x1, y2);
+  var low_right = Point<num>(x2, y2);
+
+  for (var corner in [up_left, up_right, low_left, low_right]) {
+    if (!polygon_contains_point(polygon, corner)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/// indicates if [polygon] contains point
+/// https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
+bool polygon_contains_point(List<Point<num>> polygon, Point<num> point) {
+  // create ray "infinitely" far to the right (really just 1 beyond max x of polygon) from point
+  List<num> xs = [for (var polygon_point in polygon) polygon_point.x];
+  num max_x = xs.max;
+  var point_infinite_to_right = Point<num>(max_x + 1, point.y);
+  Line infinite_line_from_point = Line(point, point_infinite_to_right);
+
+  var lines = lines_of_polygon(polygon);
+  int num_lines_intersecting = 0;
+  for (var line in lines) {
+    if (infinite_line_from_point.intersects(line)) {
+      num_lines_intersecting++;
+    }
+  }
+
+  return num_lines_intersecting % 2 == 1;
+}
+
+/// returns the lines in [poylgon]
+List<Line> lines_of_polygon(List<Point<num>> polygon) {
+  List<Line> lines = [];
+  for (int i = 0; i < polygon.length - 1; i++) {
+    var p1 = polygon[i];
+    var p2 = polygon[i + 1];
+    var line = Line(p1, p2);
+    lines.add(line);
+  }
+  assert(polygon.isNotEmpty);
+  var closing_line = Line(polygon.last, polygon.first);
+  lines.add(closing_line);
+  return lines;
 }
 
 List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, bool is_origami) {
@@ -144,21 +250,6 @@ List<Element> find_selectable_elements(Iterable<SelectModeChoice> select_modes, 
   return selectable_elts;
 }
 
-bool bboxes_intersect_generalized(
-    Rectangle<num> elt_bbox, Rectangle<num> select_box_bbox, bool overlap(num l1, num h1, num l2, num h2)) {
-  num elt_x2 = elt_bbox.left + elt_bbox.width;
-  num select_box_x2 = select_box_bbox.left + select_box_bbox.width;
-  num elt_y2 = elt_bbox.top + elt_bbox.height;
-  num select_box_y2 = select_box_bbox.top + select_box_bbox.height;
-  return overlap(elt_bbox.left, elt_x2, select_box_bbox.left, select_box_x2) &&
-      overlap(elt_bbox.top, elt_y2, select_box_bbox.top, select_box_y2);
-}
-
-// indicates if real line interval (l1,h1) \subseteq (l2,h2)
-bool interval_contained(num l1, num h1, num l2, num h2) {
-  return l1 >= l2 && h1 <= h2;
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // intersection geometry
 
@@ -168,7 +259,7 @@ class Box {
   num x;
   num y;
 
-  factory Box.from(Rect svg_rect) =>
+  factory Box.from(svg.Rect svg_rect) =>
       Box(svg_rect.x, svg_rect.y, width: svg_rect.width, height: svg_rect.height);
 
   factory Box.from_selection_box(SelectionBox box) => Box(box.x, box.y, width: box.width, height: box.height);
@@ -243,3 +334,34 @@ bool boxes_intersect_generalized(Box elt_bbox, Box select_box, bool overlap(num 
   return overlap(elt_bbox.x, elt_x2, select_box.x, select_box_x2) &&
       overlap(elt_bbox.y, elt_y2, select_box.y, select_box_y2);
 }
+
+//XXX: It's simpler to check whether the bounding rectangle in "browser viewport coordinates",
+// i.e., elt.getBoundingClientRect()
+// (instead of "transformed SVG coordinates") contains the getBoundingClientRect() rectangle of the
+// selection box. Here's why it's not straightforward to use getBBox() for both, even though that was
+// sufficient before we implemented HelixGroups and the ability to transform them.
+//
+// Three kinds of GraphicsElements are selectable:
+// - strands (SVG g object)
+// - loopouts/crossovers (SVG path)
+// - DNA ends (SVG rect and polygon)
+//
+// Strands have no transform applied to them, other than the one applied to the whole g element directly
+// under the svgsvg element, which is also applied to the selection box, so no need to correct for that.
+//   (CSS class "strand")
+//
+// Loopouts and crossovers have a transform applied directly to their path
+//   (CSS class "loopout-curve" or "crossover-curve")
+//
+// DNAEnds have a transform applied to the parent group
+//   (CSS class "dna-ends")
+//
+// We cannot simply try to use getCtm() to undo these transforms on these specific elements, because that
+// would also undo all transforms all the way up to the root SVG element. But the selection box itself
+// had the top-level g transform (for panning and zooming) applied to it. So the simplest thing is just
+// to call getBoundingClientRect() on *everything*, which essentially untransforms all of them all the
+// way up to the root of the whole DOM and gives absolute coordinates within the browser's viewport.
+//// gets list of elements associated to Selectables that intersect select_box_bbox in elements with classname
+//List<SvgElement> intersection_list_in_elt(String classname, Rect select_box_bbox) {
+//  return generalized_intersection_list_in_elt(classname, select_box_bbox, intervals_overlap);
+//}

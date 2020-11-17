@@ -588,6 +588,10 @@ Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zo
   return (point - pan) * (1.0 / zoom);
 }
 
+Point<num> transform_svg_to_mouse_coord_current_panzoom(Point<num> point, bool is_main) {
+  return transform_svg_to_mouse_coord(point, current_pan(is_main), current_zoom(is_main));
+}
+
 Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zoom) {
   // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
   if (browser.isFirefox || browser.isInternetExplorer) {
@@ -596,6 +600,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
     return point * zoom + pan;
   }
 }
+
+Rectangle<num> svg_rect_to_rectangle(Rect rect) => Rectangle<num>(rect.x, rect.y, rect.width, rect.height);
 
 transform_rect(
     Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {

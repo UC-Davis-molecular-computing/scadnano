@@ -24,6 +24,7 @@ import 'reducers/potential_crossover_reducer.dart';
 import 'state/app_state.dart';
 import 'state/selection_box.dart';
 import 'reducers/selection_reducer.dart';
+import 'state/selection_rope.dart';
 import 'view/design.dart';
 import 'view/view.dart';
 import 'reducers/app_state_reducer.dart';
@@ -58,6 +59,8 @@ class App {
   Store store;
 
   // for optimization; too slow to store in Model since it's updated 60 times/sec
+  Store<SelectionRope> store_selection_rope;
+  var context_selection_rope = createContext();
   Store<SelectionBox> store_selection_box;
   var context_selection_box = createContext();
   Store<PotentialCrossover> store_potential_crossover;
@@ -104,6 +107,9 @@ class App {
       store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
     }
 
+    store_selection_rope = Store<SelectionRope>(optimized_selection_rope_reducer,
+        initialState: null, middleware: [throttle_middleware]);
+
     store_selection_box = Store<SelectionBox>(optimized_selection_box_reducer,
         initialState: null, middleware: [throttle_middleware]);
 
@@ -137,21 +143,32 @@ class App {
 
     // optimization since these actions happen too fast to update whole model without jank
     var underlying_action = action is ThrottledActionFast ? action.action : action;
+
+    if (underlying_action is actions.SelectionRopeCreate ||
+        underlying_action is actions.SelectionRopeMouseMove ||
+        underlying_action is actions.SelectionRopeAddPoint ||
+        underlying_action is actions.SelectionRopeRemove) {
+      store_selection_rope.dispatch(action);
+    }
+
     if (underlying_action is actions.SelectionBoxCreate ||
         underlying_action is actions.SelectionBoxSizeChange ||
         underlying_action is actions.SelectionBoxRemove) {
       store_selection_box.dispatch(action);
     }
+
     if (underlying_action is actions.PotentialCrossoverCreate ||
         underlying_action is actions.PotentialCrossoverMove ||
         underlying_action is actions.PotentialCrossoverRemove) {
       store_potential_crossover.dispatch(action);
     }
+
     if (underlying_action is actions.DNAEndsMoveSetSelectedEnds ||
         underlying_action is actions.DNAEndsMoveAdjustOffset ||
         underlying_action is actions.DNAEndsMoveStop) {
       store_dna_ends_move.dispatch(action);
     }
+
     if (underlying_action is actions.HelixGroupMoveCreate ||
         underlying_action is actions.HelixGroupMoveAdjustTranslation ||
         underlying_action is actions.HelixGroupMoveStop) {

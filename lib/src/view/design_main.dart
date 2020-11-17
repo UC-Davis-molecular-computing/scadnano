@@ -4,8 +4,10 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
-import 'package:scadnano/src/view/design_main_domains_moving.dart';
 
+import '../state/selection_rope.dart';
+import 'design_main_domains_moving.dart';
+import 'selection_rope_view.dart';
 import '../actions/actions.dart' as actions;
 import '../state/design.dart';
 import '../state/edit_mode.dart';
@@ -68,7 +70,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
             state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = state.ui_state.display_major_tick_widths
         ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-        ..helix_group_is_moving = state.ui_state.helix_group_is_moving);
+        ..helix_group_is_moving = state.ui_state.helix_group_is_moving
+        ..selection_rope = state.ui_state.selection_rope);
     }
   },
 )(DesignMain);
@@ -107,6 +110,7 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_helix_circles;
   bool helix_group_is_moving;
   bool show_loopout_length;
+  SelectionRope selection_rope;
 }
 
 @Props()
@@ -209,6 +213,11 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-box-main'
         ..key = 'selection-box')(),
+      (ConnectedSelectionRopeView()
+        ..stroke_width_getter = (() => 2.0 / util.current_zoom_main_js())
+        ..is_main = true
+        ..id = 'selection-rope-main'
+        ..key = 'selection-rope')(),
       if (props.edit_modes.contains(EditModeChoice.backbone))
         (DesignMainMouseoverRectHelices()
           ..helices = props.design.helices
