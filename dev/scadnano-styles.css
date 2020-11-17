@@ -288,6 +288,11 @@ html, body {
 ** BEGIN mode layout
 ************************************************/
 
+
+#modes-buttons {
+    display: flex;
+}
+
 #edit-mode {
     width: 105px;
 }
@@ -375,10 +380,22 @@ html, body {
     text-anchor: middle;
 }
 
-.selection-box {
+.selection-box,.selection-rope {
     stroke: dimgray;
     fill: gray;
     fill-opacity: 0.5;
+}
+
+.selection-rope-potential {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.25;
+}
+
+.selection-rope-potential-illegal {
+    stroke: darkred;
+    fill: red;
+    fill-opacity: 0.25;
 }
 
 .rotation-line {
