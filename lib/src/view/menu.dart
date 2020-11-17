@@ -673,6 +673,16 @@ When selected, the length of each loopout is displayed next to it.'''
 // help menu
 
   help_menu() {
+    List<dynamic> older_versions_links = [for (var version in constants.scadnano_versions) DropdownItem(
+        {
+          'href': 'https://scadnano.org/v${version}',
+          'target': '_blank',
+          'title': '''\
+Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
+        },
+        'scadnano v${version}',
+      )];
+
     return NavDropdown(
       {
         'title': 'Help',
@@ -730,6 +740,7 @@ However, it may be less stable than the main site.'''
         },
         'scadnano dev version',
       ),
+      older_versions_links,
       DropdownItem(
         {
           'href':

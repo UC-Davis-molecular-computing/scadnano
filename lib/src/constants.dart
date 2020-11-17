@@ -8,6 +8,10 @@ import 'state/grid.dart';
 // WARNING: Do not modify line below, except for the version string.
 const String CURRENT_VERSION = "0.13.0";
 const String INITIAL_VERSION = "0.1.0";
+final scadnano_versions = [
+  "0.13.0",
+  "0.12.1"
+];
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 const NO_DESIGN_MESSAGE = 'No Design loaded.\n'
