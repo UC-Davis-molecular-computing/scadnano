@@ -15,6 +15,8 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/selectable.dart';
+import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/domain.dart';
@@ -70,7 +72,8 @@ class DesignViewComponent {
 
   DivElement context_menu_container = DivElement()..attributes = {'id': 'context-menu-container'};
   DivElement dialog_form_container = DivElement()..attributes = {'class': 'dialog-form-container'};
-  DivElement strand_color_picker_container = DivElement()..attributes = {'id': 'strand-color-picker-container'};
+  DivElement strand_color_picker_container = DivElement()
+    ..attributes = {'id': 'strand-color-picker-container'};
 
   svg.SvgSvgElement side_view_svg;
   svg.SvgSvgElement main_view_svg;
@@ -216,6 +219,18 @@ class DesignViewComponent {
       main_view_mouse_position = event.client;
       main_view_move_potential_crossover(event);
 
+      // redraw potential next point for selection rope
+      if (edit_mode_is_rope_select() &&
+          app.state.ui_state.selection_rope != null &&
+          (event.ctrlKey || event.metaKey || event.shiftKey)) {
+        bool is_main_view = true;
+        var view_svg = main_view_svg;
+        Point<num> point =
+            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        var action = actions.SelectionRopeMouseMove(point: point, is_main_view: is_main_view);
+        app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
+      }
+
       // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
       if (left_click_down) {
         // move selected DNA ends
@@ -353,6 +368,28 @@ class DesignViewComponent {
           key == constants.KEY_CODE_SELECT) {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
+
+        // if rope-selecting, send actions to select items and remove displayed rope
+        if (edit_mode_is_rope_select()) {
+          // print('key up: ${key}');
+          SelectionRope rope = app.store_selection_rope.state;
+          if (rope != null) {
+            bool toggle = rope.toggle;
+            var action_adjust = null;
+            // rope.is_main might be null
+            if (rope.is_main == true) {
+              action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
+            } else if (rope.is_main == false) {
+              // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
+            }
+            if (action_adjust != null) {
+              app.dispatch(action_adjust);
+            }
+
+            var action_remove = actions.SelectionRopeRemove();
+            app.dispatch(action_remove);
+          }
+        }
       }
 
       if (key == constants.KEY_CODE_SHOW_POTENTIAL_HELIX) {
@@ -365,9 +402,32 @@ class DesignViewComponent {
       }
     });
 
-    //XXX: this does NOT get fired when Draggable is running things, in particular when the user
-    // did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
-    // finish the box
+    // listen for clicks in rope select view to add points
+    main_view_svg.onMouseDown.listen((MouseEvent event) {
+      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
+      if (app.state.ui_state.selection_rope != null && left_click_down && edit_mode_is_rope_select()) {
+        bool is_main_view = true;
+        var view_svg = main_view_svg;
+        Point<num> point =
+            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
+      }
+    });
+
+    side_view_svg.onMouseDown.listen((MouseEvent event) {
+      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
+      if (app.state.ui_state.selection_rope != null && left_click_down && edit_mode_is_rope_select()) {
+        bool is_main_view = false;
+        var view_svg = side_view_svg;
+        Point<num> point =
+            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
+        app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
+      }
+    });
+
+//XXX: this does NOT get fired when Draggable is running things, in particular when the user
+// did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
+// finish the box
 //    main_view_svg.onMouseUp.listen((ev) {
 //      // XXX: if we decide to unselect items here, add some logic to make sure we didn't just get done moving a
 //      // selected item/group of items
@@ -410,15 +470,18 @@ class DesignViewComponent {
     if (app.state.ui_state.dialog != null) {
       app.dispatch(actions.DialogHide());
     }
+    if (app.state.ui_state.selection_rope != null) {
+      app.dispatch(actions.SelectionRopeRemove());
+    }
     app.keyboard_shortcuts_enabled = true;
   }
 
   handle_keyboard_shortcuts(int key, KeyboardEvent ev) {
-    if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
-            app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) &&
+    if ((edit_mode_is_select() || edit_mode_is_move_group()) &&
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
+      // start drag mode to either draw selection box or translate helix group
       install_draggable(true, DraggableComponent.main, main_view_svg);
       install_draggable(false, DraggableComponent.side, side_view_svg);
     } else if (!ev.ctrlKey &&
@@ -426,14 +489,24 @@ class DesignViewComponent {
         !ev.shiftKey &&
         !ev.altKey &&
         EditModeChoice.key_code_to_mode.keys.contains(key)) {
+      // switch edit mode based on keyboard shortcut
       app.dispatch(actions.EditModeToggle(EditModeChoice.key_code_to_mode[key]));
     } else if (key == KeyCode.DELETE || (operatingSystem.isMac && key == KeyCode.BACKSPACE)) {
+      // delete selected objects
       ev.preventDefault(); // ensure backspace doesn't go to previous page
       if (app.state.ui_state.selectables_store.isNotEmpty) {
         app.dispatch(actions.DeleteAllSelected());
       } else if (app.state.ui_state.side_selected_helix_idxs.isNotEmpty) {
         app.dispatch(actions.HelixRemoveAllSelected());
       }
+    } else if (edit_mode_is_rope_select() &&
+        (key == constants.KEY_CODE_TOGGLE_SELECT ||
+            key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
+            key == constants.KEY_CODE_SELECT)) {
+      // start drawing selection rope, or continue it
+      bool toggle = key != constants.KEY_CODE_SELECT;
+      app.dispatch(actions.SelectionRopeCreate(toggle: toggle));
+      // print('key pressed: ${key}');
     }
 
     // Ctrl+C/Ctrl+V for copy/paste
@@ -508,12 +581,12 @@ class DesignViewComponent {
     MouseEvent event = draggable_event.originalEvent;
     Point<num> point =
         util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+    if (edit_mode_is_select()) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
         var action = actions.SelectionBoxSizeChange(point, is_main_view);
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
       }
-    } else if (is_main_view && app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) {
+    } else if (is_main_view && edit_mode_is_move_group()) {
       if (event.ctrlKey || event.metaKey || event.shiftKey) {
         var action = actions.HelixGroupMoveAdjustTranslation(mouse_point: point);
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
@@ -522,7 +595,7 @@ class DesignViewComponent {
   }
 
   drag_end(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+    if (edit_mode_is_select()) {
       if (app.store_selection_box.state == null) {
         return;
       }
@@ -530,7 +603,7 @@ class DesignViewComponent {
       bool toggle = app.store_selection_box.state.toggle;
       var action_adjust;
       if (is_main_view) {
-        action_adjust = actions.SelectionsAdjust(toggle);
+        action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: true);
       } else {
         action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
       }
@@ -538,7 +611,7 @@ class DesignViewComponent {
       // so we can detect intersection
       app.dispatch(action_adjust);
       app.dispatch(action_remove);
-    } else if (is_main_view && app.state.ui_state.edit_modes.contains(EditModeChoice.move_group)) {
+    } else if (is_main_view && edit_mode_is_move_group()) {
       app.dispatch(actions.HelixGroupMoveStop());
     }
   }
@@ -615,9 +688,13 @@ class DesignViewComponent {
         over_react_components.ErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             (ReduxProvider()
-              ..store = app.store_selection_box
-              ..context = app.context_selection_box)(
-              ConnectedDesignSide()(),
+              ..store = app.store_selection_rope
+              ..context = app.context_selection_rope)(
+              (ReduxProvider()
+                ..store = app.store_selection_box
+                ..context = app.context_selection_box)(
+                ConnectedDesignSide()(),
+              ),
             ),
           ),
         ),
@@ -629,18 +706,22 @@ class DesignViewComponent {
         DesignMainErrorBoundary()(
           (ReduxProvider()..store = app.store)(
             (ReduxProvider()
-              ..store = app.store_selection_box
-              ..context = app.context_selection_box)(
+              ..store = app.store_selection_rope
+              ..context = app.context_selection_rope)(
               (ReduxProvider()
-                ..store = app.store_potential_crossover
-                ..context = app.context_potential_crossover)(
+                ..store = app.store_selection_box
+                ..context = app.context_selection_box)(
                 (ReduxProvider()
-                  ..store = app.store_dna_ends_move
-                  ..context = app.context_dna_ends_move)(
+                  ..store = app.store_potential_crossover
+                  ..context = app.context_potential_crossover)(
                   (ReduxProvider()
-                    ..store = app.store_helix_group_move
-                    ..context = app.context_helix_group_move)(
-                    ConnectedDesignMain()(),
+                    ..store = app.store_dna_ends_move
+                    ..context = app.context_dna_ends_move)(
+                    (ReduxProvider()
+                      ..store = app.store_helix_group_move
+                      ..context = app.context_helix_group_move)(
+                      ConnectedDesignMain()(),
+                    ),
                   ),
                 ),
               ),
@@ -681,12 +762,12 @@ class DesignViewComponent {
       );
 
       react_dom.render(
-        over_react_components.ErrorBoundary()(
-          (ReduxProvider()..store = app.store)(
-            ConnectedStrandColorPicker()(),
+          over_react_components.ErrorBoundary()(
+            (ReduxProvider()..store = app.store)(
+              ConnectedStrandColorPicker()(),
+            ),
           ),
-        ), this.strand_color_picker_container
-      );
+          this.strand_color_picker_container);
 
       if (!svg_panzoom_has_been_set_up) {
         // Need to wrap callbacks so that Dart functions can be called in JavaScript.
@@ -765,7 +846,7 @@ class DesignViewComponent {
 
   side_view_update_position({Point<num> mouse_pos = null, MouseEvent event = null}) {
     assert(!(mouse_pos == null && event == null));
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.pencil)) {
+    if (edit_mode_is_pencil()) {
       var displayed_group_name = app.state.ui_state.displayed_group_name;
       var displayed_grid = app.state.design.groups[displayed_group_name].grid;
       if (!displayed_grid.is_none()) {

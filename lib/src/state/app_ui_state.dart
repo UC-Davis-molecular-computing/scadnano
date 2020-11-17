@@ -23,6 +23,7 @@ import 'selectable.dart';
 import 'strand.dart';
 import 'strand_creation.dart';
 import 'strands_move.dart';
+import 'selection_rope.dart';
 
 part 'app_ui_state.g.dart';
 
@@ -53,6 +54,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get warn_on_change_strand_dna_assign_default;
 
   bool get helix_change_apply_to_all;
+
+  @nullable
+  SelectionRope get selection_rope;
 
   // last 5' modification that was added (for populating new add modification dialogs)
   @nullable

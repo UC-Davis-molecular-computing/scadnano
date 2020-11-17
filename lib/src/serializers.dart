@@ -40,6 +40,7 @@ import 'state/select_mode.dart';
 import 'state/domain.dart';
 import 'state/grid_position.dart';
 import 'state/selection_box.dart';
+import 'state/selection_rope.dart';
 import 'state/select_mode_state.dart';
 import 'state/strand.dart';
 import 'state/crossover.dart';
@@ -93,6 +94,12 @@ part 'serializers.g.dart';
   SelectionBoxCreate,
   SelectionBoxSizeChange,
   SelectionBoxRemove,
+  SelectionRope,
+  Line,
+  SelectionRopeCreate,
+  SelectionRopeMouseMove,
+  SelectionRopeAddPoint,
+  SelectionRopeRemove,
   MouseoverParams,
   Helix,
   HelixGroup,
@@ -127,7 +134,7 @@ part 'serializers.g.dart';
   HelixSelectionsAdjust,
   HelixSelectionsClear,
   HelixSelect,
-  SelectionsAdjust,
+  SelectionsAdjustMainView,
   SelectionsClear,
   SelectOrToggleItems,
   DeleteAllSelected,

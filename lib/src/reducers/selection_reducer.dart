@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/selection_rope.dart';
 import '../state/edit_mode.dart';
 import '../state/select_mode.dart';
 
@@ -33,7 +36,7 @@ GlobalReducer<SelectablesStore, AppState> selectables_store_global_reducer = com
 currently_selectable(AppState state, Selectable item) {
   var edit_modes = state.ui_state.edit_modes;
   var select_modes = state.ui_state.select_mode_state.modes;
-  if (!edit_modes.contains(EditModeChoice.select)) {
+  if (!(edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select))) {
     return false;
   }
   if (!select_modes.contains(item.select_mode)) {
@@ -138,7 +141,7 @@ BuiltSet<int> helix_selections_adjust_reducer(
       all_helices_in_displayed_group.values.map((helix) => helix_to_box(helix)).toList();
   var selection_box_as_box = select.Box.from_selection_box(selection_box);
   List<Helix> helices_overlapping =
-    select.enclosure_list(all_helices_in_displayed_group.values, all_bboxes, selection_box_as_box);
+      select.enclosure_list(all_helices_in_displayed_group.values, all_bboxes, selection_box_as_box);
 //      util.intersection_list(all_helices.toList(), all_bboxes, util.Box.from_selection_box(selection_box));
   List<int> helix_idxs_overlapping = helices_overlapping.map((helix) => helix.idx).toList();
 
@@ -224,3 +227,60 @@ SelectionBox selection_box_size_changed_reducer(
     selection_box.rebuild((s) => s..current = action.point);
 
 SelectionBox selection_box_remove_reducer(SelectionBox _, actions.SelectionBoxRemove __) => null;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// selection rope reducer
+
+Reducer<SelectionRope> optimized_selection_rope_reducer = combineReducers([
+  selection_rope_reducer,
+]);
+
+Reducer<SelectionRope> selection_rope_reducer = combineReducers([
+  TypedReducer<SelectionRope, actions.SelectionRopeCreate>(selection_rope_create_reducer),
+  TypedReducer<SelectionRope, actions.SelectionRopeMouseMove>(selection_rope_mouse_move_reducer),
+  TypedReducer<SelectionRope, actions.SelectionRopeAddPoint>(selection_rope_add_point_reducer),
+  TypedReducer<SelectionRope, actions.SelectionRopeRemove>(selection_rope_remove_reducer),
+]);
+
+SelectionRope selection_rope_create_reducer(SelectionRope _, actions.SelectionRopeCreate action) =>
+    SelectionRope(action.toggle);
+
+SelectionRope selection_rope_mouse_move_reducer(SelectionRope rope, actions.SelectionRopeMouseMove action) {
+  // if no points have been added, is_main should be null; if so we set it according to the action
+  if (rope.is_main == null) {
+    rope = rope.rebuild((b) => b..is_main = action.is_main_view);
+  }
+
+  // if action and rope disagree about is_main,
+  // then the click just occurred in a different view than the first click, so we ignore it
+  if (rope.is_main != action.is_main_view) {
+    return rope;
+  }
+
+  return rope.rebuild((b) => b..current_point = action.point);
+}
+
+SelectionRope selection_rope_add_point_reducer(SelectionRope rope, actions.SelectionRopeAddPoint action) {
+  // if no points have been added, is_main should be null; if so we set it according to the action
+  if (rope.is_main == null) {
+    rope = rope.rebuild((b) => b..is_main = action.is_main_view);
+  }
+
+  // if action and rope disagree about is_main,
+  // then the click just occurred in a different view than the first click, so we ignore it
+  if (rope.is_main != action.is_main_view) {
+    return rope;
+  }
+
+  // otherwise, add the point, as long as it keeps the polygon's lines non-self-intersecting;
+  // otherwise ignore it
+  List<Point<num>> points = rope.points.toList();
+  if (points.length <= 1 || !rope.creates_self_intersection(action.point)) {
+    points.add(action.point);
+    rope = rope.rebuild((b) => b..points.replace(points));
+  }
+
+  return rope;
+}
+
+SelectionRope selection_rope_remove_reducer(SelectionRope _, actions.SelectionRopeRemove __) => null;

@@ -813,7 +813,7 @@ abstract class ErrorMessageSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Selection box (side view)
+// Selection box
 
 abstract class SelectionBoxCreate
     with BuiltJsonSerializable
@@ -870,6 +870,79 @@ abstract class SelectionBoxRemove
   SelectionBoxRemove._();
 
   static Serializer<SelectionBoxRemove> get serializer => _$selectionBoxRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Selection rope (polygon that user can create by holding Ctrl or Shift key in rope select mode
+//                 while clicking several points to draw a polygon)
+
+// This doesn't actually create any points yet, it just sets up listening.
+// When the first point is clicked, we can start populating,
+// and also know whether it's the main or side view.
+abstract class SelectionRopeCreate
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeCreate, SelectionRopeCreateBuilder> {
+  bool get toggle;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeCreate({bool toggle}) = _$SelectionRopeCreate._;
+
+  SelectionRopeCreate._();
+
+  static Serializer<SelectionRopeCreate> get serializer => _$selectionRopeCreateSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeMouseMove
+    with BuiltJsonSerializable
+    implements FastAction, Built<SelectionRopeMouseMove, SelectionRopeMouseMoveBuilder> {
+  Point<num> get point;
+
+  bool get is_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeMouseMove({Point<num> point, bool is_main_view}) = _$SelectionRopeMouseMove._;
+
+  SelectionRopeMouseMove._();
+
+  static Serializer<SelectionRopeMouseMove> get serializer => _$selectionRopeMouseMoveSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeAddPoint
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeAddPoint, SelectionRopeAddPointBuilder> {
+  Point<num> get point;
+
+  bool get is_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeAddPoint({Point<num> point, bool is_main_view}) = _$SelectionRopeAddPoint._;
+
+  SelectionRopeAddPoint._();
+
+  static Serializer<SelectionRopeAddPoint> get serializer => _$selectionRopeAddPointSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeRemove
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeRemove, SelectionRopeRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeRemove() = _$SelectionRopeRemove._;
+
+  SelectionRopeRemove._();
+
+  static Serializer<SelectionRopeRemove> get serializer => _$selectionRopeRemoveSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -984,22 +1057,26 @@ abstract class SelectionsClear
   static Serializer<SelectionsClear> get serializer => _$selectionsClearSerializer;
 }
 
-// dispatched in response to Selection box being done drawning (i.e., mouse button goes up),
+// dispatched in response to Selection box being done drawing (i.e., mouse button goes up),
 // but needs to be intercepted by middleware, which queries the DOM to see what Selectable
 // SVG objects intersect the box, and then constructs a SelectOrToggleAll action with those objects
-abstract class SelectionsAdjust
+abstract class SelectionsAdjustMainView
     with BuiltJsonSerializable
-    implements Action, Built<SelectionsAdjust, SelectionsAdjustBuilder> {
+    implements Action, Built<SelectionsAdjustMainView, SelectionsAdjustMainViewBuilder> {
   bool get toggle;
 
+  // if true, use selection box to calculate selected items, otherwise use selection rope
+  bool get box;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionsAdjust(bool toggle) => SelectionsAdjust.from((b) => b..toggle = toggle);
+  factory SelectionsAdjustMainView({bool toggle, bool box}) = _$SelectionsAdjustMainView._;
 
-  factory SelectionsAdjust.from([void Function(SelectionsAdjustBuilder) updates]) = _$SelectionsAdjust;
+  factory SelectionsAdjustMainView.from([void Function(SelectionsAdjustMainViewBuilder) updates]) =
+      _$SelectionsAdjustMainView;
 
-  SelectionsAdjust._();
+  SelectionsAdjustMainView._();
 
-  static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
+  static Serializer<SelectionsAdjustMainView> get serializer => _$selectionsAdjustMainViewSerializer;
 }
 
 abstract class SelectOrToggleItems

@@ -13,9 +13,7 @@ UiFactory<SelectionBoxViewProps> ConnectedSelectionBoxView = connect<SelectionBo
   context: app.context_selection_box,
 )(SelectionBoxView);
 
-
 UiFactory<SelectionBoxViewProps> SelectionBoxView = _$SelectionBoxView;
-
 
 mixin SelectionBoxViewProps on UiProps {
   SelectionBox selection_box;
@@ -23,7 +21,6 @@ mixin SelectionBoxViewProps on UiProps {
   String id;
   bool is_main;
 }
-
 
 class SelectionBoxViewComponent extends UiComponent2<SelectionBoxViewProps> {
   @override

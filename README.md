@@ -515,7 +515,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
   This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
 
-  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
   Unlike other drawing programs, clicking on the background will not unselect the objects.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
@@ -560,6 +560,18 @@ There are different edit modes available, shown on the right side of the screen.
 
   Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
 
+* **(r)ope select:**
+  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. Then click several points to define a polygon. 
+
+  ![](images/screenshot-polygon.png)
+
+  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle below), and a larger (*n*+1)-gon showing what the new polygon would be if another click happens. The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red, and clicking will have no effect:
+
+  ![](images/screenshot-polygon-illegal.png)
+
+  Lifting up on the Shift/Ctrl key will select items within the smaller polygon.
+
+  You can also select individual objects by clicking them while in rope select mode. However, Shift/Ctrl+clicking multiple items is awkward in rope select mode, since it will start drawing a polygon. So it is suggested to use select mode to select many items by clicking individually on each of them while holding the Shift key.
   
 * **(p)encil:**
   This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 

@@ -445,7 +445,11 @@ BuiltSet<EditModeChoice> edit_modes() => app.state.ui_state.edit_modes;
 
 BuiltSet<SelectModeChoice> select_modes() => app.state.ui_state.select_mode_state.modes;
 
+bool edit_mode_is_select_or_rope_select() => edit_mode_is_select() || edit_mode_is_rope_select();
+
 bool edit_mode_is_select() => edit_modes().contains(EditModeChoice.select);
+
+bool edit_mode_is_rope_select() => edit_modes().contains(EditModeChoice.rope_select);
 
 bool edit_mode_is_pencil() => edit_modes().contains(EditModeChoice.pencil);
 
@@ -459,43 +463,45 @@ bool edit_mode_is_deletion() => edit_modes().contains(EditModeChoice.deletion);
 
 bool edit_mode_is_backbone() => edit_modes().contains(EditModeChoice.backbone);
 
+bool edit_mode_is_move_group() => edit_modes().contains(EditModeChoice.move_group);
+
 bool strand_selectable(Strand strand) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.strand) &&
     origami_type_selectable(strand);
 
 bool domain_selectable(Domain domain) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.domain) &&
     origami_type_selectable(domain);
 
 bool crossover_selectable(Crossover crossover) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.crossover) &&
     origami_type_selectable(crossover);
 
 bool loopout_selectable(Loopout loopout) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.loopout) &&
     origami_type_selectable(loopout);
 
 bool deletion_selectable(SelectableDeletion deletion) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.deletion) &&
     origami_type_selectable(deletion);
 
 bool insertion_selectable(SelectableInsertion insertion) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.insertion) &&
     origami_type_selectable(insertion);
 
 bool modification_selectable(SelectableModification modification) =>
-    edit_mode_is_select() &&
+    edit_mode_is_select_or_rope_select() &&
     select_modes().contains(SelectModeChoice.modification) &&
     origami_type_selectable(modification);
 
 bool end_selectable(DNAEnd end) =>
-    edit_mode_is_select() && end_type_selectable(end) && origami_type_selectable(end);
+    edit_mode_is_select_or_rope_select() && end_type_selectable(end) && origami_type_selectable(end);
 
 bool end_type_selectable(DNAEnd end) =>
     (end.is_5p && end.substrand_is_first && select_modes().contains(SelectModeChoice.end_5p_strand)) ||
