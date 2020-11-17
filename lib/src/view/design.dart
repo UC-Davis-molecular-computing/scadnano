@@ -523,9 +523,7 @@ class DesignViewComponent {
     }
 
     // Ctrl+A for select all
-    if ((ev.ctrlKey || ev.metaKey) &&
-        key == KeyCode.A &&
-        app.state.ui_state.edit_modes.contains(EditModeChoice.select)) {
+    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.A && edit_mode_is_select_or_rope_select()) {
       ev.preventDefault();
       app.dispatch(actions.SelectAllSelectable());
     }
