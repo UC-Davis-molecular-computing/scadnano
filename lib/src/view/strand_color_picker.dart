@@ -1,3 +1,7 @@
+@JS()
+library scadnano;
+
+import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
@@ -36,7 +40,7 @@ mixin StrandColorPickerState on UiState {
 
 class StrandColorPickerComponent
     extends UiStatefulComponent2<StrandColorPickerProps, StrandColorPickerState> {
-  void handleOnChangeComplete(color, event) {
+  void handleOnChangeComplete(JSColor color, _) {
     state.color = HexColor(color.hex);
   }
 
@@ -111,4 +115,10 @@ class StrandColorPickerComponent
     }
     return action;
   }
+}
+
+@JS()
+@anonymous
+class JSColor {
+  external String get hex;
 }
