@@ -40,7 +40,7 @@ mixin StrandColorPickerState on UiState {
 
 class StrandColorPickerComponent
     extends UiStatefulComponent2<StrandColorPickerProps, StrandColorPickerState> {
-  void handleOnChangeComplete(JSColor color, event) {
+  void handleOnChangeComplete(JSColor color, _) {
     state.color = HexColor(color.hex);
   }
 
