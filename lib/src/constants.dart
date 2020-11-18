@@ -5,10 +5,14 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-// WARNING: Do not modify line below, except for the version string.
+// WARNING: Do not modify line below, except for the version string
+//          (and also add new version string to scadnano_versions_to_link).
 const String CURRENT_VERSION = "0.13.0";
 const String INITIAL_VERSION = "0.1.0";
-final scadnano_versions = [
+
+// scadnano versions that we deploy so that older versions can be used.
+// CURRENT_VERSION should be the highest verstion in this list.
+final scadnano_versions_to_link = [
   "0.13.0",
   "0.12.1"
 ];

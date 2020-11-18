@@ -21,6 +21,7 @@ import '../constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
+import '../view/menu_dropdown_right.dart';
 import '../view/menu_form_file.dart';
 
 import '../app.dart';
@@ -673,16 +674,6 @@ When selected, the length of each loopout is displayed next to it.'''
 // help menu
 
   help_menu() {
-    List<dynamic> older_versions_links = [for (var version in constants.scadnano_versions) DropdownItem(
-        {
-          'href': 'https://scadnano.org/v${version}',
-          'target': '_blank',
-          'title': '''\
-Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
-        },
-        'scadnano v${version}',
-      )];
-
     return NavDropdown(
       {
         'title': 'Help',
@@ -740,7 +731,27 @@ However, it may be less stable than the main site.'''
         },
         'scadnano dev version',
       ),
-      older_versions_links,
+      // older_versions_link_dropdown,
+      (MenuDropdownRight()
+        ..title = "Other version"
+        ..id = "older-version-dropdown"
+        ..tooltip = '''\
+Older versions of scadnano.
+
+Starting from v0.12.1, every released (master branch) version of scadnano is deployed
+to http://scadnano.org/{version}.''')([
+        for (var version in constants.scadnano_versions_to_link)
+          DropdownItem(
+            {
+              'href': 'https://scadnano.org/v${version}',
+              'target': '_blank',
+              'key': version,
+              'title': '''\
+    Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
+            },
+            'scadnano v${version}',
+          )
+      ]),
       DropdownItem(
         {
           'href':

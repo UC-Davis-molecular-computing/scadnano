@@ -9,6 +9,7 @@ import 'package:react/react_client/react_interop.dart';
 @JS()
 class ReactBootstrap {
   external static ReactClass get Button;
+  external static ReactClass get DropdownButton;
   external static ReactClass get DropdownDivider;
   external static ReactClass get DropdownItem;
   external static ReactClass get Navbar;
@@ -18,6 +19,7 @@ class ReactBootstrap {
 }
 
 final Button = ReactJsComponentFactoryProxy(ReactBootstrap.Button);
+final DropdownButton = ReactJsComponentFactoryProxy(ReactBootstrap.DropdownButton);
 final DropdownDivider = ReactJsComponentFactoryProxy(ReactBootstrap.DropdownDivider);
 final DropdownItem = ReactJsComponentFactoryProxy(ReactBootstrap.DropdownItem);
 final Navbar = ReactJsComponentFactoryProxy(ReactBootstrap.Navbar);
