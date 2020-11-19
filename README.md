@@ -545,7 +545,7 @@ There are different edit modes available, shown on the right side of the screen.
   - **crossover, loopout:**
     Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another.)
 
-    If many crossovers/loopouts are selected, all the crossovers can be converted to loopouts (or vice versa) by right-clicking on one fo them and picking "convert to loopout" (or "change loopout length" if a loopout; changing to length 0 converts it to a crossover).
+    If many crossovers/loopouts are selected, all the crossovers can be converted to loopouts (or vice versa) by right-clicking on one of them and picking "convert to loopout" (or "change loopout length" if a loopout; changing to length 0 converts it to a crossover).
 
   - **deletion, insertion:**
     Deletions and insertions can be selected and deleted in batch by pressing the Delete key. Also, one can change the length of all selected insertions by right-clicking on one of them and selecting the option to change insertion length.
