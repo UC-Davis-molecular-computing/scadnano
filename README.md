@@ -582,7 +582,7 @@ There are different edit modes available, shown on the right side of the screen.
 
   A faster alternative that works in most circumstances is this. In pencil mode, if two bound domains on adjacent helices have their 5'/3' ends at the *same horizontal offset*, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.
 
-  In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
+  In pencil mode, clicking on an existing helix will delete it. (Helices can also be deleted by selecting them while in select mode and pressing the Delete key.) Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
 * **(n)ick / (l)igate:**
   Technically these operations are unnecessary, but they are faster than creating/moving/deleting domains in some circumstances. In nick mode, clicking on a bound domain will split it into two at that position. Ligate mode does the reverse operation: if two bound domains point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
