@@ -567,13 +567,13 @@ There are different edit modes available, shown on the right side of the screen.
 
   ![](images/screenshot-polygon.png)
 
-  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle below), and an (*n*+1)-gon showing what the new polygon would be if another click happens. (In this example the (*n*+1)-gon is larger, but it can be smaller, for instance if the mouse cursor were between the triangle's hypotenuse and its lower-left vertex.) The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red, and clicking will have no effect:
+  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle above), and an (*n*+1)-gon showing what the new polygon would be if another click happens. (In the example above the (*n*+1)-gon is larger, but it can be smaller, for instance if the mouse cursor were between the triangle's hypotenuse and its lower-left vertex.) The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red to indicate it is illegal to add a polygon vertex there, and clicking will have no effect:
 
   ![](images/screenshot-polygon-illegal.png)
 
-  Lifting up on the Shift or Ctrl key will select items within the *n*-gon (the darker polygon).
+  Lifting up on the Shift or Ctrl key will select items within the *n*-gon consisting of the points clicked so far (the darker polygon).
 
-  You can also select individual objects by clicking them while in rope select mode. However, Shift/Ctrl+clicking multiple items is awkward in rope select mode, since it will start drawing a polygon. So it is suggested to use select mode to select many items by clicking individually on each of them while holding the Shift key.
+  You can also select individual objects by clicking them while in rope select mode. Shift/Ctrl+clicking multiple items is more awkward in rope select mode than in select mode, since in rope select mode it will start drawing a polygon if you keep the Shift or Ctrl key pressed. If you don't want to switch to select mode, a workaround is, after each mouse click, to lift the Shift/Ctrl key before pressing it again, to prevent the polygon from being drawn.
   
 * **(p)encil:**
   This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 
