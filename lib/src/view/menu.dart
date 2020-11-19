@@ -69,7 +69,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_loopout_length = state.ui_state.show_loopout_length
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
-      ..clear_helix_selection_when_loading_new_design = state.ui_state.clear_helix_selection_when_loading_new_design
+      ..clear_helix_selection_when_loading_new_design =
+          state.ui_state.clear_helix_selection_when_loading_new_design
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
@@ -220,13 +221,13 @@ really want to exit without saving.'''
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+            clear: !props.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
 design will be selected (based on helix index) on the loaded design.'''
-        ..key = 'clear-helix-selection-when-loading-new-design'
-      )(),
+        ..key = 'clear-helix-selection-when-loading-new-design')(),
     ]);
   }
 
@@ -717,9 +718,33 @@ When selected, the length of each loopout is displayed next to it.'''
       ),
       DropdownItem(
         {
-          'href': 'https://scadnano.org/dev',
+          'href':
+          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
           'target': '_blank',
-          'title': '''\
+          //TODO: figure out how to give a DropdownItem a tooltip
+//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+        },
+        'Version ${constants.CURRENT_VERSION} release notes',
+      ),
+      // older_versions_link_dropdown,
+      (MenuDropdownRight()
+        ..title = "Other versions"
+        ..id = "older-version-dropdown"
+        ..tooltip = '''\
+Older versions of scadnano, as well as the newest development version.
+
+Starting from v0.12.1, every released (master branch) version of scadnano 
+is deployed to https://scadnano.org/{version}. 
+
+https://scadnano.org/dev is the newest version, containing newer features 
+(those marked "closed in dev" on the scadnano issues page: 
+https://github.com/UC-Davis-molecular-computing/scadnano/issues), 
+but it may be less stable than the current version.''')([
+        DropdownItem(
+          {
+            'href': 'https://scadnano.org/dev',
+            'target': '_blank',
+            'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
 This site is updated more frequently than the main site at https://scadnano.org.
@@ -728,18 +753,9 @@ This includes open issues that have been handled in the dev branch but not the m
 https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev
 
 However, it may be less stable than the main site.'''
-        },
-        'scadnano dev version',
-      ),
-      // older_versions_link_dropdown,
-      (MenuDropdownRight()
-        ..title = "Other version"
-        ..id = "older-version-dropdown"
-        ..tooltip = '''\
-Older versions of scadnano.
-
-Starting from v0.12.1, every released (master branch) version of scadnano is deployed
-to http://scadnano.org/{version}.''')([
+          },
+          'dev',
+        ),
         for (var version in constants.scadnano_versions_to_link)
           DropdownItem(
             {
@@ -749,19 +765,9 @@ to http://scadnano.org/{version}.''')([
               'title': '''\
     Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
             },
-            'scadnano v${version}',
+            'v${version}',
           )
       ]),
-      DropdownItem(
-        {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
-          'target': '_blank',
-          //TODO: figure out how to give a DropdownItem a tooltip
-//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
-        },
-        'Version ${constants.CURRENT_VERSION} release notes',
-      ),
     );
   }
 
