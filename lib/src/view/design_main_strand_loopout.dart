@@ -235,10 +235,14 @@ String loopout_path_description_within_group(Helix prev_helix, Helix next_helix,
   Geometry geometry = top_helix.geometry;
   Domain top_dom = prev_domain;
   Domain bot_dom = next_domain;
-  if (top_helix.idx == bot_helix.idx && top_dom.forward == bot_dom.forward) {
+
+  bool same_helix = top_helix.idx == bot_helix.idx;
+  if (same_helix && top_dom.forward == bot_dom.forward) {
     return loopout_path_description_same_helix_same_direction(
         loopout, prev_helix, prev_domain, next_domain, include_start_M, show_loopout_labels);
-  } else if (top_helix.svg_position.y > bot_helix.svg_position.y) {
+  } else if (top_helix.svg_position.y > bot_helix.svg_position.y || same_helix && !top_dom.forward) {
+    // helices are same if same_helix is true, but we'd still like top_dom/bot_dom to reflect which
+    // is on top, i.e. that of the forward domain
     top_helix = next_helix;
     bot_helix = prev_helix;
     top_dom = next_domain;
