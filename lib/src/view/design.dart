@@ -376,8 +376,9 @@ class DesignViewComponent {
           if (rope != null) {
             bool toggle = rope.toggle;
             var action_adjust = null;
-            // rope.is_main might be null
-            if (rope.is_main == true) {
+            // rope.is_main might be null;
+            // also if there's only 1 or 2 points, it's not a Jordan curve yet so don't bother selecting
+            if (rope.is_main == true && rope.points.length >= 3) {
               action_adjust = actions.SelectionsAdjustMainView(toggle: toggle, box: false);
             } else if (rope.is_main == false) {
               // action_adjust = actions.HelixSelectionsAdjust(toggle, app.store_selection_box.state);
