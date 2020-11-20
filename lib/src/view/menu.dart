@@ -675,6 +675,23 @@ When selected, the length of each loopout is displayed next to it.'''
 // help menu
 
   help_menu() {
+    List<ReactElement> version_dropdown_items = [];
+    bool first = true;
+    for (var version in constants.scadnano_versions_to_link) {
+      var version_dropdown_item = DropdownItem(
+        {
+          'href': 'https://scadnano.org/v${version}',
+          'target': '_blank',
+          'key': version,
+          'title': '''\
+    Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
+        },
+        'v${version}' + (first? ' (current version)': ''),
+      );
+      first = false;
+      version_dropdown_items.add(version_dropdown_item);
+    }
+
     return NavDropdown(
       {
         'title': 'Help',
@@ -757,17 +774,7 @@ However, it may be less stable than the main site.'''
           },
           'dev',
         ),
-        for (var version in constants.scadnano_versions_to_link)
-          DropdownItem(
-            {
-              'href': 'https://scadnano.org/v${version}',
-              'target': '_blank',
-              'key': version,
-              'title': '''\
-    Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
-            },
-            'v${version}',
-          )
+        version_dropdown_items
       ]),
     );
   }
