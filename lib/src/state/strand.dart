@@ -734,7 +734,19 @@ abstract class Strand
   }
 
   /// Name to use when exporting this Strand.
+  /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
   String export_name() {
+    if (idt != null) {
+      return idt.name;
+    } else if (name != null) {
+      return name;
+    } else {
+      return default_export_name();
+    }
+  }
+
+  /// Name to export if Strand.name and Strand.idt_fields.name are both not set.
+  String default_export_name() {
     Domain first_ss = first_domain();
     Domain last_ss = last_domain();
     String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
