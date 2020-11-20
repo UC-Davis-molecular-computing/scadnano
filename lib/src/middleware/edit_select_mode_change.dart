@@ -39,13 +39,14 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
     var design = store.state.design;
-    bool is_origami = store.state.design.is_origami;
-    set_selectables_css_style_rules(design, edit_modes, select_modes, is_origami);
+    if (design != null) {
+      set_selectables_css_style_rules(design, edit_modes, select_modes);
+    }
   }
 }
 
 set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_modes,
-    BuiltSet<SelectModeChoice> select_modes, bool is_origami) {
+    BuiltSet<SelectModeChoice> select_modes) {
   bool edit_mode_is_select_or_rope =
       edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select);
   bool scaffold_parts_selectable =
@@ -62,7 +63,7 @@ set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_mod
       staple_parts_selectable: staple_parts_selectable,
       scaffold_parts_selectable: scaffold_parts_selectable,
       select_mode_choice: select_mode_choice,
-      is_origami: is_origami,
+      is_origami: design.is_origami,
       edit_mode_is_select_or_rope_select: edit_mode_is_select_or_rope,
     );
   }
