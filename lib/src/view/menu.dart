@@ -744,6 +744,7 @@ but it may be less stable than the current version.''')([
           {
             'href': 'https://scadnano.org/dev',
             'target': '_blank',
+            'key': 'dev',
             'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
