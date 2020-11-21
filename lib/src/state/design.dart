@@ -412,6 +412,28 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
+  /// design.strands_overlapping[strand] is a list of all strands that overlap strand.
+  @memoized
+  BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
+    Map<Strand, List<Strand>> map = {};
+    Map<Strand, BuiltList<Strand>> map_builtlist = {};
+    for (int i = 0; i < strands.length; i++) {
+      var strand1 = strands[i];
+      map[strand1] = [];
+      for (int j = 0; j < strands.length; j++) {
+        if (i == j) {
+          continue;
+        }
+        var strand2 = strands[j];
+        if (strand1.overlaps(strand2)) {
+          map[strand1].add(strand2);
+        }
+      }
+      map_builtlist[strand1] = map[strand1].toBuiltList();
+    }
+    return map_builtlist.build();
+  }
+
   @memoized
   BuiltMap<Domain, BuiltList<Mismatch>> get domain_mismatches_map {
     var domain_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
@@ -873,7 +895,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // Swap x and z coordinates if needed
     if (position_x_z_should_swap) {
       for (var helix_builder in helix_builders_list) {
-        if (grid_is_none && !using_groups || using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
+        if (grid_is_none && !using_groups ||
+            using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
           // prior to version 0.13.0, x and z had the opposite role
           num swap = helix_builder.position_.x;
           helix_builder.position_.x = helix_builder.position_.z;

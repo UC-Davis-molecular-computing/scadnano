@@ -168,15 +168,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_dna() =>
-      app.disable_keyboard_shortcuts_while(() =>
-          ask_for_assign_dna_sequence(props.strand,
-              props.assign_complement_to_bound_strands_default,
-              props.warn_on_change_strand_dna_assign_default));
+  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
+      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
+
+  assign_dna_complement_from_bound_strands() {
+    List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+
+    if (!strands_selected.contains(props.strand)) {
+      strands_selected.add(props.strand);
+    }
+
+    var action = actions.AssignDNAComplementFromBoundStrands(strands_selected);
+    app.dispatch(action);
+  }
 
   add_modification(Domain domain, Address address, bool is_5p) =>
-      app
-          .disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
+      app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -197,8 +204,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     return paths.isEmpty
         ? null
         : (Dom.g()
-      ..key = 'insertions'
-      ..className = 'insertions')(paths);
+          ..key = 'insertions'
+          ..className = 'insertions')(paths);
   }
 
   /// Assuming props contain helices mapping idx to Helix, groups mapping group names to groups,
@@ -230,8 +237,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     return paths.isEmpty
         ? null
         : (Dom.g()
-      ..key = 'deletions'
-      ..className = 'deletions')(paths);
+          ..key = 'deletions'
+          ..className = 'deletions')(paths);
   }
 
   remove_dna() {
@@ -241,7 +248,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   set_color() {
     app.disable_keyboard_shortcuts_while(
-            () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
+        () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
   }
 
   reflect(bool horizontal, bool reverse_polarity) {
@@ -270,11 +277,22 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) =>
-      [
+  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
         ContextMenuItem(
           title: 'assign DNA',
+          tooltip: '''\
+Assign a specific DNA sequence to this strand (and optionally assign complementary
+sequence to strands bound to it).
+''',
           on_click: assign_dna,
+        ),
+        ContextMenuItem(
+          title: 'assign DNA complement from bound strands',
+          tooltip: '''\
+If other strands bound to this strand (or the selected strands) have DNA already 
+assigned, assign the complementary DNA sequence to this strand.
+''',
+          on_click: assign_dna_complement_from_bound_strands,
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
@@ -354,7 +372,6 @@ after:
         ),
       ];
 
-
   Future<void> ask_for_add_modification(
       [Domain domain = null, Address address = null, bool is_5p = null]) async {
     assert((is_5p == null && domain != null && address != null) ||
@@ -430,12 +447,12 @@ after:
     Modification mod;
     if (modification_type == "3'") {
       mod = Modification3Prime(
-        //id: id,
+          //id: id,
           display_text: display_text,
           idt_text: idt_text);
     } else if (modification_type == "5'") {
       mod = Modification5Prime(
-        //id: id,
+          //id: id,
           display_text: display_text,
           idt_text: idt_text);
     } else {
@@ -481,11 +498,10 @@ after:
 
     app.dispatch(action);
   }
-
 }
 
-actions.UndoableAction batch_if_multiple_selected(ActionCreator action_creator, Strand strand,
-    BuiltSet<Strand> selected_strands) {
+actions.UndoableAction batch_if_multiple_selected(
+    ActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
   actions.Action action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
     // set for single strand if nothing is selected, or exactly this strand is selected
@@ -514,17 +530,17 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
-        ('    name=${strand.name}\n' ?? '\n') +
-        "    length=${strand.dna_length()}\n" +
-        "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
-        "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
-        (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
-        (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
+    ('    name=${strand.name}\n' ?? '\n') +
+    "    length=${strand.dna_length()}\n" +
+    "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
+    "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
+    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
+    (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
-bool should_draw_domain(Domain ss, BuiltSet<int> side_selected_helix_idxs,
-    bool only_display_selected_helices) =>
+bool should_draw_domain(
+        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DNAAssignOptions {
@@ -552,8 +568,8 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
   return strand_dna_idx;
 }
 
-Future<void> ask_for_assign_dna_sequence(Strand strand, bool assign_complement_to_bound_strands_default,
-    bool warn_on_change_default) async {
+Future<void> ask_for_assign_dna_sequence(
+    Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
     DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
     DialogCheckbox(label: 'use predefined DNA sequence'),
@@ -630,6 +646,6 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
   String color_hex = (results[0] as DialogText).value;
 
   actions.Action action =
-  batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
+      batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
   app.dispatch(action);
 }
