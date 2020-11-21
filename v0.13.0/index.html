@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scadnano</title>
+
+    <link rel="stylesheet" href="bootstrap.min.css">
+
+    <link href="packages/codemirror/codemirror.css" rel="stylesheet">
+    <link href="packages/codemirror/addon/hint/show-hint.css" rel="stylesheet">
+    <link rel="stylesheet" href="scadnano-styles.css">
+    <link rel="icon" href="images/origami-icon-thin-seam.png">
+
+    <!--    <script src="external-libs/pablo.js"></script>-->
+
+    <!--    <script src="external-libs/panzoom.min.js"></script>-->
+    <!--    <script src="external-libs/panzoom.js"></script>-->
+
+    <!--    <script src="external-libs/brython.js"></script>-->
+    <!--    <script src="external-libs/brython_stdlib.js"></script>-->
+
+    <!--    <script src="external-libs/pyodide/pyodide.js"></script>-->
+
+    <!--    the documentation doesn't say it, but we need to include this reference to split.min.js -->
+    <!--    <script src="packages/split/split.min.js"></script>-->
+
+
+    <script src="external-libs/simpledrag.js"></script>
+    <script src="splitpane.js"></script>
+
+<!--    polyfill to make Edge work (needs "EventSource")-->
+<!--    <script src="external-libs/eventsource.js"></script>-->
+
+
+    <script src="packages/codemirror/codemirror.js"></script>
+    <script src="packages/codemirror/mode/python/python.js"></script>
+
+
+    <script src="packages/react/react.js"></script>
+    <script src="packages/react/react_dom.js"></script>
+    <!--<script src="packages/react/react_with_react_dom_prod.js"></script>-->
+
+
+    <!--    <script src="external-libs/react-dnd/ReactDnD.js"></script>-->
+    <!--    <script src="external-libs/react-dnd/ReactDnDHTML5Backend.js"></script>-->
+    <!--    <script src="external-libs/ReactDnD.min.js"></script>-->
+    <!--    <script src="external-libs/ReactDnDHTML5Backend.min.js"></script>-->
+
+
+    <script src="external-libs/svg-pan-zoom.js"></script>
+    <!--    <script src="external-libs/svg-pan-zoom.min.js"></script>-->
+    <script src="external-libs/hammer.min.js"></script>
+
+
+    <!--    <script src="external-libs/react-svg-pan-zoom/prop-types.js"></script>-->
+    <!--    <script src="external-libs/react-svg-pan-zoom/react-svg-pan-zoom.min.js"></script>-->
+
+    <!--    needed for react-svg-pan-zoom since it expects a fixed-size SVG; this package queries the parent container-->
+    <!--    <script src="external-libs/autosizer/index.js" type="module"></script>-->
+
+
+    <!--    <script type="module" src="external-libs/npm/node_modules/react-virtualized-auto-sizer/dist/index.esm.js"></script>-->
+
+    <!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/prop-types/prop-types.min.js"></script>-->
+    <!--    <script src="external-libs/npm/node_modules/react-svg-pan-zoom/build-umd/react-svg-pan-zoom.min.js"></script>-->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156000688-1"></script>
+    <script>
+        var host = window.location.hostname;
+        if (host == 'localhost') { // disable GA:
+            console.log('host = ' + host);
+            console.log('disabling Google analytics because host is local');
+            window['ga-disable-UA-156000688-1'] = true; // enter your tracking ID
+        }
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-156000688-1');
+    </script>
+
+</head>
+
+<body>
+
+<!--<button id="compile">Compile</button>-->
+
+<div id="top-container"></div>
+
+<!--<script src="react_dnd_imports.js"></script>-->
+
+<!--<script type="text/javascript">-->
+<!--    const REACT_VERSION = React.version;-->
+
+<!--    var ReactDnD_DndContext = window.ReactDnD.DndContext;-->
+<!--    var ReactDnD_createDndContext = window.ReactDnD.createDndContext;-->
+<!--    var ReactDnD_DndProvider = window.ReactDnD.DndProvider;-->
+<!--    var ReactDnD_DragPreviewImage = window.ReactDnD.DragPreviewImage;-->
+<!--    var ReactDnD_useDrag = window.ReactDnD.useDrag;-->
+<!--    var ReactDnD_useDrop = window.ReactDnD.useDrop;-->
+<!--    var ReactDnD_useDragLayer = window.ReactDnD.useDragLayer;-->
+<!--    var ReactDnD_DragSource = window.ReactDnD.DragSource;-->
+<!--    var ReactDnD_DropTarget = window.ReactDnD.DropTarget;-->
+<!--    var ReactDnd_DragLayer = window.ReactDnD.DragLayer;-->
+<!--    var ReactDnDHTML5Backend_NativeTypes = window.ReactDnDHTML5Backend.NativeTypes;-->
+<!--    var ReactDnDHTML5Backend_getEmptyImage = window.ReactDnDHTML5Backend.getEmptyImage;-->
+<!--    var ReactDnDHTML5Backend_default = window.ReactDnDHTML5Backend.default;-->
+
+
+<!--</script>-->
+
+<script type="text/javascript">
+
+
+    function setup_splits(show_editor) {
+        setup_split_drag('side-pane', 'main-pane', 'side-main-separator');
+        if (show_editor) {
+            setup_split_drag('design-pane', 'editor-pane', 'design-editor-separator');
+        } else {
+            // need to remove style elements that specify width
+            clear_split_drag('design-pane');
+        }
+    }
+
+    // function react_uncontrolled_svg_pan_zoom() {
+    //     return window.ReactSVGPanZoom.UncontrolledReactSVGPanZoom;
+    // }
+    //
+    // function autosizer() {
+    //     return window.AutoSizer;
+    // }
+
+    var allow_pan = true;
+    var allow_zoom = true;
+
+    function set_allow_pan(allow) {
+        var prev_allow_pan = allow_pan;
+        allow_pan = allow;
+        // console.log('in Javascript set_allow_pan; before allow_pan = '
+        //     + prev_allow_pan + '; after allow_pan = ' + allow);
+    }
+
+    function set_allow_zoom(allow) {
+        allow_zoom = allow;
+    }
+
+    //TODO: add ability to pan with keyboard; possibly change to one of these libraries:
+    //  https://github.com/anvaka/panzoom
+    //  https://github.com/timmywil/panzoom
+
+    // This is needed to prevent panning user is drawing for another purpose, such as dragging a
+    // selection box to moving a HelixGroup.
+    function before_pan(oldPan, newPan) {
+        var allow = true;
+        if (document.body.classList.contains('dnd-drag-occurring')) {
+            allow = false;
+        }
+        if (!allow_pan) {
+            allow = false;
+        }
+        return allow;
+    }
+
+    var main_view_svg_pan_zoom;
+    var side_view_svg_pan_zoom;
+
+    function setup_svg_panzoom(svg_cache_callback, dispatch_zoom_threshold_callback, zoom_threshold) {
+        var eventsHandler;
+
+        eventsHandler = {
+            haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel']
+            , init: function (options) {
+                var instance = options.instance
+                    , initialScale = 1
+                    , pannedX = 0
+                    , pannedY = 0;
+
+                //TODO: bug in code below sets wrong zoom fixed point when using pinch zoom
+                //  (assumes container is in upper-left corner of screen)
+
+                // Init Hammer
+                // Listen only for pointer and touch events
+                this.hammer = Hammer(options.svgElement, {
+                    inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+                });
+
+                // Enable pinch
+                this.hammer.get('pinch').set({enable: true});
+
+                // Handle double tap
+                this.hammer.on('doubletap', function (_) {
+                    instance.zoomIn();
+                });
+
+                // Handle pan
+                this.hammer.on('panstart panmove', function (ev) {
+                    // On pan start reset panned variables
+                    if (ev.type === 'panstart') {
+                        pannedX = 0;
+                        pannedY = 0;
+                    }
+
+                    // Pan only the difference
+                    instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY});
+                    pannedX = ev.deltaX;
+                    pannedY = ev.deltaY;
+                });
+
+                // Handle pinch
+                this.hammer.on('pinchstart pinchmove', function (ev) {
+                    // On pinch start remember initial zoom
+                    if (ev.type === 'pinchstart') {
+                        initialScale = instance.getZoom();
+                        instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y});
+                    }
+
+                    instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y});
+                });
+
+                // Prevent moving the page on some devices when panning over SVG
+                options.svgElement.addEventListener('touchmove', function (e) {
+                    e.preventDefault();
+                });
+            }
+
+            , destroy: function () {
+                this.hammer.destroy()
+            }
+        };
+
+        var ctrl = false;
+        var meta = false;
+        var shift = false;
+        var alt = false;
+
+        function set_ctrl_shift_alt(event) {
+            ctrl = event.ctrlKey;
+            meta = event.metaKey;
+            shift = event.shiftKey;
+            alt = event.altKey;
+            if (event.altKey) {
+                event.preventDefault(); // otherwise shifts focus away from main viewport to browser menu
+            }
+        }
+
+        window.onkeydown = set_ctrl_shift_alt;
+        window.onkeyup = set_ctrl_shift_alt;
+        window.onmousedown = set_ctrl_shift_alt;
+        window.onmouseup = set_ctrl_shift_alt;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // browser detection
+        // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+        // Opera 8.0+
+        var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+        // Firefox 1.0+
+        var isFirefox = typeof InstallTrigger !== 'undefined';
+        // Safari 3.0+ "[object HTMLElementConstructor]"
+        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        // Internet Explorer 6-11
+        var isIE = /*@cc_on!@*/false || !!document.documentMode;
+        // Edge 20+
+        var isEdge = !isIE && !!window.StyleMedia;
+        // Chrome 1 - 71
+        var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        // Edge (based on chromium) detection
+        var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
+        // Blink engine detection
+        var isBlink = (isChrome || isOpera) && !!window.CSS;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        var zoom_speed = 0.3;
+        if (isEdge) {
+            zoom_speed = 0.06;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        // svg-png-caching
+
+        function on_zoom(newZoom) {
+            if (newZoom < 1 && svg_cache_callback) {
+                svg_cache_callback();
+            }
+        }
+
+        // This is needed to prevent zooming unless Alt key is pressed
+        function before_zoom(oldZoom, newZoom) {
+            var allow = true;
+            if (document.body.classList.contains('dnd-drag-occurring')) {
+                allow = false;
+            }
+            if (!allow_zoom) {
+                allow = false;
+            }
+
+            // Detects if zoom threshold will be crossed.
+            if (allow) {
+                if (oldZoom >= zoom_threshold && newZoom < zoom_threshold) {
+                    dispatch_zoom_threshold_callback(false);
+                } else if (oldZoom < zoom_threshold && newZoom >= zoom_threshold) {
+                    dispatch_zoom_threshold_callback(true);
+                }
+            }
+            return allow;
+        }
+        // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
+        side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
+            viewportSelector: "#side-view-svg-viewport",
+            zoomScaleSensitivity: zoom_speed,
+            minZoom: 0.05,
+            maxZoom: 20,
+            beforePan: before_pan,
+            beforeZoom: before_zoom,
+            dblClickZoomEnabled: false,
+            customEventsHandler: eventsHandler,
+            fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
+        });
+
+        main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
+            viewportSelector: "#main-view-svg-viewport",
+            zoomScaleSensitivity: zoom_speed,
+            minZoom: 0.05,
+            maxZoom: 20,
+            beforePan: before_pan,
+            beforeZoom: before_zoom,
+            onZoom: on_zoom,
+            dblClickZoomEnabled: false,
+            customEventsHandler: eventsHandler,
+            fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
+        });
+
+        // main_view_svg_pan_zoom.onpointerup = function() {
+        var main_view_svg = document.getElementById('main-view-svg');
+        main_view_svg.onpointerup = function(ev) {
+            dart_main_view_pointer_up(ev);
+        };
+
+        // attempting to remove the dummy node here causes a race condition with the Dart code that clears out
+        // DOM children before rendering, so we just leave it in.
+        // removeDummy("dummy-elt-side-view");
+        // removeDummy("dummy-elt-main-view");
+
+        /*
+        // panzoom library: https://github.com/anvaka/panzoom
+        var side_view_elt = document.getElementById('side-view-svg-viewport')
+        var side_view_svg_pan_zoom = panzoom(side_view_elt, {
+            zoomSpeed: 0.065,
+            pinchSpeed: 2,
+            minZoom: 0.05,
+            maxZoom: 20,
+            zoomDoubleClickSpeed: 1.2,
+        });
+        side_view_svg_pan_zoom.moveTo(0,0);
+
+        var main_view_elt = document.getElementById('main-view-svg-viewport')
+        var main_view_svg_pan_zoom = panzoom(main_view_elt, {
+            zoomSpeed: 0.065,
+            pinchSpeed: 2,
+            minZoom: 0.05,
+            maxZoom: 20,
+            zoomDoubleClickSpeed: 1.2,
+        });
+        main_view_svg_pan_zoom.moveTo(0,0);
+        */
+
+    }
+
+    //XXX: doesn't work like I had hoped; not using it for now
+    function fit_and_center() {
+        if (typeof side_view_svg_pan_zoom !== 'undefined') {
+            side_view_svg_pan_zoom.updateBBox(); // not sure why, but this is needed: https://github.com/ariutta/svg-pan-zoom
+            side_view_svg_pan_zoom.fit();
+            side_view_svg_pan_zoom.center();
+        }
+        if (typeof main_view_svg_pan_zoom !== 'undefined') {
+            main_view_svg_pan_zoom.updateBBox(); // not sure why, but this is needed: https://github.com/ariutta/svg-pan-zoom
+            main_view_svg_pan_zoom.fit();
+            main_view_svg_pan_zoom.center();
+        }
+    }
+
+    function set_pan_side(pan) {
+        if (typeof side_view_svg_pan_zoom !== 'undefined') {
+            side_view_svg_pan_zoom.pan(pan);
+        }
+    }
+
+    function set_pan_main(pan) {
+        if (typeof main_view_svg_pan_zoom !== 'undefined') {
+            main_view_svg_pan_zoom.pan(pan);
+        }
+    }
+
+    function set_zoom_side(zoom) {
+        if (typeof side_view_svg_pan_zoom !== 'undefined') {
+            side_view_svg_pan_zoom.zoom(zoom);
+        }
+    }
+
+    function set_zoom_main(zoom) {
+        if (typeof main_view_svg_pan_zoom !== 'undefined') {
+            main_view_svg_pan_zoom.zoom(zoom);
+        }
+    }
+
+
+    function current_pan_main() {
+        //XXX: dartdevc can handle passing the object pan directly, but the release version requires
+        // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
+        // of print statement debugging on the server to identify this.
+        var pan;
+        if ('undefined' !== typeof main_view_svg_pan_zoom) {
+            pan = main_view_svg_pan_zoom.getPan();
+        } else {
+            pan = {x: 0, y: 0};
+            // console.log('using default pan for main');
+        }
+        return [pan.x, pan.y];
+    }
+
+    function current_pan_side() {
+        //XXX: dartdevc can handle passing the object pan directly, but the release version requires
+        // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
+        // of print statement debugging on the server to identify this.
+        var pan;
+        if ('undefined' !== typeof side_view_svg_pan_zoom) {
+            pan = side_view_svg_pan_zoom.getPan();
+        } else {
+            pan = {x: 0, y: 0};
+            // console.log('using default pan for side');
+        }
+        return [pan.x, pan.y];
+    }
+
+    function current_zoom_main() {
+        if ('undefined' !== typeof main_view_svg_pan_zoom) {
+            return main_view_svg_pan_zoom.getZoom();
+        } else {
+            // console.log('using default zoom for main');
+            return 1;
+        }
+    }
+
+    function current_zoom_side() {
+        if ('undefined' !== typeof side_view_svg_pan_zoom) {
+            return side_view_svg_pan_zoom.getZoom();
+        } else {
+            // console.log('using default zoom for side');
+            return 1;
+        }
+    }
+
+    function current_pan_new() {
+        //XXX: dartdevc can handle passing the object pan directly, but the release version requires
+        // that we pull out the two pieces of data manually and put them in a list. Not sure why but it took a lot
+        // of print statement debugging on the server to identify this.
+        // var pan = main_view_svg_pan_zoom.getPan();
+        // return [pan.x,pan.y];
+        return [0, 0];
+    }
+
+    function current_zoom_new() {
+        // return main_view_svg_pan_zoom.getZoom();
+        return 1;
+    }
+
+</script>
+
+<!--<script type="text/python" src="compile_script.py"></script>-->
+
+<script src="external-libs/react-bootstrap.js"></script>
+
+<script>
+// Add components to global namespace.
+// React interop cannot access nested components (components that are fields of another React component)
+// Thus, any nested components needs to be added to the global namespace
+// by assigning it as a member to ReactBoostrap.
+// In general the line will look something like
+//
+// ```
+// ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
+// ```
+ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
+</script>
+
+<script src="external-libs/react-color.min.js"></script>
+
+<script src="main.dart.js"></script>
+
+</body>
+
+</html>
+
