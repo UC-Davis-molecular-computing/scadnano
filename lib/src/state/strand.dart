@@ -113,13 +113,16 @@ abstract class Strand
     for (var ss in strand.substrands) {
       if (ss is Loopout) {
         var loopout = ss.rebuild((l) => l
+          ..is_scaffold = is_scaffold
           ..strand_id = id
           ..prev_domain_idx = idx - 1
           ..next_domain_idx = idx + 1);
         substrands_new[idx] = loopout;
         updated = true;
       } else if (ss is Domain) {
-        var domain = ss.rebuild((l) => l..strand_id = id);
+        var domain = ss.rebuild((l) => l
+          ..strand_id = id
+          ..is_scaffold = is_scaffold);
         substrands_new[idx] = domain;
         updated = true;
       }
