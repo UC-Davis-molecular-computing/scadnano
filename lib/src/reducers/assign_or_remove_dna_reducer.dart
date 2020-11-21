@@ -6,6 +6,7 @@ import '../state/substrand.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/strand.dart';
+import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
 import '../constants.dart' as constants;
@@ -36,6 +37,26 @@ BuiltList<Strand> remove_dna_reducer(BuiltList<Strand> strands, actions.RemoveDN
   }
 
   return strands_builder.toBuiltList();
+}
+
+BuiltList<Strand> assign_dna_reducer_complement_from_bound_strands(
+    BuiltList<Strand> strands, AppState state, actions.AssignDNAComplementFromBoundStrands action) {
+  List<Strand> all_strands = strands.toList();
+  for (var strand_to_assign in action.strands) {
+    int strand_to_assign_idx = strands.indexOf(strand_to_assign);
+    bool strand_changed = false;
+    for (var strand_with_dna in state.design.strands_overlapping[strand_to_assign]) {
+      if (strand_with_dna.dna_sequence != null) {
+        String new_dna = compute_dna_complement_from(strand_to_assign, strand_with_dna, false);
+        strand_to_assign = strand_to_assign.set_dna_sequence(new_dna);
+        strand_changed = true;
+      }
+    }
+    if (strand_changed) {
+      all_strands[strand_to_assign_idx] = strand_to_assign;
+    }
+  }
+  return all_strands.build();
 }
 
 BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDNA action) {
@@ -77,8 +98,7 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
 }
 
 // Lexicographically compare (start,end) overlap coordinates of o1 and o2.
-int compare_overlap(
-    Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>, Domain> o2) {
+int compare_overlap(Tuple2<Tuple2<int, int>, Domain> o1, Tuple2<Tuple2<int, int>, Domain> o2) {
   int o1_start = o1.item1.item1;
   int o1_end = o1.item1.item2;
   int o2_start = o2.item1.item1;
@@ -90,8 +110,8 @@ int compare_overlap(
   }
 }
 
-/// Assuming a DNA sequence has been assigned to `other`, assign its Watson-Crick
-/// complement to the portions of this Strand that are bound to `other`.
+/// Assuming a DNA sequence has been assigned to `strand_from`, assign its Watson-Crick
+/// complement to the portions of `strand_to` that are bound to `other`.
 ///
 /// Generally this is not called directly; use :py:meth:`DNADesign.assign_dna` to assign
 /// a DNA sequence to a :any:`Strand`. The method :py:meth:`DNADesign.assign_dna` will calculate
@@ -128,8 +148,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
       int helix_idx = substrand_to.helix;
-      List<Domain> substrands_on_helix_from =
-          strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
+      List<Domain> substrands_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
       List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
       for (var substrand_from in substrands_on_helix_from) {
         if (substrand_to != substrand_from && substrand_to.overlaps(substrand_from)) {
