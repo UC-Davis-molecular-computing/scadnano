@@ -15,6 +15,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/modification.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';
@@ -308,7 +309,7 @@ bool lists_contain_same_elts<T extends Comparable>(Iterable<T> elts1, Iterable<T
 // assign SVG coordinates to helices
 
 Map<int, Helix> helices_assign_svg(
-    Geometry geometry, bool invert_yz, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
+    Geometry geometry, bool invert_xy, Map<int, Helix> helices, BuiltMap<String, HelixGroup> groups,
     {BuiltSet<int> selected_helix_idxs = null}) {
   if (selected_helix_idxs == null || selected_helix_idxs.isEmpty) {
     selected_helix_idxs = [for (var helix in helices.values) helix.idx].toBuiltSet();
@@ -343,7 +344,7 @@ Map<int, Helix> helices_assign_svg(
         if (helix.grid.is_none()) {
           var prev_pos = prev_helix.position_;
           var pos = helix.position_;
-          delta_y = pos.distance_zy(prev_pos) * geometry.nm_to_svg_pixels;
+          delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
         } else {
           var prev_grid_position = prev_helix.grid_position;
           var grid_position = helix.grid_position;
@@ -356,7 +357,7 @@ Map<int, Helix> helices_assign_svg(
       helix = helix.rebuild((b) => b
         ..geometry.replace(geometry)
         ..svg_position_ = Point<num>(x, y)
-        ..invert_yz = invert_yz);
+        ..invert_xy = invert_xy);
       prev_helix = helix;
 
       new_helices[helix.idx] = helix;
@@ -367,7 +368,7 @@ Map<int, Helix> helices_assign_svg(
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
-  num x = helix.position3d().x * geometry.nm_to_svg_pixels;
+  num x = helix.position3d().z * geometry.nm_to_svg_pixels;
   return x;
 }
 
@@ -587,6 +588,10 @@ Point<num> transform_mouse_coord_to_svg(Point<num> point, Point<num> pan, num zo
   return (point - pan) * (1.0 / zoom);
 }
 
+Point<num> transform_svg_to_mouse_coord_current_panzoom(Point<num> point, bool is_main) {
+  return transform_svg_to_mouse_coord(point, current_pan(is_main), current_zoom(is_main));
+}
+
 Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zoom) {
   // Don't know why but Firefox auto-corrects for the current SVG coordinates whereas Chrome does not
   if (browser.isFirefox || browser.isInternetExplorer) {
@@ -595,6 +600,8 @@ Point<num> transform_svg_to_mouse_coord(Point<num> point, Point<num> pan, num zo
     return point * zoom + pan;
   }
 }
+
+Rectangle<num> svg_rect_to_rectangle(Rect rect) => Rectangle<num>(rect.x, rect.y, rect.width, rect.height);
 
 transform_rect(
     Point<num> transform(Point<num> p, Point<num> pan, num zoom), Rect rect, Point<num> pan, num zoom) {
@@ -656,11 +663,11 @@ enum HexGridCoordinateSystem { odd_r, even_r, odd_q, even_q }
 /// and the center of circle at grid_position (0,0) is the origin.
 Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num z, y;
+  num x, y;
   if (coordinate_system == HexGridCoordinateSystem.odd_r) {
-    z = gp.h; // x offset from h
+    x = gp.h; // x offset from h
     if (gp.v % 2 == 1) {
-      z += cos(2 * pi / 6); // x offset from v
+      x += cos(2 * pi / 6); // x offset from v
     }
     y = sin(2 * pi / 6) * gp.v; // y offset from v
   } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
@@ -668,17 +675,17 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
     if (gp.h % 2 == 1) {
       y -= cos(2 * pi / 6);
     }
-    z = sin(2 * pi / 6) * gp.h;
+    x = sin(2 * pi / 6) * gp.h;
   } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
     y = gp.v;
     if (gp.h % 2 == 1) {
       y += cos(2 * pi / 6);
     }
-    z = sin(2 * pi / 6) * gp.h;
+    x = sin(2 * pi / 6) * gp.h;
   } else {
     throw UnsupportedError('coordinate system ${coordinate_system} not supported');
   }
-  return Point<num>(z, y);
+  return Point<num>(x, y);
 }
 
 // Uses cadnano coordinate system:
@@ -697,15 +704,15 @@ Point<num> hex_grid_position_to_position2d_diameter_1_circles(GridPosition gp,
 //
 // The first is used when the row is even and the second when the row is odd.
 Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition gp) {
-  num z, y;
+  num x, y;
   y = 1.5 * gp.v;
   if (gp.h % 2 == 0 && gp.v % 2 == 1) {
     y += 0.5;
   } else if (gp.h % 2 == 1 && gp.v % 2 == 0) {
     y += cos(2 * pi / 6);
   }
-  z = gp.h * sin(2 * pi / 6);
-  return Point<num>(z, y);
+  x = gp.h * sin(2 * pi / 6);
+  return Point<num>(x, y);
   // below inverts the rows, i.e., implements the convention
   //   "The first is used when the row is odd and the second when the row is even."
   // in the documentation above.
@@ -723,36 +730,34 @@ Point<num> honeycomb_grid_position_to_position2d_diameter_1_circles(GridPosition
 /// Translates SVG coordinates in side view to Grid coordinates using the specified grid.
 GridPosition side_view_svg_to_grid(Grid grid, Point<num> svg_coord, bool invert_y, Geometry geometry,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
-  num z = svg_coord.x / geometry.distance_between_helices_svg;
+  num x = svg_coord.x / geometry.distance_between_helices_svg;
   num y = svg_coord.y / geometry.distance_between_helices_svg;
-  GridPosition gp = position_2d_to_grid_position_diameter_1_circles(grid, z, y, coordinate_system);
+  GridPosition gp = position_2d_to_grid_position_diameter_1_circles(grid, x, y, coordinate_system);
   if (invert_y) {
     gp = GridPosition(-gp.h, -gp.v);
   }
   return gp;
 }
 
-GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, num y,
+GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num x, num y,
     [HexGridCoordinateSystem coordinate_system = HexGridCoordinateSystem.odd_q]) {
   int h, v;
   // below here computes inverse of hex_grid_position_to_position2d_diameter_1_circles
   if (grid == Grid.none) {
     throw ArgumentError('cannot output grid coordinates for grid = Grid.none');
   } else if (grid == Grid.square) {
-    h = z.round();
+    h = x.round();
     v = y.round();
   } else if (grid == Grid.honeycomb) {
-    h = (z / sin(2 * pi / 6)).round();
+    h = (x / sin(2 * pi / 6)).round();
     if (h % 2 == 0) {
       int remainder_by_3 = y.floor() % 3;
       if (remainder_by_3 == 2) {
-        //        y += 0.5;
         y -= 0.5;
       }
     } else if (h % 2 == 1) {
       int remainder_by_3 = (y - cos(2 * pi / 6)).floor() % 3;
       if (remainder_by_3 == 1) {
-        //        y += cos(2 * pi / 6);
         y -= cos(2 * pi / 6);
       }
     }
@@ -761,17 +766,17 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, n
     if (coordinate_system == HexGridCoordinateSystem.odd_r) {
       v = (y / sin(2 * pi / 6)).round();
       if (v % 2 == 1) {
-        z -= cos(2 * pi / 6);
+        x -= cos(2 * pi / 6);
       }
-      h = z.round();
+      h = x.round();
     } else if (coordinate_system == HexGridCoordinateSystem.even_q) {
-      h = (z / sin(2 * pi / 6)).round();
+      h = (x / sin(2 * pi / 6)).round();
       if (h % 2 == 1) {
         y += cos(2 * pi / 6);
       }
       v = y.round();
     } else if (coordinate_system == HexGridCoordinateSystem.odd_q) {
-      h = (z / sin(2 * pi / 6)).round();
+      h = (x / sin(2 * pi / 6)).round();
       if (h % 2 == 1) {
         y -= cos(2 * pi / 6);
       }
@@ -784,12 +789,14 @@ GridPosition position_2d_to_grid_position_diameter_1_circles(Grid grid, num z, n
   return gp;
 }
 
-GridPosition position3d_to_grid(Position3D position, Grid grid, Geometry geometry) {
-  var gp = position_2d_to_grid_position_diameter_1_circles(grid, position.z, position.y);
+GridPosition position3d_to_grid_position(Position3D position, Grid grid, Geometry geometry) {
+  var position_normalized_diameter_1 = position * (1.0 / geometry.distance_between_helices_nm);
+  var gp = position_2d_to_grid_position_diameter_1_circles(
+      grid, position_normalized_diameter_1.z, position_normalized_diameter_1.y);
   return gp;
 }
 
-Position3D grid_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
+Position3D grid_position_to_position3d(GridPosition grid_position, Grid grid, Geometry geometry) {
   num y, z;
   if (grid == Grid.square) {
     z = grid_position.h * geometry.distance_between_helices_nm;
@@ -810,14 +817,14 @@ Position3D grid_to_position3d(GridPosition grid_position, Grid grid, Geometry ge
 }
 
 Point<num> position3d_to_side_view_svg(Position3D position, bool invert_y, Geometry geometry) => Point<num>(
-      position.z * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      position.x * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       position.y * geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
     );
 
 Position3D svg_side_view_to_position3d(Point<num> svg_pos, bool invert_y, Geometry geometry) => Position3D(
-      z: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
+      x: svg_pos.x / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
       y: svg_pos.y / geometry.nm_to_svg_pixels * (invert_y ? -1 : 1),
-      x: 0,
+      z: 0,
     );
 
 /// This goes into "window", so in JS you can access window.editor_content, and in Brython you can do this:
@@ -1077,6 +1084,14 @@ String id_insertion(Domain domain, int offset) =>
 
 String id_deletion(Domain domain, int offset) =>
     'deletion-H${domain.helix}-O${offset}-${domain.forward ? 'forward' : 'reverse'}';
+
+String id_modification_5p(Strand strand, Modification5Prime mod) => 'modification-5p-${strand.id}';
+
+String id_modification_3p(Strand strand, Modification3Prime mod) => 'modification-3p-${strand.id}';
+
+String id_modification_int(Strand strand, ModificationInternal mod, Address address) =>
+    'modification-int-H${address.helix_idx}-${address.offset}-'
+    '${address.forward ? "forward" : "reverse"}-${strand.id}';
 
 Map<Type, List> split_list_selectable_by_type(List<Selectable> selected) {
   Map<Type, List> selected_all = {Crossover: [], Loopout: [], DNAEnd: [], Strand: []};

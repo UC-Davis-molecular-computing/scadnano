@@ -146,7 +146,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return group;
   }
 
+  String group_name_of_helix_idx(int helix_idx) {
+    Helix helix = helices[helix_idx];
+    return helix.group;
+  }
+
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
+
+  String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -249,7 +256,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Strand> get strands_by_id {
     var builder = MapBuilder<String, Strand>();
     for (var strand in strands) {
-      builder[strand.id()] = strand;
+      builder[strand.id] = strand;
     }
     return builder.build();
   }
@@ -259,7 +266,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
       for (var domain in strand.domains()) {
-        builder[domain.id()] = domain;
+        builder[domain.id] = domain;
       }
     }
     return builder.build();
@@ -270,7 +277,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Loopout>();
     for (var strand in strands) {
       for (var loopout in strand.loopouts()) {
-        builder[loopout.id()] = loopout;
+        builder[loopout.id] = loopout;
       }
     }
     return builder.build();
@@ -281,7 +288,44 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, Crossover>();
     for (var strand in strands) {
       for (var crossover in strand.crossovers) {
-        builder[crossover.id()] = crossover;
+        builder[crossover.id] = crossover;
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableDeletion> get deletions_by_id {
+    var builder = MapBuilder<String, SelectableDeletion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var deletion in domain.selectable_deletions) {
+          builder[deletion.id] = deletion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableInsertion> get insertions_by_id {
+    var builder = MapBuilder<String, SelectableInsertion>();
+    for (var strand in strands) {
+      for (var domain in strand.domains()) {
+        for (var insertion in domain.selectable_insertions) {
+          builder[insertion.id] = insertion;
+        }
+      }
+    }
+    return builder.build();
+  }
+
+  @memoized
+  BuiltMap<String, SelectableModification> get modifications_by_id {
+    var builder = MapBuilder<String, SelectableModification>();
+    for (var strand in strands) {
+      for (var mod in strand.selectable_modifications) {
+        builder[mod.id] = mod;
       }
     }
     return builder.build();
@@ -292,8 +336,8 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       for (var domain in strand.domains()) {
-        builder[domain.dnaend_start.id()] = domain.dnaend_start;
-        builder[domain.dnaend_end.id()] = domain.dnaend_end;
+        builder[domain.dnaend_start.id] = domain.dnaend_start;
+        builder[domain.dnaend_end.id] = domain.dnaend_end;
       }
     }
     return builder.build();
@@ -304,7 +348,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       var end = strand.dnaend_5p;
-      builder[end.id()] = end;
+      builder[end.id] = end;
     }
     return builder.build();
   }
@@ -314,7 +358,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
       var end = strand.dnaend_3p;
-      builder[end.id()] = end;
+      builder[end.id] = end;
     }
     return builder.build();
   }
@@ -326,7 +370,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var domain in strand.domains()) {
         var end = domain.dnaend_5p;
         if (!domain.is_first) {
-          builder[end.id()] = end;
+          builder[end.id] = end;
         }
       }
     }
@@ -340,7 +384,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var domain in strand.domains()) {
         var end = domain.dnaend_3p;
         if (!domain.is_last) {
-          builder[end.id()] = end;
+          builder[end.id] = end;
         }
       }
     }
@@ -350,7 +394,16 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltMap<String, Selectable> get selectable_by_id {
     Map<String, Selectable> map = {};
-    for (var map_small in [strands_by_id, loopouts_by_id, crossovers_by_id, ends_by_id, domains_by_id]) {
+    for (var map_small in [
+      strands_by_id,
+      loopouts_by_id,
+      crossovers_by_id,
+      ends_by_id,
+      domains_by_id,
+      deletions_by_id,
+      insertions_by_id,
+      modifications_by_id,
+    ]) {
       for (var key in map_small.keys) {
         var obj = map_small[key];
         map[key] = obj;
@@ -724,7 +777,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_yz = false]) {
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
     if (json_map == null) return null;
 
     _check_mutually_exclusive_fields(json_map);
@@ -732,6 +785,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var design_builder = DesignBuilder();
 
     design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
+
+    // prior to version 0.13.0, x and z had the opposite role
+    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
 
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
@@ -756,7 +812,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       if (helix_builder.idx == null) {
         helix_builder.idx = idx;
       }
-      helix_builder.invert_yz = invert_yz;
+      helix_builder.invert_xy = invert_xy;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
@@ -814,6 +870,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
 
+    // Swap x and z coordinates if needed
+    if (position_x_z_should_swap) {
+      for (var helix_builder in helix_builders_list) {
+        if (grid_is_none && !using_groups || using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
+          // prior to version 0.13.0, x and z had the opposite role
+          num swap = helix_builder.position_.x;
+          helix_builder.position_.x = helix_builder.position_.z;
+          helix_builder.position_.z = swap;
+        }
+      }
+      for (var group_builder in group_builders_map.values) {
+        num swap = group_builder.position.x;
+        group_builder.position.x = group_builder.position.z;
+        group_builder.position.z = swap;
+      }
+    }
+
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
@@ -825,7 +898,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, Helix> helices = {
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
     };
-    helices = util.helices_assign_svg(geometry, invert_yz, helices, groups_map.build());
+    helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
     design_builder.helices.replace(helices);
 
     // modifications in whole design
@@ -955,33 +1028,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   _check_loopouts_not_consecutive_or_singletons_or_zero_length() {
     for (var strand in strands) {
-      Design._check_loopout_not_singleton(strand);
-      Design._check_two_consecutive_loopouts(strand);
-      Design._check_loopouts_length(strand);
-    }
-  }
-
-  static _check_loopout_not_singleton(Strand strand) {
-    if (strand.substrands.length == 1 && strand.first_domain().is_loopout()) {
-      throw StrandError(strand, 'strand cannot have a single Loopout as its only domain');
-    }
-  }
-
-  static _check_two_consecutive_loopouts(Strand strand) {
-    for (int i = 0; i < strand.substrands.length - 1; i++) {
-      var domain1 = strand.substrands[i];
-      var domain2 = strand.substrands[i + 1];
-      if (domain1.is_loopout() && domain2.is_loopout()) {
-        throw StrandError(strand, 'cannot have two consecutive Loopouts in a strand');
-      }
-    }
-  }
-
-  static _check_loopouts_length(Strand strand) {
-    for (var loopout in strand.loopouts()) {
-      if (loopout.loopout_length <= 0) {
-        throw StrandError(strand, 'loopout length must be positive but is ${loopout.loopout_length}');
-      }
+      strand.check_loopout_not_singleton();
+      strand.check_two_consecutive_loopouts();
+      strand.check_loopouts_length();
     }
   }
 
@@ -1265,6 +1314,15 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         if (substrand.contains_offset(offset)) substrand
     });
     return substrands_at_offset.build();
+  }
+
+  /// Return [Domain]s at [offset], excluding the start and offset
+  BuiltSet<Domain> domains_on_helix_at_offset_internal(int helix_idx, int offset) {
+    var domains_at_offset = SetBuilder<Domain>({
+      for (var domain in this.helix_idx_to_domains[helix_idx])
+        if (domain.contains_offset(offset) && offset != domain.start && offset != domain.end - 1) domain
+    });
+    return domains_at_offset.build();
   }
 
   /// Return [Domain] at [address], INCLUSIVE, or null if there is none.
@@ -1605,9 +1663,9 @@ set_helices_min_max_offsets(Map<int, HelixBuilder> helix_builders, Iterable<Stra
         min_offset = 0;
       }
       helix_builder.min_offset = min_offset;
-      if (helix_builder.major_tick_start == null) {
-        helix_builder.major_tick_start = min_offset;
-      }
+    }
+    if (helix_builder.major_tick_start == null) {
+      helix_builder.major_tick_start = helix_builder.min_offset;
     }
   }
 }

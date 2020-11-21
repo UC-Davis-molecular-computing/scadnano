@@ -11,6 +11,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:tuple/tuple.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
@@ -235,15 +236,19 @@ abstract class LocalStorageDesignChoiceSet
 
 abstract class ClearHelixSelectionWhenLoadingNewDesignSet
     with BuiltJsonSerializable
-    implements Action, Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
+    implements
+        Action,
+        Built<ClearHelixSelectionWhenLoadingNewDesignSet, ClearHelixSelectionWhenLoadingNewDesignSetBuilder> {
   bool get clear;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) = _$ClearHelixSelectionWhenLoadingNewDesignSet._;
+  factory ClearHelixSelectionWhenLoadingNewDesignSet({bool clear}) =
+      _$ClearHelixSelectionWhenLoadingNewDesignSet._;
 
   ClearHelixSelectionWhenLoadingNewDesignSet._();
 
-  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer => _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
+  static Serializer<ClearHelixSelectionWhenLoadingNewDesignSet> get serializer =>
+      _$clearHelixSelectionWhenLoadingNewDesignSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,8 +373,7 @@ abstract class ShowDomainNamesSet
   factory ShowDomainNamesSet(bool show) => ShowDomainNamesSet.from((b) => b..show = show);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) =
-      _$ShowDomainNamesSet;
+  factory ShowDomainNamesSet.from([void Function(ShowDomainNamesSetBuilder) updates]) = _$ShowDomainNamesSet;
 
   ShowDomainNamesSet._();
 
@@ -494,10 +498,12 @@ abstract class ShowDomainNameMismatchesSet
     implements Action, Built<ShowDomainNameMismatchesSet, ShowDomainNameMismatchesSetBuilder> {
   bool get show_domain_name_mismatches;
 
-  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) => ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
+  factory ShowDomainNameMismatchesSet(bool show_domain_name_mismatches) =>
+      ShowDomainNameMismatchesSet.from((b) => b..show_domain_name_mismatches = show_domain_name_mismatches);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) = _$ShowDomainNameMismatchesSet;
+  factory ShowDomainNameMismatchesSet.from([void Function(ShowDomainNameMismatchesSetBuilder) updates]) =
+      _$ShowDomainNameMismatchesSet;
 
   ShowDomainNameMismatchesSet._();
 
@@ -620,17 +626,17 @@ abstract class SetOnlyDisplaySelectedHelices
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // invert y-axis
 
-abstract class InvertYZSet
+abstract class InvertXYSet
     with BuiltJsonSerializable
-    implements Action, SvgPngCacheInvalidatingAction, Built<InvertYZSet, InvertYZSetBuilder> {
-  bool get invert_yz;
+    implements Action, SvgPngCacheInvalidatingAction, Built<InvertXYSet, InvertXYSetBuilder> {
+  bool get invert_xy;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InvertYZSet({bool invert_yz}) = _$InvertYZSet._;
+  factory InvertXYSet({bool invert_xy}) = _$InvertXYSet._;
 
-  InvertYZSet._();
+  InvertXYSet._();
 
-  static Serializer<InvertYZSet> get serializer => _$invertYZSetSerializer;
+  static Serializer<InvertXYSet> get serializer => _$invertXYSetSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -807,7 +813,7 @@ abstract class ErrorMessageSet
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Selection box (side view)
+// Selection box
 
 abstract class SelectionBoxCreate
     with BuiltJsonSerializable
@@ -864,6 +870,79 @@ abstract class SelectionBoxRemove
   SelectionBoxRemove._();
 
   static Serializer<SelectionBoxRemove> get serializer => _$selectionBoxRemoveSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Selection rope (polygon that user can create by holding Ctrl or Shift key in rope select mode
+//                 while clicking several points to draw a polygon)
+
+// This doesn't actually create any points yet, it just sets up listening.
+// When the first point is clicked, we can start populating,
+// and also know whether it's the main or side view.
+abstract class SelectionRopeCreate
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeCreate, SelectionRopeCreateBuilder> {
+  bool get toggle;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeCreate({bool toggle}) = _$SelectionRopeCreate._;
+
+  SelectionRopeCreate._();
+
+  static Serializer<SelectionRopeCreate> get serializer => _$selectionRopeCreateSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeMouseMove
+    with BuiltJsonSerializable
+    implements FastAction, Built<SelectionRopeMouseMove, SelectionRopeMouseMoveBuilder> {
+  Point<num> get point;
+
+  bool get is_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeMouseMove({Point<num> point, bool is_main_view}) = _$SelectionRopeMouseMove._;
+
+  SelectionRopeMouseMove._();
+
+  static Serializer<SelectionRopeMouseMove> get serializer => _$selectionRopeMouseMoveSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeAddPoint
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeAddPoint, SelectionRopeAddPointBuilder> {
+  Point<num> get point;
+
+  bool get is_main_view;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeAddPoint({Point<num> point, bool is_main_view}) = _$SelectionRopeAddPoint._;
+
+  SelectionRopeAddPoint._();
+
+  static Serializer<SelectionRopeAddPoint> get serializer => _$selectionRopeAddPointSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class SelectionRopeRemove
+    with BuiltJsonSerializable
+    implements Action, Built<SelectionRopeRemove, SelectionRopeRemoveBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SelectionRopeRemove() = _$SelectionRopeRemove._;
+
+  SelectionRopeRemove._();
+
+  static Serializer<SelectionRopeRemove> get serializer => _$selectionRopeRemoveSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -978,22 +1057,26 @@ abstract class SelectionsClear
   static Serializer<SelectionsClear> get serializer => _$selectionsClearSerializer;
 }
 
-// dispatched in response to Selection box being done drawning (i.e., mouse button goes up),
+// dispatched in response to Selection box being done drawing (i.e., mouse button goes up),
 // but needs to be intercepted by middleware, which queries the DOM to see what Selectable
 // SVG objects intersect the box, and then constructs a SelectOrToggleAll action with those objects
-abstract class SelectionsAdjust
+abstract class SelectionsAdjustMainView
     with BuiltJsonSerializable
-    implements Action, Built<SelectionsAdjust, SelectionsAdjustBuilder> {
+    implements Action, Built<SelectionsAdjustMainView, SelectionsAdjustMainViewBuilder> {
   bool get toggle;
 
+  // if true, use selection box to calculate selected items, otherwise use selection rope
+  bool get box;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory SelectionsAdjust(bool toggle) => SelectionsAdjust.from((b) => b..toggle = toggle);
+  factory SelectionsAdjustMainView({bool toggle, bool box}) = _$SelectionsAdjustMainView._;
 
-  factory SelectionsAdjust.from([void Function(SelectionsAdjustBuilder) updates]) = _$SelectionsAdjust;
+  factory SelectionsAdjustMainView.from([void Function(SelectionsAdjustMainViewBuilder) updates]) =
+      _$SelectionsAdjustMainView;
 
-  SelectionsAdjust._();
+  SelectionsAdjustMainView._();
 
-  static Serializer<SelectionsAdjust> get serializer => _$selectionsAdjustSerializer;
+  static Serializer<SelectionsAdjustMainView> get serializer => _$selectionsAdjustMainViewSerializer;
 }
 
 abstract class SelectOrToggleItems
@@ -1517,6 +1600,26 @@ abstract class LoopoutLengthChange
   static Serializer<LoopoutLengthChange> get serializer => _$loopoutLengthChangeSerializer;
 }
 
+abstract class LoopoutsLengthChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<LoopoutsLengthChange, LoopoutsLengthChangeBuilder> {
+  BuiltList<Loopout> get loopouts;
+
+  int get length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory LoopoutsLengthChange(Iterable<Loopout> loopouts, int length) => LoopoutsLengthChange.from((b) => b
+    ..loopouts.replace(loopouts)
+    ..length = length);
+
+  factory LoopoutsLengthChange.from([void Function(LoopoutsLengthChangeBuilder) updates]) =
+      _$LoopoutsLengthChange;
+
+  LoopoutsLengthChange._();
+
+  static Serializer<LoopoutsLengthChange> get serializer => _$loopoutsLengthChangeSerializer;
+}
+
 abstract class ConvertCrossoverToLoopout
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<ConvertCrossoverToLoopout, ConvertCrossoverToLoopoutBuilder> {
@@ -1538,6 +1641,27 @@ abstract class ConvertCrossoverToLoopout
   ConvertCrossoverToLoopout._();
 
   static Serializer<ConvertCrossoverToLoopout> get serializer => _$convertCrossoverToLoopoutSerializer;
+}
+
+abstract class ConvertCrossoversToLoopouts
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<ConvertCrossoversToLoopouts, ConvertCrossoversToLoopoutsBuilder> {
+  BuiltList<Crossover> get crossovers;
+
+  int get length;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ConvertCrossoversToLoopouts(Iterable<Crossover> crossovers, int length) =>
+      ConvertCrossoversToLoopouts.from((b) => b
+        ..crossovers.replace(crossovers)
+        ..length = length);
+
+  factory ConvertCrossoversToLoopouts.from([void Function(ConvertCrossoversToLoopoutsBuilder) updates]) =
+      _$ConvertCrossoversToLoopouts;
+
+  ConvertCrossoversToLoopouts._();
+
+  static Serializer<ConvertCrossoversToLoopouts> get serializer => _$convertCrossoversToLoopoutsSerializer;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2052,9 +2176,11 @@ abstract class InsertionOrDeletionAction implements UndoableAction, StrandPartAc
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part; // => substrand;
 
-  InsertionOrDeletionAction clone_for_adjacent_substrand(Domain other_domain);
+  InsertionOrDeletionAction clone_for_other_domain(Domain other_domain);
 }
 
 abstract class InsertionAdd
@@ -2064,12 +2190,14 @@ abstract class InsertionAdd
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  InsertionAdd clone_for_adjacent_substrand(Domain domain) => InsertionAdd(domain: domain, offset: offset);
+  InsertionAdd clone_for_other_domain(Domain domain) => rebuild((b) => b..domain.replace(domain));
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionAdd({Domain domain, int offset}) = _$InsertionAdd._;
+  factory InsertionAdd({Domain domain, int offset, bool all_helices}) = _$InsertionAdd._;
 
   InsertionAdd._();
 
@@ -2085,22 +2213,63 @@ abstract class InsertionLengthChange
 
   int get length;
 
+  bool get all_helices;
+
   int get offset => insertion.offset;
 
   StrandPart get strand_part => domain;
 
-  InsertionLengthChange clone_for_adjacent_substrand(Domain other_domain) => InsertionLengthChange(
+  InsertionLengthChange clone_for_other_domain(Domain other_domain) => InsertionLengthChange(
         domain: other_domain,
         insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
         length: length,
       );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) = _$InsertionLengthChange._;
+  factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) {
+    return InsertionLengthChange.from((b) => b
+      ..domain.replace(domain)
+      ..insertion.replace(insertion)
+      ..length = length
+      ..all_helices = false);
+  }
+
+  factory InsertionLengthChange.from([void Function(InsertionLengthChangeBuilder) updates]) =
+      _$InsertionLengthChange;
+
+  // factory InsertionLengthChange({Domain domain, Insertion insertion, int length}) = _$InsertionLengthChange._;
 
   InsertionLengthChange._();
 
   static Serializer<InsertionLengthChange> get serializer => _$insertionLengthChangeSerializer;
+}
+
+abstract class InsertionsLengthChange
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<InsertionsLengthChange, InsertionsLengthChangeBuilder> {
+  BuiltList<Insertion> get insertions;
+
+  BuiltList<Domain> get domains;
+
+  int get length;
+
+  bool get all_helices;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory InsertionsLengthChange({Iterable<Insertion> insertions, Iterable<Domain> domains, int length}) {
+    return InsertionsLengthChange.from((b) => b
+      ..insertions.replace(insertions)
+      ..domains.replace(domains)
+      ..length = length
+      ..all_helices = false);
+  }
+
+  factory InsertionsLengthChange.from([void Function(InsertionsLengthChangeBuilder) updates]) =
+      _$InsertionsLengthChange;
+
+  InsertionsLengthChange._();
+
+  static Serializer<InsertionsLengthChange> get serializer => _$insertionsLengthChangeSerializer;
 }
 
 abstract class DeletionAdd
@@ -2110,13 +2279,14 @@ abstract class DeletionAdd
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  DeletionAdd clone_for_adjacent_substrand(Domain other_domain) =>
-      DeletionAdd(domain: other_domain, offset: offset);
+  DeletionAdd clone_for_other_domain(Domain domain) => rebuild((b) => b..domain.replace(domain));
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionAdd({Domain domain, int offset}) = _$DeletionAdd._;
+  factory DeletionAdd({Domain domain, int offset, bool all_helices}) = _$DeletionAdd._;
 
   DeletionAdd._();
 
@@ -2130,17 +2300,26 @@ abstract class InsertionRemove
 
   Insertion get insertion;
 
+  bool get all_helices;
+
   int get offset => insertion.offset;
 
   StrandPart get strand_part => domain;
 
-  InsertionRemove clone_for_adjacent_substrand(Domain other_domain) => InsertionRemove(
+  InsertionRemove clone_for_other_domain(Domain other_domain) => InsertionRemove(
         domain: other_domain,
         insertion: other_domain.insertions.firstWhere((i) => i.offset == offset),
       );
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory InsertionRemove({Domain domain, Insertion insertion}) = _$InsertionRemove._;
+  factory InsertionRemove({Domain domain, Insertion insertion}) {
+    return InsertionRemove.from((b) => b
+      ..domain.replace(domain)
+      ..insertion.replace(insertion)
+      ..all_helices = false);
+  }
+
+  factory InsertionRemove.from([void Function(InsertionRemoveBuilder) updates]) = _$InsertionRemove;
 
   InsertionRemove._();
 
@@ -2154,13 +2333,24 @@ abstract class DeletionRemove
 
   int get offset;
 
+  bool get all_helices;
+
   StrandPart get strand_part => domain;
 
-  DeletionRemove clone_for_adjacent_substrand(Domain other_domain) =>
+  DeletionRemove clone_for_other_domain(Domain other_domain) =>
       DeletionRemove(domain: other_domain, offset: offset);
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory DeletionRemove({Domain domain, int offset}) = _$DeletionRemove._;
+  factory DeletionRemove({Domain domain, int offset}) {
+    return DeletionRemove.from((b) => b
+      ..domain.replace(domain)
+      ..offset = offset
+      ..all_helices = false);
+  }
+
+  factory DeletionRemove.from([void Function(DeletionRemoveBuilder) updates]) = _$DeletionRemove;
+
+  // factory DeletionRemove({Domain domain, int offset}) = _$DeletionRemove._;
 
   DeletionRemove._();
 
@@ -2211,6 +2401,7 @@ abstract class ModificationRemove
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // modification edit
+
 abstract class ModificationEdit
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<ModificationEdit, ModificationEditBuilder> {
@@ -2229,6 +2420,73 @@ abstract class ModificationEdit
 
   static Serializer<ModificationEdit> get serializer => _$modificationEditSerializer;
 }
+
+abstract class Modifications5PrimeEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<Modifications5PrimeEdit, Modifications5PrimeEditBuilder> {
+  BuiltList<SelectableModification5Prime> get modifications;
+
+  Modification5Prime get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Modifications5PrimeEdit(
+      {Iterable<SelectableModification5Prime> modifications, Modification5Prime new_modification}) {
+    return Modifications5PrimeEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory Modifications5PrimeEdit.from([void Function(Modifications5PrimeEditBuilder) updates]) =
+      _$Modifications5PrimeEdit;
+
+  Modifications5PrimeEdit._();
+
+  static Serializer<Modifications5PrimeEdit> get serializer => _$modifications5PrimeEditSerializer;
+}
+
+abstract class Modifications3PrimeEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<Modifications3PrimeEdit, Modifications3PrimeEditBuilder> {
+  BuiltList<SelectableModification3Prime> get modifications;
+
+  Modification3Prime get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Modifications3PrimeEdit(
+      {Iterable<SelectableModification3Prime> modifications, Modification3Prime new_modification}) {
+    return Modifications3PrimeEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory Modifications3PrimeEdit.from([void Function(Modifications3PrimeEditBuilder) updates]) =
+      _$Modifications3PrimeEdit;
+
+  Modifications3PrimeEdit._();
+
+  static Serializer<Modifications3PrimeEdit> get serializer => _$modifications3PrimeEditSerializer;
+}
+
+abstract class ModificationsInternalEdit
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<ModificationsInternalEdit, ModificationsInternalEditBuilder> {
+  BuiltList<SelectableModificationInternal> get modifications;
+
+  ModificationInternal get new_modification;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ModificationsInternalEdit(
+      {Iterable<SelectableModificationInternal> modifications, ModificationInternal new_modification}) {
+    return ModificationsInternalEdit.from(
+        (b) => b..modifications.replace(modifications)..new_modification.replace(new_modification));
+  }
+
+  factory ModificationsInternalEdit.from([void Function(ModificationsInternalEditBuilder) updates]) =
+      _$ModificationsInternalEdit;
+
+  ModificationsInternalEdit._();
+
+  static Serializer<ModificationsInternalEdit> get serializer => _$modificationsInternalEditSerializer;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // grid change
 
@@ -2362,7 +2620,9 @@ abstract class ContextMenuHide
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strand color picker
 
-abstract class StrandColorPickerShow with BuiltJsonSerializable implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
+abstract class StrandColorPickerShow
+    with BuiltJsonSerializable
+    implements Action, Built<StrandColorPickerShow, StrandColorPickerShowBuilder> {
   Strand get strand;
 
   /************************ begin BuiltValue boilerplate ************************/
@@ -2373,10 +2633,14 @@ abstract class StrandColorPickerShow with BuiltJsonSerializable implements Actio
   static Serializer<StrandColorPickerShow> get serializer => _$strandColorPickerShowSerializer;
 }
 
-abstract class StrandColorPickerHide with BuiltJsonSerializable implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
+abstract class StrandColorPickerHide
+    with BuiltJsonSerializable
+    implements Action, Built<StrandColorPickerHide, StrandColorPickerHideBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory StrandColorPickerHide() => StrandColorPickerHide.from((b) => b);
-  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) = _$StrandColorPickerHide;
+
+  factory StrandColorPickerHide.from([void Function(StrandColorPickerHideBuilder) updates]) =
+      _$StrandColorPickerHide;
 
   StrandColorPickerHide._();
 

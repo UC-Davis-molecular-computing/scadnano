@@ -6,10 +6,11 @@ import 'package:redux/redux.dart';
 import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/modification.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/group.dart';
-import '../middleware/insertion_deletion_pairing.dart';
+import '../middleware/insertion_deletion_batching.dart';
 import '../state/app_state.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
@@ -47,6 +48,18 @@ GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGloba
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Ligate>(ligate_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.JoinStrandsByCrossover>(
       join_strands_by_crossover_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ConvertCrossoversToLoopouts>(
+      convert_crossovers_to_loopouts_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.LoopoutsLengthChange>(
+      loopouts_length_change_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.InsertionsLengthChange>(
+      insertions_length_change_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications5PrimeEdit>(
+      modifications_5p_edit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.Modifications3PrimeEdit>(
+      modifications_3p_edit_reducer),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.ModificationsInternalEdit>(
+      modifications_int_edit_reducer),
 ]);
 
 BuiltList<Strand> replace_strands_reducer(BuiltList<Strand> strands, actions.ReplaceStrands action) {
@@ -295,7 +308,7 @@ Tuple2<Strand, List<InsertionDeletionRecord>> single_strand_dna_ends_commit_stop
               .map((i) => i.offset)
               .toList();
           for (var offset in deletions_removed + insertion_offsets_removed) {
-            Domain other_ss = find_paired_substrand(design, bound_ss, offset);
+            Domain other_ss = find_paired_domain(design, bound_ss, offset);
             if (other_ss != null) {
               Strand other_strand = design.substrand_to_strand[other_ss];
               int other_ss_idx = other_strand.substrands.indexOf(other_ss);
@@ -405,12 +418,12 @@ BuiltList<Strand> strands_single_strand_reducer(
 Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ScaffoldSet>(scaffold_set_reducer),
   TypedReducer<Strand, actions.StrandColorSet>(strand_color_set_reducer),
-  TypedReducer<Strand, actions.ModificationAdd>(add_modification_reducer),
-  TypedReducer<Strand, actions.ModificationRemove>(remove_modification_reducer),
-  TypedReducer<Strand, actions.ModificationEdit>(edit_modification_reducer),
+  TypedReducer<Strand, actions.ModificationAdd>(modification_add_reducer),
+  TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
+  TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
 ]);
 
-Strand add_modification_reducer(Strand strand, actions.ModificationAdd action) {
+Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   Strand strand_with_new_modification;
   // first overwrite this strand in the builder list
   if (action.modification is ModificationInternal) {
@@ -424,7 +437,7 @@ Strand add_modification_reducer(Strand strand, actions.ModificationAdd action) {
   return strand_with_new_modification;
 }
 
-Strand remove_modification_reducer(Strand strand, actions.ModificationRemove action) {
+Strand modification_remove_reducer(Strand strand, actions.ModificationRemove action) {
   Strand strand_with_new_modification;
   // first overwrite this strand in the builder list
   if (action.modification is ModificationInternal) {
@@ -437,7 +450,7 @@ Strand remove_modification_reducer(Strand strand, actions.ModificationRemove act
   return strand_with_new_modification;
 }
 
-Strand edit_modification_reducer(Strand strand, actions.ModificationEdit action) {
+Strand modification_edit_reducer(Strand strand, actions.ModificationEdit action) {
   Strand strand_with_edited_modification;
   // first overwrite this strand in the builder list
   if (action.modification is ModificationInternal) {
@@ -461,3 +474,68 @@ Strand scaffold_set_reducer(Strand strand, actions.ScaffoldSet action) {
 
 Strand strand_color_set_reducer(Strand strand, actions.StrandColorSet action) =>
     strand.rebuild((b) => b..color = action.color);
+
+BuiltList<Strand> modifications_5p_edit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.Modifications5PrimeEdit action) {
+  var new_strands = strands.toList();
+
+  List<String> strand_ids = [for (var strand in strands) strand.id];
+  for (var selectable_mod in action.modifications) {
+    int strand_idx = strand_ids.indexOf(selectable_mod.strand_id);
+    Strand strand = strands[strand_idx];
+    strand = strand.rebuild((b) => b..modification_5p.replace(action.new_modification));
+    strand = strand.initialize();
+    new_strands[strand_idx] = strand;
+  }
+
+  return new_strands.build();
+}
+
+BuiltList<Strand> modifications_3p_edit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.Modifications3PrimeEdit action) {
+  var new_strands = strands.toList();
+
+  List<String> strand_ids = [for (var strand in strands) strand.id];
+  for (var selectable_mod in action.modifications) {
+    int strand_idx = strand_ids.indexOf(selectable_mod.strand_id);
+    Strand strand = strands[strand_idx];
+    strand = strand.rebuild((b) => b..modification_3p.replace(action.new_modification));
+    strand = strand.initialize();
+    new_strands[strand_idx] = strand;
+  }
+
+  return new_strands.build();
+}
+
+BuiltList<Strand> modifications_int_edit_reducer(
+    BuiltList<Strand> strands, AppState state, actions.ModificationsInternalEdit action) {
+  // collect all internal modifications for each strand
+  Map<String, Set<SelectableModificationInternal>> strand_id_to_mods = {};
+  for (var mod in action.modifications) {
+    if (!strand_id_to_mods.containsKey(mod.strand.id)) {
+      strand_id_to_mods[mod.strand.id] = {};
+    }
+    strand_id_to_mods[mod.strand.id].add(mod);
+  }
+
+  var new_strands = strands.toList();
+  List<String> strand_ids = [for (var strand in strands) strand.id];
+  for (String strand_id in strand_id_to_mods.keys) {
+    Set<SelectableModificationInternal> selectable_mods = strand_id_to_mods[strand_id];
+    int strand_idx = strand_ids.indexOf(strand_id);
+    Strand strand = strands[strand_idx];
+
+    Map<int, ModificationInternal> mods_int = strand.modifications_int.toMap();
+
+    for (var selectable_mod in selectable_mods) {
+      int dna_idx = selectable_mod.dna_idx;
+      mods_int[dna_idx] = action.new_modification;
+    }
+
+    strand = strand.rebuild((b) => b.modifications_int.replace(mods_int));
+    strand = strand.initialize();
+    new_strands[strand_idx] = strand;
+  }
+
+  return new_strands.build();
+}

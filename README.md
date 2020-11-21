@@ -243,7 +243,9 @@ otherwise these roles are reversed.
 There is implicitly a crossover between adjacent bound domains in a strand.
 Although the visual depiction of a loopout is similar to a crossover, loopouts are explicitly specified as a (non-bound) domain in between two bound domains.
 Currently, two loopouts cannot be consecutive (and this will remain a requirement),
-and a loopout cannot be the first or last domain of a strand (this may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34)).
+and a loopout cannot be the first or last domain of a strand.
+This constraint may be [relaxed in the future](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34). 
+For now, if you need to put a single-stranded overhang at the end of a strand, a good solution is to add a 5' or 3' modification whose idt_text (see description of modifications below) is the DNA sequence you want to assign.
 
 Bound domains may have optional fields, notably *deletions* (called *skips* in cadnano) and *insertions* (called *loops* in cadnano), explained below.
 
@@ -447,11 +449,11 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **display only selected helices:**
     This is a useful way to visualize only certain parts of a complex design, particularly 3D designs with many "long-range" crossovers. These are crossovers that (like all crossovers) actually represent just a single phosphate group joining two consecutive bases, but are visually depicted in the 2D main view as "stretching" between two helices that are displayed far from each other. When this option is selected, then only helices that are selected (using Ctrl/Shift+click, or Ctrl/Shift + drag), are displayed in the main view, and only crossovers between two displayed helices are shown.
 
-  * **invert y- and z-axes:**
-    In the main view, invert the y-axis, and in the side view, invert both the y-axis and the z-axis. 
-    If unchecked, then use "screen coordinates", where increasing y moves down. 
-    If checked, then use Cartesian coordinates where increasing y moves up. 
-    Also invert the z-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
+  * **invert y- and x-axes:**
+    In the main view, invert the y-axis, and in the side view, invert both the x-axis and the y-axis.
+    If unchecked, then use "screen coordinates", where increasing y moves down.
+    If checked, then use Cartesian coordinates where increasing y moves up.
+    Also invert the x-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
   * **Show main view Helix circles/idx:**
     Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.
@@ -513,7 +515,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
   This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
 
-  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Also, if Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a box. Ctrl+A will select all selectable items in the design.
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
   Unlike other drawing programs, clicking on the background will not unselect the objects.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
@@ -534,12 +536,22 @@ There are different edit modes available, shown on the right side of the screen.
 
   - **5' strand, 3' strand:**
     These allow one to select the 5' end (square) or 3' end (triangle) of a whole strand. 
+    
+    If many 5'/3' ends are selected, then one can add a 5'/3' modification to all of them by right-clicking and selecting "add modification". This will add only to the type of modification picked. For example, if both 5' and 3' ends are selected, and a 5' modification is added, then only the 5' ends are modified.
 
   - **5' domain, 3' domain:**
     Each strand is composed of one or more *bound domains*, defined to be a portion of a strand that exists on a single helix. A 5'/3' end of a bound domain that is not the 5'/3' end of the whole strand is one of these. They are not normally visible, but when these select modes are enabled, they become visible on mouseover and can be selected and dragged. Deleting a 5'/3' end of a bound domain deletes the whole bound domain. Ends can be moved, but unlike strands and domains, they can only be moved back and forth along their current helix.
 
   - **crossover, loopout:**
-    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another. However, currently it is [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/34) for a strand to begin or end with a loopout, so single-stranded bound domains are currently necessary to support single-stranded extensions on the end of a strand.)
+    Two consecutive bound domains on a strand can be joined by either a *crossover*, which consists of no DNA bases, or a *loopout*, which is a single-stranded portion of the strand with one or more DNA bases. (Technically bound domains do not have to be bound to another strand, but the idea is that generally in a finished design, most of the bound domains will actually be bound to another.)
+
+    If many crossovers/loopouts are selected, all the crossovers can be converted to loopouts (or vice versa) by right-clicking on one of them and picking "convert to loopout" (or "change loopout length" if a loopout; changing to length 0 converts it to a crossover).
+
+  - **deletion, insertion:**
+    Deletions and insertions can be selected and deleted in batch by pressing the Delete key. Also, one can change the length of all selected insertions by right-clicking on one of them and selecting the option to change insertion length.
+
+  - **modification:**
+    If many modifications are selected, they can be deleted at once by pressing the Delete key (or right-clicking and selecting "remove modification"). Those of a similar type (5', 3', or internal) can be modified in batch by right-clicking on one of them and selecting "edit modification".
 
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
@@ -548,6 +560,20 @@ There are different edit modes available, shown on the right side of the screen.
 
   Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
 
+* **(r)ope select:**
+  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. This is useful, for example, for selecting many objects along a diagonal, where a rectangle containing all of them would also contain many objects off the diagonal that are not intended to be selected.
+  
+  The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. While holding down the Shift or Ctrl key, click several points to define a polygon. 
+
+  ![](images/screenshot-polygon.png)
+
+  Two polygons are shown: a darker *n*-gon defined by the *n* points that have been clicked so far (the triangle above), and an (*n*+1)-gon showing what the new polygon would be if another click happens. (In the example above the (*n*+1)-gon is larger, but it can be smaller, for instance if the mouse cursor were between the triangle's hypotenuse and its lower-left vertex.) The polygon must be *non-self-intersecting*: no two edges of the polygon can cross each other. If the mouse cursor is at a point that would make the polygon self-intersecting, then it is drawn in red to indicate it is illegal to add a polygon vertex there, and clicking will have no effect:
+
+  ![](images/screenshot-polygon-illegal.png)
+
+  Lifting up on the Shift or Ctrl key will select items within the *n*-gon consisting of the points clicked so far (the darker polygon).
+
+  You can also select individual objects by clicking them while in rope select mode. Shift/Ctrl+clicking multiple items is more awkward in rope select mode than in select mode, since in rope select mode it will start drawing a polygon if you keep the Shift or Ctrl key pressed. If you don't want to switch to select mode, a workaround is, after each mouse click, to lift the Shift/Ctrl key before pressing it again, to prevent the polygon from being drawn.
   
 * **(p)encil:**
   This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 
@@ -556,31 +582,33 @@ There are different edit modes available, shown on the right side of the screen.
 
   A faster alternative that works in most circumstances is this. In pencil mode, if two bound domains on adjacent helices have their 5'/3' ends at the *same horizontal offset*, by placing the cursor over where a crossover between them would appear, a potential crossover appears, which can be clicked to add a crossover.
 
-  In pencil mode, clicking on an existing helix will delete it. Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
+  In pencil mode, clicking on an existing helix will delete it. (Helices can also be deleted by selecting them while in select mode and pressing the Delete key.) Clicking on an empty space will add a helix. The grid type (square, hexagonal, honeycomb, none) determines where new helices are allowed to be placed.
 
 * **(n)ick / (l)igate:**
   Technically these operations are unnecessary, but they are faster than creating/moving/deleting domains in some circumstances. In nick mode, clicking on a bound domain will split it into two at that position. Ligate mode does the reverse operation: if two bound domains point in the same direction and have abutting 5'/3' ends, then clicking on either will join them into a single strand. A common way to create a large design quickly is to use pencil mode to create exactly two strands on each helix at the same horizontal offsets, one pointing forward (i.e,. its 5' end is on the left and its 3' end is on the right) and the other pointing in reverse. Then use select mode to drag them to be longer. Then use nick mode to add nicks and pencil mode to add crossovers.
 
 * **(i)nsertion / (d)eletion:**
-  These have the same meaning as in cadnano. 
+  These have the same meaning as in cadnano, where they are called "loops" and "skips", respectively. 
   They are a visual trick used to allow bound domains to appear to be one length in the main view of scadnano, while actually having a different length. 
   Normally, each offset (small white square outlined in gray on a helix) represents a single base. 
   Clicking on a bound domain in insertion/deletion mode adds an insertion/deletion at that offset. 
   Clicking an existing insertion/deletion removes it. 
   (Note that this requires clicking in the small square where the bound domain is drawn; 
-  clicking on an insertion outside of that square allows one to change its length.) 
+  clicking on an insertion outside of that square has no effect.) 
   If a deletion appears at that position, then it does not correspond to any DNA base. 
   If an insertion appears at that position, it has a *length*, which is a positive integer, 
   and the number of bases represented by that position is actually *length*+1. 
   In other words *length* is the number of *extra* bases at that position in addition to the one that was already there (so insertions always represent 2 or more bases). 
 
-  Currently, if one offset on a helix has two bound domains (going in opposite directions), 
+  If one offset on a helix has two bound domains (going in opposite directions), 
   then adding/removing an insertion/deletion at that offset adds/removes on both bound domains.
-  The Python scripting library lets one specify insertions/deletions on one bound domain but not the other, 
-  but this is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/90) in the web interface to create such a solitary deletion/insertion directly. 
-  (If necessary, one hack is to move one domain out of the way, add the deletion/insertion to the other, and then move the first back.)
+  If you want only one of the domains to have the insertion/deletion, then click while in insertion/deletion edit mode to add to both, switch to Select mode, select the unwanted one, and press the Delete key.
 
-  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, insertions and deletions in scadnano are associated to a bound domain. If the whole strand moves or is copied, the insertions/deletions move along with it.
+  A useful shortcut allows one to add many insertions/deletions to the same offset on all helices (in a helix group). 
+  If the Ctrl key is pressed while clicking on a domain in Deletion/Insertion mode, then deletions/insertions will be added at *all* domains on all helices in the same helix group that overlap the same offset (unless that offset is the start or end of the domain, which is disallowed from having a deletion/insertion).
+  This helps to implement, for example, twist correction in DNA origami (see https://doi.org/10.1038/nchem.1070 for a description), where vertical "columns" of deletions need to be added to every domain in every helix at a given offset.
+
+  *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, in scadnano, insertions and deletions are associated to a bound domain. If the domain (or the whole strand) moves, the insertions/deletions move along with it.
 
 * **(b)ackbone:**
   This shows information in the side view about the roll of the helix when the pointer is over an offset of that helix in the main view, 
@@ -604,7 +632,7 @@ There are different edit modes available, shown on the right side of the screen.
 
 
 * **(m)ove group:**
-  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur.)
+  This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur, without changing the position of any helix group.)
 
 
 ## Assigning DNA
@@ -660,7 +688,7 @@ See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a
 
 
 ## Performance tips
-There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this and save only infrequently.
+There are some [performance issues](https://github.com/UC-Davis-molecular-computing/scadnano/issues/191) that we don't fully understand. But in general, if you are working on a very large design, it is best to minimize how much is displayed/done. In particular, performance will be best if DNA sequence and mismatches are not shown. (This is true even if your design has no mismatches, because on each edit to the design, it is costly to check for new potential mismatches.) On very large designs (e.g., more than 10,000 base pairs), it can be a significant cost to write the entire design to localStorage on each edit. So you may want to disable this (under the File menu) and save only infrequently.
 
 
 ## Contributing

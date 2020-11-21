@@ -25,13 +25,43 @@ SelectModeState toggle_select_mode_reducer(SelectModeState state, actions.Select
     } else if (SelectModeChoice.strand_parts.contains(mode)) {
       new_state = new_state.remove_mode(SelectModeChoice.strand);
       if (mode == SelectModeChoice.crossover || mode == SelectModeChoice.loopout) {
-        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() + [SelectModeChoice.domain]);
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [SelectModeChoice.domain, SelectModeChoice.deletion, SelectModeChoice.insertion]);
       } else if (SelectModeChoice.ends.contains(mode)) {
-        new_state = new_state
-            .remove_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.domain]);
+        new_state = new_state.remove_modes([
+          SelectModeChoice.crossover,
+          SelectModeChoice.loopout,
+          SelectModeChoice.domain,
+          SelectModeChoice.deletion,
+          SelectModeChoice.insertion,
+          SelectModeChoice.modification,
+        ]);
       } else if (mode == SelectModeChoice.domain) {
-        new_state = new_state.remove_modes(
-            SelectModeChoice.ends.toList() + [SelectModeChoice.crossover, SelectModeChoice.loopout]);
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.deletion || mode == SelectModeChoice.insertion) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.modification) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+            ]);
       }
     }
   }
@@ -49,13 +79,48 @@ SelectModeState add_select_modes_reducer(SelectModeState state, actions.SelectMo
     } else if (SelectModeChoice.strand_parts.contains(mode)) {
       new_state = new_state.remove_mode(SelectModeChoice.strand);
       if (mode == SelectModeChoice.crossover || mode == SelectModeChoice.loopout) {
-        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() + [SelectModeChoice.domain]);
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+              SelectModeChoice.modification,
+            ]);
       } else if (SelectModeChoice.ends.contains(mode)) {
-        new_state = new_state
-            .remove_modes([SelectModeChoice.crossover, SelectModeChoice.loopout, SelectModeChoice.domain]);
+        new_state = new_state.remove_modes([
+          SelectModeChoice.crossover,
+          SelectModeChoice.loopout,
+          SelectModeChoice.domain,
+          SelectModeChoice.deletion,
+          SelectModeChoice.insertion,
+          SelectModeChoice.modification,
+        ]);
       } else if (mode == SelectModeChoice.domain) {
-        new_state = new_state.remove_modes(
-            SelectModeChoice.ends.toList() + [SelectModeChoice.crossover, SelectModeChoice.loopout]);
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.deletion || mode == SelectModeChoice.insertion) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.modification,
+            ]);
+      } else if (mode == SelectModeChoice.modification) {
+        new_state = new_state.remove_modes(SelectModeChoice.ends.toList() +
+            [
+              SelectModeChoice.crossover,
+              SelectModeChoice.loopout,
+              SelectModeChoice.domain,
+              SelectModeChoice.deletion,
+              SelectModeChoice.insertion,
+            ]);
       }
     }
   }

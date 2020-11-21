@@ -32,7 +32,7 @@ GlobalReducer<BuiltMap<int, Helix>, AppState> helices_global_reducer = combineGl
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.GridChange>(helix_grid_change_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.SetAppUIStateStorable>(
       set_app_ui_state_storables_set_helices_reducer),
-  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertYZSet>(invert_yz_set_helices_reducer),
+  TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.InvertXYSet>(invert_xy_set_helices_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixGridPositionSet>(
       helix_grid_position_set_reducer),
   TypedGlobalReducer<BuiltMap<int, Helix>, AppState, actions.HelixPositionSet>(helix_position_set_reducer),
@@ -64,7 +64,7 @@ BuiltMap<int, Helix> helix_individual_reducer(
     var helices_map = helices.toMap();
     helices_map[action.helix_idx] = new_helix;
     helices_map = util.helices_assign_svg(
-        state.design.geometry, state.ui_state.invert_yz, helices_map, state.design.groups);
+        state.design.geometry, state.ui_state.invert_xy, helices_map, state.design.groups);
     return helices_map.build();
   } else {
     return helices;
@@ -128,12 +128,14 @@ Design helix_idx_change_reducer(Design design, AppState state, actions.HelixIdxs
 
   //TODO: recalculate view order; first figure out if it was non-default by looking at Helix.view_order
 
-  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, helices, new_groups.build());
-  design = design.rebuild((b) => b..helices.replace(helices)..strands.replace(strands));
+  helices = util.helices_assign_svg(design.geometry, state.ui_state.invert_xy, helices, new_groups.build());
+  design = design
+      .rebuild((b) => b..groups.replace(new_groups)..helices.replace(helices)..strands.replace(strands));
   return design;
 }
 
-Map<String, HelixGroup> change_groups(actions.HelixIdxsChange action, Map<int, Helix> helices, Design design) {
+Map<String, HelixGroup> change_groups(
+    actions.HelixIdxsChange action, Map<int, Helix> helices, Design design) {
   // initialize with default view order to be the same as before the idx change
   Map<int, int> new_view_order = {};
   for (int old_idx in action.idx_replacements.keys) {
@@ -175,6 +177,7 @@ Map<String, HelixGroup> change_groups(actions.HelixIdxsChange action, Map<int, H
       new_groups[group_name] = new_group;
     }
   }
+
   return new_groups;
 }
 
@@ -193,7 +196,7 @@ BuiltMap<int, Helix> helix_offset_change_all_reducer(
   Helix map_func(_, Helix helix) => _change_offset_one_helix(helix, action.min_offset, action.max_offset);
   var helices_after = helices.map_values(map_func);
   var helices_after_svg_adjusted = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
+      state.design.geometry, state.ui_state.invert_xy, helices_after.toMap(), state.design.groups);
   return helices_after_svg_adjusted.build();
 }
 
@@ -222,7 +225,7 @@ BuiltMap<int, Helix> helix_min_offset_set_by_domains_all_reducer(
   Helix map_func(_, Helix helix) => _min_offset_set_by_domains_one_helix(helix, state.design);
   var helices_after = helices.map_values(map_func);
   var helices_after_svg_adjusted = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
+      state.design.geometry, state.ui_state.invert_xy, helices_after.toMap(), state.design.groups);
   return helices_after_svg_adjusted.build();
 }
 
@@ -231,7 +234,7 @@ BuiltMap<int, Helix> helix_max_offset_set_by_domains_all_reducer(
   Helix map_func(_, Helix helix) => _max_offset_set_by_domains_one_helix(helix, state.design);
   var helices_after = helices.map_values(map_func);
   var helices_after_svg_adjusted = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, helices_after.toMap(), state.design.groups);
+      state.design.geometry, state.ui_state.invert_xy, helices_after.toMap(), state.design.groups);
   return helices_after_svg_adjusted.build();
 }
 
@@ -356,7 +359,7 @@ Design helix_add_design_reducer(Design design, AppState state, actions.HelixAdd 
   Map<int, Helix> new_helices = design.helices.toMap();
   new_helices[helix.idx] = helix;
   new_helices =
-      util.helices_assign_svg(design.geometry, state.ui_state.invert_yz, new_helices, new_groups.build());
+      util.helices_assign_svg(design.geometry, state.ui_state.invert_xy, new_helices, new_groups.build());
 
   return design.rebuild((d) => d..helices.replace(new_helices)..groups.replace(new_groups));
 }
@@ -375,7 +378,7 @@ Design helix_remove_design_global_reducer(Design design, AppState state, actions
   var new_groups = design.groups.toMap();
   new_groups[state.ui_state.displayed_group_name] = new_group;
 
-  var new_helices_after_svg_assign = util.helices_assign_svg(state.design.geometry, state.ui_state.invert_yz,
+  var new_helices_after_svg_assign = util.helices_assign_svg(state.design.geometry, state.ui_state.invert_xy,
       new_helices_before_svg_assign.toMap(), new_groups.build());
 
   return design.rebuild((d) => d
@@ -406,7 +409,7 @@ Design helix_remove_all_selected_design_global_reducer(
   new_groups[state.ui_state.displayed_group_name] = new_group;
 
   var new_helices_list = util.helices_assign_svg(
-      state.design.geometry, state.ui_state.invert_yz, new_helices.toMap(), new_groups.build());
+      state.design.geometry, state.ui_state.invert_xy, new_helices.toMap(), new_groups.build());
 
   return design.rebuild((d) => d
     ..helices.replace(new_helices_list)
@@ -461,7 +464,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     helix_builder.grid = action.grid;
     if (!action.grid.is_none() && helix.grid_position == null) {
       helix_builder.grid_position =
-          util.position3d_to_grid(helix.position, action.grid, geometry).toBuilder();
+          util.position3d_to_grid_position(helix.position, action.grid, geometry).toBuilder();
       helix_builder.position_ = null;
     }
     if (action.grid.is_none() && helix.position_ == null) {
@@ -469,7 +472,7 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)
       helix_builder.position_ =
-          util.grid_to_position3d(helix.grid_position, helix.grid, geometry).toBuilder();
+          util.grid_position_to_position3d(helix.grid_position, helix.grid, geometry).toBuilder();
     }
     new_helices[idx] = helix_builder.build();
   }
@@ -480,9 +483,9 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // invert y axis
-BuiltMap<int, Helix> invert_yz_set_helices_reducer(
-    BuiltMap<int, Helix> helices, AppState state, actions.InvertYZSet action) {
-  var new_helices = reassign_svg_positions(state, helices, invert_yz: action.invert_yz);
+BuiltMap<int, Helix> invert_xy_set_helices_reducer(
+    BuiltMap<int, Helix> helices, AppState state, actions.InvertXYSet action) {
+  var new_helices = reassign_svg_positions(state, helices, invert_xy: action.invert_xy);
   return new_helices;
 }
 
@@ -490,7 +493,7 @@ BuiltMap<int, Helix> invert_yz_set_helices_reducer(
 BuiltMap<int, Helix> set_app_ui_state_storables_set_helices_reducer(
     BuiltMap<int, Helix> helices, AppState state, actions.SetAppUIStateStorable action) {
   var new_helices = reassign_svg_positions(state, helices,
-      selected_helix_idxs: action.storables.side_selected_helix_idxs, invert_yz: action.storables.invert_yz);
+      selected_helix_idxs: action.storables.side_selected_helix_idxs, invert_xy: action.storables.invert_yz);
   return new_helices;
 }
 
@@ -540,22 +543,22 @@ BuiltMap<int, Helix> helix_position_set_reducer(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // select/unselect Helices (so SVG positions need to be recalculated)
 
-///XXX: this uses state to get [geometry] and [invert_yz] values, but be careful because if those values
+///XXX: this uses state to get [geometry] and [invert_xy] values, but be careful because if those values
 /// are changing in the action, then state will not yet have been updated to the new value; in that case
-/// assign them explicitly in the parameter list; e.g., see [invert_yz_set_helices_reducer]
+/// assign them explicitly in the parameter list; e.g., see [invert_xy_set_helices_reducer]
 BuiltMap<int, Helix> reassign_svg_positions(AppState state, BuiltMap<int, Helix> helices,
-    {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_yz = null}) {
+    {BuiltSet<int> selected_helix_idxs = null, Geometry geometry = null, bool invert_xy = null}) {
   if (helices.length == 0) {
     return helices;
   }
   if (selected_helix_idxs == null && state.ui_state.only_display_selected_helices) {
     selected_helix_idxs = state.ui_state.side_selected_helix_idxs;
   }
-  invert_yz ??= state.ui_state.invert_yz;
+  invert_xy ??= state.ui_state.invert_xy;
   geometry ??= state.design.geometry;
   BuiltMap<String, HelixGroup> groups = state.design.groups;
   Map<int, Helix> helices_map = helices.toMap();
-  helices_map = util.helices_assign_svg(geometry, invert_yz, helices_map, groups,
+  helices_map = util.helices_assign_svg(geometry, invert_xy, helices_map, groups,
       selected_helix_idxs: selected_helix_idxs);
   return BuiltMap<int, Helix>(helices_map);
 }

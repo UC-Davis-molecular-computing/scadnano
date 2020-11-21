@@ -71,6 +71,6 @@ GlobalReducer<Design, AppState> design_whole_global_reducer = combineGlobalReduc
 // need to operate on Design so we can re-set helix svg coordinates
 Design design_geometry_set_reducer(Design design, AppState state, actions.GeometrySet action) {
   var new_helices = util.helices_assign_svg(
-      action.geometry, state.ui_state.invert_yz, design.helices.toMap(), design.groups);
+      action.geometry, state.ui_state.invert_xy, design.helices.toMap(), design.groups);
   return design.rebuild((b) => b..helices.replace(new_helices)..geometry.replace(action.geometry));
 }

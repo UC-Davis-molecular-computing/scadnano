@@ -18,7 +18,7 @@ helix_grid_offsets_middleware(Store<AppState> store, dynamic action, NextDispatc
     Geometry geometry = store.state.design.geometry;
     Map<int, GridPosition> new_grid_positions_map = {
       for (var helix in store.state.design.helices_in_group(action.group_name).values)
-        helix.idx: util.position3d_to_grid(helix.position, action.grid, geometry)
+        helix.idx: util.position3d_to_grid_position(helix.position, action.grid, geometry)
     };
     Set<GridPosition> new_grid_positions_set = Set<GridPosition>.from(new_grid_positions_map.values);
     // if lengths don't match, there's a duplicate grid position

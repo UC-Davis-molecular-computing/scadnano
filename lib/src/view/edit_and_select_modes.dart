@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/selectable.dart';
 import '../state/app_state.dart';
 import '../view/redraw_counter_component_mixin.dart';
 
@@ -39,17 +40,20 @@ mixin EditAndSelectModesProps on UiProps {
 class EditAndSelectModesComponent extends UiComponent2<EditAndSelectModesProps> with RedrawCounterMixin {
   @override
   render() {
+    bool select_mode = props.edit_modes.contains(EditModeChoice.select) || props.edit_modes.contains(EditModeChoice.rope_select);
     return [
+      if (select_mode)
+        (SelectMode()
+          ..select_mode_state = props.select_mode_state
+          ..is_origami = props.is_origami
+          ..key = 'select-modes')(),
+      if (select_mode)
+        (Dom.div()
+          ..className = FIXED_VERTICAL_SEPARATOR //FIXED_HORIZONTAL_SEPARATOR
+          ..key = 'modes-separator')(),
       (EditMode()
         ..modes = props.edit_modes
         ..key = 'edit-modes')(),
-      (Dom.div()
-        ..className = FIXED_HORIZONTAL_SEPARATOR
-        ..key = 'modes-separator')(),
-      (SelectMode()
-        ..select_mode_state = props.select_mode_state
-        ..is_origami = props.is_origami
-        ..key = 'select-modes')(),
     ];
   }
 }

@@ -19,6 +19,7 @@ class EditModeChoice extends EnumClass {
   /******************** end BuiltValue boilerplate *********************/
 
   static const EditModeChoice select = _$select;
+  static const EditModeChoice rope_select = _$rope_select;
   static const EditModeChoice pencil = _$pencil; // used to join two Domains with Crossover
   static const EditModeChoice nick = _$nick;
   static const EditModeChoice ligate = _$ligate; // means join two Domains on same Helix
@@ -35,6 +36,7 @@ class EditModeChoice extends EnumClass {
 
   static const Map<int, EditModeChoice> key_code_to_mode = {
     KeyCode.S: select,
+    KeyCode.R: rope_select,
     KeyCode.P: pencil,
     KeyCode.N: nick,
     KeyCode.L: ligate,
@@ -60,21 +62,23 @@ class EditModeChoice extends EnumClass {
   BuiltSet<EditModeChoice> get excluded_modes {
     switch (this) {
       case select:
-        return [pencil, backbone, nick, ligate, insertion, deletion, move_group].toBuiltSet();
+        return [rope_select, pencil, backbone, nick, ligate, insertion, deletion, move_group].toBuiltSet();
+      case rope_select:
+        return [select, pencil, backbone, nick, ligate, insertion, deletion, move_group].toBuiltSet();
       case pencil:
-        return [select, ligate, backbone, move_group].toBuiltSet();
+        return [select, rope_select, ligate, backbone, move_group].toBuiltSet();
       case nick:
-        return [select, ligate, insertion, deletion, backbone, move_group].toBuiltSet();
+        return [select, rope_select, ligate, insertion, deletion, backbone, move_group].toBuiltSet();
       case ligate:
-        return [select, pencil, nick, insertion, deletion, backbone, move_group].toBuiltSet();
+        return [select, rope_select, pencil, nick, insertion, deletion, backbone, move_group].toBuiltSet();
       case insertion:
-        return [select, nick, ligate, deletion, backbone, move_group].toBuiltSet();
+        return [select, rope_select, nick, ligate, deletion, backbone, move_group].toBuiltSet();
       case deletion:
-        return [select, nick, ligate, insertion, backbone, move_group].toBuiltSet();
+        return [select, rope_select, nick, ligate, insertion, backbone, move_group].toBuiltSet();
       case backbone:
-        return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
+        return [select, rope_select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
       case move_group:
-        return [select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
+        return [select, rope_select, pencil, nick, ligate, insertion, deletion].toBuiltSet();
       default:
         throw ArgumentError('${this} is not a valid EditModeChoice');
     }
@@ -89,6 +93,8 @@ class EditModeChoice extends EnumClass {
     switch (this) {
       case select:
         return '(s)elect';
+      case rope_select:
+        return '(r)ope select';
       case pencil:
         return '(p)encil';
       case nick:

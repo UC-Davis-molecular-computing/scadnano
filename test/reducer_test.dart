@@ -5255,6 +5255,11 @@ main() {
   });
 
   group('insertion/deletion', () {
+    //TODO: add some unit tests that test this when DNA sequences are on the domains, and both domains
+    // having the deletion/insertion added are part of the same strand (e.g., a hairpin);
+    // this caused a bug because adding the first deletion shifts the DNA sequence, which caused the
+    // second domain to be unequal to its previous self in some internal equality check in the reducer
+    // (bug has been fixed but it's good if the unit tests catch it)
     test('InsertionAdd', () {
       // Before
       //     0               16
@@ -5270,9 +5275,9 @@ main() {
 
       int offset = 8;
       Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0));
+      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0, all_helices: false));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
-      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1));
+      state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
         "version": "''' +
@@ -5353,9 +5358,9 @@ main() {
 
       int offset = 8;
       Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0));
+      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0, all_helices: false));
       Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
-      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1));
+      state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
         "version": "''' +
@@ -5534,9 +5539,9 @@ main() {
       Grid grid = Grid.none;
       state = app_state_reducer(state, GridChange(grid: grid, group_name: constants.default_group_name));
 
-      var expected_position_h0 = util.grid_to_position3d(
+      var expected_position_h0 = util.grid_position_to_position3d(
           two_helices_design.helices[0].grid_position, Grid.square, two_helices_design.geometry);
-      var expected_position_h1 = util.grid_to_position3d(
+      var expected_position_h1 = util.grid_position_to_position3d(
           two_helices_design.helices[1].grid_position, Grid.square, two_helices_design.geometry);
 
       expect(state.design.default_group().grid, Grid.none);
@@ -5568,9 +5573,9 @@ main() {
           expected_position1.rebuild((b) => b.x = original_helix1.min_offset * geometry.base_width_svg);
 
       GridPosition expected_grid_position0 =
-          util.position3d_to_grid(expected_position0, grid, no_grid_two_helices_design.geometry);
+          util.position3d_to_grid_position(expected_position0, grid, no_grid_two_helices_design.geometry);
       GridPosition expected_grid_position1 =
-          util.position3d_to_grid(expected_position1, grid, no_grid_two_helices_design.geometry);
+          util.position3d_to_grid_position(expected_position1, grid, no_grid_two_helices_design.geometry);
 
       Helix new_helix0 = no_grid_two_helices_design.helices.values.first.rebuild((b) => b
         ..grid = grid
@@ -5627,9 +5632,9 @@ main() {
     Geometry geometry = no_grid_two_helices_design.geometry;
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
-    Point<num> svg_position0 = Point<num>(10, 60) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 30, 80 - 60) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(30, 60) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(20 - 10, 80 - 60) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b..svg_position_ = svg_position0);
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
@@ -5649,9 +5654,9 @@ main() {
     Helix helix0 = no_grid_two_helices_design.helices[0];
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D new_position0 = Position3D(x: 40, y: 30, z: 130);
-    Point<num> svg_position0 = Point<num>(40, 30) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(20 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(50 - 130, 80 - 30) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(130, 30) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(50 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(20 - 40, 80 - 30) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(new_position0)
@@ -5679,9 +5684,9 @@ main() {
     Helix helix1 = no_grid_two_helices_design.helices[1];
     Position3D position0 = Position3D(x: 200, y: 160, z: 10);
     Position3D position1 = Position3D(x: 300, y: 280, z: 500);
-    Point<num> svg_position0 = Point<num>(200, 160) * geometry.nm_to_svg_pixels;
-    Point<num> svg_position1 = Point<num>(300 * geometry.nm_to_svg_pixels,
-        svg_position0.y + util.norm_l2(500 - 10, 280 - 160) * geometry.nm_to_svg_pixels);
+    Point<num> svg_position0 = Point<num>(10, 160) * geometry.nm_to_svg_pixels;
+    Point<num> svg_position1 = Point<num>(500 * geometry.nm_to_svg_pixels,
+        svg_position0.y + util.norm_l2(300 - 200, 280 - 160) * geometry.nm_to_svg_pixels);
 
     Helix expected_helix0 = helix0.rebuild((b) => b
       ..position_.replace(position0)
@@ -5797,7 +5802,7 @@ main() {
     });
   });
 
-  group('Test strand editing with modifications -- split', () {
+  group('strand_editing_with_modifications_split', () {
     // many_helices_modification.dna
     //    B     Cy3   B
     // 0  [-----------------

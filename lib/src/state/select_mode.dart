@@ -19,6 +19,9 @@ class SelectModeChoice extends EnumClass {
   static const SelectModeChoice crossover = _$crossover;
   static const SelectModeChoice loopout = _$loopout;
   static const SelectModeChoice strand = _$strand;
+  static const SelectModeChoice deletion = _$deletion;
+  static const SelectModeChoice insertion = _$insertion;
+  static const SelectModeChoice modification = _$modification;
   static const SelectModeChoice scaffold = _$scaffold;
   static const SelectModeChoice staple = _$staple;
 
@@ -61,6 +64,12 @@ class SelectModeChoice extends EnumClass {
         return constants.css_selector_crossover;
       case loopout:
         return constants.css_selector_loopout;
+      case deletion:
+        return constants.css_selector_deletion;
+      case insertion:
+        return constants.css_selector_insertion;
+      case modification:
+        return constants.css_selector_modification;
       case strand:
         return constants.css_selector_strand;
       case scaffold:
@@ -87,6 +96,9 @@ class SelectModeChoice extends EnumClass {
     end_3p_domain,
     crossover,
     loopout,
+    deletion,
+    insertion,
+    modification,
   ]);
 
   static final BuiltList<SelectModeChoice> ends = BuiltList<SelectModeChoice>([

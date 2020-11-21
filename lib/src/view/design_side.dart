@@ -42,7 +42,7 @@ UiFactory<DesignSideProps> ConnectedDesignSide = connect<AppState, DesignSidePro
         ..grid_position_mouse_cursor = state.ui_state.side_view_grid_position_mouse_cursor
         ..mouse_svg_pos = state.ui_state.side_view_position_mouse_cursor
         ..show_grid_coordinates = state.ui_state.show_grid_coordinates_side_view
-        ..invert_y = state.ui_state.invert_yz;
+        ..invert_y = state.ui_state.invert_xy;
     }
   },
 )(DesignSide);

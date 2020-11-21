@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/selectable.dart';
 
 import 'transform_by_helix_group.dart';
 import '../state/geometry.dart';
@@ -8,7 +9,7 @@ import '../state/domain.dart';
 import '../state/design.dart';
 import '../state/loopout.dart';
 import '../state/substrand.dart';
-import 'design_main_strand_modification_domain.dart';
+import 'design_main_strand_modification.dart';
 import 'pure_component.dart';
 
 import '../state/strand.dart';
@@ -29,6 +30,8 @@ mixin DesignMainStrandModificationsPropsMixin on UiProps {
   bool only_display_selected_helices;
   bool display_connector;
   int font_size;
+
+  BuiltSet<SelectableModification> selected_modifications_in_strand;
 }
 
 class DesignMainStrandModificationsProps = UiProps
@@ -44,14 +47,14 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.first_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_5p = props.helices[domain.helix];
-        modifications.add((DesignMainStrandModificationDomain()
-          ..address = Address(helix_idx: helix_5p.idx, offset: domain.offset_5p, forward: domain.forward)
+        bool selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
+        modifications.add((DesignMainStrandModification()
+          ..selectable_modification = props.strand.selectable_modification_5p
           ..helix = helix_5p
           ..transform = transform_of_helix(domain.helix)
-          ..modification = props.strand.modification_5p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
-          ..strand = props.strand
+          ..selected = selected
           ..key = "5'")());
       }
     }
@@ -60,19 +63,20 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       var domain = props.strand.last_domain();
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_3p = props.helices[domain.helix];
-        modifications.add((DesignMainStrandModificationDomain()
-          ..address = Address(helix_idx: helix_3p.idx, offset: domain.offset_3p, forward: domain.forward)
+        modifications.add((DesignMainStrandModification()
+          ..selectable_modification = props.strand.selectable_modification_3p
           ..helix = helix_3p
           ..transform = transform_of_helix(domain.helix)
-          ..modification = props.strand.modification_3p
           ..font_size = props.font_size
           ..display_connector = props.display_connector
-          ..strand = props.strand
+          ..selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_3p)
           ..key = "3'")());
       }
     }
 
-    for (var dna_idx_mod in props.strand.modifications_int.keys) {
+
+    // for (int dna_idx_mod in props.strand.modifications_int.keys) {
+    for (int dna_idx_mod in props.strand.selectable_modifications_int_by_dna_idx.keys) {
       // find substrand with modification, and the DNA index of its 5' end
       Substrand ss_with_mod;
       int dna_index_5p_end_of_ss_with_mod = 0;
@@ -88,18 +92,18 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
       if (ss_with_mod is Domain) {
         if (!props.only_display_selected_helices ||
             props.side_selected_helix_idxs.contains(ss_with_mod.helix)) {
-          int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
-          int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
+          // int ss_dna_idx = dna_idx_mod - dna_index_5p_end_of_ss_with_mod;
+          // int offset = ss_with_mod.substrand_dna_idx_to_substrand_offset(ss_dna_idx, ss_with_mod.forward);
           Helix helix = props.helices[ss_with_mod.helix];
-          modifications.add((DesignMainStrandModificationDomain()
-            ..address = Address(helix_idx: helix.idx, offset: offset, forward: ss_with_mod.forward)
+          var selectable_mod_int = props.strand.selectable_modifications_int_by_dna_idx[dna_idx_mod];
+          modifications.add((DesignMainStrandModification()
+            ..selectable_modification = selectable_mod_int
             ..helix = helix
             ..transform = transform_of_helix(ss_with_mod.helix)
-            ..modification = props.strand.modifications_int[dna_idx_mod]
             ..font_size = props.font_size
             ..display_connector = props.display_connector
+            ..selected = props.selected_modifications_in_strand.contains(selectable_mod_int)
             ..dna_idx_mod = dna_idx_mod
-            ..strand = props.strand
             ..key = "internal-${dna_idx_mod}")());
         }
       } else if (ss_with_mod is Loopout) {

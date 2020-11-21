@@ -58,7 +58,7 @@ abstract class HelixGroupMove
     var mouse_translation = delta;
     var nm_translation = mouse_translation * geometry.svg_pixels_to_nm;
     var new_position = group.position.rebuild((b) => b
-      ..x = group.position.x + nm_translation.x
+      ..z = group.position.z + nm_translation.x
       ..y = group.position.y + nm_translation.y);
     return new_position;
   }

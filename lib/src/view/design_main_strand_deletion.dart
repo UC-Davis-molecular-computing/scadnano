@@ -18,10 +18,14 @@ UiFactory<DesignMainStrandDeletionProps> DesignMainStrandDeletion = _$DesignMain
 
 @Props()
 mixin DesignMainStrandDeletionPropsMixin on UiProps {
-  Domain domain;
-  int deletion;
+  SelectableDeletion selectable_deletion;
   Helix helix;
   String transform;
+  bool selected;
+
+  Domain get domain => selectable_deletion.domain;
+  int get deletion => selectable_deletion.offset;
+
 }
 
 class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionPropsMixin;
@@ -29,6 +33,7 @@ class DesignMainStrandDeletionProps = UiProps with DesignMainStrandDeletionProps
 @Component2()
 class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDeletionProps>
     with PureComponent {
+
   @override
   render() {
     Geometry geometry = props.helix.geometry;
@@ -49,10 +54,28 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
     num background_x = pos.x - background_width / 2;
     num background_y = pos.y - background_height / 2;
 
+    var classname = constants.css_selector_deletion_group;
+    if (props.selected) {
+      classname += ' ' + constants.css_selector_selected;
+    }
+    if (props.selectable_deletion.is_scaffold) {
+      classname += ' ' + constants.css_selector_scaffold;
+    }
+
     String key = 'deletion-H${domain.helix}-${deletion_offset}';
     String key_background = 'deletion-background-H${domain.helix}-${deletion_offset}';
     return (Dom.g()
-          ..className = 'deletion-group'
+          ..className = classname
+          ..onPointerDown = ((ev) {
+            if (deletion_selectable(props.selectable_deletion)) {
+              props.selectable_deletion.handle_selection_mouse_down(ev.nativeEvent);
+            }
+          })
+          ..onPointerUp = ((ev) {
+            if (deletion_selectable(props.selectable_deletion)) {
+              props.selectable_deletion.handle_selection_mouse_up(ev.nativeEvent);
+            }
+          })
           ..transform = props.transform)(
         (Dom.rect()
           ..className = 'deletion-background'
@@ -75,7 +98,7 @@ class DesignMainStrandDeletionComponent extends UiComponent2<DesignMainStrandDel
               app.dispatch(actions.DeletionRemove(domain: props.domain, offset: props.deletion));
             }
           })
-          ..id = key
+          ..id = props.selectable_deletion.id
           ..key = key)());
   }
 }

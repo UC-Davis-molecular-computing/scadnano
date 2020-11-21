@@ -51,7 +51,7 @@ class DesignMainPotentialVerticalCrossoversComponent
           ..helices = helices_of_crossover
           ..groups = groups_of_crossover
           ..geometry = props.geometry
-          ..key = potential_vertical_crossover.dna_end_top.id())());
+          ..key = potential_vertical_crossover.dna_end_top.id)());
       }
     }
     return (Dom.g()..className = 'potential-vertical-crossovers')(crossover_components);

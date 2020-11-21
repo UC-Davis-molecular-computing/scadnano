@@ -82,7 +82,7 @@ class DesignMainStrandCrossoverComponent
     }
 
     var color = strand.color.toHexColor().toCssString();
-    var id = crossover.id();
+    var id = crossover.id;
 
     //XXX: I believe this was here so that when the crossover was clicked to set the Helix rolls at
     // each other (what we call "unstrain backbone here", the updated rolls would immediately display
@@ -94,7 +94,7 @@ class DesignMainStrandCrossoverComponent
 //      update_mouseover_crossover();
 //    }
 
-    String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
+    // String tooltip = 'PUT TOOLTIP TEXT HERE (if we think of something)';
 
     var path_props = Dom.path()
       ..d = path
@@ -135,14 +135,14 @@ class DesignMainStrandCrossoverComponent
 
   @override
   componentDidMount() {
-    var element = querySelector('#${props.crossover.id()}');
+    var element = querySelector('#${props.crossover.id}');
     element.addEventListener('contextmenu', on_context_menu);
     super.componentDidMount();
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.crossover.id()}');
+    var element = querySelector('#${props.crossover.id}');
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }
@@ -153,7 +153,8 @@ class DesignMainStrandCrossoverComponent
       event.preventDefault();
       event.stopPropagation(); // needed to prevent strand context menu from popping up
       app.dispatch(actions.ContextMenuShow(
-          context_menu: ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
+          context_menu:
+              ContextMenu(items: context_menu_crossover(props.strand).build(), position: event.page)));
     }
   }
 
@@ -164,11 +165,11 @@ class DesignMainStrandCrossoverComponent
         ),
         ContextMenuItem(
           title: 'unstrain backbone here',
-          on_click: handle_crossover_click,
+          on_click: unstrain_backbone_at_crossover,
         ),
       ];
 
-  handle_crossover_click() {
+  unstrain_backbone_at_crossover() {
     Domain prev_domain = props.prev_domain;
     Domain next_domain = props.next_domain;
     List<actions.UndoableAction> roll_actions = [];
@@ -201,6 +202,14 @@ class DesignMainStrandCrossoverComponent
     if (new_length == null || new_length == 0) {
       return;
     }
-    app.dispatch(actions.ConvertCrossoverToLoopout(props.crossover, new_length));
+
+    var selected_crossovers = app.state.ui_state.selectables_store.selected_crossovers;
+    actions.UndoableAction action;
+    if (selected_crossovers.length > 0) {
+      action = actions.ConvertCrossoversToLoopouts(selected_crossovers, new_length);
+    } else {
+      action = actions.ConvertCrossoverToLoopout(props.crossover, new_length);
+    }
+    app.dispatch(action);
   }
 }

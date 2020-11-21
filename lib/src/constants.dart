@@ -5,8 +5,18 @@ import 'package:platform_detect/platform_detect.dart';
 
 import 'state/grid.dart';
 
-const String CURRENT_VERSION = "0.12.2";
+// WARNING: Do not modify line below, except for the version string
+//          (and also add new version string to scadnano_versions_to_link).
+const String CURRENT_VERSION = "0.13.0";
 const String INITIAL_VERSION = "0.1.0";
+
+// scadnano versions that we deploy so that older versions can be used.
+// CURRENT_VERSION should be the highest version in this list.
+final scadnano_older_versions_to_link =[
+  "0.12.2",
+  "0.12.1",
+];
+final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
 const NO_DESIGN_MESSAGE = 'No Design loaded.\n'
@@ -344,8 +354,14 @@ const css_selector_end_3p_strand_creating = '3p-strand-creating';
 
 const css_selector_helix__mouseover_invisible_rectangle = 'helix-mouseover';
 
+// const css_selector_modification = 'modification-text';
+// const css_selector_modification_group = 'modification';
+const css_selector_modification = 'modification';
+
 const css_selector_insertion = 'insertion-curve';
 const css_selector_deletion = 'deletion-cross';
+const css_selector_insertion_group = 'insertion-group';
+const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
 

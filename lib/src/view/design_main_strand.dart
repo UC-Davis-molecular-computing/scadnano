@@ -46,6 +46,9 @@ mixin DesignMainStrandPropsMixin on UiProps {
   BuiltSet<Crossover> selected_crossovers_in_strand;
   BuiltSet<Loopout> selected_loopouts_in_strand;
   BuiltSet<Domain> selected_domains_in_strand;
+  BuiltSet<SelectableDeletion> selected_deletions_in_strand;
+  BuiltSet<SelectableInsertion> selected_insertions_in_strand;
+  BuiltSet<SelectableModification> selected_modifications_in_strand;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -54,7 +57,6 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool selected;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool currently_moving;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool modification_display_connector;
@@ -88,7 +90,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
 
     return (Dom.g()
-      ..id = props.strand.id()
+      ..id = props.strand.id
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
 //      ..onContextMenu = strand_content_menu // this is handled when clicking on domain
@@ -99,7 +101,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..show_domain_labels = props.show_domain_labels
         ..helices = props.helices
         ..groups = props.groups
-        ..currently_moving = props.currently_moving
         ..selected_ends_in_strand = props.selected_ends_in_strand
         ..selected_crossovers_in_strand = props.selected_crossovers_in_strand
         ..selected_loopouts_in_strand = props.selected_loopouts_in_strand
@@ -132,6 +133,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..geometry = props.geometry
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
+          ..selected_modifications_in_strand = props.selected_modifications_in_strand
           ..font_size = props.modification_font_size
           ..display_connector = props.modification_display_connector
           ..key = 'modifications')(),
@@ -157,41 +159,46 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      if (strand_selectable(props.strand) && !props.currently_moving) {
+      bool currently_moving = app.state.ui_state.strands_move != null ||
+          app.state.ui_state.domains_move != null ||
+          app.state.ui_state.dna_ends_are_moving;
+      if (strand_selectable(props.strand) && !currently_moving) {
         props.strand.handle_selection_mouse_up(event_syn.nativeEvent);
       }
     }
   }
 
-  assign_dna() => app.disable_keyboard_shortcuts_while(() => ask_for_assign_dna_sequence(props.strand,
-      props.assign_complement_to_bound_strands_default, props.warn_on_change_strand_dna_assign_default));
+  assign_dna() =>
+      app.disable_keyboard_shortcuts_while(() =>
+          ask_for_assign_dna_sequence(props.strand,
+              props.assign_complement_to_bound_strands_default,
+              props.warn_on_change_strand_dna_assign_default));
 
-  add_modification(Domain domain, Address address, bool is_5p) => app
-      .disable_keyboard_shortcuts_while(() => ask_for_add_modification(props.strand, domain, address, is_5p));
+  add_modification(Domain domain, Address address, bool is_5p) =>
+      app
+          .disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var insertion in domain.insertions) {
-          String id = util.id_insertion(domain, insertion.offset);
+        for (var selectable_insertion in domain.selectable_insertions) {
           paths.add((DesignMainStrandInsertion()
-            ..insertion = insertion
-            ..domain = domain
+            ..selectable_insertion = selectable_insertion
+            ..selected = props.selected_insertions_in_strand.contains(selectable_insertion)
             ..helix = helix
             ..color = props.strand.color
             ..transform = transform_of_helix(domain.helix)
-            ..id = id
-            ..key = id)());
+            ..key = util.id_insertion(domain, selectable_insertion.insertion.offset))());
         }
       }
     }
     return paths.isEmpty
         ? null
         : (Dom.g()
-          ..key = 'insertions'
-          ..className = 'insertions')(paths);
+      ..key = 'insertions'
+      ..className = 'insertions')(paths);
   }
 
   /// Assuming props contain helices mapping idx to Helix, groups mapping group names to groups,
@@ -209,12 +216,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     for (Domain domain in props.strand.domains()) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
-        for (var deletion in domain.deletions) {
-          String id = util.id_deletion(domain, deletion);
+        for (var selectable_deletion in domain.selectable_deletions) {
+          String id = util.id_deletion(domain, selectable_deletion.offset);
           paths.add((DesignMainStrandDeletion()
-            ..domain = domain
-            ..deletion = deletion
+            ..selectable_deletion = selectable_deletion
             ..helix = helix
+            ..selected = props.selected_deletions_in_strand.contains(selectable_deletion)
             ..transform = transform_of_helix(domain.helix)
             ..key = id)());
         }
@@ -223,8 +230,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     return paths.isEmpty
         ? null
         : (Dom.g()
-          ..key = 'deletions'
-          ..className = 'deletions')(paths);
+      ..key = 'deletions'
+      ..className = 'deletions')(paths);
   }
 
   remove_dna() {
@@ -234,7 +241,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   set_color() {
     app.disable_keyboard_shortcuts_while(
-        () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
+            () => ask_for_color(props.strand, app.state.ui_state.selectables_store.selected_strands));
   }
 
   reflect(bool horizontal, bool reverse_polarity) {
@@ -263,7 +270,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) => [
+  List<ContextMenuItem> context_menu_strand(Strand strand, {Domain domain, Address address, bool is_5p}) =>
+      [
         ContextMenuItem(
           title: 'assign DNA',
           on_click: assign_dna,
@@ -345,10 +353,139 @@ after:
 ''',
         ),
       ];
+
+
+  Future<void> ask_for_add_modification(
+      [Domain domain = null, Address address = null, bool is_5p = null]) async {
+    assert((is_5p == null && domain != null && address != null) ||
+        (is_5p != null && domain == null && address == null));
+    bool is_end = is_5p != null;
+    int strand_dna_idx = null;
+    int selected_index = 2;
+    if (!is_end) {
+      strand_dna_idx = clicked_strand_dna_idx(domain, address, props.strand);
+    } else {
+      if (is_5p) {
+        selected_index = 1;
+      } else {
+        selected_index = 0;
+      }
+    }
+
+    int modification_type_idx = 0;
+    int display_text_idx = 1;
+    int idt_text_idx = 2;
+    int index_of_dna_base_idx = 3;
+    // int id_idx = 4;
+    var items = List<DialogItem>(4);
+    items[modification_type_idx] = DialogRadio(
+        label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
+
+    String initial_display_text = "";
+    String initial_idt_text = "";
+    // String initial_id = "";
+
+    // if there is a last mod of this type, it auto-populates the dialog inputs
+    Modification last_mod;
+    if (selected_index == 0) {
+      // 3' mod
+      last_mod = app.state.ui_state.last_mod_3p;
+    } else if (selected_index == 1) {
+      // 5' mod
+      last_mod = app.state.ui_state.last_mod_5p;
+    } else if (selected_index == 2) {
+      // internal mod
+      last_mod = app.state.ui_state.last_mod_int;
+    } else {
+      throw AssertionError('should be unreachable');
+    }
+    if (last_mod != null) {
+      initial_display_text = last_mod.display_text;
+      initial_idt_text = last_mod.idt_text;
+      // initial_id = last_mod.id;
+    }
+
+    items[display_text_idx] = DialogText(label: 'display text', value: initial_display_text);
+    items[idt_text_idx] = DialogText(label: 'idt text', value: initial_idt_text);
+    // items[id_idx] = DialogText(label: 'id', value: initial_id);
+
+    items[index_of_dna_base_idx] =
+        DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
+
+    // don't allow to modify index of DNA base when 3' or 5' is selected
+    var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
+      index_of_dna_base_idx: {
+        modification_type_idx: ["3'", "5'"]
+      },
+    });
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+    String modification_type = (results[modification_type_idx] as DialogRadio).value;
+    String display_text = (results[display_text_idx] as DialogText).value;
+    // String id = (results[id_idx] as DialogText).value;
+    String idt_text = (results[idt_text_idx] as DialogText).value;
+    int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
+
+    Modification mod;
+    if (modification_type == "3'") {
+      mod = Modification3Prime(
+        //id: id,
+          display_text: display_text,
+          idt_text: idt_text);
+    } else if (modification_type == "5'") {
+      mod = Modification5Prime(
+        //id: id,
+          display_text: display_text,
+          idt_text: idt_text);
+    } else {
+      mod = ModificationInternal(
+        // id: id,
+        display_text: display_text,
+        idt_text: idt_text,
+      );
+    }
+
+    // if modification type is 5' or 3' and many such ends are selected, add modifications to all of them
+    actions.UndoableAction action;
+    if (mod is ModificationInternal) {
+      action =
+          actions.ModificationAdd(strand: props.strand, modification: mod, strand_dna_idx: index_of_dna_base);
+    } else {
+      List<DNAEnd> ends_selected = app.state.ui_state.selectables_store.selected_dna_ends.toList();
+
+      if (is_5p && !ends_selected.contains(props.strand.dnaend_5p)) {
+        ends_selected.add(props.strand.dnaend_5p);
+      } else if (!is_5p && !ends_selected.contains(props.strand.dnaend_3p)) {
+        ends_selected.add(props.strand.dnaend_3p);
+      }
+
+      if (ends_selected.length == 1) {
+        action = actions.ModificationAdd(
+            strand: props.strand, modification: mod, strand_dna_idx: index_of_dna_base);
+      } else if (ends_selected.length > 1) {
+        // safe to batch this action since it's only for 5' or 3', so each strand will only be modified once
+        List<actions.ModificationAdd> all_actions = [];
+        for (var end_selected in ends_selected) {
+          var strand_of_end_selected = app.state.design.end_to_strand(end_selected);
+          var new_action = actions.ModificationAdd(
+              strand: strand_of_end_selected, modification: mod, strand_dna_idx: null);
+          all_actions.add(new_action);
+        }
+        action = actions.BatchAction(all_actions);
+      } else {
+        print('WARNING: selectable_mods should have at least one element in it by this line');
+        return;
+      }
+    }
+
+    app.dispatch(action);
+  }
+
 }
 
-actions.UndoableAction batch_if_multiple_selected(
-    ActionCreator action_creator, Strand strand, BuiltSet<Strand> selected_strands) {
+actions.UndoableAction batch_if_multiple_selected(ActionCreator action_creator, Strand strand,
+    BuiltSet<Strand> selected_strands) {
   actions.Action action;
   if (selected_strands.isEmpty || selected_strands.length == 1 && selected_strands.first == strand) {
     // set for single strand if nothing is selected, or exactly this strand is selected
@@ -377,17 +514,17 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
-    ('    name=${strand.name}\n' ?? '\n') +
-    "    length=${strand.dna_length()}\n" +
-    "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
-    "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
-    (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
-    (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
+        ('    name=${strand.name}\n' ?? '\n') +
+        "    length=${strand.dna_length()}\n" +
+        "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
+        "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
+        (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
+        (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 
 String tooltip_end(Domain ss, DNAEnd end) => "(helix=${ss.helix}, offset=${end.offset_inclusive})";
 
-bool should_draw_domain(
-        Domain ss, BuiltSet<int> side_selected_helix_idxs, bool only_display_selected_helices) =>
+bool should_draw_domain(Domain ss, BuiltSet<int> side_selected_helix_idxs,
+    bool only_display_selected_helices) =>
     !only_display_selected_helices || side_selected_helix_idxs.contains(ss.helix);
 
 class DNAAssignOptions {
@@ -404,70 +541,6 @@ class DNARemoveOptions {
   DNARemoveOptions({this.remove_complements = false, this.remove_all = false});
 }
 
-Future<void> ask_for_add_modification(Strand strand,
-    [Domain domain = null, Address address = null, bool is_5p = null]) async {
-  assert((is_5p == null && domain != null && address != null) ||
-      (is_5p != null && domain == null && address == null));
-  bool is_end = is_5p != null;
-  int strand_dna_idx = null;
-  int selected_index = 2;
-  if (!is_end) {
-    strand_dna_idx = clicked_strand_dna_idx(domain, address, strand);
-  } else {
-    if (is_5p) {
-      selected_index = 1;
-    } else {
-      selected_index = 0;
-    }
-  }
-
-  int modification_type_idx = 0;
-  int display_text_idx = 1;
-  int id_idx = 2;
-  int idt_text_idx = 3;
-  int index_of_dna_base_idx = 4;
-  var items = List<DialogItem>(5);
-  items[modification_type_idx] = DialogRadio(
-      label: 'modification type', options: {"3'", "5'", "internal"}, selected_idx: selected_index);
-  items[display_text_idx] = DialogText(label: 'display text', value: "");
-  items[id_idx] = DialogText(label: 'id', value: "");
-  items[idt_text_idx] = DialogText(label: 'idt text', value: "");
-  items[index_of_dna_base_idx] =
-      DialogInteger(label: 'index of DNA base', value: is_end ? 0 : strand_dna_idx);
-
-  // don't allow to modify index of DNA base when 3' or 5' is selected
-  var dialog = Dialog(title: 'add modification', items: items, disable_when_any_radio_button_selected: {
-    index_of_dna_base_idx: {
-      modification_type_idx: ["3'", "5'"]
-    },
-  });
-
-  List<DialogItem> results = await util.dialog(dialog);
-  if (results == null) return;
-  String modification_type = (results[modification_type_idx] as DialogRadio).value;
-  String display_text = (results[display_text_idx] as DialogText).value;
-  String id = (results[id_idx] as DialogText).value;
-  String idt_text = (results[idt_text_idx] as DialogText).value;
-  int index_of_dna_base = (results[index_of_dna_base_idx] as DialogInteger).value;
-
-  Modification mod;
-  if (modification_type == "3'") {
-    mod = Modification3Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
-  } else if (modification_type == "5'") {
-    mod = Modification5Prime(
-        display_text: display_text, id: id, idt_text: idt_text, unused_fields: BuiltMap<String, Object>());
-  } else {
-    mod = ModificationInternal(
-        display_text: display_text,
-        id: id,
-        idt_text: idt_text,
-        allowed_bases: null,
-        unused_fields: BuiltMap<String, Object>());
-  }
-  app.dispatch(actions.ModificationAdd(strand: strand, modification: mod, strand_dna_idx: index_of_dna_base));
-}
-
 int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
   int strand_dna_idx = 0;
   int domain_dna_idx = domain.substrand_offset_to_substrand_dna_idx(address.offset, address.forward);
@@ -479,8 +552,8 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
   return strand_dna_idx;
 }
 
-Future<void> ask_for_assign_dna_sequence(
-    Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
+Future<void> ask_for_assign_dna_sequence(Strand strand, bool assign_complement_to_bound_strands_default,
+    bool warn_on_change_default) async {
   var dialog = Dialog(title: 'assign DNA sequence', items: [
     DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
     DialogCheckbox(label: 'use predefined DNA sequence'),
@@ -557,6 +630,6 @@ Future<void> ask_for_color(Strand strand, BuiltSet<Strand> selected_strands) asy
   String color_hex = (results[0] as DialogText).value;
 
   actions.Action action =
-      batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
+  batch_if_multiple_selected(color_set_strand_action_creator(color_hex), strand, selected_strands);
   app.dispatch(action);
 }

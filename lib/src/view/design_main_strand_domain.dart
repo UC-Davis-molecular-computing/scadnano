@@ -36,7 +36,6 @@ mixin DesignMainDomainPropsMixin on UiProps {
   Strand strand;
   String transform;
   List<ContextMenuItem> Function(Strand strand, {Domain domain, Address address}) context_menu_strand;
-  bool currently_moving;
   bool selected;
 
   BuiltMap<int, Helix> helices;
@@ -52,7 +51,7 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   @override
   render() {
     Domain domain = props.domain;
-    String id = domain.id();
+    String id = domain.id;
 
     Point<num> start_svg = props.helix.svg_base_pos(domain.offset_5p, domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(domain.offset_3p, domain.forward);
@@ -99,9 +98,9 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
         }
         app.dispatch(actions.Nick(domain: domain, offset: offset));
       } else if (edit_mode_is_insertion()) {
-        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset));
+        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
       } else if (edit_mode_is_deletion()) {
-        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset));
+        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
       }
     }
   }
@@ -125,7 +124,10 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
       // want, which is that if we are moving a group of strands, and we are in a disallowed position where
       // the pointer itself (so also some strands) are positioned directly over a visible part of a strand,
       // then it would otherwise become selected on mouse up, when really we just want to end the move.
-      if (domain_selectable(props.domain) && !props.currently_moving) {
+      bool currently_moving = app.state.ui_state.strands_move != null ||
+          app.state.ui_state.domains_move != null ||
+          app.state.ui_state.dna_ends_are_moving;
+      if (domain_selectable(props.domain) && !currently_moving) {
         props.domain.handle_selection_mouse_up(event_syn.nativeEvent);
       }
     }
@@ -135,13 +137,13 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
   // https://medium.com/@ericclemmons/react-event-preventdefault-78c28c950e46
   @override
   componentDidMount() {
-    var element = querySelector('#${props.domain.id()}');
+    var element = querySelector('#${props.domain.id}');
     element.addEventListener('contextmenu', on_context_menu);
   }
 
   @override
   componentWillUnmount() {
-    var element = querySelector('#${props.domain.id()}');
+    var element = querySelector('#${props.domain.id}');
     element.removeEventListener('contextmenu', on_context_menu);
     super.componentWillUnmount();
   }

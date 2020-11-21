@@ -1,5 +1,5 @@
-import origami_rectangle as rect
 import scadnano as sc
+from scadnano import origami_rectangle as rect
 
 
 def create_design():

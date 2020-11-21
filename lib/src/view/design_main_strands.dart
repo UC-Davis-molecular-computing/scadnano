@@ -22,9 +22,6 @@ UiFactory<DesignMainStrandsProps> ConnectedDesignMainStrands =
     ..groups = state.design.groups
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
     ..selectables_store = state.ui_state.selectables_store
-    ..currently_moving = state.ui_state.strands_move != null ||
-        state.ui_state.domains_move != null ||
-        state.ui_state.dna_ends_are_moving
     ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
     ..moving_dna_ends = state.ui_state.dna_ends_are_moving
     ..assign_complement_to_bound_strands_default = state.ui_state.assign_complement_to_bound_strands_default
@@ -54,7 +51,6 @@ mixin DesignMainStrandsProps on UiProps {
   num domain_label_font_size;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
-  bool currently_moving;
   bool assign_complement_to_bound_strands_default;
   bool warn_on_change_strand_dna_assign_default;
   bool only_display_selected_helices;
@@ -79,6 +75,9 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
       var selected_crossovers_in_strand = props.selectables_store.selected_crossovers_in_strand(strand);
       var selected_loopouts_in_strand = props.selectables_store.selected_loopouts_in_strand(strand);
       var selected_domains_in_strand = props.selectables_store.selected_domains_in_strand(strand);
+      var selected_deletions_in_strand = props.selectables_store.selected_deletions_in_strand(strand);
+      var selected_insertions_in_strand = props.selectables_store.selected_insertions_in_strand(strand);
+      var selected_modifications_in_strand = props.selectables_store.selected_modifications_in_strand(strand);
 
       elts.add((DesignMainStrand()
         ..strand = strand
@@ -91,7 +90,9 @@ class DesignMainStrandsComponent extends UiComponent2<DesignMainStrandsProps> wi
         ..selected_crossovers_in_strand = selected_crossovers_in_strand
         ..selected_loopouts_in_strand = selected_loopouts_in_strand
         ..selected_domains_in_strand = selected_domains_in_strand
-        ..currently_moving = props.currently_moving
+        ..selected_deletions_in_strand = selected_deletions_in_strand
+        ..selected_insertions_in_strand = selected_insertions_in_strand
+        ..selected_modifications_in_strand = selected_modifications_in_strand
         ..drawing_potential_crossover = props.drawing_potential_crossover
         ..moving_dna_ends = props.moving_dna_ends
         ..assign_complement_to_bound_strands_default = props.assign_complement_to_bound_strands_default

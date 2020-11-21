@@ -21,6 +21,7 @@ import '../constants.dart' as constants;
 import 'package:smart_dialogs/smart_dialogs.dart';
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
+import '../view/menu_dropdown_right.dart';
 import '../view/menu_form_file.dart';
 
 import '../app.dart';
@@ -62,13 +63,14 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           state.ui_state.display_base_offsets_of_major_ticks_only_first_helix
       ..display_major_tick_widths = state.ui_state.display_major_tick_widths
       ..display_major_tick_widths_all_helices = state.ui_state.display_major_tick_widths_all_helices
-      ..invert_yz = state.ui_state.invert_yz
+      ..invert_xy = state.ui_state.invert_xy
       ..show_helix_circles_main_view = state.ui_state.show_helix_circles_main_view
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_loopout_length = state.ui_state.show_loopout_length
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
-      ..clear_helix_selection_when_loading_new_design = state.ui_state.clear_helix_selection_when_loading_new_design
+      ..clear_helix_selection_when_loading_new_design =
+          state.ui_state.clear_helix_selection_when_loading_new_design
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
@@ -104,7 +106,7 @@ mixin MenuPropsMixin on UiProps {
   bool display_base_offsets_of_major_ticks_only_first_helix;
   bool display_major_tick_widths;
   bool display_major_tick_widths_all_helices;
-  bool invert_yz;
+  bool invert_xy;
   bool warn_on_exit_if_unsaved;
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
@@ -219,13 +221,13 @@ really want to exit without saving.'''
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+            clear: !props.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
 design will be selected (based on helix index) on the loaded design.'''
-        ..key = 'clear-helix-selection-when-loading-new-design'
-      )(),
+        ..key = 'clear-helix-selection-when-loading-new-design')(),
     ]);
   }
 
@@ -603,20 +605,20 @@ of the design you were looking at before changing the script.'''
             props.dispatch(actions.SetOnlyDisplaySelectedHelices(!props.only_display_selected_helices)))
         ..key = 'display-only-selected-helices')(),
       (MenuBoolean()
-        ..value = props.invert_yz
-        ..display = 'Invert y- and z-axes'
+        ..value = props.invert_xy
+        ..display = 'Invert y- and x-axes'
         ..tooltip = '''\
 In the main view, invert the y-axis, and in the side view, invert both the 
-y-axis and the z-axis. 
+y-axis and the x-axis. 
 
 If unchecked, then use "screen coordinates", where increasing y moves down. 
 
 If checked, then use Cartesian coordinates where increasing y moves up. 
-Also invert the z-axis to maintain chirality, so this has the net effect of 
+Also invert the x-axis to maintain chirality, so this has the net effect of 
 rotating the side view by 180 degrees.'''
-        ..name = 'invert-yz-axes'
-        ..onChange = ((_) => props.dispatch(actions.InvertYZSet(invert_yz: !props.invert_yz)))
-        ..key = 'invert-yz-axes')(),
+        ..name = 'invert-xy-axes'
+        ..onChange = ((_) => props.dispatch(actions.InvertXYSet(invert_xy: !props.invert_xy)))
+        ..key = 'invert-xy-axes')(),
       (MenuBoolean()
         ..value = props.show_helix_circles_main_view
         ..display = 'Show main view helix circles/idx'
@@ -673,6 +675,23 @@ When selected, the length of each loopout is displayed next to it.'''
 // help menu
 
   help_menu() {
+    List<ReactElement> version_dropdown_items = [];
+    bool first = true;
+    for (var version in constants.scadnano_versions_to_link) {
+      var version_dropdown_item = DropdownItem(
+        {
+          'href': 'https://scadnano.org/v${version}',
+          'target': '_blank',
+          'key': version,
+          'title': '''\
+    Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
+        },
+        'v${version}' + (first? ' (current version)': ''),
+      );
+      first = false;
+      version_dropdown_items.add(version_dropdown_item);
+    }
+
     return NavDropdown(
       {
         'title': 'Help',
@@ -716,9 +735,34 @@ When selected, the length of each loopout is displayed next to it.'''
       ),
       DropdownItem(
         {
-          'href': 'https://scadnano.org/dev',
+          'href':
+          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
           'target': '_blank',
-          'title': '''\
+          //TODO: figure out how to give a DropdownItem a tooltip
+//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+        },
+        'Version ${constants.CURRENT_VERSION} release notes',
+      ),
+      // older_versions_link_dropdown,
+      (MenuDropdownRight()
+        ..title = "Other versions"
+        ..id = "older-version-dropdown"
+        ..tooltip = '''\
+Older versions of scadnano, as well as the newest development version.
+
+Starting from v0.12.1, every released (master branch) version of scadnano 
+is deployed to https://scadnano.org/{version}. 
+
+https://scadnano.org/dev is the newest version, containing newer features 
+(those marked "closed in dev" on the scadnano issues page: 
+https://github.com/UC-Davis-molecular-computing/scadnano/issues), 
+but it may be less stable than the current version.''')([
+        DropdownItem(
+          {
+            'href': 'https://scadnano.org/dev',
+            'target': '_blank',
+            'key': 'dev',
+            'title': '''\
 Development version of scadnano, located at https://scadnano.org/dev.
 
 This site is updated more frequently than the main site at https://scadnano.org.
@@ -727,19 +771,11 @@ This includes open issues that have been handled in the dev branch but not the m
 https://github.com/UC-Davis-molecular-computing/scadnano/labels/closed%20in%20dev
 
 However, it may be less stable than the main site.'''
-        },
-        'scadnano dev version',
-      ),
-      DropdownItem(
-        {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
-          'target': '_blank',
-          //TODO: figure out how to give a DropdownItem a tooltip
-//          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
-        },
-        'Version ${constants.CURRENT_VERSION} release notes',
-      ),
+          },
+          'dev',
+        ),
+        version_dropdown_items
+      ]),
     );
   }
 

@@ -33,8 +33,8 @@ def create_design():
     group_north = sc.HelixGroup(position=sc.Position3D(x=0, y=-10, z=0), grid=sc.honeycomb)
     group_south = sc.HelixGroup(position=sc.Position3D(x=0, y=10, z=0), helices_view_order=[7, 6],
                                 grid=sc.square)
-    group_east = sc.HelixGroup(position=sc.Position3D(x=10, y=0, z=0), grid=sc.square)
-    group_west = sc.HelixGroup(position=sc.Position3D(x=-10, y=0, z=0), grid=sc.Grid.none)
+    group_east = sc.HelixGroup(position=sc.Position3D(x=0, y=0, z=10), grid=sc.square)
+    group_west = sc.HelixGroup(position=sc.Position3D(x=0, y=0, z=-10), grid=sc.Grid.none)
     groups = {
         n: group_north,
         e: group_east,
@@ -43,7 +43,7 @@ def create_design():
     }
 
     if include_rot:
-        group_rot = sc.HelixGroup(position=sc.Position3D(x=10, y=10, z=0), pitch=45, grid=sc.square)
+        group_rot = sc.HelixGroup(position=sc.Position3D(x=00, y=10, z=10), pitch=45, grid=sc.square)
         groups['r'] = group_rot
 
     design = sc.Design(helices=helices, groups=groups, strands=[])

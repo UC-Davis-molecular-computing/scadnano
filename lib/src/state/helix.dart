@@ -36,6 +36,8 @@ abstract class Address with BuiltJsonSerializable implements Built<Address, Addr
   int get offset;
 
   bool get forward;
+
+  String toString() => 'H${helix_idx}-${forward ? "F" : "R"}-${offset}';
 }
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
@@ -71,7 +73,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     int min_offset = 0,
     int major_tick_start = null,
     int max_offset = constants.default_max_offset,
-    bool invert_yz = false,
+    bool invert_xy = false,
     Position3D position = null,
     Point<num> svg_position = null,
     String group = constants.default_group_name,
@@ -90,7 +92,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..roll = roll
       ..pitch = pitch
       ..yaw = yaw
-      ..invert_yz = invert_yz
+      ..invert_xy = invert_xy
       ..min_offset = min_offset
       ..max_offset = max_offset
       ..major_tick_start = major_tick_start
@@ -103,7 +105,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     b.roll = constants.default_roll;
     b.pitch = constants.default_pitch;
     b.yaw = constants.default_yaw;
-    b.invert_yz = false;
+    b.invert_xy = false;
   }
 
   /// unique identifier of used helix; also index indicating order to show
@@ -129,12 +131,12 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   Point<num> get svg_position_;
 
   Point<num> get svg_position =>
-      invert_yz ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
+      invert_xy ? (Point<num>(svg_position_.x, -svg_position_.y)) : svg_position_;
 
   @nullable
   Position3D get position_;
 
-  Position3D get position => position_ ?? util.grid_to_position3d(grid_position, grid, geometry);
+  Position3D get position => position_ ?? util.grid_position_to_position3d(grid_position, grid, geometry);
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
   double get roll;
@@ -151,7 +153,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   /// Minimum allowed offset of Substrand that can be drawn on this Helix.
   int get min_offset;
 
-  bool get invert_yz;
+  bool get invert_xy;
 
   // If regular or periodic distances are used, this is the starting offset
   int get major_tick_start;
@@ -167,7 +169,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   @memoized
   Position3D get default_position {
-    num x = min_offset * geometry.rise_per_base_pair;
+    num z = min_offset * geometry.rise_per_base_pair;
 
     // normalized so helices are diameter 1
     Point<num> point_zy;
@@ -182,7 +184,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     }
 
     num y = point_zy.y * geometry.distance_between_helices_nm;
-    num z = point_zy.x * geometry.distance_between_helices_nm;
+    num x = point_zy.x * geometry.distance_between_helices_nm;
     Position3D pos = Position3D(x: x, y: y, z: z);
     return pos;
   }
@@ -200,13 +202,13 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     return default_position;
   }
 
-  /// Calculates z-y angle in degrees, according to position3d(), from this [Helix] to [other].
+  /// Calculates x-y angle in degrees, according to position3d(), from this [Helix] to [other].
   num angle_to(Helix other) {
     var pos1 = position3d();
     var pos2 = other.position3d();
-    num z = pos2.z - pos1.z;
+    num x = pos2.x - pos1.x;
     num y = pos2.y - pos1.y;
-    num angle_radians = (atan2(z, -y)) % (2 * pi); // using SVG "reverse y" coordinates
+    num angle_radians = (atan2(x, -y)) % (2 * pi); // using SVG "reverse y" coordinates
     return util.to_degrees(angle_radians);
   }
 
@@ -368,10 +370,8 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     helix_builder.major_tick_start =
         util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
     helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
-    helix_builder.roll =
-        util.optional_field(json_map, constants.roll_key, constants.default_roll);
-    helix_builder.pitch =
-        util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
+    helix_builder.roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
+    helix_builder.pitch = util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
     helix_builder.yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
     if (json_map.containsKey(constants.major_tick_distance_key) &&

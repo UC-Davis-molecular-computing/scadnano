@@ -51,7 +51,7 @@ abstract class Insertion
 /// Domain that overlaps it, but it could potentially bind. By contrast a Loopout cannot be bound
 /// to any other Substrand since there is no Helix with which it is associated.
 abstract class Domain
-    with Selectable, BuiltJsonSerializable, UnusedFields
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields
     implements Built<Domain, DomainBuilder>, Substrand {
   Domain._();
 
@@ -134,7 +134,11 @@ abstract class Domain
   @nullable
   String get strand_id;
 
-  SelectModeChoice select_mode() => SelectModeChoice.domain;
+  @memoized
+  String get id => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
+
+  @memoized
+  SelectModeChoice get select_mode => SelectModeChoice.domain;
 
   @memoized
   BuiltMap<int, int> get insertion_offset_to_length =>
@@ -148,7 +152,7 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
-      substrand_id: id());
+      substrand_id: id);
 
   @memoized
   DNAEnd get dnaend_end => DNAEnd(
@@ -158,7 +162,20 @@ abstract class Domain
       is_scaffold: is_scaffold,
       substrand_is_first: is_first,
       substrand_is_last: is_last,
-      substrand_id: id());
+      substrand_id: id);
+
+  @memoized
+  BuiltList<SelectableDeletion> get selectable_deletions => [
+        for (int deletion in deletions)
+          SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold)
+      ].build();
+
+
+  @memoized
+  BuiltList<SelectableInsertion> get selectable_insertions => [
+        for (var insertion in insertions)
+          SelectableInsertion(insertion: insertion, domain: this, is_scaffold: is_scaffold)
+      ].build();
 
   Domain set_start(int start_new) => rebuild((ss) => ss..start = start_new);
 
@@ -173,8 +190,6 @@ abstract class Domain
   DNAEnd get dnaend_5p => forward ? dnaend_start : dnaend_end;
 
   DNAEnd get dnaend_3p => forward ? dnaend_end : dnaend_start;
-
-  String id() => 'substrand-H${helix}-${start}-${end}-${forward ? 'forward' : 'reverse'}';
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};
@@ -221,8 +236,8 @@ abstract class Domain
 
     deletions = util.remove_duplicates(deletions);
     insertions = util.remove_duplicates(insertions);
-    for (int i=0; i<insertions.length; i++) {
-      for (int j=i+1; j<insertions.length; j++) {
+    for (int i = 0; i < insertions.length; i++) {
+      for (int j = i + 1; j < insertions.length; j++) {
         var ins1 = insertions[i];
         var ins2 = insertions[j];
         if (ins1.offset == ins2.offset) {
@@ -230,7 +245,7 @@ abstract class Domain
           throw IllegalDesignError('two insertions on a domain have the same offset but different lengths:'
               '\n${ins1}'
               '\n${ins2}'
-          '\n${pre_domain_description(helix, forward, start, end)}');
+              '\n${pre_domain_description(helix, forward, start, end)}');
         }
       }
     }
@@ -277,10 +292,10 @@ abstract class Domain
   }
 
   static String pre_domain_description(int helix, bool forward, int start, int end) =>
-      'This occurred on a ${forward? "forward": "reverse"} Domain with'
-          '\n  helix = ${helix}'
-          '\n  start = ${start}'
-          '\n  end   = ${end}.';
+      'This occurred on a ${forward ? "forward" : "reverse"} Domain with'
+      '\n  helix = ${helix}'
+      '\n  start = ${start}'
+      '\n  end   = ${end}.';
 
   static List<Insertion> parse_json_insertions(json_encoded_insertions) {
     // need to use List.from because List.map returns Iterable, not List

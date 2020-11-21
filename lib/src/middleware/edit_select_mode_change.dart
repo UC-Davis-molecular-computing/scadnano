@@ -39,20 +39,22 @@ edit_select_mode_change_middleware(Store<AppState> store, action, NextDispatcher
     var select_modes = store.state.ui_state.select_mode_state.modes;
     var edit_modes = store.state.ui_state.edit_modes;
     var design = store.state.design;
-    bool is_origami = store.state.design.is_origami;
-    set_selectables_css_style_rules(design, edit_modes, select_modes, is_origami);
+    if (design != null) {
+      set_selectables_css_style_rules(design, edit_modes, select_modes);
+    }
   }
 }
 
 set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_modes,
-    BuiltSet<SelectModeChoice> select_modes, bool is_origami) {
-  bool edit_mode_is_select = edit_modes.contains(EditModeChoice.select);
+    BuiltSet<SelectModeChoice> select_modes) {
+  bool edit_mode_is_select_or_rope =
+      edit_modes.contains(EditModeChoice.select) || edit_modes.contains(EditModeChoice.rope_select);
   bool scaffold_parts_selectable =
-      edit_mode_is_select && (design.is_origami && select_modes.contains(SelectModeChoice.scaffold));
+      edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.scaffold));
   bool staple_parts_selectable =
-      edit_mode_is_select && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
-  bool all_parts_selectable =
-      edit_mode_is_select && (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
+      edit_mode_is_select_or_rope && (design.is_origami && select_modes.contains(SelectModeChoice.staple));
+  bool all_parts_selectable = edit_mode_is_select_or_rope &&
+      (!design.is_origami || (scaffold_parts_selectable && staple_parts_selectable));
 
   for (var select_mode_choice in [SelectModeChoice.strand] + SelectModeChoice.strand_parts.toList()) {
     set_strand_part_selectable_css_style_rules(
@@ -61,8 +63,8 @@ set_selectables_css_style_rules(Design design, BuiltSet<EditModeChoice> edit_mod
       staple_parts_selectable: staple_parts_selectable,
       scaffold_parts_selectable: scaffold_parts_selectable,
       select_mode_choice: select_mode_choice,
-      is_origami: is_origami,
-      edit_mode_is_select: edit_mode_is_select,
+      is_origami: design.is_origami,
+      edit_mode_is_select_or_rope_select: edit_mode_is_select_or_rope,
     );
   }
 }
@@ -74,7 +76,7 @@ set_strand_part_selectable_css_style_rules(
   bool scaffold_parts_selectable,
   SelectModeChoice select_mode_choice,
   bool is_origami,
-  bool edit_mode_is_select,
+  bool edit_mode_is_select_or_rope_select,
 }) {
   bool select_mode_contains_part = select_modes.contains(select_mode_choice);
   var selectable_css_style_this_choice;
@@ -93,7 +95,7 @@ set_strand_part_selectable_css_style_rules(
   var scaffold_selector =
       '.${SelectModeChoice.scaffold.css_selector()}.${select_mode_choice.css_selector()}:hover';
 
-  if (!edit_mode_is_select || !select_mode_contains_part) {
+  if (!edit_mode_is_select_or_rope_select || !select_mode_contains_part) {
     css_class_remove_style(all_strand_selector);
     css_class_remove_style(staple_only_selector);
     css_class_remove_style(scaffold_selector);

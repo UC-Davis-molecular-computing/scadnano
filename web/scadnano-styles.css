@@ -288,6 +288,11 @@ html, body {
 ** BEGIN mode layout
 ************************************************/
 
+
+#modes-buttons {
+    display: flex;
+}
+
 #edit-mode {
     width: 105px;
 }
@@ -375,10 +380,22 @@ html, body {
     text-anchor: middle;
 }
 
-.selection-box {
+.selection-box,.selection-rope {
     stroke: dimgray;
     fill: gray;
     fill-opacity: 0.5;
+}
+
+.selection-rope-potential {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.25;
+}
+
+.selection-rope-potential-illegal {
+    stroke: darkred;
+    fill: red;
+    fill-opacity: 0.25;
 }
 
 .rotation-line {
@@ -472,6 +489,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected.crossover-curve,
 .selected.loopout-curve,
 .selected.insertion-curve,
+.selected.deletion-cross,
+.selected.modification,
 .selected.domain-line {
     stroke: hotpink;
     stroke-width: 5pt;
@@ -492,6 +511,8 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 .selected .crossover-curve,
 .selected .loopout-curve,
 .selected .insertion-curve,
+.selected .deletion-cross,
+.selected .modification,
 .selected .domain-line {
     stroke: hotpink;
     stroke-width: 5pt;
@@ -703,6 +724,52 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 #view-nav-dropdown + .dropdown-menu label {
     white-space: nowrap;
 }
+
+
+/************************************************
+** BEGIN Dropdown Right
+************************************************/
+
+/* Style dropdown buttons that drop to the right so it looks like other dropdown item */
+
+/* Normal style */
+.dropright .dropdown-toggle {
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    font-size: inherit;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+/* Hover */
+.dropright .dropdown-toggle:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Remove btn focus */
+.dropright .dropdown-toggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Style right arrow */
+.dropright .dropdown-toggle::after {
+    margin-top: 5px;
+    vertical-align: 0;
+    right: 3px;
+    position: absolute;
+}
+
+/************************************************
+** END Dropdown Right
+************************************************/
 
 /* Style dropdown item of selected grid as well as newly clicked on grid */
 #grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled, .dropdown-item:active {

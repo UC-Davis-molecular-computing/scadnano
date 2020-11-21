@@ -231,13 +231,13 @@ main() {
             idx: 1,
             grid: Grid.none,
             geometry: geometry,
-            position: Position3D(x: 0, z: helix_dist, y: helix_dist),
+            position: Position3D(x: helix_dist, z: 0, y: helix_dist),
             roll: 0),
         Helix(
             idx: 2,
             grid: Grid.none,
             geometry: geometry,
-            position: Position3D(x: 0, z: 2 * helix_dist, y: 2 * helix_dist),
+            position: Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist),
             roll: 0),
       ];
       design = Design(grid: Grid.none, helices: helices, geometry: geometry);
@@ -257,8 +257,8 @@ main() {
 
       num helix_dist = design.geometry.distance_between_helices_nm;
       expect(helix0.position, Position3D(x: 0, z: 0, y: 0));
-      expect(helix1.position, Position3D(x: 0, z: helix_dist, y: helix_dist));
-      expect(helix2.position, Position3D(x: 0, z: 2 * helix_dist, y: 2 * helix_dist));
+      expect(helix1.position, Position3D(x: helix_dist, z: 0, y: helix_dist));
+      expect(helix2.position, Position3D(x: 2 * helix_dist, z: 0, y: 2 * helix_dist));
 
       expect(util.rotation_between_helices(helix0, helix1, true, design.geometry), 90 + 45);
       expect(util.rotation_between_helices(helix1, helix2, true, design.geometry), 90 + 45);
@@ -272,11 +272,11 @@ main() {
 
     test('h0_h1_crossover_0_h1_h2_crossover_10', () {
       // with helix0.roll = 0, the forward backbone points up, so helix1 should be directly above
-      // y = -2.5, z = 0
+      // x = 0, y = -2.5
       // On helix1, the reverse backbone will point down, so the forward backbone will point 30 degrees
       // clockwise from straight up, which is 60 degrees counterclockwise from the x-axis in Cartesian.
       // So helix2 will be at
-      // y = -sin(60), z = cos(60)
+      // x = cos(60), y = -sin(60)
       List<actions.UndoableAction> all_actions = helix_positions_set_based_on_crossovers(state);
 
       expect(all_actions.length, 6);
@@ -293,18 +293,18 @@ main() {
       expect(helix0.position.y, closeTo(0, eps));
       expect(helix0.position.z, closeTo(0, eps));
 
-      num z1 = 0;
+      num x1 = 0;
       num y1 = -design.geometry.distance_between_helices_nm;
-      expect(helix1.position.x, closeTo(0, eps));
+      expect(helix1.position.x, closeTo(x1, eps));
       expect(helix1.position.y, closeTo(y1, eps));
-      expect(helix1.position.z, closeTo(z1, eps));
+      expect(helix1.position.z, closeTo(0, eps));
 
       num radians_60_deg = util.to_radians(60);
-      num z2 = cos(radians_60_deg) * design.geometry.distance_between_helices_nm;
+      num x2 = cos(radians_60_deg) * design.geometry.distance_between_helices_nm;
       num y2 = -sin(radians_60_deg) * design.geometry.distance_between_helices_nm;
-      expect(helix2.position.x, closeTo(0, eps));
+      expect(helix2.position.x, closeTo(x1 + x2, eps));
       expect(helix2.position.y, closeTo(y1 + y2, eps));
-      expect(helix2.position.z, closeTo(z1 + z2, eps));
+      expect(helix2.position.z, closeTo(0, eps));
     });
   });
 }
