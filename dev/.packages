@@ -34,6 +34,7 @@ csslib:packages/csslib/
 dart_style:packages/dart_style/
 dialog:packages/dialog/
 dnd:packages/dnd/
+file:packages/file/
 fixnum:packages/fixnum/
 glob:packages/glob/
 graphs:packages/graphs/
