@@ -5612,7 +5612,8 @@ main() {
 
     Strand strand = two_helices_design.strands[1];
 
-    Strand new_strand = strand.rebuild((b) => b.is_scaffold = true);
+    Strand new_strand = strand.rebuild((b) => b..is_scaffold = true);
+    new_strand = new_strand.initialize();
 
     BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b[1] = new_strand);
 
