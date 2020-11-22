@@ -637,8 +637,14 @@ There are different edit modes available, shown on the right side of the screen.
 
 ## Assigning DNA
 Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
+
+There are two options for assigning DNA sequences to a strand, both available via the right-click context menu on a strand:
+*assign DNA* and *assign DNA complement from bound strands*.
+The first option requires you to specify a DNA sequence. The second infers the DNA sequence from the complement of other DNA sequences already present in the design.
+
+*assign DNA*:
 By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. 
-Disabling this allows one to create intentional mismatches.
+Disabling this allows one to create intentional mismatches, for instance.
 
 It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. 
 However, be careful in automatically assigning DNA complements to strands bound to this one.
@@ -652,6 +658,9 @@ For example, if a strand *s1* is connected to two others *s2* and *s3*, then DNA
 Any bases on *s1* not bound to *s2* (for instance, those bound to *s3*), after *s2* has a sequence assigned to it, will receive the wildcard symbol `?` as their "DNA base".
 Upon subsequently assigning a DNA sequence to *s3*, the complementary portions of *s1* (which have a `?`) will be overwritten with the appropriate DNA sequence, even if the warning is enabled.
 Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`, if it already exists and is about to be overwritten with a different base.
+
+*assign DNA complement from bound strands*:
+The above description indicates how to assign a specific DNA sequence to a particular strand while automatically assigning the complementary DNA sequence to strands bound to it. But in some circumstances, you might have some strand(s) that already have DNA sequences assigned, and through some modification of the design, new strand(s) come to be bound to them that were not present in the design at the time the DNA sequence was assigned. This feature allows you to select that new strand (or many strands if you like), and tell it to receive the appropriate complementary DNA sequence. It is equivalent to iterating over each strand bound to the selected strand(s), selecting "Assign DNA" from the context menu, and selecting the option "assign complement to bound strands".
 
 [TODO: make a figure showing this]
 
