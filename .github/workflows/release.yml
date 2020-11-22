@@ -22,6 +22,6 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: "Development Build [TODO: Replace label and number with version number]"
+          title: "Development Build [TODO: Replace label and title with version number]"
           files: |
             LICENSE.txt
