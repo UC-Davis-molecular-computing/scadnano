@@ -106,12 +106,14 @@ BuiltList<Strand> strands_move_commit_reducer(
   if (action.strands_move.allowable && action.strands_move.is_nontrivial) {
     var strands_builder = strands.toBuilder();
     for (var strand in action.strands_move.strands_moving) {
-      int strand_idx = strands.indexOf(strand);
       Strand new_strand = one_strand_strands_move_commit_reducer(state.design, strand, action.strands_move);
       new_strand = new_strand.initialize();
       if (action.strands_move.copy) {
         strands_builder.add(new_strand);
       } else {
+        // if copying, we might have loaded a new design, so this indexOf is only safe to do
+        // (i.e., the strand will only be found in the list of all strands) if we are moving
+        int strand_idx = strands.indexOf(strand);
         strands_builder[strand_idx] = new_strand;
       }
     }

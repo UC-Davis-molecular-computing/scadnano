@@ -790,14 +790,13 @@ class DesignViewComponent {
 
   copy_selected_strands() {
     // find minimum helix of any selected strand, then minimum starting offset of that strand
-    var strands =
-        BuiltList<Strand>(app.state.ui_state.selectables_store.selected_items.where((s) => s is Strand));
+    var selected_strands = app.state.ui_state.selectables_store.selected_strands.toBuiltList();
 
     int extreme_helix_view_order; // max if invert_yz; min if not
     int extreme_helix_idx;
     int min_offset;
     bool min_forward;
-    for (Strand strand in strands) {
+    for (Strand strand in selected_strands) {
       for (Domain domain in strand.domains()) {
         HelixGroup group = app.state.design.group_of_domain(domain);
         int helix_view_order = group.helices_view_order_inverse[domain.helix];
@@ -819,7 +818,7 @@ class DesignViewComponent {
     }
 
     copy_action = actions.StrandsMoveStart(
-        strands: strands,
+        strands: selected_strands,
         address: Address(helix_idx: extreme_helix_idx, offset: min_offset, forward: min_forward),
         copy: true);
   }
