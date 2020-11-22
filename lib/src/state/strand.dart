@@ -113,13 +113,16 @@ abstract class Strand
     for (var ss in strand.substrands) {
       if (ss is Loopout) {
         var loopout = ss.rebuild((l) => l
+          ..is_scaffold = is_scaffold
           ..strand_id = id
           ..prev_domain_idx = idx - 1
           ..next_domain_idx = idx + 1);
         substrands_new[idx] = loopout;
         updated = true;
       } else if (ss is Domain) {
-        var domain = ss.rebuild((l) => l..strand_id = id);
+        var domain = ss.rebuild((l) => l
+          ..strand_id = id
+          ..is_scaffold = is_scaffold);
         substrands_new[idx] = domain;
         updated = true;
       }
@@ -196,6 +199,49 @@ abstract class Strand
   Object get label;
 
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
+
+  @memoized
+  String get idt_dna_sequence {
+    if (dna_sequence == null) {
+      return null;
+    }
+
+    List<String> ret_list = [];
+
+    // 5' mod
+    if (modification_5p != null && modification_5p.idt_text != null) {
+      ret_list.add(modification_5p.idt_text);
+    }
+
+    // internal mods
+    for (int offset = 0; offset < dna_sequence.length; offset++) {
+      String base = dna_sequence[offset];
+      ret_list.add(base);
+      if (modifications_int.containsKey(offset)) {
+        // if internal mod attached to base, replace base
+        var mod = modifications_int[offset];
+        if (mod.idt_text != null) {
+          if (mod.allowed_bases != null) {
+            if (!mod.allowed_bases.contains(base)) {
+              var msg = 'internal modification ${mod} can only replace one of these bases: '
+                  '${mod.allowed_bases}.join(","), but the base at offset ${offset} is ${base}';
+              throw IllegalDesignError(msg);
+            }
+            ret_list.last = mod.idt_text; // replace base with modified base
+          } else {
+            ret_list.add(mod.idt_text); // append modification between two bases
+          }
+        }
+      }
+    }
+
+    // 3' mods
+    if (modification_3p != null && modification_3p.idt_text != null) {
+      ret_list.add(modification_3p.idt_text);
+    }
+
+    return ret_list.join();
+  }
 
   @memoized
   BuiltList<SelectableDeletion> get selectable_deletions => [

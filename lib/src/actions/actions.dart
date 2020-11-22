@@ -2151,6 +2151,31 @@ abstract class AssignDNA
   static Serializer<AssignDNA> get serializer => _$assignDNASerializer;
 }
 
+/// used when other strands have DNA already assigned, and are bound to this one, and we want to
+/// assign/replace its DNA with the complement of those
+abstract class AssignDNAComplementFromBoundStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDNAComplementFromBoundStrands, AssignDNAComplementFromBoundStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDNAComplementFromBoundStrands(Iterable<Strand> strands) {
+    return AssignDNAComplementFromBoundStrands.from((b) => b..strands.replace(strands));
+  }
+
+  factory AssignDNAComplementFromBoundStrands.from(
+          [void Function(AssignDNAComplementFromBoundStrandsBuilder) updates]) =
+      _$AssignDNAComplementFromBoundStrands;
+
+  AssignDNAComplementFromBoundStrands._();
+
+  static Serializer<AssignDNAComplementFromBoundStrands> get serializer =>
+      _$assignDNAComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {

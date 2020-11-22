@@ -23,9 +23,35 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
         .export(strands)
         .then((content) => util.save_file(filename, content, blob_type: blob_type))
         .catchError((e, stackTrace) {
-      var msg = e.cause + '\n\n' + stackTrace.toString();
+      var cause = "";
+      if (has_cause(e)) {
+        cause = e.cause;
+      } else if (has_message(e)) {
+        cause = e.message;
+      }
+      var msg = cause + '\n\n' + stackTrace.toString();
       store.dispatch(actions.ErrorMessageSet(msg));
       app.view.design_view.render(store.state);
     });
   }
+}
+
+/// Check if a Dart object has cause field.
+bool has_cause(obj) {
+  var has_it = false;
+  try {
+    (obj as dynamic).cause;
+    has_it = true;
+  } on NoSuchMethodError {}
+  return has_it;
+}
+
+/// Check if a Dart object has message field.
+bool has_message(obj) {
+  var has_it = false;
+  try {
+    (obj as dynamic).message;
+    has_it = true;
+  } on NoSuchMethodError {}
+  return has_it;
 }
