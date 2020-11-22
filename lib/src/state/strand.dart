@@ -201,6 +201,49 @@ abstract class Strand
   static Color DEFAULT_STRAND_COLOR = RgbColor.name('black');
 
   @memoized
+  String get idt_dna_sequence {
+    if (dna_sequence == null) {
+      return null;
+    }
+
+    List<String> ret_list = [];
+
+    // 5' mod
+    if (modification_5p != null && modification_5p.idt_text != null) {
+      ret_list.add(modification_5p.idt_text);
+    }
+
+    // internal mods
+    for (int offset = 0; offset < dna_sequence.length; offset++) {
+      String base = dna_sequence[offset];
+      ret_list.add(base);
+      if (modifications_int.containsKey(offset)) {
+        // if internal mod attached to base, replace base
+        var mod = modifications_int[offset];
+        if (mod.idt_text != null) {
+          if (mod.allowed_bases != null) {
+            if (!mod.allowed_bases.contains(base)) {
+              var msg = 'internal modification ${mod} can only replace one of these bases: '
+                  '${mod.allowed_bases}.join(","), but the base at offset ${offset} is ${base}';
+              throw IllegalDesignError(msg);
+            }
+            ret_list.last = mod.idt_text; // replace base with modified base
+          } else {
+            ret_list.add(mod.idt_text); // append modification between two bases
+          }
+        }
+      }
+    }
+
+    // 3' mods
+    if (modification_3p != null && modification_3p.idt_text != null) {
+      ret_list.add(modification_3p.idt_text);
+    }
+
+    return ret_list.join();
+  }
+
+  @memoized
   BuiltList<SelectableDeletion> get selectable_deletions => [
         for (var domain in domains())
           for (var deletion in domain.selectable_deletions) deletion
