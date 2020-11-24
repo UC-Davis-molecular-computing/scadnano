@@ -81,6 +81,12 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }
+    if (geometry == null) {
+      geometry = constants.default_geometry;
+    }
+    if (grid_position == null && grid != Grid.none) {
+      grid_position = GridPosition(0, idx);
+    }
     return Helix.from((b) => b
       ..idx = idx
       ..geometry = geometry?.toBuilder()

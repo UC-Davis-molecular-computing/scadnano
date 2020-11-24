@@ -290,7 +290,7 @@ abstract class SelectableModification5Prime
 
   @memoized
   Address get address {
-    var dom = strand.first_domain();
+    var dom = strand.first_domain;
     return Address(helix_idx: dom.helix, offset: dom.offset_5p, forward: dom.forward);
   }
 
@@ -322,7 +322,7 @@ abstract class SelectableModification3Prime
 
   @memoized
   Address get address {
-    var dom = strand.last_domain();
+    var dom = strand.last_domain;
     return Address(helix_idx: dom.helix, offset: dom.offset_3p, forward: dom.forward);
   }
 

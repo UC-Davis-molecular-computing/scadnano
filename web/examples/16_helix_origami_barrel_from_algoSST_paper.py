@@ -77,9 +77,9 @@ def add_domains_for_barrel_seam(design):
 
     for top_5p, top_3p, bot_5p, bot_3p in zip(top_staples_5p, top_staples_3p, bot_staples_5p, bot_staples_3p):
         ss_top = sc.Domain(helix=2, forward=False,
-                           start=top_5p.first_domain().end, end=top_3p.last_domain().start)
+                           start=top_5p.first_domain.end, end=top_3p.last_domain.start)
         ss_bot = sc.Domain(helix=17, forward=True,
-                           start=bot_3p.last_domain().end, end=bot_5p.first_domain().start)
+                           start=bot_3p.last_domain.end, end=bot_5p.first_domain.start)
         design.insert_domain(bot_5p, 0, ss_top)
         design.insert_domain(top_5p, 0, ss_bot)
 
@@ -237,11 +237,11 @@ def assign_dna_to_unzipper_toeholds(design):
     uz_toes = [sc.wc(seq) for seq in uz_toes_wc]
 
     strands_h1 = design.strands_starting_on_helix(1)
-    strands_h1.sort(key=lambda _strand: _strand.first_domain().offset_5p())
+    strands_h1.sort(key=lambda _strand: _strand.first_domain.offset_5p())
     strands_h1.reverse()
 
     strands_h18 = design.strands_starting_on_helix(18)
-    strands_h18.sort(key=lambda _strand: _strand.first_domain().offset_5p())
+    strands_h18.sort(key=lambda _strand: _strand.first_domain.offset_5p())
 
     for strand, toe in zip(strands_h1 + strands_h18, uz_toes):
         seq = toe + sc.DNA_base_wildcard * (strand.dna_length() - 8)

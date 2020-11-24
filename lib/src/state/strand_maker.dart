@@ -6,10 +6,14 @@ import 'package:scadnano/src/state/strand.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
+import '../constants.dart' as constants;
+import 'idt_fields.dart';
+
 class StrandMaker {
   Design design;
   List<Substrand> substrands = [];
   Color color = Color.rgb(247, 67, 8); //(#f74308)
+  IDTFields idt = null; //(#f74308)
   String dna_sequence = null;
   String domain_dna_sequence = null;
   Object label = null;
@@ -37,6 +41,7 @@ class StrandMaker {
         is_scaffold: this.is_scaffold,
         dna_sequence: this.dna_sequence,
         label: this.label,
+        idt: this.idt,
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
         modifications_int: this.modifications_int);
@@ -44,6 +49,10 @@ class StrandMaker {
     return this.design;
   }
 
+  // relative coordinates
+  StrandMaker move(int delta) => to(current_offset + delta);
+
+  // absolute coordinates
   StrandMaker to(int offset) {
     if (this.loopout_length != null) {
       Loopout loopout = Loopout(
@@ -116,6 +125,15 @@ class StrandMaker {
     } else {
       this.modifications_int[idx] = mod;
     }
+    return this;
+  }
+
+  StrandMaker with_idt(String name,
+      {String scale = constants.default_idt_scale,
+      String purification = constants.default_idt_purification,
+      String plate = null,
+      String well = null}) {
+    this.idt = IDTFields(name, scale, purification, plate: plate, well: well);
     return this;
   }
 

@@ -9,6 +9,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:tuple/tuple.dart';
@@ -1542,8 +1543,25 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
 
   ExportDNAFormat get export_dna_format;
 
+  @nullable
+  StrandOrder get strand_order;
+
+  bool get column_major;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory ExportDNA({bool include_scaffold, ExportDNAFormat export_dna_format}) = _$ExportDNA._;
+  factory ExportDNA(
+      {bool include_scaffold,
+      ExportDNAFormat export_dna_format,
+      StrandOrder strand_order = null,
+      bool column_major = true}) {
+    return ExportDNA.from((b) => b
+      ..include_scaffold = include_scaffold
+      ..export_dna_format = export_dna_format
+      ..strand_order = strand_order
+      ..column_major = column_major);
+  }
+
+  factory ExportDNA.from([void Function(ExportDNABuilder) updates]) = _$ExportDNA;
 
   ExportDNA._();
 

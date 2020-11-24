@@ -83,9 +83,9 @@ def add_domains_for_barrel_seam(design: sc.Design):
 
     for top_5p, top_3p, bot_5p, bot_3p in zip(top_staples_5p, top_staples_3p, bot_staples_5p, bot_staples_3p):
         ss_top = sc.Domain(helix=0, forward=False,
-                           start=top_5p.first_domain().end, end=top_3p.last_domain().start)
+                           start=top_5p.first_domain.end, end=top_3p.last_domain.start)
         ss_bot = sc.Domain(helix=15, forward=True,
-                           start=bot_3p.last_domain().end, end=bot_5p.first_domain().start)
+                           start=bot_3p.last_domain.end, end=bot_5p.first_domain.start)
         design.insert_domain(bot_5p, 0, ss_top)
         design.insert_domain(top_5p, 0, ss_bot)
 

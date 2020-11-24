@@ -44,7 +44,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     List<ReactElement> modifications = [];
 
     if (props.strand.modification_5p != null) {
-      var domain = props.strand.first_domain();
+      var domain = props.strand.first_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_5p = props.helices[domain.helix];
         bool selected = props.selected_modifications_in_strand.contains(props.strand.selectable_modification_5p);
@@ -60,7 +60,7 @@ class DesignMainStrandModificationsComponent extends UiComponent2<DesignMainStra
     }
 
     if (props.strand.modification_3p != null) {
-      var domain = props.strand.last_domain();
+      var domain = props.strand.last_domain;
       if (!props.only_display_selected_helices || props.side_selected_helix_idxs.contains(domain.helix)) {
         Helix helix_3p = props.helices[domain.helix];
         modifications.add((DesignMainStrandModification()

@@ -10,7 +10,7 @@ def create_design():
     add_nicks(design)
     add_crossovers(design)
     scaffold = next(s for s in design.strands if
-                    s.first_domain().helix == 5 and not s.first_domain().forward)
+                    s.first_domain.helix == 5 and not s.first_domain.forward)
     scaffold.set_scaffold()
     design.assign_m13_to_scaffold(rotation=m13_rotation, variant=m13_variant)
     return design
