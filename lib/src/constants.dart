@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:color/color.dart';
 import 'package:platform_detect/platform_detect.dart';
 
+import 'state/geometry.dart';
 import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
@@ -42,6 +43,8 @@ const String DNA_BASE_WILDCARD = '?';
 
 const default_min_offset = 0;
 const default_max_offset = 64;
+
+final default_geometry = Geometry();
 
 const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 const scadnano_css_stylesheet_name = r'scadnano-styles.css';
@@ -365,3 +368,5 @@ const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
 
+const default_idt_scale = "25nm";
+const default_idt_purification = "STD";

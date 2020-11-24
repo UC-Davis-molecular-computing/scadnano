@@ -4,12 +4,93 @@ import 'dart:math';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/view/menu_form_file.dart';
 import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
+import 'package:tuple/tuple.dart';
 
 import '../util.dart' as util;
 import 'strand.dart';
+import 'export_dna_format_strand_order.dart';
 
 part 'export_dna_format.g.dart';
+
+typedef StrandComparison = int Function(Strand s1, Strand s2);
+
+Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order, bool column_major) {
+  int helix_idx;
+  int offset;
+  if (strand_order == StrandOrder.five_prime) {
+    helix_idx = strand.first_domain.helix;
+    offset = strand.first_domain.offset_5p;
+  } else if (strand_order == StrandOrder.three_prime) {
+    helix_idx = strand.last_domain.helix;
+    offset = strand.last_domain.offset_3p;
+  } else if (strand_order == StrandOrder.five_or_three_prime) {
+    int helix_idx_5p = strand.first_domain.helix;
+    int offset_5p = strand.first_domain.offset_5p;
+    int helix_idx_3p = strand.last_domain.helix;
+    int offset_3p = strand.last_domain.offset_3p;
+    if (column_major) {
+      if (offset_5p < offset_3p || (offset_5p == offset_3p && helix_idx_5p <= helix_idx_3p)) {
+        offset = offset_5p;
+        helix_idx = helix_idx_5p;
+      } else {
+        offset = offset_3p;
+        helix_idx = helix_idx_3p;
+      }
+    } else {
+      if (helix_idx_5p < helix_idx_3p || (helix_idx_5p == helix_idx_3p && offset_5p <= offset_3p)) {
+        helix_idx = helix_idx_5p;
+        offset = offset_5p;
+      } else {
+        helix_idx = helix_idx_3p;
+        offset = offset_3p;
+      }
+    }
+  } else if (strand_order == StrandOrder.top_left_domain_start) {
+    helix_idx = strand.first_domain.helix;
+    offset = strand.first_domain.start;
+    for (var domain in strand.domains()) {
+      if (helix_idx > domain.helix || (helix_idx == domain.helix && offset > domain.start)) {
+        helix_idx = domain.helix;
+        offset = domain.start;
+      }
+    }
+  } else {
+    throw ArgumentError('${strand_order} is not a valid StrandOrder');
+  }
+  return Tuple2<int, int>(helix_idx, offset);
+}
+
+/// Returns comparison function that can be used to sort Strands
+StrandComparison strands_comparison_function(StrandOrder strand_order, bool column_major) {
+  int compare(Strand strand1, Strand strand2) {
+    var helix_offset1 = strand_helix_offset_key(strand1, strand_order, column_major);
+    var helix_offset2 = strand_helix_offset_key(strand2, strand_order, column_major);
+    int helix_idx1 = helix_offset1.item1;
+    int offset1 = helix_offset1.item2;
+    int helix_idx2 = helix_offset2.item1;
+    int offset2 = helix_offset2.item2;
+
+    var tuple1;
+    var tuple2;
+    if (column_major) {
+      tuple1 = Tuple2<int, int>(offset1, helix_idx1);
+      tuple2 = Tuple2<int, int>(offset2, helix_idx2);
+    } else {
+      tuple1 = Tuple2<int, int>(helix_idx1, offset1);
+      tuple2 = Tuple2<int, int>(helix_idx2, offset2);
+    }
+
+    if (tuple1.item1 != tuple2.item1) {
+      return tuple1.item1 - tuple2.item1;
+    } else {
+      return tuple1.item2 - tuple2.item2;
+    }
+  }
+
+  return compare;
+}
 
 /// Format of exported DNA sequences
 class ExportDNAFormat extends EnumClass {
@@ -85,18 +166,30 @@ class ExportDNAFormat extends EnumClass {
     throw ExportDNAException(util.ASSERTION_ERROR_MESSAGE);
   }
 
-  /// Output object (String if text file; Blob if binary) representing list of Strands
-  Future<dynamic> export(Iterable<Strand> strands) async {
+
+  /// Output object (String if text file; Future<List<int>> if binary) representing list of Strands
+  /// I couldn't see a way to export Excel files synchronosly, since they require loading an
+  /// existing Excel file from a local resource using an HttpRequest, which is asynchronous.
+  /// So export returns a Future<List<int>> if calling idt_plates_export and a String (with text file
+  /// contents) otherwise. The caller needs to check the return type, or the type of this,
+  /// to determine whether to use the return value directly or to wait for it asynchronously.
+  export(Iterable<Strand> strands, {StrandOrder strand_order = null, bool column_major = true}) {
+    List<Strand> strands_sorted = strands.toList();
+    if (strand_order != null) {
+      StrandComparison compare = strands_comparison_function(strand_order, column_major);
+      strands_sorted.sort(compare);
+    }
+
     try {
       switch (this) {
         case csv:
-          return csv_export(strands);
+          return csv_export(strands_sorted);
         case idt_bulk:
-          return idt_bulk_export(strands);
+          return idt_bulk_export(strands_sorted);
         case idt_plates96:
-          return idt_plates_export(strands, PlateType.wells96);
+          return idt_plates_export(strands_sorted, PlateType.wells96);
         case idt_plates384:
-          return idt_plates_export(strands, PlateType.wells384);
+          return idt_plates_export(strands_sorted, PlateType.wells384);
       }
     } on ExportDNAException catch (e) {
       throw e;
@@ -117,20 +210,20 @@ class ExportDNAException implements Exception {
   ExportDNAException(this.cause);
 }
 
-csv_export(Iterable<Strand> strands) async {
+String csv_export(Iterable<Strand> strands) {
   var lines = strands.map((strand) => '${strand.export_name()},${idt_sequence_null_aware(strand)}');
   return lines.join('\n');
 }
 
 String idt_sequence_null_aware(Strand strand) => strand.idt_dna_sequence ?? '*****NONE*****';
 
-idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) async {
+String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) {
   var lines = strands
       .map((strand) => '${strand.export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
   return lines.join('\n');
 }
 
-idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
+Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_type) async {
   var plate_coord = _PlateCoordinate(plate_type);
   int plate = 1;
   int excel_row = 1;

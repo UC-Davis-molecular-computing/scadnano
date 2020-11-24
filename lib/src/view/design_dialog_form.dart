@@ -239,16 +239,15 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
             setState(newState()..responses = new_responses.build());
           })(),
       );
-    } else if (item is DialogSelect) {
-      throw UnsupportedError('not yet implemented');
-    } else if (item is DialogRadio) {
+    } else if (item is DialogRadio && item.radio) {
+      // can be either radio buttons or drop-down select, depending on value of DialogRadio.radio
       int radio_idx = 0;
       List<ReactElement> components = [];
       for (var option in item.options) {
         components.add((Dom.br()..key = 'br-$radio_idx')());
         components.add((Dom.input()
           ..type = 'radio'
-          ..id = 'radio-example-filename-${radio_idx}'
+          ..id = 'radio-${radio_idx}'
           ..disabled = disabled
           ..name = item.label
           ..checked = (item.selected_idx == radio_idx)
@@ -266,6 +265,31 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         radio_idx++;
       }
       return (Dom.div()..className = 'radio-left')('${item.label}: ', components);
+    } else if (item is DialogRadio && !item.radio) {
+      int radio_idx = 0;
+      List<ReactElement> components = [];
+      for (var option in item.options) {
+        // components.add((Dom.br()..key = 'br-$radio_idx')());
+        components.add((Dom.option()
+          // ..type = 'radio'
+          ..id = 'radio-${radio_idx}'
+          ..disabled = disabled
+          ..name = item.label
+          ..checked = (item.selected_idx == radio_idx)
+          ..value = option
+          ..onChange = (SyntheticFormEvent e) {
+            var selected_title = e.target.value;
+            int selected_radio_idx = item.options.indexOf(selected_title);
+            DialogRadio response = state.responses[dialog_item_idx];
+            var new_responses = state.responses.toBuilder();
+            new_responses[dialog_item_idx] = response.rebuild((b) => b.selected_idx = selected_radio_idx);
+            setState(newState()..responses = new_responses.build());
+          }
+          ..key = '$radio_idx')());
+        // components.add((Dom.label()..key = 'label-$radio_idx')(option));
+        radio_idx++;
+      }
+      return (Dom.select()..className = 'radio-left')('${item.label}: ', components);
     }
     return null;
   }
