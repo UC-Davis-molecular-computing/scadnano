@@ -515,7 +515,7 @@ In both the side menu and the main menu, hovering the cursor over a most menu it
 There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application's display.
 
 * **(s)elect:**
-  This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
+  This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown when in select edit mode or rope select edit mode. Some of the select modes are mutually exclusive as well.
 
   A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
@@ -558,12 +558,10 @@ There are different edit modes available, shown on the right side of the screen.
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
 
-    It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
-
-  Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
+  Regardless of the current select mode, it is always possible to select helices in the side view by holding Shift or Ctrl and dragging a selection box. Pressing delete will delete the selected helices. You can also delete a helix by clicking on the helix in the side view while in pencil edit mode.
 
 * **(r)ope select:**
-  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. This is useful, for example, for selecting many objects along a diagonal, where a rectangle containing all of them would also contain many objects off the diagonal that are not intended to be selected.
+  This is similar to select mode, but when holding Shift or Ctrl, it allows one to draw a general polygon (a "rope"), rather than just a rectangle. This is useful, for example, for selecting many objects along a diagonal, where a rectangle containing all of them would also contain many objects off the diagonal that are not intended to be selected.
   
   The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. While holding down the Shift or Ctrl key, click several points to define a polygon. 
 
