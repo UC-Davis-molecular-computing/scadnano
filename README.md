@@ -474,6 +474,8 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **DNA sequences:**
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
+    By default the DNA sequences will be output in the same order strands appear in the `.sc` file. A few defaults are available to output them in another order based on their 5' or 3' ends' helix index and case offset.
+
 * Help
 
   * This contains links to various web sites associated with scadnano, which contain its documentation.
