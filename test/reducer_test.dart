@@ -1811,61 +1811,33 @@ main() {
     expect_strands_equal(state.design.strands, two_helices_join_inner_strands.strands);
   });
 
-  test('add helix to DNA design', () {
+  test('add_helix_to_DNA_design', () {
     AppState state = app_state_from_design(two_helices_design);
     state = app_state_reducer(state, HelixAdd(grid_position: GridPosition(0, 2)));
 
-    String two_helices_helix_add_json = r'''
- {
-  "version": "''' +
-        constants.CURRENT_VERSION +
-        r'''", "grid": "square", "helices": [ {"grid_position": [0, 0]}, {"grid_position": [0, 1]}, {"grid_position": [0, 2], "max_offset": 16} ],
-  "strands": [
-    {
-      "domains": [
-        {"helix": 0, "forward": true , "start": 0, "end": 16}
-      ]
-    },
-    {
-      "domains": [
-        {"helix": 0, "forward": false , "start": 0, "end": 16}
-      ]
-    },
-    {
-      "domains": [
-        {"helix": 1, "forward": true , "start": 0, "end": 16}
-      ]
-    },
-    {
-      "domains": [
-        {"helix": 1, "forward": false , "start": 0, "end": 16}
-      ]
-    }
-  ]
- }
-    ''';
-    Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json));
-    AppState two_helices_helix_add_state = app_state_from_design(two_helices_helix_add_design);
-    two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(
-          two_helices_helix_add_state.undo_redo.rebuild((b) => b..undo_stack.replace([two_helices_design]))));
-
-    expect_app_state_equal(state, two_helices_helix_add_state);
+    expect(state.ui_state.changed_since_last_save, true);
+    expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+    expect(state.undo_redo.redo_stack, BuiltList<Design>());
+    expect(state.design.helices.length, 3);
+    expect(state.design.helices[0], two_helices_design.helices[0]);
+    expect(state.design.helices[1], two_helices_design.helices[1]);
+    var helix2 = state.design.helices[2];
+    expect(helix2.idx, 2);
+    expect(helix2.grid_position, GridPosition(0, 2));
+    expect(helix2.min_offset, 0);
+    expect(helix2.max_offset, 16);
   });
 
-  test('remove empty helix from design', () {
+  test('remove_empty_helix_from_design', () {
     AppState original_state = app_state_from_design(two_helices_design);
 
     AppState second_state = app_state_reducer(original_state, HelixAdd(grid_position: GridPosition(0, 2)));
     AppState final_state = app_state_reducer(second_state, HelixRemove(2));
 
-    UndoRedo expected_undo_redo =
-        UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design, second_state.design]));
-    AppState expected_state = original_state.rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(final_state, expected_state);
+    expect(final_state.ui_state.changed_since_last_save, true);
+    expect(final_state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design, second_state.design]));
+    expect(final_state.undo_redo.redo_stack, BuiltList<Design>());
+    expect_design_equal(final_state.design, two_helices_design);
   });
 
   test('remove_first_helix_from_design', () {
@@ -1888,7 +1860,7 @@ main() {
     expect_design_equal(final_design, expected_design);
   });
 
-  test('remove helices from DNA design', () {
+  test('remove_helices_from_DNA_design', () {
     // Remove helix 0 and 2 from this design.
     //
     // Before:
@@ -1939,20 +1911,19 @@ main() {
     }
   ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..undo_redo.undo_stack.add(simple_strand_design)
-      ..ui_state.changed_since_last_save = true);
-    ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
         .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs.replace([0, 2]));
 
     AppState actual_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.undo_redo.undo_stack, BuiltList<Design>([simple_strand_design]));
+    expect(actual_state.undo_redo.redo_stack, BuiltList<Design>());
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('remove helices from DNA design should adjust svg position of helices with higher view position', () {
+  test('remove_helices_from_DNA_design_should_adjust_svg_position_of_helices_with_higher_view_position', () {
     // Remove helix 0 and 2 from this design.
     //
     // Before:
@@ -2003,17 +1974,16 @@ main() {
     }
   ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..undo_redo.undo_stack.add(simple_strand_design)
-      ..ui_state.changed_since_last_save = true);
-    ;
 
     AppState original_state = app_state_from_design(simple_strand_design)
         .rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 1]));
 
     AppState final_state = app_state_reducer(original_state, HelixRemoveAllSelected());
 
-    expect_app_state_equal(final_state, expected_state);
+    expect(final_state.ui_state.changed_since_last_save, true);
+    expect(final_state.undo_redo.undo_stack, BuiltList<Design>([simple_strand_design]));
+    expect(final_state.undo_redo.redo_stack, BuiltList<Design>());
+    expect_design_equal(final_state.design, expected_design);
   });
 
   //   0                  16
@@ -2060,7 +2030,7 @@ main() {
   Design two_helices_with_helix_idx_gap_design =
       Design.from_json(jsonDecode(two_helices_with_helix_idx_gap_json));
 
-  test('add new helix be one higher than max id', () {
+  test('add_new_helix_be_one_higher_than_max_id', () {
     AppState state = app_state_from_design(two_helices_with_helix_idx_gap_design);
 
     GridPosition grid_position = GridPosition(0, 2);
@@ -2098,11 +2068,10 @@ main() {
     }
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..undo_redo.replace(expected_undo_redo)
-      ..ui_state.changed_since_last_save = true);
 
-    expect_app_state_equal(state, expected_state);
+    expect(state.ui_state.changed_since_last_save, true);
+    expect(state.undo_redo, expected_undo_redo);
+    expect_design_equal(state.design, expected_design);
   });
 
   //     0               16
@@ -2128,15 +2097,20 @@ main() {
 }
 ''';
   Design simple_helix_no_seq_design = Design.from_json(jsonDecode(simple_helix_no_seq_json));
-  test('Testing DNAEndsMoveStart', () {
+  test('Testing_DNAEndsMoveStart', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     AppState actual_state = app_state_reducer(
         initial_state, DNAEndsMoveStart(offset: 0, helix: simple_helix_no_seq_design.helices[0]));
     AppState expect_state = initial_state.rebuild((b) => b.ui_state.dna_ends_are_moving = true);
-    expect_app_state_equal(actual_state, expect_state);
+
+    expect(actual_state.ui_state.changed_since_last_save, false);
+    expect(actual_state.ui_state.dna_ends_are_moving, true);
+    expect(actual_state.undo_redo.undo_stack, BuiltList<Design>());
+    expect(actual_state.undo_redo.redo_stack, BuiltList<Design>());
+    expect_design_equal(actual_state.design, simple_helix_no_seq_design);
   });
 
-  test('Testing DNAEndsMoveStop', () {
+  test('Testing_DNAEndsMoveStop', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
 
     // Starts DNA Ends move.
@@ -2145,10 +2119,14 @@ main() {
     // Stops DNA Ends move.
     actual_state = app_state_reducer(actual_state, DNAEndsMoveStop());
 
-    expect_app_state_equal(actual_state, initial_state);
+    expect(actual_state.ui_state.changed_since_last_save, false);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo.undo_stack, BuiltList<Design>());
+    expect(actual_state.undo_redo.redo_stack, BuiltList<Design>());
+    expect_design_equal(actual_state.design, simple_helix_no_seq_design);
   });
 
-  test('Testing DNAEndsMoveCommit on forward strand 5p end', () {
+  test('Testing_DNAEndsMoveCommit_on_forward_strand_5p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
@@ -2194,14 +2172,14 @@ main() {
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('Testing DNAEndsMoveCommit on forward strand 3p end', () {
+  test('Testing_DNAEndsMoveCommit_on_forward_strand_3p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands[0];
@@ -2247,14 +2225,14 @@ main() {
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('Testing DNAEndsMoveCommit on reverse strand 5p end', () {
+  test('Testing_DNAEndsMoveCommit_on_reverse_strand_5p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
@@ -2300,14 +2278,14 @@ main() {
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('Testing DNAEndsMoveCommit on reverse strand 3p end', () {
+  test('Testing_DNAEndsMoveCommit_on_reverse_strand_3p_end', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand reverse_strand = simple_helix_no_seq_design.strands.last;
@@ -2353,14 +2331,14 @@ main() {
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('Testing DNAEndsMoveCommit on two different strands', () {
+  test('Testing_DNAEndsMoveCommit_on_two_different_strands', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
@@ -2415,14 +2393,14 @@ main() {
     ''';
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo = UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('Moving Multiple DNA Ends', () {
+  test('Moving_Multiple_DNA_Ends', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
@@ -2489,14 +2467,14 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(final_state, expected_state);
+    expect(final_state.ui_state.changed_since_last_save, true);
+    expect(final_state.ui_state.dna_ends_are_moving, false);
+    expect(final_state.undo_redo, expected_undo_redo);
+    expect_design_equal(final_state.design, expected_design);
   });
 
-  test('Undoing multiple DNA end movements', () {
+  test('Undoing_multiple_DNA_end_movements', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
@@ -2563,34 +2541,34 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(final_state, expected_state);
+    expect(final_state.ui_state.changed_since_last_save, true);
+    expect(final_state.ui_state.dna_ends_are_moving, false);
+    expect(final_state.undo_redo, expected_undo_redo);
+    expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
     expected_undo_redo = UndoRedo()
         .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
     AppState state_undo_1 = app_state_reducer(final_state, Undo());
 
-    expect_app_state_equal(state_undo_1, expected_state);
+    expect(state_undo_1.ui_state.changed_since_last_save, true);
+    expect(state_undo_1.ui_state.dna_ends_are_moving, false);
+    expect(state_undo_1.undo_redo, expected_undo_redo);
+    expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
     expected_undo_redo =
         UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    expected_state = app_state_from_design(simple_helix_no_seq_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = false
-      ..undo_redo.replace(expected_undo_redo));
     AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
 
-    expect_app_state_equal(state_undo_2, expected_state);
+    expect(state_undo_2.ui_state.changed_since_last_save, false);
+    expect(state_undo_2.ui_state.dna_ends_are_moving, false);
+    expect(state_undo_2.undo_redo, expected_undo_redo);
+    expect_design_equal(state_undo_2.design, simple_helix_no_seq_design);
   });
 
-  test('Undoing multiple DNA end movements with extra DNAEndsMoveStop (see issue #72)', () {
+  test('Undoing_multiple_DNA_end_movements_with_extra_DNAEndsMoveStop_see_issue_#72', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_design);
     Helix helix0 = simple_helix_no_seq_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_design.strands.first;
@@ -2666,31 +2644,31 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.addAll([simple_helix_no_seq_design, mid_state.design]));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
 
-    expect_app_state_equal(final_state, expected_state);
+    expect(final_state.ui_state.changed_since_last_save, true);
+    expect(final_state.ui_state.dna_ends_are_moving, false);
+    expect(final_state.undo_redo, expected_undo_redo);
+    expect_design_equal(final_state.design, expected_design);
 
     // First Undo.
     expected_undo_redo = UndoRedo()
         .rebuild((b) => b..undo_stack.add(simple_helix_no_seq_design)..redo_stack.add(final_state.design));
-    expected_state = app_state_from_design(mid_state.design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
     AppState state_undo_1 = app_state_reducer(final_state, Undo());
 
-    expect_app_state_equal(state_undo_1, expected_state);
+    expect(state_undo_1.ui_state.changed_since_last_save, true);
+    expect(state_undo_1.ui_state.dna_ends_are_moving, false);
+    expect(state_undo_1.undo_redo, expected_undo_redo);
+    expect_design_equal(state_undo_1.design, mid_state.design);
 
     // Second Undo.
     expected_undo_redo =
         UndoRedo().rebuild((b) => b.redo_stack.addAll([final_state.design, mid_state.design]));
-    expected_state = app_state_from_design(simple_helix_no_seq_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = false
-      ..undo_redo.replace(expected_undo_redo));
     AppState state_undo_2 = app_state_reducer(state_undo_1, Undo());
 
-    expect_app_state_equal(state_undo_2, expected_state);
+    expect(state_undo_2.ui_state.changed_since_last_save, false);
+    expect(state_undo_2.ui_state.dna_ends_are_moving, false);
+    expect(state_undo_2.undo_redo, expected_undo_redo);
+    expect_design_equal(state_undo_2.design, simple_helix_no_seq_design);
   });
 
   //     0    4      10 11   16
@@ -2716,7 +2694,7 @@ main() {
 }
 ''';
   Design simple_helix_no_seq_smaller_design = Design.from_json(jsonDecode(simple_helix_no_seq_smaller_json));
-  test('Dragging end less than helix min offset (see issue #77)', () {
+  test('Dragging_end_less_than_helix_min_offset_see_issue_#77', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
     Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
@@ -2762,17 +2740,17 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
   // before:
   //     0    4      10 11   16
   // 0        [------>
   //          <------]
-  test('Dragging end greater than helix max offset (see issue #77)', () {
+  test('Dragging_end_greater_than_helix_max_offset_see_issue_#77', () {
     AppState initial_state = app_state_from_design(simple_helix_no_seq_smaller_design);
     Helix helix0 = simple_helix_no_seq_smaller_design.helices[0];
     Strand forward_strand = simple_helix_no_seq_smaller_design.strands[0];
@@ -2819,10 +2797,10 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_no_seq_smaller_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
   // https://github.com/UC-Davis-molecular-computing/scadnano/issues/83#issuecomment-569432526
@@ -2897,7 +2875,7 @@ main() {
     expect(actual_state.ui_state.selectables_store.selected_items, BuiltSet<Selectable>());
   });
 
-  test('test moving end over deletion (see issue #92)', () {
+  test('test_moving_end_over_deletion_see_issue_#92', () {
     //   simple_helix_with_deletion_design
     //
     //     0            16               32
@@ -2946,13 +2924,13 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_deletion_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
-  test('test moving end over insertion (see issue #92)', () {
+  test('test_moving_end_over_insertion_see_issue_#92', () {
     //   simple_helix_with_insertion_design
     //
     //     0            16               32
@@ -3000,10 +2978,10 @@ main() {
     Design expected_design = Design.from_json(jsonDecode(expected_json));
     UndoRedo expected_undo_redo =
         UndoRedo().rebuild((b) => b.undo_stack.add(simple_helix_with_insertion_design));
-    AppState expected_state = app_state_from_design(expected_design).rebuild((b) => b
-      ..ui_state.changed_since_last_save = true
-      ..undo_redo.replace(expected_undo_redo));
-    expect_app_state_equal(actual_state, expected_state);
+    expect(actual_state.ui_state.changed_since_last_save, true);
+    expect(actual_state.ui_state.dna_ends_are_moving, false);
+    expect(actual_state.undo_redo, expected_undo_redo);
+    expect_design_equal(actual_state.design, expected_design);
   });
 
   group('Edit modes tests: ', () {
@@ -3058,7 +3036,8 @@ main() {
   group('File Menu tests:', () {
     test('ClearHelixSelectionWhenLoadingNewDesignSet', () {
       AppState initial_state = app_state_from_design(two_helices_design);
-      AppState final_state = app_state_reducer(initial_state, ClearHelixSelectionWhenLoadingNewDesignSet(clear: true));
+      AppState final_state =
+          app_state_reducer(initial_state, ClearHelixSelectionWhenLoadingNewDesignSet(clear: true));
       expect(final_state.ui_state.clear_helix_selection_when_loading_new_design, true);
       final_state = app_state_reducer(final_state, ClearHelixSelectionWhenLoadingNewDesignSet(clear: false));
       expect(final_state.ui_state.clear_helix_selection_when_loading_new_design, false);
@@ -3323,13 +3302,10 @@ main() {
  }
     ''';
       Design two_helices_helix_add_design = Design.from_json(jsonDecode(two_helices_helix_add_json));
-      AppState two_helices_helix_add_state = app_state_from_design(two_helices_helix_add_design);
-      two_helices_helix_add_state = two_helices_helix_add_state.rebuild((b) => b
-        ..ui_state.changed_since_last_save = false
-        ..undo_redo.replace(two_helices_helix_add_state.undo_redo
-            .rebuild((b) => b..undo_stack.replace([two_helices_design]))));
 
-      expect_app_state_equal(state, two_helices_helix_add_state);
+      expect(state.ui_state.changed_since_last_save, false);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+      expect_design_equal(state.design, two_helices_helix_add_design);
     });
 
     test('load_a_valid_design', () {
@@ -4092,9 +4068,7 @@ main() {
       state = app_state_reducer(state, HelixSelect(1, true));
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
       expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
-      AppState expected_state =
-          state.rebuild((b) => b..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
-      expect_app_state_equal(state, expected_state);
+      expect(state.ui_state.side_selected_helix_idxs, BuiltSet<int>([1]));
     });
 
     test('HelixSelectionClear', () {
@@ -4102,21 +4076,20 @@ main() {
       expect(state.ui_state.side_selected_helix_idxs, BuiltList<int>());
     });
 
-    test('HelixSelectionClear_only_display_selected_helices)', () {
+    test('HelixSelectionClear_only_display_selected_helices', () {
       // setup
       AppState initial_state = app_state_from_design(simple_strand_design);
       AppState state = app_state_reducer(initial_state, HelixSelect(1, true));
       state = app_state_reducer(state, SetOnlyDisplaySelectedHelices(true));
-      expect(state.ui_state.side_selected_helix_idxs, [1].toBuiltList());
-      AppState expected_state = state.rebuild((b) => b
-        ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1]));
-      expect_app_state_equal(state, expected_state);
+      expect(state.ui_state.only_display_selected_helices, true);
+      expect(state.ui_state.side_selected_helix_idxs, BuiltSet<int>([1]));
+      expect(state.design, simple_strand_design);
 
       // clear should reset helix positions (but keep only display selected helices true).
       state = app_state_reducer(state, HelixSelectionsClear());
-      expect_app_state_equal(
-          state, initial_state.rebuild((b) => b.ui_state.storables.only_display_selected_helices = true));
+      expect(state.ui_state.only_display_selected_helices, true);
+      expect(state.ui_state.side_selected_helix_idxs, BuiltList<int>());
+      expect(state.design, simple_strand_design);
     });
 
     // Distance from selection box to enclosing helix.
@@ -4150,38 +4123,36 @@ main() {
       var y = state.design.geometry.distance_between_helices_svg * 3 + MARGIN;
       SelectionBox box = SelectionBox(Point(-x, -x), false, false).rebuild((b) => b..current = Point(x, y));
       state = app_state_reducer(state, HelixSelectionsAdjust(true, box));
-      expect(state.ui_state.side_selected_helix_idxs, [1, 2].toBuiltList());
 
-      AppState expected_state = state.rebuild((b) => b
-        ..ui_state.storables.only_display_selected_helices = true
-        ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([1, 2]));
-      expect_app_state_equal(state, expected_state);
+      expect(state.ui_state.only_display_selected_helices, true);
+      expect(state.ui_state.side_selected_helix_idxs, BuiltList<int>([1, 2]));
+      expect(state.design, simple_strand_design);
     });
 
     test('Helix selection clears after load', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
         ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-        ..ui_state.storables.clear_helix_selection_when_loading_new_design = true
-      );
-      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = true);
+      AppState final_state = app_state_reducer(
+          initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
       expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>());
     });
 
     test('Helix selection saved after load', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
         ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false
-      );
-      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_strand_json, filename: 'test.sc'));
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false);
+      AppState final_state =
+          app_state_reducer(initial_state, LoadDNAFile(content: simple_strand_json, filename: 'test.sc'));
       expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>([0, 2]));
     });
 
     test('Helix selection saved after load (remove extraneous selected helices)', () {
       AppState initial_state = app_state_from_design(simple_strand_design).rebuild((b) => b
         ..ui_state.storables.side_selected_helix_idxs = SetBuilder<int>([0, 2])
-        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false
-      );
-      AppState final_state = app_state_reducer(initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
+        ..ui_state.storables.clear_helix_selection_when_loading_new_design = false);
+      AppState final_state = app_state_reducer(
+          initial_state, LoadDNAFile(content: simple_helix_no_seq_json, filename: 'test.sc'));
       expect(final_state.ui_state.storables.side_selected_helix_idxs, BuiltSet<int>([0]));
     });
   });
@@ -4528,7 +4499,7 @@ main() {
 
     expect_design_equal(state.design, expected);
   });
-  group('Potential crossover and linking crossover and linking by crossover', () {
+  group('Potential_crossover_and_linking_crossover_and_linking_by_crossover', () {
     //   0                  16
     //
     // 0 [------------------->
@@ -4568,8 +4539,7 @@ main() {
 
       // Test AppState reducer
       state = app_state_reducer(state, action);
-      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = true);
-      expect_app_state_equal(state, expected_state);
+      expect(state.ui_state.potential_crossover_is_drawing, true);
 
       // Test potential_crossover store's reducer
       potentialCrossoverState = optimized_potential_crossover_reducer(potentialCrossoverState, action);
@@ -4580,11 +4550,6 @@ main() {
       Point<num> movePoint = Point(42, 24);
       Action action = PotentialCrossoverMove(point: movePoint);
 
-      // Test AppState reducer (should not change).
-      AppState expected_state = state;
-      state = app_state_reducer(state, action);
-      expect_app_state_equal(state, expected_state);
-
       // Test potential_crossover store's reducer
       PotentialCrossover expectedPotentialCrossover =
           potentialCrossover.rebuild((b) => b.current_point = movePoint);
@@ -4594,11 +4559,6 @@ main() {
 
     test('PotentialCrossoverRemove', () {
       Action action = PotentialCrossoverRemove();
-
-      // Test AppState reducer
-      AppState expected_state = state.rebuild((b) => b.ui_state.potential_crossover_is_drawing = false);
-      state = app_state_reducer(state, action);
-      expect_app_state_equal(state, expected_state);
 
       // Test potential_crossover store's reducer
       PotentialCrossover expectedPotentialCrossover = null;
@@ -5599,7 +5559,7 @@ main() {
     });
   });
 
-  test('Scaffold set', () {
+  test('Scaffold_set', () {
     AppState state = app_state_from_design(two_helices_design);
 
     //   0                  16
@@ -5615,15 +5575,12 @@ main() {
     Strand new_strand = strand.rebuild((b) => b..is_scaffold = true);
     new_strand = new_strand.initialize();
 
-    BuiltList<Strand> new_strands = two_helices_design.strands.rebuild((b) => b[1] = new_strand);
-
-    AppState expected_state = state.rebuild((b) => b
-      ..design.strands.replace(new_strands)
-      ..undo_redo.undo_stack.add(two_helices_design)
-      ..ui_state.changed_since_last_save = true);
+    Design expected_design = two_helices_design.rebuild((b) => b..strands[1] = new_strand);
 
     state = app_state_reducer(state, ScaffoldSet(strand: strand, is_scaffold: true));
-    expect_app_state_equal(state, expected_state);
+    expect_design_equal(state.design, expected_design);
+    expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+    expect(state.ui_state.changed_since_last_save, true);
   });
 
   test('helix_svg_position_from_position', () {
@@ -5641,9 +5598,8 @@ main() {
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
     var expected_helices = {0: expected_helix0, 1: expected_helix1};
 
-    AppState expected_state = state.rebuild((b) => b..design.helices.replace(expected_helices));
-
-    expect_app_state_equal(state, expected_state);
+    Design expected_design = no_grid_two_helices_design.rebuild((b) => b.helices.replace(expected_helices));
+    expect(state.design, expected_design);
   });
 
   test('HelixPositionSet', () {
@@ -5665,13 +5621,11 @@ main() {
     Helix expected_helix1 = helix1.rebuild((b) => b..svg_position_ = svg_position1);
     var expected_helices = {0: expected_helix0, 1: expected_helix1};
 
-    AppState expected_state = state.rebuild((b) => b
-      ..design.helices.replace(expected_helices)
-      ..undo_redo.undo_stack.add(no_grid_two_helices_design)
-      ..ui_state.changed_since_last_save = true);
-
     state = app_state_reducer(state, HelixPositionSet(helix_idx: helix0.idx, position: new_position0));
-    expect_app_state_equal(state, expected_state);
+    Design expected_design = no_grid_two_helices_design.rebuild((b) => b.helices.replace(expected_helices));
+    expect(state.design, expected_design);
+    expect(state.undo_redo.undo_stack, BuiltList<Design>([no_grid_two_helices_design]));
+    expect(state.ui_state.changed_since_last_save, true);
   });
 
   test('two_helices_Helix_Position_Set', () {
@@ -5695,19 +5649,16 @@ main() {
     Helix expected_helix1 = helix1.rebuild((b) => b
       ..position_.replace(position1)
       ..svg_position_ = svg_position1);
-    var expected_helices = {0: expected_helix0, 1: expected_helix1};
-
-    AppState expected_state = state.rebuild((b) => b
-      ..design.helices.replace(expected_helices)
-      ..undo_redo.undo_stack.add(no_grid_two_helices_design)
-      ..ui_state.changed_since_last_save = true);
 
     var batch_action = BatchAction([
       HelixPositionSet(helix_idx: helix0.idx, position: position0),
       HelixPositionSet(helix_idx: helix1.idx, position: position1)
     ]);
     state = app_state_reducer(state, batch_action);
-    expect_app_state_equal(state, expected_state);
+    expect(state.design.helices[0], expected_helix0);
+    expect(state.design.helices[1], expected_helix1);
+    expect(state.undo_redo.undo_stack, BuiltList<Design>([no_grid_two_helices_design]));
+    expect(state.ui_state.changed_since_last_save, true);
   });
 
   test('HelixGridPositionSet', () {
@@ -5715,48 +5666,30 @@ main() {
     Helix helix = two_helices_design.helices.values.first;
 
     GridPosition grid_position = GridPosition(5, -3);
-    Helix expected_helix = helix.rebuild((b) => b
-      ..grid_position.replace(grid_position)
-      ..svg_position_ = Point(0, 0));
-
-    var expected_helices = two_helices_design.helices.toBuilder();
-    expected_helices[0] = expected_helix;
-
-    var built_expected_helices = expected_helices.build().toMap();
-    var geometry = two_helices_design.geometry;
-    built_expected_helices =
-        util.helices_assign_svg(geometry, false, built_expected_helices, state.design.groups);
-
-    AppState expected_state = state.rebuild((b) => b
-      ..design.helices.replace(built_expected_helices)
-      ..undo_redo.undo_stack.add(two_helices_design)
-      ..ui_state.changed_since_last_save = true);
-
     state = app_state_reducer(state, HelixGridPositionSet(helix: helix, grid_position: grid_position));
-    expect_app_state_equal(state, expected_state);
+
+    Helix helix0 = state.design.helices[0];
+    expect(helix0.grid_position, grid_position);
+    expect(state.undo_redo.undo_stack, BuiltList<Design>([two_helices_design]));
+    expect(state.ui_state.changed_since_last_save, true);
   });
 
   group('Test png caching:', () {
-    test('LoadDnaSequenceImageUri loads new uri', () {
+    test('LoadDnaSequenceImageUri_loads_new_uri', () {
       AppState old_state = app_state_from_design(two_helices_design);
       String uri = 'test_uri';
 
       AppState new_state = app_state_reducer(old_state, LoadDnaSequenceImageUri(uri, 20, 30));
-      AppState exp_state = old_state.rebuild((b) => b
-        ..ui_state.dna_sequence_png_uri = uri
-        ..ui_state.dna_sequence_png_horizontal_offset = 20
-        ..ui_state.dna_sequence_png_vertical_offset = 30);
-
-      expect_app_state_equal(new_state, exp_state);
+      var ui_state = new_state.ui_state;
+      expect(ui_state.dna_sequence_png_uri, uri);
+      expect(ui_state.dna_sequence_png_horizontal_offset, 20);
+      expect(ui_state.dna_sequence_png_vertical_offset, 30);
     });
 
-    test('SetIsZoomAboveThreshold sets field to true', () {
+    test('SetIsZoomAboveThreshold_sets_field_to_true', () {
       AppState old_state = app_state_from_design(two_helices_design);
-
       AppState new_state = app_state_reducer(old_state, SetIsZoomAboveThreshold(true));
-      AppState exp_state = old_state.rebuild((b) => b..ui_state.is_zoom_above_threshold = true);
-
-      expect_app_state_equal(new_state, exp_state);
+      expect(new_state.ui_state.is_zoom_above_threshold, true);
     });
 
     test('SetDisablePngCacheUntilActionCompletes', () {
@@ -5765,13 +5698,11 @@ main() {
       Action action = ExportSvg(type: ExportSvgType.main);
 
       AppState new_state = app_state_reducer(old_state, SetDisablePngCacheUntilActionCompletes(action));
-      AppState exp_state =
-          old_state.rebuild((b) => b..ui_state.disable_png_cache_until_action_completes = action);
 
-      expect_app_state_equal(new_state, exp_state);
+      expect(new_state.ui_state.disable_png_cache_until_action_completes, action);
 
-      exp_state = app_state_reducer(exp_state, SetDisablePngCacheUntilActionCompletes(null));
-      expect_app_state_equal(old_state, exp_state);
+      new_state = app_state_reducer(new_state, SetDisablePngCacheUntilActionCompletes(null));
+      expect(new_state.ui_state.disable_png_cache_until_action_completes, null);
     });
   });
 
@@ -5901,7 +5832,7 @@ main() {
 
     Crossover crossover23 =
         many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
-    Strand domain = many_helices_modification_design.strands.first;
+    Strand strand = many_helices_modification_design.strands.first;
     Domain domain6 = many_helices_modification_design.strands.first.substrands[6] as Domain;
     test('delete_crossover', () {
       // Delete crossover between 2 and 3
@@ -5936,7 +5867,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      AppState expected_state = app_state_from_design(Design.from_json(json.decode(r'''
+      Design expected_design1 = Design.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6000,17 +5931,18 @@ main() {
               }
             ]
           }
-        '''))).rebuild((b) => b
-        ..undo_redo.undo_stack.add(many_helices_modification_design)
-        ..ui_state.changed_since_last_save = true);
+        '''));
 
       AppState state = initial_state;
+      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.crossover]));
       state = app_state_reducer(state, Select(crossover23, toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_app_state_equal(state, expected_state);
+      expect(state.undo_redo.undo_stack, [many_helices_modification_design]);
+      expect(state.ui_state.changed_since_last_save, true);
+      expect_design_equal(state.design, expected_design1);
 
-      Crossover crossover56 = expected_state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+      Crossover crossover56 = state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
       // Delete crossover between 5 and 6.
       //    B     Cy3   B
       // 0  [-----------------
@@ -6043,9 +5975,11 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      expected_state = app_state_from_design(Design.from_json(json.decode(r'''
+      Design expected_design2 = Design.from_json(json.decode(r'''
           {
-            "version": "0.6.7",
+            "version": "''' +
+            constants.CURRENT_VERSION +
+            r'''",
             "grid": "square",
             "helices": [
               {"grid_position": [0, 0]},
@@ -6114,17 +6048,18 @@ main() {
               }
             ]
           }
-        '''))).rebuild((b) => b
-        ..undo_redo.undo_stack.addAll([many_helices_modification_design, state.design])
-        ..ui_state.changed_since_last_save = true);
+        '''));
 
       state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.undo_redo.undo_stack[1], expected_design1);
+      expect_design_equal(state.undo_redo.undo_stack[0], many_helices_modification_design);
+      expect(state.ui_state.changed_since_last_save, true);
+      expect_design_equal(state.design, expected_design2);
     },
-        skip:
-            'test is failing, but behavior works in app. suspect the test is fragile (is not really checking the right thing)');
+    );
+
     test('delete_loopout', () {
       // 0  -----------------]
       //    |  B     Cy3
@@ -6174,7 +6109,7 @@ main() {
       //
       //           Cy3    B
       // 1  [---------------->
-      AppState expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
         {
           "version": "0.7.0",
           "grid": "square",
@@ -6216,22 +6151,23 @@ main() {
             }
           ]
         }
-      ''', modifications_loopout);
+      '''));
 
       AppState state = initial_state;
+      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.loopout]));
       state = app_state_reducer(
           state,
           Select(modifications_loopout.loopouts_by_id['loopout-1-strand-H0-15-reverse'],
               toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_app_state_equal(state, expected_state);
-    },
-        skip:
-            'test is failing, but behavior works in app. suspect the test is fragile (is not really checking the right thing)');
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([modifications_loopout]));
+      expect(state.ui_state.changed_since_last_save, true);
+    });
 
-    test('delete_domain', () {
-      // Delete domain
+    test('delete_strand_with_modifications', () {
+      // delete_strand_with_modifications
       // 0
       // 1
       // 2
@@ -6240,7 +6176,7 @@ main() {
       // 5
       // 6
       // 7
-      AppState expected_state = app_state_from_design(Design.from_json(json.decode(r'''
+      Design expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6256,24 +6192,18 @@ main() {
             ],
             "strands": []
           }
-        '''))).rebuild((b) => b
-        ..undo_redo.undo_stack.add(many_helices_modification_design)
-        ..ui_state.changed_since_last_save = true
-        ..ui_state
-            .storables
-            .select_mode_state
-            .replace(SelectModeState().set_modes(DEFAULT_SelectModeStateBuilder.modes.build())));
+        '''));
 
       AppState state = initial_state;
-      state = app_state_reducer(state, SelectModeToggle(SelectModeChoice.strand));
-      state = app_state_reducer(state, Select(domain, toggle: false, only: true));
+      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.strand]));
+      state = app_state_reducer(state, Select(strand, toggle: false, only: true));
       state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_app_state_equal(state, expected_state);
-    },
-        skip: 'DD: I had trouble understanding what the above test is testing. Individual domains supposedly '
-            'cannot be selected, so I was not clear on what it means to send an Action to Select a '
-            'single domain.');
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modification_design]));
+      expect(state.ui_state.changed_since_last_save, true);
+      expect(state.ui_state.select_mode_state, SelectModeState().set_modes([SelectModeChoice.strand]));
+    });
 
     test('nick', () {
       // nick at helix 6 offset 0
@@ -6308,7 +6238,7 @@ main() {
       //                     |
       // 7  <-----------------
       //    Cy3  B      Cy3
-      var expected_state = app_state_from_design(Design.from_json(json.decode(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -6373,14 +6303,14 @@ main() {
               }
             ]
           }
-        '''))).rebuild((b) => b
-        ..undo_redo.undo_stack.add(many_helices_modification_design)
-        ..ui_state.changed_since_last_save = true);
+        '''));
 
       AppState state = initial_state;
       state = app_state_reducer(state, Nick(domain: domain6, offset: 4));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modification_design]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
   });
 
@@ -6573,7 +6503,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6677,13 +6607,15 @@ main() {
               }
             ]
           }
-        ''', many_helices_modifications_split);
+        '''));
 
       AppState state = initial_state;
       state = app_state_reducer(
           state, JoinStrandsByCrossover(dna_end_first_click: end_3p_H4, dna_end_second_click: end_5p_H5));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modifications_split]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
 
     test('ligate', () {
@@ -6720,7 +6652,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6823,12 +6755,14 @@ main() {
               }
             ]
           }
-        ''', many_helices_modifications_split);
+        '''));
 
       AppState state = initial_state;
       state = app_state_reducer(state, Ligate(dna_end: end_5p_H4));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modifications_split]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
     test('move DNA end', () {
       // move 5' end on 5 helix to the left by 2 offsets
@@ -6864,7 +6798,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -6975,7 +6909,7 @@ main() {
               }
             ]
           }
-        ''', many_helices_modifications_split);
+        '''));
 
       AppState state = initial_state;
       DNAEndMove move = DNAEndMove(dna_end: end_5p_H5, lowest_offset: 0, highest_offset: 16);
@@ -6983,9 +6917,11 @@ main() {
           moves: BuiltList<DNAEndMove>([move]), original_offset: 15, current_offset: 13, helix: helix5);
       state = app_state_reducer(state, DNAEndsMoveCommit(dna_ends_move: moves));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modifications_split]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
-    test('move strands', () {
+    test('move_strands', () {
       // move strands at 3 and 4 to 0 and 1
       //
       //    B     Cy3   B
@@ -7022,7 +6958,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -7133,7 +7069,7 @@ main() {
               }
             ]
           }
-        ''', many_helices_modifications_split);
+        '''));
 
       AppState state = initial_state;
 
@@ -7159,9 +7095,11 @@ main() {
 
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modifications_split]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
-    test('copy and paste strands', () {
+    test('copy_and_paste_strands', () {
       // copy strands at 3 and 4 to 0 and 1
       //
       //    B     Cy3   B
@@ -7198,7 +7136,7 @@ main() {
       //
       // 7  <----------------]
       //    Cy3  B      Cy3
-      var expected_state = expected_state_from_json_string(r'''
+      var expected_design = Design.from_json(json.decode(r'''
           {
             "version": "0.7.0",
             "grid": "square",
@@ -7333,7 +7271,7 @@ main() {
               }
             ]
           }
-        ''', many_helices_modifications_split);
+        '''));
 
       AppState state = initial_state;
 
@@ -7359,7 +7297,9 @@ main() {
 
       state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
 
-      expect_app_state_equal(state, expected_state);
+      expect_design_equal(state.design, expected_design);
+      expect(state.undo_redo.undo_stack, BuiltList<Design>([many_helices_modifications_split]));
+      expect(state.ui_state.changed_since_last_save, true);
     });
   });
 
@@ -7374,16 +7314,14 @@ main() {
 
     test('StrandColorPickerHide', () {
       Strand strand = two_helices_design.strands.first;
-      AppState initial_state = app_state_from_design(two_helices_design).rebuild((b) => b
-        ..ui_state.strand_color_picker_strand = strand.toBuilder()
-      );
+      AppState initial_state = app_state_from_design(two_helices_design)
+          .rebuild((b) => b..ui_state.strand_color_picker_strand = strand.toBuilder());
 
       AppState final_state = app_state_reducer(initial_state, StrandColorPickerHide());
 
       expect(final_state.ui_state.strand_color_picker_strand, null);
     });
   });
-
 }
 
 AppState make_ends_selectable(AppState actual_state) {

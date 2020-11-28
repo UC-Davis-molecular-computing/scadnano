@@ -136,18 +136,6 @@ void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
   expect_stack_equal(actual.redo_stack, matcher.redo_stack);
 }
 
-/// Asserts that the [actual] matches [matcher] AppState.
-///
-/// This function makes debugging easier by splitting the giant assertion
-/// into smaller assertions on individual fields.
-void expect_app_state_equal(AppState actual, AppState matcher) {
-  expect_design_equal(actual.design, matcher.design);
-  expect_ui_state_equal(actual.ui_state, matcher.ui_state);
-  expect_undo_redo_equal(actual.undo_redo, matcher.undo_redo);
-  expect(actual.error_message, matcher.error_message);
-  expect(actual.editor_content, matcher.editor_content);
-}
-
 Store<AppState> store_from_design(Design design) {
   var state = app_state_from_design(design);
   var store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
