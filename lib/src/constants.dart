@@ -325,8 +325,8 @@ const num ZOOM_THRESHOLD = 1;
 
 /////////////////////////////////////////////////////////////
 // Backend
-const export_url = 'http://51.89.138.231:9090/scadnano_to_cadnano_v2';
-const import_url = 'http://51.89.138.231:9090/cadnano_v2_to_scadnano';
+const export_url = 'https://os-interactive.ie/scadnano-backend/scadnano_to_cadnano_v2';
+const import_url = 'https://os-interactive.ie/scadnano-backend/cadnano_v2_to_scadnano';
 
 /////////////////////////////////////////////////////////////
 // CSS selector classnames
