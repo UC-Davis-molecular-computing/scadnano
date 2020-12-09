@@ -474,6 +474,8 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **DNA sequences:**
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
+    By default the DNA sequences will be output in the same order strands appear in the `.sc` file. A few defaults are available to output them in another order based on their 5' or 3' ends' helix index and case offset.
+
 * Help
 
   * This contains links to various web sites associated with scadnano, which contain its documentation.
@@ -513,7 +515,7 @@ In both the side menu and the main menu, hovering the cursor over a most menu it
 There are different edit modes available, shown on the right side of the screen. Currently most of them are mutually exclusive, so selecting one will unselect the others. However, a few can be on simultaneously. Each edit mode has a keyboard shortcut that can be used to toggle it, shown in parentheses in the application's display.
 
 * **(s)elect:**
-  This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown below the Edit modes. Some of these are mutually exclusive as well.
+  This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown when in select edit mode or rope select edit mode. Some of the select modes are mutually exclusive as well.
 
   A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
@@ -556,12 +558,10 @@ There are different edit modes available, shown on the right side of the screen.
   - **scaffold/staple:**
     In the case of a DNA origami design---one in which at least one strand is marked as a *scaffold*---all non-scaffold strands are called *staples*. This option allows one to select only scaffold strands/strand parts, only staples, or both. The option is not shown in a non-origami design.
 
-    It is also possible to select helices in the side view. As currently implemented, the delete key does not delete them. Instead, they can be deleted by picking the "helix" edit mode and clicking on them.
-
-  Regardless of the current select mode, it is always possible to select helices in the side view. Pressing delete will delete those helices. You can also delete a helix by clicking on the helix in the side view while in pencil mode (see below).
+  Regardless of the current select mode, it is always possible to select helices in the side view by holding Shift or Ctrl and dragging a selection box. Pressing delete will delete the selected helices. You can also delete a helix by clicking on the helix in the side view while in pencil edit mode.
 
 * **(r)ope select:**
-  This is similar to select mode, but it allows one to draw a general polygon (a "rope"), rather than just a rectangle. This is useful, for example, for selecting many objects along a diagonal, where a rectangle containing all of them would also contain many objects off the diagonal that are not intended to be selected.
+  This is similar to select mode, but when holding Shift or Ctrl, it allows one to draw a general polygon (a "rope"), rather than just a rectangle. This is useful, for example, for selecting many objects along a diagonal, where a rectangle containing all of them would also contain many objects off the diagonal that are not intended to be selected.
   
   The interpretation of Shift and Ctrl are similar (Shift means add all items inside the polygon to the selected items; Ctrl means toggle them). First, press and hold either Shift or Ctrl. While holding down the Shift or Ctrl key, click several points to define a polygon. 
 
@@ -637,8 +637,14 @@ There are different edit modes available, shown on the right side of the screen.
 
 ## Assigning DNA
 Right-clicking on a strand allows one to assign a DNA sequence to a strand (or remove it if assigned). 
+
+There are two options for assigning DNA sequences to a strand, both available via the right-click context menu on a strand:
+*assign DNA* and *assign DNA complement from bound strands*.
+The first option requires you to specify a DNA sequence. The second infers the DNA sequence from the complement of other DNA sequences already present in the design.
+
+*assign DNA*:
 By default any strands bound to the assigned strand will have their sequences assigned to be the complement of the relevant region. 
-Disabling this allows one to create intentional mismatches.
+Disabling this allows one to create intentional mismatches, for instance.
 
 It is possible to assign DNA to a strand that already has DNA assigned to it. It will replace the previous DNA sequence. 
 However, be careful in automatically assigning DNA complements to strands bound to this one.
@@ -652,6 +658,9 @@ For example, if a strand *s1* is connected to two others *s2* and *s3*, then DNA
 Any bases on *s1* not bound to *s2* (for instance, those bound to *s3*), after *s2* has a sequence assigned to it, will receive the wildcard symbol `?` as their "DNA base".
 Upon subsequently assigning a DNA sequence to *s3*, the complementary portions of *s1* (which have a `?`) will be overwritten with the appropriate DNA sequence, even if the warning is enabled.
 Thus the warning only concerns a concrete DNA base, one of `A`, `C`, `G`, or `T`, if it already exists and is about to be overwritten with a different base.
+
+*assign DNA complement from bound strands*:
+The above description indicates how to assign a specific DNA sequence to a particular strand while automatically assigning the complementary DNA sequence to strands bound to it. But in some circumstances, you might have some strand(s) that already have DNA sequences assigned, and through some modification of the design, new strand(s) come to be bound to them that were not present in the design at the time the DNA sequence was assigned. This feature allows you to select that new strand (or many strands if you like), and tell it to receive the appropriate complementary DNA sequence. It is equivalent to iterating over each strand bound to the selected strand(s), selecting "Assign DNA" from the context menu, and selecting the option "assign complement to bound strands".
 
 [TODO: make a figure showing this]
 

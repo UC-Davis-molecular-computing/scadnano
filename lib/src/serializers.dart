@@ -21,6 +21,7 @@ import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
 import 'state/example_designs.dart';
 import 'state/export_dna_format.dart';
+import 'state/export_dna_format_strand_order.dart';
 import 'state/geometry.dart';
 import 'state/modification.dart';
 import 'state/potential_crossover.dart';
@@ -234,10 +235,10 @@ part 'serializers.g.dart';
   DialogFloat,
   DialogTextArea,
   DialogCheckbox,
-  DialogSelect,
   DialogRadio,
   DialogShow,
   DialogHide,
+  StrandOrder,
   StrandColorSet,
   StrandColorPickerShow,
   StrandColorPickerHide,

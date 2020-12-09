@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:quiver/iterables.dart';
+import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import '../state/dialog.dart';
 import '../state/edit_mode.dart';
@@ -686,7 +687,7 @@ When selected, the length of each loopout is displayed next to it.'''
           'title': '''\
     Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
         },
-        'v${version}' + (first? ' (current version)': ''),
+        'v${version}' + (first ? ' (current version)' : ''),
       );
       first = false;
       version_dropdown_items.add(version_dropdown_item);
@@ -736,7 +737,7 @@ When selected, the length of each loopout is displayed next to it.'''
       DropdownItem(
         {
           'href':
-          'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
+              'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
 //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
@@ -783,29 +784,39 @@ However, it may be less stable than the main site.'''
 // helper methods
 
   Future<void> export_dna() async {
-    // https://pub.dev/documentation/smart_dialogs/latest/smart_dialogs/Info/get.html
-    String buttontype = DiaAttr.CHECKBOX;
-    String htmlTitleText = 'export DNA sequences';
-    List<String> textLabels = ['include scaffold?', 'output type'];
-    List<List<String>> comboInfo = [null, ExportDNAFormat.values.map((v) => v.toString()).toList()];
-    List<String> defaultInputTexts = [null, ExportDNAFormat.idt_bulk.toString()];
-    List<int> widths = [0, 20];
-    List<String> isChecked = ['false', null];
-    bool alternateRowColor = false;
-    List<String> buttonLabels = ['OK', 'Cancel'];
+    List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
+    List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
+    var dialog = Dialog(title: 'export DNA sequences', items: [
+      DialogCheckbox(label: 'include scaffold', value: false), // 0
+      DialogRadio(label: 'designs', options: export_options), // 1
+      DialogCheckbox(label: 'sort strands', value: false), // 2
+      DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true), // 3
+      DialogRadio(label: 'strand part to sort by', options: sort_options), // 4
+    ], disable_when_any_checkboxes_off: {
+      3: [2],
+      4: [2]
+    });
 
-    UserInput result = await Info.get(buttontype, htmlTitleText, textLabels, comboInfo, defaultInputTexts,
-        widths, isChecked, alternateRowColor, buttonLabels);
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
 
-    if (result.buttonCode != 'DIA_ACT_OK') {
-      return;
+    bool include_scaffold = (results[0] as DialogCheckbox).value;
+    String format_str = (results[1] as DialogRadio).value;
+    bool sort = (results[2] as DialogCheckbox).value;
+    StrandOrder strand_order = null;
+    bool column_major = true;
+    if (sort) {
+      column_major = (results[3] as DialogCheckbox).value;
+      String strand_order_str = (results[4] as DialogRadio).value;
+      strand_order = StrandOrder.fromString(strand_order_str);
     }
-
-    bool include_scaffold = result.getCheckedState(0) == 'true';
-    String format_str = result.getUserInput(1)[0];
     ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
 
-    props.dispatch(actions.ExportDNA(include_scaffold: include_scaffold, export_dna_format: format));
+    props.dispatch(actions.ExportDNA(
+        include_scaffold: include_scaffold,
+        export_dna_format: format,
+        strand_order: strand_order,
+        column_major: column_major));
   }
 
   Future<void> load_example_dialog() async {

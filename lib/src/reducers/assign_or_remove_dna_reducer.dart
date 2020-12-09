@@ -213,8 +213,8 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
         new_dna_sequence =
             util.merge_wildcards(strand_to.dna_sequence, new_dna_sequence, constants.DNA_BASE_WILDCARD);
       } on ArgumentError {
-        Domain ss_to = strand_to.first_domain();
-        Domain ss_from = strand_from.first_domain();
+        Domain ss_to = strand_to.first_domain;
+        Domain ss_from = strand_from.first_domain;
         var msg = 'strand starting at helix ${ss_to.helix}, offset ${ss_to.offset_5p} has '
             'length '
             '${strand_to.dna_length()} and already has a partial DNA sequence assignment of length '
@@ -237,7 +237,7 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
     try {
       seq = util.merge_wildcards(seq, strand.dna_sequence, constants.DNA_BASE_WILDCARD);
     } on ArgumentError {
-      var first_ss = strand.first_domain();
+      var first_ss = strand.first_domain;
       var msg = 'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
           'length '
           '${strand.dna_length()} and already has a DNA sequence assignment of length '

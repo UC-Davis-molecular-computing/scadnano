@@ -3,15 +3,18 @@ import 'dart:html';
 import 'package:color/color.dart';
 import 'package:platform_detect/platform_detect.dart';
 
+import 'state/geometry.dart';
 import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.13.2";
+const String CURRENT_VERSION = "0.13.3";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.13.2",
+  "0.13.1",
   "0.13.0",
   "0.12.2",
   "0.12.1",
@@ -42,6 +45,8 @@ const String DNA_BASE_WILDCARD = '?';
 
 const default_min_offset = 0;
 const default_max_offset = 64;
+
+final default_geometry = Geometry();
 
 const scadnano_css_stylesheet_name_no_ext = r'scadnano-styles';
 const scadnano_css_stylesheet_name = r'scadnano-styles.css';
@@ -320,9 +325,8 @@ const num ZOOM_THRESHOLD = 1;
 
 /////////////////////////////////////////////////////////////
 // Backend
-const export_url = 'https://dna.hamilton.ie/scadnano-backend/scadnano_to_cadnano_v2';
-const import_url = 'https://dna.hamilton.ie/scadnano-backend/cadnano_v2_to_scadnano';
-
+const export_url = 'https://os-interactive.ie/scadnano-backend/scadnano_to_cadnano_v2';
+const import_url = 'https://os-interactive.ie/scadnano-backend/cadnano_v2_to_scadnano';
 
 /////////////////////////////////////////////////////////////
 // CSS selector classnames
@@ -365,3 +369,5 @@ const css_selector_deletion_group = 'deletion-group';
 const css_selector_selected = 'selected';
 
 
+const default_idt_scale = "25nm";
+const default_idt_purification = "STD";

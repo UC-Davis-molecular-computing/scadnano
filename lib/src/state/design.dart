@@ -47,7 +47,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
           'num_helices = ${num_helices}\n'
           'helices = ${helices}');
     }
-    geometry ??= Geometry();
+    geometry ??= constants.default_geometry;
     if (helices == null) {
       if (num_helices == null) {
         helices = List<Helix>();
@@ -77,7 +77,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   static void _initializeBuilder(DesignBuilder b) {
     b.version = constants.CURRENT_VERSION;
-    b.geometry = Geometry().toBuilder();
+    b.geometry = constants.default_geometry.toBuilder();
     b.helices = MapBuilder<int, Helix>();
     b.strands = ListBuilder<Strand>();
     b.unused_fields = MapBuilder<String, Object>({});
@@ -537,7 +537,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Address, Strand> get address_5p_to_strand {
     var map = Map<Address, Strand>();
     for (var strand in strands) {
-      var ss = strand.first_domain();
+      var ss = strand.first_domain;
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_5p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
@@ -550,7 +550,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Address, Strand> get address_3p_to_strand {
     var map = Map<Address, Strand>();
     for (var strand in strands) {
-      var ss = strand.last_domain();
+      var ss = strand.last_domain;
       var key = Address(helix_idx: ss.helix, offset: ss.dnaend_3p.offset_inclusive, forward: ss.forward);
       map[key] = strand;
     }
@@ -563,7 +563,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltList<PotentialVerticalCrossover> get potential_vertical_crossovers {
     List<PotentialVerticalCrossover> crossovers = [];
     for (var strand_5p in strands) {
-      var ss = strand_5p.first_domain();
+      var ss = strand_5p.first_domain;
       int helix_idx = ss.helix;
       int offset = ss.dnaend_5p.offset_inclusive;
       bool forward = ss.forward;
@@ -590,13 +590,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
               dna_end_top = substrand_top.dnaend_5p;
 
               helix_idx_bot = address_3p.helix_idx;
-              substrand_bot = strand_3p.last_domain();
+              substrand_bot = strand_3p.last_domain;
               dna_end_bot = substrand_bot.dnaend_3p;
             } else {
               // 3' end is on top, 5' is on bottom
               helix_idx_top = address_3p.helix_idx;
               forward_top = !forward;
-              substrand_top = strand_3p.last_domain();
+              substrand_top = strand_3p.last_domain;
               dna_end_top = substrand_top.dnaend_3p;
 
               helix_idx_bot = address_5p.helix_idx;
@@ -1698,7 +1698,7 @@ int calculate_default_max_offset(Iterable<Strand> strands) {
   if (strands.isEmpty) {
     greatest_max_offset = constants.default_max_offset;
   } else {
-    greatest_max_offset = strands.first.first_domain().end;
+    greatest_max_offset = strands.first.first_domain.end;
     for (var strand in strands) {
       for (var domain in strand.domains()) {
         if (domain.end > greatest_max_offset) {
@@ -1749,8 +1749,8 @@ class IllegalDesignError implements Exception {
 
 class StrandError extends IllegalDesignError {
   StrandError(Strand strand, String the_cause) : super(the_cause) {
-    var first_substrand = strand.first_domain();
-    var last_substrand = strand.last_domain();
+    var first_substrand = strand.first_domain;
+    var last_substrand = strand.last_domain;
 
     var msg = '\n'
         '  number of domains    =  ${strand.substrands.length}\n'

@@ -532,8 +532,8 @@ String tooltip_text(Strand strand) =>
     "Strand:\n" +
     ('    name=${strand.name}\n' ?? '\n') +
     "    length=${strand.dna_length()}\n" +
-    "    5' end=${tooltip_end(strand.first_domain(), strand.dnaend_5p)}\n" +
-    "    3' end=${tooltip_end(strand.last_domain(), strand.dnaend_3p)}\n" +
+    "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
+    "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
     (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +
     (strand.idt == null ? "" : "    idt info=\n${strand.idt.tooltip()}");
 

@@ -16,10 +16,12 @@ jobs:
         run: |
           echo "done!"
       - uses: "marvinpinto/action-automatic-releases@v1.1.0"
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: "Development Build [TODO: Replace label and number with version number]"
+          title: "Development Build [TODO: Replace label and title with version number]"
           files: |
             LICENSE.txt

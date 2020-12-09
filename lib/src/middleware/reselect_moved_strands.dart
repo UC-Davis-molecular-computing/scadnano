@@ -34,7 +34,7 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
     // first collect old addresses while design.end_to_substrand is still valid, convert them to
     // their new addresses so we can look them up
     for (Strand strand in strands_move.strands_moving) {
-      Domain old_domain = strand.first_domain();
+      Domain old_domain = strand.first_domain;
       DNAEnd old_5p_end = old_domain.dnaend_5p;
       int old_helix_view_order = old_helices_view_order_inverse[old_domain.helix];
       int new_helix_view_order = old_helix_view_order + strands_move.delta_view_order;

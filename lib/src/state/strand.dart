@@ -144,7 +144,7 @@ abstract class Strand
   }
 
   check_loopout_not_singleton() {
-    if (substrands.length == 1 && first_domain().is_loopout()) {
+    if (substrands.length == 1 && first_domain.is_loopout()) {
       throw StrandError(this, 'strand cannot have a single Loopout as its only domain');
     }
   }
@@ -443,7 +443,7 @@ abstract class Strand
 
   @memoized
   String get id {
-    var first_dom = this.first_domain();
+    var first_dom = this.first_domain;
     return id_from_data(first_dom.helix, first_dom.offset_5p, first_dom.forward);
   }
 
@@ -451,7 +451,7 @@ abstract class Strand
       'strand-H${helix}-${offset}-${forward ? 'forward' : 'reverse'}';
 
 //  String toString() {
-//    var first_ss = this.first_domain();
+//    var first_ss = this.first_domain;
 //    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
 //  }
 
@@ -656,14 +656,14 @@ abstract class Strand
       label: label,
     ).rebuild((b) => b.unused_fields = unused_fields);
 
-//    print('first domain unused_fields type               = ${strand.first_domain().unused_fields.runtimeType}');
-//    print('first domain unused_fields                    = ${strand.first_domain().unused_fields}');
-//    print('first domain unused_fields.label type         = ${strand.first_domain().unused_fields['label'].runtimeType}');
-//    print('first domain unused_fields.label              = ${strand.first_domain().unused_fields['label']}');
-//    print('first domain unused_fields.sequence type      = ${strand.first_domain().unused_fields['sequence'].runtimeType}');
-//    print('first domain unused_fields.sequence           = ${strand.first_domain().unused_fields['sequence']}');
-//    print('first domain unused_fields.label.pool type    = ${(strand.first_domain().unused_fields['label'] as Map)['pool'].runtimeType}');
-//    print('first domain unused_fields.label.pool         = ${(strand.first_domain().unused_fields['label'] as Map)['pool']}');
+//    print('first domain unused_fields type               = ${strand.first_domain.unused_fields.runtimeType}');
+//    print('first domain unused_fields                    = ${strand.first_domain.unused_fields}');
+//    print('first domain unused_fields.label type         = ${strand.first_domain.unused_fields['label'].runtimeType}');
+//    print('first domain unused_fields.label              = ${strand.first_domain.unused_fields['label']}');
+//    print('first domain unused_fields.sequence type      = ${strand.first_domain.unused_fields['sequence'].runtimeType}');
+//    print('first domain unused_fields.sequence           = ${strand.first_domain.unused_fields['sequence']}');
+//    print('first domain unused_fields.label.pool type    = ${(strand.first_domain.unused_fields['label'] as Map)['pool'].runtimeType}');
+//    print('first domain unused_fields.label.pool         = ${(strand.first_domain.unused_fields['label'] as Map)['pool']}');
 //    print('');
 
     if (json_map.containsKey(constants.idt_key)) {
@@ -688,8 +688,9 @@ abstract class Strand
     return strand;
   }
 
-  Domain first_domain({int starting_at = 0}) {
-    for (int i = starting_at; i < substrands.length; i++) {
+  @memoized
+  Domain get first_domain {
+    for (int i = 0; i < substrands.length; i++) {
       if (this.substrands[i] is Domain) {
         return this.substrands[i] as Domain;
       }
@@ -697,7 +698,8 @@ abstract class Strand
     throw AssertionError('should not be reachable');
   }
 
-  Domain last_domain() {
+  @memoized
+  Domain get last_domain {
     for (int i = substrands.length - 1; i >= 0; i--) {
       if (this.substrands[i] is Domain) {
         return this.substrands[i] as Domain;
@@ -743,9 +745,11 @@ abstract class Strand
     }
   }
 
-  DNAEnd get dnaend_3p => last_domain().dnaend_3p;
+  @memoized
+  DNAEnd get dnaend_3p => last_domain.dnaend_3p;
 
-  DNAEnd get dnaend_5p => first_domain().dnaend_5p;
+  @memoized
+  DNAEnd get dnaend_5p => first_domain.dnaend_5p;
 
   /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
@@ -762,20 +766,20 @@ abstract class Strand
   }
 
   bool _ligatable_3p_to_5p_of(Strand other) {
-    Domain last_ss_this = last_domain();
-    Domain first_ss_other = other.first_domain();
+    Domain last_domain_this = last_domain;
+    Domain first_domain_other = other.first_domain;
 
-    return last_ss_this.forward == first_ss_other.forward &&
-        last_ss_this.helix == first_ss_other.helix &&
+    return last_domain_this.forward == first_domain_other.forward &&
+        last_domain_this.helix == first_domain_other.helix &&
         dnaend_3p.offset == other.dnaend_5p.offset;
   }
 
   bool _ligatable_5p_to_3p_of(Strand other) {
-    Domain first_ss_this = first_domain();
-    Domain last_ss_other = other.last_domain();
+    Domain first_domain_this = first_domain;
+    Domain last_domain_other = other.last_domain;
 
-    return first_ss_this.forward == last_ss_other.forward &&
-        first_ss_this.helix == last_ss_other.helix &&
+    return first_domain_this.forward == last_domain_other.forward &&
+        first_domain_this.helix == last_domain_other.helix &&
         dnaend_5p.offset == other.dnaend_3p.offset;
   }
 
@@ -793,9 +797,8 @@ abstract class Strand
 
   /// Name to export if Strand.name and Strand.idt_fields.name are both not set.
   String default_export_name() {
-    Domain first_ss = first_domain();
-    Domain last_ss = last_domain();
-    String id = '${first_ss.helix}[${first_ss.offset_5p}]${last_ss.helix}[${last_ss.offset_3p}]';
+    String id =
+        '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';
     return is_scaffold ? 'SCAF$id}' : 'ST$id';
   }
 }
