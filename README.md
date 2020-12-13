@@ -281,7 +281,7 @@ All helices in a group are translated by the group's `position` and rotated in t
 
 Each is described by a 2D (*h*,*v*) coordinate system. In all cases, *h* increases moving right in the side view and *v* increases moving down. (i.e., so-called *screen coordinates*, as opposed to *Cartesian coordinates* where *v* increases moving up)
 
-The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below.
+The grid types square, honeycomb, hex all have *integer* coordinates. Examples are shown below. These images will look slightly different than the default side view, because they have no gaps between the helices. By default helices have a positive gap between them, which can be configured under the menu item "Set geometric parameters" explained elsewhere in this document.
 
 square grid:
 
