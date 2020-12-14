@@ -350,6 +350,9 @@ For many typical features one would want to add that involve changing some aspec
     ```
     its name is `_` to emphasize that it doesn't need to be read. Other reducers, for example `strands_move`, require access to other parts of the `AppState`, so they are "global" reducers.
 
+    **CAUTION when writing reducers that change strands:**
+    The way the scadnano data is stored, it is necessary to called `strand = strand.initialize();` whenever creating a new strand. Any reducer listed in `strand_part_reducer` in reducers/strands_reducer.dart will have this done automatically, but in general, be conservative and, before putting a new strand in a design (including one that is the result of modifying an existing strand), replace it with `strand.initialize()`.
+
 6. **if necessary, add view code to display the new state**: 
     If this involved adding a new piece of state, then it may influence the view in some way. (Not always; some features/new actions influence only side-effects, such as saving to localStorage, implemented by middleware, so in such cases you could skip this step.) Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
 

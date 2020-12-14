@@ -234,6 +234,7 @@ const legacy_dna_sequence_keys = ['dna_sequence'];
 const idt_key = 'idt';
 const is_scaffold_key = 'is_scaffold';
 const substrands_key = 'domains';
+const circular_key = 'circular';
 const legacy_substrands_keys = ['substrands'];
 const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';

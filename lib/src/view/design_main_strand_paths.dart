@@ -108,28 +108,31 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
             ..strand_tooltip = props.strand_tooltip
             ..key = "domain-$i")());
 
-          bool is_5p = true;
-          for (DNAEnd end in [domain.dnaend_5p, domain.dnaend_3p]) {
-            String key = is_5p
-                ? "5'-end-$i${domain.is_first ? '-is_first' : ''}"
-                : "3'-end-$i${domain.is_last ? '-is_last' : ''}";
-            bool end_selected = props.selected_ends_in_strand.contains(end);
-            ends.add((DesignMainDNAEnd()
-              ..domain = domain
-              ..is_5p = is_5p
-              ..transform = transform_of_helix(domain.helix)
-              ..color = strand.color
-              ..helix = helix
-              ..group = props.groups[helix.group]
-              ..geometry = props.geometry
-              ..is_scaffold = props.strand.is_scaffold
-              ..selected = end_selected
-              ..strand = strand
-              ..context_menu_strand = props.context_menu_strand
-              ..moving_this_dna_end = props.moving_dna_ends && end_selected
-              ..drawing_potential_crossover = props.drawing_potential_crossover
-              ..key = key)());
-            is_5p = false;
+          // don't draw 5' or 3' end of a circular strand
+          if (!props.strand.circular) {
+            bool is_5p = true;
+            for (DNAEnd end in [domain.dnaend_5p, domain.dnaend_3p]) {
+              String key = is_5p
+                  ? "5'-end-$i${domain.is_first ? '-is_first' : ''}"
+                  : "3'-end-$i${domain.is_last ? '-is_last' : ''}";
+              bool end_selected = props.selected_ends_in_strand.contains(end);
+              ends.add((DesignMainDNAEnd()
+                ..domain = domain
+                ..is_5p = is_5p
+                ..transform = transform_of_helix(domain.helix)
+                ..color = strand.color
+                ..helix = helix
+                ..group = props.groups[helix.group]
+                ..geometry = props.geometry
+                ..is_scaffold = props.strand.is_scaffold
+                ..selected = end_selected
+                ..strand = strand
+                ..context_menu_strand = props.context_menu_strand
+                ..moving_this_dna_end = props.moving_dna_ends && end_selected
+                ..drawing_potential_crossover = props.drawing_potential_crossover
+                ..key = key)());
+              is_5p = false;
+            }
           }
         }
       } else if (substrand is Loopout) {
