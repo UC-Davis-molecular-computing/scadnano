@@ -48,6 +48,7 @@ class StrandColorPickerComponent
     e.preventDefault();
     e.stopPropagation();
     app.dispatch(actions.StrandColorPickerHide());
+    state.color = null;
   }
 
   void handleOnOK(e) {
@@ -60,6 +61,7 @@ class StrandColorPickerComponent
           app.state.ui_state.selectables_store.selected_strands);
       app.dispatch(action);
     }
+    state.color = null;
   }
 
   @override
@@ -71,6 +73,8 @@ class StrandColorPickerComponent
             ..onSubmit = handleOnOK
             ..className = 'dialog-form-form')(
             ChromePicker({
+              // props.color is used to set initial color (strand original color)
+              // state.color is used to set color as user changes color on color picker
               'color': state.color ?? props.color,
               'onChangeComplete': handleOnChangeComplete,
             }),
