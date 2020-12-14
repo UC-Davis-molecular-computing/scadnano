@@ -22,20 +22,25 @@ BuiltList<Strand> delete_all_reducer(
 
   var select_mode_state = state.ui_state.select_mode_state;
   if (select_mode_state.strands_selectable()) {
+    // strands
     var strands_to_remove = Set<Strand>.from(items.where((item) => item is Strand));
     strands = _remove_strands(strands, strands_to_remove);
   } else if (select_mode_state.linkers_selectable()) {
+    // crossovers/loopouts
     var crossovers = Set<Crossover>.from(items.where((item) => item is Crossover));
     var loopouts = Set<Loopout>.from(items.where((item) => item is Loopout));
     strands = _remove_crossovers_and_loopouts(strands, state, crossovers, loopouts);
   } else if (select_mode_state.ends_selectable()) {
+    // DNA ends
     var ends = items.where((item) => item is DNAEnd);
     var domains = ends.map((end) => state.design.end_to_domain[end]);
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.domains_selectable()) {
+    // domains
     var domains = List<Domain>.from(items.where((item) => item is Domain));
     strands = remove_domains(strands, state, domains);
   } else if (select_mode_state.deletions_selectable() || select_mode_state.insertions_selectable()) {
+    // deletions/insertions
     List<SelectableDeletion> deletions = select_mode_state.deletions_selectable()
         ? List<SelectableDeletion>.from(items.where((item) => item is SelectableDeletion))
         : [];
@@ -44,6 +49,7 @@ BuiltList<Strand> delete_all_reducer(
         : [];
     strands = remove_deletions_and_insertions(strands, state, deletions, insertions);
   } else if (select_mode_state.modifications_selectable()) {
+    // modifications
     var modifications =
         List<SelectableModification>.from(items.where((item) => item is SelectableModification));
     strands = remove_modifications(strands, state, modifications);
@@ -57,8 +63,8 @@ BuiltList<Strand> _remove_strands(BuiltList<Strand> strands, Iterable<Strand> st
 
 BuiltList<Strand> _remove_crossovers_and_loopouts(
     BuiltList<Strand> strands, AppState state, Iterable<Crossover> crossovers, Iterable<Loopout> loopouts) {
-  Set<Strand> strands_to_remove = {};
-  List<Strand> strands_to_add = [];
+  // maps each strand with >= 1 domains being removed to list of strands to replace it
+  Map<Strand, List<Strand>> strands_to_replace = {};
 
   // collect all linkers for one strand because we need special case to remove multiple from one strand
   Map<Strand, List<Linker>> strand_to_linkers = {};
@@ -79,20 +85,25 @@ BuiltList<Strand> _remove_crossovers_and_loopouts(
 
   // remove linkers one strand at a time
   for (var strand in strand_to_linkers.keys) {
-    strands_to_remove.add(strand);
-    var split_strands = _remove_linkers_from_strand(strand, strand_to_linkers[strand]);
-    strands_to_add.addAll(split_strands);
+    List<Strand> split_strands = _remove_linkers_from_strand(strand, strand_to_linkers[strand]);
+    strands_to_replace[strand] = split_strands;
   }
 
-  // remove old strands and add new strands to DNADesign
-  var new_strands = state.design.strands.toList();
-  new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
-  new_strands.addAll(strands_to_add);
+  // remove old strands and add new strands to DNADesign; preserve order where possible
+  // (i.e., look up index of strand being removed and put its replacement strands at same index)
+  var new_strands = strands.toList();
+  for (var strand in strands_to_replace.keys) {
+    int old_strand_idx = new_strands.indexOf(strand);
+    new_strands.removeAt(old_strand_idx);
+    List<Strand> split_strands = strands_to_replace[strand];
+    new_strands.insertAll(old_strand_idx, split_strands);
+  }
 
   return new_strands.build();
 }
 
 // Splits one strand into many by removing crossovers and loopouts
+// If the strand is circular and we only remove one linker, it stays one strand but becomes linear.
 List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
   // partition substrands of Strand that are separated by a linker
   // This logic is a bit complex because Loopouts are themselves Substrands, but Crossovers are not.
@@ -114,6 +125,14 @@ List<Strand> _remove_linkers_from_strand(Strand strand, List<Linker> linkers) {
     }
   }
 
+  // if circular, then the last list of substrands should be concatenated with the first
+  if (strand.circular) {
+    substrands_list[substrands_list.length - 1].addAll(substrands_list[0]);
+    substrands_list[0] = substrands_list[substrands_list.length - 1];
+    substrands_list.removeLast();
+    strand = strand.rebuild((b) => b..circular = false);
+  }
+
   return create_new_strands_from_substrand_lists(substrands_list, strand);
 }
 
@@ -127,6 +146,7 @@ String _dna_seq(List<Substrand> substrands, Strand strand) {
 
 /// Creates new strands, one for each list of consecutive substrands of strand.
 /// Needs strand to assign DNA sequences and to have default properties for first strand (e.g., idt).
+/// Always makes a linear Strand, even if Strand is circular.
 List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> substrands_list, Strand strand) {
   if (substrands_list.isEmpty) {
     return [];
@@ -209,42 +229,46 @@ List<Strand> create_new_strands_from_substrand_lists(List<List<Substrand>> subst
 }
 
 BuiltList<Strand> remove_domains(BuiltList<Strand> strands, AppState state, Iterable<Domain> domains) {
-  Set<Strand> strands_to_remove = {};
-  List<Strand> strands_to_add = [];
+  // maps each strand with >= 1 domains being removed to list of strands to replace it
+  Map<Strand, List<Strand>> strands_to_replace = {};
 
   // collect all Domains for one strand because we need special case to remove multiple from one strand
-  Map<Strand, Set<Domain>> strand_to_substrands = {};
-  for (var substrand in domains) {
-    var strand = state.design.substrand_to_strand[substrand];
-    if (strand_to_substrands[strand] == null) {
-      strand_to_substrands[strand] = {};
+  Map<Strand, Set<Domain>> strand_to_domains = {};
+  for (var domain in domains) {
+    var strand = state.design.substrand_to_strand[domain];
+    if (strand_to_domains[strand] == null) {
+      strand_to_domains[strand] = {};
     }
-    strand_to_substrands[strand].add(substrand);
+    strand_to_domains[strand].add(domain);
   }
 
   // remove domains one strand at a time
-  for (var strand in strand_to_substrands.keys) {
-    strands_to_remove.add(strand);
-    var split_strands = _remove_domains_from_strand(strand, strand_to_substrands[strand]);
-    strands_to_add.addAll(split_strands);
+  for (var strand in strand_to_domains.keys) {
+    List<Strand> split_strands = _remove_domains_from_strand(strand, strand_to_domains[strand]);
+    strands_to_replace[strand] = split_strands;
   }
 
-  // remove old strands and add new strands to DNADesign
+  // remove old strands and add new strands to DNADesign; preserve order where possible
+  // (i.e., look up index of strand being removed and put its replacement strands at same index)
   var new_strands = strands.toList();
-  new_strands.removeWhere((strand) => strands_to_remove.contains(strand));
-  new_strands.addAll(strands_to_add);
+  for (var strand in strands_to_replace.keys) {
+    int old_strand_idx = new_strands.indexOf(strand);
+    new_strands.removeAt(old_strand_idx);
+    List<Strand> split_strands = strands_to_replace[strand];
+    new_strands.insertAll(old_strand_idx, split_strands);
+  }
 
   return new_strands.build();
 }
 
 // Splits one strand into many by removing Domains
-List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> substrands_to_remove) {
+List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> domains_to_remove) {
   // partition substrands of Strand that are separated by a Domain
   List<Substrand> substrands = [];
   List<List<Substrand>> substrands_list = [substrands];
   for (int ss_idx = 0; ss_idx < strand.substrands.length; ss_idx++) {
     var substrand = strand.substrands[ss_idx];
-    if (substrands_to_remove.contains(substrand)) {
+    if (domains_to_remove.contains(substrand)) {
       // also remove previous substrand if it is a Loopout
       if (substrands.isNotEmpty && substrands.last is Loopout) {
         substrands.removeLast();
@@ -264,9 +288,20 @@ List<Strand> _remove_domains_from_strand(Strand strand, Set<Domain> substrands_t
     }
   }
 
-  // special case if we removed last bound substrand
+  // special case if we removed last domain
   if (substrands.isEmpty) {
     substrands_list.removeLast();
+  } else if (strand.circular) {
+    // if circular, then if there is more than one list of substrands remaining,
+    // the last list of substrands should be concatenated with the first
+    if (substrands_list.length > 1) {
+      var last_substrands = substrands_list[substrands_list.length - 1];
+      var first_substrands = substrands_list[0];
+      last_substrands.addAll(first_substrands);
+      substrands_list[0] = last_substrands;
+      substrands_list.removeLast();
+    }
+    strand = strand.rebuild((b) => b..circular = false);
   }
 
   return create_new_strands_from_substrand_lists(substrands_list, strand);
@@ -361,10 +396,10 @@ BuiltList<Strand> remove_modifications(
     }
 
     strand = strand.rebuild((b) {
-      if (remove_5p){
+      if (remove_5p) {
         b.modification_5p = null;
       }
-      if (remove_3p){
+      if (remove_3p) {
         b.modification_3p = null;
       }
       b.modifications_int.replace(mods_int);

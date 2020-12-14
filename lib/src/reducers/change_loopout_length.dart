@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:scadnano/src/state/app_state.dart';
 import 'package:scadnano/src/state/crossover.dart';
+import 'package:scadnano/src/state/domain.dart';
 
 import '../state/loopout.dart';
 import '../state/strand.dart';
@@ -14,15 +15,38 @@ Strand convert_crossover_to_loopout_reducer(Strand strand, actions.ConvertCrosso
     next_domain_idx: action.crossover.next_domain_idx + 1,
     is_scaffold: strand.is_scaffold,
   );
-  var substrands_builder = strand.substrands.toBuilder();
-  substrands_builder.insert(action.crossover.next_domain_idx, loopout_new);
-  strand = strand.rebuild((s) => s..substrands = substrands_builder);
+  var substrands = strand.substrands.toList();
+  substrands.insert(action.crossover.next_domain_idx, loopout_new);
+
+  // this could be the last crossover on a circular strand,
+  // which would mean the strand now ends in a Loopout, currently disallowed
+  // let's look for two consecutive domains connected by a crossover and make the latter of them
+  // the "first" domain, and rotate the substrand list to start there.
+  // If we can't find one, we do nothing.
+  // (Should have already reported error to user though, in middleware,
+  // if they tried to convert the last crossover in a circular strand to be a Loopout.)
+  if (action.crossover.next_domain_idx == 0) {
+    assert(substrands.first is Loopout);
+    int first_dom = -1;
+    for (int i = 0; i < substrands.length - 1; i++) {
+      if (substrands[i] is Domain && substrands[i + 1] is Domain) {
+        first_dom = i + 1;
+      }
+    }
+    if (first_dom < 0) {
+      // do nothing if we couldn't find two consecutive domains, i.e., if there's no crossovers left
+      assert(strand.crossovers.length == 1);
+      return strand;
+    }
+    substrands = substrands.sublist(first_dom) + substrands.sublist(0, first_dom);
+  }
+  strand = strand.rebuild((s) => s..substrands.replace(substrands));
   strand = strand.initialize();
   return strand;
 }
 
-BuiltList<Strand> convert_crossovers_to_loopouts_reducer(BuiltList<Strand> strands, AppState state,
-    actions.ConvertCrossoversToLoopouts action) {
+BuiltList<Strand> convert_crossovers_to_loopouts_reducer(
+    BuiltList<Strand> strands, AppState state, actions.ConvertCrossoversToLoopouts action) {
   // TODO: need to dynamically calculate index of crossover as strand is being converted,
   //  since inserting loopouts earlier will increase indices
 
@@ -65,8 +89,8 @@ BuiltList<Strand> convert_crossovers_to_loopouts_reducer(BuiltList<Strand> stran
   return strands_builder.build();
 }
 
-BuiltList<Strand> loopouts_length_change_reducer(BuiltList<Strand> strands,
-    AppState state, actions.LoopoutsLengthChange action) {
+BuiltList<Strand> loopouts_length_change_reducer(
+    BuiltList<Strand> strands, AppState state, actions.LoopoutsLengthChange action) {
   Map<String, List<Loopout>> loopouts_on_strand_id = {};
   for (var loopout in action.loopouts) {
     String strand_id = loopout.strand_id;
@@ -117,6 +141,5 @@ Strand loopout_length_change_reducer(Strand strand, actions.LoopoutLengthChange 
     substrands_builder.removeAt(loopout_idx);
   }
   strand = strand.rebuild((s) => s..substrands = substrands_builder);
-  strand = strand.initialize();
   return strand;
 }

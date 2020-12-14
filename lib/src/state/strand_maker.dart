@@ -16,6 +16,7 @@ class StrandMaker {
   IDTFields idt = null; //(#f74308)
   String dna_sequence = null;
   String domain_dna_sequence = null;
+  bool circular = false;
   Object label = null;
   Object domain_label = null;
   Modification5Prime modification_5p = null;
@@ -38,6 +39,7 @@ class StrandMaker {
   Design commit() {
     Strand strand = new Strand(substrands,
         color: this.color,
+        circular: circular,
         is_scaffold: this.is_scaffold,
         dna_sequence: this.dna_sequence,
         label: this.label,
@@ -101,6 +103,11 @@ class StrandMaker {
   StrandMaker loopout(int helix, int length, [int offset = null]) {
     this.loopout_length = length;
     this.cross(helix, offset);
+    return this;
+  }
+
+  StrandMaker as_circular() {
+    this.circular = true;
     return this;
   }
 
