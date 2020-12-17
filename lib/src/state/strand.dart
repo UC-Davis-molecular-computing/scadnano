@@ -788,7 +788,7 @@ abstract class Strand
 
   /// Name to use when exporting this Strand.
   /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
-  String export_name() {
+  String idt_export_name() {
     if (idt != null) {
       return idt.name;
     } else if (name != null) {

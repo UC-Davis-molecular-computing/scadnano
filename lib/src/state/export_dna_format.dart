@@ -211,7 +211,7 @@ class ExportDNAException implements Exception {
 }
 
 String csv_export(Iterable<Strand> strands) {
-  var lines = strands.map((strand) => '${strand.export_name()},${idt_sequence_null_aware(strand)}');
+  var lines = strands.map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)}');
   return lines.join('\n');
 }
 
@@ -219,7 +219,7 @@ String idt_sequence_null_aware(Strand strand) => strand.idt_dna_sequence ?? '***
 
 String idt_bulk_export(Iterable<Strand> strands, {String scale = '25nm', String purification = 'STD'}) {
   var lines = strands
-      .map((strand) => '${strand.export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
+      .map((strand) => '${strand.idt_export_name()},${idt_sequence_null_aware(strand)},${scale},${purification}');
   return lines.join('\n');
 }
 
@@ -260,7 +260,7 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
     var well = plate_coord.well();
     decoder.insertRow(plate_name, excel_row);
     decoder.updateCell(plate_name, 0, excel_row, well);
-    decoder.updateCell(plate_name, 1, excel_row, strand.export_name());
+    decoder.updateCell(plate_name, 1, excel_row, strand.idt_export_name());
     decoder.updateCell(plate_name, 2, excel_row, idt_sequence_null_aware(strand));
     num_strands_remaining--;
 
