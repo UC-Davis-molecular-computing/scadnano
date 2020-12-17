@@ -798,7 +798,7 @@ abstract class Strand
     }
   }
 
-  /// Name to export if Strand.name and Strand.idt_fields.name are both not set.
+  /// Name to export if Strand.name and Strand.idt.name are both not set.
   String default_export_name() {
     String id =
         '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';

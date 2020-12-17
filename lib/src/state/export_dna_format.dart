@@ -168,7 +168,7 @@ class ExportDNAFormat extends EnumClass {
 
 
   /// Output object (String if text file; Future<List<int>> if binary) representing list of Strands
-  /// I couldn't see a way to export Excel files synchronosly, since they require loading an
+  /// I couldn't see a way to export Excel files synchronously, since they require loading an
   /// existing Excel file from a local resource using an HttpRequest, which is asynchronous.
   /// So export returns a Future<List<int>> if calling idt_plates_export and a String (with text file
   /// contents) otherwise. The caller needs to check the return type, or the type of this,
