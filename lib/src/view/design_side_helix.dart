@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import '../state/context_menu.dart';
 import '../state/edit_mode.dart';
 import '../state/grid.dart';
@@ -32,7 +33,7 @@ mixin DesignSideHelixProps on UiProps {
   bool show_grid_coordinates;
   bool invert_y;
   Grid grid;
-  MouseoverData mouseover_data;
+  DesignSideRotationData rotation_data;
   BuiltSet<EditModeChoice> edit_modes;
 }
 
@@ -90,11 +91,11 @@ class DesignSideHelixComponent extends UiComponent2<DesignSideHelixProps> with P
       ((Dom.svgTitle()..key = 'text-grid-position-tooltip')(tooltip)),
     ];
 
-    if (props.mouseover_data != null) {
-      assert(props.mouseover_data.helix.idx == this.props.helix.idx);
+    if (props.rotation_data != null) {
+      assert(props.rotation_data.helix.idx == this.props.helix.idx);
       var rot_component = (DesignSideRotation()
         ..radius = props.helix.geometry.helix_radius_svg
-        ..mouseover_data = props.mouseover_data
+        ..data = props.rotation_data
         ..invert_y = props.invert_y
         ..className = '$SIDE_VIEW_PREFIX-helix-rotation'
         ..key = 'rotation')();

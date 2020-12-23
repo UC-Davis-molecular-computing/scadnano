@@ -67,6 +67,11 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     return (Dom.line()
       ..className = classname
       ..onClick = _handle_click_for_nick_insertion_deletion
+      // TODO(benlee12): add listener for adding info previously from mouseover data
+      // update ui state's some new domain field that tracks which domain is being hovered over
+      // --> displays info in footer
+      ..onMouseEnter = null
+      ..onMouseLeave = null
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()

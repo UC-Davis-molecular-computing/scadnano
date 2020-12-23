@@ -15,6 +15,7 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
@@ -37,6 +38,7 @@ import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
 import 'state/design.dart';
+import 'state/mouseover_data.dart';
 import 'constants.dart' as constants;
 import 'state/domain.dart';
 import 'state/position3d.dart';
@@ -476,6 +478,64 @@ Helix find_closest_helix(
   }
   return closest_helix;
 }
+
+/// Returns `offset` if offset is within bounds of helices in `helices_in_group`.
+/// If `offset` is too high, returns the upper bound offset.
+/// If `offset` is too low, returns the lower bound offset.
+/// If `offset` is null, returns the lower bound offset.
+int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group) {
+  var range = find_helix_group_min_max(helices_in_group);
+  var min_offset = range.x;
+  var max_offset = range.y;
+
+  if (offset != null) {
+    return min(max_offset - 1, max(offset, min_offset));
+  } else {
+    return min_offset;
+  }
+}
+
+/// Find min_offset and max_offset range of list of of helices.
+Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
+  int min_offset = helices_in_group.first.min_offset;
+  int max_offset = helices_in_group.first.max_offset;
+  for (var helix in helices_in_group) {
+    min_offset = min(helix.min_offset, min_offset);
+    max_offset = max(helix.max_offset, max_offset);
+  }
+  return Point(min_offset, max_offset);
+}
+
+/// Return closest offset in a helix group where click event occured.
+int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+  var svg_clicked_point = svg_position_of_mouse_click(event);
+  var svg_clicked_point_untransformed = group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+
+  var range = find_helix_group_min_max(helices_in_group);
+  var min_offset = range.x;
+  var max_offset = range.y;
+
+  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(svg_clicked_point_untransformed.x);
+
+  // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
+  return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
+}
+
+/// Return list of mouseover data about helix group `group_name` at `offset`.
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, Design design, String group_name) {
+  List<DesignSideRotationParams> rotation_params_list = [];
+  if (offset != null) {
+    for (var helix_idx in design.helix_idxs_in_group[group_name]) {
+      var helix = design.helices[helix_idx];
+      if (offset >= helix.min_offset && offset < helix.max_offset) {
+        var rotation_params = DesignSideRotationParams(helix_idx, offset);
+        rotation_params_list.add(rotation_params);
+      }
+    }
+  }
+  return DesignSideRotationData.from_params(design, rotation_params_list).toBuiltList();
+}
+
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address(

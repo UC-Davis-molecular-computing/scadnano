@@ -36,6 +36,8 @@ abstract class AppUIStateStorables
 
   bool get show_editor;
 
+  bool get show_slice_bar;
+
   /// True if only selected helices in the side view should be displayed in the
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
@@ -84,6 +86,9 @@ abstract class AppUIStateStorables
 
   String get displayed_group_name;
 
+  @nullable
+  int get slice_bar_offset;
+
   static void _initializeBuilder(AppUIStateStorablesBuilder b) {
     // This ensures that even if these keys are not in localStorage (e.g., due to upgrading),
     // then they will be populated with a default value instead of raising an exception.
@@ -118,6 +123,8 @@ abstract class AppUIStateStorables
     b.default_crossover_type_scaffold_for_setting_helix_rolls = true;
     b.default_crossover_type_staple_for_setting_helix_rolls = true;
     b.displayed_group_name = constants.default_group_name;
+    b.show_slice_bar = false;
+    b.slice_bar_offset = null;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
     b.clear_helix_selection_when_loading_new_design = false;
   }

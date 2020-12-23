@@ -4,6 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:react/react_client/react_interop.dart';
+import 'package:scadnano/src/view/design_main_slice_bar.dart';
 
 import '../state/selection_rope.dart';
 import 'design_main_domains_moving.dart';
@@ -54,6 +55,9 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..strand_creation = state.ui_state.strand_creation
         ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
         ..show_mismatches = state.ui_state.show_mismatches
+        ..show_slice_bar = state.ui_state.show_slice_bar
+        ..slice_bar_offset = state.ui_state.slice_bar_offset
+        ..displayed_group_name = state.ui_state.displayed_group_name
         ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
         ..show_dna = state.ui_state.show_dna
         ..show_domain_labels = state.ui_state.show_domain_labels
@@ -110,6 +114,9 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_helix_circles;
   bool helix_group_is_moving;
   bool show_loopout_length;
+  bool show_slice_bar;
+  int slice_bar_offset;
+  String displayed_group_name;
   SelectionRope selection_rope;
 }
 
@@ -146,6 +153,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
             props.display_base_offsets_of_major_ticks_only_first_helix
         ..display_major_tick_widths = props.display_major_tick_widths
         ..display_major_tick_widths_all_helices = props.display_major_tick_widths_all_helices
+        // ..slice_bar_offset = props.slice_bar_offset
+        // ..displayed_group_name = props.displayed_group_name
         ..key = 'helices')(),
       if (props.show_mismatches)
         (DesignMainDNAMismatches()
@@ -203,6 +212,18 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..strands = props.design.strands
           ..show_loopout_length = props.show_loopout_length
           ..key = 'loopout-length')(),
+      if (props.show_slice_bar)
+        (DesignMainSliceBar()
+          ..helices = props.design.helices
+          ..groups = props.design.groups
+          ..helix_idxs_in_group = props.design.helix_idxs_in_group
+          ..geometry = props.design.geometry
+          ..side_selected_helix_idxs = props.side_selected_helix_idxs
+          ..only_display_selected_helices = props.only_display_selected_helices
+          ..slice_bar_offset = props.slice_bar_offset
+          ..displayed_group_name = props.displayed_group_name
+          ..key = 'slice-bar'
+        )(),
       (ConnectedPotentialCrossoverView()
         ..id = 'potential-crossover-main'
         ..key = 'potential-crossover')(),

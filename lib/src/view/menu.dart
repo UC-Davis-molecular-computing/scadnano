@@ -69,6 +69,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_slice_bar = state.ui_state.show_slice_bar
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -112,6 +113,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
   bool show_loopout_length;
+  bool show_slice_bar;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -648,6 +650,19 @@ When selected, the length of each loopout is displayed next to it.'''
         ..onChange = ((_) =>
             props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
         ..key = 'show-loopout-length')(),
+      (MenuBoolean()
+        ..value = props.show_slice_bar
+        ..display = 'Show slice bar'
+        ..tooltip = '''\
+When selected, a slicebar is displayed, which users can drag and move to
+display the DNA backbone angle of all helices at a particular offset.
+        '''
+        ..name = 'show-slice-bar'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowSliceBarSet(!props.show_slice_bar));
+        }
+        ..key = 'show-slice-bar'
+      )()
     ];
   }
 

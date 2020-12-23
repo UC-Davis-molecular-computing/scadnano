@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/reducers/design_reducer.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/util.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
 import '../state/grid_position.dart';
@@ -44,6 +46,7 @@ AppUIState ui_state_local_reducer(AppUIState ui_state, action) =>
       ..potential_crossover_is_drawing =
       drawing_potential_crossover_reducer(ui_state.potential_crossover_is_drawing, action)
       ..dna_ends_are_moving = moving_dna_ends_reducer(ui_state.dna_ends_are_moving, action)
+      ..slice_bar_is_moving = slice_bar_is_moving_reducer(ui_state.slice_bar_is_moving, action)
       ..helix_group_is_moving = helix_group_is_moving_reducer(ui_state.helix_group_is_moving, action)
       ..strands_move = strands_move_local_reducer(ui_state.strands_move, action)?.toBuilder()
       ..domains_move = domains_move_local_reducer(ui_state.domains_move, action)?.toBuilder()
@@ -100,6 +103,11 @@ Reducer<bool> moving_dna_ends_reducer = combineReducers([
   TypedReducer<bool, actions.DNAEndsMoveStop>(dna_ends_move_stop_app_ui_state_reducer),
 ]);
 
+Reducer<bool> slice_bar_is_moving_reducer = combineReducers([
+  TypedReducer<bool, actions.SliceBarMoveStart>(slice_bar_move_start_app_ui_state_reducer),
+  TypedReducer<bool, actions.SliceBarMoveStop>(slice_bar_move_stop_app_ui_state_reducer),
+]);
+
 Reducer<bool> helix_group_is_moving_reducer = combineReducers([
   TypedReducer<bool, actions.HelixGroupMoveStart>(helix_group_move_start_app_ui_state_reducer),
   TypedReducer<bool, actions.HelixGroupMoveStop>(helix_group_move_stop_app_ui_state_reducer),
@@ -113,6 +121,10 @@ bool potential_crossover_remove_app_ui_state_reducer(bool _, actions.PotentialCr
 bool dna_ends_move_start_app_ui_state_reducer(bool _, actions.DNAEndsMoveStart action) => true;
 
 bool dna_ends_move_stop_app_ui_state_reducer(bool _, actions.DNAEndsMoveStop action) => false;
+
+bool slice_bar_move_start_app_ui_state_reducer(bool _, actions.SliceBarMoveStart action) => true;
+
+bool slice_bar_move_stop_app_ui_state_reducer(bool _, actions.SliceBarMoveStop action) => false;
 
 bool helix_group_move_start_app_ui_state_reducer(bool _, actions.HelixGroupMoveStart action) => true;
 
@@ -151,6 +163,10 @@ bool show_grid_coordinates_side_view_reducer(bool _, actions.ShowGridCoordinates
     action.show_grid_coordinates_side_view;
 
 bool show_loopout_length_reducer(bool _, actions.ShowLoopoutLengthSet action) => action.show_loopout_length;
+
+bool show_slice_bar_reducer(bool _, actions.ShowSliceBarSet action) => action.show;
+
+int slice_bar_offset_set_reducer(int _, actions.SliceBarOffsetSet action) => action.offset;
 
 bool display_base_offsets_of_major_ticks_reducer(bool _, actions.DisplayMajorTicksOffsetsSet action) =>
     action.show;
@@ -246,12 +262,55 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
         .replace(side_selected_helices_global_reducer(storables.side_selected_helix_idxs, state, action))
     ..displayed_group_name =
     TypedGlobalReducer<String, AppState, actions.GroupRemove>(displayed_group_name_group_remove_reducer)(
-        storables.displayed_group_name, state, action));
+        storables.displayed_group_name, state, action)
+    ..slice_bar_offset = slice_bar_offset_global_reducer(storables.slice_bar_offset, state, action)
+  );
 }
 
+
 // If we remove the current displayed group, we've got to pick something else to display next
-String displayed_group_name_group_remove_reducer(String _, AppState state, actions.GroupRemove __) =>
-    state.design.groups.keys.first;
+String displayed_group_name_group_remove_reducer(String _, AppState state, actions.GroupRemove action) {
+  String name = action.name;
+  String first = state.design.groups.keys.first;
+  String last =  state.design.groups.keys.last;
+  return name != first ? first : last;
+}
+
+GlobalReducer<int, AppState> slice_bar_offset_global_reducer = combineGlobalReducers([
+  TypedGlobalReducer<int, AppState, actions.ShowSliceBarSet>(slice_bar_offset_show_slice_bar_set_reducer),
+  TypedGlobalReducer<int, AppState, actions.GroupDisplayedChange>(slice_bar_offset_group_displayed_change_reducer),
+  TypedGlobalReducer<int, AppState, actions.GroupRemove>(slice_bar_offset_group_remove_reducer),
+  TypedGlobalReducer<int, AppState, actions.HelixOffsetChange>(slice_bar_offset_helix_offset_change_reducer),
+  TypedGlobalReducer<int, AppState, actions.HelixOffsetChangeAll>(slice_bar_offset_helix_offset_change_all_reducer),
+]);
+
+int slice_bar_offset_show_slice_bar_set_reducer(int offset, AppState state, actions.ShowSliceBarSet action) {
+  if (action.show) {
+    return bounded_offset_in_helices_group(offset, state.design.helices_in_group(state.ui_state.displayed_group_name).values);
+  } else {
+    // Don't change slice bar position if user hides it. Saves value for when next time user wants to display.
+    return offset;
+  }
+}
+
+int slice_bar_offset_group_displayed_change_reducer(int offset, AppState state, actions.GroupDisplayedChange action) {
+  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(action.group_name).values);
+}
+
+int slice_bar_offset_group_remove_reducer(int offset, AppState state, actions.GroupRemove action) {
+  String new_group_name = displayed_group_name_group_remove_reducer(null, state, action);
+  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(new_group_name).values);
+}
+
+int slice_bar_offset_helix_offset_change_reducer(int offset, AppState state, actions.HelixOffsetChange action) {
+  var new_design = design_global_reducer(state.design, state, action);
+  return bounded_offset_in_helices_group(offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
+}
+
+int slice_bar_offset_helix_offset_change_all_reducer(int offset, AppState state, actions.HelixOffsetChangeAll action) {
+  var new_design = design_global_reducer(state.design, state, action);
+  return bounded_offset_in_helices_group(offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // storables local reducer
@@ -299,6 +358,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         show_grid_coordinates_side_view_reducer)(storables.show_grid_coordinates_side_view, action)
     ..show_loopout_length = TypedReducer<bool, actions.ShowLoopoutLengthSet>(show_loopout_length_reducer)(
         storables.show_loopout_length, action)
+    ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(
+        storables.show_slice_bar, action)
+    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(storables.slice_bar_offset, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice,
         actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(
         storables.local_storage_design_choice, action).toBuilder()
@@ -464,4 +526,10 @@ GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer
       helix_rotation_set_at_other_mouseover_reducer),
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.MouseoverDataUpdate>(
       mouseover_data_update_reducer),
+  // TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.GroupDisplayedChange>(
+  //     mouseover_data_group_displayed_change_reducer),
+  // TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.SliceBarOffsetSet>(
+  //     mouseover_data_set_slice_bar_offset_reducer),
+  // TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.SetAppUIStateStorable>(
+  //     mouseover_data_set_app_ui_state_storable_reducer),
 ]);

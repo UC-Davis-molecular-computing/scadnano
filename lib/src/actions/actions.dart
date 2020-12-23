@@ -2978,3 +2978,67 @@ abstract class SetDisablePngCacheUntilActionCompletes
   static Serializer<SetDisablePngCacheUntilActionCompletes> get serializer =>
       _$setDisablePngCacheUntilActionCompletesSerializer;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// slice bar
+
+abstract class ShowSliceBarSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowSliceBarSet, ShowSliceBarSetBuilder> {
+  bool get show;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowSliceBarSet(bool show) =>
+      ShowSliceBarSet.from((b) => b..show = show);
+
+  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) =
+      _$ShowSliceBarSet;
+
+  ShowSliceBarSet._();
+
+  static Serializer<ShowSliceBarSet> get serializer => _$showSliceBarSetSerializer;
+}
+
+abstract class SliceBarOffsetSet
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarOffsetSet, SliceBarOffsetSetBuilder> {
+  @nullable
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarOffsetSet(int offset) =>
+      SliceBarOffsetSet.from((b) => b..offset = offset);
+
+  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) =
+      _$SliceBarOffsetSet;
+
+  SliceBarOffsetSet._();
+
+  static Serializer<SliceBarOffsetSet> get serializer => _$sliceBarOffsetSetSerializer;
+}
+
+abstract class SliceBarMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) =
+      _$SliceBarMoveStart;
+
+  SliceBarMoveStart._();
+
+  static Serializer<SliceBarMoveStart> get serializer => _$sliceBarMoveStartSerializer;
+}
+
+abstract class SliceBarMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarMoveStop, SliceBarMoveStopBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) =
+      _$SliceBarMoveStop;
+
+  SliceBarMoveStop._();
+
+  static Serializer<SliceBarMoveStop> get serializer => _$sliceBarMoveStopSerializer;
+}
