@@ -419,6 +419,23 @@ Set geometric parameters affecting how the design is displayed.
 - minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction
                       of its long axis.
                       default ${constants.default_minor_groove_angle} degrees''')(),
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => app.dispatch(actions.Autostaple()))
+        ..display = 'Autostaple (experimental)'
+        ..tooltip = '''\
+Removes all staple strands and puts long "precursor" staples everywhere the scaffold appears.
+WARNING: this is an experimental feature and may be modified or removed. It uses cadnano code,
+so will only work on scadnano designs that are exportable to cadnano.
+        ''')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => ask_for_autobreak_parameters())
+        ..display = 'Autobreak (experimental)'
+        ..tooltip = '''\
+Puts nicks in long staple strands automatically.
+WARNING: Autobreak is an experimental feature and may be modified or removed.
+It uses cadnano code that crashes on many designs, so it is not guaranteed to work properly. It will also only work on scadnano designs that are exportable to cadnano.
+        ''')(),
     );
   }
 
@@ -832,6 +849,29 @@ However, it may be less stable than the main site.'''
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
+}
+
+Future<void> ask_for_autobreak_parameters() async {
+  var items = List<DialogItem>(4);
+  int target_length_idx = 0;
+  int min_length_idx = 1;
+  int max_length_idx = 2;
+  int min_distance_to_xover_idx = 3;
+  items[target_length_idx] = DialogInteger(label: 'target length', value: 49);
+  items[min_length_idx] = DialogInteger(label: 'min length', value: 15);
+  items[max_length_idx] = DialogInteger(label: 'max length', value: 60);
+  items[min_distance_to_xover_idx] = DialogInteger(label: 'min distance to xover', value: 3);
+
+  var dialog = Dialog(title: 'Choose autobreak parameters', items: items);
+  List<DialogItem> results = await util.dialog(dialog);
+  if (results == null) return;
+
+  int target_length = (results[target_length_idx] as DialogInteger).value;
+  int min_length = (results[min_length_idx] as DialogInteger).value;
+  int max_length = (results[max_length_idx] as DialogInteger).value;
+  int min_distance_to_xover = (results[min_distance_to_xover_idx] as DialogInteger).value;
+
+  app.dispatch(actions.Autobreak(target_length: target_length, min_length: min_length, max_length: max_length, min_distance_to_xover: min_distance_to_xover));
 }
 
 Future<void> ask_for_geometry(Geometry geometry) async {
