@@ -16,6 +16,7 @@ import 'package:tuple/tuple.dart';
 
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
+import '../state/design.dart';
 import '../state/group.dart';
 import '../state/context_menu.dart';
 import '../state/crossover.dart';
@@ -694,6 +695,23 @@ abstract class LoadDNAFile
   LoadDNAFile._();
 
   static Serializer<LoadDNAFile> get serializer => _$loadDNAFileSerializer;
+}
+
+abstract class NewDesignSet
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<NewDesignSet, NewDesignSetBuilder> {
+  Design get design;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory NewDesignSet({Design design}) {
+    return NewDesignSet.from((b) => b..design.replace(design));
+  }
+
+  factory NewDesignSet.from([void Function(NewDesignSetBuilder) updates]) = _$NewDesignSet;
+
+  NewDesignSet._();
+
+  static Serializer<NewDesignSet> get serializer => _$newDesignSetSerializer;
 }
 
 abstract class ExportCadnanoFile
@@ -2977,4 +2995,47 @@ abstract class SetDisablePngCacheUntilActionCompletes
 
   static Serializer<SetDisablePngCacheUntilActionCompletes> get serializer =>
       _$setDisablePngCacheUntilActionCompletesSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// autostaple
+
+abstract class Autostaple
+    with BuiltJsonSerializable
+    implements Action, Built<Autostaple, AutostapleBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Autostaple([void Function(AutostapleBuilder) updates]) = _$Autostaple;
+
+  Autostaple._();
+
+  static Serializer<Autostaple> get serializer => _$autostapleSerializer;
+}
+
+abstract class Autobreak
+    with BuiltJsonSerializable
+    implements
+        Action,
+        Built<Autobreak, AutobreakBuilder> {
+  int get target_length;
+  int get min_length;
+  int get max_length;
+  int get min_distance_to_xover;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory Autobreak({int target_length, int min_length, int max_length, int min_distance_to_xover}) =>
+      Autobreak.from(
+        (b) => b
+          ..target_length = target_length
+          ..min_length = min_length
+          ..max_length = max_length
+          ..min_distance_to_xover = min_distance_to_xover);
+
+  factory Autobreak.from(
+          [void Function(AutobreakBuilder) updates]) =
+      _$Autobreak;
+
+  Autobreak._();
+
+  static Serializer<Autobreak> get serializer =>
+      _$autobreakSerializer;
 }

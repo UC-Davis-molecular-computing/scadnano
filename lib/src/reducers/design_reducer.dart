@@ -49,6 +49,7 @@ Design design_composed_global_reducer(Design design, AppState state, action) => 
 Reducer<Design> design_whole_local_reducer = combineReducers([
   TypedReducer<Design, actions.ErrorMessageSet>(design_error_message_set_reducer),
   TypedReducer<Design, actions.InlineInsertionsDeletions>(inline_insertions_deletions_reducer),
+  TypedReducer<Design, actions.NewDesignSet>(new_design_set_reducer),
 ]);
 
 // This isn't strictly necessary, but it would be nice for debugging if, whenever there is an error,
@@ -74,3 +75,5 @@ Design design_geometry_set_reducer(Design design, AppState state, actions.Geomet
       action.geometry, state.ui_state.invert_xy, design.helices.toMap(), design.groups);
   return design.rebuild((b) => b..helices.replace(new_helices)..geometry.replace(action.geometry));
 }
+
+Design new_design_set_reducer(Design design, actions.NewDesignSet action) => action.design;

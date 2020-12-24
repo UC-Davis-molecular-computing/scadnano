@@ -16,6 +16,7 @@ import 'dna_sequence_constants.dart';
 import 'state/local_storage_design_choice.dart';
 import 'state/context_menu.dart';
 import 'state/dialog.dart';
+import 'state/design.dart';
 import 'state/dna_end.dart';
 import 'state/dna_ends_move.dart';
 import 'state/edit_mode.dart';
@@ -273,6 +274,10 @@ part 'serializers.g.dart';
   SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
+  Autostaple,
+  Autobreak,
+  NewDesignSet,
+  Design,
 ])
 Serializers serializers = _$serializers;
 

@@ -16,6 +16,7 @@ import '../util.dart' as util;
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'design.dart';
+import 'helix.dart';
 
 part 'domain.g.dart';
 
@@ -170,7 +171,6 @@ abstract class Domain
           SelectableDeletion(offset: deletion, domain: this, is_scaffold: is_scaffold)
       ].build();
 
-
   @memoized
   BuiltList<SelectableInsertion> get selectable_insertions => [
         for (var insertion in insertions)
@@ -190,6 +190,19 @@ abstract class Domain
   DNAEnd get dnaend_5p => forward ? dnaend_start : dnaend_end;
 
   DNAEnd get dnaend_3p => forward ? dnaend_end : dnaend_start;
+
+  @memoized
+  Address get address_start => Address(helix_idx: helix, offset: start, forward: forward);
+
+  // INCLUSIVE
+  @memoized
+  Address get address_end => Address(helix_idx: helix, offset: end - 1, forward: forward);
+
+  @memoized
+  Address get address_5p => forward ? address_start : address_end;
+
+  @memoized
+  Address get address_3p => forward ? address_end : address_start;
 
   dynamic to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {};

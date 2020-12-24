@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 
+import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
 import 'export_cadnano_or_codenano_file.dart';
@@ -29,11 +30,13 @@ import 'throttle.dart';
 import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
+import 'autostaple_and_autobreak.dart';
 import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
   move_ensure_all_in_same_helix_group_middleware,
+  forbid_create_circular_strand_no_crossovers_middleware,
   export_svg_middleware,
   save_file_middleware,
   load_file_middleware,
@@ -61,4 +64,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   check_reflect_strands_legal_middleware,
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
+  autostaple_and_autobreak_middleware,
 ]);

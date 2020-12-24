@@ -6,6 +6,7 @@ import '../state/dna_end.dart';
 import '../state/modification.dart';
 import '../state/strand.dart';
 import '../state/substrand.dart';
+import '../state/loopout.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
 
@@ -39,154 +40,229 @@ BuiltList<Strand> nick_reducer(BuiltList<Strand> strands, AppState state, action
 
   // join new Domains to existing strands
   int index_removed = strand.substrands.indexOf(domain_to_remove);
-  List<Substrand> substrands_5p = strand.substrands.sublist(0, index_removed).toList();
-  List<Substrand> substrands_3p = strand.substrands.sublist(index_removed + 1).toList();
-  Domain domain_5p = domain_left;
-  Domain domain_3p = domain_right;
+  List<Substrand> substrands_before = strand.substrands.sublist(0, index_removed).toList();
+  List<Substrand> substrands_after = strand.substrands.sublist(index_removed + 1).toList();
+  Domain domain_before = domain_left;
+  Domain domain_after = domain_right;
   if (!forward) {
-    domain_5p = domain_right;
-    domain_3p = domain_left;
+    domain_before = domain_right;
+    domain_after = domain_left;
   }
-  domain_5p = domain_5p.rebuild((b) => b
+  domain_before = domain_before.rebuild((b) => b
     ..is_last = true
-    ..is_first = substrands_5p.isEmpty);
-  domain_3p = domain_3p.rebuild((b) => b
+    ..is_first = substrands_before.isEmpty);
+  domain_after = domain_after.rebuild((b) => b
     ..is_first = true
-    ..is_last = substrands_3p.isEmpty);
-  substrands_5p.add(domain_5p);
-  substrands_3p.insert(0, domain_3p);
+    ..is_last = substrands_after.isEmpty);
+  substrands_before.add(domain_before);
+  substrands_after.insert(0, domain_after);
 
-  String dna_5p = null;
-  String dna_3p = null;
+  String dna_before = null;
+  String dna_after = null;
   if (strand.dna_sequence != null) {
-    int dna_length_5p = [for (var ss in substrands_5p) ss.dna_length()].reduce((l1, l2) => l1 + l2);
-    dna_5p = strand.dna_sequence.substring(0, dna_length_5p);
-    dna_3p = strand.dna_sequence.substring(dna_length_5p);
+    int dna_length_before = [for (var ss in substrands_before) ss.dna_length()].reduce((l1, l2) => l1 + l2);
+    dna_before = strand.dna_sequence.substring(0, dna_length_before);
+    dna_after = strand.dna_sequence.substring(dna_length_before);
   }
 
-  int dna_length_strand_5p = [for (var ss in substrands_5p) ss.dna_length()].reduce((a, b) => a + b);
+  int dna_length_strand_5p = [for (var ss in substrands_before) ss.dna_length()].reduce((a, b) => a + b);
 
   // move modifications onto strand_5p from strand
   Map<int, ModificationInternal> modifications_int_strand_5p = {};
-  for (int i = 0; i < substrands_5p.length; i++) {
+  for (int i = 0; i < substrands_before.length; i++) {
     var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
     mods_on_ss.forEach((idx, mod) {
-      if (i < substrands_5p.length - 1 || idx < dna_length_strand_5p) {
+      if (i < substrands_before.length - 1 || idx < dna_length_strand_5p) {
         modifications_int_strand_5p[idx] = mod;
       }
     });
   }
 
-  Strand strand_5p = Strand(substrands_5p,
-      color: strand.color,
-      dna_sequence: dna_5p,
-      idt: strand.idt,
-      is_scaffold: strand.is_scaffold,
-      modification_5p: strand.modification_5p,
-      modification_3p: null,
-      modifications_int: modifications_int_strand_5p);
+  if (strand.circular) {
+    var substrands = substrands_after + substrands_before;
+    String dna_sequence = null;
+    if (strand.dna_sequence != null) {
+      dna_sequence = dna_before + dna_after;
+    }
+    var strand_new = strand.rebuild((b) => b
+      ..substrands.replace(substrands)
+      ..dna_sequence = dna_sequence
+      ..circular = false);
+    strand_new = strand_new.initialize();
 
-  // move modifications onto strand_3p from strand
-  Map<int, ModificationInternal> modifications_int_strand_3p = {};
-  for (int i = substrands_5p.length - 1; i < strand.substrands.length; i++) {
-    var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
-    mods_on_ss.forEach((idx, mod) {
-      if (i > substrands_5p.length || idx >= dna_length_strand_5p) {
-        int new_idx = idx - dna_length_strand_5p;
-        modifications_int_strand_3p[new_idx] = mod;
-      }
-    });
+    int strand_idx = strands.indexOf(strand);
+    var strands_mutable = strands.toBuilder();
+    strands_mutable[strand_idx] = strand_new;
+    return strands_mutable.build();
+  } else {
+    Strand strand_5p = Strand(substrands_before,
+        color: strand.color,
+        dna_sequence: dna_before,
+        idt: strand.idt,
+        is_scaffold: strand.is_scaffold,
+        modification_5p: strand.modification_5p,
+        modification_3p: null,
+        modifications_int: modifications_int_strand_5p);
+
+    // move modifications onto strand_3p from strand
+    Map<int, ModificationInternal> modifications_int_strand_3p = {};
+    for (int i = substrands_before.length - 1; i < strand.substrands.length; i++) {
+      var mods_on_ss = strand.internal_modifications_on_substrand_absolute_idx[i];
+      mods_on_ss.forEach((idx, mod) {
+        if (i > substrands_before.length || idx >= dna_length_strand_5p) {
+          int new_idx = idx - dna_length_strand_5p;
+          modifications_int_strand_3p[new_idx] = mod;
+        }
+      });
+    }
+
+    Strand strand_3p = Strand(substrands_after,
+        color: strand.is_scaffold == true ? strand.color : null,
+        dna_sequence: dna_after,
+        is_scaffold: strand.is_scaffold,
+        modification_5p: null,
+        modification_3p: strand.modification_3p,
+        modifications_int: modifications_int_strand_3p);
+
+    return swap_old_strands_for_new(strands, [strand], [strand_5p, strand_3p]);
   }
-
-  Strand strand_3p = Strand(substrands_3p,
-      color: strand.is_scaffold == true ? strand.color : null,
-      dna_sequence: dna_3p,
-      is_scaffold: strand.is_scaffold,
-      modification_5p: null,
-      modification_3p: strand.modification_3p,
-      modifications_int: modifications_int_strand_3p);
-
-  return swap_old_strands_for_new(strands, [strand], [strand_5p, strand_3p]);
 }
 
 BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, actions.Ligate action) {
   DNAEnd dna_end_clicked = action.dna_end;
-  Domain substrand = state.design.end_to_domain[dna_end_clicked];
-  Strand strand = state.design.substrand_to_strand[substrand];
-  int helix = substrand.helix;
-  bool forward = substrand.forward;
+  Domain domain = state.design.end_to_domain[dna_end_clicked];
+  Strand strand = state.design.substrand_to_strand[domain];
+  int helix = domain.helix;
+  bool forward = domain.forward;
   int offset = dna_end_clicked.offset;
 
-  // Look at adjacent locations for a substrand not equal to current substrand,
+  // Look at adjacent locations for a domain not equal to current domain,
   // Need strange logic with offset because Domain.end is exclusive.
-  Domain other_substrand;
-  BuiltSet<Domain> substrands_adjacent;
-  DNAEnd strand_end;
+  Domain other_domain;
+  BuiltSet<Domain> domains_adjacent;
+  DNAEnd other_strand_end;
   if (dna_end_clicked.is_start)
-    substrands_adjacent = state.design.domains_on_helix_at(helix, offset - 1);
+    domains_adjacent = state.design.domains_on_helix_at(helix, offset - 1);
   else
-    substrands_adjacent = state.design.domains_on_helix_at(helix, offset);
-  for (var substrand_adj in substrands_adjacent) {
-    Strand strand_adj = state.design.substrand_to_strand[substrand_adj];
+    domains_adjacent = state.design.domains_on_helix_at(helix, offset);
+  for (var domain_adj in domains_adjacent) {
+    Strand strand_adj = state.design.substrand_to_strand[domain_adj];
     var ends = strand.ligatable_ends_with(strand_adj);
     if (ends != null) {
-      strand_end = ends.item1;
-      other_substrand = substrand_adj;
+      other_strand_end = ends.item1;
+      other_domain = domain_adj;
       break;
     }
   }
   // if no substrands are adjacent, then action has no effect
-  if (other_substrand == null) {
+  if (other_domain == null) {
     return strands;
   }
 
   // normalize left/right distinction
-  bool other_is_right = !strand_end.is_start;
-  Domain ss_left, ss_right;
+  bool other_is_right = !dna_end_clicked.is_start;
+  Domain dom_left, dom_right;
   if (other_is_right) {
-    ss_left = substrand;
-    ss_right = other_substrand;
+    dom_left = domain;
+    dom_right = other_domain;
   } else {
-    ss_left = other_substrand;
-    ss_right = substrand;
+    dom_left = other_domain;
+    dom_right = domain;
   }
-  Strand strand_left = state.design.substrand_to_strand[ss_left];
-  Strand strand_right = state.design.substrand_to_strand[ss_right];
+  Strand strand_left = state.design.substrand_to_strand[dom_left];
+  Strand strand_right = state.design.substrand_to_strand[dom_right];
 
   // normalize 5'/3' distinction; below refers to which Strand has the 5'/3' end that will be ligated
   // So strand_5p is the one whose 3' end will be the 3' end of the whole new Strand
-  Domain ss_5p, ss_3p;
+  // strand_5p and dom_5p are the ones on the 5' side of the nick,
+  // e.g.,
+  //
+  //  strand_3p  strand_5p
+  // [--------->[--------->
+  //    dom_3p     dom_5p
+  //
+  // or
+  //
+  //  strand_5p  strand_3p
+  // <---------]<---------]
+  //    dom_5p     dom_3p
+  Domain dom_5p, dom_3p;
   Strand strand_5p, strand_3p;
   if (!forward) {
-    ss_5p = ss_left;
-    ss_3p = ss_right;
+    dom_5p = dom_left;
+    dom_3p = dom_right;
     strand_5p = strand_left;
     strand_3p = strand_right;
   } else {
-    ss_5p = ss_right;
-    ss_3p = ss_left;
+    dom_5p = dom_right;
+    dom_3p = dom_left;
     strand_5p = strand_right;
     strand_3p = strand_left;
   }
 
-  Domain new_substrand = Domain(
+  Domain dom_new = Domain(
       helix: helix,
       forward: forward,
-      start: ss_left.start,
-      end: ss_right.end,
+      start: dom_left.start,
+      end: dom_right.end,
       is_scaffold: strand_5p.is_scaffold || strand_3p.is_scaffold,
-      deletions: ss_left.deletions + ss_right.deletions,
-      insertions: ss_left.insertions + ss_right.insertions,
-      is_first: ss_3p.is_first,
-      is_last: ss_5p.is_last);
-  var substrands_5p_new = strand_5p.substrands.toList()..removeAt(0);
-  var substrands_3p_new = strand_3p.substrands.toList()..removeLast();
+      deletions: dom_left.deletions + dom_right.deletions,
+      insertions: dom_left.insertions + dom_right.insertions,
+      is_first: dom_3p.is_first,
+      is_last: dom_5p.is_last);
 
-  // take properties from existing strands
-  var substrands_new = substrands_3p_new + [new_substrand] + substrands_5p_new;
-  Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new);
+  if (strand_left == strand_right) {
+    // join domains and make strand circular
+    var strand = strand_left;
+    assert(!strand.circular);
+    assert(strand.first_domain == dom_5p);
+    assert(strand.last_domain == dom_3p);
+    var substrands = strand.substrands.toList();
+    substrands.removeAt(0);
+    substrands.removeLast();
+    substrands.insert(0, dom_new);
 
-  return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
+    // If this linear strand had no crossovers, only loopouts, this is illegal so we do nothing
+    // (and forbid_create_circular_strand_no_crossovers_middleware middleware should warn user)
+    // If there is a crossover, we need to find it to make those domains the "first" and "last"
+    // in the circular strand.
+    // let's look for two consecutive domains connected by a crossover and make the latter of them
+    // the "first" domain, and rotate the substrand list to start there.
+    // If we can't find one, we do nothing.
+    // (Should have already reported error to user though, in middleware,
+    // if they tried to convert the last crossover in a circular strand to be a Loopout.)
+    if (strand.crossovers.isEmpty) {
+      return strands;
+    }
+    if (substrands.last is Loopout) {
+      int first_dom = -1;
+      for (int i = 0; i < substrands.length - 1; i++) {
+        if (substrands[i] is Domain && substrands[i + 1] is Domain) {
+          first_dom = i + 1;
+        }
+      }
+      assert(first_dom >= 0); // we would have returned above since this means no crossovers
+      substrands = substrands.sublist(first_dom) + substrands.sublist(0, first_dom);
+    }
+
+    var new_strand = strand.rebuild((b) => b
+      ..substrands.replace(substrands)
+      ..circular = true);
+    new_strand = new_strand.initialize();
+
+    int strand_idx = strands.indexOf(strand);
+    var strands_mutable = strands.toBuilder();
+    strands_mutable[strand_idx] = new_strand;
+    return strands_mutable.build();
+  } else {
+    var substrands_5p_new = strand_5p.substrands.toList()..removeAt(0);
+    var substrands_3p_new = strand_3p.substrands.toList()..removeLast();
+    // take properties from existing strands
+    var substrands_new = substrands_3p_new + [dom_new] + substrands_5p_new;
+    Strand new_strand = join_two_strands_with_substrands(strand_3p, strand_5p, substrands_new);
+
+    return swap_old_strands_for_new(strands, [strand_left, strand_right], [new_strand]);
+  }
 }
 
 BuiltList<Strand> join_strands_by_crossover_reducer(
@@ -200,11 +276,18 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   DNAEnd dna_end_to = first_clicked_is_from ? dna_end_second_click : dna_end_first_click;
   Strand strand_from = state.design.end_to_strand(dna_end_from);
   Strand strand_to = state.design.end_to_strand(dna_end_to);
+
+  // if joining strand to itself by crossover, just make it circular
   if (strand_from == strand_to) {
-    // circular Strands not supported
-    print('WARNING: circular strands not supported, so I cannot connect strand ${strand_to.id} to itself.');
-    return strands;
+    var strand = strand_from;
+    int strand_idx = strands.indexOf(strand);
+    var strands_mutable = strands.toBuilder();
+    var new_strand = strand.rebuild((b) => b..circular = true);
+    new_strand = new_strand.initialize();
+    strands_mutable[strand_idx] = new_strand;
+    return strands_mutable.build();
   }
+
   Strand strand_first_clicked = first_clicked_is_from ? strand_from : strand_to;
   Strand strand_second_clicked = first_clicked_is_from ? strand_to : strand_from;
   ListBuilder<Substrand> substrands_from = strand_from.substrands.toBuilder();
@@ -263,7 +346,7 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
     dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length();
   }
 
-  // include 5'p' mod from 5' strand and 3' mod from 3' strand.
+  // include 5' mod from 5' strand and 3' mod from 3' strand.
   var mod_5p = strand_5p.modification_5p;
   var mod_3p = strand_3p.modification_3p;
 
