@@ -30,6 +30,7 @@ import 'throttle.dart';
 import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
+import 'autostaple_and_autobreak.dart';
 import '../state/app_state.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
@@ -63,4 +64,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   check_reflect_strands_legal_middleware,
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
+  autostaple_and_autobreak_middleware,
 ]);
