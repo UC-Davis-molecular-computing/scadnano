@@ -170,4 +170,5 @@ tooltip_text(Domain domain) =>
         '    helix=${domain.helix}\n'
         '    start=${domain.start}\n'
         '    end=${domain.end}' +
+    (domain.name == null ? "" : "\n    name=${domain.name}") +
     (domain.label == null ? "" : "\n    label=${domain.label.toString()}");
