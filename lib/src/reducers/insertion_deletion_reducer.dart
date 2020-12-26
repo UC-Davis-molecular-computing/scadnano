@@ -39,6 +39,7 @@ Strand insertion_deletion_reducer(Strand strand, actions.InsertionOrDeletionActi
   return strand.rebuild((b) => b..substrands.replace(substrands));
 }
 
+
 Reducer<Domain> insertion_deletion_domain_reducer = combineReducers([
   TypedReducer<Domain, actions.InsertionAdd>(insertion_add_reducer),
   TypedReducer<Domain, actions.InsertionRemove>(insertion_remove_reducer),

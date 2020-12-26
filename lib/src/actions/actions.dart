@@ -12,6 +12,7 @@ import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
+import 'package:scadnano/src/state/substrand.dart';
 import 'package:tuple/tuple.dart';
 
 import '../state/app_ui_state_storables.dart';
@@ -333,6 +334,54 @@ abstract class SelectModesSet
   SelectModesSet._();
 
   static Serializer<SelectModesSet> get serializer => _$selectModesSetSerializer;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Strand/domain/loopout names
+
+// used to set or remove (set name=null to remove)
+abstract class StrandNameSet
+    with BuiltJsonSerializable, UndoableAction
+    implements SingleStrandAction, Built<StrandNameSet, StrandNameSetBuilder> {
+
+  @nullable
+  String get name;
+
+  Strand get strand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandNameSet({String name, Strand strand}) = _$StrandNameSet._;
+
+  StrandNameSet._();
+
+  static Serializer<StrandNameSet> get serializer => _$strandNameSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+// used to set or remove (set name=null to remove)
+// used for both Domains and Loopouts
+abstract class SubstrandNameSet
+    with BuiltJsonSerializable, UndoableAction
+    implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
+
+  @nullable
+  String get name;
+
+  Substrand get substrand;
+
+  StrandPart get strand_part => substrand;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SubstrandNameSet({String name, Substrand substrand}) = _$SubstrandNameSet._;
+
+  SubstrandNameSet._();
+
+  static Serializer<SubstrandNameSet> get serializer => _$substrandNameSetSerializer;
+
+  @memoized
+  int get hashCode;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1607,6 +1656,9 @@ abstract class ExportSvg with BuiltJsonSerializable implements Action, Built<Exp
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Strand part action
 
+// reducer takes a part of a strand and looks up the strand it's in by strand_id,
+// then applies reducer to strand
+// action may not have the strand itself
 abstract class StrandPartAction extends Action {
   StrandPart get strand_part;
 }
