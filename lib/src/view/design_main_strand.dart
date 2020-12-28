@@ -75,14 +75,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     with PureComponent, TransformByHelixGroup<DesignMainStrandProps> {
   @override
   render() {
-    bool selected = props.selected;
-
     if (props.strand.substrands.length == 0) {
       return null;
     }
 
     var classname = constants.css_selector_strand;
-    if (selected) {
+    if (props.selected) {
       classname += ' ' + constants.css_selector_selected;
     }
     if (props.strand.is_scaffold) {
