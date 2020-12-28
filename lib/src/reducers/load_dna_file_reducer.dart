@@ -13,13 +13,11 @@ import '../util.dart' as util;
 var hline = '*' * 100;
 
 AppState load_dna_file_reducer(AppState state, actions.LoadDNAFile action) {
-  Map<String, dynamic> map;
   String error_message;
   Design design_new;
 
   try {
-    map = jsonDecode(action.content);
-    design_new = Design.from_json(map, state.ui_state.invert_xy);
+    design_new = Design.from_json_str(action.content, state.ui_state.invert_xy);
   } on IllegalDesignError catch (error, stack_trace) {
     error_message = ''
         '******************'
