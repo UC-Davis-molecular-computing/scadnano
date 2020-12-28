@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -797,6 +798,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         throw IllegalDesignError('cannot specify both "${key1}" and "${key2}" in Design JSON');
       }
     }
+  }
+
+  static Design from_json_str(String json_str, [bool invert_xy = false]) {
+    var json_map = jsonDecode(json_str);
+    return Design.from_json(json_map, invert_xy);
   }
 
   static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {

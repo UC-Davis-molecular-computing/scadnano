@@ -17,6 +17,7 @@ class StrandMaker {
   String dna_sequence = null;
   String domain_dna_sequence = null;
   bool circular = false;
+  String name = null;
   Object label = null;
   Object domain_label = null;
   Modification5Prime modification_5p = null;
@@ -44,6 +45,7 @@ class StrandMaker {
         dna_sequence: this.dna_sequence,
         label: this.label,
         idt: this.idt,
+        name: this.name,
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
         modifications_int: this.modifications_int);
@@ -135,12 +137,16 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker with_idt(String name,
-      {String scale = constants.default_idt_scale,
+  StrandMaker with_idt({String scale = constants.default_idt_scale,
       String purification = constants.default_idt_purification,
       String plate = null,
       String well = null}) {
-    this.idt = IDTFields(name, scale, purification, plate: plate, well: well);
+    this.idt = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
+    return this;
+  }
+
+  StrandMaker with_name(String name) {
+    this.name = name;
     return this;
   }
 

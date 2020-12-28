@@ -68,38 +68,36 @@ row major top-left domain start: ADGMPEHIBNQFJKCORL
 col major top-left domain start: ABCDEFLHJGIKMNOPQR
    */
 
-  var helices = [
-    for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)
-  ];
+  var helices = [for (int i = 0; i < 6; i++) Helix(idx: i, max_offset: 100, grid: Grid.square)];
   var d = Design(helices: helices, grid: Grid.square);
 
-  d = d.strand(1, 0).move(16).cross(0).move(-16).with_idt('A').commit();
-  d = d.strand(3, 0).move(16).cross(2).move(-16).with_idt('B').commit();
-  d = d.strand(5, 0).move(16).cross(4).move(-16).with_idt('C').commit();
+  d = d.strand(1, 0).move(16).cross(0).move(-16).with_name('A').commit();
+  d = d.strand(3, 0).move(16).cross(2).move(-16).with_name('B').commit();
+  d = d.strand(5, 0).move(16).cross(4).move(-16).with_name('C').commit();
 
-  d = d.strand(0, 40).move(-24).cross(1).move(8).with_idt('D').commit();
+  d = d.strand(0, 40).move(-24).cross(1).move(8).with_name('D').commit();
 
-  d = d.strand(1, 24).move(8).cross(2).move(-16).cross(3).move(8).with_idt('E').commit();
-  d = d.strand(3, 24).move(8).cross(4).move(-16).cross(5).move(8).with_idt('F').commit();
+  d = d.strand(1, 24).move(8).cross(2).move(-16).cross(3).move(8).with_name('E').commit();
+  d = d.strand(3, 24).move(8).cross(4).move(-16).cross(5).move(8).with_name('F').commit();
 
-  d = d.strand(0, 72).move(-32).with_idt('G').commit();
+  d = d.strand(0, 72).move(-32).with_name('G').commit();
 
-  d = d.strand(2, 40).move(-8).cross(1).move(24).with_idt('H').commit();
-  d = d.strand(1, 56).move(8).cross(2).move(-24).with_idt('I').commit();
+  d = d.strand(2, 40).move(-8).cross(1).move(24).with_name('H').commit();
+  d = d.strand(1, 56).move(8).cross(2).move(-24).with_name('I').commit();
 
-  d = d.strand(4, 40).move(-8).cross(3).move(24).with_idt('J').commit();
-  d = d.strand(3, 56).move(8).cross(4).move(-24).with_idt('K').commit();
+  d = d.strand(4, 40).move(-8).cross(3).move(24).with_name('J').commit();
+  d = d.strand(3, 56).move(8).cross(4).move(-24).with_name('K').commit();
 
-  d = d.strand(5, 24).move(32).with_idt('L').commit();
+  d = d.strand(5, 24).move(32).with_name('L').commit();
 
-  d = d.strand(2, 72).move(-8).cross(1).move(16).cross(0).move(-8).with_idt('M').commit();
-  d = d.strand(4, 72).move(-8).cross(3).move(16).cross(2).move(-8).with_idt('N').commit();
+  d = d.strand(2, 72).move(-8).cross(1).move(16).cross(0).move(-8).with_name('M').commit();
+  d = d.strand(4, 72).move(-8).cross(3).move(16).cross(2).move(-8).with_name('N').commit();
 
-  d = d.strand(5, 56).move(24).cross(4).move(-8).with_idt('O').commit();
+  d = d.strand(5, 56).move(24).cross(4).move(-8).with_name('O').commit();
 
-  d = d.strand(0, 96).move(-16).cross(1).move(16).with_idt('P').commit();
-  d = d.strand(2, 96).move(-16).cross(3).move(16).with_idt('Q').commit();
-  d = d.strand(4, 96).move(-16).cross(5).move(16).with_idt('R').commit();
+  d = d.strand(0, 96).move(-16).cross(1).move(16).with_name('P').commit();
+  d = d.strand(2, 96).move(-16).cross(3).move(16).with_name('Q').commit();
+  d = d.strand(4, 96).move(-16).cross(5).move(16).with_name('R').commit();
 
   // assign DNA to strands so we can export IDT
   var strands = d.strands.toList();
@@ -169,4 +167,72 @@ col major top-left domain start: ABCDEFLHJGIKMNOPQR
     var names_joined = get_names_idt(design_6h, StrandOrder.top_left_domain_start, true);
     expect(names_joined, 'ABCDEFLHJGIKMNOPQR');
   });
+
+  test('from_json__legacy_idt_name__no_strand_name', () {
+    // tests proper importing of old format when name was a subfield of idt;
+    // ensures if that exists and no Strand.name field exists, the idt.name is used as Strand.name
+    var json_str = '''
+    {
+      "version": "0.14.0",
+      "grid": "square",
+      "helices": [
+        {"grid_position": [0, 0]},
+        {"grid_position": [0, 1]}
+      ],
+      "strands": [
+        {
+          "color": "#f74308",
+          "sequence": "TATTATAGTCTTACCCTGAC",
+          "idt": {"name": "staple1", "scale": "100nm", "purification": "HPLC", "plate": "plate1", "well": "A1"},
+          "domains": [
+            {"helix": 0, "forward": true, "start": 0, "end": 10},
+            {"helix": 1, "forward": false, "start": 0, "end": 10}
+          ]
+        }
+      ]
+    }
+    ''';
+
+    var design = Design.from_json_str(json_str);
+    expect(design.strands.length, 1);
+    var strand = design.strands[0];
+    expect(strand.name, 'staple1');
+    expect(strand.idt.scale, '100nm');
+    expect(strand.idt.purification, 'HPLC');
+    expect(strand.idt.plate, 'plate1');
+    expect(strand.idt.well, 'A1');
+  });
+
+  test('from_json__legacy_idt_name__strand_name_exists', () {
+    // tests proper importing of old format when name was a subfield of idt;
+    // ensures if that exists and no Strand.name field exists, the idt.name is used as Strand.name
+    var json_str = '''
+    {
+      "version": "0.14.0",
+      "grid": "square",
+      "helices": [
+        {"grid_position": [0, 0]},
+        {"grid_position": [0, 1]}
+      ],
+      "strands": [
+        {
+          "name": "staple1 strand level",
+          "color": "#f74308",
+          "sequence": "TATTATAGTCTTACCCTGAC",
+          "idt": {"name": "staple1", "scale": "100nm", "purification": "HPLC", "plate": "plate1", "well": "A1"},
+          "domains": [
+            {"helix": 0, "forward": true, "start": 0, "end": 10},
+            {"helix": 1, "forward": false, "start": 0, "end": 10}
+          ]
+        }
+      ]
+    }
+    ''';
+
+    var design = Design.from_json_str(json_str);
+    expect(design.strands.length, 1);
+    var strand = design.strands[0];
+    expect(strand.name, 'staple1 strand level');
+  });
+
 }
