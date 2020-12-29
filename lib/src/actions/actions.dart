@@ -65,7 +65,7 @@ abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
 }
 
-/// Fast actions happen rapidly and are not dispatched to normal store for optimization
+/// Fast actions are not dispatched to normal store for optimization
 abstract class FastAction extends Action {}
 
 // Wrap an UndoableAction in a SkipUndo in order to apply it, but skip its effect on the undo/redo stacks.
