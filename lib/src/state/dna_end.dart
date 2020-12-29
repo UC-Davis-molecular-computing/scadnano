@@ -4,6 +4,7 @@ import 'package:built_value/serializer.dart';
 import '../serializers.dart';
 import 'select_mode.dart';
 import 'selectable.dart';
+import 'helix.dart';
 
 part 'dna_end.g.dart';
 
@@ -50,6 +51,7 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
   bool get substrand_is_last;
 
   String get substrand_id;
+
 
 //  DNAEnd(this.is_5p, this.substrand_is_first, this.substrand_is_last, this.substrand_id);
 

@@ -40,6 +40,7 @@ abstract class Strand
   factory Strand(
     Iterable<Substrand> substrands, {
     Color color = null,
+    bool circular = false,
     String dna_sequence = null,
     IDTFields idt = null,
     bool is_scaffold = false,
@@ -55,6 +56,7 @@ abstract class Strand
 
     var strand = Strand.from((b) => b
       ..color = color
+      ..circular = circular
       ..substrands.replace(substrands)
       ..dna_sequence = dna_sequence
       ..idt = idt?.toBuilder()
@@ -120,8 +122,12 @@ abstract class Strand
         substrands_new[idx] = loopout;
         updated = true;
       } else if (ss is Domain) {
+        bool is_first = idx == 0;
+        bool is_last = idx == strand.substrands.length - 1;
         var domain = ss.rebuild((l) => l
           ..strand_id = id
+          ..is_first = is_first
+          ..is_last = is_last
           ..is_scaffold = is_scaffold);
         substrands_new[idx] = domain;
         updated = true;
@@ -176,6 +182,8 @@ abstract class Strand
   IDTFields get idt;
 
   bool get is_scaffold;
+
+  bool get circular;
 
   @nullable
   Modification5Prime get modification_5p;
@@ -428,14 +436,18 @@ abstract class Strand
 
   @memoized
   BuiltList<Crossover> get crossovers {
-    Set<Crossover> ret = {};
+    List<Crossover> xovers = [];
     for (int i = 0; i < substrands.length - 1; i++) {
       if (substrands[i] is Domain && substrands[i + 1] is Domain) {
-        ret.add(Crossover(i, i + 1, id, is_scaffold));
+        xovers.add(Crossover(i, i + 1, id, is_scaffold));
       }
     }
 
-    return BuiltList<Crossover>(ret);
+    if (circular) {
+      xovers.add(Crossover(substrands.length - 1, 0, id, is_scaffold));
+    }
+
+    return BuiltList<Crossover>(xovers);
   }
 
   @memoized
@@ -483,6 +495,10 @@ abstract class Strand
 
     if (this.name != null) {
       json_map[constants.name_key] = name;
+    }
+
+    if (this.circular) {
+      json_map[constants.circular_key] = circular;
     }
 
     if (this.color != null) {
@@ -577,10 +593,8 @@ abstract class Strand
     var substrand_jsons = util.mandatory_field(json_map, constants.substrands_key, 'Strand',
         legacy_keys: constants.legacy_substrands_keys);
 
-    bool is_scaffold = false;
-    if (json_map.containsKey(constants.is_scaffold_key)) {
-      is_scaffold = json_map[constants.is_scaffold_key];
-    }
+    bool is_scaffold = util.optional_field(json_map, constants.is_scaffold_key, false);
+    bool circular = util.optional_field(json_map, constants.circular_key, false);
 
     // need to parse all Domains before Loopouts,
     // because prev and next Domains need to be referenced by Loopouts
@@ -650,21 +664,12 @@ abstract class Strand
     Strand strand = Strand(
       substrands,
       color: color,
+      circular: circular,
       name: name,
       is_scaffold: is_scaffold,
       dna_sequence: dna_sequence,
       label: label,
     ).rebuild((b) => b.unused_fields = unused_fields);
-
-//    print('first domain unused_fields type               = ${strand.first_domain.unused_fields.runtimeType}');
-//    print('first domain unused_fields                    = ${strand.first_domain.unused_fields}');
-//    print('first domain unused_fields.label type         = ${strand.first_domain.unused_fields['label'].runtimeType}');
-//    print('first domain unused_fields.label              = ${strand.first_domain.unused_fields['label']}');
-//    print('first domain unused_fields.sequence type      = ${strand.first_domain.unused_fields['sequence'].runtimeType}');
-//    print('first domain unused_fields.sequence           = ${strand.first_domain.unused_fields['sequence']}');
-//    print('first domain unused_fields.label.pool type    = ${(strand.first_domain.unused_fields['label'] as Map)['pool'].runtimeType}');
-//    print('first domain unused_fields.label.pool         = ${(strand.first_domain.unused_fields['label'] as Map)['pool']}');
-//    print('');
 
     if (json_map.containsKey(constants.idt_key)) {
       try {
@@ -751,12 +756,10 @@ abstract class Strand
   @memoized
   DNAEnd get dnaend_5p => first_domain.dnaend_5p;
 
-  /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent and aren't the same strand)
+  /// If this and other are ligatable (they have a pair of 5'/3' ends adjacent)
   /// return the two [DNAEnd]s that can be ligated, in other (this.end, other.end).
   Tuple2<DNAEnd, DNAEnd> ligatable_ends_with(Strand other) {
-    if (this == other) {
-      return null;
-    } else if (_ligatable_3p_to_5p_of(other)) {
+    if (_ligatable_3p_to_5p_of(other)) {
       return Tuple2<DNAEnd, DNAEnd>(dnaend_3p, other.dnaend_5p);
     } else if (_ligatable_5p_to_3p_of(other)) {
       return Tuple2<DNAEnd, DNAEnd>(dnaend_5p, other.dnaend_3p);
@@ -785,7 +788,7 @@ abstract class Strand
 
   /// Name to use when exporting this Strand.
   /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
-  String export_name() {
+  String idt_export_name() {
     if (idt != null) {
       return idt.name;
     } else if (name != null) {
@@ -795,7 +798,7 @@ abstract class Strand
     }
   }
 
-  /// Name to export if Strand.name and Strand.idt_fields.name are both not set.
+  /// Name to export if Strand.name and Strand.idt.name are both not set.
   String default_export_name() {
     String id =
         '${first_domain.helix}[${first_domain.offset_5p}]${last_domain.helix}[${last_domain.offset_3p}]';

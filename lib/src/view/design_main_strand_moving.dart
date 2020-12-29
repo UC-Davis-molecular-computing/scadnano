@@ -64,27 +64,29 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
     //XXX: need to switch 3' and 5' if delta_forward is true
     return (Dom.g()
       ..className = 'strand-moving'
-      ..transform = transform_of_helix(first_domain_moved.helix))(
+      ..transform = transform_of_helix(first_domain_moved.helix))([
       _draw_strand_lines_single_path(strand_moved),
-      (EndMoving()
-        ..helix = first_helix_moved
-        ..dna_end = end_5p_moved
-        ..color = props.strand.color
-        ..forward = first_domain_moved.forward //first_domain_moved.forward != props.delta_forward
-        ..is_5p = true //true != props.delta_forward
-        ..allowable = props.allowable
-        ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
-        ..key = 'end-5p')(),
-      (EndMoving()
-        ..helix = last_helix_moved
-        ..dna_end = end_3p_moved
-        ..color = props.strand.color
-        ..forward = last_domain_moved.forward //props.delta_forward != last_domain_moved.forward
-        ..is_5p = false //false != props.delta_forward
-        ..allowable = props.allowable
-        ..current_offset = end_3p_moved.offset_inclusive // + props.delta_offset
-        ..key = 'end-3p')(),
-    );
+      if (!strand_moved.circular)
+        (EndMoving()
+          ..helix = first_helix_moved
+          ..dna_end = end_5p_moved
+          ..color = props.strand.color
+          ..forward = first_domain_moved.forward //first_domain_moved.forward != props.delta_forward
+          ..is_5p = true //true != props.delta_forward
+          ..allowable = props.allowable
+          ..current_offset = end_5p_moved.offset_inclusive // + props.delta_offset
+          ..key = 'end-5p')(),
+      if (!strand_moved.circular)
+        (EndMoving()
+          ..helix = last_helix_moved
+          ..dna_end = end_3p_moved
+          ..color = props.strand.color
+          ..forward = last_domain_moved.forward //props.delta_forward != last_domain_moved.forward
+          ..is_5p = false //false != props.delta_forward
+          ..allowable = props.allowable
+          ..current_offset = end_3p_moved.offset_inclusive // + props.delta_offset
+          ..key = 'end-3p')(),
+    ]);
   }
 
   ReactElement _draw_strand_lines_single_path(Strand strand_moved) {
@@ -104,9 +106,10 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
         path_cmds.add('L ${end_svg.x} ${end_svg.y}');
 
         // crossover/loopout line/arc
-        if (i < substrands.length - 1 && substrands[i + 1] is Domain) {
+        int idx_next = (i + 1) % substrands.length;
+        if (substrands[idx_next] is Domain && (i < substrands.length - 1 || strand_moved.circular)) {
           var old_domain = domain;
-          domain = substrands[i + 1];
+          domain = substrands[idx_next];
           helix = props.helices[domain.helix];
           start_svg = helix.svg_base_pos(domain.offset_5p, domain.forward);
           var control = control_point_for_crossover_bezier_curve(old_domain, domain, props.helices,

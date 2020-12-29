@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.13.3";
+const String CURRENT_VERSION = "0.13.4";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.13.3",
   "0.13.2",
   "0.13.1",
   "0.13.0",
@@ -234,6 +235,7 @@ const legacy_dna_sequence_keys = ['dna_sequence'];
 const idt_key = 'idt';
 const is_scaffold_key = 'is_scaffold';
 const substrands_key = 'domains';
+const circular_key = 'circular';
 const legacy_substrands_keys = ['substrands'];
 const modification_5p_key = '5prime_modification';
 const modification_3p_key = '3prime_modification';

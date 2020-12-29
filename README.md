@@ -26,6 +26,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Menu](#menu)
 * [Side view menu](#side-view-menu)
 * [Edit modes](#edit-modes)
+* [Circular strands](#circular-strands)
 * [Assigning DNA](#assigning-dna)
 * [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
@@ -633,6 +634,16 @@ There are different edit modes available, shown on the right side of the screen.
 
 * **(m)ove group:**
   This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur, without changing the position of any helix group.)
+
+## Circular strands
+It is possible to create circular strands, by ligating a strand's 5' and 3' ends, or by adding a crossover between a strand's 5' and 3' ends:
+
+![](images/circular-strand.png)
+
+Although this is allowed while editing strands, it is encouraged eventually to make all strands linear (non-circular) by adding appropriate nicks or deleting crossovers.
+At the current time, assigning and tracking DNA sequences in circular strands is not well-supported.
+In particular, there is not a straightforward way, when assigning DNA, to control where it begins on the strand.
+The reason this feature is allowed is that it helps to allow circular strands as *intermediates* that will eventually be made linear.
 
 
 ## Assigning DNA
