@@ -75,14 +75,12 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     with PureComponent, TransformByHelixGroup<DesignMainStrandProps> {
   @override
   render() {
-    bool selected = props.selected;
-
     if (props.strand.substrands.length == 0) {
       return null;
     }
 
     var classname = constants.css_selector_strand;
-    if (selected) {
+    if (props.selected) {
       classname += ' ' + constants.css_selector_selected;
     }
     if (props.strand.is_scaffold) {
@@ -184,6 +182,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
+
+  set_strand_name() => app.disable_keyboard_shortcuts_while(ask_for_strand_name);
+
+  set_domain_name(Domain domain) => app.disable_keyboard_shortcuts_while(() => ask_for_domain_name(domain));
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
@@ -310,6 +312,22 @@ assigned, assign the complementary DNA sequence to this strand.
         ContextMenuItem(
             title: 'set color',
             on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
+        ContextMenuItem(
+          title: 'set strand name',
+          on_click: set_strand_name,
+        ),
+        if (props.strand.name != null)
+          ContextMenuItem(
+              title: 'remove strand name',
+              on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+        ContextMenuItem(
+          title: 'set domain name',
+          on_click: () => set_domain_name(domain),
+        ),
+        if (domain.name != null)
+          ContextMenuItem(
+              title: 'remove domain name',
+              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
         ContextMenuItem(
           title: 'reflect horizontally',
           on_click: () => reflect(true, false),
@@ -498,6 +516,34 @@ after:
 
     app.dispatch(action);
   }
+
+  Future<void> ask_for_strand_name() async {
+    int name_idx = 0;
+    var items = List<DialogItem>(1);
+    items[name_idx] = DialogText(label: 'name', value: props.strand.name ?? '');
+    var dialog = Dialog(title: 'set strand name', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String name = (results[name_idx] as DialogText).value;
+    actions.UndoableAction action = actions.StrandNameSet(name: name, strand: props.strand);
+    app.dispatch(action);
+  }
+
+  Future<void> ask_for_domain_name(Domain domain) async {
+    int name_idx = 0;
+    var items = List<DialogItem>(1);
+    items[name_idx] = DialogText(label: 'name', value: domain.name ?? '');
+    var dialog = Dialog(title: 'set domain name', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String name = (results[name_idx] as DialogText).value;
+    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: domain);
+    app.dispatch(action);
+  }
 }
 
 actions.UndoableAction batch_if_multiple_selected(
@@ -530,9 +576,9 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
-    ('    name=${strand.name}\n' ?? '\n') +
+    (strand.name == null ? "" : "    name=${strand.name}\n") +
     "    length=${strand.dna_length()}\n" +
-    (!strand.circular? "" : "    circular\n") +
+    (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
     (strand.label == null ? "" : "    label: ${strand.label.toString()}\n") +

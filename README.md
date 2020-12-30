@@ -419,6 +419,9 @@ This refers to the menu at the top of the whole app. At the top of the side view
     * bases per turn: The number of bases in a single full turn of DNA.
 
     * minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction of its long axis.
+
+  * **Autostaple/Autobreak:**
+    These are *experimental* features that are subject to change/removal, and in particular that are not guaranteed to work on all designs. Autostaple removes all staple strands from a DNA origami design and fills in with a few very long circular "precursor" staples bound to every part of the scaffold strand, i.e., it assumes you want staples everywhere there's a scaffold, and it chooses where to put the crossovers (but not the nicks). Autobreak, which should be run after running Autostaple, automatically adds nicks. See https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.13.4 for more information.
   
 * View
 

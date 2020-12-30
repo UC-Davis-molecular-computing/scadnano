@@ -3298,8 +3298,9 @@ main() {
             "domains": [
               {"helix": 0, "forward": true, "start": 0, "end": 16}
             ],
+            "name": "staple1", 
             "idt": {
-              "name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
+              "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
               "unused_idt_field_foo": {
                 "foo_idt_field": "foo_idt",
                 "bar_idt_field": "bar",
@@ -7214,6 +7215,21 @@ main() {
       expect(final_state.ui_state.strand_color_picker_strand, null);
     });
   });
+
+  group('DesignNewSet', () {
+    test('DesignNewSet should set new design', () {
+      AppState initial_state = app_state_from_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      expect(final_state.design, small_design_h0);
+    });
+
+    test('DesignNewSet should be undoable', () {
+      AppState initial_state = app_state_from_design(two_helices_design);
+      AppState final_state = app_state_reducer(initial_state, NewDesignSet(design: small_design_h0));
+      expect(final_state.undo_redo, UndoRedo().rebuild((b) => b..undo_stack.replace([two_helices_design])));
+    });
+  });
+
 }
 
 AppState make_ends_selectable(AppState actual_state) {

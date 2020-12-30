@@ -5,6 +5,7 @@ import 'package:color/color.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/constants.dart';
 import 'package:scadnano/src/state/domains_move.dart';
+import 'package:scadnano/src/state/loopout.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:tuple/tuple.dart';
@@ -96,7 +97,27 @@ Reducer<Strand> strand_part_reducer = combineReducers([
   TypedReducer<Strand, actions.ConvertCrossoverToLoopout>(convert_crossover_to_loopout_reducer),
   TypedReducer<Strand, actions.LoopoutLengthChange>(loopout_length_change_reducer),
   TypedReducer<Strand, actions.InsertionOrDeletionAction>(insertion_deletion_reducer),
+  TypedReducer<Strand, actions.SubstrandNameSet>(substrand_name_set_reducer),
 ]);
+
+Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action) {
+  int substrand_idx = strand.substrands.indexOf(action.substrand);
+
+  // we do the same thing no matter if its Domain or Loopout, but need to cast to call rebuild
+  Substrand substrand = action.substrand;
+  if (substrand is Domain) {
+    substrand = (substrand as Domain).rebuild((b) => b..name = action.name);
+  } else if (substrand is Loopout) {
+    substrand = (substrand as Loopout).rebuild((b) => b..name = action.name);
+  } else {
+    throw AssertionError('substrand must either be Domain or Loopout');
+  }
+
+  var substrands = strand.substrands.toList();
+  substrands[substrand_idx] = substrand;
+  strand = strand.rebuild((s) => s..substrands.replace(substrands));
+  return strand;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // move strands/domains
@@ -425,7 +446,11 @@ Reducer<Strand> single_strand_reducer = combineReducers([
   TypedReducer<Strand, actions.ModificationAdd>(modification_add_reducer),
   TypedReducer<Strand, actions.ModificationRemove>(modification_remove_reducer),
   TypedReducer<Strand, actions.ModificationEdit>(modification_edit_reducer),
+  TypedReducer<Strand, actions.StrandNameSet>(strand_name_set_reducer),
 ]);
+
+Strand strand_name_set_reducer(Strand strand, actions.StrandNameSet action) =>
+    strand.rebuild((b) => b..name = action.name);
 
 Strand modification_add_reducer(Strand strand, actions.ModificationAdd action) {
   Strand strand_with_new_modification;

@@ -14,10 +14,8 @@ part 'idt_fields.g.dart';
 abstract class IDTFields
     with BuiltJsonSerializable, UnusedFields
     implements Built<IDTFields, IDTFieldsBuilder> {
-  factory IDTFields(String name, String scale, String purification,
-          {String plate = null, String well = null}) =>
+  factory IDTFields({String scale, String purification, String plate = null, String well = null}) =>
       IDTFields.from((b) => b
-        ..name = name
         ..scale = scale
         ..purification = purification
         ..plate = plate
@@ -31,8 +29,6 @@ abstract class IDTFields
   static Serializer<IDTFields> get serializer => _$iDTFieldsSerializer;
 
   /************************ end BuiltValue boilerplate ************************/
-
-  String get name;
 
   String get scale;
 
@@ -49,7 +45,6 @@ abstract class IDTFields
 
   Map<String, dynamic> to_json_serializable({bool suppress_indent = false}) {
     Map<String, dynamic> json_map = {
-      constants.idt_name_key: this.name,
       constants.idt_scale_key: this.scale,
       constants.idt_purification_key: this.purification
     };
@@ -65,7 +60,6 @@ abstract class IDTFields
 
   static IDTFields from_json(Map<String, dynamic> json_map) {
     var field_name = 'IDTFields';
-    var name = util.mandatory_field(json_map, constants.idt_name_key, field_name);
     var scale = util.mandatory_field(json_map, constants.idt_scale_key, field_name);
     var purification = util.mandatory_field(json_map, constants.idt_purification_key, field_name);
     var plate, well;
@@ -85,12 +79,11 @@ abstract class IDTFields
     }
     var unused_fields = util.unused_fields_map(json_map, constants.idt_keys);
 
-    return new IDTFields(name, scale, purification, plate: plate, well: well)
+    return new IDTFields(scale: scale, purification: purification, plate: plate, well: well)
         .rebuild((b) => b.unused_fields = unused_fields);
   }
 
   tooltip() =>
-      '      name: $name\n' +
       '      scale: $scale\n' +
       '      purification: $purification\n' +
       (plate == null

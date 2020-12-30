@@ -657,28 +657,34 @@ abstract class Strand
 
     String name = util.optional_field_with_null_default(json_map, constants.name_key);
 
+
+
     Object label = util.optional_field_with_null_default(json_map, constants.label_key);
 
     var unused_fields = util.unused_fields_map(json_map, constants.strand_keys);
+
+    IDTFields idt = null;
+    Map<String, dynamic> idt_dict = null;
+    if (json_map.containsKey(constants.idt_key)) {
+      idt_dict = json_map[constants.idt_key];
+      idt = IDTFields.from_json(idt_dict);
+    }
+    // legacy:
+    // if no name is specified, but there's a name field in idt, then use that as the Strand's name
+    if (name == null && idt_dict != null && idt_dict.containsKey(constants.idt_name_key)) {
+      name = idt_dict[constants.idt_name_key];
+    }
 
     Strand strand = Strand(
       substrands,
       color: color,
       circular: circular,
       name: name,
+      idt: idt,
       is_scaffold: is_scaffold,
       dna_sequence: dna_sequence,
       label: label,
     ).rebuild((b) => b.unused_fields = unused_fields);
-
-    if (json_map.containsKey(constants.idt_key)) {
-      try {
-        var idt = IDTFields.from_json(json_map[constants.idt_key]);
-        strand = strand.rebuild((s) => s..idt.replace(idt));
-      } catch (err) {
-        throw StrandError(strand, err.toString());
-      }
-    }
 
     if (strand.substrands.first is Loopout) {
       throw StrandError(strand, 'Loopout at beginning of strand not supported');
@@ -789,9 +795,7 @@ abstract class Strand
   /// Name to use when exporting this Strand.
   /// Prefer idt.name if defined, then this.name if defined, then default_export_name().
   String idt_export_name() {
-    if (idt != null) {
-      return idt.name;
-    } else if (name != null) {
+    if (name != null) {
       return name;
     } else {
       return default_export_name();
