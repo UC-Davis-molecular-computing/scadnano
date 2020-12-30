@@ -96,15 +96,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ..d = path_description
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
       }
       ..onMouseLeave = ((_) {
         setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
       })
       ..onPointerDown = ((ev) {
         if (loopout_selectable(props.loopout)) {

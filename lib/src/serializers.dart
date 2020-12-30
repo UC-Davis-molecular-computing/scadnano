@@ -280,6 +280,7 @@ part 'serializers.g.dart';
   SliceBarMoveStart,
   SliceBarMoveStop,
   ShowSliceBarSet,
+  ShowMouseoverDataSet
 ])
 Serializers serializers = _$serializers;
 

@@ -461,8 +461,6 @@ bool edit_mode_is_insertion() => edit_modes().contains(EditModeChoice.insertion)
 
 bool edit_mode_is_deletion() => edit_modes().contains(EditModeChoice.deletion);
 
-bool edit_mode_is_backbone() => edit_modes().contains(EditModeChoice.backbone);
-
 bool edit_mode_is_move_group() => edit_modes().contains(EditModeChoice.move_group);
 
 bool strand_selectable(Strand strand) =>

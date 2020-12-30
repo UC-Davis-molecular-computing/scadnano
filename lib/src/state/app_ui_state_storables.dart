@@ -38,6 +38,8 @@ abstract class AppUIStateStorables
 
   bool get show_slice_bar;
 
+  bool get show_mouseover_data;
+
   /// True if only selected helices in the side view should be displayed in the
   /// main view. False means all helices should be drawn.
   bool get only_display_selected_helices;
@@ -127,6 +129,7 @@ abstract class AppUIStateStorables
     b.slice_bar_offset = null;
     b.local_storage_design_choice = LocalStorageDesignChoice().toBuilder();
     b.clear_helix_selection_when_loading_new_design = false;
+    b.show_mouseover_data = false;
   }
 
   /************************ begin BuiltValue boilerplate ************************/

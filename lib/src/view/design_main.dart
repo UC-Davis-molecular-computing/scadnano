@@ -23,7 +23,6 @@ import 'design_main_helices.dart';
 import 'design_main_potential_vertical_crossovers.dart';
 import 'design_main_strands.dart';
 import 'design_main_dna_sequences.dart';
-import 'design_main_mouseover_rect_helices.dart';
 import '../state/app_state.dart';
 import 'design_main_strands_moving.dart';
 import 'helix_group_moving.dart';
@@ -239,15 +238,6 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..is_main = true
         ..id = 'selection-rope-main'
         ..key = 'selection-rope')(),
-      if (props.edit_modes.contains(EditModeChoice.backbone))
-        (DesignMainMouseoverRectHelices()
-          ..helices = props.design.helices
-          ..helix_change_apply_to_all = props.helix_change_apply_to_all
-          ..groups = props.design.groups
-          ..geometry = props.design.geometry
-          ..only_display_selected_helices = props.only_display_selected_helices
-          ..side_selected_helix_idxs = props.side_selected_helix_idxs
-          ..key = 'mouseover-rect')(),
       if (props.helix_group_is_moving)
         (ConnectedHelixGroupMoving()
           ..side_selected_helix_idxs = props.side_selected_helix_idxs

@@ -10,6 +10,7 @@ import 'dart:typed_data';
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
+import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
@@ -1509,3 +1510,87 @@ async_alert(String msg) async {
 // detect duplicates in list
 
 List<T> remove_duplicates<T>(Iterable<T> list) => LinkedHashSet<T>.from(list).toList();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouseover Data
+
+bool show_mouseover_data() {
+  return app.state.ui_state.show_mouseover_data;
+}
+
+const DEBUG_PRINT_MOUSEOVER = false;
+//const DEBUG_PRINT_MOUSEOVER = true;
+
+mouse_leave_update_mouseover() {
+  if (show_mouseover_data()) {
+    app.dispatch(actions.MouseoverDataClear());
+  }
+}
+
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+  if (show_mouseover_data()) {
+    MouseEvent event = event_syn.nativeEvent;
+    var group = app.state.design.groups[helix.group];
+    var geometry = app.state.design.geometry;
+    var address = get_address_on_helix(event, helix, group, geometry);
+    int offset = address.offset;
+    bool forward = address.forward;
+
+    if (DEBUG_PRINT_MOUSEOVER) {
+      Point<num> pan = current_pan(true);
+      num zoom = current_zoom(true);
+      print('mouse event: '
+          'x = ${event.offset.x},   '
+          'y = ${event.offset.y},   '
+          'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+          'zoom = ${zoom.toStringAsFixed(2)},   '
+  //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+  //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+          'helix = ${helix.idx},   '
+          'offset = ${offset},   '
+          'forward = ${forward}');
+    }
+
+    var mouseover_params = MouseoverParams(helix.idx, offset, forward);
+
+    BuiltList<MouseoverData> mouseover_datas = app.state.ui_state.mouseover_datas;
+
+    if (needs_update(mouseover_params, mouseover_datas)) {
+  //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      app.dispatch(
+          actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
+    } else {
+  //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+    }
+  }
+}
+
+// only needs updating if the MouseoverData that would be created is not already in the list
+bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mouseover_datas) {
+  bool needs = true;
+//  print('needs update?');
+//  print('  mouseover_datas: ${mouseover_datas}');
+  for (var mouseover_data in mouseover_datas) {
+//    print('  old helix.idx: ${mouseover_data.helix.idx}');
+//    print('  new helix.idx: ${mouseover_params.helix_idx}');
+//    print('  old offset: ${mouseover_data.offset}');
+//    print('  new offset: ${mouseover_params.offset}');
+//    print('  old forward: ${mouseover_data.substrand?.forward}');
+//    print('  new forward: ${mouseover_params.forward}');
+    if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
+        mouseover_data.offset == mouseover_params.offset &&
+        mouseover_data.domain?.forward == mouseover_params.forward) {
+      needs = false;
+    }
+//    else {
+//      print("need to print because "
+//          "mouseover_data.helix.idx = ${mouseover_data.helix.idx} "
+//          "mouseover_params.helix_idx = ${mouseover_params.helix_idx} "
+//          "mouseover_data.offset = ${mouseover_data.offset} "
+//          "mouseover_params.offset = ${mouseover_params.offset} "
+//          "mouseover_data.substrand.forward = ${mouseover_data.substrand.forward} "
+//          "mouseover_params.forward = ${mouseover_params.forward}");
+//    }
+  }
+  return needs;
+}

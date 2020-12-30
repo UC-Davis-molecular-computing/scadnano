@@ -13,6 +13,9 @@ abstract class EndEitherPrimeProps implements UiProps {
   PointerDownUpHandler on_pointer_down;
   PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
+  MouseUpHandler on_mouse_move;
+  MouseUpHandler on_mouse_enter;
+  MouseUpHandler on_mouse_leave;
   String classname;
   Point<num> pos;
   Color color;
@@ -26,6 +29,9 @@ mixin End5PrimeProps on UiProps implements EndEitherPrimeProps {
   PointerDownUpHandler on_pointer_down;
   PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
+  MouseUpHandler on_mouse_move;
+  MouseUpHandler on_mouse_enter;
+  MouseUpHandler on_mouse_leave;
   String classname;
   Point<num> pos;
   Color color;
@@ -43,6 +49,9 @@ class End5PrimeComponent extends UiComponent2<End5PrimeProps> {
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
+      ..onMouseEnter  = props.on_mouse_enter
+      ..onMouseLeave = props.on_mouse_leave
+      ..onMouseMove = props.on_mouse_move
       ..className = props.classname
       ..x = '${props.pos.x - width / 2}'
       ..y = '${props.pos.y - width / 2}'

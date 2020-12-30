@@ -721,6 +721,22 @@ abstract class ExportCodenanoFile
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouseover data (main view)
 
+abstract class ShowMouseoverDataSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowMouseoverDataSet, ShowMouseoverDataSetBuilder> {
+  bool get show;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowMouseoverDataSet(bool show) => ShowMouseoverDataSet.from((b) => b..show = show);
+
+  factory ShowMouseoverDataSet.from([void Function(ShowMouseoverDataSetBuilder) updates]) =
+      _$ShowMouseoverDataSet;
+
+  ShowMouseoverDataSet._();
+
+  static Serializer<ShowMouseoverDataSet> get serializer => _$showMouseoverDataSetSerializer;
+}
+
 abstract class MouseoverDataClear
     with BuiltJsonSerializable
     implements Action, Built<MouseoverDataClear, MouseoverDataClearBuilder> {

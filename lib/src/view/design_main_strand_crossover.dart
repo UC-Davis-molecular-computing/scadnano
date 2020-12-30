@@ -12,7 +12,6 @@ import '../state/crossover.dart';
 import '../state/mouseover_data.dart';
 import '../state/strand.dart';
 import '../state/domain.dart';
-import 'design_main_mouseover_rect_helix.dart';
 import 'design_main_strand_loopout.dart';
 import 'design_main_strand_paths.dart';
 import '../app.dart';
@@ -102,15 +101,9 @@ class DesignMainStrandCrossoverComponent
       ..className = classname
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_crossover();
-        }
       }
       ..onMouseLeave = (_) {
         setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          mouse_leave_update_mouseover();
-        }
       }
       ..onPointerDown = ((ev) {
         if (crossover_selectable(props.crossover)) {

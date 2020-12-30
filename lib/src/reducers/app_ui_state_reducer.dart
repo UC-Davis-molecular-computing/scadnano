@@ -187,6 +187,8 @@ bool center_on_load_reducer(bool _, actions.AutofitSet action) => action.autofit
 
 bool show_editor_reducer(bool _, actions.SetShowEditor action) => action.show;
 
+bool show_mouseover_data_set_reducer(bool _, actions.ShowMouseoverDataSet action) => action.show;
+
 bool only_display_selected_helices_reducer(bool _, actions.SetOnlyDisplaySelectedHelices action) =>
     action.only_display_selected_helices;
 
@@ -253,6 +255,10 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
       // if displayed_group_name does not exist, must pick a new one
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
     }
+    // It's possible the the slice bar being set is not valid.
+    storables = storables.rebuild((b) => b
+      ..slice_bar_offset = bounded_offset_in_helices_group(storables.slice_bar_offset, state.design.helices_in_group(state.design.groups.keys.first).values)
+    );
     return storables;
   }
 
@@ -393,7 +399,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..default_crossover_type_staple_for_setting_helix_rolls = TypedReducer<bool,
         actions.DefaultCrossoverTypeForSettingHelixRollsSet>(
         default_crossover_type_staple_for_setting_helix_rolls_reducer)(
-        storables.default_crossover_type_staple_for_setting_helix_rolls, action));
+        storables.default_crossover_type_staple_for_setting_helix_rolls, action)
+    ..show_mouseover_data = TypedReducer<bool, actions.ShowMouseoverDataSet>(show_mouseover_data_set_reducer)(
+        storables.show_mouseover_data, action));
 }
 
 Reducer<String> displayed_group_name_reducer = combineReducers([

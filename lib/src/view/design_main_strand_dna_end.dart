@@ -21,6 +21,7 @@ import 'design_main_strand_dna_end_moving.dart';
 import 'pure_component.dart';
 import '../actions/actions.dart' as actions;
 import '../constants.dart' as constants;
+import '../util.dart' as util;
 
 part 'design_main_strand_dna_end.over_react.g.dart';
 
@@ -93,6 +94,9 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
       ..on_pointer_down = handle_end_click_select_and_or_move_start
       ..on_pointer_up = handle_end_pointer_up_select
       ..on_mouse_up = handle_end_click_ligate_or_potential_crossover
+      ..on_mouse_enter = handle_on_mouse_enter
+      ..on_mouse_leave = handle_on_mouse_leave
+      ..on_mouse_move = handle_on_mouse_move
       ..pos = pos
       ..color = props.color
       ..classname = classname
@@ -215,5 +219,17 @@ class DesignMainDNAEndComponent extends UiComponent2<DesignMainDNAEndProps> with
     } else if (edit_mode_is_ligate() && (is_first || is_last)) {
       app.dispatch(actions.Ligate(dna_end: dna_end));
     }
+  }
+
+  handle_on_mouse_leave(SyntheticMouseEvent event) {
+    util.mouse_leave_update_mouseover();
+  }
+
+  handle_on_mouse_enter(SyntheticMouseEvent event) {
+    util.update_mouseover(event, props.helix);
+  }
+
+  handle_on_mouse_move(SyntheticMouseEvent event) {
+    util.update_mouseover(event, props.helix);
   }
 }
