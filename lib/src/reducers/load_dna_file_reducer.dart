@@ -5,6 +5,7 @@ import '../state/selectable.dart';
 
 import '../state/design.dart';
 import '../actions/actions.dart' as actions;
+import '../state/mouseover_data.dart';
 import '../state/app_state.dart';
 import '../state/undo_redo.dart';
 import '../constants.dart' as constants;

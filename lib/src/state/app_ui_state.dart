@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
+import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import '../actions/actions.dart';
 import '../state/local_storage_design_choice.dart';
@@ -44,6 +45,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get dna_ends_are_moving;
 
   bool get helix_group_is_moving;
+
+  bool get slice_bar_is_moving;
 
   bool get selection_box_displayed_main;
 
@@ -188,6 +191,12 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
 
+  bool get show_slice_bar => storables.show_slice_bar;
+
+  int get slice_bar_offset => storables.slice_bar_offset;
+
+  bool get show_mouseover_data => storables.show_mouseover_data;
+
   static void _initializeBuilder(AppUIStateBuilder b) {
     b.last_mod_5p = null;
     b.last_mod_3p = null;
@@ -199,6 +208,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
     b.potential_crossover_is_drawing = false;
     b.dna_ends_are_moving = false;
     b.helix_group_is_moving = false;
+    b.slice_bar_is_moving = false;
     b.changed_since_last_save = false;
     b.side_view_grid_position_mouse_cursor = null;
     b.side_view_position_mouse_cursor = null;

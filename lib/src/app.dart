@@ -39,7 +39,7 @@ import 'actions/actions.dart' as actions;
 App app = App();
 
 const USE_REDUX_DEV_TOOLS = String.fromEnvironment('SCADNANO_PROD') != 'true';
-//const USE_REDUX_DEV_TOOLS = true;
+// const USE_REDUX_DEV_TOOLS = false;
 
 const RUN_TEST_CODE_INSTEAD_OF_APP = false;
 //const RUN_TEST_CODE_INSTEAD_OF_APP = true;

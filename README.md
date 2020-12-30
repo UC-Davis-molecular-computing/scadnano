@@ -465,6 +465,31 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Show grid coordinates in side view:**
     Shows grid coordinates in the side view under the helix index.
 
+  * **Show slice bar:**
+    Shows a slicebar, which you can drag and move to
+    display the DNA backbone angle of all helices (in a helix group) at a particular offset.
+
+    Each helix has a notion of a roll angle where the phosphate backbone of each of its two bound domains are pointing.
+    The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
+    Most interesting crossovers will be between two helices that are tangent to each other in the side view.
+    Ideally, the roll of each helix is such that the backbones "point at each other".
+
+    This is not intended to be a predictive model based on molecular kinetics,
+    nor is it even intended to be meaningful over the entirety of a helix.
+    Rather, it is useful to set the roll at one offset on a helix to be "perfect"
+    (i.e., the backbones of the two helices at that offset point directly at each other)
+    and then inspect what scadnano claims the roll will be at nearby offsets, in order to help pick appropriate crossover positions.
+
+    Each crossover has a right-click option "unstrain backbone here".
+    If this is selected, then the backbone roll angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets.
+    For setting rolls more generally, you can right click on a helix and select "adjust roll."
+    You can also set rolls via the Python scripting library.
+
+  * **Display strand and helix details in footer:**
+    The footer will display details about the design based
+    on where the cursor is located. If the cursor is on a helix, the helix
+    index and cursor's base offset location is displayed. If the cursor is
+    on a strand, then the strand details will also be displayed.
 
 * Export
 
@@ -613,27 +638,6 @@ There are different edit modes available, shown on the right side of the screen.
   This helps to implement, for example, twist correction in DNA origami (see https://doi.org/10.1038/nchem.1070 for a description), where vertical "columns" of deletions need to be added to every domain in every helix at a given offset.
 
   *Note for cadnano users:* From the user's perspective, cadnano associates each deletion/insertion to an "address", i.e., a helix and offset on that helix. For instance, it is possible to have a "deletion" where there is no DNA strand, and if DNA strand(s) are later placed there, they will have the deletion. By contrast, in scadnano, insertions and deletions are associated to a bound domain. If the domain (or the whole strand) moves, the insertions/deletions move along with it.
-
-* **(b)ackbone:**
-  This shows information in the side view about the roll of the helix when the pointer is over an offset of that helix in the main view, 
-  or of two helices when the pointer is over a crossover joining those two helices. 
-  (It doesn't actually enable any edits, but it *disables* other edits for technical reasons related detecting click events.)
-  Each helix has a notion of a roll angle where the phosphate backbone of each of its two bound domains are pointing. 
-  The purpose of this feature is to help place crossovers between helices at points where the backbone of the strand being connected by the crossover is minimally strained.
-  Most interesting crossovers will be between two helices that are tangent to each other in the side view.
-  Ideally, the roll of each helix is such that the backbones "point at each other".
-
-  This is not intended to be a predictive model based on molecular kinetics, 
-  nor is it even intended to be meaningful over the entirety of a helix. 
-  Rather, it is useful to set the roll at one offset on a helix to be "perfect"
-  (i.e., the backbones of the two helices at that offset point directly at each other)
-  and then inspect what scadnano claims the roll will be at nearby offsets, in order to help pick appropriate crossover positions. 
-
-  Each crossover has a right-click option "unstrain backbone here".
-  If this is selected, then the backbone roll angles of the two helices connected by the crossover will be adjusted to point them at each other at their respective offsets. 
-  The Python scripting library can be used to set these more generally, but it is currently [unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/99) to set them arbitrarily in the web interface. 
-  It is also the case that some simple information about strands and domains under the pointer is shown in the footer when backbone mode is enable, but this will [change](https://github.com/UC-Davis-molecular-computing/scadnano/issues/13) in the future.
-
 
 * **(m)ove group:**
   This mode allows one to translate the currently selected helix group in the main view by clicking and dragging (i.e., to change its `position.x` and `position.y` coordinates, which can also be set manually under the menu Group &rarr; adjust current group). When in this mode, press either the Ctrl (Cmd on Mac) or Shift key and then click+drag with the cursor. (Without pressing Ctrl or Shift, the normal panning of the view will occur, without changing the position of any helix group.)

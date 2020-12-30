@@ -19,7 +19,6 @@ UiFactory<DesignFooterProps> ConnectedDesignFooter = connect<AppState, DesignFoo
         mouseover_datas.isNotEmpty ? state.design.substrand_to_strand[first_mouseover_data.domain] : null;
     String loaded_filename = state.ui_state.loaded_filename;
     return (DesignFooter()
-      ..show_mouseover_rect = state.ui_state.edit_modes.contains(EditModeChoice.backbone)
       ..mouseover_datas = state.ui_state.mouseover_datas
       ..strand_first_mouseover_data = strand_first_mouseover_data
       ..loaded_filename = loaded_filename);
@@ -30,7 +29,6 @@ UiFactory<DesignFooterProps> DesignFooter = _$DesignFooter;
 
 mixin DesignFooterProps on UiProps {
   BuiltList<MouseoverData> mouseover_datas;
-  bool show_mouseover_rect;
   Strand strand_first_mouseover_data;
   String loaded_filename;
 }

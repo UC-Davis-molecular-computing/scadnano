@@ -67,7 +67,7 @@ abstract class UndoableAction implements DesignChangingAction {
   Iterable<Storable> storables() => [Storable.design];
 }
 
-/// Fast actions happen rapidly and are not dispatched to normal store for optimization
+/// Fast actions are not dispatched to normal store for optimization
 abstract class FastAction extends Action {}
 
 // Wrap an UndoableAction in a SkipUndo in order to apply it, but skip its effect on the undo/redo stacks.
@@ -787,6 +787,22 @@ abstract class ExportCodenanoFile
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mouseover data (main view)
+
+abstract class ShowMouseoverDataSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowMouseoverDataSet, ShowMouseoverDataSetBuilder> {
+  bool get show;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowMouseoverDataSet(bool show) => ShowMouseoverDataSet.from((b) => b..show = show);
+
+  factory ShowMouseoverDataSet.from([void Function(ShowMouseoverDataSetBuilder) updates]) =
+      _$ShowMouseoverDataSet;
+
+  ShowMouseoverDataSet._();
+
+  static Serializer<ShowMouseoverDataSet> get serializer => _$showMouseoverDataSetSerializer;
+}
 
 abstract class MouseoverDataClear
     with BuiltJsonSerializable
@@ -3050,6 +3066,68 @@ abstract class SetDisablePngCacheUntilActionCompletes
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// slice bar
+
+abstract class ShowSliceBarSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowSliceBarSet, ShowSliceBarSetBuilder> {
+  bool get show;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowSliceBarSet(bool show) =>
+      ShowSliceBarSet.from((b) => b..show = show);
+
+  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) =
+      _$ShowSliceBarSet;
+
+  ShowSliceBarSet._();
+
+  static Serializer<ShowSliceBarSet> get serializer => _$showSliceBarSetSerializer;
+}
+
+abstract class SliceBarOffsetSet
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarOffsetSet, SliceBarOffsetSetBuilder> {
+  @nullable
+  int get offset;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarOffsetSet(int offset) =>
+      SliceBarOffsetSet.from((b) => b..offset = offset);
+
+  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) =
+      _$SliceBarOffsetSet;
+
+  SliceBarOffsetSet._();
+
+  static Serializer<SliceBarOffsetSet> get serializer => _$sliceBarOffsetSetSerializer;
+}
+
+abstract class SliceBarMoveStart
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) =
+      _$SliceBarMoveStart;
+
+  SliceBarMoveStart._();
+
+  static Serializer<SliceBarMoveStart> get serializer => _$sliceBarMoveStartSerializer;
+}
+
+abstract class SliceBarMoveStop
+    with BuiltJsonSerializable
+    implements Action, Built<SliceBarMoveStop, SliceBarMoveStopBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) =
+      _$SliceBarMoveStop;
+
+  SliceBarMoveStop._();
+
+  static Serializer<SliceBarMoveStop> get serializer => _$sliceBarMoveStopSerializer;
+}
 // autostaple
 
 abstract class Autostaple

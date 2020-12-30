@@ -10,6 +10,7 @@ import 'package:react/react_client.dart';
 import '../state/context_menu.dart';
 import '../state/geometry.dart';
 import '../state/edit_mode.dart';
+import '../state/mouseover_data.dart';
 import '../state/helix.dart';
 import '../app.dart';
 import 'pure_component.dart';
@@ -103,6 +104,12 @@ class DesignMainHelixComponent extends UiComponent2<DesignMainHelixProps> with P
             app.dispatch(actions.StrandCreateStart(address: address, color: util.color_cycler.next()));
           }
         }
+        ..onMouseLeave = ((_) => util.mouse_leave_update_mouseover())
+        //XXX: it matters that we reference props.mouseover_datas, not a local variable
+        // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
+        // otherwise the callback is not updated until render executes again
+        ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix))
+        ..onMouseMove = ((event) => util.update_mouseover(event, props.helix))
         ..x = props.helix.svg_position.x
         ..y = props.helix.svg_position.y
         ..width = '$width'
