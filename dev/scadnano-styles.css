@@ -819,3 +819,27 @@ https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-l
 /************************************************
 ** END Navbar
 ************************************************/
+
+/************************************************
+** BEGIN Slice Bar
+************************************************/
+
+.slice-bar-rect rect {
+    fill:goldenrod;
+    fill-opacity: 50%;
+    cursor: move;
+    stroke: rgb(131, 97, 3);
+    stroke-width: 0.5;
+}
+
+.slice-bar-rect text {
+    fill:rgb(131, 97, 3);
+    fill-opacity: 100%;
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+
+/************************************************
+** END Slice Bar
+************************************************/
