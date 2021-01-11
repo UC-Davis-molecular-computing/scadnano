@@ -446,7 +446,7 @@ And manually click where the deletions should go:
 
 ![](images/manual_deletions.png)
 
-This would only take a few minutes, though it would be quite tedious. Since adding full "columns" of deletions like this is common, there is a shortcut to do it: press Ctrl while clicking. This will add a deletion to *every* helix at the offset where you clicked:
+It would be quite tedious to draw all deletions in this way. Since adding full "columns" of deletions like this is common, there is a shortcut to do it: press Ctrl while clicking. This will add a deletion to *every* helix at the offset where you clicked:
 
 ![](images/deletions_full_column.png)
 
