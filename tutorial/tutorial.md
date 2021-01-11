@@ -334,7 +334,7 @@ Then connect it by a crossover:
 
 ![](images/top_left_edge_staple.png)
 
-In staple select mode, copy and paste it to make a second edge staple:
+In select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
