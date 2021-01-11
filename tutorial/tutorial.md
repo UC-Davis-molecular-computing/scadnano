@@ -302,11 +302,19 @@ Finally, to join the domains separated by a nick in the middle of the top helix,
 
 ![](images/ligate_mode.png)
 
-and click one of the ends where that nick is to join them into a single strand:
+and click one of the ends where that nick is:
+
+![](images/ligate_click.png)
+
+which joins them into a single strand:
+
+![](images/ligate_after_clicking.png)
+
+Now the scaffold is complete!
 
 ![](images/scaffold_complete.png)
 
-Now the scaffold is complete!
+
 
 
 ## add staples
