@@ -238,7 +238,7 @@ When this is done, the design should look like this:
 
 
 
-Now, every other domain of the scaffold looks just like these, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy all the strands we've drawn so far. This can be done by dragging a selection box (press Shift+click+drag), or simply by pressing Ctrl+A while in select edit mode, with strands selectable. 
+Now, every other domain of the scaffold looks just like these, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under *Selectable:*, copy all the strands we've drawn so far. This can be done by dragging a selection box (press Shift+click+drag), or simply by pressing Ctrl+A while in select edit mode, with strands selectable. 
 
 ![](images/scaffold_domains_22_23_selected.png)
 
