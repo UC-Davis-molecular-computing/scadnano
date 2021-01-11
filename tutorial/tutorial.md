@@ -224,7 +224,8 @@ Click on the 3' end of the strand directly below to connect them with a crossove
 
 This method enables any 5' end to be connected to any 3' end.
 
-Now let's connect the rightmost ends of domains on these helices as well. For the common case that you wish to connect ends at the same offset on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
+Now let's connect the rightmost ends of domains on these helices as well. There's a very common case for crossovers:
+you wish to connect ends at the same offset on adjacent helices, on strands pointing in opposite directions. To do this, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
 
 ![](images/potential_vertical_crossover.png)
 
@@ -235,9 +236,17 @@ When this is done, the design should look like this:
 
 
 
-Now, every other domain of the scaffold looks just like these, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy all the strands we've drawn so far. This can be done by dragging a selection box (press Shift+click+drag), or simply by pressing Ctrl+A while in select edit mode, with strands selectable.
+Now, every other domain of the scaffold looks just like these, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy all the strands we've drawn so far. This can be done by dragging a selection box (press Shift+click+drag), or simply by pressing Ctrl+A while in select edit mode, with strands selectable. 
 
 ![](images/scaffold_domains_22_23_selected.png)
+
+Make sure that you have clicked somewhere in the main view first, and are in select edit mode. Otherwise the browser's normal Ctrl+A select all functionality will be used, and instead it will select a lot of the text in the browser window, like this:
+
+![](images/select_all_not_in_select_mode.png)
+
+To get rid of the blue highlighting, just click anywhere in the menu area, e.g., where the cursor is shown here:
+
+![](images/unselect_text.png)
 
 Press Ctrl+C to copy. To paste put the cursor at the leftmost offset of helix 20, in the forward direction, i.e., on the top part of the helix:
 
