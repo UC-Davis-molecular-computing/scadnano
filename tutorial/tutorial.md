@@ -362,7 +362,7 @@ To make the right edge staples, we can copy the left edge staples and paste them
 
 ![](images/right_edge_staples_backwards.png)
 
-However, note that the crossovers are on the wrong side. To fix this, right click any of the edge staples, while they are still all selected, and pick *reflect horizontally (reverse vertical polarity)*
+However, the crossovers are on the wrong side. To fix this, right click any of the edge staples, while they are still all selected, and pick *reflect horizontally (reverse vertical polarity)*
 
 ![](images/reflect_strand_horizontally.png)
 
