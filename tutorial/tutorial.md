@@ -457,7 +457,7 @@ Do this every 48 offsets until the design looks like this:
 
 ## Assign DNA sequence to scaffold
 
-Finally, we complete the design by assigning a DNA sequence to the scaffold. This can also be done in the scripting library (as can any other edits), but we will do this in the graphical interface. Right-click anywhere on the scaffold strand and select "assign DNA":
+Finally, we complete the design by assigning a DNA sequence to the scaffold. Right-click anywhere on the scaffold strand and select "assign DNA":
 
 ![](images/assign_DNA_click.png)
 
@@ -486,5 +486,9 @@ Finally, to create a text file or Excel spreadsheet containing the staple sequen
 A few default options are available. For example, to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends (in "column major" order, meaning first all the left-most staples in order from top to bottom, the the ones to the left of those, then to the left of those, etc.), choose these options:
 
 ![](images/idt_plate_options.png)
+
+This should create an Excel spreadsheet with three sheets, one per plate, that looks like this:
+
+![](images/excel_spreadsheet.png)
 
 The Python scripting library gives more control than the web interface for controlling what is exported.
