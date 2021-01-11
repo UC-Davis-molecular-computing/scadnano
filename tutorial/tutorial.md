@@ -158,7 +158,7 @@ which lengthens the strand:
 ![](images/strand_lengthened.png)
 
 
-To unselect all items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to clear all selections. (This helps when you want to keep several objects selected, but retain the ability to click and drag the background to help pan around the view.)
+To unselect all selected items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to unselect all selected items. This is useful when you want to keep several objects selected, but retain the ability to click and drag the background to help pan around the view.
 
 Now, zoom out and repeat to lengthen it all the way to the right end of the helix. When zoomed out, it can be difficult to click exactly on the 3' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 3' end:
 
