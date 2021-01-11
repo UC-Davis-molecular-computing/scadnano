@@ -502,7 +502,7 @@ Finally, to create a text file or Excel spreadsheet containing the staple sequen
 
 ![](images/export_DNA.png)
 
-A few default options are available. For example, to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends (in "column major" order, meaning first all the left-most staples in order from top to bottom, the the ones to the left of those, then to the left of those, etc.), choose these options:
+The Python scripting library gives more control than the web interface for controlling what is exported. In the web interface, a few default options are available. For example, to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends (in "column major" order, meaning first all the left-most staples in order from top to bottom, the the ones to the left of those, then to the left of those, etc.), choose these options:
 
 ![](images/idt_plate_options.png)
 
@@ -510,4 +510,9 @@ This should create an Excel spreadsheet with three sheets, one per plate, that l
 
 ![](images/excel_spreadsheet.png)
 
-The Python scripting library gives more control than the web interface for controlling what is exported.
+To order from IDT, on the [96-well plate ordering page](https://www.idtdna.com/site/order/plate/index/dna/1800), click on *UPLOAD PLATE(S)*:
+
+![](images/idt_upload_plates.png)
+
+and upload this Excel file.
+
