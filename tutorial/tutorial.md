@@ -338,7 +338,7 @@ In select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
-By default, copy-pasted strands keep the color of the original. To generate a new color for each pasted strand, uncheck *View&rarr;Pasted strands keep original color*
+By default, copy-pasted strands keep the color of the original. To generate a new color for each pasted strand, uncheck *Edit&rarr;Pasted strands keep original color*
 
 ![](images/pasted_strands_new_color_menu_option.png)
 
@@ -364,7 +364,7 @@ To make the right edge staples, we can copy the left edge staples and paste them
 
 ![](images/right_edge_staples_backwards.png)
 
-However, the crossovers are on the wrong side. To fix this, right click any of the edge staples, while they are still all selected, and pick *reflect horizontally (reverse vertical polarity)*
+However, the crossovers are on the wrong side. To fix this, right click any of the right-side edge staples, while they are still all selected, and pick *reflect horizontally (reverse vertical polarity)*
 
 ![](images/reflect_strand_horizontally.png)
 
@@ -372,7 +372,7 @@ This will flip them around:
 
 ![](images/all_edge_staples.png)
 
-The other horizontal reflection option *reflect horizontally* (without reversing vertical polarity) would have a similar effect, but it would have all the strands pointing in the opposite direction. So in fact if you tried this, it would not be allowed, because the scaffold strand is already occupying that direction on those helices. It would generate an error message like this:
+The other horizontal reflection option, *reflect horizontally* (without reversing vertical polarity), would have a similar effect, but it would have all the strands pointing in the opposite direction. So in fact if you tried this, it would not be allowed, because the scaffold strand is already occupying that direction on those helices. It would generate an error message like this:
 
 ![](images/reflect_horizontal_error_message.png)
 
@@ -393,7 +393,7 @@ Draw two seam staples like this between helices 1 and 2:
 ![](images/first_two_seam_staples.png)
 
 
-Recursively copy/paste to get the rest. Note that because they start down one helix compared to the edge staples, there will be 11 total instead of 12:
+Recursively copy/paste to get the rest. Because they start down one helix compared to the edge staples, there will be 11 total instead of 12:
 
 ![](images/all_seam_staples.png)
 
@@ -438,7 +438,7 @@ And manually draw the final few staples:
 
 ## Twist correction using deletions
 
-Finally, twist correction is applied by added deletions at appropriate points. (See [this paper](https://www.nature.com/articles/nchem.1070) for an explanation of the need for twist correction and the mechanism of the solution.)
+Finally, twist correction is applied by added deletions at appropriate points. (See [this paper](https://doi.org/10.1038/nchem.1070) for an explanation of the need for twist correction and the mechanism of the solution.)
 
 We use the deletion edit mode:
 
@@ -448,7 +448,7 @@ And manually click where the deletions should go:
 
 ![](images/manual_deletions.png)
 
-It would be quite tedious to draw all deletions in this way. Since adding full "columns" of deletions like this is common, there is a shortcut to do it: press Ctrl while clicking. This will add a deletion to *every* helix at the offset where you clicked:
+We need to draw 144 total deletions, which would be quite tedious to add manually like this. Since adding full "columns" of deletions like this is common, there is a shortcut to do it: press Ctrl while clicking. This will add a deletion to *every* helix at the offset where you clicked:
 
 ![](images/deletions_full_column.png)
 
@@ -477,7 +477,7 @@ The other two options listed are longer variants available from Tilibit:
 and
 [M13p8064](https://www.tilibit.com/collections/scaffold-dna/products/single-stranded-scaffold-dna-type-p8064).
 
-When assigning DNA, it starts at the 5' end of the strand in scadnano. Since M13 is a circular DNA strand, there are 7249 *rotations* to choose from, indicating which base 0--7248 at which to start, according to the order in which the bases are listed on [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/X02513.1). The scadnano default is 5587, because this is recommend in Rothemund's [original paper, Supplemental Note S8](https://www.nature.com/articles/nature04586#MOESM1). (Rothemund uses 1-based indexing, so it's called rotation 5588 there, but scadnano uses 0-based indexing, so 5587 is the scadnano equivalent.) 
+When assigning DNA, it starts at the 5' end of the strand in scadnano. Since M13 is a circular DNA strand, there are 7249 *rotations* to choose from, indicating which base 0&ndash;7248 at which to start, according to the order in which the bases are listed on [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/X02513.1). The scadnano default is 5587, because this is recommend in Rothemund's [original paper, Supplemental Note S8](https://www.nature.com/articles/nature04586#MOESM1). (Rothemund uses 1-based indexing, so it's called rotation 5588 in that paper, but scadnano uses 0-based indexing, so 5587 is the scadnano equivalent.) 
 
 
 Be sure that *assign complement to bound strands* is checked. This is, in a sense, the primary function of cadnano and scadnano: to translate a desired abstract strand design, together with knowledge of a concrete DNA sequence for the scaffold, into the appropriate sequences for the staples to enable them to bind to the scaffold where we want.
@@ -502,17 +502,19 @@ Finally, to create a text file or Excel spreadsheet containing the staple sequen
 
 ![](images/export_DNA.png)
 
-The Python scripting library gives more control than the web interface for controlling what is exported. In the web interface, a few default options are available. For example, to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends (in "column major" order, meaning first all the left-most staples in order from top to bottom, the the ones to the left of those, then to the left of those, etc.), choose these options:
+The Python scripting library gives more control than the web interface for controlling what is exported. In the web interface, a few common useful options are available. For example, choose these options:
 
 ![](images/idt_plate_options.png)
 
-This should create an Excel spreadsheet with three sheets, one per plate, that looks like this:
+to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends, in "column major" order. Column-major order means first enumerating all the left-most staples in order from top to bottom, then the ones just to the right of those, then to the right of those, etc.
+
+This should create an Excel spreadsheet named [sequences.xlsx](sequences.xlsx), with three sheets, one per plate, that looks like this:
 
 ![](images/excel_spreadsheet.png)
 
-To order from IDT, on the [96-well plate ordering page](https://www.idtdna.com/site/order/plate/index/dna/1800), click on *UPLOAD PLATE(S)*:
+Since IDT requires a minimum of 24 strands to order in a 96-well plate, scadnano will rebalance if necessary to ensure that all plates have at least 24 strands. In this case rebalancing is unnecessary, since there are 216 strands, so maxing out the first two plates with 96 strands each leaves 216&minus;2&middot;96 = 24 left for the last plate.
+
+To order from IDT, on the [96-well plate ordering page](https://www.idtdna.com/site/order/plate/index/dna/1800), click on *UPLOAD PLATE(S)* to upload this Excel file:
 
 ![](images/idt_upload_plates.png)
-
-and upload this Excel file.
 
