@@ -480,7 +480,7 @@ and
 When assigning DNA, it starts at the 5' end of the strand in scadnano. Since M13 is a circular DNA strand, there are 7249 *rotations* to choose from, indicating which base 0--7248 at which to start, according to the order in which the bases are listed on [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/X02513.1). The scadnano default is 5587, because this is recommend in Rothemund's [original paper, Supplemental Note S8](https://www.nature.com/articles/nature04586#MOESM1). (Rothemund uses 1-based indexing, so it's called rotation 5588 there, but scadnano uses 0-based indexing, so 5587 is the scadnano equivalent.) 
 
 
-Be sure that "assign complement to bound strands" is checked. This is, in a sense, the primary function of cadnano and scadnano: to translate a desired abstract strand design, together with knowledge of a concrete DNA sequence for the scaffold, into the appropriate sequences for the staples to enable them to bind to the scaffold where we want.
+Be sure that *assign complement to bound strands* is checked. This is, in a sense, the primary function of cadnano and scadnano: to translate a desired abstract strand design, together with knowledge of a concrete DNA sequence for the scaffold, into the appropriate sequences for the staples to enable them to bind to the scaffold where we want.
 
 Finally, check the box *View&rarr;Show DNA sequences*:
 
