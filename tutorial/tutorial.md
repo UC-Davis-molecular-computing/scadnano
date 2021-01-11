@@ -8,8 +8,6 @@ The design will look like this when we are done:
 
 ![](images/complete_design_no_DNA.png)
 
-The completed design is available as a [`.sc` file](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/24_helix_origami_rectangle_twist_corrected.sc) readable by scadnano.
-
 
 ## Start
 
@@ -28,20 +26,24 @@ If you have never used scadnano before, you will see a screen similar to this:
 
 ## Load completed design to see what it looks like
 
-Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/example_designs/24_helix_rectangle.sc) and save it somewhere on your local file system.
+The completed design is available as the file [`24_helix_rectangle.sc`](24_helix_rectangle.sc) readable by scadnano. To download it, navigate to that page and right-click the *Raw* button at the top right, selecting the appropriate option, for example, in Chrome, it is *Save link as...*:
 
-In the menu at the top of the screen, click File&rarr;Open...
+![](images/download_raw_sc_file.png)
+
+Save the file somewhere on your local file system. In the menu at the top of the screen, click *File&rarr;Open...*
 
 ![](images/file_menu.png)
 
-Choose the file you downloaded. (Alternatively, you can drag the file from your file browser onto the open scadnano page in your web browser.) The design should look similar to the first screenshot in the tutorial.
+Choose the file you downloaded.
+
+Alternatively, you can drag the file from your file browser onto the open scadnano page in your web browser. The design should look similar to the first screenshot in the tutorial.
 
 
 ## Load empty design
 
 Now, let's learn how to make this design ourselves. 
 
-First, load an empty design by clicking File&rarr;Load example and selecting "empty" from the "Load example" list:
+First, load an empty design by clicking *File&rarr;Load example* and selecting "empty" from the "Load example" list:
 
 ![](images/example_empty.png)
 
