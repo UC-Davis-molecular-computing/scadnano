@@ -11,11 +11,6 @@ The design will look like this when we are done:
 The completed design is available as a [`.sc` file](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/24_helix_origami_rectangle_twist_corrected.sc) readable by scadnano.
 
 
-## Note about interface
-
-The visual interface for scadnano is somewhat in flux. As a result, some of the screenshots in this tutorial, and some of the names of menu items, have changed since this tutorial was released. The functionality is all still there, but you may have to search around a bit in the menu to find it. Once the interface has stabilized a bit more, this tutorial will be updated to contain screenshots from the latest version of scadnano.
-
-
 ## Start
 
 Open scadnano in your browser:
@@ -29,22 +24,26 @@ If you have never used scadnano before, you will see a screen similar to this:
 ![initial screenshot of scadnano web interface](images/initial.png)
 
 
+
+
 ## Load completed design to see what it looks like
 
-Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/web/examples/24_helix_origami_rectangle_twist_corrected.sc) and save it somewhere on your local file system.
+Download the [completed design](https://raw.githubusercontent.com/UC-Davis-molecular-computing/scadnano/master/example_designs/24_helix_rectangle.sc) and save it somewhere on your local file system.
 
-Press the button next to the word "Load" at the top (in Chrome the button says "Choose file", whereas in other browsers it might say "Browse" or something different):
+In the menu at the top of the screen, click File&rarr;Open...
 
-![](images/load_file_button.png)
+![](images/file_menu.png)
 
 Choose the file you downloaded. (Alternatively, you can drag the file from your file browser onto the open scadnano page in your web browser.) The design should look similar to the first screenshot in the tutorial.
 
 
 ## Load empty design
 
-Now, let's learn how to make this design ourselves. First, load an empty design by selecting "empty" from the "Load example" list:
+Now, let's learn how to make this design ourselves. 
 
-![](images/load_empty.png)
+First, load an empty design by clicking File&rarr;Load example and selecting "empty" from the "Load example" list:
+
+![](images/example_empty.png)
 
 After loading you should see this:
 
@@ -62,41 +61,48 @@ To begin the design, we need to create helices. Click "(p)encil" under Edit mode
 
 ![](images/pencil_mode.png)
 
-Now click in the side view to create a helix. It will be labeled "0": 
+Now click in the side view to create a helix. 
 
-![](images/one_helix_initial.png)
-
-You can use the mouse wheel or the two-finger motion on the touchpad to zoom out and see the whole helix in the main view:
-
-![](images/one_helix_zoomed_out.png)
-
-You can also use the mouse/touchpad to click+drag and translate the image in the main view (and also the side view). Let's zoom in on helix 0 in both views:
+You may notice that it will be zoomed in very far:
 
 ![](images/one_helix_zoomed_in.png)
 
-In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" (small white squares with gray borders) where DNA strands *could* go; each DNA base occupies one offset. By default the allowed offsets are 0 through 255. This zoom shows only the first 10 offsets of helix 0: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
+Use the mouse wheel or two finger scroll in both the side view on the left and the main view in the middle, to zoom out, and click and drag the background to pan the view left/right/up/down:
+
+![](images/one_helix_initial.png)
+
+As you are editing the design, you may notice that the pan feature stops working, i.e., you click and drag the background, but it no longer moves. This is a known bug that is notoriously difficult to reproduce (and therefore difficult to diagnose and fix): https://github.com/UC-Davis-molecular-computing/scadnano/issues/163 If this happens while you are editing, the fix is to press the Ctrl or Shift key once, which should re-enable normal panning.
+
+In scadnano, a "helix" doesn't refer to a literal DNA double helix. It is a 1D set of locations called "offsets" (small white squares with gray borders) where DNA strands *could* go; each DNA base occupies one offset. By default the allowed offsets are 0 through 63. When using the graphical interface to scadnano, you don't usually need to think much about these numbers, but they are important if you use the Python scripting library, because it uses these numerical offsets to specify where DNA strands begin and end.
 
 Each helix has two "rows" of offsets. The top row always contains the strand whose 3' end is to the right of its 5' end; this strand is a "forward" strand. If there is another strand occupying some of the same offsets, it must be oriented in the opposite direction, i.e., its 3' end is to the left, a so-called "reverse" strand, and it will be drawn in the second row of the helix's offsets.
 
 For now, just understand that moving to the right in the main view moves "into the screen" in the side view. Thus we can think of these as two 2D [projections](https://en.wikipedia.org/wiki/3D_projection) of the 3D space in which helices live. The side view shows the *x*-*y* plane (where moving in the *x* and/or *y* direction moves us between helices) and the main view shows "something like" the *y*-*z* plane (where moving in the *z* direction moves between DNA bases within a helix). The reason for the quotes around "something like" is that we actually will show every helix in the main view, even those with overlapping *x*-coordinates, so the main view is not formally a [linear projection](https://en.wikipedia.org/wiki/Projection_(linear_algebra)). See the [documentation](../README.md) for an explanation of how scadnano chooses helix positions in the main view.
 
-Each helix has given an integer *index*, starting at 0 in the order you create them. (When creating helices with the scripting library or manually editing a scadnano `.sc` file, the helix indices can be any integers, but they must be unique to a helix.) By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to change the indices of existing helices or to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.sc` file), but these edits will be supported soon.
+Each helix has given an integer *index*, starting at 0 in the order you create them. (When creating helices with the scripting library or manually editing a scadnano `.sc` file, the helix indices can be any integers, but they must be unique to a helix.) By default, helices are drawn in the main view from top to bottom in order of their index, but this can be changed with a property called *helices_view_order* in the scripting library. It is [currently unsupported](https://github.com/UC-Davis-molecular-computing/scadnano/issues/36) to edit *helices_view_order* directly in the web interface (the Python scripting library is needed, or direct editing of the `.sc` file).
 
 For now, we just have to be careful to add helices in the order we want them to appear in the main view. In both the main view and side view, we'd like them to appear 0,1,...,23 in order from top to bottom, so zoom out in the side view, and click in the side view to create 23 more helices below the first. If you mess up and click somewhere incorrectly, you can press Ctrl+Z to undo the last action (and Ctrl+Shift+Z to redo):
 
 ![](images/24_helices_empty_default_length.png)
 
-Finally, we need to ensure each helix has enough offsets for all the bases we will need. We will use a standard M13mp18 scaffold strand, of length 7249. We won't use all of it, but we'll use most of it. We have 7249 / 24 &asymp; 302, so length 304 should be enough for each helix. Right click on any helix in the main view and select "adjust length"
+Finally, we need to ensure each helix has enough offsets for all the bases we will need. We will use a standard M13mp18 scaffold strand, of length 7249. We won't use all of it, but we'll use most of it. Right click on any helix in the main view and click "adjust max offset"
 
 ![](images/adjust_helix_length.png)
 
-Enter a value of 304 for "maximum offset" and ensure "apply to all helices" is checked:
+![](images/adjust_helix_max_offset.png)
 
-![](images/adjust_helix_length_dialog.png)
+Enter a value of 288 for "maximum offset" and ensure "apply to all helices" is checked:
+
+![](images/adjust_helix_max_offset_dialog.png)
 
 Click OK and the helix lengths should increase:
 
 ![](images/helices_lengthed.png)
+
+
+Using all 288 offsets on each of the 24 helices means the scaffold will be length 288&middot;24 = 6912, which is close to the full length 7249. (Actually it will be slightly shorter because of the "twist-correction deletions" we add near the end.)
+
+
 
 
 
@@ -111,15 +117,15 @@ Now we show how to create DNA strands. As in cadnano, there's a distinction betw
 
 Many DNA origami designs are quite repetitive. Thus, it is helpful to look at a mockup of the design you want and notice which strands are similar. Generally the fastest way to make a design is to identify a few repetitive strands and copy/paste them.
 
-We start with the scaffold, which is the long blue strand in the first image. The routing pattern is quite repetitive, so we use this to our advantage. First, draw a strand on the left side of helix 0, in the forward direction (i.e., in the top row of the helix).
+We start with the scaffold, which is the long blue strand in the first image. The routing pattern is quite repetitive, so we use this to our advantage. First, draw a strand on the left side of helix 23 (the bottom helix), in the reverse direction (i.e., in the bottom row of the helix).
 
-To do this, select pencil mode and click on helix 0, offset 8, on top, and drag the cursor to the right a few offsets (in this case we go to offset 15), then release the mouse button/touchpad:
+To do this, click pencil mode and click on helix 23, offset 0 (leftmost offset), on bottom, and drag the cursor to the right a few offsets (in this case we go to offset 15), then release the mouse button/touchpad:
 
 ![](images/draw_one_strand.png)
 
 This is a strand consisting of a single *domain*, which is a portion of a strand contiguous on a single helix. Later we will add *crossovers* to connect multiple domains on different helices into a single strand, but for now we simply draw the domains.
 
-By default, strands are not scaffolds, meaning they are part of a design that doesn't represent DNA origami, or they are a DNA origami staple. To make this strand a scaffold, right-click the strand and select "set as scaffold"
+By default, strands are not scaffolds, meaning they are part of a design that doesn't represent DNA origami, or they are a DNA origami staple. To make this strand a scaffold, right-click the strand and click "set as scaffold"
 
 ![](images/set_scaffold.png)
 
@@ -131,11 +137,15 @@ Now, we need to lengthen the strand to cross most of the helix. We could have ma
 
 ![](images/select_mode.png)
 
-Different types of objects can be selectable or not, and some are mutually exclusive. For now, we want to be able to select 5'/3' ends of strands, so click those under "Select" (see the [README](../README.md) for a description of all the selection options):
+Different types of objects can be selectable or not, and some are mutually exclusive. When in select mode (or rope select mode, see [here](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.13.0) for more information about that mode), a list will appear of all the potentially selectable objects. 
 
-![](images/selecton_5p_3p_strand.png)
+Right now, we want to be able to select 5'/3' ends of strands. 5' and 3' can be independently selectable or not, but a quick way to make all 5' and 3' ends selectable (including those that are not at the end of the strand, but are at the end of a domain at a crossover between two domains), is to click "all ends" under "Selectable":
 
-Now we can select and drag ends of strands. Click the 3' end of the strand (the triangle on the right side) and drag it to the right:
+![](images/selection_5p_3p_strand.png)
+
+See the [README](../README.md) for a description of all the selection options.
+
+Now we can select and drag ends of strands. Click the 5' end of the strand (the square on the right side) and drag it to the right:
 
 ![](images/lengthen_strand.png)
 
@@ -143,17 +153,17 @@ which lengthens the strand:
 
 ![](images/strand_lengthened.png)
 
-To unselect all items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to clear all selections.
 
-Now, zoom out and repeat to lengthen it all the way to (almost) the end of the helix. When zoomed out, it can be difficult to click exactly on the 3' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 3' end:
+To unselect all items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to clear all selections. (This helps when you want to keep several objects selected, but retain the ability to click and drag the background to help pan around the view.)
 
-![](images/selection_box_over_3p_end.png)
+Now, zoom out and repeat to lengthen it all the way to the right end of the helix. When zoomed out, it can be difficult to click exactly on the 3' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 3' end:
+
+![](images/selection_box_over_5p_end.png)
 
 Unfortunately, to drag the 3' end, you do have to click it. So it may require zooming in and dragging a few times to get it all the way to the right:
 
-![](images/scaffold_helix_0_full_length.png)
+![](images/scaffold_helix_23_full_length.png)
 
-Note that we stop a bit short on each side (leaving 8 unoccupied offsets on each side of the helix), because 304&middot;24 = 7296 is a bit too long for M13. Instead, we use length 288 on the helix, which if used on every helix will mean the scaffold will be length 288&middot;24 = 6912. (Actually it will be slightly shorter because of the deletions we add near the end.)
 
 You can also Shift-click (or Shift + drag selection box) on items to add them to the selection one at a time, and Ctrl-click (or Ctrl + drag selection box) to toggle whether they are selected.
 
@@ -163,38 +173,38 @@ You can also Shift-click (or Shift + drag selection box) on items to add them to
 
 ## Add other domains of scaffold
 
-First, we copy and paste the strand we just made. To do this, remain in select edit mode, but choose "strand" under "Select":
+First, we copy and paste the strand we just made. To do this, remain in select edit mode, but choose "strand" under "Selectable":
 
-![](images/strand_selection_mode.png)
+![](images/strand_selectable.png)
 
 Now click the strand and press Ctrl+C (the Ctrl key on Windows or Linux behaves the same as the Cmd key on Mac) to copy it.
 
 ![](images/strand_selected.png)
 
-Pressing Ctrl+V and moving the cursor gives you options where to paste the copy. Paste it to start at the same offset on helix 1, but to be a reverse strand, i.e., in the bottom row of the helix:
+Pressing Ctrl+V and moving the cursor gives you options where to paste the copy. Paste it to start at the same offset on helix 22 (the one above), but to be a forward strand, i.e., in the top row of the helix:
 
-![](images/scaffold_substrand_first_copy.png)
+![](images/scaffold_domain_first_copy.png)
 
-Observing the final design and noticing that these two so-called *domains* are connected by a crossover, at this point you might think we want to add those crossovers. Unfortunately, scadnano does not yet support *circular strands*, but adding those crossovers now would create a circular strand.
+At this point, we add nicks to both domains, since the bottom one will have the 5' and 3' ends of the whole scaffold strand, and the top one needs to be nicked to add the crossovers to the domains above it (which we haven't created yet).
 
-In this case, the domain we just drew should not span the entire length of the helix, but instead we want two domains that are adjacent in the middle. To split this domain into two, select the "nick" edit mode:
+To split these domains into two, select the "nick" edit mode. To help see where offset 144 is, first click on *View&rarr;Display major tick offsets ... on all helices*:
 
-![](images/nick_edit_mode.png)
+![](images/show_offsets_all_helices.png)
 
-and click somewhere around the middle of the domain (if this doesn't get exactly to the middle; you can edit the exact offsets of the 5'/3' ends later by selecting and dragging them):
+Then click at offset 144, around the middle of the domain.
 
-![](images/nick_second_substrand.png)
+![](images/nick_first_two_domains.png)
 
 It's a bit harder to see, but here it is zoomed out:
 
-![](images/nick_second_substrand_zoomed_out.png)
-
-Now, every other domain of the scaffold looks just like this, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy the two reverse strands on helix 1 and paste them in the forward direction on helix 2 (when many strands are selected, the mouse cursor for the paste is assumed to be where the rightmost strand on the topmost helix is, so to paste you will want to go to the left side of the main view near the start of the helix):
-
-![](images/helix_2_scaffold_substrands.png)
+![](images/nick_first_two_domains_zoomed_out.png)
 
 
 
+
+## Note on circular strands
+
+We added a nick to the bottom scaffold domain, and when we are done editing the scaffold, that will be where the 5' and 3' ends of the whole strand are. Actually, the real M13 strand is circular, i.e., it has no 5' or 3' end. So why do we design it as a linear strand in scadnano? Although scadnano [supports circular strands](https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v0.13.4), it is typically best to avoid them in final designs, because certain operations, such as assigning DNA sequences, are not well-defined on circular strands.
 
 
 
@@ -202,7 +212,7 @@ Now, every other domain of the scaffold looks just like this, so we can copy/pas
 
 We will want the strands on helices 1 and 2 to be joined by crossovers in the middle, so let's add those now.
 
-Select pencil mode and zoom in to the middle. Click on the 5' end of the left strand on helix 1. A "potential crossover" will be drawn wherever you drag the cursor:
+Select pencil mode and zoom in to the middle. Click on the 5' end of the left strand on helix 22. A "potential crossover" will be drawn wherever you drag the cursor:
 
 ![](images/potential_crossover.png)
 
@@ -210,85 +220,86 @@ Click on the 3' end of the strand directly below to connect them with a crossove
 
 ![](images/crossover.png)
 
-This method enables any 5' end to be connected to any 3' end, as long as they are not already on the same strand (which would create a [circular strand](https://github.com/UC-Davis-molecular-computing/scadnano/issues/5).)
+This method enables any 5' end to be connected to any 3' end.
 
-For the common case that you wish to connect ends at the same offset on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
+Now let's connect the rightmost ends of domains on these helices as well. For the common case that you wish to connect ends at the same offset on adjacent helices, by putting the cursor over where a crossover would be drawn, a potential crossover appears that can be clicked to add the crossover:
 
 ![](images/potential_vertical_crossover.png)
 
 When this is done, the design should look like this:
 
-![](images/scaffold_substrands_helices_0_1_2_seam_crossover.png)
+![](images/scaffold_domains_helices_22_23_crossovers.png)
+
+
+
+
+Now, every other domain of the scaffold looks just like these, so we can copy/paste to get the rest. First, go to select mode with "strand" picked under select, copy all the strands we've drawn so far. This can be done by dragging a selection box (press Shift+click+drag), or simply by pressing Ctrl+A while in select edit mode, with strands selectable.
+
+![](images/scaffold_domains_22_23_selected.png)
+
+Press Ctrl+C to copy. To paste put the cursor at the leftmost offset of helix 20, in the forward direction, i.e., on the top part of the helix:
+
+![](images/scaffold_pasted_helices_20_21.png)
+
+When you copy several strands, when pasting them, the cursor tracks where is the leftmost offset of the topmost domain.
+
+Finally, add crossovers connected the ends at offsets in the middle of helices 21 and 22 (the region of the origami called the "*seam*"):
+
+![](images/scaffold_crossovers_seam_21_22.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
 ## Recursive copy/paste to complete the domains of the scaffold
 
-We also want to connect the strands on helix 0 and 1 by crossovers near the edge of the helix, but not yet, because we aren't done copying the existing shorter strands.
-
-Observe that this alternation of "reverse on helix 1, forward on helix 2" continues though helices 3 and 4, and helices 5 and 6, etc.
+The remainder of the scaffold looks just like what we have drawn so far. We can "recursively copy paste" to quickly generate the rest of the scaffold.
 
 Switch back to *select* edit mode. At this point it might be simpler to select strands by zooming out and doing Shift+drag:
 
-![](images/shift_drag_select_4_scaffold_substrands.png)
+![](images/shift_drag_select_scaffold_domains_20_to_23.png)
 
-Select all four domains on helices, and copy/paste them to helices 3 and 4, respectively, ensuring that the top domains on helix 3 go in the reverse direction.
+Copy paste them to the next four helices above (taking care to match the forward/reverse pattern of the existing domains; they should alternate forward on even helices and reverse on odd helices):
 
-![](images/paste_scaffold_substrands_to_helices_3_4.png)
+![](images/paste_scaffold_domains_16_to_19.png)
 
-Switch to pencil mode, and connect domains on helices 2 and 3 by crossovers near the outer edges of the helices:
+Switch to pencil mode, and connect domains on helices 19 and 20 by crossovers near the seam:
 
-![](images/scaffold_substrands_helices_0_4_out_crossovers.png)
+![](images/scaffold_domains_16_to_23.png)
 
-Now, recursively copy/paste: select all the domains on helices 1-5 and copy/paste them to helices 6-9 as before. Since this is all the domains except the topmost domai, one fast way is to press Ctrl+A to select all strands:
+Now, recursively copy/paste again: select all the domains on helices 16-23 and copy/paste them to helices 8-15:
 
-![](images/all_substrands_selected.png)
+![](images/scaffold_domains_8_to_23.png)
 
-then Ctrl+click the top strand to unselect it:
+We will connect helices 15 and 16 with crossovers at the seam, but before doing that, we paste one more time (you don't have to copy again; it is possible to paste the same strand(s) several times in a row) to the remaining helices 0-7:
 
-![](images/all_but_top_substrand_selected.png)
+![](images/scaffold_domains_all_helices_missing_crossovers_seam.png)
 
-Now copy/paste to helices 6-9:
+*Now*, connect the domains on helices 7 and 8, and those on helices 15 and 16, with crossovers at the seam:
 
-![](images/scaffold_helices_0_9.png)
+![](images/scaffold_complete_with_nick_at_top.png)
 
-In pencil mode, connect helices 4 and 5 by "outer" crossovers:
+Finally, to join the domains separated by a nick in the middle of the top helix, switch to *ligate* edit mode:
 
-![](images/scaffold_substrands_helices_0_8_outer_crossovers.png)
+![](images/ligate_mode.png)
 
-In select mode, copy paste strands from helices 1-8 to helices 9-16, and in pencil mode, connect helices 8 and 9 by outer crossovers:
+and click one of the ends where that nick is to join them into a single strand:
 
-![](images/scaffold_substrands_helices_0_16.png)
+![](images/scaffold_complete.png)
 
-Now, we have only 7 helices worth of strands to fill, and since they start with an odd helix (17), we want to copy strands starting at an odd helix going for 6 more helices. So we will copy the domains on helices 1-7 (or any consecutive helices starting with an odd index) and copy/paste them to helices 17-23. 
-
-To do this, first temporarily disconnect the inner crossovers between helices 7 and 8 by changing to select edit, then pick "crossover" under "select":
-
-![](images/crossover_select_mode.png)
-
-Then select the "inner" crossovers between helices 7 and 8:
-
-![](images/select_crossovers_to_disconnect.png)
-
-Press the delete key to delete them:
-
-![](images/inner_crossovers_disconnected.png)
-
-Now, enabling *strand* under "Select", copy the strands on helices 1-7, and paste them to helices 17-23:
-
-![](images/all_scaffold_substrands_almost_crossover_connected.png)
-
-Finally, in pencil mode add the final remaining crossovers (outer crossovers between helices 0-1, 16-17, and inner crossovers between helices 7-8):
-
-![](images/full_scaffold.png)
-
-The above steps could have been simplified somewhat by waiting until the domains were all drawn to add the crossovers, but then all 36 crossovers would have to be added manually. The total time in each case is probably comparable. It's your preference how much to try to plan ahead so that the copied substructures are more complete.
-
+Now the scaffold is complete!
 
 
 ## add staples
 
-**Note:** Due to a mistake, I forgot to add a few crossovers in the scaffold before adding the staples, so the scaffold below is missing a few crossovers that it should have. The scaffold you are working with should look like it does in the previous image, not like it does in several images below. I'll correct the images below eventually.
 
 ### edge staples
 
@@ -306,6 +317,10 @@ In staple select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
+By default, copy-pasted strands keep the color of the original. To generate a new color for each pasted strand, uncheck *View&rarr;Pasted strands keep original color*
+
+![](images/pasted_strands_new_color_menu_option.png)
+
 Recursively copy/paste until there are 12 edge staples. In other words, copy/paste the current 2 edge staples to make 4:
 
 ![](images/four_edge_staples.png)
@@ -319,9 +334,31 @@ Then paste the same 4 again to make 12:
 ![](images/twelve_edge_staples.png)
 
 
-Follow the same strategy to make the right edge staples:
+
+
+
+### strand reflections
+
+To make the right edge staples, we can copy the left edge staples and paste them on the right:
+
+![](images/right_edge_staples_backwards.png)
+
+However, note that the crossovers are on the wrong side. To fix this, right click any of the edge staples, while they are still all selected, and pick *reflect horizontally (reverse vertical polarity)*
+
+![](images/reflect_strand_horizontally.png)
+
+This will flip them around:
 
 ![](images/all_edge_staples.png)
+
+The other horizontal reflection option *reflect horizontally* (without reversing vertical polarity) would have a similar effect, but it would have all the strands pointing in the opposite direction. So in fact if you tried this, it would not be allowed, because the scaffold strand is already occupying that direction on those helices. It would generate an error message like this:
+
+![](images/reflect_horizontal_error_message.png)
+
+
+
+
+
 
 
 
@@ -334,14 +371,21 @@ Draw two seam staples like this between helices 1 and 2:
 
 ![](images/first_two_seam_staples.png)
 
-Recursively copy/paste to get the rest:
+
+Recursively copy/paste to get the rest. Note that because they start down one helix compared to the edge staples, there will be 11 total instead of 12:
 
 ![](images/all_seam_staples.png)
 
 
+
+
+
+
+
+
 ### inner staples
 
-Draw this staple on helices 0, 1, 2:
+Next to the left edge staples, draw this staple on helices 0, 1, 2:
 
 ![](images/first_inner_staple.png)
 
@@ -375,7 +419,7 @@ And manually draw the final few staples:
 
 Finally, twist correction is applied by added deletions at appropriate points. (See [this paper](https://www.nature.com/articles/nchem.1070) for an explanation of the need for twist correction and the mechanism of the solution.)
 
-We could use the deletion edit mode:
+We use the deletion edit mode:
 
 ![](images/deletion_edit_mode.png)
 
@@ -383,148 +427,28 @@ And manually click where the deletions should go:
 
 ![](images/manual_deletions.png)
 
-This would only take a few minutes, though it would be quite tedious. Furthermore, if we decided to change the location of the deletions slightly, we would have to go back through and re-click on all the deletions we want to remove and click new locations to add deletions.
+This would only take a few minutes, though it would be quite tedious. Since adding full "columns" of deletions like this is common, there is a shortcut to do it: press Ctrl while clicking. This will add a deletion to *every* helix at the offset where you clicked:
 
-This is a good opportunity to show how the Python scripting library can be used for repetitive tasks such as this. If you don't want to learn the Python scripting library just yet, continue clicking to add deletions until the design looks like the next full screenshot below, and skip the next subsection "Adding deletions using a Python script".
+![](images/deletions_full_column.png)
 
-
-
-### Adding deletions using a Python script
-
-First, follow the [installation instructions](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
-
-Save the file using the "Save" button. Name it `24_helix_rectangle.sc`.
-
-Next, put a Python file named `add_deletions_to_24_helix_rectangle.py` in the same folder, with this content:
-
-```python
-import scadnano as sc
-
-def main():
-    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.sc')
-    return design
-
-if __name__ == '__main__':
-    design = main()
-    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.sc')
-```
-
-If you run the above code, it will simply read the design from `24_helix_rectangle.sc` and write the same design to `24_helix_rectangle_twist_corrected.sc`. Our goal now is to add the appropriate deletions in the script before writing the output.
-
-We can simply loop over the helices and the offsets we need to do this. The three new lines are marked with `###`
-
-```python
-import scadnano as sc
-
-def main():
-    design = sc.DNADesign.from_scadnano_file('24_helix_rectangle.sc')
-    for helix in range(24):                     ###
-        for offset in range(27, 294, 48):       ###
-            design.add_deletion(helix, offset)  ###
-    return design
-
-if __name__ == '__main__':
-    design = main()
-    design.write_scadnano_file(filename='24_helix_rectangle_twist_corrected.sc')
-```
-
-This code will only work for this particular design. One could imagine a more general algorithm that works on arbitrary DNA origami rectangles, making some assumptions about how they are designed. But this code is fairly easy to write for just this one specific design: we want deletions on every helix (outer `for` loop), starting after offset 27 and incrementing every 48 bases until the end (inner `for` loop).
-
-If we now load the file `24_helix_rectangle_twist_corrected.sc`, we see this:
+Do this every 48 offsets until the design looks like this:
 
 ![](images/complete_design_no_DNA.png)
 
 
 ## Assign DNA sequence to scaffold
 
-Finally, we complete the design by assigning a DNA sequence to the scaffold. This can also be done in the scripting library (as can any other edits), but we will do this in the graphical interface. Right-click the scaffold strand and select "assign DNA":
+Finally, we complete the design by assigning a DNA sequence to the scaffold. This can also be done in the scripting library (as can any other edits), but we will do this in the graphical interface. Right-click anywhere on the scaffold strand and select "assign DNA":
 
 ![](images/assign_DNA_click.png)
 
-Paste this string into the text box:
+The default option is to choose your own DNA sequence to paste into the textbox, but for the common case that you want to assign the M13 sequence to the strand, it is provided for you, so click *use predefined DNA sequence*:
 
-```
-TTCCCTTCCTTTCTCGCCACGTTCGCCGGCTTTCCCCGTCAAGCTCTAAATCGGGGGCTCCCTTTAGGGTTCCGATTTAGTGCTTTACGGCACCTCGAC
-CCCAAAAAACTTGATTTGGGTGATGGTTCACGTAGTGGGCCATCGCCCTGATAGACGGTTTTTCGCCCTTTGACGTTGGAGTCCACGTTCTTTAATAGT
-GGACTCTTGTTCCAAACTGGAACAACACTCAACCCTATCTCGGGCTATTCTTTTGATTTATAAGGGATTTTGCCGATTTCGGAACCACCATCAAACAGG
-ATTTTCGCCTGCTGGGGCAAACCAGCGTGGACCGCTTGCTGCAACTCTCTCAGGGCCAGGCGGTGAAGGGCAATCAGCTGTTGCCCGTCTCACTGGTGA
-AAAGAAAAACCACCCTGGCGCCCAATACGCAAACCGCCTCTCCCCGCGCGTTGGCCGATTCATTAATGCAGCTGGCACGACAGGTTTCCCGACTGGAAA
-GCGGGCAGTGAGCGCAACGCAATTAATGTGAGTTAGCTCACTCATTAGGCACCCCAGGCTTTACACTTTATGCTTCCGGCTCGTATGTTGTGTGGAATT
-GTGAGCGGATAACAATTTCACACAGGAAACAGCTATGACCATGATTACGAATTCGAGCTCGGTACCCGGGGATCCTCTAGAGTCGACCTGCAGGCATGC
-AAGCTTGGCACTGGCCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTGCAGCACATCCCCCTTTCGCCAGCTG
-GCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTTCCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGCTTTGCCTGGTTTCCGGCACCAGAAGCGGT
-GCCGGAAAGCTGGCTGGAGTGCGATCTTCCTGAGGCCGATACTGTCGTCGTCCCCTCAAACTGGCAGATGCACGGTTACGATGCGCCCATCTACACCAA
-CGTGACCTATCCCATTACGGTCAATCCGCCGTTTGTTCCCACGGAGAATCCGACGGGTTGTTACTCGCTCACATTTAATGTTGATGAAAGCTGGCTACA
-GGAAGGCCAGACGCGAATTATTTTTGATGGCGTTCCTATTGGTTAAAAAATGAGCTGATTTAACAAAAATTTAATGCGAATTTTAACAAAATATTAACG
-TTTACAATTTAAATATTTGCTTATACAATCTTCCTGTTTTTGGGGCTTTTCTGATTATCAACCGGGGTACATATGATTGACATGCTAGTTTTACGATTA
-CCGTTCATCGATTCTCTTGTTTGCTCCAGACTCTCAGGCAATGACCTGATAGCCTTTGTAGATCTCTCAAAAATAGCTACCCTCTCCGGCATTAATTTA
-TCAGCTAGAACGGTTGAATATCATATTGATGGTGATTTGACTGTCTCCGGCCTTTCTCACCCTTTTGAATCTTTACCTACACATTACTCAGGCATTGCA
-TTTAAAATATATGAGGGTTCTAAAAATTTTTATCCTTGCGTTGAAATAAAGGCTTCTCCCGCAAAAGTATTACAGGGTCATAATGTTTTTGGTACAACC
-GATTTAGCTTTATGCTCTGAGGCTTTATTGCTTAATTTTGCTAATTCTTTGCCTTGCCTGTATGATTTATTGGATGTTAATGCTACTACTATTAGTAGA
-ATTGATGCCACCTTTTCAGCTCGCGCCCCAAATGAAAATATAGCTAAACAGGTTATTGACCATTTGCGAAATGTATCTAATGGTCAAACTAAATCTACT
-CGTTCGCAGAATTGGGAATCAACTGTTATATGGAATGAAACTTCCAGACACCGTACTTTAGTTGCATATTTAAAACATGTTGAGCTACAGCATTATATT
-CAGCAATTAAGCTCTAAGCCATCCGCAAAAATGACCTCTTATCAAAAGGAGCAATTAAAGGTACTCTCTAATCCTGACCTGTTGGAGTTTGCTTCCGGT
-CTGGTTCGCTTTGAAGCTCGAATTAAAACGCGATATTTGAAGTCTTTCGGGCTTCCTCTTAATCTTTTTGATGCAATCCGCTTTGCTTCTGACTATAAT
-AGTCAGGGTAAAGACCTGATTTTTGATTTATGGTCATTCTCGTTTTCTGAACTGTTTAAAGCATTTGAGGGGGATTCAATGAATATTTATGACGATTCC
-GCAGTATTGGACGCTATCCAGTCTAAACATTTTACTATTACCCCCTCTGGCAAAACTTCTTTTGCAAAAGCCTCTCGCTATTTTGGTTTTTATCGTCGT
-CTGGTAAACGAGGGTTATGATAGTGTTGCTCTTACTATGCCTCGTAATTCCTTTTGGCGTTATGTATCTGCATTAGTTGAATGTGGTATTCCTAAATCT
-CAACTGATGAATCTTTCTACCTGTAATAATGTTGTTCCGTTAGTTCGTTTTATTAACGTAGATTTTTCTTCCCAACGTCCTGACTGGTATAATGAGCCA
-GTTCTTAAAATCGCATAAGGTAATTCACAATGATTAAAGTTGAAATTAAACCATCTCAAGCCCAATTTACTACTCGTTCTGGTGTTTCTCGTCAGGGCA
-AGCCTTATTCACTGAATGAGCAGCTTTGTTACGTTGATTTGGGTAATGAATATCCGGTTCTTGTCAAGATTACTCTTGATGAAGGTCAGCCAGCCTATG
-CGCCTGGTCTGTACACCGTTCATCTGTCCTCTTTCAAAGTTGGTCAGTTCGGTTCCCTTATGATTGACCGTCTGCGCCTCGTTCCGGCTAAGTAACATG
-GAGCAGGTCGCGGATTTCGACACAATTTATCAGGCGATGATACAAATCTCCGTTGTACTTTGTTTCGCGCTTGGTATAATCGCTGGGGGTCAAAGATGA
-GTGTTTTAGTGTATTCTTTTGCCTCTTTCGTTTTAGGTTGGTGCCTTCGTAGTGGCATTACGTATTTTACCCGTTTAATGGAAACTTCCTCATGAAAAA
-GTCTTTAGTCCTCAAAGCCTCTGTAGCCGTTGCTACCCTCGTTCCGATGCTGTCTTTCGCTGCTGAGGGTGACGATCCCGCAAAAGCGGCCTTTAACTC
-CCTGCAAGCCTCAGCGACCGAATATATCGGTTATGCGTGGGCGATGGTTGTTGTCATTGTCGGCGCAACTATCGGTATCAAGCTGTTTAAGAAATTCAC
-CTCGAAAGCAAGCTGATAAACCGATACAATTAAAGGCTCCTTTTGGAGCCTTTTTTTTGGAGATTTTCAACGTGAAAAAATTATTATTCGCAATTCCTT
-TAGTTGTTCCTTTCTATTCTCACTCCGCTGAAACTGTTGAAAGTTGTTTAGCAAAATCCCATACAGAAAATTCATTTACTAACGTCTGGAAAGACGACA
-AAACTTTAGATCGTTACGCTAACTATGAGGGCTGTCTGTGGAATGCTACAGGCGTTGTAGTTTGTACTGGTGACGAAACTCAGTGTTACGGTACATGGG
-TTCCTATTGGGCTTGCTATCCCTGAAAATGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTTCTGAGGGTGGCGGTACTAAACCTCCTG
-AGTACGGTGATACACCTATTCCGGGCTATACTTATATCAACCCTCTCGACGGCACTTATCCGCCTGGTACTGAGCAAAACCCCGCTAATCCTAATCCTT
-CTCTTGAGGAGTCTCAGCCTCTTAATACTTTCATGTTTCAGAATAATAGGTTCCGAAATAGGCAGGGGGCATTAACTGTTTATACGGGCACTGTTACTC
-AAGGCACTGACCCCGTTAAAACTTATTACCAGTACACTCCTGTATCATCAAAAGCCATGTATGACGCTTACTGGAACGGTAAATTCAGAGACTGCGCTT
-TCCATTCTGGCTTTAATGAGGATTTATTTGTTTGTGAATATCAAGGCCAATCGTCTGACCTGCCTCAACCTCCTGTCAATGCTGGCGGCGGCTCTGGTG
-GTGGTTCTGGTGGCGGCTCTGAGGGTGGTGGCTCTGAGGGTGGCGGTTCTGAGGGTGGCGGCTCTGAGGGAGGCGGTTCCGGTGGTGGCTCTGGTTCCG
-GTGATTTTGATTATGAAAAGATGGCAAACGCTAATAAGGGGGCTATGACCGAAAATGCCGATGAAAACGCGCTACAGTCTGACGCTAAAGGCAAACTTG
-ATTCTGTCGCTACTGATTACGGTGCTGCTATCGATGGTTTCATTGGTGACGTTTCCGGCCTTGCTAATGGTAATGGTGCTACTGGTGATTTTGCTGGCT
-CTAATTCCCAAATGGCTCAAGTCGGTGACGGTGATAATTCACCTTTAATGAATAATTTCCGTCAATATTTACCTTCCCTCCCTCAATCGGTTGAATGTC
-GCCCTTTTGTCTTTGGCGCTGGTAAACCATATGAATTTTCTATTGATTGTGACAAAATAAACTTATTCCGTGGTGTCTTTGCGTTTCTTTTATATGTTG
-CCACCTTTATGTATGTATTTTCTACGTTTGCTAACATACTGCGTAATAAGGAGTCTTAATCATGCCAGTTCTTTTGGGTATTCCGTTATTATTGCGTTT
-CCTCGGTTTCCTTCTGGTAACTTTGTTCGGCTATCTGCTTACTTTTCTTAAAAAGGGCTTCGGTAAGATAGCTATTGCTATTTCATTGTTTCTTGCTCT
-TATTATTGGGCTTAACTCAATTCTTGTGGGTTATCTCTCTGATATTAGCGCTCAATTACCCTCTGACTTTGTTCAGGGTGTTCAGTTAATTCTCCCGTC
-TAATGCGCTTCCCTGTTTTTATGTTATTCTCTCTGTAAAGGCTGCTATTTTCATTTTTGACGTTAAACAAAAAATCGTTTCTTATTTGGATTGGGATAA
-ATAATATGGCTGTTTATTTTGTAACTGGCAAATTAGGCTCTGGAAAGACGCTCGTTAGCGTTGGTAAGATTCAGGATAAAATTGTAGCTGGGTGCAAAA
-TAGCAACTAATCTTGATTTAAGGCTTCAAAACCTCCCGCAAGTCGGGAGGTTCGCTAAAACGCCTCGCGTTCTTAGAATACCGGATAAGCCTTCTATAT
-CTGATTTGCTTGCTATTGGGCGCGGTAATGATTCCTACGATGAAAATAAAAACGGCTTGCTTGTTCTCGATGAGTGCGGTACTTGGTTTAATACCCGTT
-CTTGGAATGATAAGGAAAGACAGCCGATTATTGATTGGTTTCTACATGCTCGTAAATTAGGATGGGATATTATTTTTCTTGTTCAGGACTTATCTATTG
-TTGATAAACAGGCGCGTTCTGCATTAGCTGAACATGTTGTTTATTGTCGTCGTCTGGACAGAATTACTTTACCTTTTGTCGGTACTTTATATTCTCTTA
-TTACTGGCTCGAAAATGCCTCTGCCTAAATTACATGTTGGCGTTGTTAAATATGGCGATTCTCAATTAAGCCCTACTGTTGAGCGTTGGCTTTATACTG
-GTAAGAATTTGTATAACGCATATGATACTAAACAGGCTTTTTCTAGTAATTATGATTCCGGTGTTTATTCTTATTTAACGCCTTATTTATCACACGGTC
-GGTATTTCAAACCATTAAATTTAGGTCAGAAGATGAAATTAACTAAAATATATTTGAAAAAGTTTTCTCGCGTTCTTTGTCTTGCGATTGGATTTGCAT
-CAGCATTTACATATAGTTATATAACCCAACCTAAGCCGGAGGTTAAAAAGGTAGTCTCTCAGACCTATGATTTTGATAAATTCACTATTGACTCTTCTC
-AGCGTCTTAATCTAAGCTATCGCTATGTTTTCAAGGATTCTAAGGGAAAATTAATTAATAGCGACGATTTACAGAAGCAAGGTTATTCACTCACATATA
-TTGATTTATGTACTGTTTCCATTAAAAAAGGTAATTCAAATGAAATTGTTAAATGTAATTAATTTTGTTTTCTTGATGTTTGTTTCATCATCTTCTTTT
-GCTCAGGTAATTGAAATGAATAATTCGCCTCTGCGCGATTTTGTAACTTGGTATTCAAAGCAATCAGGCGAATCCGTTATTGTTTCTCCCGATGTAAAA
-GGTACTGTTACTGTATATTCATCTGACGTTAAACCTGAAAATCTACGCAATTTCTTTATTTCTGTTTTACGTGCAAATAATTTTGATATGGTAGGTTCT
-AACCCTTCCATTATTCAGAAGTATAATCCAAACAATCAGGATTATATTGATGAATTGCCATCATCTGATAATCAGGAATATGATGATAATTCCGCTCCT
-TCTGGTGGTTTCTTTGTTCCGCAAAATGATAATGTTACTCAAACTTTTAAAATTAATAACGTTCGGGCAAAGGATTTAATACGAGTTGTCGAATTGTTT
-GTAAAGTCTAATACTTCTAAATCCTCAAATGTATTATCTATTGACGGCTCTAATCTATTAGTTGTTAGTGCTCCTAAAGATATTTTAGATAACCTTCCT
-CAATTCCTTTCAACTGTTGATTTGCCAACTGACCAGATATTGATTGAGGGTTTGATATTTGAGGTTCAGCAAGGTGATGCTTTAGATTTTTCATTTGCT
-GCTGGCTCTCAGCGTGGCACTGTTGCAGGCGGTGTTAATACTGACCGCCTCACCTCTGTTTTATCTTCTGCTGGTGGTTCGTTCGGTATTTTTAATGGC
-GATGTTTTAGGGCTATCAGTTCGCGCATTAAAGACTAATAGCCATTCAAAAATATTGTCTGTGCCACGTATTCTTACGCTTTCAGGTCAGAAGGGTTCT
-ATCTCTGTTGGCCAGAATGTCCCTTTTATTACTGGTCGTGTGACTGGTGAATCTGCCAATGTAAATAATCCATTTCAGACGATTGAGCGTCAAAATGTA
-GGTATTTCCATGAGCGTTTTTCCTGTTGCAATGGCTGGCGGTAATATTGTTCTGGATATTACCAGCAAGGCCGATAGTTTGAGTTCTTCTACTCAGGCA
-AGTGATGTTATTACTAATCAAAGAAGTATTGCTACAACGGTTAATTTGCGTGATGGACAGACTCTTTTACTCGGTGGCCTCACTGATTATAAAAACACT
-TCTCAGGATTCTGGCGTACCGTTCCTGTCTAAAATCCCTTTAATCGGCCTCCTGTTTAGCTCCCGCTCTGATTCTAACGAGGAAAGCACGTTATACGTG
-CTCGTCAAAGCAACCATAGTACGCGCCCTGTAGCGGCGCATTAAGCGCGGCGGGTGTGGTGGTTACGCGCAGCGTGACCGCTACACTTGCCAGCGCCCT
-AGCGCCCGCTCCTTTCGCTTTC
-```
-
-![](images/assign_DNA_dialog.png)
+![](images/assign_m13.png)
 
 Be sure that "assign complement to bound strands" is checked. This is, in a sense, the primary function of cadnano and scadnano: to translate a desired abstract strand design, together with knowledge of a concrete DNA sequence for the scaffold, into the appropriate sequences for the staples to enable them to bind to the scaffold where we want.
 
-Finally, check the box "show DNA":
+Finally, check the box *View&rarr;Show DNA sequences*:
 
 ![](images/show_dna.png)
 
@@ -532,10 +456,16 @@ When a large design displays its full DNA sequence, it can be slow to do things 
 
 And there we have it, the completed design:
 
-![](images/full_design.png)
+![](images/complete_design.png)
 
 ## Exporting DNA sequences
 
-Finally, to create a text file or Excel spreadsheet containing the staple sequences, click the button "Export DNA". A few default options are available. 
+Finally, to create a text file or Excel spreadsheet containing the staple sequences, click *Export&rarr;DNA sequences*: 
 
-The Python scripting library gives more control than the web interface. Currently, some default options are available for both the web interface and the scripting library for making files that can be uploaded to the web site of the synthesis company IDT. In the future, scadnano will support export formats for other biotech companies.
+![](images/export_DNA.png)
+
+A few default options are available. For example, to create an Excel spreadsheet that can be used to order staples from the synthesis company IDT in 96-well plates, with strands sorted by the positions of their 5' ends (in "column major" order, meaning first all the left-most staples in order from top to bottom, the the ones to the left of those, then to the left of those, etc.), choose these options:
+
+![](images/idt_plate_options.png)
+
+The Python scripting library gives more control than the web interface for controlling what is exported.
