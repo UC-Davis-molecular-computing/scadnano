@@ -43,7 +43,7 @@ Alternatively, you can drag the file from your file browser onto the open scadna
 
 Now, let's learn how to make this design ourselves. 
 
-First, load an empty design by clicking *File&rarr;Load example* and selecting "empty" from the "Load example" list:
+First, load an empty design by clicking *File&rarr;Load example* and selecting "empty" from the "Load example DNA design" list:
 
 ![](images/example_empty.png)
 
