@@ -53,6 +53,8 @@ The left part is called the "side view" and the middle part is called the "main 
 
 First, save this design into a file by pressing the "Save" button. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically using the "Save" button.
 
+Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
+
 
 
 ## Create helices
