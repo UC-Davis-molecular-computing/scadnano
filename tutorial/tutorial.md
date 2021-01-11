@@ -467,11 +467,28 @@ The default option is to choose your own DNA sequence to paste into the textbox,
 
 ![](images/assign_m13.png)
 
+The "standard" variant, commonly known as M13mp18, is called *M13p7249* in scadnano. It is available from many biotech companies, e.g., 
+[Tilibit](https://www.tilibit.com/collections/scaffold-dna/products/single-stranded-scaffold-dna-type-p7249),
+[New England Biolabs](https://www.neb.com/products/n4040-m13mp18-single-stranded-dna), 
+or
+[Bayou](http://www.bayoubiolabs.com/biochemicat/vectors/pUCM13/).
+The other two options listed are longer variants available from Tilibit:
+[M13p7560](https://www.tilibit.com/collections/scaffold-dna/products/single-stranded-scaffold-dna-type-p7560)
+and
+[M13p8064](https://www.tilibit.com/collections/scaffold-dna/products/single-stranded-scaffold-dna-type-p8064).
+
+When assigning DNA, it starts at the 5' end of the strand in scadnano. Since M13 is a circular DNA strand, there are 7249 *rotations* to choose from, indicating which base 0--7248 at which to start, according to the order in which the bases are listed on [GenBank](https://www.ncbi.nlm.nih.gov/nuccore/X02513.1). The scadnano default is 5587, because this is recommend in Rothemund's [original paper, Supplemental Note S8](https://www.nature.com/articles/nature04586#MOESM1). (Rothemund uses 1-based indexing, so it's called rotation 5588 there, but scadnano uses 0-based indexing, so 5587 is the scadnano equivalent.) 
+
+
 Be sure that "assign complement to bound strands" is checked. This is, in a sense, the primary function of cadnano and scadnano: to translate a desired abstract strand design, together with knowledge of a concrete DNA sequence for the scaffold, into the appropriate sequences for the staples to enable them to bind to the scaffold where we want.
 
 Finally, check the box *View&rarr;Show DNA sequences*:
 
 ![](images/show_dna.png)
+
+Rotation 5587 begins with the sequence TTCCCTTCCTTTC..., and this can be seen by zooming in on the seam on the bottom helix:
+
+![](images/M13_sequence_near_5p.png)
 
 When a large design displays its full DNA sequence, it can be slow to do things like zooming in and out, so normally it's a good idea to leave this box unchecked. But when checked, we can inspect the entire DNA sequence of both the scaffold and the staples.
 
