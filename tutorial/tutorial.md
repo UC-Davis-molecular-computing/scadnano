@@ -214,7 +214,7 @@ We added a nick to the bottom scaffold domain, and when we are done editing the 
 
 ## Link domains into one long scaffold strand
 
-We will want the strands on helices 1 and 2 to be joined by crossovers in the middle, so let's add those now.
+We will want the strands on helices 22 and 23 to be joined by crossovers in the middle, so let's add those now.
 
 Select pencil mode and zoom in to the middle. Click on the 5' end of the left strand on helix 22. A "potential crossover" will be drawn wherever you drag the cursor:
 
