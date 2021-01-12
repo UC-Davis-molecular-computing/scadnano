@@ -401,7 +401,7 @@ Draw two seam staples like this between helices 1 and 2:
 ![](images/first_two_seam_staples.png)
 
 
-Recursively copy/paste to get the rest. Because they start down one helix compared to the edge staples, there will be 11 total instead of 12:
+Recursively copy/paste to get the rest. Because they start down one helix compared to the edge staples, there will be 11 pairs total instead of 12:
 
 ![](images/all_seam_staples.png)
 
