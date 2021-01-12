@@ -490,6 +490,8 @@ Rotation 5587 begins with the sequence TTCCCTTCCTTTC..., and this can be seen by
 
 ![](images/M13_sequence_near_5p.png)
 
+Recall that the scaffold strand length before adding the deletions was 24&middot;288 = 6912. We added 24&middot;6=144 deletions, so the final scaffold length is 6912&minus;144 = 6768. Thus, only the first 6768 bases of M13, starting at index 5587, are used. The remaining 7249&minus;6768 = 481 bases are not displayed (or stored) in scadnano. However, since the real M13 strand has those bases (and is circular), our design will have a loopout of length 481 just below the bottom helix at the seam, joining the 5' and 3' ends of the scadnano strand.
+
 When a large design displays its full DNA sequence, it can be slow to do things like zooming in and out, so normally it's a good idea to leave this box unchecked. But when checked, we can inspect the entire DNA sequence of both the scaffold and the staples.
 
 And there we have it, the completed design:
