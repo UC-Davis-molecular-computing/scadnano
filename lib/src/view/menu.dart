@@ -69,6 +69,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..warn_on_exit_if_unsaved = state.ui_state.warn_on_exit_if_unsaved
       ..show_grid_coordinates_side_view = state.ui_state.show_grid_coordinates_side_view
       ..show_loopout_length = state.ui_state.show_loopout_length
+      ..show_slice_bar = state.ui_state.show_slice_bar
+      ..show_mouseover_data = state.ui_state.show_mouseover_data
       ..local_storage_design_choice = state.ui_state.local_storage_design_choice
       ..clear_helix_selection_when_loading_new_design =
           state.ui_state.clear_helix_selection_when_loading_new_design
@@ -112,6 +114,8 @@ mixin MenuPropsMixin on UiProps {
   bool show_helix_circles_main_view;
   bool show_grid_coordinates_side_view;
   bool show_loopout_length;
+  bool show_slice_bar;
+  bool show_mouseover_data;
   bool default_crossover_type_scaffold_for_setting_helix_rolls;
   bool default_crossover_type_staple_for_setting_helix_rolls;
   LocalStorageDesignChoice local_storage_design_choice;
@@ -665,6 +669,36 @@ When selected, the length of each loopout is displayed next to it.'''
         ..onChange = ((_) =>
             props.dispatch(actions.ShowLoopoutLengthSet(show_loopout_length: !props.show_loopout_length)))
         ..key = 'show-loopout-length')(),
+      (MenuBoolean()
+        ..value = props.show_slice_bar
+        ..display = 'Show slice bar'
+        ..tooltip = '''\
+When selected, a slicebar is displayed, which users can drag and move to
+display the DNA backbone angle of all helices at a particular offset.
+        '''
+        ..name = 'show-slice-bar'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowSliceBarSet(!props.show_slice_bar));
+        }
+        ..key = 'show-slice-bar'
+      )(),
+      (MenuBoolean()
+        ..value = props.show_mouseover_data
+        ..display = 'Display strand and helix details in footer'
+        ..tooltip = '''\
+When selected, the footer will display details about the design based
+on where the cursor is located. If the cursor is on a helix, the helix
+index and cursor's base offset location is displayed. If the cursor is
+on a strand, then the strand details will also be displayed.
+
+In a large design, this can slow down the performance, so uncheck it when not in use.
+        '''
+        ..name = 'show-mouseover-data'
+        ..onChange = (_) {
+          props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
+        }
+        ..key = 'show-mouseover-data'
+      )()
     ];
   }
 

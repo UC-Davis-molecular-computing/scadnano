@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:over_react/over_react.dart';
+import 'package:scadnano/src/state/dialog.dart';
 import 'package:smart_dialogs/smart_dialogs.dart';
 
 import 'transform_by_helix_group.dart';
@@ -96,15 +97,9 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
       ..d = path_description
       ..onMouseEnter = (ev) {
         setState(newState()..mouse_hover = true);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
       }
       ..onMouseLeave = ((_) {
         setState(newState()..mouse_hover = false);
-        if (edit_mode_is_backbone()) {
-          update_mouseover_loopout();
-        }
       })
       ..onPointerDown = ((ev) {
         if (loopout_selectable(props.loopout)) {
@@ -153,6 +148,14 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
           title: 'change loopout length',
           on_click: loopout_length_change,
         ),
+        ContextMenuItem(
+          title: 'set loopout name',
+          on_click: set_loopout_name,
+        ),
+        if (props.loopout.name != null)
+          ContextMenuItem(
+              title: 'remove loopout name',
+              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: props.loopout))),
       ];
 
   update_mouseover_loopout() {
@@ -184,6 +187,22 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
     } else {
       action = actions.LoopoutLengthChange(props.loopout, new_length);
     }
+    app.dispatch(action);
+  }
+
+  set_loopout_name() => app.disable_keyboard_shortcuts_while(ask_for_loopout_name);
+
+  Future<void> ask_for_loopout_name() async {
+    int name_idx = 0;
+    var items = List<DialogItem>(1);
+    items[name_idx] = DialogText(label: 'name', value: props.loopout.name ?? '');
+    var dialog = Dialog(title: 'set loopout name', items: items);
+
+    List<DialogItem> results = await util.dialog(dialog);
+    if (results == null) return;
+
+    String name = (results[name_idx] as DialogText).value;
+    actions.UndoableAction action = actions.SubstrandNameSet(name: name, substrand: props.loopout);
     app.dispatch(action);
   }
 

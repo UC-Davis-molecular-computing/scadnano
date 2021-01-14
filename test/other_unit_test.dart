@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:scadnano/src/state/domain.dart';
@@ -405,5 +406,25 @@ main() {
     expect(design.helices[1].major_tick_start, 1);
     expect(design.helices[2].major_tick_start, 2);
     expect(design.helices[3].major_tick_start, 3);
+  });
+
+  // See issue #551: https://github.com/UC-Davis-molecular-computing/scadnano/issues/551
+  //
+  //
+  // (1,2)    (11,2)   (21,2)
+  //  |       |        |
+  //  v       v        v
+  //  [------][-------][--------] ...
+  //     -5     -4        -3
+  test('helix.svg_x_to_offset_when_min_offset_is_non-zero', () {
+    // Tweak rise per base pair so that svg base width will be exactly 10
+    var rise_per_base_pair = 10 / 30.12;
+    var helix = Helix(idx: 0, grid: Grid.square, svg_position: Point(1, 2), min_offset: -5, max_offset: 8, geometry: Geometry(rise_per_base_pair: rise_per_base_pair));
+
+    expect(helix.svg_x_to_offset(1), -5);
+    expect(helix.svg_x_to_offset(3), -5); // base interior
+    expect(helix.svg_x_to_offset(11), -4);
+    expect(helix.svg_x_to_offset(15), -4); // base interior
+    expect(helix.svg_x_to_offset(21), -3);
   });
 }

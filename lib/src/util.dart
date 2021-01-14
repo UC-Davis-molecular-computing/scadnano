@@ -10,11 +10,13 @@ import 'dart:typed_data';
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
+import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
@@ -37,6 +39,7 @@ import 'state/grid_position.dart';
 import 'state/helix.dart';
 import 'state/loopout.dart';
 import 'state/design.dart';
+import 'state/mouseover_data.dart';
 import 'constants.dart' as constants;
 import 'state/domain.dart';
 import 'state/position3d.dart';
@@ -476,6 +479,64 @@ Helix find_closest_helix(
   }
   return closest_helix;
 }
+
+/// Returns `offset` if offset is within bounds of helices in `helices_in_group`.
+/// If `offset` is too high, returns the upper bound offset.
+/// If `offset` is too low, returns the lower bound offset.
+/// If `offset` is null, returns the lower bound offset.
+int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group) {
+  var range = find_helix_group_min_max(helices_in_group);
+  var min_offset = range.x;
+  var max_offset = range.y;
+
+  if (offset != null) {
+    return min(max_offset - 1, max(offset, min_offset));
+  } else {
+    return min_offset;
+  }
+}
+
+/// Find min_offset and max_offset range of list of of helices.
+Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
+  int min_offset = helices_in_group.first.min_offset;
+  int max_offset = helices_in_group.first.max_offset;
+  for (var helix in helices_in_group) {
+    min_offset = min(helix.min_offset, min_offset);
+    max_offset = max(helix.max_offset, max_offset);
+  }
+  return Point(min_offset, max_offset);
+}
+
+/// Return closest offset in a helix group where click event occured.
+int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+  var svg_clicked_point = svg_position_of_mouse_click(event);
+  var svg_clicked_point_untransformed = group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+
+  var range = find_helix_group_min_max(helices_in_group);
+  var min_offset = range.x;
+  var max_offset = range.y;
+
+  int closest_offset_unbounded = helices_in_group.first.svg_x_to_offset(svg_clicked_point_untransformed.x);
+
+  // max_offset in helix is non-inclusive, so highest offset value is max_offset - 1
+  return min(max_offset - 1, max(closest_offset_unbounded, min_offset));
+}
+
+/// Return list of mouseover data about helix group `group_name` at `offset`.
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, Design design, String group_name) {
+  List<DesignSideRotationParams> rotation_params_list = [];
+  if (offset != null) {
+    for (var helix_idx in design.helix_idxs_in_group[group_name]) {
+      var helix = design.helices[helix_idx];
+      if (offset >= helix.min_offset && offset < helix.max_offset) {
+        var rotation_params = DesignSideRotationParams(helix_idx, offset);
+        rotation_params_list.add(rotation_params);
+      }
+    }
+  }
+  return DesignSideRotationData.from_params(design, rotation_params_list).toBuiltList();
+}
+
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address(
@@ -1449,3 +1510,87 @@ async_alert(String msg) async {
 // detect duplicates in list
 
 List<T> remove_duplicates<T>(Iterable<T> list) => LinkedHashSet<T>.from(list).toList();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mouseover Data
+
+bool show_mouseover_data() {
+  return app.state.ui_state.show_mouseover_data;
+}
+
+const DEBUG_PRINT_MOUSEOVER = false;
+//const DEBUG_PRINT_MOUSEOVER = true;
+
+mouse_leave_update_mouseover() {
+  if (show_mouseover_data()) {
+    app.dispatch(actions.MouseoverDataClear());
+  }
+}
+
+update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
+  if (show_mouseover_data()) {
+    MouseEvent event = event_syn.nativeEvent;
+    var group = app.state.design.groups[helix.group];
+    var geometry = app.state.design.geometry;
+    var address = get_address_on_helix(event, helix, group, geometry);
+    int offset = address.offset;
+    bool forward = address.forward;
+
+    if (DEBUG_PRINT_MOUSEOVER) {
+      Point<num> pan = current_pan(true);
+      num zoom = current_zoom(true);
+      print('mouse event: '
+          'x = ${event.offset.x},   '
+          'y = ${event.offset.y},   '
+          'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
+          'zoom = ${zoom.toStringAsFixed(2)},   '
+  //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+  //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+          'helix = ${helix.idx},   '
+          'offset = ${offset},   '
+          'forward = ${forward}');
+    }
+
+    var mouseover_params = MouseoverParams(helix.idx, offset, forward);
+
+    BuiltList<MouseoverData> mouseover_datas = app.state.ui_state.mouseover_datas;
+
+    if (needs_update(mouseover_params, mouseover_datas)) {
+  //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      app.dispatch(
+          actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
+    } else {
+  //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+    }
+  }
+}
+
+// only needs updating if the MouseoverData that would be created is not already in the list
+bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mouseover_datas) {
+  bool needs = true;
+//  print('needs update?');
+//  print('  mouseover_datas: ${mouseover_datas}');
+  for (var mouseover_data in mouseover_datas) {
+//    print('  old helix.idx: ${mouseover_data.helix.idx}');
+//    print('  new helix.idx: ${mouseover_params.helix_idx}');
+//    print('  old offset: ${mouseover_data.offset}');
+//    print('  new offset: ${mouseover_params.offset}');
+//    print('  old forward: ${mouseover_data.substrand?.forward}');
+//    print('  new forward: ${mouseover_params.forward}');
+    if (mouseover_data.helix.idx == mouseover_params.helix_idx &&
+        mouseover_data.offset == mouseover_params.offset &&
+        mouseover_data.domain?.forward == mouseover_params.forward) {
+      needs = false;
+    }
+//    else {
+//      print("need to print because "
+//          "mouseover_data.helix.idx = ${mouseover_data.helix.idx} "
+//          "mouseover_params.helix_idx = ${mouseover_params.helix_idx} "
+//          "mouseover_data.offset = ${mouseover_data.offset} "
+//          "mouseover_params.offset = ${mouseover_params.offset} "
+//          "mouseover_data.substrand.forward = ${mouseover_data.substrand.forward} "
+//          "mouseover_params.forward = ${mouseover_params.forward}");
+//    }
+  }
+  return needs;
+}

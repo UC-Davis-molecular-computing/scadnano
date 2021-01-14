@@ -15,6 +15,9 @@ mixin End3PrimeProps on UiProps implements EndEitherPrimeProps {
   PointerDownUpHandler on_pointer_down;
   PointerDownUpHandler on_pointer_up;
   MouseUpHandler on_mouse_up;
+  MouseUpHandler on_mouse_move;
+  MouseUpHandler on_mouse_enter;
+  MouseUpHandler on_mouse_leave;
   String classname;
   Point<num> pos;
   Color color;
@@ -45,6 +48,9 @@ class End3PrimeComponent extends UiComponent2<End3PrimeProps> {
       ..onPointerDown = props.on_pointer_down
       ..onPointerUp = props.on_pointer_up
       ..onMouseUp = props.on_mouse_up
+      ..onMouseEnter  = props.on_mouse_enter
+      ..onMouseLeave = props.on_mouse_leave
+      ..onMouseMove = props.on_mouse_move
       ..className = props.classname
       ..points = points
       ..id = props.id

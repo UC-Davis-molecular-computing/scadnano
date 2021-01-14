@@ -1,6 +1,10 @@
 import 'package:built_collection/built_collection.dart';
+import 'dart:math';
+import 'package:scadnano/src/state/edit_mode.dart';
+import 'package:scadnano/src/state/selectable.dart';
 
 import '../state/helix.dart';
+import '../state/design.dart';
 import '../state/app_state.dart';
 import '../state/mouseover_data.dart';
 import '../actions/actions.dart' as actions;
@@ -14,6 +18,26 @@ BuiltList<MouseoverData> mouseover_data_clear_reducer(_, actions.MouseoverDataCl
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // mouseover_data global reducer
+
+
+
+// BuiltList<MouseoverData> mouseover_data_group_displayed_change_reducer(_, AppState state, actions.GroupDisplayedChange action) {
+//   var offset = state.ui_state.storables.slice_bar_offset;
+//   var group_name = action.group_name;
+//   var helices_in_group = state.design.helices_in_group(group_name).values;
+//   offset = util.bounded_offset_in_helices_group(offset, helices_in_group);
+//   return util.rotation_datas_at_offset_in_group(offset, state.design, group_name);
+// }
+
+// BuiltList<MouseoverData> mouseover_data_set_slice_bar_offset_reducer(_, AppState state, actions.SliceBarOffsetSet action) {
+//   var offset = action.offset;
+//   return util.rotation_datas_at_offset_in_group(offset, state.design, state.ui_state.displayed_group_name);
+// }
+
+// BuiltList<MouseoverData> mouseover_data_set_app_ui_state_storable_reducer(_, AppState state, actions.SetAppUIStateStorable action) {
+//   var offset = action.storables.slice_bar_offset;
+//   return util.rotation_datas_at_offset_in_group(offset, state.design, state.ui_state.displayed_group_name);
+// }
 
 BuiltList<MouseoverData> mouseover_data_update_reducer(
     _, AppState state, actions.MouseoverDataUpdate action) {

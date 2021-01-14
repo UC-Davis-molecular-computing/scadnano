@@ -46,11 +46,14 @@ import 'state/selection_rope.dart';
 import 'state/select_mode_state.dart';
 import 'state/strand.dart';
 import 'state/crossover.dart';
+import 'state/design_side_rotation_data.dart';
 import 'state/domain_name_mismatch.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor([
+  StrandNameSet,
+  SubstrandNameSet,
   DomainNameMismatch,
   ShowDomainNameMismatchesSet,
   ModificationEdit,
@@ -103,6 +106,8 @@ part 'serializers.g.dart';
   SelectionRopeAddPoint,
   SelectionRopeRemove,
   MouseoverParams,
+  DesignSideRotationParams,
+  DesignSideRotationData,
   Helix,
   HelixGroup,
   Domain,
@@ -274,6 +279,11 @@ part 'serializers.g.dart';
   SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix,
   SetDisplayMajorTickWidths,
   SetDisplayMajorTickWidthsAllHelices,
+  SliceBarOffsetSet,
+  SliceBarMoveStart,
+  SliceBarMoveStop,
+  ShowSliceBarSet,
+  ShowMouseoverDataSet,
   Autostaple,
   Autobreak,
   NewDesignSet,

@@ -80,20 +80,10 @@ void main() {
         final deletion_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.deletion));
         expect(deletion_button, isNotNull);
       });
-      test('that renders the backbone button', () {
-        final backbone_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.backbone));
-        expect(backbone_button, isNotNull);
-      });
-
       test('that nick buttons is selected', () {
         final nick_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.nick));
         ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-selected');
         expect(nick_button.className, matcher);
-      });
-      test('that backbone button is unselected', () {
-        final backbone_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.backbone));
-        ClassNameMatcher matcher = ClassNameMatcher.expected('edit-mode-button-unselected');
-        expect(backbone_button.className, matcher);
       });
       test('that clicking nick buttons unselects it', () async {
         final nick_button = getByTestId(component, testIdEditModeChoiceButton(EditModeChoice.nick));

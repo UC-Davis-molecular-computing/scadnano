@@ -67,6 +67,15 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
     return (Dom.line()
       ..className = classname
       ..onClick = _handle_click_for_nick_insertion_deletion
+      // TODO(benlee12): add listener for adding info previously from mouseover data
+      // update ui state's some new domain field that tracks which domain is being hovered over
+      // --> displays info in footer
+      ..onMouseLeave = ((_) => util.mouse_leave_update_mouseover())
+      //XXX: it matters that we reference props.mouseover_datas, not a local variable
+      // this ensures that when subsequent mouse events happen, the most recent mouseover_datas is examined,
+      // otherwise the callback is not updated until render executes again
+      ..onMouseEnter = ((event) => util.update_mouseover(event, props.helix))
+      ..onMouseMove = ((event) => util.update_mouseover(event, props.helix))
       ..onPointerDown = handle_click_down
       ..onPointerUp = handle_click_up
       ..stroke = props.color.toHexColor().toCssString()
@@ -170,4 +179,5 @@ tooltip_text(Domain domain) =>
         '    helix=${domain.helix}\n'
         '    start=${domain.start}\n'
         '    end=${domain.end}' +
+    (domain.name == null ? "" : "\n    name=${domain.name}") +
     (domain.label == null ? "" : "\n    label=${domain.label.toString()}");

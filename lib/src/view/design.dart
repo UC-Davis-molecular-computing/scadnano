@@ -231,6 +231,19 @@ class DesignViewComponent {
         app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
       }
 
+      // move slice bar
+      if (left_click_down && app.state.ui_state.slice_bar_is_moving) {
+        String displayed_group_name = app.state.ui_state.displayed_group_name;
+        var group = app.state.design.groups[displayed_group_name];
+        var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
+        int old_offset = app.state.ui_state.storables.slice_bar_offset;
+        var new_offset = util.find_closest_offset(event, helices_in_group, group, app.state.design.geometry);
+
+        if (old_offset != new_offset) {
+          app.dispatch(actions.SliceBarOffsetSet(new_offset));
+        }
+      }
+
       // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
       if (left_click_down) {
         // move selected DNA ends
@@ -882,6 +895,9 @@ group_names_of_ends(DNAEndsMove ends_move) => app.state.design.group_names_of_en
 
 main_view_pointer_up(MouseEvent event) {
 //  util.set_allow_pan(true);
+  if (app.state.ui_state.slice_bar_is_moving) {
+    app.dispatch(actions.SliceBarMoveStop());
+  }
 
   DNAEndsMove dna_ends_move = app.store_dna_ends_move.state;
   if (dna_ends_move != null) {

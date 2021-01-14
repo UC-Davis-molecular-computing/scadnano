@@ -3298,8 +3298,9 @@ main() {
             "domains": [
               {"helix": 0, "forward": true, "start": 0, "end": 16}
             ],
+            "name": "staple1", 
             "idt": {
-              "name": "staple1", "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
+              "scale": "25nm", "purification": "STD", "plate": "plate1", "well": "A1",
               "unused_idt_field_foo": {
                 "foo_idt_field": "foo_idt",
                 "bar_idt_field": "bar",

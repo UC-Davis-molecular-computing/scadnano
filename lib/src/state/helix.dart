@@ -316,7 +316,7 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
   }
 
   int svg_x_to_offset(num x) {
-    var offset = ((x - svg_position.x) / geometry.base_width_svg).floor();
+    var offset = ((x - svg_position.x) / geometry.base_width_svg).floor() + min_offset;
     return offset;
   }
 

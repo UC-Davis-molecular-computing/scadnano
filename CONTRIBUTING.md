@@ -291,6 +291,8 @@ For many typical features one would want to add that involve changing some aspec
 
     Any Action modifying the `Design` should implement `UndoableAction`. ([Issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386) is intended to handle this also.) This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new `Design` is loaded from a file, which changes the `Design`, but is not an undo-able action.)
 
+    Actions that change a single strand (but leave it in place in the list of strands) should implement `SingleStrandAction`. This gives a simplified method for implementing the reducer that saves some of the work of reaching into the immutable list of strands in the design; see examples (e.g., `StrandNameSet`) of how to implement the reducer for these. Similarly, actions that change a part of a strand should implement `StrandPartAction`, see examples such as `SubstrandNameSet` or `ConvertCrossoverToLoopout`.
+
 3. **if necessary, add new data fields the app state**: 
     Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`. Particularly for "UI state" (aspects of the state that control how things look, but are not stored in the `Design`), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. 
 
