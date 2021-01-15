@@ -160,11 +160,11 @@ which lengthens the strand:
 
 To unselect all selected items, unlike most drawing programs, you don't simply click on the background. Instead, press the Esc button to unselect all selected items. This is useful when you want to keep several objects selected, but retain the ability to click and drag the background to help pan around the view.
 
-Now, zoom out and repeat to lengthen it all the way to the right end of the helix. When zoomed out, it can be difficult to click exactly on the 3' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 3' end:
+Now, zoom out and repeat to lengthen it all the way to the right end of the helix. When zoomed out, it can be difficult to click exactly on the 5' end, but it can be selected by pressing Shift and click-dragging the cursor to draw a gray box over the 5' end:
 
 ![](images/selection_box_over_5p_end.png)
 
-Unfortunately, to drag the 3' end, you do have to click it. So it may require zooming in and dragging a few times to get it all the way to the right:
+Unfortunately, to drag the 5' end, you do have to click it. So it may require zooming in and dragging a few times to get it all the way to the right:
 
 ![](images/scaffold_helix_23_full_length.png)
 
