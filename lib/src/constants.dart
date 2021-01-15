@@ -27,7 +27,11 @@ final scadnano_older_versions_to_link =[
 final scadnano_versions_to_link = [CURRENT_VERSION] + scadnano_older_versions_to_link;
 
 const BUG_REPORT_URL = 'https://github.com/UC-Davis-molecular-computing/scadnano/issues';
-const NO_DESIGN_MESSAGE = 'No Design loaded.\n'
+const NO_DESIGN_MESSAGE = 'scadnano is a program for designing synthetic DNA structures such as DNA origami.\n'
+    'scadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group.\n'
+    'It is similar to cadnano (<a href="https://cadnano.org/">cadnano</a>), developed and maintained by the Douglas lab at UCSF.\n'
+    '\n'
+    'No design is loaded.\n'
     'Try loading an example by selecting File --> Load example,\n'
     'or select File --> Open... to load a .sc file from your local drive.\n'
     'You can also drag and drop a .sc file from your file system to the browser.';
