@@ -1,0 +1,845 @@
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+/************************************************
+** BEGIN layout
+************************************************/
+
+.radio-left {
+    text-align: left;
+}
+
+.error-message {
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    background-color: #eeeeee;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}
+
+.error-pre {
+    overflow: auto;
+}
+
+#top-container {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.fixed-horizontal-separator {
+    height: 5px;
+    background: black;
+    position: relative;
+}
+
+.fixed-vertical-separator {
+    width: 5px;
+    background: black;
+    position: relative;
+}
+
+.draggable-separator {
+    width: 15px;
+    height: 100%;
+    background: lightgray;
+    position: relative;
+    cursor: col-resize;
+}
+
+#design-and-modes-buttons-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#design-pane {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#design {
+    display: flex;
+    /*height: 100%;*/
+    flex-grow: 1;
+}
+
+#side-pane {
+    /*width: 8%;*/
+    /*background: #eee;*/
+}
+
+#main-pane {
+    /*width: 90%;*/
+}
+
+#design-footer-mouse-over {
+    height: 24px;
+    text-align: left;
+    background: #eee;
+    flex-grow: 0;
+}
+
+.design-footer-mouse-over-paragraph {
+    padding: 5px;
+    text-align: left;
+}
+
+#main-pane {
+    /*flex: auto;*/
+    width: 100%;
+    /*flex-basis: auto;*/
+}
+
+#editor-pane {
+    /*flex: auto;*/
+}
+
+#side-pane,
+#main-pane,
+#design-pane,
+#editor-pane {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.menu-item {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.dialog-form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.dialog-form-form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #B2B2B2;
+    background: #F9F9F9;
+    box-shadow: 3px 3px 2px #E9E9E9;
+}
+
+.dialog-form-item {
+    align-self: flex-start;
+    /*float: left;*/
+    /*display: block;*/
+}
+
+.dialog-button {
+    display: inline-block;
+    border-radius: 3px;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(52, 120, 188);
+    border-left: none;
+    border-image: initial;
+    font-size: 14px;
+    padding: 0.4rem 0.8em;
+    background: rgb(113, 160, 208);
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    font-weight: bold;
+    margin: 10px 0.25em 3px 0.25em;
+    text-align: center;
+    opacity: 0.8;
+    cursor: auto;
+}
+
+.context-menu {
+    display: block;
+    position: absolute;
+    border: 1px solid #B2B2B2;
+    width: auto;
+    background: #F9F9F9;
+    box-shadow: 3px 3px 2px #E9E9E9;
+    border-radius: 4px;
+}
+
+.context-menu-list {
+    list-style: none;
+    margin: 0px;
+    margin-top: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.context-menu-item {
+    padding: 3px;
+    padding-left: 10px;
+}
+
+.context-menu-item:hover {
+    color: white;
+    background: #284570;
+    border-radius: 2px;
+}
+
+#strand-color-picker-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.chrome-picker {
+    border: none !important;
+    background: #F9F9F9 !important;
+    box-shadow: none !important;
+}
+/*.panes-container {*/
+/*  display: flex;*/
+/*  width: 100%;*/
+/*  overflow: hidden;*/
+/*}*/
+
+/*.panes-container,*/
+/*.panes-separator {*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*  height: 100%;*/
+/*}*/
+
+/*.gutter {*/
+/*  background-color: #eee;*/
+/*}*/
+
+/*.split, .gutter.gutter-horizontal {*/
+/*  float: left;*/
+/*}*/
+
+/*.gutter.gutter-horizontal {*/
+/*  cursor: ew-resize;*/
+/*}*/
+
+/************************************************
+** END layout
+************************************************/
+
+.error-message {
+    color: darkred;
+    border: 10px;
+    padding: 10px;
+}
+
+/************************************************
+** BEGIN CodeMirror layout
+************************************************/
+
+#controls {
+    margin-bottom: 1em;
+}
+
+#editor-pane {
+    flex: 20;
+    height: 100%;
+}
+
+#editor,
+.CodeMirror {
+    border: 0;
+    padding: 0;
+    flex: 20;
+    box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+#editor {
+    height: calc(100% - 60px);
+}
+
+.CodeMirror {
+    height: 100%;
+}
+
+#footer {
+    text-align: center;
+    font-size: 0.8em;
+}
+
+/************************************************
+** END CodeMirror layout
+************************************************/
+
+/************************************************
+** BEGIN mode layout
+************************************************/
+
+
+#modes-buttons {
+    display: flex;
+}
+
+#edit-mode {
+    width: 105px;
+}
+
+#select-mode {
+    width: 105px;
+}
+
+.mode-button {
+    border: none;
+    width: 108px;
+    /*outline: #0b0080;*/
+    /*font-weight: bold;*/
+    color: black;
+    text-align: left;
+}
+
+.edit-mode-button-selected {
+    background-color: mediumseagreen;
+}
+
+.edit-mode-button-unselected {
+    background-color: lightgray;
+}
+
+.select-mode-button {
+    border: none;
+    width: 75px;
+    outline: 0;
+    font-weight: bold;
+    color: black;
+    text-align: left;
+}
+
+.helix-change-offsets-button-rect {
+    stroke: black;
+    fill: #dddddd;
+}
+
+.helix-change-offsets-button-rect:hover {
+    stroke: green;
+    fill: limegreen;
+}
+
+.helix-change-offsets-button-text {
+    font-size: smaller;
+    text-anchor: middle;
+    text-align: center;
+    alignment-baseline: middle;
+    pointer-events: none;
+}
+
+.select-mode-button-selected {
+    background-color: lightcoral;
+}
+
+.select-mode-button-unselected {
+    background-color: lightgray;
+}
+
+/************************************************
+** END mode layout
+************************************************/
+
+/************************************************
+** BEGIN SVG layout
+************************************************/
+
+/*.panzoomable {*/
+/*    cursor: move; !* fallback: no `url()` support or images disabled *!*/
+/*    cursor: url(images/grab.png), auto; !* fallback: Internet Explorer *!*/
+/*    cursor: -webkit-grab; !* Chrome 1-21, Safari 4+ *!*/
+/*    cursor: -moz-grab; !* Firefox 1.5-26 *!*/
+/*    cursor: grab; !* W3C standards syntax, should come least *!*/
+/*}*/
+
+/*.panzoomable.dragging {*/
+/*    cursor: url(images/grabbing.png), auto;*/
+/*    cursor: -webkit-grabbing;*/
+/*    cursor: -moz-grabbing;*/
+/*    cursor: grabbing;*/
+/*}*/
+
+.domain-name-text {
+    text-anchor: middle;
+}
+
+.selection-box,.selection-rope {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.5;
+}
+
+.selection-rope-potential {
+    stroke: dimgray;
+    fill: gray;
+    fill-opacity: 0.25;
+}
+
+.selection-rope-potential-illegal {
+    stroke: darkred;
+    fill: red;
+    fill-opacity: 0.25;
+}
+
+.rotation-line {
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.helix-invisible-rect {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.helix-mouseover {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.helix-lines {
+    stroke: #B0B0B0;
+}
+
+.helix-horz-line, .helix-vert-minor-line {
+    stroke-width: 0.5;
+}
+
+.helix-vert-end-line, .helix-vert-major-line {
+    stroke-width: 3;
+}
+
+/*******************************************************************************/
+/* begin formatting of Strand elements when selected/selectable/not selectable */
+
+.five-prime-end-first-substrand,
+.three-prime-end-last-substrand {
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
+.five-prime-end-moving,
+.three-prime-end-moving {
+    stroke: black;
+    stroke-width: 0.5px;
+    fill-opacity: 0.5;
+    pointer-events: none; /* XXX: need this so we can detect mouse up on non-moving end underneath */
+}
+
+.five-prime-end,
+.three-prime-end {
+    stroke: black;
+    stroke-width: 0.5px;
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.domain-line, .loopout-curve, .domain-line-moving {
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+}
+
+.disallowed {
+    stroke: lightgray;
+}
+
+.disallowed-end {
+    stroke: lightgray;
+    fill: lightgray;
+}
+
+/* excluding domain lines until I can figure out this issue where they disappear.
+https://stackoverflow.com/questions/36284828/svg-adding-shadow-filter-makes-straight-line-invisible
+https://stackoverflow.com/questions/47758565/adding-fedropshadow-to-a-vertical-line-in-svg-makes-it-disappear
+*/
+.selected:not(.domain-line) {
+    filter: url("#shadow");
+}
+
+.selected.side-view-helix-circle {
+    stroke: red;
+    fill: hotpink;
+}
+
+.deletable.side-view-helix-circle {
+    stroke: none;
+    fill: lightgray;
+}
+
+
+/* https://www.w3schools.com/cssref/css_selectors.asp */
+/* These are needed to make parts pink when they are selected individually. */
+.selected.crossover-curve,
+.selected.loopout-curve,
+.selected.insertion-curve,
+.selected.deletion-cross,
+.selected.modification,
+.selected.domain-line {
+    stroke: hotpink;
+    stroke-width: 5pt;
+}
+.selected.five-prime-end,
+.selected.three-prime-end,
+.selected.five-prime-end-first-substrand,
+.selected.three-prime-end-last-substrand {
+    stroke: red;
+    fill: hotpink;
+    visibility: visible;
+    stroke-width: 1pt;
+}
+
+/* https://www.w3schools.com/cssref/css_selectors.asp */
+/* These are needed to make all parts pink when whole strand is selected, */
+/* i.e., a parent of these components is selected */
+.selected .crossover-curve,
+.selected .loopout-curve,
+.selected .insertion-curve,
+.selected .deletion-cross,
+.selected .modification,
+.selected .domain-line {
+    stroke: hotpink;
+    stroke-width: 5pt;
+}
+.selected .five-prime-end,
+.selected .three-prime-end,
+.selected .five-prime-end-first-substrand,
+.selected .three-prime-end-last-substrand {
+    stroke: red;
+    fill: hotpink;
+    stroke-width: 1pt;
+}
+
+
+/* end formatting of Strand elements when selected/selectable/not selectable */
+/*****************************************************************************/
+
+
+.crossover-curve {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+}
+
+.potential-vertical-crossover-curve {
+    stroke-width: 4;
+    fill: none;
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.potential-vertical-crossover-curve:hover {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+    visibility: visible;
+}
+
+.potential-crossover {
+    stroke-width: 4;
+    stroke-opacity: 0.3;
+    fill: none;
+    pointer-events: none;
+}
+
+.insertion-curve {
+    stroke-width: 2.5px;
+    fill: none;
+}
+
+.mismatch-star {
+    /*stroke: black;*/
+    stroke: red;
+    fill: red;
+    stroke-width: 0.25;
+}
+
+.deletion-cross {
+    stroke: red;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
+.deletion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.insertion-background {
+    visibility: hidden;
+    pointer-events: all;
+}
+
+.insertion-length {
+    font-size: 8px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+}
+
+.modification-text {
+    text-anchor: middle;
+    font-weight: bold;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+}
+
+.dna-seq {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    font-size: 12px;
+    text-anchor: start;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+    white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.dna-seq-insertion,
+.loopout-length,
+.dna-seq-loopout {
+    font-family: "Consolas", "Lucida Console", "Courier New", monospace;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+    white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.loopout-name {
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: ideographic;
+    text-shadow: /*-1px -1px 0 #fff,*/ /*1px -1px 0 #fff,*/ /*-1px 1px 0 #fff,*/ /*1px 1px 0 #fff;*/ -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    0.7px 0.7px 0 #fff;
+    text-rendering: optimizeSpeed; /* doesn't seem to do much to improve rendering speed */
+    white-space: pre; /* needed to display multiple space symbols in a row */
+}
+
+.main-view-helix-circle {
+    fill: goldenrod;
+}
+
+.side-view-helix-circle {
+    fill: goldenrod;
+}
+
+.side-view-potential-helix {
+    fill: palegoldenrod;
+    stroke: goldenrod;
+}
+
+.side-view-potential-helix-disallowed-position {
+    fill: red;
+    /*stroke: darkred;*/
+}
+
+.main-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 32pt;
+    fill: DarkBlue;
+    stroke: none; /* don't know why this is necessary to prevent a gray stoke from hiding most of the text */
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+.side-view-helix-text {
+    font-family: Helvetica, serif;
+    font-size: 32pt;
+    fill: DarkBlue;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
+
+/************************************************
+** END SVG layout
+************************************************/
+
+
+/************************************************
+** BEGIN Navbar
+************************************************/
+
+/* Thin the navbar */
+.navbar, .dropdown-menu, .form-control {
+    font-size: 0.8rem;
+}
+
+/* Thin the navbar */
+.navbar {
+    padding: 0rem 1rem;
+    line-height: 0.8rem;
+}
+
+/* Thicken the dropdown vertical spacing */
+.dropdown-item {
+    padding: .5rem 1.5rem;
+}
+
+/* Since the dropdowns are links, need to overwrite default colors */
+.nav-link:hover {
+    color: rgba(0, 0, 0);
+}
+
+.nav-link {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+/* File checkmarks appear on one line */
+#file-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
+/* View checkmarks appear on one line */
+#view-nav-dropdown + .dropdown-menu label {
+    white-space: nowrap;
+}
+
+
+/************************************************
+** BEGIN Dropdown Right
+************************************************/
+
+/* Style dropdown buttons that drop to the right so it looks like other dropdown item */
+
+/* Normal style */
+.dropright .dropdown-toggle {
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    font-size: inherit;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+/* Hover */
+.dropright .dropdown-toggle:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Remove btn focus */
+.dropright .dropdown-toggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Style right arrow */
+.dropright .dropdown-toggle::after {
+    margin-top: 5px;
+    vertical-align: 0;
+    right: 3px;
+    position: absolute;
+}
+
+/************************************************
+** END Dropdown Right
+************************************************/
+
+/* Style dropdown item of selected grid as well as newly clicked on grid */
+#grid-nav-dropdown + .dropdown-menu .dropdown-item.disabled, .dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #686868;
+}
+
+/* Hides input of Open (only display the label) */
+.form-file-dropdown .custom-file-input {
+    display: none;
+}
+
+/* Styles the label like a DropdownItem */
+.form-file-dropdown .custom-file-input + .custom-file-label {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    margin-bottom: 0%; /* Removes label browser default */
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+/* Styles the label like a DropdownItem (on hover) */
+.form-file-dropdown .custom-file-input + .custom-file-label:hover {
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+}
+
+/* Hides the data-browse psuedo-element. */
+.form-file-dropdown .custom-file-input + .custom-file-label::after {
+    content: none;
+}
+
+.dropdown-item-keyboard-shortcut-span {
+    float: right;
+    width: 33%;
+    position: relative;
+}
+
+/************************************************
+** END Navbar
+************************************************/
+
+/************************************************
+** BEGIN Slice Bar
+************************************************/
+
+.slice-bar-rect rect {
+    fill:goldenrod;
+    fill-opacity: 50%;
+    cursor: move;
+    stroke: rgb(131, 97, 3);
+    stroke-width: 0.5;
+}
+
+.slice-bar-rect text {
+    fill:rgb(131, 97, 3);
+    fill-opacity: 100%;
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+
+/************************************************
+** END Slice Bar
+************************************************/
