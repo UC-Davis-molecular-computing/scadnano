@@ -56,6 +56,9 @@ const MAIN_VIEW_SVG_VIEWPORT_GROUP = 'main-view-svg-viewport';
 const SIDE_VIEW_SVG_ID = 'side-view-svg';
 const MAIN_VIEW_SVG_ID = 'main-view-svg';
 
+const PANZOOMABLE_CLASS = 'panzoomable';
+const SELECTION_BOX_DRAWABLE_CLASS = 'selection-box-drawable';
+
 enum DraggableComponent { main, side }
 
 class DesignViewComponent {
@@ -97,6 +100,7 @@ class DesignViewComponent {
     side_view_svg = svg.SvgSvgElement()
       ..attributes = {
         'id': SIDE_VIEW_SVG_ID,
+        'class': PANZOOMABLE_CLASS,
         'width': '100%',
         'height': '100%',
       };
@@ -104,6 +108,7 @@ class DesignViewComponent {
     main_view_svg = svg.SvgSvgElement()
       ..attributes = {
         'id': MAIN_VIEW_SVG_ID,
+        'class': PANZOOMABLE_CLASS,
         'width': '100%',
         'height': '100%',
       };
@@ -557,6 +562,12 @@ class DesignViewComponent {
       if (app.store_selection_box.state != null) {
         app.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
+
+      // restore panzoomable class to change CSS cursor
+      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+        svg_elt.classes.add(PANZOOMABLE_CLASS);
+        svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
+      }
     }
   }
 
@@ -568,6 +579,12 @@ class DesignViewComponent {
     draggable.onDragStart.listen((ev) => drag_start(ev, view_svg, is_main_view));
     draggable.onDrag.listen((ev) => drag(ev, view_svg, is_main_view));
     draggable.onDragEnd.listen((ev) => drag_end(ev, view_svg, is_main_view));
+
+    // remove panzoomable class to change CSS cursor
+    for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+      svg_elt.classes.remove(PANZOOMABLE_CLASS);
+      svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
+    }
   }
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
