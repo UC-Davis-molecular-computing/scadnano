@@ -101,15 +101,18 @@ class DesignMainDomainComponent extends UiComponent2<DesignMainDomainProps>
         return; // cannot have nick/insertion/deletion on end
       }
 
+      // if Ctrl key is pressed (Windows/Linux) or Cmd key (Mac), add deletions/insertions to all helices
+      bool all_helices = event.ctrlKey || event.metaKey;
+
       if (edit_mode_is_nick()) {
         if (offset <= domain.start + 1 || offset >= domain.end - 1) {
           return; // need remaining substrands to be length at least 2
         }
         app.dispatch(actions.Nick(domain: domain, offset: offset));
       } else if (edit_mode_is_insertion()) {
-        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
+        app.dispatch(actions.InsertionAdd(domain: domain, offset: offset, all_helices: all_helices));
       } else if (edit_mode_is_deletion()) {
-        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset, all_helices: event.ctrlKey));
+        app.dispatch(actions.DeletionAdd(domain: domain, offset: offset, all_helices: all_helices));
       }
     }
   }
