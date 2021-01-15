@@ -30,7 +30,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Edit modes](#edit-modes)
 * [Circular strands](#circular-strands)
 * [Assigning DNA](#assigning-dna)
-* [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
+* [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
@@ -691,10 +691,8 @@ The above description indicates how to assign a specific DNA sequence to a parti
 
 
 
-## cadnano file format versus scadnano
-Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported from scadnano, in both the Python scripting library and the web interface. However, since the cadnano format is more limited, some scadnano features may be lost upon export.
-
-TODO: discuss these.
+## Exporting to cadnano
+Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported from scadnano, in both the Python scripting library and the web interface. However, since the cadnano format is more limited, some scadnano features may be lost upon export. These are discussed here: https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2
 
 
 ## How to design structures manually using scadnano
