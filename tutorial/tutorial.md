@@ -30,7 +30,7 @@ The completed design is available as the file [`24_helix_rectangle.sc`](24_helix
 
 ![](images/download_raw_sc_file.png)
 
-Save the file somewhere on your local file system. In the menu at the top of the screen, click *File&rarr;Open...*
+Save the file somewhere on your local file system. Then, in the menu at the top of the screen, click *File&rarr;Open*
 
 ![](images/file_menu.png)
 
@@ -53,7 +53,7 @@ After loading you should see this:
 
 The left part is called the "side view" and the middle part is called the "main view".
 
-First, save this design into a file by pressing the "Save" button. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically using the "Save" button.
+First, save this design into a file by clicking *File&rarr;Save* or pressing Ctrl+S. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically.
 
 Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
 
