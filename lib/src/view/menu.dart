@@ -186,13 +186,13 @@ class MenuComponent extends UiComponent2<MenuProps> with RedrawCounterMixin {
         ..id = 'open-form-file'
         ..accept = constants.all_scadnano_file_extensions.map((ext) => '.' + ext).join(",")
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, scadnano_file_loaded))
-        ..display = '📂 Open...'
+        ..display = '📂 Open'
         ..keyboard_shortcut = 'Ctrl+O'
         ..key = 'open-form-file')(),
       DropdownDivider({'key': 'divider-file-load'}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.SaveDNAFile()))
-        ..display = '💾 Save...'
+        ..display = '💾 Save'
         ..keyboard_shortcut = 'Ctrl+S'
         ..key = 'save-file')(),
       (MenuBoolean()
@@ -788,12 +788,12 @@ In a large design, this can slow down the performance, so uncheck it when not in
       DropdownItem(
         {
           'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases/tag/v${constants.CURRENT_VERSION}',
+              'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
 //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
         },
-        'Version ${constants.CURRENT_VERSION} release notes',
+        'Release notes',
       ),
       // older_versions_link_dropdown,
       (MenuDropdownRight()
@@ -828,6 +828,23 @@ However, it may be less stable than the main site.'''
         ),
         version_dropdown_items
       ]),
+      (MenuDropdownItem()
+        ..on_click = ((_) => window.alert(''
+'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+'\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
+        ..display = 'About')(),
+//       DropdownItem(
+//         {
+//           'href':
+//           'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+//           'target': '_blank',
+//           //TODO: figure out how to give a DropdownItem a tooltip
+// //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
+//         },
+//         'About',
+//       ),
     );
   }
 

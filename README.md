@@ -4,6 +4,8 @@
 [scadnano](http://scadnano.org) 
 ("scriptable-cadnano", [source code repository here](https://github.com/UC-Davis-molecular-computing/scadnano)) 
 is a program for designing synthetic DNA structures such as DNA origami. 
+The scadnano project is developed and maintained by the UC Davis Molecular Computing group.
+Note that [cadnano](https://cadnano.org) is a separate project, developed and maintained by the [Douglas lab](https://bionano.ucsf.edu/) at UCSF.
 
 If you find scadnano useful in a scientific project, please cite its associated paper:
 
@@ -28,14 +30,14 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Edit modes](#edit-modes)
 * [Circular strands](#circular-strands)
 * [Assigning DNA](#assigning-dna)
-* [cadnano file format versus scadnano](#cadnano-file-format-versus-scadnano)
+* [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
 
 ## Overview
 
-The design of scadnano is based heavily on [cadnano](https://cadnano.org/), 
+The design of scadnano is similar to [cadnano](https://cadnano.org/), 
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
 with three main differences: 
 
@@ -689,10 +691,8 @@ The above description indicates how to assign a specific DNA sequence to a parti
 
 
 
-## cadnano file format versus scadnano
-Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported from scadnano, in both the Python scripting library and the web interface. However, since the cadnano format is more limited, some scadnano features may be lost upon export.
-
-TODO: discuss these.
+## Exporting to cadnano
+Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported from scadnano, in both the Python scripting library and the web interface. However, since the cadnano format is more limited, some scadnano features may be lost upon export. These are discussed here: https://scadnano-python-package.readthedocs.io/en/latest/#interoperability-cadnano-v2
 
 
 ## How to design structures manually using scadnano
