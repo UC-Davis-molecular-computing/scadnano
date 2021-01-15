@@ -256,9 +256,17 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
       storables = storables.rebuild((b) => b..displayed_group_name = state.design.groups.keys.first);
     }
     // It's possible the the slice bar being set is not valid.
-    storables = storables.rebuild((b) => b
-      ..slice_bar_offset = bounded_offset_in_helices_group(storables.slice_bar_offset, state.design.helices_in_group(state.design.groups.keys.first).values)
-    );
+    int slice_bar_offset = 0;
+    if (state.design != null) {
+      var helices_in_first_group = state.design
+          .helices_in_group(state.design.groups.keys.first)
+          .values;
+      if (helices_in_first_group.isNotEmpty) {
+        slice_bar_offset =
+            bounded_offset_in_helices_group(storables.slice_bar_offset, helices_in_first_group);
+      }
+    }
+    storables = storables.rebuild((b) => b..slice_bar_offset = slice_bar_offset);
     return storables;
   }
 
@@ -278,44 +286,59 @@ AppUIStateStorables app_ui_state_storable_global_reducer(AppUIStateStorables sto
 String displayed_group_name_group_remove_reducer(String _, AppState state, actions.GroupRemove action) {
   String name = action.name;
   String first = state.design.groups.keys.first;
-  String last =  state.design.groups.keys.last;
+  String last = state.design.groups.keys.last;
   return name != first ? first : last;
 }
 
 GlobalReducer<int, AppState> slice_bar_offset_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<int, AppState, actions.ShowSliceBarSet>(slice_bar_offset_show_slice_bar_set_reducer),
-  TypedGlobalReducer<int, AppState, actions.GroupDisplayedChange>(slice_bar_offset_group_displayed_change_reducer),
+  TypedGlobalReducer<int, AppState, actions.GroupDisplayedChange>(
+      slice_bar_offset_group_displayed_change_reducer),
   TypedGlobalReducer<int, AppState, actions.GroupRemove>(slice_bar_offset_group_remove_reducer),
   TypedGlobalReducer<int, AppState, actions.HelixOffsetChange>(slice_bar_offset_helix_offset_change_reducer),
-  TypedGlobalReducer<int, AppState, actions.HelixOffsetChangeAll>(slice_bar_offset_helix_offset_change_all_reducer),
+  TypedGlobalReducer<int, AppState, actions.HelixOffsetChangeAll>(
+      slice_bar_offset_helix_offset_change_all_reducer),
 ]);
 
 int slice_bar_offset_show_slice_bar_set_reducer(int offset, AppState state, actions.ShowSliceBarSet action) {
   if (action.show) {
-    return bounded_offset_in_helices_group(offset, state.design.helices_in_group(state.ui_state.displayed_group_name).values);
+    return bounded_offset_in_helices_group(offset, state.design
+        .helices_in_group(state.ui_state.displayed_group_name)
+        .values);
   } else {
     // Don't change slice bar position if user hides it. Saves value for when next time user wants to display.
     return offset;
   }
 }
 
-int slice_bar_offset_group_displayed_change_reducer(int offset, AppState state, actions.GroupDisplayedChange action) {
-  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(action.group_name).values);
+int slice_bar_offset_group_displayed_change_reducer(int offset, AppState state,
+    actions.GroupDisplayedChange action) {
+  return bounded_offset_in_helices_group(offset, state.design
+      .helices_in_group(action.group_name)
+      .values);
 }
 
 int slice_bar_offset_group_remove_reducer(int offset, AppState state, actions.GroupRemove action) {
   String new_group_name = displayed_group_name_group_remove_reducer(null, state, action);
-  return bounded_offset_in_helices_group(offset, state.design.helices_in_group(new_group_name).values);
+  return bounded_offset_in_helices_group(offset, state.design
+      .helices_in_group(new_group_name)
+      .values);
 }
 
-int slice_bar_offset_helix_offset_change_reducer(int offset, AppState state, actions.HelixOffsetChange action) {
+int slice_bar_offset_helix_offset_change_reducer(int offset, AppState state,
+    actions.HelixOffsetChange action) {
   var new_design = design_global_reducer(state.design, state, action);
-  return bounded_offset_in_helices_group(offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
+  return bounded_offset_in_helices_group(offset, new_design
+      .helices_in_group(state.ui_state.displayed_group_name)
+      .values);
 }
 
-int slice_bar_offset_helix_offset_change_all_reducer(int offset, AppState state, actions.HelixOffsetChangeAll action) {
+int slice_bar_offset_helix_offset_change_all_reducer(int offset, AppState state,
+    actions.HelixOffsetChangeAll action) {
   var new_design = design_global_reducer(state.design, state, action);
-  return bounded_offset_in_helices_group(offset, new_design.helices_in_group(state.ui_state.displayed_group_name).values);
+  return bounded_offset_in_helices_group(offset, new_design
+      .helices_in_group(state.ui_state.displayed_group_name)
+      .values);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,7 +389,8 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
         storables.show_loopout_length, action)
     ..show_slice_bar = TypedReducer<bool, actions.ShowSliceBarSet>(show_slice_bar_reducer)(
         storables.show_slice_bar, action)
-    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(storables.slice_bar_offset, action)
+    ..slice_bar_offset = TypedReducer<int, actions.SliceBarOffsetSet>(slice_bar_offset_set_reducer)(
+        storables.slice_bar_offset, action)
     ..local_storage_design_choice = TypedReducer<LocalStorageDesignChoice,
         actions.LocalStorageDesignChoiceSet>(local_storage_design_choice_reducer)(
         storables.local_storage_design_choice, action).toBuilder()
