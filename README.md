@@ -37,7 +37,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 
 ## Overview
 
-The design of scadnano is based heavily on [cadnano](https://cadnano.org/), 
+The design of scadnano is similar to [cadnano](https://cadnano.org/), 
 specifically [version 2](https://github.com/douglaslab/cadnano2), 
 with three main differences: 
 
