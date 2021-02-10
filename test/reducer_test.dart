@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:scadnano/src/state/group.dart';
 import 'package:test/test.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
@@ -7230,6 +7231,16 @@ main() {
     });
   });
 
+  test('GroupDisplayChange on empty HelixGroup (see issue #573)', () {
+    AppState initial_state = app_state_from_design(two_helices_design);
+    // Add empty helix group
+    AppState state = app_state_reducer(initial_state, GroupAdd(name: 'test', group: HelixGroup(helices_view_order: [])));
+    // Display new helix group
+    AppState final_state = app_state_reducer(state, GroupDisplayedChange(group_name: 'test'));
+
+    // Slice bar offset should be set to null if displayed group has no helices
+    expect(null, final_state.ui_state.slice_bar_offset);
+  });
 }
 
 AppState make_ends_selectable(AppState actual_state) {
