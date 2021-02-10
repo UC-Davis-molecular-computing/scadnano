@@ -484,8 +484,13 @@ Helix find_closest_helix(
 /// If `offset` is too high, returns the upper bound offset.
 /// If `offset` is too low, returns the lower bound offset.
 /// If `offset` is null, returns the lower bound offset.
+/// If no helices in `helices_in_group` returns null.
 int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group) {
   var range = find_helix_group_min_max(helices_in_group);
+  if (range == null) {
+    return null;
+  }
+
   var min_offset = range.x;
   var max_offset = range.y;
 
@@ -497,7 +502,11 @@ int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group
 }
 
 /// Find min_offset and max_offset range of list of of helices.
+/// If list is empty, return null
 Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
+  if (helices_in_group.isEmpty) {
+    return null;
+  }
   int min_offset = helices_in_group.first.min_offset;
   int max_offset = helices_in_group.first.max_offset;
   for (var helix in helices_in_group) {
