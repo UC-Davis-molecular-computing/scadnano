@@ -211,7 +211,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..strands = props.design.strands
           ..show_loopout_length = props.show_loopout_length
           ..key = 'loopout-length')(),
-      if (props.show_slice_bar)
+      // slice_bar_offset null means displayed helix group has no helices, so omit slice bar
+      if (props.show_slice_bar && props.slice_bar_offset != null)
         (DesignMainSliceBar()
           ..helices = props.design.helices
           ..groups = props.design.groups

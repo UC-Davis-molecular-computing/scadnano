@@ -211,6 +211,12 @@ html, body {
     background: #F9F9F9 !important;
     box-shadow: none !important;
 }
+
+.sketch-picker {
+    border: none !important;
+    background: #F9F9F9 !important;
+    box-shadow: none !important;
+}
 /*.panes-container {*/
 /*  display: flex;*/
 /*  width: 100%;*/

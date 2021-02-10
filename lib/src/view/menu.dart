@@ -732,11 +732,11 @@ In a large design, this can slow down the performance, so uncheck it when not in
     for (var version in constants.scadnano_versions_to_link) {
       var version_dropdown_item = DropdownItem(
         {
-          'href': 'https://scadnano.org/v${version}',
+          'href': 'https://scadnano.org/v${version}/index.html',
           'target': '_blank',
           'key': version,
           'title': '''\
-    Version v${version} of scadnano, located at https://scadnano.org/v${version}.'''
+    Version v${version} of scadnano, located at https://scadnano.org/v${version}/index.html.'''
         },
         'v${version}' + (first ? ' (current version)' : ''),
       );

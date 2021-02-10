@@ -72,7 +72,7 @@ class StrandColorPickerComponent
           (Dom.form()
             ..onSubmit = handleOnOK
             ..className = 'dialog-form-form')(
-            ChromePicker({
+            SketchPicker({
               // props.color is used to set initial color (strand original color)
               // state.color is used to set color as user changes color on color picker
               'color': state.color ?? props.color,
