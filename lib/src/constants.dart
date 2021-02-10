@@ -15,7 +15,6 @@ const String INITIAL_VERSION = "0.1.0";
 final scadnano_older_versions_to_link =[
   "0.15.1",
   "0.15.0",
-  "0.14.1",
   "0.14.0",
   "0.13.4",
   "0.13.3",
