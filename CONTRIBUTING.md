@@ -191,7 +191,7 @@ cd scadnano
 
 Changes to scadnano should be pushed to the
 [`dev`](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev)
-branch. So switch to the `dev` branch:
+branch. (This step is unnecessary if you simply wish to run scadnano locally.) So switch to the `dev` branch:
 
 ```
 git checkout dev
@@ -213,9 +213,11 @@ pub get
 To run a local server to test the application, use the
 [`webdev`](https://dart.dev/tools/webdev) tool. This tool can
 be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
-Run `webdev serve` in the command line to compile your code
+Run 
+```webdev serve``` 
+in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
-(dartdevc) and spin up a [development
+(dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
 Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
 However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
