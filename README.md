@@ -32,6 +32,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Running offline](#running-offline)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
 
@@ -712,6 +713,18 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+## Running offline
+It is possible to run scadnano offline, so that no internet connection is needed.
+To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
+
+- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+
+- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+
+- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+
 
 
 ## Performance tips

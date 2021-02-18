@@ -170,14 +170,23 @@ We get into more detail below.
 
 ## Making Contributions
 
-scadnano can be developed locally.
+scadnano can be developed locally. 
+You can also use the instructions in this section to run scadnano offline even if you are not doing development for the project.
+
+
 
 ### Cloning
 
-The first step is cloning the repository so you have it available locally.
+The first step is cloning the repository so you have it available locally. This requires you to have [git](https://git-scm.com/) installed.
 
 ```
 git clone https://github.com/UC-Davis-molecular-computing/scadnano.git
+```
+
+Then change into the newly created directory:
+
+```
+cd scadnano
 ```
 
 Changes to scadnano should be pushed to the
@@ -188,22 +197,33 @@ branch. So switch to the `dev` branch:
 git checkout dev
 ```
 
-Next install all the dependencies (make sure you have [installed Dart](#dart)):
+### Installing Dart
+
+First, install the [Dart SDK](https://dart.dev/get-dart).
+
+Next install all the Dart dependencies:
 
 ```
 pub get
 ```
 
 
-### Running a Development Server
+### Running a Local Server
 
-To run a development server to test the application, use the
+To run a local server to test the application, use the
 [`webdev`](https://dart.dev/tools/webdev) tool. This tool can
 be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
 Run `webdev serve` in the command line to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and spin up a [development
 server](https://dart.dev/tools/webdev#serve).
+Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
+However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
+The webdev program will tell you which URL to enter in your browser; it will be something like 
+
+```
+[INFO] Serving `web` on http://127.0.0.1:8080
+```
 
 There are a couple benefits of using `webdev serve`:
 1. Unlike the [dart2js](https://dart.dev/tools/dart2js)
