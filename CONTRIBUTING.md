@@ -214,7 +214,11 @@ To run a local server to test the application, use the
 [`webdev`](https://dart.dev/tools/webdev) tool. This tool can
 be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
 Run 
-```webdev serve``` 
+
+```
+webdev serve
+``` 
+
 in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
 (dartdevc) and start up a [local
