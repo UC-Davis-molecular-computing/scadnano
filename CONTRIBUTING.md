@@ -201,7 +201,7 @@ git checkout dev
 
 First, install the [Dart SDK](https://dart.dev/get-dart).
 
-Next install all the Dart dependencies:
+Next install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
 pub get
