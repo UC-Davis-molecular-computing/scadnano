@@ -23,7 +23,7 @@ import 'unused_fields.dart';
 part 'strand.g.dart';
 
 abstract class Strand
-    with SelectableMixin, BuiltJsonSerializable, UnusedFields
+    with SelectableMixin, BuiltJsonSerializable, UnusedFields, JSONSerializable
     implements Built<Strand, StrandBuilder> {
   Strand._();
 

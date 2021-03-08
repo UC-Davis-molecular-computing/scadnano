@@ -288,6 +288,7 @@ part 'serializers.g.dart';
   Autobreak,
   NewDesignSet,
   Design,
+  CopySelectedStrandsToClipboard
 ])
 Serializers serializers = _$serializers;
 
