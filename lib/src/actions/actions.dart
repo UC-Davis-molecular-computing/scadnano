@@ -3169,3 +3169,15 @@ abstract class Autobreak
   static Serializer<Autobreak> get serializer =>
       _$autobreakSerializer;
 }
+
+// copy strand details
+abstract class CopySelectedStrandsToClipboard
+    with BuiltJsonSerializable
+    implements Action, Built<CopySelectedStrandsToClipboard, CopySelectedStrandsToClipboardBuilder> {
+
+  /************************ begin BuiltValue boilerplate ************************/
+factory CopySelectedStrandsToClipboard([void Function(CopySelectedStrandsToClipboardBuilder) updates]) = _$CopySelectedStrandsToClipboard;
+  CopySelectedStrandsToClipboard._();
+
+  static Serializer<CopySelectedStrandsToClipboard> get serializer => _$copySelectedStrandsToClipboardSerializer;
+}

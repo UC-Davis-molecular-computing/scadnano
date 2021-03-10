@@ -529,6 +529,7 @@ class DesignViewComponent {
         app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
         (ev.ctrlKey || ev.metaKey) &&
         key == KeyCode.C) {
+      app.dispatch(actions.CopySelectedStrandsToClipboard());
       copy_selected_strands();
     }
     // can paste even if nothing selected or not in select mode, if something is in copy buffer
