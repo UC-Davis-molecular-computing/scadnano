@@ -6,12 +6,12 @@ import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
 copy_selected_objects_to_clipboard_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action == actions.CopySelectedStrandsToClipboard) {
-    var clipboard_string = '';
+  if (action is actions.CopySelectedStrandsToClipboard) {
+    var clipboard_strings = [];
     for (var item in store.state.ui_state.selectables_store.selected_strands) {
-      clipboard_string += json_encode(item) + '\n';
+      clipboard_strings.add(json_encode(item));
     }
-    window.navigator.clipboard.writeText(clipboard_string);
+    window.navigator.clipboard.writeText('[\n${clipboard_strings.join(',\n')}]');
   }
   next(action);
 }

@@ -77,8 +77,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..default_crossover_type_scaffold_for_setting_helix_rolls =
           state.ui_state.default_crossover_type_scaffold_for_setting_helix_rolls
       ..default_crossover_type_staple_for_setting_helix_rolls =
-          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls)
-      ..enable_copy_to_clipboard = state.ui_state.selectables_store.isNotEmpty;
+          state.ui_state.default_crossover_type_staple_for_setting_helix_rolls);
   },
   // Used for component test.
   forwardRef: true,
@@ -122,7 +121,6 @@ mixin MenuPropsMixin on UiProps {
   LocalStorageDesignChoice local_storage_design_choice;
   bool clear_helix_selection_when_loading_new_design;
   Geometry geometry;
-  bool enable_copy_to_clipboard;
 }
 
 class MenuProps = UiProps with MenuPropsMixin, ConnectPropsMixin;
@@ -318,14 +316,6 @@ that occurred between the last edit and a browser crash.'''
         ..display = 'Copy'
         ..keyboard_shortcut = 'Ctrl+C'
         ..disabled = !props.enable_copy)(),
-      (MenuDropdownItem()
-        ..on_click = (_) {
-          if (props.enable_copy_to_clipboard) {
-            props.dispatch(actions.CopySelectedStrandsToClipboard);
-          }
-        }
-        ..display = 'Copy to clipboard'
-        ..disabled = !props.enable_copy_to_clipboard)(),
       (MenuDropdownItem()
         ..on_click =
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))

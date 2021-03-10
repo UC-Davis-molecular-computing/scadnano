@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/copy_selected_strands_to_clipboard.dart';
+import 'package:scadnano/src/middleware/copy_selected_objects_to_clipboard.dart';
 
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
