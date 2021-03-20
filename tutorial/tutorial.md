@@ -55,7 +55,14 @@ The left part is called the "side view" and the middle part is called the "main 
 
 First, save this design into a file by clicking *File&rarr;Save* or pressing Ctrl+S. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically.
 
-Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
+### Browser filename tricks
+
+1. Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
+
+2. Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
+so repeatedly saving the file will change its name on your local filesystem every time. 
+To disable this so that it uses the same filename every time you save, you can install the extension 
+[Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
 
 

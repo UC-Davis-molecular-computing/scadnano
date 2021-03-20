@@ -105,7 +105,7 @@ it is not possible to save your file automatically without further interaction;
 after pressing "Save", you will always be prompted to specify a filename to which to save.
 
 Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
-so repeatedly saving the file will change its name every time. 
+so repeatedly saving the file will change its name on your local filesystem every time. 
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
