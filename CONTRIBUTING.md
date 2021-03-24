@@ -9,7 +9,7 @@ or post questions as issues on the [issues page](https://github.com/UC-Davis-mol
 
 * [What should I know before I get started?](#what-should-i-know-before-i-get-started)
 * [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
-* [Making Contributions](#making-contributions)
+* [Making contributions](#making-contributions)
 * [General recipe for adding features](#general-recipe-for-adding-features)
 * [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
 * [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
@@ -178,7 +178,7 @@ We get into more detail below.
     
     So although the top-level reducer is called every time, which seems as though it might be inefficient, most of the reducers do not actually run (and many that do run simply return the same state object without changing it). So it is actually quite efficient.
 
-## Making Contributions
+## Making contributions
 
 scadnano can be developed locally. 
 You can also use the instructions in this section to run scadnano offline even if you are not doing development for the project.

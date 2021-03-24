@@ -382,7 +382,7 @@ html, body {
 /*    cursor: grabbing;*/
 /*}*/
 
-.domain-name-text {
+.domain-name-text, .strand-name-text {
     text-anchor: middle;
 }
 

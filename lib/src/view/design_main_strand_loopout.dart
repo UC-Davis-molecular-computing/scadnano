@@ -41,7 +41,7 @@ mixin DesignMainLoopoutPropsMixin on UiProps {
   Helix next_helix;
   bool selected;
   BuiltSet<EditModeChoice> edit_modes;
-  bool show_domain_labels;
+  bool show_domain_names;
 
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -86,7 +86,7 @@ class DesignMainLoopoutComponent extends UiStatefulComponent2<DesignMainLoopoutP
 
     if (within_group) {
       path_description = loopout_path_description_within_group(props.prev_helix, props.next_helix,
-          props.prev_domain, props.next_domain, props.loopout, true, props.show_domain_labels);
+          props.prev_domain, props.next_domain, props.loopout, true, props.show_domain_names);
     } else {
       path_description = loopout_path_description_between_groups();
     }

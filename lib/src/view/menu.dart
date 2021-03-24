@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:quiver/iterables.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import '../state/dialog.dart';
@@ -19,7 +18,6 @@ import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
 import '../view/react_bootstrap.dart';
 import '../constants.dart' as constants;
-import 'package:smart_dialogs/smart_dialogs.dart';
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
@@ -39,7 +37,10 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_labels
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_strand_names = state.ui_state.show_strand_names
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..strand_name_font_size = state.ui_state.strand_name_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
@@ -55,7 +56,6 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
           app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
           app.state.ui_state.selectables_store.selected_items.isNotEmpty)
       ..modification_font_size = state.ui_state.modification_font_size
-      ..domain_name_font_size = state.ui_state.domain_label_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
       ..modification_display_connector = state.ui_state.modification_display_connector
@@ -89,9 +89,11 @@ mixin MenuPropsMixin on UiProps {
   bool no_grid_is_none;
   bool show_dna;
   bool show_domain_names;
+  bool show_strand_names;
+  num domain_name_font_size;
+  num strand_name_font_size;
   bool show_modifications;
   num modification_font_size;
-  num domain_name_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool modification_display_connector;
@@ -493,6 +495,20 @@ helix with the opposite orientation.'''
   List view_menu_show_labels() {
     return [
       (MenuBoolean()
+        ..value = props.show_strand_names
+        ..display = 'Show strand names'
+        ..tooltip = "Show strand names near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandNamesSet(!props.show_strand_names)))
+        ..key = 'show-strand-name')(),
+      (MenuNumber()
+        ..display = 'strand name font size'
+        ..default_value = props.strand_name_font_size
+        ..hide = !props.show_strand_names
+        ..tooltip = 'Adjust to change the font size of strand name.'
+        ..on_new_value =
+        ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
+        ..key = 'strand-name-font-size')(),
+      (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
         ..tooltip = 'Show domain and loopout names.'
@@ -505,7 +521,7 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of domain and loopout name.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
-        ..key = 'domain-label-font-size')(),
+        ..key = 'domain-name-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_name_mismatches
         ..display = 'Show domain name mismatches'
