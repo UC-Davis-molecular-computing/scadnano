@@ -5,6 +5,16 @@ The following is a set of guidelines for contributing to scadnano.
 Feel free to propose changes to this document in a pull request, 
 or post questions as issues on the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
 
+## Table of contents
+
+* [What should I know before I get started?](#what-should-i-know-before-i-get-started)
+* [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
+* [Making Contributions](#making-contributions)
+* [General recipe for adding features](#general-recipe-for-adding-features)
+* [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
+* [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+* [Styleguide](#styleguide)
+
 ## What should I know before I get started?
 
 ### Dart
