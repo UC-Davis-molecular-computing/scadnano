@@ -40,7 +40,8 @@ mixin DesignMainStrandPathsPropsMixin on UiProps {
   BuiltMap<String, HelixGroup> groups;
   Geometry geometry;
 
-  bool show_domain_labels;
+  bool show_domain_names;
+  bool show_strand_names;
   bool drawing_potential_crossover;
   bool moving_dna_ends;
   bool origami_type_is_selectable;
@@ -148,7 +149,7 @@ class DesignMainStrandPathsComponent extends UiComponent2<DesignMainStrandPathsP
         if (should) {
           paths.add((DesignMainLoopout()
             ..loopout = loopout
-            ..show_domain_labels = props.show_domain_labels
+            ..show_domain_names = props.show_domain_names
             ..strand = strand
             ..helices = props.helices
             ..groups = props.groups

@@ -8,37 +8,44 @@ import 'pure_component.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
 
-part 'design_main_strand_domain_name.over_react.g.dart';
+part 'design_main_strand_strand_name.over_react.g.dart';
 
-UiFactory<DesignMainStrandDomainNameProps> DesignMainStrandDomainName = _$DesignMainStrandDomainName;
+UiFactory<DesignMainStrandStrandNameProps> DesignMainStrandStrandName = _$DesignMainStrandStrandName;
 
-mixin DesignMainStrandDomainNamePropsMixin on UiProps {
-  Domain domain;
+mixin DesignMainStrandStrandNamePropsMixin on UiProps {
+  String strand_name;
+  Domain domain; // domain next to which we draw strand name
   Helix helix;
   Geometry geometry;
 
   int font_size;
   bool show_dna;
+  bool show_domain_names;
   String transform;
 }
 
-class DesignMainStrandDomainNameProps = UiProps with DesignMainStrandDomainNamePropsMixin;
+class DesignMainStrandStrandNameProps = UiProps with DesignMainStrandStrandNamePropsMixin;
 
-class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandDomainNameProps>
+class DesignMainStrandStrandNameComponent extends UiComponent2<DesignMainStrandStrandNameProps>
     with PureComponent {
   @override
   render() {
-
     Point<num> start_svg = props.helix.svg_base_pos(props.domain.start, props.domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward);
     Point<num> mid_svg = (start_svg + end_svg) * 0.5;
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
 
-    // offset depends on whether we are showing DNA, so they don't overlap
-    num offset_of_dna = props.show_dna ? props.helix.geometry.base_height_svg : 0;
+    // offset depends on whether we are showing DNA and/or domain names, so they don't overlap
+    num y_offset = 0;
+    if (props.show_dna) {
+      y_offset += props.helix.geometry.base_height_svg;
+    }
+    if (props.show_domain_names) {
+      y_offset += props.helix.geometry.base_height_svg;
+    }
 
-    var dy = props.geometry.base_height_svg * 0.7 + offset_of_dna;
+    var dy = props.geometry.base_height_svg * 0.7 + y_offset;
     if (props.domain.forward) {
       dy = -dy;
     }
@@ -50,6 +57,6 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
       ..transform = props.transform
       ..fontSize = props.font_size
       ..dominantBaseline = baseline
-      ..className = constants.css_selector_domain_name_text)(props.domain.name);
+      ..className = constants.css_selector_strand_name_text)(props.strand_name);
   }
 }

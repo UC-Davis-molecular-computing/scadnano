@@ -121,8 +121,6 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   num get modification_font_size => storables.modification_font_size;
 
-  num get domain_label_font_size => storables.domain_label_font_size;
-
   bool get modification_display_connector => storables.modification_display_connector;
 
   bool get display_base_offsets_of_major_ticks => storables.display_base_offsets_of_major_ticks;
@@ -147,7 +145,13 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get show_dna => storables.show_dna;
 
-  bool get show_domain_labels => storables.show_domain_labels;
+  bool get show_domain_names => storables.show_domain_names;
+
+  bool get show_strand_names => storables.show_strand_names;
+
+  num get domain_name_font_size => storables.domain_name_font_size;
+
+  num get strand_name_font_size => storables.strand_name_font_size;
 
   bool get show_modifications => storables.show_modifications;
 
@@ -189,7 +193,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   LocalStorageDesignChoice get local_storage_design_choice => storables.local_storage_design_choice;
 
-  bool get clear_helix_selection_when_loading_new_design => storables.clear_helix_selection_when_loading_new_design;
+  bool get clear_helix_selection_when_loading_new_design =>
+      storables.clear_helix_selection_when_loading_new_design;
 
   bool get show_slice_bar => storables.show_slice_bar;
 
