@@ -5,6 +5,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
+import 'package:tuple/tuple.dart';
 
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
@@ -182,6 +183,7 @@ part 'serializers.g.dart';
   Nick,
   Ligate,
   JoinStrandsByCrossover,
+  JoinStrandsByMultipleCrossovers,
   PotentialVerticalCrossover,
   PotentialCrossover,
   PotentialCrossoverCreate,

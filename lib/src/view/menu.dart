@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:html';
+import 'package:built_collection/built_collection.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
+import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:tuple/tuple.dart';
 import '../state/dialog.dart';
 import '../state/edit_mode.dart';
 import '../state/example_designs.dart';
@@ -33,9 +37,10 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
+      ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
       ..geometry = state.design?.geometry
       ..no_grid_is_none =
-          state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
+      state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
       ..show_domain_names = state.ui_state.show_domain_names
       ..show_strand_names = state.ui_state.show_strand_names
@@ -86,6 +91,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
 UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
+  BuiltSet<DNAEnd> selected_ends;
   bool no_grid_is_none;
   bool show_dna;
   bool show_domain_names;
@@ -205,7 +211,7 @@ If checked, before attempting to close or refresh the page, if the design has
 changed since it was last saved, a warning dialog is displayed to ask if you
 really want to exit without saving.'''
         ..onChange =
-            ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
+        ((_) => props.dispatch(actions.WarnOnExitIfUnsavedSet(warn: !props.warn_on_exit_if_unsaved)))
         ..key = 'warn-on-exit-if-unsaved')(),
       DropdownDivider({'key': 'divider-save'}),
       (MenuFormFile()
@@ -228,8 +234,9 @@ really want to exit without saving.'''
       (MenuBoolean()
         ..value = props.clear_helix_selection_when_loading_new_design
         ..display = 'Clear helix selection when loading new design'
-        ..onChange = ((_) => props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
-            clear: !props.clear_helix_selection_when_loading_new_design)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.ClearHelixSelectionWhenLoadingNewDesignSet(
+                clear: !props.clear_helix_selection_when_loading_new_design)))
         ..tooltip = '''\
 If checked, the selected helices will be clear when loading a new design.
 Otherwise, helix selection is not cleared, meaning that all the selected helices in the current
@@ -238,7 +245,8 @@ design will be selected (based on helix index) on the loaded design.'''
     ]);
   }
 
-  List<ReactElement> file_menu_save_design_local_storage_options() => [
+  List<ReactElement> file_menu_save_design_local_storage_options() =>
+      [
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_edit
           ..display = 'Save design in localStorage on every edit'
@@ -246,8 +254,10 @@ design will be selected (based on helix index) on the loaded design.'''
 On every edit, save current design in localStorage (in your web browser).
 
 Disabling this minimizes the time needed to render large designs.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_edit())))
+          ..onChange = ((_) =>
+              props.dispatch(
+                  actions.LocalStorageDesignChoiceSet(
+                      choice: props.local_storage_design_choice.to_on_edit())))
           ..key = 'save-dna-design-in-local-storage')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.on_exit
@@ -256,16 +266,19 @@ Disabling this minimizes the time needed to render large designs.'''
 Before exiting, save current design in localStorage (in your web browser). 
 For large designs, this is faster than saving on every edit, but if the browser crashes, 
 all changes made will be lost, so it is not as safe as storing on every edit.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_on_exit())))
+          ..onChange = ((_) =>
+              props.dispatch(
+                  actions.LocalStorageDesignChoiceSet(
+                      choice: props.local_storage_design_choice.to_on_exit())))
           ..key = 'save-dna-design-in-local-storage-on-exit')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.never
           ..display = 'Do not save design in localStorage'
           ..tooltip = '''\
 Never saves the design in localStorage.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
+          ..onChange = ((_) =>
+              props.dispatch(
+                  actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_never())))
           ..key = 'never-save-dna-design-in-local-storage')(),
         (MenuBoolean()
           ..value = props.local_storage_design_choice.option == LocalStorageDesignOption.periodic
@@ -275,8 +288,10 @@ Every <period> seconds, save current design in localStorage (in your web browser
 Also saves before exiting.
 This is safer than never saving, or saving only before exiting, but will not save edits
 that occurred between the last edit and a browser crash.'''
-          ..onChange = ((_) => props.dispatch(
-              actions.LocalStorageDesignChoiceSet(choice: props.local_storage_design_choice.to_periodic())))
+          ..onChange = ((_) =>
+              props.dispatch(
+                  actions.LocalStorageDesignChoiceSet(
+                      choice: props.local_storage_design_choice.to_periodic())))
           ..key = 'save-dna-design-in-local-storage-periodically')(),
         (MenuNumber()
           ..display = 'period (seconds)'
@@ -284,8 +299,9 @@ that occurred between the last edit and a browser crash.'''
           ..default_value = props.local_storage_design_choice.period_seconds
           ..hide = props.local_storage_design_choice.option != LocalStorageDesignOption.periodic
           ..tooltip = 'Number of seconds between saving design to localStorage.'
-          ..on_new_value = ((num period) => props.dispatch(actions.LocalStorageDesignChoiceSet(
-              choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
+          ..on_new_value = ((num period) =>
+              props.dispatch(actions.LocalStorageDesignChoiceSet(
+                  choice: LocalStorageDesignChoice(LocalStorageDesignOption.periodic, period))))
           ..key = 'period-of-save-dna-design-in-local-storage-periodically')(),
       ];
 
@@ -298,6 +314,8 @@ that occurred between the last edit and a browser crash.'''
         'title': 'Edit',
         'id': 'edit-nav-dropdown',
       },
+      ///////////////////////////////////////////////////////////////
+      // cut/copy/paste
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.Undo()))
         ..display = 'Undo'
@@ -320,9 +338,11 @@ that occurred between the last edit and a browser crash.'''
         ..disabled = !props.enable_copy)(),
       (MenuDropdownItem()
         ..on_click =
-            ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
+        ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
         ..keyboard_shortcut = 'Ctrl+V')(),
+      ///////////////////////////////////////////////////////////////
+      // pasted strands keep original color
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
@@ -331,7 +351,9 @@ that occurred between the last edit and a browser crash.'''
 If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..onChange =
-            ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+        ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+      ///////////////////////////////////////////////////////////////
+      // inline insertions/deletions
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
@@ -342,6 +364,25 @@ If unchecked, then a new color is generated.'''
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
+      ///////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////
+      // Connect selected ends by crossovers
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
+        ..display = 'Connect selected ends by crossovers'
+        ..disabled = props.selected_ends.isEmpty
+        ..tooltip = ''
+            '''Connect selected ends by crossovers. 
+
+Ends are connected as follows. Within each HelixGroup, do the following. 
+Iterate over ends in the following order: first by helix, then by 
+forward/reverse, then by offset. For each other end (in the same order, 
+if it is "above" (lower helix idx, or more generally helix earlier in 
+helices_view_order) another end and opposite direction, then join them by 
+a crossover and remove both ends from the list of ends to consider.''')(),
+      ///////////////////////////////////////////////////////////////
+      // Set helix coordinates based on crossovers
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
@@ -402,6 +443,8 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
                 staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
+      ///////////////////////////////////////////////////////////////
+      // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => ask_for_geometry(props.geometry))
@@ -425,6 +468,8 @@ Set geometric parameters affecting how the design is displayed.
 - minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction
                       of its long axis.
                       default ${constants.default_minor_groove_angle} degrees''')(),
+      ///////////////////////////////////////////////////////////////
+      // autostaple/autobreak
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.Autostaple()))
@@ -520,7 +565,7 @@ helix with the opposite orientation.'''
         ..hide = !props.show_domain_names
         ..tooltip = 'Adjust to change the font size of domain and loopout name.'
         ..on_new_value =
-            ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
+        ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
         ..key = 'domain-name-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_name_mismatches
@@ -575,8 +620,9 @@ helix with the opposite orientation.'''
         ..hide = !props.display_of_major_ticks_offsets
         ..display = '... on all helices'
         ..tooltip = 'Display the integer base offset to the right of each major tick, for all helices.'
-        ..onChange = ((_) => props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
-            !props.display_base_offsets_of_major_ticks_only_first_helix)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.SetDisplayBaseOffsetsOfMajorTicksOnlyFirstHelix(
+                !props.display_base_offsets_of_major_ticks_only_first_helix)))
         ..key = 'display-major-tick-offsets-on-all-helices')(),
       (MenuNumber()
         ..display = 'major tick offset font size'
@@ -596,15 +642,16 @@ helix with the opposite orientation.'''
         ..tooltip =
             'Display the number of bases between each adjacent pair of major ticks, on the first helix.'
         ..onChange =
-            ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
+        ((_) => props.dispatch(actions.SetDisplayMajorTickWidths(!props.display_major_tick_widths)))
         ..key = 'display-major-tick-widths')(),
       (MenuBoolean()
         ..value = props.display_major_tick_widths_all_helices
         ..hide = !props.display_major_tick_widths
         ..display = '...on all helices'
         ..tooltip = 'Display the number of bases between each adjacent pair of major ticks, on all helices.'
-        ..onChange = ((_) => props.dispatch(
-            actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
+        ..onChange = ((_) =>
+            props.dispatch(
+                actions.SetDisplayMajorTickWidthsAllHelices(!props.display_major_tick_widths_all_helices)))
         ..key = 'display-major-tick-widths-on-all-helices')(),
       (MenuNumber()
         ..display = 'Major tick width font size'
@@ -664,8 +711,9 @@ rotating the side view by 180 degrees.'''
 Shows helix circles and idx's in main view. You may want to hide them for
 designs that have overlapping non-parallel helices.'''
         ..name = 'show-helix-circles-main-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowHelixCirclesMainViewSet(
-            show_helix_circles_main_view: !props.show_helix_circles_main_view)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowHelixCirclesMainViewSet(
+                show_helix_circles_main_view: !props.show_helix_circles_main_view)))
         ..key = 'show-helix-circles-main-view')(),
       (MenuBoolean()
         ..value = props.show_grid_coordinates_side_view
@@ -673,8 +721,9 @@ designs that have overlapping non-parallel helices.'''
         ..tooltip = '''\
 Shows grid coordinates in the side view under the helix index.'''
         ..name = 'show-grid-coordinates-side-view'
-        ..onChange = ((_) => props.dispatch(actions.ShowGridCoordinatesSideViewSet(
-            show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
+        ..onChange = ((_) =>
+            props.dispatch(actions.ShowGridCoordinatesSideViewSet(
+                show_grid_coordinates_side_view: !props.show_grid_coordinates_side_view)))
         ..key = 'show-grid-coordinates-side-view')(),
       (MenuBoolean()
         ..value = props.show_loopout_length
@@ -696,8 +745,7 @@ display the DNA backbone angle of all helices at a particular offset.
         ..onChange = (_) {
           props.dispatch(actions.ShowSliceBarSet(!props.show_slice_bar));
         }
-        ..key = 'show-slice-bar'
-      )(),
+        ..key = 'show-slice-bar')(),
       (MenuBoolean()
         ..value = props.show_mouseover_data
         ..display = 'Display strand and helix details in footer'
@@ -713,8 +761,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data'
-      )()
+        ..key = 'show-mouseover-data')()
     ];
   }
 
@@ -789,7 +836,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
       DropdownItem(
         {
           'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
+          'https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md',
           'target': '_blank',
         },
         'Python scripting tutorial',
@@ -803,8 +850,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
 //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
@@ -845,11 +891,12 @@ However, it may be less stable than the main site.'''
         version_dropdown_items
       ]),
       (MenuDropdownItem()
-        ..on_click = ((_) => window.alert(''
-'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
-'\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
-'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
-'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
+        ..on_click = ((_) =>
+            window.alert(''
+                'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+                '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+                'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+                'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
         ..display = 'About')(),
 //       DropdownItem(
 //         {
@@ -918,6 +965,118 @@ However, it may be less stable than the main site.'''
   }
 }
 
+/// find which pairs of ends among [selected_ends] to connect by Crossovers, and dispatch BatchAction
+/// to connect them
+connect_ends_by_crossovers(Iterable<DNAEnd> selected_ends) {
+  var design = app.state.design;
+  List<DNAEnd> all_ends = selected_ends.toList();
+  Map<DNAEnd, Domain> all_domains = {for (var end in all_ends) end: app.state.design.end_to_domain[end]};
+
+  // group according to HelixGroups
+  Map<String, List<DNAEnd>> ends_by_group = {};
+  for (var end in all_ends) {
+    var domain = all_domains[end];
+    int helix_idx = domain.helix;
+    var helix = design.helices[helix_idx];
+    var group_name = helix.group;
+    if (!ends_by_group.containsKey(group_name)) {
+      ends_by_group[group_name] = [];
+    }
+    ends_by_group[group_name].add(end);
+  }
+
+  // find pairs of ends to connect
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs_to_connect = [];
+  for (var group_name in design.groups.keys) {
+    // BuiltList<int> helices_view_order = design.groups[group_name].helices_view_order;
+    BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name].helices_view_order_inverse;
+    var ends_in_group = ends_by_group[group_name];
+    Map<DNAEnd, Domain> domains_by_end_in_group = {
+      for (var end in ends_in_group) end: app.state.design.end_to_domain[end]
+    };
+    var end_pairs_to_connect_in_group =
+    find_end_pairs_to_connect(ends_in_group, domains_by_end_in_group, helices_view_order_inverse);
+    end_pairs_to_connect.addAll(end_pairs_to_connect_in_group);
+  }
+
+  app.dispatch(actions.JoinStrandsByMultipleCrossovers(end_pairs: end_pairs_to_connect.toBuiltList()));
+}
+
+/// find end pairs to connect according to algorithm described here:
+/// https://github.com/UC-Davis-molecular-computing/scadnano/issues/581
+List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(List<DNAEnd> ends, Map<DNAEnd, Domain> domains_by_end,
+    BuiltMap<int, int> helices_view_order_inverse) {
+  /// sort by helix, then by forward/reverse, then by offset
+  ends.sort((DNAEnd end1, DNAEnd end2) {
+    var domain1 = domains_by_end[end1];
+    var domain2 = domains_by_end[end2];
+    int helix1 = domain1.helix;
+    int helix2 = domain2.helix;
+    int helix1_order = helices_view_order_inverse[helix1];
+    int helix2_order = helices_view_order_inverse[helix2];
+    if (helix1_order != helix2_order) {
+      return helix1_order - helix2_order;
+    }
+    if (domain1.forward != domain2.forward) {
+      return domain1.forward ? -1 : 1;
+    }
+    assert(end1.offset_inclusive != end2.offset_inclusive);
+    return end1.offset_inclusive - end2.offset_inclusive;
+  });
+
+  // group ends by common offsets to reduce search time
+  Map<int, List<DNAEnd>> ends_by_offset = {};
+  for (var end in ends) {
+    if (!ends_by_offset.containsKey(end.offset_inclusive)) {
+      ends_by_offset[end.offset_inclusive] = [];
+    }
+    ends_by_offset[end.offset_inclusive].add(end);
+  }
+
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs = [];
+
+  for (int offset in ends_by_offset.keys) {
+    // remember which ends have been paired with this offset, so we don't pick any twice
+    Set<DNAEnd> already_chosen_ends = {};
+    var ends_with_offset = ends_by_offset[offset];
+    for (int i = 0; i < ends_with_offset.length; i++) {
+      var end1 = ends_with_offset[i];
+      if (already_chosen_ends.contains(end1)) {
+        continue;
+      }
+      var end2 = find_paired_end(end1, i + 1, ends_with_offset, already_chosen_ends, domains_by_end);
+      if (end2 != null) {
+        var end_pair = Tuple2<DNAEnd, DNAEnd>(end1, end2);
+        end_pairs.add(end_pair);
+        already_chosen_ends.add(end1);
+        already_chosen_ends.add(end2);
+      }
+    }
+  }
+
+  return end_pairs;
+}
+
+/// find DNAEnd in list [ends_with_offset], but not in set [already_chosen_ends], to pair with [end1],
+/// starting at index [starting_index] in [ends_with_offset].
+/// Assume [end1] has same offset as all DNAEnds in [ends_with_offset].
+DNAEnd find_paired_end(DNAEnd end1, int starting_index, List<DNAEnd> ends_with_offset,
+    Set<DNAEnd> already_chosen_ends, Map<DNAEnd, Domain> domains_by_end) {
+  var domain1 = domains_by_end[end1];
+  for (int i=starting_index; i<ends_with_offset.length; i++) {
+    DNAEnd end2 = ends_with_offset[i];
+    if (!already_chosen_ends.contains(end2)) {
+      var domain2 = domains_by_end[end2];
+      if (domain1.forward != domain2.forward && domain1.helix != domain2.helix) {
+        assert(end1.is_5p != end2.is_5p);
+        return end2;
+      }
+    }
+  }
+  return null;
+}
+
+
 Future<void> ask_for_autobreak_parameters() async {
   var items = List<DialogItem>(4);
   int target_length_idx = 0;
@@ -938,7 +1097,11 @@ Future<void> ask_for_autobreak_parameters() async {
   int max_length = (results[max_length_idx] as DialogInteger).value;
   int min_distance_to_xover = (results[min_distance_to_xover_idx] as DialogInteger).value;
 
-  app.dispatch(actions.Autobreak(target_length: target_length, min_length: min_length, max_length: max_length, min_distance_to_xover: min_distance_to_xover));
+  app.dispatch(actions.Autobreak(
+      target_length: target_length,
+      min_length: min_length,
+      max_length: max_length,
+      min_distance_to_xover: min_distance_to_xover));
 }
 
 Future<void> ask_for_geometry(Geometry geometry) async {
@@ -977,8 +1140,8 @@ Future<void> ask_for_geometry(Geometry geometry) async {
   app.dispatch(actions.GeometrySet(geometry: new_geometry));
 }
 
-request_load_file_from_file_chooser(
-    FileUploadInputElement file_chooser, void Function(FileReader, String) onload_callback) {
+request_load_file_from_file_chooser(FileUploadInputElement file_chooser,
+    void Function(FileReader, String) onload_callback) {
   List<File> files = file_chooser.files;
   assert(files.isNotEmpty);
   File file = files[0];

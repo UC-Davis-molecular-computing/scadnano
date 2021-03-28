@@ -524,8 +524,24 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     for (var strand in strands) {
       for (var ss in strand.domains()) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
-          var key = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
-          map[key] = end;
+          var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
+          map[address] = end;
+        }
+      }
+    }
+    return map.build();
+  }
+
+  /// Gets Address (helix,offset,forward) of given DNAEnd
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<DNAEnd, Address> get end_to_address {
+    var map = Map<DNAEnd, Address>();
+    for (var strand in strands) {
+      for (var ss in strand.domains()) {
+        for (var end in [ss.dnaend_start, ss.dnaend_end]) {
+          var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
+          map[end] = address;
         }
       }
     }

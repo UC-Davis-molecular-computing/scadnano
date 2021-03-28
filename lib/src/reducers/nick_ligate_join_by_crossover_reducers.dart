@@ -1,4 +1,6 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/design.dart';
+import 'package:scadnano/src/state/helix.dart';
 
 import '../state/app_state.dart';
 import '../state/domain.dart';
@@ -265,33 +267,83 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   }
 }
 
+BuiltList<Strand> join_strands_by_multiple_crossovers_reducer(
+    BuiltList<Strand> strands, AppState state, actions.JoinStrandsByMultipleCrossovers action) {
+  // build up list of addresses; these will stay the same even as the strands change as we add Crossovers
+  List<Address> addresses_from = [];
+  List<Address> addresses_to = [];
+  for (var end_pair in action.end_pairs) {
+    var end1 = end_pair.item1;
+    var end2 = end_pair.item2;
+    var end_from = end1.is_3p? end1: end2;
+    var end_to = end1.is_3p? end2: end1;
+    addresses_from.add(state.design.end_to_address[end_from]);
+    addresses_to.add(state.design.end_to_address[end_to]);
+  }
+
+  // add one crossover at a time, looking up strands to connect by Address
+  // (since we are invalidating the Design's lookup as we modify the list [strands])
+  for (int i=0; i<addresses_from.length; i++) {
+    var address_from = addresses_from[i];
+    var address_to = addresses_to[i];
+    var strand_from = _strand_with_end_address(strands, address_from, true);
+    var strand_to = _strand_with_end_address(strands, address_to, false);
+    assert(strand_from != null);
+    assert(strand_to != null);
+    strands = _join_strands_with_crossover(strand_from, strand_to, strands, true);
+  }
+
+  return strands;
+}
+
+Strand _strand_with_end_address(Iterable<Strand> strands, Address address, bool end_is_3p) {
+  for (var strand in strands) {
+    if (end_is_3p && strand.address_3p == address) {
+      return strand;
+    }
+    if (!end_is_3p && strand.address_5p == address) {
+      return strand;
+    }
+  }
+  return null;
+}
+
 BuiltList<Strand> join_strands_by_crossover_reducer(
     BuiltList<Strand> strands, AppState state, actions.JoinStrandsByCrossover action) {
   // gather substrand data
-  DNAEnd dna_end_first_click = action.dna_end_first_click;
-  DNAEnd dna_end_second_click = action.dna_end_second_click;
+  DNAEnd end_first_click = action.dna_end_first_click;
+  DNAEnd end_second_click = action.dna_end_second_click;
 
-  bool first_clicked_is_from = !dna_end_first_click.is_5p;
-  DNAEnd dna_end_from = first_clicked_is_from ? dna_end_first_click : dna_end_second_click;
-  DNAEnd dna_end_to = first_clicked_is_from ? dna_end_second_click : dna_end_first_click;
-  Strand strand_from = state.design.end_to_strand(dna_end_from);
-  Strand strand_to = state.design.end_to_strand(dna_end_to);
+  // "from" strand is the one with the 3' end adjacent to the new crossover
+  // (in 5' to 3' direction, this crossover goes from one strand to another)
+  bool first_clicked_is_from = end_first_click.is_3p;
+  DNAEnd end_from = first_clicked_is_from ? end_first_click : end_second_click;
+  DNAEnd end_to = first_clicked_is_from ? end_second_click : end_first_click;
+  Strand strand_from = state.design.end_to_strand(end_from);
+  Strand strand_to = state.design.end_to_strand(end_to);
 
+  // if joining strand to itself by crossover, just make it circular
+  return _join_strands_with_crossover(strand_from, strand_to, strands, first_clicked_is_from);
+}
+
+// This is a common function used by actions JoinStrandsByCrossover and JoinStrandsByMultipleCrossovers
+BuiltList<Strand> _join_strands_with_crossover(
+    Strand strand_from, Strand strand_to, BuiltList<Strand> strands, bool first_clicked_is_from) {
   // if joining strand to itself by crossover, just make it circular
   if (strand_from == strand_to) {
     var strand = strand_from;
     int strand_idx = strands.indexOf(strand);
-    var strands_mutable = strands.toBuilder();
+    var strands_mutable = strands.toList();
     var new_strand = strand.rebuild((b) => b..circular = true);
     new_strand = new_strand.initialize();
     strands_mutable[strand_idx] = new_strand;
-    return strands_mutable.build();
+    return strands_mutable.toBuiltList();
   }
 
   Strand strand_first_clicked = first_clicked_is_from ? strand_from : strand_to;
   Strand strand_second_clicked = first_clicked_is_from ? strand_to : strand_from;
-  ListBuilder<Substrand> substrands_from = strand_from.substrands.toBuilder();
-  ListBuilder<Substrand> substrands_to = strand_to.substrands.toBuilder();
+  List<Substrand> substrands_from = strand_from.substrands.toList();
+  List<Substrand> substrands_to = strand_to.substrands.toList();
 
   // change substrand data
   int last_idx_from = substrands_from.length - 1;
@@ -306,7 +358,7 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   substrands_from[last_idx_from] = last_domain_from;
   substrands_to[0] = first_domain_to;
 
-  List<Substrand> substrands_new = substrands_from.build().toList() + substrands_to.build().toList();
+  List<Substrand> substrands_new = substrands_from + substrands_to;
 
   // create new Strand
   Strand new_strand = join_two_strands_with_substrands(
