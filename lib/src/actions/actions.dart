@@ -343,7 +343,6 @@ abstract class SelectModesSet
 abstract class StrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<StrandNameSet, StrandNameSetBuilder> {
-
   @nullable
   String get name;
 
@@ -365,7 +364,6 @@ abstract class StrandNameSet
 abstract class SubstrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
-
   @nullable
   String get name;
 
@@ -1839,8 +1837,24 @@ abstract class JoinStrandsByCrossover
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// reflect (mirror image) Strands
+// JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
+// from the Design, which are invalidated as the Design is modified.
+// Also, to keep the complex logic in the reducer and out of the view code,
+// we don't pass any information into the action; the global reducer looks up the selected ends.
+abstract class JoinStrandsByMultipleCrossovers
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<JoinStrandsByMultipleCrossovers, JoinStrandsByMultipleCrossoversBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory JoinStrandsByMultipleCrossovers() = _$JoinStrandsByMultipleCrossovers;
+
+  JoinStrandsByMultipleCrossovers._();
+
+  static Serializer<JoinStrandsByMultipleCrossovers> get serializer =>
+      _$joinStrandsByMultipleCrossoversSerializer;
+
+  @memoized
+  int get hashCode;
+}
 
 abstract class StrandsReflect
     with BuiltJsonSerializable
@@ -3102,11 +3116,9 @@ abstract class ShowSliceBarSet
   bool get show;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowSliceBarSet(bool show) =>
-      ShowSliceBarSet.from((b) => b..show = show);
+  factory ShowSliceBarSet(bool show) => ShowSliceBarSet.from((b) => b..show = show);
 
-  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) =
-      _$ShowSliceBarSet;
+  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) = _$ShowSliceBarSet;
 
   ShowSliceBarSet._();
 
@@ -3120,11 +3132,9 @@ abstract class SliceBarOffsetSet
   int get offset;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarOffsetSet(int offset) =>
-      SliceBarOffsetSet.from((b) => b..offset = offset);
+  factory SliceBarOffsetSet(int offset) => SliceBarOffsetSet.from((b) => b..offset = offset);
 
-  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) =
-      _$SliceBarOffsetSet;
+  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) = _$SliceBarOffsetSet;
 
   SliceBarOffsetSet._();
 
@@ -3134,10 +3144,8 @@ abstract class SliceBarOffsetSet
 abstract class SliceBarMoveStart
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) =
-      _$SliceBarMoveStart;
+  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) = _$SliceBarMoveStart;
 
   SliceBarMoveStart._();
 
@@ -3147,10 +3155,8 @@ abstract class SliceBarMoveStart
 abstract class SliceBarMoveStop
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStop, SliceBarMoveStopBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) =
-      _$SliceBarMoveStop;
+  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) = _$SliceBarMoveStop;
 
   SliceBarMoveStop._();
 
@@ -3158,9 +3164,7 @@ abstract class SliceBarMoveStop
 }
 // autostaple
 
-abstract class Autostaple
-    with BuiltJsonSerializable
-    implements Action, Built<Autostaple, AutostapleBuilder> {
+abstract class Autostaple with BuiltJsonSerializable implements Action, Built<Autostaple, AutostapleBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Autostaple([void Function(AutostapleBuilder) updates]) = _$Autostaple;
 
@@ -3169,43 +3173,40 @@ abstract class Autostaple
   static Serializer<Autostaple> get serializer => _$autostapleSerializer;
 }
 
-abstract class Autobreak
-    with BuiltJsonSerializable
-    implements
-        Action,
-        Built<Autobreak, AutobreakBuilder> {
+abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Autobreak, AutobreakBuilder> {
   int get target_length;
+
   int get min_length;
+
   int get max_length;
+
   int get min_distance_to_xover;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory Autobreak({int target_length, int min_length, int max_length, int min_distance_to_xover}) =>
-      Autobreak.from(
-        (b) => b
-          ..target_length = target_length
-          ..min_length = min_length
-          ..max_length = max_length
-          ..min_distance_to_xover = min_distance_to_xover);
+      Autobreak.from((b) => b
+        ..target_length = target_length
+        ..min_length = min_length
+        ..max_length = max_length
+        ..min_distance_to_xover = min_distance_to_xover);
 
-  factory Autobreak.from(
-          [void Function(AutobreakBuilder) updates]) =
-      _$Autobreak;
+  factory Autobreak.from([void Function(AutobreakBuilder) updates]) = _$Autobreak;
 
   Autobreak._();
 
-  static Serializer<Autobreak> get serializer =>
-      _$autobreakSerializer;
+  static Serializer<Autobreak> get serializer => _$autobreakSerializer;
 }
 
 // copy strand details
 abstract class CopySelectedStrandsToClipboard
     with BuiltJsonSerializable
     implements Action, Built<CopySelectedStrandsToClipboard, CopySelectedStrandsToClipboardBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
-factory CopySelectedStrandsToClipboard([void Function(CopySelectedStrandsToClipboardBuilder) updates]) = _$CopySelectedStrandsToClipboard;
+  factory CopySelectedStrandsToClipboard([void Function(CopySelectedStrandsToClipboardBuilder) updates]) =
+      _$CopySelectedStrandsToClipboard;
+
   CopySelectedStrandsToClipboard._();
 
-  static Serializer<CopySelectedStrandsToClipboard> get serializer => _$copySelectedStrandsToClipboardSerializer;
+  static Serializer<CopySelectedStrandsToClipboard> get serializer =>
+      _$copySelectedStrandsToClipboardSerializer;
 }

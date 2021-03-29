@@ -1,4 +1,7 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:scadnano/src/state/design.dart';
+import 'package:scadnano/src/state/helix.dart';
+import 'package:tuple/tuple.dart';
 
 import '../state/app_state.dart';
 import '../state/domain.dart';
@@ -265,33 +268,201 @@ BuiltList<Strand> ligate_reducer(BuiltList<Strand> strands, AppState state, acti
   }
 }
 
+//////////////////////////////////////////////////////////////////////////
+// actions.JoinStrandsByMultipleCrossovers
+
+BuiltList<Strand> join_strands_by_multiple_crossovers_reducer(
+    BuiltList<Strand> strands, AppState state, actions.JoinStrandsByMultipleCrossovers action) {
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs =
+      find_end_pairs_to_connect(state.design, state.ui_state.selectables_store.selected_dna_ends.toList());
+
+  // build up list of addresses; these will stay the same even as the strands change as we add Crossovers
+  List<Address> addresses_from = [];
+  List<Address> addresses_to = [];
+  for (var end_pair in end_pairs) {
+    var end1 = end_pair.item1;
+    var end2 = end_pair.item2;
+    var end_from = end1.is_3p ? end1 : end2;
+    var end_to = end1.is_3p ? end2 : end1;
+    addresses_from.add(state.design.end_to_address[end_from]);
+    addresses_to.add(state.design.end_to_address[end_to]);
+  }
+
+  // add one crossover at a time, looking up strands to connect by Address
+  // (since we are invalidating the Design's lookup as we modify the list [strands])
+  for (int i = 0; i < addresses_from.length; i++) {
+    var address_from = addresses_from[i];
+    var address_to = addresses_to[i];
+    var strand_from = _strand_with_end_address(strands, address_from, true);
+    var strand_to = _strand_with_end_address(strands, address_to, false);
+    assert(strand_from != null);
+    assert(strand_to != null);
+    strands = _join_strands_with_crossover(strand_from, strand_to, strands, true);
+  }
+
+  return strands;
+}
+
+Strand _strand_with_end_address(Iterable<Strand> strands, Address address, bool end_is_3p) {
+  for (var strand in strands) {
+    if (end_is_3p && strand.address_3p == address) {
+      return strand;
+    }
+    if (!end_is_3p && strand.address_5p == address) {
+      return strand;
+    }
+  }
+  return null;
+}
+
+/// find which pairs of ends among [selected_ends] to connect by Crossovers, and dispatch BatchAction
+/// to connect them
+List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(Design design, List<DNAEnd> selected_ends) {
+  Map<DNAEnd, Domain> all_domains = {for (var end in selected_ends) end: design.end_to_domain[end]};
+
+  // group according to HelixGroups
+  Map<String, List<DNAEnd>> ends_by_group = {};
+  for (var end in selected_ends) {
+    var domain = all_domains[end];
+    int helix_idx = domain.helix;
+    var helix = design.helices[helix_idx];
+    var group_name = helix.group;
+    if (!ends_by_group.containsKey(group_name)) {
+      ends_by_group[group_name] = [];
+    }
+    ends_by_group[group_name].add(end);
+  }
+
+  // find pairs of ends to connect
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs_to_connect = [];
+  for (var group_name in design.groups.keys) {
+    // BuiltList<int> helices_view_order = design.groups[group_name].helices_view_order;
+    BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name].helices_view_order_inverse;
+    var ends_in_group = ends_by_group[group_name];
+    Map<DNAEnd, Domain> domains_by_end_in_group = {
+      for (var end in ends_in_group) end: design.end_to_domain[end]
+    };
+    var end_pairs_to_connect_in_group = find_end_pairs_to_connect_in_group(
+        ends_in_group, domains_by_end_in_group, helices_view_order_inverse);
+    end_pairs_to_connect.addAll(end_pairs_to_connect_in_group);
+  }
+
+  return end_pairs_to_connect;
+}
+
+/// find end pairs to connect according to algorithm described here:
+/// https://github.com/UC-Davis-molecular-computing/scadnano/issues/581
+List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect_in_group(
+    List<DNAEnd> ends, Map<DNAEnd, Domain> domains_by_end, BuiltMap<int, int> helices_view_order_inverse) {
+  /// sort by helix, then by forward/reverse, then by offset
+  ends.sort((DNAEnd end1, DNAEnd end2) {
+    var domain1 = domains_by_end[end1];
+    var domain2 = domains_by_end[end2];
+    int helix1 = domain1.helix;
+    int helix2 = domain2.helix;
+    int helix1_order = helices_view_order_inverse[helix1];
+    int helix2_order = helices_view_order_inverse[helix2];
+    if (helix1_order != helix2_order) {
+      return helix1_order - helix2_order;
+    }
+    if (domain1.forward != domain2.forward) {
+      return domain1.forward ? -1 : 1;
+    }
+    assert(end1.offset_inclusive != end2.offset_inclusive);
+    return end1.offset_inclusive - end2.offset_inclusive;
+  });
+
+  // group ends by common offsets to reduce search time
+  Map<int, List<DNAEnd>> ends_by_offset = {};
+  for (var end in ends) {
+    if (!ends_by_offset.containsKey(end.offset_inclusive)) {
+      ends_by_offset[end.offset_inclusive] = [];
+    }
+    ends_by_offset[end.offset_inclusive].add(end);
+  }
+
+  List<Tuple2<DNAEnd, DNAEnd>> end_pairs = [];
+
+  for (int offset in ends_by_offset.keys) {
+    // remember which ends have been paired with this offset, so we don't pick any twice
+    Set<DNAEnd> already_chosen_ends = {};
+    var ends_with_offset = ends_by_offset[offset];
+    for (int i = 0; i < ends_with_offset.length; i++) {
+      var end1 = ends_with_offset[i];
+      if (already_chosen_ends.contains(end1)) {
+        continue;
+      }
+      var end2 = find_paired_end(end1, i + 1, ends_with_offset, already_chosen_ends, domains_by_end);
+      if (end2 != null) {
+        var end_pair = Tuple2<DNAEnd, DNAEnd>(end1, end2);
+        end_pairs.add(end_pair);
+        already_chosen_ends.add(end1);
+        already_chosen_ends.add(end2);
+      }
+    }
+  }
+
+  return end_pairs;
+}
+
+/// find DNAEnd in list [ends_with_offset], but not in set [already_chosen_ends], to pair with [end1],
+/// starting at index [starting_index] in [ends_with_offset].
+/// Assume [end1] has same offset as all DNAEnds in [ends_with_offset].
+DNAEnd find_paired_end(DNAEnd end1, int starting_index, List<DNAEnd> ends_with_offset,
+    Set<DNAEnd> already_chosen_ends, Map<DNAEnd, Domain> domains_by_end) {
+  var domain1 = domains_by_end[end1];
+  for (int i = starting_index; i < ends_with_offset.length; i++) {
+    DNAEnd end2 = ends_with_offset[i];
+    if (!already_chosen_ends.contains(end2)) {
+      var domain2 = domains_by_end[end2];
+      if (end1.is_5p != end2.is_5p && domain1.forward != domain2.forward && domain1.helix != domain2.helix) {
+        // assert(end1.is_5p != end2.is_5p);
+        return end2;
+      }
+    }
+  }
+  return null;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// actions.JoinStrandsByCrossover
+
 BuiltList<Strand> join_strands_by_crossover_reducer(
     BuiltList<Strand> strands, AppState state, actions.JoinStrandsByCrossover action) {
   // gather substrand data
-  DNAEnd dna_end_first_click = action.dna_end_first_click;
-  DNAEnd dna_end_second_click = action.dna_end_second_click;
+  DNAEnd end_first_click = action.dna_end_first_click;
+  DNAEnd end_second_click = action.dna_end_second_click;
 
-  bool first_clicked_is_from = !dna_end_first_click.is_5p;
-  DNAEnd dna_end_from = first_clicked_is_from ? dna_end_first_click : dna_end_second_click;
-  DNAEnd dna_end_to = first_clicked_is_from ? dna_end_second_click : dna_end_first_click;
-  Strand strand_from = state.design.end_to_strand(dna_end_from);
-  Strand strand_to = state.design.end_to_strand(dna_end_to);
+  // "from" strand is the one with the 3' end adjacent to the new crossover
+  // (in 5' to 3' direction, this crossover goes from one strand to another)
+  bool first_clicked_is_from = end_first_click.is_3p;
+  DNAEnd end_from = first_clicked_is_from ? end_first_click : end_second_click;
+  DNAEnd end_to = first_clicked_is_from ? end_second_click : end_first_click;
+  Strand strand_from = state.design.end_to_strand(end_from);
+  Strand strand_to = state.design.end_to_strand(end_to);
 
+  // if joining strand to itself by crossover, just make it circular
+  return _join_strands_with_crossover(strand_from, strand_to, strands, first_clicked_is_from);
+}
+
+// This is a common function used by actions JoinStrandsByCrossover and JoinStrandsByMultipleCrossovers
+BuiltList<Strand> _join_strands_with_crossover(
+    Strand strand_from, Strand strand_to, BuiltList<Strand> strands, bool first_clicked_is_from) {
   // if joining strand to itself by crossover, just make it circular
   if (strand_from == strand_to) {
     var strand = strand_from;
     int strand_idx = strands.indexOf(strand);
-    var strands_mutable = strands.toBuilder();
+    var strands_mutable = strands.toList();
     var new_strand = strand.rebuild((b) => b..circular = true);
     new_strand = new_strand.initialize();
     strands_mutable[strand_idx] = new_strand;
-    return strands_mutable.build();
+    return strands_mutable.toBuiltList();
   }
 
   Strand strand_first_clicked = first_clicked_is_from ? strand_from : strand_to;
   Strand strand_second_clicked = first_clicked_is_from ? strand_to : strand_from;
-  ListBuilder<Substrand> substrands_from = strand_from.substrands.toBuilder();
-  ListBuilder<Substrand> substrands_to = strand_to.substrands.toBuilder();
+  List<Substrand> substrands_from = strand_from.substrands.toList();
+  List<Substrand> substrands_to = strand_to.substrands.toList();
 
   // change substrand data
   int last_idx_from = substrands_from.length - 1;
@@ -306,7 +477,7 @@ BuiltList<Strand> join_strands_by_crossover_reducer(
   substrands_from[last_idx_from] = last_domain_from;
   substrands_to[0] = first_domain_to;
 
-  List<Substrand> substrands_new = substrands_from.build().toList() + substrands_to.build().toList();
+  List<Substrand> substrands_new = substrands_from + substrands_to;
 
   // create new Strand
   Strand new_strand = join_two_strands_with_substrands(

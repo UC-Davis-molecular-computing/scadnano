@@ -44,6 +44,9 @@ abstract class DNAEnd with SelectableMixin, BuiltJsonSerializable implements Bui
 
   bool get is_5p;
 
+  @memoized
+  bool get is_3p => !is_5p;
+
   bool get is_start;
 
   bool get substrand_is_first;

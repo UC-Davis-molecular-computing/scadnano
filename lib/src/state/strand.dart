@@ -4,6 +4,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:tuple/tuple.dart';
 
+import 'helix.dart';
 import 'modification.dart';
 import '../serializers.dart';
 import 'dna_end.dart';
@@ -250,6 +251,12 @@ abstract class Strand
 
     return ret_list.join();
   }
+
+  @memoized
+  Address get address_5p => first_domain.address_5p;
+
+  @memoized
+  Address get address_3p => last_domain.address_3p;
 
   @memoized
   BuiltList<SelectableDeletion> get selectable_deletions => [
