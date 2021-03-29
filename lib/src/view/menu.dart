@@ -369,18 +369,22 @@ marks on helices so that they are adjacent to the same bases as before.''')(),
       // Connect selected ends by crossovers
       DropdownDivider({}),
       (MenuDropdownItem()
-        ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
+        // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
+        ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
         ..display = 'Connect selected ends by crossovers'
         ..disabled = props.selected_ends.isEmpty
         ..tooltip = ''
             '''Connect selected ends by crossovers. 
 
-Ends are connected as follows. Within each HelixGroup, do the following. 
+Ends are connected by crossovers as follows. Within each HelixGroup: 
+
 Iterate over ends in the following order: first by helix, then by 
-forward/reverse, then by offset. For each other end (in the same order, 
-if it is "above" (lower helix idx, or more generally helix earlier in 
-helices_view_order) another end and opposite direction, then join them by 
-a crossover and remove both ends from the list of ends to consider.''')(),
+forward/reverse, then by offset. For each end e1 in this order, join it 
+to the first end e2 after it in this order, if 
+1) e1 and e2 have the same offset (making a "vertical" crossover), 
+2) e1 is "above" e2 (lower helix idx; more generally earlier in helices_view_order), 
+3) opposite direction (one is forward and the other reverse), and 
+4) opposite side of a strand (i.e., one is 5' and the other 3').''')(),
       ///////////////////////////////////////////////////////////////
       // Set helix coordinates based on crossovers
       DropdownDivider({}),
@@ -963,117 +967,6 @@ However, it may be less stable than the main site.'''
     int selected_idx = (results[0] as DialogRadio).selected_idx;
     props.dispatch(actions.ExampleDesignsLoad(selected_idx: selected_idx));
   }
-}
-
-/// find which pairs of ends among [selected_ends] to connect by Crossovers, and dispatch BatchAction
-/// to connect them
-connect_ends_by_crossovers(Iterable<DNAEnd> selected_ends) {
-  var design = app.state.design;
-  List<DNAEnd> all_ends = selected_ends.toList();
-  Map<DNAEnd, Domain> all_domains = {for (var end in all_ends) end: app.state.design.end_to_domain[end]};
-
-  // group according to HelixGroups
-  Map<String, List<DNAEnd>> ends_by_group = {};
-  for (var end in all_ends) {
-    var domain = all_domains[end];
-    int helix_idx = domain.helix;
-    var helix = design.helices[helix_idx];
-    var group_name = helix.group;
-    if (!ends_by_group.containsKey(group_name)) {
-      ends_by_group[group_name] = [];
-    }
-    ends_by_group[group_name].add(end);
-  }
-
-  // find pairs of ends to connect
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs_to_connect = [];
-  for (var group_name in design.groups.keys) {
-    // BuiltList<int> helices_view_order = design.groups[group_name].helices_view_order;
-    BuiltMap<int, int> helices_view_order_inverse = design.groups[group_name].helices_view_order_inverse;
-    var ends_in_group = ends_by_group[group_name];
-    Map<DNAEnd, Domain> domains_by_end_in_group = {
-      for (var end in ends_in_group) end: app.state.design.end_to_domain[end]
-    };
-    var end_pairs_to_connect_in_group =
-    find_end_pairs_to_connect(ends_in_group, domains_by_end_in_group, helices_view_order_inverse);
-    end_pairs_to_connect.addAll(end_pairs_to_connect_in_group);
-  }
-
-  app.dispatch(actions.JoinStrandsByMultipleCrossovers(end_pairs: end_pairs_to_connect.toBuiltList()));
-}
-
-/// find end pairs to connect according to algorithm described here:
-/// https://github.com/UC-Davis-molecular-computing/scadnano/issues/581
-List<Tuple2<DNAEnd, DNAEnd>> find_end_pairs_to_connect(List<DNAEnd> ends, Map<DNAEnd, Domain> domains_by_end,
-    BuiltMap<int, int> helices_view_order_inverse) {
-  /// sort by helix, then by forward/reverse, then by offset
-  ends.sort((DNAEnd end1, DNAEnd end2) {
-    var domain1 = domains_by_end[end1];
-    var domain2 = domains_by_end[end2];
-    int helix1 = domain1.helix;
-    int helix2 = domain2.helix;
-    int helix1_order = helices_view_order_inverse[helix1];
-    int helix2_order = helices_view_order_inverse[helix2];
-    if (helix1_order != helix2_order) {
-      return helix1_order - helix2_order;
-    }
-    if (domain1.forward != domain2.forward) {
-      return domain1.forward ? -1 : 1;
-    }
-    assert(end1.offset_inclusive != end2.offset_inclusive);
-    return end1.offset_inclusive - end2.offset_inclusive;
-  });
-
-  // group ends by common offsets to reduce search time
-  Map<int, List<DNAEnd>> ends_by_offset = {};
-  for (var end in ends) {
-    if (!ends_by_offset.containsKey(end.offset_inclusive)) {
-      ends_by_offset[end.offset_inclusive] = [];
-    }
-    ends_by_offset[end.offset_inclusive].add(end);
-  }
-
-  List<Tuple2<DNAEnd, DNAEnd>> end_pairs = [];
-
-  for (int offset in ends_by_offset.keys) {
-    // remember which ends have been paired with this offset, so we don't pick any twice
-    Set<DNAEnd> already_chosen_ends = {};
-    var ends_with_offset = ends_by_offset[offset];
-    for (int i = 0; i < ends_with_offset.length; i++) {
-      var end1 = ends_with_offset[i];
-      if (already_chosen_ends.contains(end1)) {
-        continue;
-      }
-      var end2 = find_paired_end(end1, i + 1, ends_with_offset, already_chosen_ends, domains_by_end);
-      if (end2 != null) {
-        var end_pair = Tuple2<DNAEnd, DNAEnd>(end1, end2);
-        end_pairs.add(end_pair);
-        already_chosen_ends.add(end1);
-        already_chosen_ends.add(end2);
-      }
-    }
-  }
-
-  return end_pairs;
-}
-
-/// find DNAEnd in list [ends_with_offset], but not in set [already_chosen_ends], to pair with [end1],
-/// starting at index [starting_index] in [ends_with_offset].
-/// Assume [end1] has same offset as all DNAEnds in [ends_with_offset].
-DNAEnd find_paired_end(DNAEnd end1, int starting_index, List<DNAEnd> ends_with_offset,
-    Set<DNAEnd> already_chosen_ends, Map<DNAEnd, Domain> domains_by_end) {
-  var domain1 = domains_by_end[end1];
-  for (int i=starting_index; i<ends_with_offset.length; i++) {
-    DNAEnd end2 = ends_with_offset[i];
-    if (!already_chosen_ends.contains(end2)) {
-      var domain2 = domains_by_end[end2];
-      if (domain1.forward != domain2.forward && domain1.helix != domain2.helix) {
-        assert(end1.is_5p != end2.is_5p);
-        return end2;
-      }
-    }
-  }
-  return null;
 }
 
 
