@@ -9,6 +9,7 @@ import 'package:tuple/tuple.dart';
 
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
+import 'state/strands_copy_info.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -217,6 +218,9 @@ part 'serializers.g.dart';
   DNAEndsMoveSetSelectedEnds,
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
+  CopySelectedStrands,
+  StrandsCopyBufferClear,
+  StrandsCopyInfo,
   StrandsMove,
   StrandsMoveStart,
   StrandsMoveStartSelectedStrands,

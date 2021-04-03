@@ -6,6 +6,7 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/built_value.dart';
 import 'package:scadnano/src/state/design_side_rotation_data.dart';
 import 'package:scadnano/src/state/modification.dart';
+import 'package:scadnano/src/state/strands_copy_info.dart';
 import '../actions/actions.dart';
 import '../state/local_storage_design_choice.dart';
 
@@ -39,6 +40,9 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   @nullable
   DomainsMove get domains_move;
+
+  @nullable
+  StrandsCopyInfo get strands_copy_info;
 
   bool get potential_crossover_is_drawing;
 
@@ -203,6 +207,7 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
   bool get show_mouseover_data => storables.show_mouseover_data;
 
   static void _initializeBuilder(AppUIStateBuilder b) {
+    b.strands_copy_info = null;
     b.last_mod_5p = null;
     b.last_mod_3p = null;
     b.last_mod_int = null;

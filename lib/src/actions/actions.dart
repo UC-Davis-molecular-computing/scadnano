@@ -1995,6 +1995,30 @@ abstract class PotentialCrossoverRemove
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // strands move
 
+// This is dispatched on Ctrl+C to copy the strands. What is done with it depends on what
+// type of paste we use (manual or auto)
+abstract class CopySelectedStrands
+    with BuiltJsonSerializable
+    implements Action, Built<CopySelectedStrands, CopySelectedStrandsBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CopySelectedStrands() = _$CopySelectedStrands;
+
+  CopySelectedStrands._();
+
+  static Serializer<CopySelectedStrands> get serializer => _$copySelectedStrandsSerializer;
+}
+
+abstract class StrandsCopyBufferClear
+    with BuiltJsonSerializable
+    implements Action, Built<StrandsCopyBufferClear, StrandsCopyBufferClearBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsCopyBufferClear() = _$StrandsCopyBufferClear;
+
+  StrandsCopyBufferClear._();
+
+  static Serializer<StrandsCopyBufferClear> get serializer => _$strandsCopyBufferClearSerializer;
+}
+
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart

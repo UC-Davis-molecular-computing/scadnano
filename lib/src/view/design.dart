@@ -11,12 +11,14 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
+import 'package:scadnano/src/state/strands_copy_info.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/domain.dart';
@@ -800,49 +802,21 @@ class DesignViewComponent {
     }
   }
 
-  actions.StrandsMoveStart copy_action;
-
   copy_selected_strands() {
-    // find minimum helix of any selected strand, then minimum starting offset of that strand
-    var selected_strands = app.state.ui_state.selectables_store.selected_strands.toBuiltList();
-
-    int extreme_helix_view_order; // max if invert_yz; min if not
-    int extreme_helix_idx;
-    int min_offset;
-    bool min_forward;
-    for (Strand strand in selected_strands) {
-      for (Domain domain in strand.domains()) {
-        HelixGroup group = app.state.design.group_of_domain(domain);
-        int helix_view_order = group.helices_view_order_inverse[domain.helix];
-        bool helix_is_more_extreme = extreme_helix_view_order == null ||
-            (app.state.ui_state.invert_xy
-                ? extreme_helix_view_order < helix_view_order
-                : extreme_helix_view_order > helix_view_order);
-        if (helix_is_more_extreme) {
-          extreme_helix_view_order = helix_view_order;
-          extreme_helix_idx = domain.helix;
-          min_offset = domain.start; // reset this absolutely since helix got smaller
-          min_forward = domain.forward; //
-        } else if (min_offset == null ||
-            (extreme_helix_view_order == helix_view_order && min_offset > domain.start)) {
-          min_offset = domain.start;
-          min_forward = domain.forward;
-        }
-      }
-    }
-
-    copy_action = actions.StrandsMoveStart(
-        strands: selected_strands,
-        address: Address(helix_idx: extreme_helix_idx, offset: min_offset, forward: min_forward),
-        copy: true);
+    // do nothing if no strands are selected
+    if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
+    app.dispatch(actions.CopySelectedStrands());
   }
 
   clear_copy_buffer() {
-    copy_action = null;
+    app.dispatch(actions.StrandsCopyBufferClear());
   }
 
   paste_selected_strands() {
-    if (copy_action != null) {
+    var copy_info = app.state.ui_state.strands_copy_info;
+    if (copy_info != null) {
+      var copy_action =
+          actions.StrandsMoveStart(strands: copy_info.strands, address: copy_info.start_address, copy: true);
       app.dispatch(copy_action);
     }
   }
