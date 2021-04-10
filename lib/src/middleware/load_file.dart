@@ -19,11 +19,8 @@ load_file_middleware(Store<AppState> store, action, NextDispatcher next) {
       // if moving strands, clear the buffer; otherwise save it to copy into new design
       // if (design_view.copy_action != null && !design_view.copy_action.copy) {
 
-      // if (store.state.ui_state.copy???) {
-      //TODO: strands copy fix this
-      if (false) {
+      if (store.state.ui_state.strands_copy_info != null) {
         design_view.clear_copy_buffer();
-        // app.dispatch(actions.StrandsCopyBufferClear());
       }
     }
 

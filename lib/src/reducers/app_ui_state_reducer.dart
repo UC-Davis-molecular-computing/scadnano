@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
-import 'package:scadnano/src/reducers/strands_copy_reducer.dart';
+import 'package:scadnano/src/reducers/strands_copy_info_autopaste_reducer.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/strands_copy_info.dart';
@@ -564,7 +564,7 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
       ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
       ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)
           ?.toBuilder()
-      ..strands_copy_info = strands_copy_info_global_reducer(ui_state.strands_copy_info, state, action)
+      ..strands_copy_info = strands_copy_info_autopaste_global_reducer(ui_state.strands_copy_info, state, action)
           ?.toBuilder()
 
     );

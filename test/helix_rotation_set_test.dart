@@ -277,7 +277,7 @@ main() {
       // clockwise from straight up, which is 60 degrees counterclockwise from the x-axis in Cartesian.
       // So helix2 will be at
       // x = cos(60), y = -sin(60)
-      List<actions.UndoableAction> all_actions = helix_positions_set_based_on_crossovers(state);
+      List<actions.UndoableAction> all_actions = get_helix_position_and_roll_actions(state);
 
       expect(all_actions.length, 6);
 

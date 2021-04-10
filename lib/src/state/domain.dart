@@ -17,6 +17,7 @@ import 'substrand.dart';
 import 'unused_fields.dart';
 import 'design.dart';
 import 'helix.dart';
+import 'address.dart';
 
 part 'domain.g.dart';
 

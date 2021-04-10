@@ -1,8 +1,8 @@
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/design.dart';
-import 'package:scadnano/src/state/helix.dart';
 import 'package:tuple/tuple.dart';
 
+import '../state/design.dart';
+import '../state/address.dart';
 import '../state/app_state.dart';
 import '../state/domain.dart';
 import '../state/dna_end.dart';

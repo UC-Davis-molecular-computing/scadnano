@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/copy_selected_objects_to_clipboard.dart';
+import 'package:scadnano/src/middleware/copy_selected_object_text_to_system_clipboard.dart';
 
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
@@ -20,7 +20,7 @@ import 'insertion_deletion_batching.dart';
 import 'load_file.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
-import 'reselect_moved_strands.dart';
+import 'reselect_moved_copied_strands.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
@@ -57,7 +57,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
-  reselect_moved_strands_middleware,
+  reselect_moved_copied_strands_middleware,
   selections_intersect_box_compute_middleware,
   insertion_deletion_batching_middleware,
   adjust_grid_position_middleware,
@@ -66,5 +66,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
   autostaple_and_autobreak_middleware,
-  copy_selected_objects_to_clipboard_middleware
+  copy_selected_object_text_to_system_clipboard_middleware
 ]);

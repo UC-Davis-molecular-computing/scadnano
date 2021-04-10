@@ -28,6 +28,7 @@ import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
+import 'address.dart';
 import '../extension_methods.dart';
 
 part 'design.g.dart';

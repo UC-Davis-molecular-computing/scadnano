@@ -13,8 +13,8 @@ import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
-import 'package:tuple/tuple.dart';
 
+import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
@@ -2019,6 +2019,21 @@ abstract class StrandsCopyBufferClear
   static Serializer<StrandsCopyBufferClear> get serializer => _$strandsCopyBufferClearSerializer;
 }
 
+abstract class StrandsAutoPaste
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<StrandsAutoPaste, StrandsAutoPasteBuilder> {
+  StrandsMove get strands_move;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandsAutoPaste({StrandsMove strands_move}) = _$StrandsAutoPaste._;
+
+  factory StrandsAutoPaste.from([void Function(StrandsAutoPasteBuilder) updates]) = _$StrandsAutoPaste;
+
+  StrandsAutoPaste._();
+
+  static Serializer<StrandsAutoPaste> get serializer => _$strandsAutoPasteSerializer;
+}
+
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart
@@ -2947,7 +2962,7 @@ abstract class HelixGridPositionSet
 }
 
 // NOTE: not an undoable action because it merely triggers middleware to gather data to send actions
-// that actually change the DNADesign, but it causes no change itself
+// that actually change the Design, but it causes no change itself
 abstract class HelicesPositionsSetBasedOnCrossovers
     with BuiltJsonSerializable
     implements Built<HelicesPositionsSetBasedOnCrossovers, HelicesPositionsSetBasedOnCrossoversBuilder> {
@@ -3221,16 +3236,19 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
   static Serializer<Autobreak> get serializer => _$autobreakSerializer;
 }
 
-// copy strand details
-abstract class CopySelectedStrandsToClipboard
+// copy selected object details
+abstract class CopySelectedObjectTextToSystemClipboard
     with BuiltJsonSerializable
-    implements Action, Built<CopySelectedStrandsToClipboard, CopySelectedStrandsToClipboardBuilder> {
+    implements
+        Action,
+        Built<CopySelectedObjectTextToSystemClipboard, CopySelectedObjectTextToSystemClipboardBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
-  factory CopySelectedStrandsToClipboard([void Function(CopySelectedStrandsToClipboardBuilder) updates]) =
-      _$CopySelectedStrandsToClipboard;
+  factory CopySelectedObjectTextToSystemClipboard(
+          [void Function(CopySelectedObjectTextToSystemClipboardBuilder) updates]) =
+      _$CopySelectedObjectTextToSystemClipboard;
 
-  CopySelectedStrandsToClipboard._();
+  CopySelectedObjectTextToSystemClipboard._();
 
-  static Serializer<CopySelectedStrandsToClipboard> get serializer =>
-      _$copySelectedStrandsToClipboardSerializer;
+  static Serializer<CopySelectedObjectTextToSystemClipboard> get serializer =>
+      _$copySelectedObjectTextToSystemClipboardSerializer;
 }

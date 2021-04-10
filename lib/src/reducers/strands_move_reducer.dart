@@ -67,6 +67,9 @@ StrandsMove strands_adjust_address_reducer(
 // where the strands would go if it were allowable.
 bool in_bounds(Design design, StrandsMove strands_move) {
   var current_address_helix_idx = strands_move.current_address.helix_idx;
+  if (!design.helices.containsKey(current_address_helix_idx)) {
+    return false; // helix is not in design, so cannot be in bounds
+  }
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
   var num_helices_in_group = design.helices_in_group(current_helix.group).length;
@@ -169,7 +172,7 @@ bool is_allowable(Design design, StrandsMove strands_move) {
 
 /// Indicate if any of the intervals in ints1 intersect any of the intervals in ints2. Assume each
 /// is disjoint within itself (i.e., no two intervals in ints1 intersection, and no two intervals
-/// within ints2 intersect). and that each is sorted by start point
+/// within ints2 intersect) and that each is sorted by start point
 /// (thus also by end point by disjointness.)
 /// These intervals are INCLUSIVE on both sides.
 bool intersection(List<Point<int>> ints1, List<Point<int>> ints2) {

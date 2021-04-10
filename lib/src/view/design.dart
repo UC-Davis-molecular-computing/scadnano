@@ -21,7 +21,7 @@ import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/state/strands_copy_info.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
-import '../state/domain.dart';
+import '../state/address.dart';
 import '../state/dna_ends_move.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
@@ -531,12 +531,17 @@ class DesignViewComponent {
         app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
         (ev.ctrlKey || ev.metaKey) &&
         key == KeyCode.C) {
-      app.dispatch(actions.CopySelectedStrandsToClipboard());
+      app.dispatch(actions.CopySelectedObjectTextToSystemClipboard());
       copy_selected_strands();
     }
+
     // can paste even if nothing selected or not in select mode, if something is in copy buffer
-    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
-      paste_selected_strands();
+    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V && !ev.shiftKey) {
+      // Ctrl+V
+      paste_strands_manually();
+    } else if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && key == KeyCode.V) {
+      // Ctrl+Shift+V
+      paste_strands_auto();
     }
 
     // Ctrl+A for select all
@@ -812,12 +817,21 @@ class DesignViewComponent {
     app.dispatch(actions.StrandsCopyBufferClear());
   }
 
-  paste_selected_strands() {
+  paste_strands_manually() {
     var copy_info = app.state.ui_state.strands_copy_info;
+    assert(copy_info != null);
     if (copy_info != null) {
-      var copy_action =
-          actions.StrandsMoveStart(strands: copy_info.strands, address: copy_info.start_address, copy: true);
+      var copy_action = actions.StrandsMoveStart(
+          strands: copy_info.strands, address: copy_info.original_address, copy: true);
       app.dispatch(copy_action);
+    }
+  }
+
+  paste_strands_auto() {
+    var copy_info = app.state.ui_state.strands_copy_info;
+    if (copy_info != null && copy_info.next_translation_in_bounds_and_legal(app.state.design)) {
+      var strands_move = copy_info.create_strands_move(app.state.design);
+      app.dispatch(actions.StrandsAutoPaste(strands_move: strands_move));
     }
   }
 

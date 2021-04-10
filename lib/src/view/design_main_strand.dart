@@ -8,6 +8,7 @@ import 'package:scadnano/src/state/modification.dart';
 
 import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
+import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
 import '../state/dialog.dart';

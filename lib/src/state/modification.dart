@@ -1,9 +1,9 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:scadnano/src/state/helix.dart';
-import '../state/design.dart';
 
+import 'address.dart';
+import 'design.dart';
 import '../json_serializable.dart';
 import '../serializers.dart';
 import '../constants.dart' as constants;

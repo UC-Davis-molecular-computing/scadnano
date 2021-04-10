@@ -15,7 +15,7 @@ import '../state/strand.dart';
 import '../state/domain.dart';
 import '../state/crossover.dart';
 import '../state/loopout.dart';
-import '../constants.dart' as constants;
+import '../state/address.dart';
 import '../util.dart' as util;
 import 'design_main_strand_dna_end.dart';
 import 'design_main_strand_domain.dart';

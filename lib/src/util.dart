@@ -16,8 +16,10 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import 'package:scadnano/src/state/modification.dart';
+
+import 'state/design_side_rotation_data.dart';
+import 'state/modification.dart';
+import 'state/address.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';

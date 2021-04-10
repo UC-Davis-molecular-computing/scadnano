@@ -6,6 +6,7 @@ import '../serializers.dart';
 import 'strand.dart';
 import 'group.dart';
 import 'helix.dart';
+import 'address.dart';
 
 part 'strands_move.g.dart';
 

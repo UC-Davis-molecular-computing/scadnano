@@ -39,6 +39,8 @@ Reducer<BuiltList<Strand>> strands_local_reducer = combineReducers([
 GlobalReducer<BuiltList<Strand>, AppState> strands_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.AssignDNAComplementFromBoundStrands>(
       assign_dna_reducer_complement_from_bound_strands),
+  TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsAutoPaste>(
+      strands_autopaste_strands_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.StrandsMoveCommit>(strands_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DomainsMoveCommit>(domains_move_commit_reducer),
   TypedGlobalReducer<BuiltList<Strand>, AppState, actions.DNAEndsMoveCommit>(
@@ -121,25 +123,47 @@ Strand substrand_name_set_reducer(Strand strand, actions.SubstrandNameSet action
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+// autopaste strands
+
+BuiltList<Strand> strands_autopaste_strands_reducer(
+    BuiltList<Strand> strands, AppState state, actions.StrandsAutoPaste _) {
+  var copy_info = state.ui_state.strands_copy_info;
+  if (!copy_info.has_translation()) return strands;
+  if (!copy_info.next_translation_in_bounds_and_legal(state.design)) return strands;
+
+  var strands_move = state.ui_state.strands_copy_info.create_strands_move(state.design);
+  var strands_list = strands.toList();
+
+  for (var strand in copy_info.strands) {
+    Strand new_strand = one_strand_strands_move_copy_commit_reducer(state.design, strand, strands_move);
+    new_strand = new_strand.initialize();
+    strands_list.add(new_strand);
+  }
+
+  return strands_list.toBuiltList();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // move strands/domains
 
 BuiltList<Strand> strands_move_commit_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandsMoveCommit action) {
   if (action.strands_move.allowable && action.strands_move.is_nontrivial) {
-    var strands_builder = strands.toBuilder();
+    var strands_list = strands.toList();
     for (var strand in action.strands_move.strands_moving) {
-      Strand new_strand = one_strand_strands_move_commit_reducer(state.design, strand, action.strands_move);
+      Strand new_strand = one_strand_strands_move_copy_commit_reducer(state.design, strand, action.strands_move);
       new_strand = new_strand.initialize();
       if (action.strands_move.copy) {
-        strands_builder.add(new_strand);
+        strands_list.add(new_strand);
       } else {
-        // if copying, we might have loaded a new design, so this indexOf is only safe to do
+        // this indexOf is only safe to do
         // (i.e., the strand will only be found in the list of all strands) if we are moving
+        // if copying, we might have loaded a new design
         int strand_idx = strands.indexOf(strand);
-        strands_builder[strand_idx] = new_strand;
+        strands_list[strand_idx] = new_strand;
       }
     }
-    return strands_builder.build();
+    return strands_list.toBuiltList();
   } else {
     return strands;
   }
@@ -187,7 +211,7 @@ Strand one_strand_domains_move_commit_reducer(
   return strand.rebuild((b) => b..substrands.replace(substrands));
 }
 
-Strand one_strand_strands_move_commit_reducer(Design design, Strand strand, StrandsMove strands_move) {
+Strand one_strand_strands_move_copy_commit_reducer(Design design, Strand strand, StrandsMove strands_move) {
   int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
   bool delta_forward = strands_move.delta_forward;
@@ -203,8 +227,8 @@ Strand one_strand_strands_move_commit_reducer(Design design, Strand strand, Stra
       delta_offset: delta_offset,
       delta_forward: delta_forward);
   if (strands_move.copy && !strands_move.keep_color && !strand.is_scaffold) {
-    //FIXME: this makes the reducer not pure; put color_cycler in design instead; and make this a
-    // Design-level reducer
+    //FIXME: reducer not pure; put color_cycler in design instead; and make this a Design-level reducer
+    // so we can stored the update to the color_cycler state
     strand = strand.rebuild((b) => b..color = util.color_cycler.next());
   }
   return strand;
@@ -229,7 +253,7 @@ Strand move_strand(
       num new_view_order = original_view_order + delta_view_order;
       int new_helix_idx = current_group.helices_view_order[new_view_order];
       assert(new_helix_idx != null);
-      Domain bound_domain_moved = substrand.rebuild(
+      Domain domain_moved = substrand.rebuild(
         (b) => b
           ..is_first = i == 0
           ..is_last = i == substrands.length - 1
@@ -241,7 +265,7 @@ Strand move_strand(
           ..insertions.replace(
               substrand.insertions.map((i) => i.rebuild((ib) => ib..offset = i.offset + delta_offset))),
       );
-      new_substrand = bound_domain_moved;
+      new_substrand = domain_moved;
     }
     substrands[i] = new_substrand;
   }

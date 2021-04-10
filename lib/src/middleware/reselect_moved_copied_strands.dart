@@ -1,8 +1,8 @@
 import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
-import '../state/design.dart';
-import '../state/helix.dart';
 
+import '../state/design.dart';
+import '../state/address.dart';
 import '../state/domain.dart';
 import '../state/dna_end.dart';
 import '../state/strand.dart';
@@ -10,10 +10,12 @@ import '../state/strands_move.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 
-reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher next) {
-  if (action is actions.StrandsMoveCommit && action.strands_move.strands_moving.length > 1) {
-    // only reselect if there is more than 1 selected, otherwise this builds up many selected items
-    // as the user repeatedly clicks on one at a time
+reselect_moved_copied_strands_middleware(Store<AppState> store, action, NextDispatcher next) {
+  if ((action is actions.StrandsAutoPaste || action is actions.StrandsMoveCommit) &&
+      (action.strands_move.copy || action.strands_move.strands_moving.length > 1)) {
+    // if moving (not copying), only reselect if there is more than 1 selected
+    // otherwise, if the user repeatedly clicks and drags one at a time,
+    // this builds up many selected items as they click each new one, moving all of them
 
     Design design = store.state.design;
 
@@ -52,9 +54,8 @@ reselect_moved_strands_middleware(Store<AppState> store, action, NextDispatcher 
     List<Strand> new_strands = [];
     Design new_design = store.state.design;
     // if strand polarity switched, the 3' end of each strand will now be where the 5' end was
-    BuiltMap<Address, Strand> address_to_strand = strands_move.delta_forward
-        ? new_design.address_3p_to_strand
-        : new_design.address_5p_to_strand;
+    BuiltMap<Address, Strand> address_to_strand =
+        strands_move.delta_forward ? new_design.address_3p_to_strand : new_design.address_5p_to_strand;
     for (var address in addresses) {
       Strand new_strand = address_to_strand[address];
       new_strands.add(new_strand);
