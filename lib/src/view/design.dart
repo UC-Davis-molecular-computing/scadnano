@@ -4,21 +4,17 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
-import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
-import 'package:scadnano/src/state/strands_copy_info.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
 import '../state/address.dart';
@@ -26,7 +22,6 @@ import '../state/dna_ends_move.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
 import '../state/select_mode.dart';
-import '../state/strand.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 
@@ -461,7 +456,6 @@ class DesignViewComponent {
   }
 
   handle_esc_keyboard_shortcuts() {
-    clear_copy_buffer();
     if (app.state.ui_state.selectables_store.isNotEmpty) {
       app.dispatch(actions.SelectionsClear());
     }
@@ -819,7 +813,6 @@ class DesignViewComponent {
 
   paste_strands_manually() {
     var copy_info = app.state.ui_state.strands_copy_info;
-    assert(copy_info != null);
     if (copy_info != null) {
       var copy_action = actions.StrandsMoveStart(
           strands: copy_info.strands, address: copy_info.original_address, copy: true);
@@ -829,8 +822,8 @@ class DesignViewComponent {
 
   paste_strands_auto() {
     var copy_info = app.state.ui_state.strands_copy_info;
-    if (copy_info != null && copy_info.next_translation_in_bounds_and_legal(app.state.design)) {
-      var strands_move = copy_info.create_strands_move(app.state.design);
+    if (copy_info != null && copy_info.next_translation_in_bounds_and_legal(app.state)) {
+      var strands_move = copy_info.create_strands_move(app.state);
       app.dispatch(actions.StrandsAutoPaste(strands_move: strands_move));
     }
   }

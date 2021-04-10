@@ -90,11 +90,10 @@ main() {
       var autopaste_address_helix_3 = Address(helix_idx: 3, offset: 0, forward: true);
       var autopaste_address_helix_4 = Address(helix_idx: 4, offset: 0, forward: true);
 
-      //  these tests would be more robust by checking the actual positions of the strands
       expect(design.strands.length, 1);
 
       // autopaste to helix 1
-      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state);
       var autopaste_action_1 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_1);
       state = app_state_reducer(state, autopaste_action_1);
       copy_info = state.ui_state.strands_copy_info;
@@ -108,7 +107,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 2
-      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state);
       var autopaste_action_2 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_2);
       state = app_state_reducer(state, autopaste_action_2);
       copy_info = state.ui_state.strands_copy_info;
@@ -122,7 +121,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 3
-      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state);
       var autopaste_action_3 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_3);
       state = app_state_reducer(state, autopaste_action_3);
       copy_info = state.ui_state.strands_copy_info;
@@ -136,7 +135,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 4 (should have no effect)
-      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state);
       var autopaste_action_4 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_4);
       state = app_state_reducer(state, autopaste_action_4);
       copy_info = state.ui_state.strands_copy_info;
@@ -148,6 +147,40 @@ main() {
       expect(state.design.strands.last.first_domain.helix, 3);
       expect(state.design.strands.last.first_domain.start, 0);
       expect(state.design.strands.last.first_domain.forward, true);
+    });
+
+
+    test('autopaste_with_default_translation_down_strand_paste_different_color', () {
+      // same as autopaste_with_default_translation_down but set pasted strands to have different color
+      state = state.rebuild((b) => b..ui_state.storables.strand_paste_keep_color = false);
+
+      // select topmost strand
+      var select_action = actions.Select(orig_strand, toggle: false, only: true);
+      state = app_state_reducer(state, select_action);
+      expect(state.ui_state.strands_copy_info, null);
+
+      // copy
+      var copy_action = actions.CopySelectedStrands();
+      state = app_state_reducer(state, copy_action);
+      var copy_info = state.ui_state.strands_copy_info;
+
+      expect(design.strands.length, 1);
+
+      // autopaste to helix 1
+      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state);
+      var autopaste_action_1 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_1);
+      state = app_state_reducer(state, autopaste_action_1);
+      copy_info = state.ui_state.strands_copy_info;
+
+      // autopaste to helix 2
+      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state);
+      var autopaste_action_2 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_2);
+      state = app_state_reducer(state, autopaste_action_2);
+
+      // colors should all be different
+      expect(state.design.strands[0].color, isNot(state.design.strands[1].color));
+      expect(state.design.strands[0].color, isNot(state.design.strands[2].color));
+      expect(state.design.strands[1].color, isNot(state.design.strands[2].color));
     });
 
     test('autopaste_with_default_translation_right', () {
@@ -210,7 +243,7 @@ main() {
       expect(state.design.strands.length, 4);
 
       // autopaste to offset 10
-      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state);
       var autopaste_action_1 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_1);
       state = app_state_reducer(state, autopaste_action_1);
       copy_info = state.ui_state.strands_copy_info;
@@ -224,7 +257,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 20
-      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state);
       var autopaste_action_2 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_2);
       state = app_state_reducer(state, autopaste_action_2);
       copy_info = state.ui_state.strands_copy_info;
@@ -238,7 +271,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 30
-      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state);
       var autopaste_action_3 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_3);
       state = app_state_reducer(state, autopaste_action_3);
       copy_info = state.ui_state.strands_copy_info;
@@ -252,7 +285,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 40 (should have no effect)
-      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state);
       var autopaste_action_4 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_4);
       state = app_state_reducer(state, autopaste_action_4);
       copy_info = state.ui_state.strands_copy_info;
@@ -368,7 +401,7 @@ main() {
       // autopaste
       var autopaste_address_helix_2 = Address(helix_idx: 2, offset: 20, forward: true);
       var autopaste_address_helix_3 = Address(helix_idx: 3, offset: 30, forward: true);
-      var strands_move_autopaste = copy_info.create_strands_move(state.design);
+      var strands_move_autopaste = copy_info.create_strands_move(state);
       var autopaste_action = actions.StrandsAutoPaste(strands_move: strands_move_autopaste);
       state = app_state_reducer(state, autopaste_action);
       copy_info = state.ui_state.strands_copy_info;
@@ -447,7 +480,7 @@ main() {
       var autopaste_address_helix_4 = Address(helix_idx: 4, offset: 40, forward: true);
 
       // autopaste to helix 2
-      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state);
       var autopaste_action_2 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_2);
       state = app_state_reducer(state, autopaste_action_2);
       copy_info = state.ui_state.strands_copy_info;
@@ -461,7 +494,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 3
-      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_3 = copy_info.create_strands_move(state);
       var autopaste_action_3 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_3);
       state = app_state_reducer(state, autopaste_action_3);
       copy_info = state.ui_state.strands_copy_info;
@@ -475,7 +508,7 @@ main() {
       expect(state.design.strands.last.first_domain.forward, true);
 
       // attempted autopaste to helix 4; should do nothing
-      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
+      var strands_move_for_autopaste_4 = copy_info.create_strands_move(state);
       var autopaste_action_4 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_4);
       state = app_state_reducer(state, autopaste_action_4);
       copy_info = state.ui_state.strands_copy_info;
@@ -488,5 +521,92 @@ main() {
       expect(state.design.strands.last.first_domain.start, 30);
       expect(state.design.strands.last.first_domain.forward, true);
     });
+
+
+    test('autopaste__unselect_pasted_strand__autopaste', () {
+      /*
+      tests for a bug where unselecting a pasted strand cleared the copy buffer
+
+          0         10        20        30        40
+
+      0f  [--------> select, then copy
+      0r
+
+      1f  [--------> autopaste to helix 1
+      1r
+
+      2f
+      2r
+
+      3f
+      3r
+
+      unselect all
+
+          0         10        20        30        40
+
+      0f  [--------> select, then copy
+      0r
+
+      1f  [--------> autopaste to helix 1
+      1r
+
+      2f  [--------> autopaste to helix 2
+      2r
+
+      3f
+      3r
+      */
+
+      // select topmost strand
+      var select_action = actions.Select(orig_strand, toggle: false, only: true);
+      state = app_state_reducer(state, select_action);
+      expect(state.ui_state.strands_copy_info, null);
+
+      // copy
+      var copy_action = actions.CopySelectedStrands();
+      state = app_state_reducer(state, copy_action);
+      var copy_info = state.ui_state.strands_copy_info;
+
+      var autopaste_address_helix_1 = Address(helix_idx: 1, offset: 0, forward: true);
+      var autopaste_address_helix_2 = Address(helix_idx: 2, offset: 0, forward: true);
+      var autopaste_address_helix_3 = Address(helix_idx: 3, offset: 0, forward: true);
+
+      expect(design.strands.length, 1);
+
+      // autopaste to helix 1
+      var strands_move_for_autopaste_1 = copy_info.create_strands_move(state);
+      var autopaste_action_1 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_1);
+      state = app_state_reducer(state, autopaste_action_1);
+      copy_info = state.ui_state.strands_copy_info;
+      expect(copy_info.original_address, origin_address);
+      expect(copy_info.current_address, autopaste_address_helix_1);
+      expect(copy_info.translation, default_translation);
+      expect(copy_info.next_address, autopaste_address_helix_2);
+      expect(state.design.strands.length, 2);
+      expect(state.design.strands.last.first_domain.helix, 1);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
+
+      // unselect
+      var unselect_action = actions.SelectionsClear();
+      state = app_state_reducer(state, unselect_action);
+      copy_info = state.ui_state.strands_copy_info;
+
+      // autopaste to helix 2
+      var strands_move_for_autopaste_2 = copy_info.create_strands_move(state);
+      var autopaste_action_2 = actions.StrandsAutoPaste(strands_move: strands_move_for_autopaste_2);
+      state = app_state_reducer(state, autopaste_action_2);
+      copy_info = state.ui_state.strands_copy_info;
+      expect(copy_info.original_address, origin_address);
+      expect(copy_info.current_address, autopaste_address_helix_2);
+      expect(copy_info.translation, default_translation);
+      expect(copy_info.next_address, autopaste_address_helix_3);
+      expect(state.design.strands.length, 3);
+      expect(state.design.strands.last.first_domain.helix, 2);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
+    });
+
   });
 }

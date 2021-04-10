@@ -3,6 +3,7 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import '../serializers.dart';
+import 'app_state.dart';
 import 'design.dart';
 import 'strand.dart';
 import 'address.dart';
@@ -69,10 +70,10 @@ abstract class StrandsCopyInfo
       ..helices_view_order_inverse.replace(helices_view_order_inverse));
   }
 
-  StrandsCopyInfo move_to_next(Design design) {
+  StrandsCopyInfo move_to_next(AppState state) {
     assert(has_translation());
 
-    if (next_translation_in_bounds_and_legal(design)) {
+    if (next_translation_in_bounds_and_legal(state)) {
       return rebuild((b) => b..current_address.replace(next_address));
     } else {
       return this; //rebuild((b) => b..translation = null);
@@ -82,14 +83,15 @@ abstract class StrandsCopyInfo
   bool has_translation() => translation != null;
 
   /// Indicates if
-  bool next_translation_in_bounds_and_legal(Design design) {
-    var strands_move = create_strands_move(design);
-    bool in_bounds_and_legal = strands_move_reducer.in_bounds(design, strands_move) &&
-        strands_move_reducer.is_allowable(design, strands_move);
+  bool next_translation_in_bounds_and_legal(AppState state) {
+    var strands_move = create_strands_move(state);
+    bool in_bounds_and_legal = strands_move_reducer.in_bounds(state.design, strands_move) &&
+        strands_move_reducer.is_allowable(state.design, strands_move);
     return in_bounds_and_legal;
   }
 
-  StrandsMove create_strands_move(Design design) {
+  StrandsMove create_strands_move(AppState state) {
+    var design = state.design;
     var strands_move = StrandsMove(
       all_strands: design.strands,
       strands_moving: strands,
@@ -97,7 +99,7 @@ abstract class StrandsCopyInfo
       groups: design.groups,
       original_address: original_address,
       copy: true,
-      keep_color: true, // this won't really get used here
+      keep_color: state.ui_state.strand_paste_keep_color,
     );
     strands_move = strands_move.rebuild((b) => b..current_address.replace(next_address));
     return strands_move;

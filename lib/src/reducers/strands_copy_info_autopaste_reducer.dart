@@ -174,7 +174,7 @@ StrandsCopyInfo strands_manual_paste_copy_info_reducer(
       // in case we previously pasted and thendid Undo,
       // which does not undo the current_address since it only affects the Design
       ..current_address.replace(copy_info.original_address));
-    copy_info = copy_info.move_to_next(state.design);
+    copy_info = copy_info.move_to_next(state);
   }
 
   return copy_info;
@@ -187,7 +187,7 @@ StrandsCopyInfo strands_autopaste_copy_info_reducer(
   // if no translation (or no copy_info at all), nothing to update
   if (copy_info == null || !copy_info.has_translation()) return copy_info;
 
-  copy_info = copy_info.move_to_next(state.design);
+  copy_info = copy_info.move_to_next(state);
 
   return copy_info;
 }

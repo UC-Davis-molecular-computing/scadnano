@@ -129,9 +129,9 @@ BuiltList<Strand> strands_autopaste_strands_reducer(
     BuiltList<Strand> strands, AppState state, actions.StrandsAutoPaste _) {
   var copy_info = state.ui_state.strands_copy_info;
   if (!copy_info.has_translation()) return strands;
-  if (!copy_info.next_translation_in_bounds_and_legal(state.design)) return strands;
+  if (!copy_info.next_translation_in_bounds_and_legal(state)) return strands;
 
-  var strands_move = state.ui_state.strands_copy_info.create_strands_move(state.design);
+  var strands_move = state.ui_state.strands_copy_info.create_strands_move(state);
   var strands_list = strands.toList();
 
   for (var strand in copy_info.strands) {
