@@ -90,7 +90,6 @@ main() {
       var autopaste_address_helix_3 = Address(helix_idx: 3, offset: 0, forward: true);
       var autopaste_address_helix_4 = Address(helix_idx: 4, offset: 0, forward: true);
 
-      //TODO: currently we aren't checking the details of the strands to ensure they are where they should be
       //  these tests would be more robust by checking the actual positions of the strands
       expect(design.strands.length, 1);
 
@@ -104,6 +103,9 @@ main() {
       expect(copy_info.translation, default_translation);
       expect(copy_info.next_address, autopaste_address_helix_2);
       expect(state.design.strands.length, 2);
+      expect(state.design.strands.last.first_domain.helix, 1);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 2
       var strands_move_for_autopaste_2 = copy_info.create_strands_move(state.design);
@@ -115,6 +117,9 @@ main() {
       expect(copy_info.translation, default_translation);
       expect(copy_info.next_address, autopaste_address_helix_3);
       expect(state.design.strands.length, 3);
+      expect(state.design.strands.last.first_domain.helix, 2);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 3
       var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
@@ -126,6 +131,9 @@ main() {
       expect(copy_info.translation, default_translation);
       expect(copy_info.next_address, autopaste_address_helix_4);
       expect(state.design.strands.length, 4);
+      expect(state.design.strands.last.first_domain.helix, 3);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 4 (should have no effect)
       var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
@@ -137,6 +145,9 @@ main() {
       expect(copy_info.translation, default_translation);
       expect(copy_info.next_address, autopaste_address_helix_4);
       expect(state.design.strands.length, 4);
+      expect(state.design.strands.last.first_domain.helix, 3);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
     });
 
     test('autopaste_with_default_translation_right', () {
@@ -208,6 +219,9 @@ main() {
       expect(copy_info.translation, default_translation_right);
       expect(copy_info.next_address, autopaste_right_offset_20);
       expect(state.design.strands.length, 5);
+      expect(state.design.strands.last.first_domain.helix, 0);
+      expect(state.design.strands.last.first_domain.start, 10);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 20
       var strands_move_for_autopaste_2 = copy_info.create_strands_move(state.design);
@@ -219,6 +233,9 @@ main() {
       expect(copy_info.translation, default_translation_right);
       expect(copy_info.next_address, autopaste_right_offset_30);
       expect(state.design.strands.length, 6);
+      expect(state.design.strands.last.first_domain.helix, 0);
+      expect(state.design.strands.last.first_domain.start, 20);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 30
       var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
@@ -230,6 +247,9 @@ main() {
       expect(copy_info.translation, default_translation_right);
       expect(copy_info.next_address, autopaste_right_offset_40);
       expect(state.design.strands.length, 7);
+      expect(state.design.strands.last.first_domain.helix, 0);
+      expect(state.design.strands.last.first_domain.start, 30);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to offset 40 (should have no effect)
       var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
@@ -241,6 +261,9 @@ main() {
       expect(copy_info.translation, default_translation_right);
       expect(copy_info.next_address, autopaste_right_offset_40);
       expect(state.design.strands.length, 7);
+      expect(state.design.strands.last.first_domain.helix, 0);
+      expect(state.design.strands.last.first_domain.start, 30);
+      expect(state.design.strands.last.first_domain.forward, true);
     });
 
     test('manual-paste_undo_manual-paste_auto', () {
@@ -313,6 +336,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, next_address_after_manual_paste);
       expect(state.design.strands.length, 2);
+      expect(state.design.strands.last.first_domain.helix, 1);
+      expect(state.design.strands.last.first_domain.start, 10);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // undo last manual paste
       var undo_action = actions.Undo();
@@ -323,6 +349,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, next_address_after_manual_paste);
       expect(state.design.strands.length, 1);
+      expect(state.design.strands.last.first_domain.helix, 0);
+      expect(state.design.strands.last.first_domain.start, 0);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // manual paste in same spot again
       state = app_state_reducer(state, manual_paste_action);
@@ -332,6 +361,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, next_address_after_manual_paste);
       expect(state.design.strands.length, 2);
+      expect(state.design.strands.last.first_domain.helix, 1);
+      expect(state.design.strands.last.first_domain.start, 10);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste
       var autopaste_address_helix_2 = Address(helix_idx: 2, offset: 20, forward: true);
@@ -345,6 +377,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, autopaste_address_helix_3);
       expect(state.design.strands.length, 3);
+      expect(state.design.strands.last.first_domain.helix, 2);
+      expect(state.design.strands.last.first_domain.start, 20);
+      expect(state.design.strands.last.first_domain.forward, true);
     });
 
     test('manual-paste_auto_auto_auto__go_off_edge', () {
@@ -403,6 +438,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, next_address_after_manual_paste);
       expect(state.design.strands.length, 2);
+      expect(state.design.strands.last.first_domain.helix, 1);
+      expect(state.design.strands.last.first_domain.start, 10);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       var autopaste_address_helix_2 = Address(helix_idx: 2, offset: 20, forward: true);
       var autopaste_address_helix_3 = Address(helix_idx: 3, offset: 30, forward: true);
@@ -418,6 +456,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, autopaste_address_helix_3);
       expect(state.design.strands.length, 3);
+      expect(state.design.strands.last.first_domain.helix, 2);
+      expect(state.design.strands.last.first_domain.start, 20);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // autopaste to helix 3
       var strands_move_for_autopaste_3 = copy_info.create_strands_move(state.design);
@@ -429,6 +470,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, autopaste_address_helix_4);
       expect(state.design.strands.length, 4);
+      expect(state.design.strands.last.first_domain.helix, 3);
+      expect(state.design.strands.last.first_domain.start, 30);
+      expect(state.design.strands.last.first_domain.forward, true);
 
       // attempted autopaste to helix 4; should do nothing
       var strands_move_for_autopaste_4 = copy_info.create_strands_move(state.design);
@@ -440,6 +484,9 @@ main() {
       expect(copy_info.translation, manual_pasted_translation);
       expect(copy_info.next_address, autopaste_address_helix_4);
       expect(state.design.strands.length, 4);
+      expect(state.design.strands.last.first_domain.helix, 3);
+      expect(state.design.strands.last.first_domain.start, 30);
+      expect(state.design.strands.last.first_domain.forward, true);
     });
   });
 }
