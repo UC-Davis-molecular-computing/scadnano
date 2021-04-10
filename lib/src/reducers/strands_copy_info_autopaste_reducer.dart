@@ -171,7 +171,7 @@ StrandsCopyInfo strands_manual_paste_copy_info_reducer(
     copy_info = copy_info.rebuild((b) => b
       ..translation = translation.toBuilder()
       // current_address might need to be replaced with original to "reset" it,
-      // in case we previously pasted and thendid Undo,
+      // in case we previously pasted and then did Undo,
       // which does not undo the current_address since it only affects the Design
       ..current_address.replace(copy_info.original_address));
     copy_info = copy_info.move_to_next(state);
