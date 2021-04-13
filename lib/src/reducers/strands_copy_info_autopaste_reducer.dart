@@ -166,18 +166,30 @@ StrandsCopyInfo strands_manual_paste_copy_info_reducer(
 
     // translation vector for NEXT paste is *double* that from original to current in manually pasted strand
     var current_address = action.strands_move.current_address;
-    var translation =
-        current_address.difference(copy_info.original_address, copy_info.helices_view_order_inverse);
+    var translation = null;
+
+    // only calculate translation vector if paste is in same HelixGroup
+    bool calculate_autopaste_translation =_same_helix_group(copy_info, action);
+    if (calculate_autopaste_translation) {
+      translation =
+          current_address.difference(copy_info.original_address, copy_info.helices_view_order_inverse);
+    }
     copy_info = copy_info.rebuild((b) => b
-      ..translation = translation.toBuilder()
+      ..translation = translation?.toBuilder()
       // current_address might need to be replaced with original to "reset" it,
       // in case we previously pasted and then did Undo,
       // which does not undo the current_address since it only affects the Design
       ..current_address.replace(copy_info.original_address));
-    copy_info = copy_info.move_to_next(state);
+    if (calculate_autopaste_translation) {
+      copy_info = copy_info.move_to_next(state);
+    }
   }
 
   return copy_info;
+}
+
+bool _same_helix_group(StrandsCopyInfo copy_info, actions.StrandsMoveCommit action) {
+  return action.strands_move.original_helix.group == action.strands_move.current_helix.group;
 }
 
 // called on Ctrl+Shift+V

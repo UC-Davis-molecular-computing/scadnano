@@ -82,8 +82,10 @@ abstract class StrandsCopyInfo
 
   bool has_translation() => translation != null;
 
-  /// Indicates if
   bool next_translation_in_bounds_and_legal(AppState state) {
+    if (translation == null) {
+      return false;
+    }
     var strands_move = create_strands_move(state);
     bool in_bounds_and_legal = strands_move_reducer.in_bounds(state.design, strands_move) &&
         strands_move_reducer.is_allowable(state.design, strands_move);

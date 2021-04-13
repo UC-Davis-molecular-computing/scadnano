@@ -37,12 +37,12 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
     b.pitch = 0;
     b.yaw = 0;
     b.roll = 0;
-    b.helices_view_order = null;
+    b.helices_view_order = ListBuilder<int>();
   }
 
   factory HelixGroup({
+    Iterable<int> helices_view_order,
     Grid grid = Grid.none,
-    Iterable<int> helices_view_order = null,
     Position3D position = null,
     double pitch = 0,
     double yaw = 0,
