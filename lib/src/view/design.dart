@@ -521,7 +521,8 @@ class DesignViewComponent {
     }
 
     // Ctrl+C/Ctrl+V for copy/paste
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
+    if ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
+        app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select)) &&
         app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
         app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
         (ev.ctrlKey || ev.metaKey) &&
