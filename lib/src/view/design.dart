@@ -10,6 +10,7 @@ import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/middleware/copy_selected_object_text_to_system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
@@ -525,7 +526,6 @@ class DesignViewComponent {
         app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
         (ev.ctrlKey || ev.metaKey) &&
         key == KeyCode.C) {
-      app.dispatch(actions.CopySelectedObjectTextToSystemClipboard());
       copy_selected_strands();
     }
 
@@ -807,20 +807,17 @@ class DesignViewComponent {
     app.dispatch(actions.CopySelectedStrands());
   }
 
-  clear_copy_buffer() {
-    app.dispatch(actions.StrandsCopyBufferClear());
-  }
-
-  paste_strands_manually() {
+  paste_strands_manually() async {
+    get_copied_strands_from_system_clipboard();
     var copy_info = app.state.ui_state.strands_copy_info;
     if (copy_info != null) {
-      var copy_action = actions.StrandsMoveStart(
+      var paste_start_action = actions.StrandsMoveStart(
           strands: copy_info.strands, address: copy_info.original_address, copy: true);
-      app.dispatch(copy_action);
+      app.dispatch(paste_start_action);
     }
   }
 
-  paste_strands_auto() {
+  paste_strands_auto() async {
     var copy_info = app.state.ui_state.strands_copy_info;
     if (copy_info != null && copy_info.next_translation_in_bounds_and_legal(app.state)) {
       var strands_move = copy_info.create_strands_move(app.state);

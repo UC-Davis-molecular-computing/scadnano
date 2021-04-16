@@ -219,7 +219,7 @@ part 'serializers.g.dart';
   DNAEndsMoveSetSelectedEnds,
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
-  CopySelectedObjectTextToSystemClipboard,
+  // CopySelectedObjectTextToSystemClipboard,
   CopySelectedStrands,
   StrandsAutoPaste,
   StrandsCopyBufferClear,

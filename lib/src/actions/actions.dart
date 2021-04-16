@@ -3236,19 +3236,19 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
   static Serializer<Autobreak> get serializer => _$autobreakSerializer;
 }
 
-// copy selected object details
-abstract class CopySelectedObjectTextToSystemClipboard
-    with BuiltJsonSerializable
-    implements
-        Action,
-        Built<CopySelectedObjectTextToSystemClipboard, CopySelectedObjectTextToSystemClipboardBuilder> {
-  /************************ begin BuiltValue boilerplate ************************/
-  factory CopySelectedObjectTextToSystemClipboard(
-          [void Function(CopySelectedObjectTextToSystemClipboardBuilder) updates]) =
-      _$CopySelectedObjectTextToSystemClipboard;
-
-  CopySelectedObjectTextToSystemClipboard._();
-
-  static Serializer<CopySelectedObjectTextToSystemClipboard> get serializer =>
-      _$copySelectedObjectTextToSystemClipboardSerializer;
-}
+// // copy selected object details
+// abstract class CopySelectedObjectTextToSystemClipboard
+//     with BuiltJsonSerializable
+//     implements
+//         Action,
+//         Built<CopySelectedObjectTextToSystemClipboard, CopySelectedObjectTextToSystemClipboardBuilder> {
+//   /************************ begin BuiltValue boilerplate ************************/
+//   factory CopySelectedObjectTextToSystemClipboard(
+//           [void Function(CopySelectedObjectTextToSystemClipboardBuilder) updates]) =
+//       _$CopySelectedObjectTextToSystemClipboard;
+//
+//   CopySelectedObjectTextToSystemClipboard._();
+//
+//   static Serializer<CopySelectedObjectTextToSystemClipboard> get serializer =>
+//       _$copySelectedObjectTextToSystemClipboardSerializer;
+// }
