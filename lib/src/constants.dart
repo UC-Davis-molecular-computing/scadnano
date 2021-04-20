@@ -260,6 +260,7 @@ final strand_keys = [
       modification_3p_key,
       modifications_int_key,
       label_key,
+      name_key,
     ] +
     legacy_dna_sequence_keys +
     legacy_substrands_keys;
@@ -308,6 +309,7 @@ final domain_keys = [
       deletions_key,
       insertions_key,
       label_key,
+      name_key,
     ] +
     legacy_forward_keys;
 
@@ -316,6 +318,7 @@ const loopout_key = 'loopout';
 const loopout_keys = [
   loopout_key,
   label_key,
+  name_key,
 ];
 
 ////////////////////////////////////////////////////
