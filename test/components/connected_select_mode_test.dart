@@ -37,7 +37,7 @@ main() {
     SelectModeComponent component;
 
     setUp(() {
-      utils.initializeTestStore(initializeTestState());
+      utils.initialize_test_store(initializeTestState());
       selectModeRef = createRef();
       mount((ReduxProvider()..store = app.store)(
         (ConnectedSelectMode()

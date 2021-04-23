@@ -136,14 +136,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return false;
   }
 
+  // returns null if any Strand has a helix not in this Design
   BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
     var helix_idxs_of_selected_strands = {
       for (var strand in selected_strands)
         for (var domain in strand.domains()) domain.helix
     };
-    var groups_of_selected_strands = {
-      for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
-    };
+
+    Set<String> groups_of_selected_strands = {};
+    for (int helix_idx in helix_idxs_of_selected_strands) {
+      if (helices[helix_idx] == null) {
+        return null;
+      }
+      var name = helices[helix_idx].group;
+      groups_of_selected_strands.add(name);
+    }
+
     return groups_of_selected_strands.build();
   }
 
@@ -171,7 +179,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
 
+  HelixGroup group_of_strand(Strand strand) => group_of_domain(strand.first_domain);
+
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
+
+  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};

@@ -7,6 +7,7 @@ import 'package:redux/redux.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:color/color.dart';
 
+import 'package:scadnano/src/state/clipboard.dart';
 import 'package:scadnano/src/app.dart';
 import 'package:scadnano/src/reducers/app_state_reducer.dart';
 import 'package:scadnano/src/state/app_state.dart';
@@ -16,35 +17,46 @@ import 'package:scadnano/src/state/helix.dart';
 import 'package:scadnano/src/state/strand.dart';
 import 'package:scadnano/src/state/undo_redo.dart';
 import 'package:scadnano/src/middleware/all_middleware.dart';
+import 'package:scadnano/src/actions/actions.dart' as actions;
 
 void initializeComponentTests() {
   setClientConfiguration();
   enableTestMode();
 }
 
-Store<AppState> testStore;
+Store<AppState> test_store;
 
-void initializeTestStore(AppState state) {
+void initialize_test_store(AppState state) {
   addTearDown(() {
-    testStore = null;
+    test_store = null;
   });
 
-  testStore = Store<AppState>(
+  test_store = Store<AppState>(
     app_state_reducer,
     initialState: state,
+    // middleware: all_middleware,
+    // we get some error about stylesheets if we include all middleware since unit tests are not running
+    // in the browser
   );
 
-  app.store = testStore;
+  app = App();
+  app.store = test_store;
 }
 
-/// Returns an [Design] based on json string.
+AppState test_dispatch(Store<AppState> store, actions.Action action) {
+  store.dispatch(action);
+  return store.state;
+}
+
+/// Returns a [Design] based on JSON string.
 Design design_from_string(String str) {
   return Design.from_json(jsonDecode(str));
 }
 
-/// Returns an [AppState] based on dna design.
-AppState app_state_from_design(Design design) {
+/// Returns an [AppState] based on design.
+AppState app_state_from_design(Design design, {bool in_browser = false}) {
   var ui_state = AppUIState.from_design(design);
+  Clipboard clipboard = in_browser ? BrowserClipboard() : CLIClipboard();
   var state = (DEFAULT_AppState.toBuilder()
         ..design.replace(design)
         ..ui_state.replace(ui_state)
@@ -136,9 +148,23 @@ void expect_undo_redo_equal(UndoRedo actual, UndoRedo matcher) {
   expect_stack_equal(actual.redo_stack, matcher.redo_stack);
 }
 
-Store<AppState> store_from_design(Design design) {
+Store<AppState> store_from_design(Design design, {bool initialize_app_instance=false}) {
   var state = app_state_from_design(design);
   var store = Store<AppState>(app_state_reducer, initialState: state, middleware: all_middleware);
-  app.store = store;
+  if (initialize_app_instance) {
+    app.store = store;
+  }
   return store;
+}
+
+
+void sleep_in_browser(Duration duration) {
+  var ms = duration.inMilliseconds;
+  var start = new DateTime.now().millisecondsSinceEpoch;
+  while (true) {
+    var current = new DateTime.now().millisecondsSinceEpoch;
+    if (current - start >= ms) {
+      break;
+    }
+  }
 }

@@ -134,13 +134,10 @@ abstract class HelixGroup with BuiltJsonSerializable implements Built<HelixGroup
   /// Returns a map mapping helix indices to their view order.
   @memoized
   BuiltMap<int, int> get helices_view_order_inverse {
-    Map<int, int> view_order_inverse = Map<int, int>();
-    int order = 0;
-    for (var idx in helices_view_order) {
-      view_order_inverse[idx] = order++;
-    }
+    Map<int, int> view_order_inverse = util.invert_helices_view_order(helices_view_order);
     return view_order_inverse.build();
   }
+
 
   String transform_str(Geometry geometry) {
     var translate_svg = position * geometry.nm_to_svg_pixels;

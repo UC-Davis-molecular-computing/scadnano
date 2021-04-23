@@ -1,5 +1,5 @@
 import 'package:redux/redux.dart';
-import 'package:scadnano/src/middleware/copy_selected_object_text_to_system_clipboard.dart';
+import 'package:scadnano/src/middleware/system_clipboard.dart';
 
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
@@ -66,5 +66,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
   autostaple_and_autobreak_middleware,
-  copy_selected_object_text_to_system_clipboard_middleware
+  system_clipboard_middleware,
 ]);

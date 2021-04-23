@@ -13,25 +13,25 @@ import '../constants.dart' as constants;
 
 autostaple_and_autobreak_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.Autostaple) {
-    _autostaple(store.state);
+    _autostaple(store);
   } else if (action is actions.Autobreak) {
-    _autobreak(store.state, action);
+    _autobreak(store, action);
   } else {
     next(action);
   }
 }
 
-_autostaple(AppState state) async {
+_autostaple(Store<AppState> store) async {
   var response = await http.post(
     constants.autostaple_url,
-    body: json_encode(state.design),
+    body: json_encode(store.state.design),
     headers: {"Content-Type": "application/json"},
   );
 
-  _handle_response(response, state);
+  _handle_response(store, response);
 }
 
-_autobreak(AppState state, actions.Autobreak action) async {
+_autobreak(Store<AppState> store, actions.Autobreak action) async {
   var body = jsonEncode({
     'settings': {
       'minStapleLegLen': action.min_distance_to_xover,
@@ -39,7 +39,7 @@ _autobreak(AppState state, actions.Autobreak action) async {
       'maxStapleLen': action.max_length,
       'tgtStapleLen': action.target_length,
     },
-    'design': state.design.to_json_serializable()
+    'design': store.state.design.to_json_serializable()
   });
   var response = await http.post(
     constants.autobreak_url,
@@ -47,14 +47,14 @@ _autobreak(AppState state, actions.Autobreak action) async {
     headers: {"Content-Type": "application/json"},
   );
 
-  _handle_response(response, state);
+  _handle_response(store, response);
 }
 
-void _handle_response(http.Response response, AppState state) {
+void _handle_response(Store<AppState> store, http.Response response) {
   if (response.statusCode == 200) {
     var json_model_text = response.body;
-    var design_new = Design.from_json_str(json_model_text, state.ui_state.invert_xy);
-    app.dispatch(actions.NewDesignSet(design: design_new));
+    var design_new = Design.from_json_str(json_model_text, store.state.ui_state.invert_xy);
+    store.dispatch(actions.NewDesignSet(design: design_new));
   } else {
     Map response_body_json = jsonDecode(response.body);
     window.alert('Error: ${response_body_json['error']}');

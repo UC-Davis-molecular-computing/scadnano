@@ -4562,7 +4562,14 @@ main() {
       bool forward = true;
       Address address = Address(offset: offset, helix_idx: helix_idx, forward: forward);
       state = app_state_reducer(state, SelectAll(selectables: selectables, only: true));
-      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: false, strands: selectables));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStart(
+            address: address,
+            copy: false,
+            strands: selectables,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
@@ -4572,6 +4579,7 @@ main() {
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: false);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4644,7 +4652,7 @@ main() {
       //                         \
       // 1                        -------------------->
       //                          <-------------------]
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
 
       String expected_json = r'''
       {
@@ -4704,7 +4712,14 @@ main() {
 
       expect(state.ui_state.selectables_store.selected_items, selectables);
 
-      state = app_state_reducer(state, StrandsMoveStart(address: address, copy: true, strands: selectables));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStart(
+            address: address,
+            copy: true,
+            strands: selectables,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
@@ -4712,6 +4727,7 @@ main() {
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: true);
 
       expect(state.ui_state.strands_move, expected_strands_move);
@@ -4742,7 +4758,7 @@ main() {
       state = app_state_reducer(state, StrandsMoveStop());
       expect(state.ui_state.strands_move, null);
 
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strandsMove, autopaste: false));
 
       String expected_json = r'''
       {
@@ -4841,13 +4857,20 @@ main() {
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
       // Expect move start to create correct strands_move object.
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
       StrandsMove expected_strands_move = StrandsMove(
           strands_moving: selectables,
           all_strands: state.design.strands,
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: false);
       expect(state.ui_state.strands_move, expected_strands_move);
 
@@ -4886,7 +4909,13 @@ main() {
       expect(state.ui_state.selectables_store.selected_items, selectables.toBuiltSet());
 
       // start move
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       //   0                  16                       32
       //
@@ -4929,10 +4958,17 @@ main() {
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: false);
 
       // start move
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       //   0                  16                       32
       //
@@ -4973,10 +5009,17 @@ main() {
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: false);
 
       // start move
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       //   0                  16                       32
       //
@@ -5016,10 +5059,17 @@ main() {
           original_address: address,
           helices: state.design.helices,
           groups: state.design.groups,
+          original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
           copy: false);
 
       // start move
-      state = app_state_reducer(state, StrandsMoveStartSelectedStrands(address: address, copy: false));
+      state = app_state_reducer(
+          state,
+          StrandsMoveStartSelectedStrands(
+            address: address,
+            copy: false,
+            original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
+          ));
 
       //   0                  16                       32
       //
@@ -5759,40 +5809,42 @@ main() {
         many_helices_modification_design.crossovers_by_id['crossover-2-3-strand-H0-0-forward'];
     Strand strand = many_helices_modification_design.strands.first;
     Domain domain6 = many_helices_modification_design.strands.first.substrands[6] as Domain;
-    test('delete_crossover', () {
-      // Delete crossover between 2 and 3
-      //    B     Cy3   B
-      // 0  [-----------------
-      //                     |
-      //                     |
-      //                     |
-      // 1  ------------------
-      //    |  B   Cy3
-      //    |
-      //    |      Cy3    B
-      // 2  ----------------->
-      //
-      //
-      //
-      // 3  -----------------]
-      //    |  B      Cy3
-      //    |
-      //    |       Cy3    B
-      // 4  ------------------
-      //                     |
-      //                     |
-      //                     |
-      // 5  ------------------
-      //    |  B     Cy3
-      //    |
-      //    |        Cy3    B
-      // 6  ------------------
-      //                     |
-      //                     |
-      //                     |
-      // 7  <-----------------
-      //    Cy3  B      Cy3
-      Design expected_design1 = Design.from_json(json.decode(r'''
+    test(
+      'delete_crossover',
+      () {
+        // Delete crossover between 2 and 3
+        //    B     Cy3   B
+        // 0  [-----------------
+        //                     |
+        //                     |
+        //                     |
+        // 1  ------------------
+        //    |  B   Cy3
+        //    |
+        //    |      Cy3    B
+        // 2  ----------------->
+        //
+        //
+        //
+        // 3  -----------------]
+        //    |  B      Cy3
+        //    |
+        //    |       Cy3    B
+        // 4  ------------------
+        //                     |
+        //                     |
+        //                     |
+        // 5  ------------------
+        //    |  B     Cy3
+        //    |
+        //    |        Cy3    B
+        // 6  ------------------
+        //                     |
+        //                     |
+        //                     |
+        // 7  <-----------------
+        //    Cy3  B      Cy3
+        Design expected_design1 = Design.from_json(json.decode(r'''
           {
             "version": "0.6.7",
             "grid": "square",
@@ -5858,47 +5910,47 @@ main() {
           }
         '''));
 
-      AppState state = initial_state;
-      state = app_state_reducer(state, SelectModesSet([SelectModeChoice.crossover]));
-      state = app_state_reducer(state, Select(crossover23, toggle: false, only: true));
-      state = app_state_reducer(state, DeleteAllSelected());
+        AppState state = initial_state;
+        state = app_state_reducer(state, SelectModesSet([SelectModeChoice.crossover]));
+        state = app_state_reducer(state, Select(crossover23, toggle: false, only: true));
+        state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_design_equal(state.design, expected_design1);
+        expect_design_equal(state.design, expected_design1);
 
-      Crossover crossover56 = state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
-      // Delete crossover between 5 and 6.
-      //    B     Cy3   B
-      // 0  [-----------------
-      //                     |
-      //                     |
-      //                     |
-      // 1  ------------------
-      //    |  B   Cy3
-      //    |
-      //    |      Cy3    B
-      // 2  ----------------->
-      //
-      //
-      //
-      // 3  -----------------]
-      //    |  B      Cy3
-      //    |
-      //    |       Cy3    B
-      // 4  ------------------
-      //                     |
-      //                     |
-      //                     |
-      // 5  <-----------------
-      //       B     Cy3
-      //
-      //             Cy3    B
-      // 6  [-----------------
-      //                     |
-      //                     |
-      //                     |
-      // 7  <-----------------
-      //    Cy3  B      Cy3
-      Design expected_design2 = Design.from_json(json.decode(r'''
+        Crossover crossover56 = state.design.crossovers_by_id['crossover-2-3-strand-H3-15-reverse'];
+        // Delete crossover between 5 and 6.
+        //    B     Cy3   B
+        // 0  [-----------------
+        //                     |
+        //                     |
+        //                     |
+        // 1  ------------------
+        //    |  B   Cy3
+        //    |
+        //    |      Cy3    B
+        // 2  ----------------->
+        //
+        //
+        //
+        // 3  -----------------]
+        //    |  B      Cy3
+        //    |
+        //    |       Cy3    B
+        // 4  ------------------
+        //                     |
+        //                     |
+        //                     |
+        // 5  <-----------------
+        //       B     Cy3
+        //
+        //             Cy3    B
+        // 6  [-----------------
+        //                     |
+        //                     |
+        //                     |
+        // 7  <-----------------
+        //    Cy3  B      Cy3
+        Design expected_design2 = Design.from_json(json.decode(r'''
           {
             "version": "''' +
             constants.CURRENT_VERSION +
@@ -5973,13 +6025,13 @@ main() {
           }
         '''));
 
-      state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
-      state = app_state_reducer(state, DeleteAllSelected());
+        state = app_state_reducer(state, Select(crossover56, toggle: false, only: true));
+        state = app_state_reducer(state, DeleteAllSelected());
 
-      expect_design_equal(state.undo_redo.undo_stack[1], expected_design1);
-      expect_design_equal(state.undo_redo.undo_stack[0], many_helices_modification_design);
-      expect_design_equal(state.design, expected_design2);
-    },
+        expect_design_equal(state.undo_redo.undo_stack[1], expected_design1);
+        expect_design_equal(state.undo_redo.undo_stack[0], many_helices_modification_design);
+        expect_design_equal(state.design, expected_design2);
+      },
     );
 
     test('delete_loopout', () {
@@ -6998,10 +7050,11 @@ main() {
         original_address: original_address,
         helices: state.design.helices,
         groups: state.design.groups,
+        original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move, autopaste: false));
 
       expect_design_equal(state.design, expected_design);
     });
@@ -7194,10 +7247,11 @@ main() {
         original_address: original_address,
         helices: state.design.helices,
         groups: state.design.groups,
+        original_helices_view_order_inverse: state.design.default_group().helices_view_order_inverse,
         copy: copy,
       ).rebuild((b) => b..current_address = Address(forward: false, helix_idx: 0, offset: 8).toBuilder());
 
-      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move));
+      state = app_state_reducer(state, StrandsMoveCommit(strands_move: strands_move, autopaste: false));
 
       expect_design_equal(state.design, expected_design);
     }, skip: true);
@@ -7241,7 +7295,8 @@ main() {
   test('GroupDisplayChange on empty HelixGroup (see issue #573)', () {
     AppState initial_state = app_state_from_design(two_helices_design);
     // Add empty helix group
-    AppState state = app_state_reducer(initial_state, GroupAdd(name: 'test', group: HelixGroup(helices_view_order: [])));
+    AppState state =
+        app_state_reducer(initial_state, GroupAdd(name: 'test', group: HelixGroup(helices_view_order: [])));
     // Display new helix group
     AppState final_state = app_state_reducer(state, GroupDisplayedChange(group_name: 'test'));
 

@@ -37,7 +37,7 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
     }
     next(action);
 
-    app.dispatch(actions.DNAEndsMoveSetSelectedEnds(
+    store.dispatch(actions.DNAEndsMoveSetSelectedEnds(
         original_offset: action.offset,
         moves: moves.toBuiltList(),
         helix: action.helix,

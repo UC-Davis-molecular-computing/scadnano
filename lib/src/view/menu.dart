@@ -57,10 +57,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
       ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
-      ..enable_copy = ((app.state.ui_state.edit_modes.contains(EditModeChoice.select) ||
-              app.state.ui_state.edit_modes.contains(EditModeChoice.rope_select)) &&
-          app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-          app.state.ui_state.selectables_store.selected_items.isNotEmpty)
+      ..enable_copy = app.state.ui_state.selectables_store.selected_strands.isNotEmpty
       ..modification_font_size = state.ui_state.modification_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size

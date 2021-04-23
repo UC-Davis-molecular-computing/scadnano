@@ -29,7 +29,7 @@ helix_positions_set_based_on_crossovers_middleware(
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
     var all_actions = get_helix_position_and_roll_actions(store.state);
-    app.dispatch(actions.BatchAction(all_actions));
+    store.dispatch(actions.BatchAction(all_actions));
   }
 }
 
@@ -335,5 +335,5 @@ List<actions.UndoableAction> set_rolls_and_positions(List<Helix> helices, List<R
     all_actions.add(pos_action);
   }
   return all_actions;
-//  app.dispatch(actions.BatchAction(all_actions));
+//  store.dispatch(actions.BatchAction(all_actions));
 }

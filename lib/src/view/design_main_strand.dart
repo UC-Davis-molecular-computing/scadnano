@@ -152,7 +152,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
         var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
+        HelixGroup group = app.state.design.group_of_strand(props.strand);
+        var helices_view_order_inverse = group.helices_view_order_inverse;
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false,
+            original_helices_view_order_inverse: helices_view_order_inverse));
       }
     }
   }

@@ -22,7 +22,7 @@ String testIdEditModeChoiceButton(EditModeChoice choice) {
 
 const EditModeComponentTestID = 'scadnano.EditModeComponent';
 
-AppState initializeTestState() {
+AppState initialize_test_state() {
   return util
       .default_state()
       .rebuild((b) => b.ui_state.storables.edit_modes.replace([EditModeChoice.pencil, EditModeChoice.nick]));
@@ -36,7 +36,7 @@ void main() {
     EditModeComponent component;
 
     setUp(() {
-      utils.initializeTestStore(initializeTestState());
+      utils.initialize_test_store(initialize_test_state());
       editModeRef = createRef();
       mount((ReduxProvider()..store = app.store)(
         (ConnectedEditMode()
