@@ -14,24 +14,23 @@ part 'design_main_strands_moving.over_react.g.dart';
 
 UiFactory<DesignMainStrandsMovingProps> ConnectedDesignMainStrandsMoving =
     connect<AppState, DesignMainStrandsMovingProps>(mapStateToProps: (state) {
-  var original_group, current_group;
+  HelixGroup current_group;
+  BuiltMap<int, int> original_helices_view_order_inverse;
+  bool selected_strands_on_multiple_groups = false;
   if (state.ui_state.strands_move != null) {
-    original_group = util.original_group_from_strands_move(state.design, state.ui_state.strands_move);
+    original_helices_view_order_inverse = state.ui_state.strands_move.original_helices_view_order_inverse;
     current_group = util.current_group_from_strands_move(state.design, state.ui_state.strands_move);
-  }
   // Need to check this here, because we need to allow the middleware to let through the strands_move
   // object so that view/design.dart can issue a warning to the user on a mousemove event when the
   // left-click is depressed. But if we allow the strands_move to propagate to the view it throws
   // an exception since it assumes they are in the same group.
-  bool selected_strands_on_multiple_groups = false;
-  if (state.ui_state.strands_move != null) {
     var group_names = state.design.group_names_of_strands(state.ui_state.strands_move.strands_moving);
-    selected_strands_on_multiple_groups = group_names.length > 1;
+    selected_strands_on_multiple_groups = group_names != null && group_names.length > 1;
   }
   return DesignMainStrandsMoving()
     ..strands_move = selected_strands_on_multiple_groups ? null : state.ui_state.strands_move
     ..groups = state.design.groups
-    ..original_group = original_group
+    ..original_helices_view_order_inverse = original_helices_view_order_inverse
     ..current_group = current_group
     ..helices = state.design.helices
     ..side_selected_helix_idxs = state.ui_state.side_selected_helix_idxs
@@ -42,7 +41,7 @@ UiFactory<DesignMainStrandsMovingProps> DesignMainStrandsMoving = _$DesignMainSt
 
 mixin DesignMainStrandsMovingProps on UiProps {
   StrandsMove strands_move;
-  HelixGroup original_group;
+  BuiltMap<int,int> original_helices_view_order_inverse;
   HelixGroup current_group;
   BuiltMap<int, Helix> helices;
   BuiltMap<String, HelixGroup> groups;
@@ -53,7 +52,7 @@ mixin DesignMainStrandsMovingProps on UiProps {
 class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMovingProps> {
   @override
   render() {
-    if (props.strands_move == null) {
+    if (props.strands_move == null || props.current_group == null) {
       return null;
     }
     return (Dom.g()
@@ -62,7 +61,7 @@ class DesignMainStrandsMovingComponent extends UiComponent2<DesignMainStrandsMov
         (DesignMainStrandMoving()
           ..strand = strand
           ..delta_view_order = props.strands_move.delta_view_order
-          ..original_group = props.original_group
+          ..original_helices_view_order_inverse = props.original_helices_view_order_inverse
           ..current_group = props.current_group
           ..delta_offset = props.strands_move.delta_offset
           ..delta_forward = props.strands_move.delta_forward

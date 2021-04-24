@@ -4,7 +4,7 @@ import 'package:built_collection/built_collection.dart';
 import '../state/domain.dart';
 import '../state/dna_end.dart';
 import '../state/dna_ends_move.dart';
-import '../state/helix.dart';
+import '../state/address.dart';
 import '../actions/actions.dart' as actions;
 import '../state/app_state.dart';
 

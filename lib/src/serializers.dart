@@ -9,6 +9,8 @@ import 'package:tuple/tuple.dart';
 
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
+import 'state/copy_info.dart';
+import 'state/address.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -217,6 +219,14 @@ part 'serializers.g.dart';
   DNAEndsMoveSetSelectedEnds,
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
+  // CopySelectedObjectTextToSystemClipboard,
+  AutoPasteInitiate,
+  ManualPasteInitiate,
+  CopySelectedStrands,
+  // StrandsAutoPaste,
+  // StrandsCopyBufferClear,
+  // UpdateCopyInfo,
+  CopyInfo,
   StrandsMove,
   StrandsMoveStart,
   StrandsMoveStartSelectedStrands,
@@ -237,6 +247,7 @@ part 'serializers.g.dart';
   ContextMenuHide,
   ScaffoldSet,
   Address,
+  AddressDifference,
   Dialog,
   DialogItem,
   DialogText,
@@ -292,7 +303,8 @@ part 'serializers.g.dart';
   Autobreak,
   NewDesignSet,
   Design,
-  CopySelectedStrandsToClipboard
+  // BrowserClipboard,
+  // CLIClipboard,
 ])
 Serializers serializers = _$serializers;
 

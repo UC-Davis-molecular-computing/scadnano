@@ -16,8 +16,10 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import 'package:scadnano/src/state/modification.dart';
+
+import 'state/design_side_rotation_data.dart';
+import 'state/modification.dart';
+import 'state/address.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';
@@ -105,17 +107,6 @@ int color_hex_to_decimal_int(String hex) {
   return d;
 }
 
-HelixGroup original_group_from_strands_move(Design design, StrandsMove strands_move) {
-  var group_name = original_group_name_from_strands_move(design, strands_move);
-  return design.groups[group_name];
-}
-
-String original_group_name_from_strands_move(Design design, StrandsMove strands_move) {
-  var helix_idx = strands_move.original_address.helix_idx;
-  var helix = design.helices[helix_idx];
-  return helix.group;
-}
-
 HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_move) {
   var group_name = current_group_name_from_strands_move(design, strands_move);
   return design.groups[group_name];
@@ -124,7 +115,7 @@ HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_mo
 String current_group_name_from_strands_move(Design design, StrandsMove strands_move) {
   var helix_idx = strands_move.current_address.helix_idx;
   var helix = design.helices[helix_idx];
-  return helix.group;
+  return helix?.group;
 }
 
 HelixGroup original_group_from_domains_move(Design design, DomainsMove domains_move) {
@@ -1602,4 +1593,14 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
 //    }
   }
   return needs;
+}
+
+
+Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
+  var view_order_inverse = Map<int, int>();
+  int order = 0;
+  for (var idx in helices_view_order) {
+    view_order_inverse[idx] = order++;
+  }
+  return view_order_inverse;
 }

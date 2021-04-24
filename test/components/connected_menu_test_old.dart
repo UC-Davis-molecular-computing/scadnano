@@ -61,7 +61,7 @@ main() {
     MenuComponent component;
 
     setUp(() {
-      utils.initializeTestStore(initializeTestState());
+      utils.initialize_test_store(initializeTestState());
       menuRef = createRef();
       mount((ReduxProvider()..store = app.store)(
         (ConnectedMenu()

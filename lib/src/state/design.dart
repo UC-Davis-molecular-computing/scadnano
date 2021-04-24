@@ -28,6 +28,7 @@ import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
+import 'address.dart';
 import '../extension_methods.dart';
 
 part 'design.g.dart';
@@ -42,7 +43,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// If [num_helices] is specified, helices are automatically populated with reasonable defaults based
   /// on the grid.
-  factory Design({Iterable<Helix> helices, Grid grid = Grid.none, int num_helices, Geometry geometry}) {
+  factory Design(
+      {Iterable<Helix> helices,
+      Grid grid = Grid.none,
+      int num_helices,
+      Geometry geometry,
+      Map<String, HelixGroup> groups = null}) {
     if (helices != null && num_helices != null) {
       throw IllegalDesignError('cannot specify both helices and num_helices:\n'
           'num_helices = ${num_helices}\n'
@@ -66,12 +72,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     var helices_map = {for (var helix in helices) helix.idx: helix};
-    return Design.from((b) => b
-      ..geometry.replace(geometry)
-      ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
-        ..grid = grid
-        ..helices_view_order.replace(helices_map.keys))
-      ..helices.replace(helices_map));
+    if (_uses_default_group(helices)) {
+      if (groups != null) {
+        throw ArgumentError('groups must be null if all helices use default group');
+      }
+      return Design.from((b) => b
+        ..geometry.replace(geometry)
+        ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
+          ..grid = grid
+          ..helices_view_order.replace(helices_map.keys))
+        ..helices.replace(helices_map));
+    } else {
+      if (groups == null) {
+        groups = _calculate_groups_from_helices(helices, grid);
+      }
+      return Design.from(
+          (b) => b..geometry.replace(geometry)..groups.replace(groups)..helices.replace(helices_map));
+    }
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -119,14 +136,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return false;
   }
 
+  // returns null if any Strand has a helix not in this Design
   BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
     var helix_idxs_of_selected_strands = {
       for (var strand in selected_strands)
         for (var domain in strand.domains()) domain.helix
     };
-    var groups_of_selected_strands = {
-      for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
-    };
+
+    Set<String> groups_of_selected_strands = {};
+    for (int helix_idx in helix_idxs_of_selected_strands) {
+      if (helices[helix_idx] == null) {
+        return null;
+      }
+      var name = helices[helix_idx].group;
+      groups_of_selected_strands.add(name);
+    }
+
     return groups_of_selected_strands.build();
   }
 
@@ -154,7 +179,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
 
+  HelixGroup group_of_strand(Strand strand) => group_of_domain(strand.first_domain);
+
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
+
+  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -1565,6 +1594,37 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
   }
+}
+
+Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
+  // gather up helix-idxs in each group
+  Map<String, List<int>> group_to_helix_idxs = {};
+  for (var helix in helices) {
+    var name = helix.group;
+    if (!group_to_helix_idxs.containsKey(name)) {
+      group_to_helix_idxs[name] = [];
+    }
+    group_to_helix_idxs[name].add(helix.idx);
+  }
+
+  // sort helix idxs within each group
+  group_to_helix_idxs.values.map((idxs) => idxs.sort());
+
+  Map<String, HelixGroup> groups = {
+    for (var name in group_to_helix_idxs.keys)
+      name: HelixGroup(grid: grid, helices_view_order: group_to_helix_idxs[name])
+  };
+
+  return groups;
+}
+
+bool _uses_default_group(Iterable<Helix> helices) {
+  for (var helix in helices) {
+    if (helix.group != constants.default_group_name) {
+      return false;
+    }
+  }
+  return true;
 }
 
 ensure_helix_groups_in_groups_map(

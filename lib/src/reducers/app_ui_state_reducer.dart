@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:built_collection/built_collection.dart';
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';
+import 'package:scadnano/src/reducers/strands_copy_info_reducer.dart';
 import 'package:scadnano/src/state/modification.dart';
 import 'package:scadnano/src/state/strand.dart';
+import 'package:scadnano/src/state/copy_info.dart';
 import 'package:scadnano/src/util.dart';
 import '../reducers/context_menu_reducer.dart';
 import '../state/example_designs.dart';
@@ -461,6 +463,7 @@ ModificationInternal last_mod_int_modification_add_reducer(ModificationInternal 
     actions.ModificationAdd action) =>
     action.modification is ModificationInternal ? action.modification : modification;
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // svg-png-caching
 
@@ -559,8 +562,9 @@ AppUIState ui_state_global_reducer(AppUIState ui_state, AppState state, action) 
       ..mouseover_datas.replace(mouseover_datas_global_reducer(ui_state.mouseover_datas, state, action))
       ..strands_move = strands_move_global_reducer(ui_state.strands_move, state, action)?.toBuilder()
       ..domains_move = domains_move_global_reducer(ui_state.domains_move, state, action)?.toBuilder()
-      ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)
-          ?.toBuilder());
+      ..strand_creation = strand_creation_global_reducer(ui_state.strand_creation, state, action)?.toBuilder()
+      ..copy_info = copy_info_global_reducer(ui_state.copy_info, state, action)?.toBuilder()
+    );
 
 GlobalReducer<BuiltList<MouseoverData>, AppState> mouseover_datas_global_reducer = combineGlobalReducers([
   TypedGlobalReducer<BuiltList<MouseoverData>, AppState, actions.HelixRollSetAtOther>(

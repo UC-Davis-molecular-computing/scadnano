@@ -14,6 +14,7 @@ import '../state/helix.dart';
 import '../state/position3d.dart';
 import 'package:tuple/tuple.dart';
 
+import '../state/address.dart';
 import '../actions/actions.dart' as actions;
 import '../app.dart';
 import '../util.dart' as util;
@@ -27,12 +28,12 @@ helix_positions_set_based_on_crossovers_middleware(
     Store<AppState> store, dynamic action, NextDispatcher next) {
   next(action);
   if (action is actions.HelicesPositionsSetBasedOnCrossovers) {
-    var all_actions = helix_positions_set_based_on_crossovers(store.state);
-    app.dispatch(actions.BatchAction(all_actions));
+    var all_actions = get_helix_position_and_roll_actions(store.state);
+    store.dispatch(actions.BatchAction(all_actions));
   }
 }
 
-List<actions.UndoableAction> helix_positions_set_based_on_crossovers(AppState state) {
+List<actions.UndoableAction> get_helix_position_and_roll_actions(AppState state) {
   // figure out which groups to skip and warn user if there are any
   List<String> group_names_to_skip = [];
   for (var group_name in state.design.groups.keys) {
@@ -334,5 +335,5 @@ List<actions.UndoableAction> set_rolls_and_positions(List<Helix> helices, List<R
     all_actions.add(pos_action);
   }
   return all_actions;
-//  app.dispatch(actions.BatchAction(all_actions));
+//  store.dispatch(actions.BatchAction(all_actions));
 }

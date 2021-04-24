@@ -8,7 +8,7 @@ import '../serializers.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
 import 'domain.dart';
-import 'helix.dart';
+import 'address.dart';
 import 'loopout.dart';
 import 'dna_end.dart';
 import 'modification.dart';

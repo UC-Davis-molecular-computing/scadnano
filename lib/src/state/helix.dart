@@ -12,6 +12,7 @@ import 'geometry.dart';
 import 'grid.dart';
 import 'strand.dart';
 import 'grid_position.dart';
+import 'address.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
@@ -19,26 +20,7 @@ import 'package:built_value/built_value.dart';
 
 part 'helix.g.dart';
 
-// "Address" of a base; (helix, offset, direction)
-abstract class Address with BuiltJsonSerializable implements Built<Address, AddressBuilder> {
-  factory Address({int helix_idx, int offset, bool forward}) = _$Address._;
 
-  factory Address.from([void Function(AddressBuilder) updates]) = _$Address;
-
-  Address._();
-
-  static Serializer<Address> get serializer => _$addressSerializer;
-
-  /************************ end BuiltValue boilerplate ************************/
-
-  int get helix_idx;
-
-  int get offset;
-
-  bool get forward;
-
-  String toString() => 'H${helix_idx}-${forward ? "F" : "R"}-${offset}';
-}
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
 abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<Helix, HelixBuilder> {

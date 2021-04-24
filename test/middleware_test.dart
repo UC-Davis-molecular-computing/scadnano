@@ -14,7 +14,7 @@ main() {
   group('helices_positions_set_based_on_crossovers', () {
     test('helices_angle', () {
       // I wrote this when 0.5 was the default gap
-      Design helices_angle = design_from_string("""
+      Design helices_angle_design = design_from_string("""
         {
           "version": "${constants.CURRENT_VERSION}",""" + r"""
           "grid": "none",
@@ -194,7 +194,7 @@ main() {
           ]
         }
       """);
-      Store<AppState> store = store_from_design(helices_angle);
+      Store<AppState> store = store_from_design(helices_angle_design, initialize_app_instance: false);
       store.dispatch(actions.HelicesPositionsSetBasedOnCrossovers());
 
       Design expected_design = design_from_string("""

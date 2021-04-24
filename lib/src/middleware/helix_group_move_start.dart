@@ -31,7 +31,7 @@ helix_group_move_start_middleware(Store<AppState> store, action, NextDispatcher 
         helices: helices_in_group,
         original_mouse_point: action.mouse_point,
       );
-      app.dispatch(actions.HelixGroupMoveCreate(helix_group_move: helix_group_move));
+      store.dispatch(actions.HelixGroupMoveCreate(helix_group_move: helix_group_move));
     } else {
       var msg = 'Cannot move a helix group that has no helices in it.';
       window.alert(msg);

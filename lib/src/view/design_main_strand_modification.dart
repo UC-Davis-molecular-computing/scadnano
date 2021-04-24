@@ -3,14 +3,15 @@ import 'dart:math';
 
 import 'package:over_react/over_react.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:scadnano/src/state/context_menu.dart';
-import 'package:scadnano/src/state/dialog.dart';
-import 'package:scadnano/src/state/selectable.dart';
+
+import '../state/context_menu.dart';
+import '../state/dialog.dart';
+import '../state/selectable.dart';
+import '../state/address.dart';
 import '../state/modification.dart';
 import '../app.dart';
 import '../actions/actions.dart' as actions;
 import '../util.dart' as util;
-
 import '../state/strand.dart';
 import '../state/helix.dart';
 import '../constants.dart' as constants;
