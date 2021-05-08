@@ -32,6 +32,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Running offline](#running-offline)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
 
@@ -104,7 +105,7 @@ it is not possible to save your file automatically without further interaction;
 after pressing "Save", you will always be prompted to specify a filename to which to save.
 
 Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
-so repeatedly saving the file will change its name every time. 
+so repeatedly saving the file will change its name on your local filesystem every time. 
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
@@ -383,6 +384,9 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Copy/paste:**
     Strands can be copied and pasted. If they are pasted to the opposite direction (e.g., if you copy a strand that is forward on a helix and paste it to the reverse part of a helix),
     then the "polarity" of each strand is reversed: 5' and 3' ends swap.
+
+    In addition, strand details are copied to clipboard in a human-readable text format
+    (the same format used in `.sc` files)
 
   * **Undo/Redo:** 
     Undo or redo the last edit that was made to the design.
@@ -712,6 +716,18 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+## Running offline
+It is possible to run scadnano offline, so that no internet connection is needed.
+To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
+
+- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+
+- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+
+- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+
 
 
 ## Performance tips

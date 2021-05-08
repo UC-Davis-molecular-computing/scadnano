@@ -7,6 +7,7 @@ import 'domain.dart';
 import 'group.dart';
 import 'helix.dart';
 import 'strand.dart';
+import 'address.dart';
 
 part 'domains_move.g.dart';
 

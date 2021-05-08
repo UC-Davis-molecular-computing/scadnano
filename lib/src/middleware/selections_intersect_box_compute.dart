@@ -72,7 +72,7 @@ selections_intersect_box_compute_middleware(Store<AppState> store, action, NextD
       }
     }
 
-    app.dispatch(actions.SelectOrToggleItems(
+    store.dispatch(actions.SelectOrToggleItems(
         items: overlapping_now_select_mode_enabled.build(), toggle: action.toggle));
   } else {
     next(action);

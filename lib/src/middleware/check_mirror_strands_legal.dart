@@ -21,7 +21,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     var group_names = design.group_names_of_strands(strands_to_reflect);
     if (group_names.length != 1) {
       var msg = 'Cannot reflect selected strands unless they are all on the same helix group.\n'
-          'These strands occupy the following helix groups: ${group_names.join(", ")}';
+          '3 These strands occupy the following helix groups: ${group_names.join(", ")}';
       window.alert(msg);
       return;
     }
@@ -54,7 +54,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     }
 
     var edit_action = actions.ReplaceStrands(new_strands: new_strands.build());
-    app.dispatch_async(edit_action);
+    store.dispatch(edit_action);
   } else {
     next(action);
   }

@@ -6,8 +6,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification.dart';
 
-import 'design_main_strand_names.dart';
+import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
+import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
 import '../state/dialog.dart';
@@ -62,9 +63,11 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
-  bool show_domain_labels;
+  bool show_domain_names;
+  bool show_strand_names;
+  num domain_name_font_size;
+  num strand_name_font_size;
   num modification_font_size;
-  num domain_label_font_size;
   bool invert_y;
 }
 
@@ -96,7 +99,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       (DesignMainStrandPaths()
         ..strand = props.strand
         ..key = 'strand-paths'
-        ..show_domain_labels = props.show_domain_labels
+        ..show_domain_names = props.show_domain_names
         ..helices = props.helices
         ..groups = props.groups
         ..selected_ends_in_strand = props.selected_ends_in_strand
@@ -112,8 +115,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_labels)
-        (DesignMainStrandNames()
+      if (props.show_domain_names || props.show_strand_names)
+        (DesignMainStrandAndDomainNames() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -121,8 +124,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_dna = props.show_dna
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..font_size = props.domain_label_font_size
-          ..key = 'domain-labels')(),
+          ..show_domain_names = props.show_domain_names
+          ..show_strand_names = props.show_strand_names
+          ..domain_name_font_size = props.domain_name_font_size
+          ..strand_name_font_size = props.strand_name_font_size
+          ..key = 'domain-names')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -146,7 +152,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
         var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
+        HelixGroup group = app.state.design.group_of_strand(props.strand);
+        var helices_view_order_inverse = group.helices_view_order_inverse;
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false,
+            original_helices_view_order_inverse: helices_view_order_inverse));
       }
     }
   }

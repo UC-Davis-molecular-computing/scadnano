@@ -8,11 +8,12 @@ import 'state/grid.dart';
 
 // WARNING: Do not modify line below, except for the version string
 //          (and also add new version string to scadnano_versions_to_link).
-const String CURRENT_VERSION = "0.15.2";
+const String CURRENT_VERSION = "0.15.3";
 const String INITIAL_VERSION = "0.1.0";
 
 // scadnano versions that we deploy so that older versions can be used.
 final scadnano_older_versions_to_link =[
+  "0.15.2",
   "0.15.1",
   "0.15.0",
   "0.14.0",
@@ -89,7 +90,8 @@ const Grid default_grid = Grid.none;
 //const Grid default_grid = Grid.square;
 
 const default_modification_font_size = 12;
-const default_domain_label_font_size = 10;
+const default_domain_name_font_size = 10;
+const default_strand_name_font_size = 16;
 const default_major_tick_offset_font_size = 12;
 const default_major_tick_width_font_size = 8;
 
@@ -258,6 +260,7 @@ final strand_keys = [
       modification_3p_key,
       modifications_int_key,
       label_key,
+      name_key,
     ] +
     legacy_dna_sequence_keys +
     legacy_substrands_keys;
@@ -306,6 +309,7 @@ final domain_keys = [
       deletions_key,
       insertions_key,
       label_key,
+      name_key,
     ] +
     legacy_forward_keys;
 
@@ -314,6 +318,7 @@ const loopout_key = 'loopout';
 const loopout_keys = [
   loopout_key,
   label_key,
+  name_key,
 ];
 
 ////////////////////////////////////////////////////
@@ -358,7 +363,9 @@ const css_selector_end_parent_group = 'dna-ends';
 const css_selector_loopout_length = 'loopout-length';
 
 const css_selector_domain_name = 'domain-name';
+const css_selector_strand_name = 'strand-name';
 const css_selector_domain_name_text = 'domain-name-text';
+const css_selector_strand_name_text = 'strand-name-text';
 const css_selector_loopout_name = 'loopout-name';
 const css_selector_loopout_name_text = 'loopout-name-text';
 

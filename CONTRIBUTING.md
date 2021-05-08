@@ -5,6 +5,16 @@ The following is a set of guidelines for contributing to scadnano.
 Feel free to propose changes to this document in a pull request, 
 or post questions as issues on the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
 
+## Table of contents
+
+* [What should I know before I get started?](#what-should-i-know-before-i-get-started)
+* [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
+* [Making contributions](#making-contributions)
+* [General recipe for adding features](#general-recipe-for-adding-features)
+* [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
+* [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+* [Styleguide](#styleguide)
+
 ## What should I know before I get started?
 
 ### Dart
@@ -98,7 +108,7 @@ abstract class StrandPasteKeepColorSet
 
 As you can see, there's quite a bit of boilerplate code, not only below the comment line, but also in the lines declaring the class.
 
-Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 10-15 seconds minimum, and often more like 30-60 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
+Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about errors. Prior to the code generation running, the analyzer will report many errors, because the code written refers to types that don't exist yet, but that will be generated when the compilation is successful. This can make it difficult to track down compilation errors, because some are "real" (i.e., you made a mistake), and some are artifacts of this process that will go away once the compilation is successful. Even worse, OverReact's code generation retains the errors until the analyzer is refreshed; so even after successfully compiling, the analyzer will warn about errors. In WebStorm, this can be refreshed by clicking "Dart Analysis" at the bottom of the screen, and then clicking the "Restart Dart Analysis Server" button (circular red arrow).
 
@@ -111,11 +121,11 @@ One idea that has developed recently gives a powerful conceptual framework for i
 or
 [unidirectional data flow](https://redux.js.org/basics/data-flow). React and Redux together give an implementation of this idea, though they use slightly different terminology: Redux uses "state" to refer to what others would call "model", and it uses the term "reducer" for code that implements the "update" in Elm and Model-View-Update.
 
-Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea.
+Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea. (Almost no scadnano React components use [React state](https://reactjs.org/docs/state-and-lifecycle.html); they use only [React props](https://reactjs.org/docs/components-and-props.html) instead.)
 
 The basic idea is that the entire application can be thought of as consisting of three parts:
 
-1. **State**, an immutable object representing all the information the application needs to remember.
+1. **State**, an immutable object representing all the information the application needs to remember. (Often called the *Model*.)
 
 2. **View**, a function that takes the state as input and produces HTML code (i.e., a view that the user can see on the screen) as output.
 
@@ -145,16 +155,16 @@ We get into more detail below.
 2. **View:** 
     This can be thought of as a *function* that takes the state as input and outputs an HTML tree to display in the browser. It is a "pure" function, meaning that the displayed HTML is a deterministic function of the state, and should consult no other side information.
     
-    In some languages such as Elm, the view is literally implemented as a function that is called. The OverReact library handles the view, but it is not implemented as a Dart function. Instead, there are several *React components*, which are Dart objects. These objects have "props", which represent the input, and they have a `render()` method, which outputs the appropriate HTML. The props are made available as fields in the object, which can be accessed from within the `render()` method or any other methods it calls. The view components form a tree, but the tree does not mimic exactly the tree structure of the state.
+    In some languages such as Elm, the view is literally implemented as a function that is called. The OverReact library handles the view, but it is not implemented as a Dart function. Instead, there are several *React components*, which are Dart objects. These objects have "props", which represent the input, and they have a `render()` method, which outputs the appropriate HTML. The props are made available as fields in the object, which can be accessed from within the `render()` method or any other methods it calls. (The `render()` method should be a pure function of the props.) The view components form a tree, but the tree does not mimic exactly the tree structure of the state.
 
     If the app were pure React/Redux, the entire view itself would be a single React component, which contains only other React components. Because of the current use of libraries such as [svg-pan-zoom](https://github.com/ariutta/svg-pan-zoom) that are not React, the top-level view is implemented manually in Dart (using the `dart:html` package), but some nodes in the view tree are React components, and those subtrees implement the pure React/Redux ideas.
 
 3. **Reducers (a.k.a. update):**
-    Reducers are how the state updates in response user interaction, or more generally, "the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
+    Reducers are how the state updates in response to user interaction, or more generally, to "events in the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
 
     The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in. 
     
-    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated.
+    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
 
     Actions, like the objects of the state, are themselves immutable instances of built_value.
 
@@ -168,42 +178,68 @@ We get into more detail below.
     
     So although the top-level reducer is called every time, which seems as though it might be inefficient, most of the reducers do not actually run (and many that do run simply return the same state object without changing it). So it is actually quite efficient.
 
-## Making Contributions
+## Making contributions
 
-scadnano can be developed locally.
+scadnano can be developed locally. 
+You can also use the instructions in this section to run scadnano offline even if you are not doing development for the project.
+
+
 
 ### Cloning
 
-The first step is cloning the repository so you have it available locally.
+The first step is cloning the repository so you have it available locally. This requires you to have [git](https://git-scm.com/) installed.
 
 ```
 git clone https://github.com/UC-Davis-molecular-computing/scadnano.git
 ```
 
+Then change into the newly created directory:
+
+```
+cd scadnano
+```
+
 Changes to scadnano should be pushed to the
 [`dev`](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev)
-branch. So switch to the `dev` branch:
+branch. (This step is unnecessary if you simply wish to run scadnano locally.) So switch to the `dev` branch:
 
 ```
 git checkout dev
 ```
 
-Next install all the dependencies (make sure you have [installed Dart](#dart)):
+### Installing Dart
+
+First, install the [Dart SDK](https://dart.dev/get-dart).
+
+Next install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
 pub get
 ```
 
 
-### Running a Development Server
+### Running a Local Server
 
-To run a development server to test the application, use the
+To run a local server to test the application, use the
 [`webdev`](https://dart.dev/tools/webdev) tool. This tool can
 be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
-Run `webdev serve` in the command line to compile your code
+Run 
+
+```
+webdev serve
+``` 
+
+in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
-(dartdevc) and spin up a [development
+(dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
+Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
+However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
+The webdev program will tell you which URL to enter in your browser; it will be something like 
+
+```
+[INFO] Serving `web` on http://127.0.0.1:8080
+```
 
 There are a couple benefits of using `webdev serve`:
 1. Unlike the [dart2js](https://dart.dev/tools/dart2js)
@@ -265,7 +301,7 @@ As described above, the use of React and Redux is intended to reduce the number 
 
 - **view:** What does the visual interface look like, as a function of the model. This is represented by React components in the directory lib/src/view.
 
-- **update:** How should the model change in response to something, most typically the user interfacing with the view. This is implemented by the function `app_state_reducer` in lib/src/reducers/app_state_reducer.dart.
+- **update:** How should the state change in response to something, most typically the user interfacing with the view. This is implemented by the function `app_state_reducer` in lib/src/reducers/app_state_reducer.dart.
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding `with BuiltJsonSerializable`. Read more about [mixins](https://dart.dev/guides/language/language-tour#adding-features-to-a-class-mixins).
 
@@ -364,9 +400,9 @@ For many typical features one would want to add that involve changing some aspec
 
     Since DesignMain is a connected component, at the top of the file we can see how `DesignMainStrandsProps.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
 
-    The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly.
+    The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly. This is known as [prop drilling](https://medium.com/@jeromefranco/how-to-avoid-prop-drilling-in-react-7e3a9f3c8674) in React, and using many connected components further down in the view tree is advised as a way to avoid it.
   
-    However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass props down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
+    However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, when using many connected components further down in the view tree, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass props down through the view tree using prop drilling, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
 
     **Note about when to use global variables in view code:**
     In general, you should not access global variables in view code, e.g., don't do this: `var helix = app.state.design.helices[0]`. The whole idea that makes React work is that each component produces its HTML as a pure function of its props (and its React state, which is used in only a few rare instances in scadnano). The algorithm used to update the view efficiently makes this assumption. Thus, if you are tempted to access a global variable, most likely what needs to happen is that more props need to be added to the component, getting that information from the the ancestor components, which ultimately get them from a Redux connected component that can access the global state directly.

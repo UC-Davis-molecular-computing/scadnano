@@ -50,9 +50,9 @@ save(AppState state, Storable storable) {
 
 String side_pane_width() => window.localStorage[_LOCAL_STORAGE_PREFIX + 'side_pane_width'];
 
-restore(Storable storable) {
+restore(Store<AppState> store, Storable storable) {
   try {
-    _restore(storable);
+    _restore(store, storable);
   } catch (e, stackTrace) {
     var error_message =
     'ERROR: loading ${storable} from localStorage, encountered this error:'
@@ -60,11 +60,11 @@ restore(Storable storable) {
         '\n\nstack trace:'
         '\n\n${stackTrace}';
     print(error_message);
-    app.dispatch(actions.ErrorMessageSet(error_message));
+    store.dispatch(actions.ErrorMessageSet(error_message));
   }
 }
 
-_restore(Storable storable) {
+_restore(Store<AppState> store, Storable storable) {
   String storable_key = storable.key_name;
   if (window.localStorage.containsKey(storable_key)) {
     var json_str = window.localStorage[storable_key];
@@ -110,14 +110,14 @@ _restore(Storable storable) {
     }
 
     if (action != null) {
-      app.dispatch_async(action);
+      store.dispatch(action);
     }
   }
 }
 
-restore_all_local_storage() {
+restore_all_local_storage(Store<AppState> store) {
   for (Storable storable in Storable.values) {
-    restore(storable);
+    restore(store, storable);
   }
 }
 
@@ -139,10 +139,18 @@ local_storage_middleware(Store<AppState> store, dynamic action, NextDispatcher n
     }
   }
 
+  // AutoPasteInitiate is changed to StrandsMoveCommit (which changes Design)
+  // by system_clipboard middleware; if both are UndoableAction then Undo must be pressed twice.
+  //
+  // HelicesPositionsSetBasedOnCrossovers is not an undoable action because it merely triggers
+  // middleware (helix_positions_set_based_on_crossovers_middleware) to gather data to send actions that
+  // actually change the Design, but it causes no change itself.
   if (storables_after.local_storage_design_choice.option == LocalStorageDesignOption.on_edit &&
       design_before != design_after) {
     if (action is! actions.UndoableAction &&
         action is! actions.LoadDNAFile &&
+        action is! actions.AutoPasteInitiate &&
+        action is! actions.HelicesPositionsSetBasedOnCrossovers &&
         action is! actions.Undo &&
         action is! actions.Redo) {
       print('WARNING: some Action changed the design, so I am writing the Design to localStorage,\n'

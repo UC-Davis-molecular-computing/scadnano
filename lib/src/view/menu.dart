@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:html';
+import 'package:built_collection/built_collection.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
-import 'package:quiver/iterables.dart';
+import 'package:scadnano/src/state/dna_end.dart';
+import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
+import 'package:tuple/tuple.dart';
 import '../state/dialog.dart';
 import '../state/edit_mode.dart';
 import '../state/example_designs.dart';
@@ -19,7 +22,6 @@ import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
 import '../view/react_bootstrap.dart';
 import '../constants.dart' as constants;
-import 'package:smart_dialogs/smart_dialogs.dart';
 import '../view/menu_boolean.dart';
 import '../view/menu_dropdown_item.dart';
 import '../view/menu_dropdown_right.dart';
@@ -35,11 +37,15 @@ part 'menu.over_react.g.dart';
 UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
   mapStateToProps: (AppState state) {
     return (Menu()
+      ..selected_ends = state.ui_state.selectables_store.selected_dna_ends
       ..geometry = state.design?.geometry
       ..no_grid_is_none =
           state.design == null ? false : state.design.groups.values.every((group) => group.grid != Grid.none)
       ..show_dna = state.ui_state.show_dna
-      ..show_domain_names = state.ui_state.show_domain_labels
+      ..show_domain_names = state.ui_state.show_domain_names
+      ..show_strand_names = state.ui_state.show_strand_names
+      ..domain_name_font_size = state.ui_state.domain_name_font_size
+      ..strand_name_font_size = state.ui_state.strand_name_font_size
       ..show_modifications = state.ui_state.show_modifications
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
@@ -51,11 +57,8 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..design_has_insertions_or_deletions = state.design?.has_insertions_or_deletions == true
       ..undo_stack_empty = state.undo_redo.undo_stack.isEmpty
       ..redo_stack_empty = state.undo_redo.redo_stack.isEmpty
-      ..enable_copy = (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-          app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-          app.state.ui_state.selectables_store.selected_items.isNotEmpty)
+      ..enable_copy = app.state.ui_state.selectables_store.selected_strands.isNotEmpty
       ..modification_font_size = state.ui_state.modification_font_size
-      ..domain_name_font_size = state.ui_state.domain_label_font_size
       ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
       ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
       ..modification_display_connector = state.ui_state.modification_display_connector
@@ -86,12 +89,15 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
 UiFactory<MenuProps> Menu = _$Menu;
 
 mixin MenuPropsMixin on UiProps {
+  BuiltSet<DNAEnd> selected_ends;
   bool no_grid_is_none;
   bool show_dna;
   bool show_domain_names;
+  bool show_strand_names;
+  num domain_name_font_size;
+  num strand_name_font_size;
   bool show_modifications;
   num modification_font_size;
-  num domain_name_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
   bool modification_display_connector;
@@ -296,6 +302,8 @@ that occurred between the last edit and a browser crash.'''
         'title': 'Edit',
         'id': 'edit-nav-dropdown',
       },
+      ///////////////////////////////////////////////////////////////
+      // cut/copy/paste
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.Undo()))
         ..display = 'Undo'
@@ -321,6 +329,8 @@ that occurred between the last edit and a browser crash.'''
             ((_) => window.dispatchEvent(new KeyEvent('keydown', keyCode: KeyCode.V, ctrlKey: true).wrapped))
         ..display = 'Paste'
         ..keyboard_shortcut = 'Ctrl+V')(),
+      ///////////////////////////////////////////////////////////////
+      // pasted strands keep original color
       DropdownDivider({}),
       (MenuBoolean()
         ..value = props.strand_paste_keep_color
@@ -330,6 +340,8 @@ If checked, when copying and pasting a strand, the color is preserved.
 If unchecked, then a new color is generated.'''
         ..onChange =
             ((_) => props.dispatch(actions.StrandPasteKeepColorSet(keep: !props.strand_paste_keep_color))))(),
+      ///////////////////////////////////////////////////////////////
+      // inline insertions/deletions
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.InlineInsertionsDeletions()))
@@ -340,6 +352,29 @@ If unchecked, then a new color is generated.'''
 Remove insertions and deletions from the design and replace them with domains
 whose lengths correspond to the true strand length. Also moves major tick 
 marks on helices so that they are adjacent to the same bases as before.''')(),
+      ///////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////
+      // Connect selected ends by crossovers
+      DropdownDivider({}),
+      (MenuDropdownItem()
+        // ..on_click = ((_) => connect_ends_by_crossovers(props.selected_ends))
+        ..on_click = ((_) => props.dispatch(actions.JoinStrandsByMultipleCrossovers()))
+        ..display = 'Connect selected ends by crossovers'
+        ..disabled = props.selected_ends.isEmpty
+        ..tooltip = ''
+            '''Connect selected ends by crossovers. 
+
+Ends are connected by crossovers as follows. Within each HelixGroup: 
+
+Iterate over ends in the following order: first by helix, then by 
+forward/reverse, then by offset. For each end e1 in this order, join it 
+to the first end e2 after it in this order, if 
+1) e1 and e2 have the same offset (making a "vertical" crossover), 
+2) e1 is "above" e2 (lower helix idx; more generally earlier in helices_view_order), 
+3) opposite direction (one is forward and the other reverse), and 
+4) opposite side of a strand (i.e., one is 5' and the other 3').''')(),
+      ///////////////////////////////////////////////////////////////
+      // Set helix coordinates based on crossovers
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => props.dispatch(actions.HelicesPositionsSetBasedOnCrossovers()))
@@ -400,6 +435,8 @@ Ignored if design is not an origami (i.e., does not have at least one scaffold).
                 staple: !props.default_crossover_type_staple_for_setting_helix_rolls));
           }
         })(),
+      ///////////////////////////////////////////////////////////////
+      // Set geometric parameters
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => ask_for_geometry(props.geometry))
@@ -423,6 +460,8 @@ Set geometric parameters affecting how the design is displayed.
 - minor groove angle: The angle in degrees of the minor groove, when looking at the helix in the direction
                       of its long axis.
                       default ${constants.default_minor_groove_angle} degrees''')(),
+      ///////////////////////////////////////////////////////////////
+      // autostaple/autobreak
       DropdownDivider({}),
       (MenuDropdownItem()
         ..on_click = ((_) => app.dispatch(actions.Autostaple()))
@@ -493,6 +532,20 @@ helix with the opposite orientation.'''
   List view_menu_show_labels() {
     return [
       (MenuBoolean()
+        ..value = props.show_strand_names
+        ..display = 'Show strand names'
+        ..tooltip = "Show strand names near 5' domain of strand."
+        ..onChange = ((_) => props.dispatch(actions.ShowStrandNamesSet(!props.show_strand_names)))
+        ..key = 'show-strand-name')(),
+      (MenuNumber()
+        ..display = 'strand name font size'
+        ..default_value = props.strand_name_font_size
+        ..hide = !props.show_strand_names
+        ..tooltip = 'Adjust to change the font size of strand name.'
+        ..on_new_value =
+            ((num font_size) => props.dispatch(actions.StrandNameFontSizeSet(font_size: font_size)))
+        ..key = 'strand-name-font-size')(),
+      (MenuBoolean()
         ..value = props.show_domain_names
         ..display = 'Show domain names'
         ..tooltip = 'Show domain and loopout names.'
@@ -505,7 +558,7 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of domain and loopout name.'
         ..on_new_value =
             ((num font_size) => props.dispatch(actions.DomainNameFontSizeSet(font_size: font_size)))
-        ..key = 'domain-label-font-size')(),
+        ..key = 'domain-name-font-size')(),
       (MenuBoolean()
         ..value = props.show_domain_name_mismatches
         ..display = 'Show domain name mismatches'
@@ -680,8 +733,7 @@ display the DNA backbone angle of all helices at a particular offset.
         ..onChange = (_) {
           props.dispatch(actions.ShowSliceBarSet(!props.show_slice_bar));
         }
-        ..key = 'show-slice-bar'
-      )(),
+        ..key = 'show-slice-bar')(),
       (MenuBoolean()
         ..value = props.show_mouseover_data
         ..display = 'Display strand and helix details in footer'
@@ -697,8 +749,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
         ..onChange = (_) {
           props.dispatch(actions.ShowMouseoverDataSet(!props.show_mouseover_data));
         }
-        ..key = 'show-mouseover-data'
-      )()
+        ..key = 'show-mouseover-data')()
     ];
   }
 
@@ -787,8 +838,7 @@ In a large design, this can slow down the performance, so uncheck it when not in
       ),
       DropdownItem(
         {
-          'href':
-              'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
+          'href': 'https://github.com/UC-Davis-molecular-computing/scadnano/releases',
           'target': '_blank',
           //TODO: figure out how to give a DropdownItem a tooltip
 //          'title': 'Only a valid link on the main site scadnano.org, not on scadnano.org/dev'
@@ -830,10 +880,10 @@ However, it may be less stable than the main site.'''
       ]),
       (MenuDropdownItem()
         ..on_click = ((_) => window.alert(''
-'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
-'\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
-'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
-'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
+            'scadnano is a program for designing synthetic DNA structures such as DNA origami. '
+            '\n\nscadnano is a standalone project developed and maintained by the UC Davis Molecular Computing group. '
+            'Though similar in design, scadnano is distinct from cadnano (https://cadnano.org), '
+            'which is developed and maintained by the Douglas lab (https://bionano.ucsf.edu/) at UCSF.'))
         ..display = 'About')(),
 //       DropdownItem(
 //         {
@@ -922,7 +972,11 @@ Future<void> ask_for_autobreak_parameters() async {
   int max_length = (results[max_length_idx] as DialogInteger).value;
   int min_distance_to_xover = (results[min_distance_to_xover_idx] as DialogInteger).value;
 
-  app.dispatch(actions.Autobreak(target_length: target_length, min_length: min_length, max_length: max_length, min_distance_to_xover: min_distance_to_xover));
+  app.dispatch(actions.Autobreak(
+      target_length: target_length,
+      min_length: min_length,
+      max_length: max_length,
+      min_distance_to_xover: min_distance_to_xover));
 }
 
 Future<void> ask_for_geometry(Geometry geometry) async {

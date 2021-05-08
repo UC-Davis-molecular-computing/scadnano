@@ -8,6 +8,7 @@ import 'package:react/react.dart' as react;
 import 'package:scadnano/src/view/transform_by_helix_group.dart';
 
 import '../state/strand.dart';
+import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
 import '../app.dart';

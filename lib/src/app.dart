@@ -36,7 +36,7 @@ import 'actions/actions.dart' as actions;
 //import 'constants.dart' as constants;
 
 // global variable for whole program
-App app = App();
+App app;
 
 const USE_REDUX_DEV_TOOLS = String.fromEnvironment('SCADNANO_PROD') != 'true';
 // const USE_REDUX_DEV_TOOLS = false;
@@ -87,7 +87,7 @@ class App {
       setup_undo_redo_keyboard_listeners();
       setup_save_open_dna_file_keyboard_listeners();
 //    util.save_editor_content_to_js_context(state.editor_content);
-      restore_all_local_storage();
+      restore_all_local_storage(app.store);
       setup_warning_before_unload();
       setup_save_design_to_localStorage_before_unload();
       make_dart_functions_available_to_js(state);

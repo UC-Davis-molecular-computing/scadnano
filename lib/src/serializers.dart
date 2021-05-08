@@ -5,9 +5,12 @@ import 'package:built_value/serializer.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:color/color.dart';
+import 'package:tuple/tuple.dart';
 
 import 'state/domains_move.dart';
 import 'state/helix_group_move.dart';
+import 'state/copy_info.dart';
+import 'state/address.dart';
 import 'state/substrand.dart'; // analyzer says this is not used, but if deleted it breaks the code generation
 
 import 'state/group.dart';
@@ -87,6 +90,7 @@ part 'serializers.g.dart';
   SelectionBox,
   ShowDNASet,
   ShowDomainNamesSet,
+  ShowStrandNamesSet,
   ShowModificationsSet,
   ShowMismatchesSet,
   SetShowEditor,
@@ -181,6 +185,7 @@ part 'serializers.g.dart';
   Nick,
   Ligate,
   JoinStrandsByCrossover,
+  JoinStrandsByMultipleCrossovers,
   PotentialVerticalCrossover,
   PotentialCrossover,
   PotentialCrossoverCreate,
@@ -214,6 +219,14 @@ part 'serializers.g.dart';
   DNAEndsMoveSetSelectedEnds,
   DNAEndsMoveAdjustOffset,
   DNAEndsMoveCommit,
+  // CopySelectedObjectTextToSystemClipboard,
+  AutoPasteInitiate,
+  ManualPasteInitiate,
+  CopySelectedStrands,
+  // StrandsAutoPaste,
+  // StrandsCopyBufferClear,
+  // UpdateCopyInfo,
+  CopyInfo,
   StrandsMove,
   StrandsMoveStart,
   StrandsMoveStartSelectedStrands,
@@ -234,6 +247,7 @@ part 'serializers.g.dart';
   ContextMenuHide,
   ScaffoldSet,
   Address,
+  AddressDifference,
   Dialog,
   DialogItem,
   DialogText,
@@ -271,6 +285,7 @@ part 'serializers.g.dart';
   SetModificationDisplayConnector,
   ModificationFontSizeSet,
   DomainNameFontSizeSet,
+  StrandNameFontSizeSet,
   MajorTickOffsetFontSizeSet,
   MajorTickWidthFontSizeSet,
   HelicesPositionsSetBasedOnCrossovers,
@@ -288,6 +303,8 @@ part 'serializers.g.dart';
   Autobreak,
   NewDesignSet,
   Design,
+  // BrowserClipboard,
+  // CLIClipboard,
 ])
 Serializers serializers = _$serializers;
 

@@ -6,6 +6,7 @@ import '../serializers.dart';
 import 'strand.dart';
 import 'group.dart';
 import 'helix.dart';
+import 'address.dart';
 
 part 'strands_move.g.dart';
 
@@ -26,16 +27,21 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
       BuiltList<Strand> all_strands,
       BuiltMap<int, Helix> helices,
       BuiltMap<String, HelixGroup> groups,
+      BuiltMap<int, int> original_helices_view_order_inverse,
       Address original_address,
       bool copy = false,
       bool keep_color = true}) {
     var strands_fixed =
         copy ? all_strands : [for (var strand in all_strands) if (!strands_moving.contains(strand)) strand];
+    if (original_helices_view_order_inverse == null) {
+      throw ArgumentError('original_helices_view_order_inverse must be specified');
+    }
     return StrandsMove.from((b) => b
       ..strands_moving.replace(strands_moving)
       ..strands_fixed.replace(strands_fixed)
       ..helices.replace(helices)
       ..groups.replace(groups)
+      ..original_helices_view_order_inverse.replace(original_helices_view_order_inverse)
       ..original_address.replace(original_address)
       ..current_address.replace(original_address)
       ..copy = copy
@@ -51,6 +57,10 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   BuiltMap<String, HelixGroup> get groups;
 
+  // Since copied Strands may come from a different Design with different groups, we need to
+  // store this to know how to position them in new HelixGroups.
+  BuiltMap<int, int> get original_helices_view_order_inverse;
+
   Address get original_address;
 
   Address get current_address;
@@ -61,11 +71,11 @@ abstract class StrandsMove with BuiltJsonSerializable implements Built<StrandsMo
 
   bool get keep_color;
 
-  Helix get original_helix => helices[original_address.helix_idx];
-
   Helix get current_helix => helices[current_address.helix_idx];
 
-  int get original_view_order => groups[original_helix.group].helices_view_order_inverse[original_helix.idx];
+  HelixGroup get current_group => groups[current_helix.group];
+
+  int get original_view_order => original_helices_view_order_inverse[original_address.helix_idx];
 
   int get current_view_order => groups[current_helix.group].helices_view_order_inverse[current_helix.idx];
 
