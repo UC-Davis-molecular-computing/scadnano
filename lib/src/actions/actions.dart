@@ -2064,21 +2064,6 @@ abstract class CopySelectedStrands
   static Serializer<CopySelectedStrands> get serializer => _$copySelectedStrandsSerializer;
 }
 
-// abstract class StrandsAutoPaste
-//     with BuiltJsonSerializable, UndoableAction
-//     implements Action, Built<StrandsAutoPaste, StrandsAutoPasteBuilder> {
-//   StrandsMove get strands_move;
-//
-//   /************************ begin BuiltValue boilerplate ************************/
-//   factory StrandsAutoPaste({StrandsMove strands_move}) = _$StrandsAutoPaste._;
-//
-//   factory StrandsAutoPaste.from([void Function(StrandsAutoPasteBuilder) updates]) = _$StrandsAutoPaste;
-//
-//   StrandsAutoPaste._();
-//
-//   static Serializer<StrandsAutoPaste> get serializer => _$strandsAutoPasteSerializer;
-// }
-
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
 abstract class StrandsMoveStart
@@ -2222,6 +2207,12 @@ abstract class DomainsMoveCommit
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // dna ends move
 
+/// Interpreted in main store to just set state.ui_state.dna_ends_are_moving to true.
+/// An optimized store specifically for moving [DNAEnd]s handles updating as the mouse is moved
+/// by dispatching [DNAEndsMoveAdjustOffset].
+/// Also triggers middleware to look up set of selected ends, which then dispatches
+/// [DNAEndsMoveSetSelectedEnds] (since the DNAEnd itself that is clicked to dispatch [DNAEndsMoveStart]
+/// doesn't know what are all the other selected DNAEnds).
 abstract class DNAEndsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<DNAEndsMoveStart, DNAEndsMoveStartBuilder> {
