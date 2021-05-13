@@ -385,8 +385,13 @@ This refers to the menu at the top of the whole app. At the top of the side view
     Strands can be copied and pasted. If they are pasted to the opposite direction (e.g., if you copy a strand that is forward on a helix and paste it to the reverse part of a helix),
     then the "polarity" of each strand is reversed: 5' and 3' ends swap.
 
-    In addition, strand details are copied to clipboard in a human-readable text format
+    In addition, strand details are copied to clipboard in a human-readable text format.
     (the same format used in `.sc` files)
+    This means that strands can be pasted between different open instances of scadnano (e.g., between two different browser tabs),
+    see https://github.com/UC-Davis-molecular-computing/scadnano/issues/590.
+
+    Finally, pressing Ctrl+Shift+V will *autopaste*, which automatically pastes a strand in the same "direction" as the last paste, which can be used to quickly paste many strands. 
+    See https://github.com/UC-Davis-molecular-computing/scadnano/issues/580.
 
   * **Undo/Redo:** 
     Undo or redo the last edit that was made to the design.
