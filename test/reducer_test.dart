@@ -7414,7 +7414,7 @@ main() {
     });
   });
 
-  test('test_only_helix_groups_specify_pitch_and_yaw', () {
+  test('only_helix_groups_specify_pitch_and_yaw', () {
     String json_str = r'''
     {
       "helices": [
@@ -7474,7 +7474,7 @@ main() {
     expect(south_str, helix1.group);
   });
 
-  test('test_both_helix_groups_and_helices_do_not_specify_pitch_nor_yaw', () {
+  test('both_helix_groups_and_helices_do_not_specify_pitch_nor_yaw', () {
     String json_str = r"""
     {
       "helices": [
@@ -7528,6 +7528,48 @@ main() {
     expect(0, south_group.pitch);
     expect(0, south_group.yaw);
     expect(south_str, helix1.group);
+  });
+
+  test('multiple_helix_groups_helices_specify_pitch_and_yaw_invalid', () {
+    String json_str = r"""
+    {
+      "helices": [
+        {
+          "group": "north",
+          "position": {"x": 1, "y": 2, "z": 3},
+          "pitch": 4,
+          "roll": 5,
+          "yaw": 6
+        },
+        {
+          "group": "north",
+          "position": {"x": 3, "y": 2, "z": 3},
+          "pitch": 10,
+          "roll": 5,
+          "yaw": 84
+        }
+      ],
+      "groups": {
+        "north": {
+          "position": {"x": 0, "y": -200, "z": 0},
+          "grid": "none"
+        },
+        "east": {
+          "position": {"x": 0, "y": 0, "z": 100},
+          "pitch": 45,
+          "grid": "square"
+        }
+      },
+      "strands": [
+        {
+          "color": "#0066cc",
+          "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        }
+      ]
+    }
+    """;
+    // should fail because multiple helices in same helix group are non-parallel
+    expect(() => Design.from_json_str(json_str), throwsA(TypeMatcher<IllegalDesignError>()));
   });
 }
 
