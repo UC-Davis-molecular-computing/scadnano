@@ -7354,6 +7354,64 @@ main() {
       expect("north", helix1.group);
       expect(2, d.groups.length);
     });
+
+    test('only_individual_helices_specify_pitch_and_yaw', () {
+      String json_str = r"""
+      {
+        "helices": [
+          {
+            "group": "north",
+            "position": {"x": 1, "y": 2, "z": 3},
+            "pitch": 25,
+            "yaw": 19,
+            "roll": 5
+          },
+          {
+            "group": "north",
+            "position": {"x": 3, "y": 2, "z": 3},
+            "pitch": 21,
+            "yaw": 13,
+            "roll": 15
+          }
+        ],
+        "groups": {
+          "north": {
+            "position": {"x": 0, "y": -200, "z": 0},
+            "grid": "none"
+          }
+        },
+        "strands": [
+          {
+            "color": "#0066cc",
+            "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+          }
+        ]
+      }
+      """;
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+
+      // Helix 0 should have been moved to a new helix group
+      String pitch_25_yaw_19_group_name = 'pitch_25.0_yaw_19.0';
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
+      expect(25, pitch_25_yaw_19_group.pitch);
+      expect(19, pitch_25_yaw_19_group.yaw);
+      expect(5, helix0.roll);
+      expect(pitch_25_yaw_19_group_name, helix0.group);
+
+      // Helix 1 should have been moved to a new helix group
+      String pitch_21_yaw_13_group_name = 'pitch_21.0_yaw_13.0';
+      HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name];
+      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
+      expect(21, pitch_21_yaw_13_group.pitch);
+      expect(13, pitch_21_yaw_13_group.yaw);
+      expect(15, helix1.roll);
+      expect(pitch_21_yaw_13_group_name, helix1.group);
+
+      expect(3, d.groups.length);
+    });
   });
 }
 
