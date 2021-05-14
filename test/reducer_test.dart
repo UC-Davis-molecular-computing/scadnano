@@ -7303,6 +7303,58 @@ main() {
     // Slice bar offset should be set to null if displayed group has no helices
     expect(null, final_state.ui_state.slice_bar_offset);
   });
+
+  group('Designs_with_helix_pitch_and_helix_yaw_before_version_0.16.0', () {
+    test('single_helix_group_and_helices_specify_pitch_and_yaw', () {
+      String json_str = r'''
+        {
+          "helices": [
+            {
+              "group": "north",
+              "position": {"x": 1, "y": 2, "z": 3},
+              "pitch": 4,
+              "roll": 5,
+              "yaw": 6
+            },
+            {
+              "group": "north",
+              "position": {"x": 3, "y": 2, "z": 3},
+              "roll": 15
+            }
+          ],
+          "groups": {
+            "north": {
+              "position": {"x": 0, "y": -200, "z": 0},
+              "pitch": 21,
+              "yaw": 13,
+              "grid": "none"
+            }
+          },
+          "strands": [
+            {
+              "color": "#0066cc",
+              "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+            }
+          ]
+        }
+      ''';
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
+      expect(5, helix0.roll);
+      // Helix 0 should have been moved to a new helix group
+      String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      expect(25, pitch_25_yaw_19_group.pitch);
+      expect(19, pitch_25_yaw_19_group.yaw);
+      expect(pitch_25_yaw_19_group_name, helix0.group);
+      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
+      expect(15, helix1.roll);
+      expect("north", helix1.group);
+      expect(2, d.groups.length);
+    });
+  });
 }
 
 AppState make_ends_selectable(AppState actual_state) {
