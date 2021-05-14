@@ -845,35 +845,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  static Design from_json_str(String json_str, [bool invert_xy = false]) {
-    var json_map = jsonDecode(json_str);
-    return Design.from_json(json_map, invert_xy);
-  }
-
-  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
-    if (json_map == null) return null;
-
-    _check_mutually_exclusive_fields(json_map);
-
-    var design_builder = DesignBuilder();
-
-    design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
-
-    // prior to version 0.13.0, x and z had the opposite role
-    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
-
+  static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
+      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
-
     bool grid_is_none = grid == Grid.none;
     bool using_groups = json_map.containsKey(constants.groups_key);
-
-    design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
-
-    Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
-        transformer: (geometry_map) => Geometry.from_json(geometry_map),
-        legacy_keys: constants.legacy_geometry_keys);
-    design_builder.geometry.replace(geometry);
 
     List<HelixBuilder> helix_builders_list = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
@@ -906,17 +883,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<int, HelixBuilder> helix_builders_map = {
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
     };
-
-    // strands
-    List<Strand> strands = [];
-    List strand_jsons = json_map[constants.strands_key];
-    for (var strand_json in strand_jsons) {
-      Strand strand = Strand.from_json(strand_json);
-      strands.add(strand);
-    }
-    design_builder.strands.replace(strands);
-
-    set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
 
     // helix groups; populate with grids, but not helices_view_order yet
     Map<String, HelixGroupBuilder> group_builders_map = null;
@@ -961,6 +927,48 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
 
+    return Tuple2(helix_builders_map, group_builders_map);
+  }
+
+  static Design from_json_str(String json_str, [bool invert_xy = false]) {
+    var json_map = jsonDecode(json_str);
+    return Design.from_json(json_map, invert_xy);
+  }
+
+  static Design from_json(Map<String, dynamic> json_map, [bool invert_xy = false]) {
+    if (json_map == null) return null;
+
+    _check_mutually_exclusive_fields(json_map);
+
+    var design_builder = DesignBuilder();
+
+    design_builder.version = util.optional_field(json_map, constants.version_key, constants.CURRENT_VERSION);
+
+    // prior to version 0.13.0, x and z had the opposite role
+    bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
+
+    design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
+
+    Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
+        transformer: (geometry_map) => Geometry.from_json(geometry_map),
+        legacy_keys: constants.legacy_geometry_keys);
+    design_builder.geometry.replace(geometry);
+
+    var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
+    var helix_builders_map = t.item1;
+    var group_builders_map = t.item2;
+
+    // strands
+    List<Strand> strands = [];
+    List strand_jsons = json_map[constants.strands_key];
+    for (var strand_json in strand_jsons) {
+      Strand strand = Strand.from_json(strand_json);
+      strands.add(strand);
+    }
+    design_builder.strands.replace(strands);
+
+    set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
+
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
@@ -970,7 +978,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     // build Helices
     Map<int, Helix> helices = {
-      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
+      for (var helix_builder in helix_builders_map.values) helix_builder.idx: helix_builder.build()
     };
     helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
     design_builder.helices.replace(helices);
