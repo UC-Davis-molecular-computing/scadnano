@@ -7341,18 +7341,18 @@ main() {
       Design d = Design.from_json_str(json_str);
       Helix helix0 = d.helices[0];
       Helix helix1 = d.helices[1];
-      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
-      expect(5, helix0.roll);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
       HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
-      expect(25, pitch_25_yaw_19_group.pitch);
-      expect(19, pitch_25_yaw_19_group.yaw);
-      expect(pitch_25_yaw_19_group_name, helix0.group);
-      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
-      expect(15, helix1.roll);
-      expect("north", helix1.group);
-      expect(2, d.groups.length);
+      expect(pitch_25_yaw_19_group.pitch, 25);
+      expect(pitch_25_yaw_19_group.yaw, 19);
+      expect(helix0.group, pitch_25_yaw_19_group_name);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(helix1.group, "north");
+      expect(d.groups.length, 2);
     });
 
     test('only_individual_helices_specify_pitch_and_yaw', () {
@@ -7395,22 +7395,22 @@ main() {
       // Helix 0 should have been moved to a new helix group
       String pitch_25_yaw_19_group_name = 'pitch_25.0_yaw_19.0';
       HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
-      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
-      expect(25, pitch_25_yaw_19_group.pitch);
-      expect(19, pitch_25_yaw_19_group.yaw);
-      expect(5, helix0.roll);
-      expect(pitch_25_yaw_19_group_name, helix0.group);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(pitch_25_yaw_19_group.pitch, 25);
+      expect(pitch_25_yaw_19_group.yaw, 19);
+      expect(helix0.roll, 5);
+      expect(helix0.group, pitch_25_yaw_19_group_name);
 
       // Helix 1 should have been moved to a new helix group
       String pitch_21_yaw_13_group_name = 'pitch_21.0_yaw_13.0';
       HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name];
-      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
-      expect(21, pitch_21_yaw_13_group.pitch);
-      expect(13, pitch_21_yaw_13_group.yaw);
-      expect(15, helix1.roll);
-      expect(pitch_21_yaw_13_group_name, helix1.group);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(pitch_21_yaw_13_group.pitch, 21);
+      expect(pitch_21_yaw_13_group.yaw, 13);
+      expect(helix1.roll, 15);
+      expect(helix1.group, pitch_21_yaw_13_group_name);
 
-      expect(3, d.groups.length);
+      expect(d.groups.length, 3);
     });
     test('only_helix_groups_specify_pitch_and_yaw', () {
       String json_str = r'''
@@ -7457,19 +7457,19 @@ main() {
       String south_str = 'south';
       HelixGroup north_group = d.groups[north_str];
       HelixGroup south_group = d.groups[south_str];
-      expect(2, d.groups.length);
+      expect(d.groups.length, 2);
 
-      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
-      expect(5, helix0.roll);
-      expect(21, north_group.pitch);
-      expect(13, north_group.yaw);
-      expect(north_str, helix0.group);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 21);
+      expect(north_group.yaw, 13);
+      expect(helix0.group, north_str);
 
-      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
-      expect(15, helix1.roll);
-      expect(23, south_group.pitch);
-      expect(98, south_group.yaw);
-      expect(south_str, helix1.group);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 23);
+      expect(south_group.yaw, 98);
+      expect(helix1.group, south_str);
     });
 
     test('both_helix_groups_and_helices_do_not_specify_pitch_nor_yaw', () {
@@ -7513,19 +7513,19 @@ main() {
       String south_str = 'south';
       HelixGroup north_group = d.groups[north_str];
       HelixGroup south_group = d.groups[south_str];
-      expect(2, d.groups.length);
+      expect(d.groups.length, 2);
 
-      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
-      expect(5, helix0.roll);
-      expect(0, north_group.pitch);
-      expect(0, north_group.yaw);
-      expect(north_str, helix0.group);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 0);
+      expect(north_group.yaw, 0);
+      expect(helix0.group, north_str);
 
-      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
-      expect(15, helix1.roll);
-      expect(0, south_group.pitch);
-      expect(0, south_group.yaw);
-      expect(south_str, helix1.group);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 0);
+      expect(south_group.yaw, 0);
+      expect(helix1.group, south_str);
     });
 
     test('multiple_helix_groups_helices_specify_pitch_and_yaw', () {
@@ -7574,17 +7574,17 @@ main() {
       String south_str = 'south';
       HelixGroup north_group = d.groups[north_str];
       HelixGroup south_group = d.groups[south_str];
-      expect(2, d.groups.length);
-      expect(Position3D(x: 1, y: 2, z: 3), helix0.position);
-      expect(5, helix0.roll);
-      expect(25, north_group.pitch);
-      expect(19, north_group.yaw);
-      expect(north_str, helix0.group);
-      expect(Position3D(x: 3, y: 2, z: 3), helix1.position);
-      expect(15, helix1.roll);
-      expect(23, south_group.pitch);
-      expect(98, south_group.yaw);
-      expect(south_str, helix1.group);
+      expect(d.groups.length, 2);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 25);
+      expect(north_group.yaw, 19);
+      expect(helix0.group, north_str);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 23);
+      expect(south_group.yaw, 98);
+      expect(helix1.group, south_str);
     });
 
     test('multiple_helix_groups_helices_specify_pitch_and_yaw_invalid', () {
