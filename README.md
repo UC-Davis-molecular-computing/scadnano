@@ -557,7 +557,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
   This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown when in select edit mode or rope select edit mode. Some of the select modes are mutually exclusive as well.
 
-  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular "selection box". See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
   Unlike other drawing programs, clicking on the background will not unselect the objects.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
@@ -614,6 +614,15 @@ There are different edit modes available, shown on the right side of the screen.
   Lifting up on the Shift or Ctrl key will select items within the *n*-gon consisting of the points clicked so far (the darker polygon).
 
   You can also select individual objects by clicking them while in rope select mode. Shift/Ctrl+clicking multiple items is more awkward in rope select mode than in select mode, since in rope select mode it will start drawing a polygon if you keep the Shift or Ctrl key pressed. If you don't want to switch to select mode, a workaround is, after each mouse click, to lift the Shift/Ctrl key before pressing it again, to prevent the polygon from being drawn.
+
+  
+  Both rope select and the selection box require the entire bounding box of the item to be contained in the box/polygon drawn to be selected. This can be counterintuitive. For example, here is the bounding box for a strand with loopouts:
+
+  ![](images/bounding-box-loopouts.png)
+
+  Thus the following rope-select polygon would not select the strand, even though the strand appears to be contained in the polygon, because its bounding box goes outside the polygon:
+
+  ![](images/rope-select-fail-select-entire-bounding-box.png)
   
 * **(p)encil:**
   This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 
