@@ -845,16 +845,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
-  static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
-      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
+  static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
+      _helices_from_json(Map<String, dynamic> json_map, bool invert_xy, Geometry geometry) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
     bool grid_is_none = grid == Grid.none;
     bool using_groups = json_map.containsKey(constants.groups_key);
-
     List<HelixBuilder> helix_builders_list = [];
     List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
-
     // create HelixBuilders
     int idx = 0;
     for (Map<String, dynamic> helix_json in deserialized_helices_list) {
@@ -874,15 +872,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       helix_builders_list.add(helix_builder);
       idx++;
     }
-
     // ensure no two helices have same idx
     var helix_indices = [for (var helix_builder in helix_builders_list) helix_builder.idx];
     _ensure_helix_idxs_unique(helix_indices, helix_builders_list);
-
     // now that we know idx's are unique, assign from list into map with idx keys
     Map<int, HelixBuilder> helix_builders_map = {
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
     };
+
+    return Tuple3(helix_builders_map, null, null);
+  }
+
+  static Map<String, HelixGroupBuilder> _group_from_json(
+      Map<String, dynamic> json_map,
+      Map<int, HelixBuilder> helix_builders_map,
+      Map<String, HelixPitchYaw> group_to_pitch_yaw,
+      Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices) {
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
+    // TODO: Delete this variable and replace with using multiple_groups_used and single_group_used
+    bool using_groups = json_map.containsKey(constants.groups_key);
 
     // helix groups; populate with grids, but not helices_view_order yet
     Map<String, HelixGroupBuilder> group_builders_map = null;
@@ -899,7 +908,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             HelixGroup.from_json(group_json, helix_idxs: helix_idxs_in_group).toBuilder();
       }
     }
-
     ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
 
     // if helices_view_order not already specified in group or top-level of design, give each a default
@@ -909,9 +917,27 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
 
+    return group_builders_map;
+  }
+
+  static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
+      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
+    bool grid_is_none = grid == Grid.none;
+    bool using_groups = json_map.containsKey(constants.groups_key);
+
+    var r = _helices_from_json(json_map, invert_xy, geometry);
+    Map<int, HelixBuilder> helix_builders_map = r.item1;
+    Map<String, HelixPitchYaw> group_to_pitch_yaw = r.item2;
+    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
+
+    Map<String, HelixGroupBuilder> group_builders_map =
+        _group_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+
     // Swap x and z coordinates if needed
     if (position_x_z_should_swap) {
-      for (var helix_builder in helix_builders_list) {
+      for (var helix_builder in helix_builders_map.values) {
         if (grid_is_none && !using_groups ||
             using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
           // prior to version 0.13.0, x and z had the opposite role
@@ -926,7 +952,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         group_builder.position.z = swap;
       }
     }
-
     return Tuple2(helix_builders_map, group_builders_map);
   }
 
@@ -1854,4 +1879,13 @@ class StrandError extends IllegalDesignError {
 
     this.cause += msg;
   }
+}
+
+class HelixPitchYaw {
+  double pitch;
+  double yaw;
+  // Helix idx of the first helix found with this pitch and yaw value
+  int helix_idx;
+
+  HelixPitchYaw(this.pitch, this.yaw, this.helix_idx);
 }
