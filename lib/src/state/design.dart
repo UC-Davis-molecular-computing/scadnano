@@ -883,7 +883,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple3(helix_builders_map, null, null);
   }
 
-  static Map<String, HelixGroupBuilder> _group_from_json(
+  static Map<String, HelixGroupBuilder> _groups_from_json(
       Map<String, dynamic> json_map,
       Map<int, HelixBuilder> helix_builders_map,
       Map<String, HelixPitchYaw> group_to_pitch_yaw,
@@ -933,7 +933,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
 
     Map<String, HelixGroupBuilder> group_builders_map =
-        _group_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+        _groups_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
 
     // Swap x and z coordinates if needed
     if (position_x_z_should_swap) {
