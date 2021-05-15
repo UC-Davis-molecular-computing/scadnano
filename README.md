@@ -620,7 +620,7 @@ There are different edit modes available, shown on the right side of the screen.
 
   ![](images/bounding-box-loopouts.png)
 
-  Thus the following rope-select polygon would not select the strand, even though the strand appears to be contained in the polygon, because its bounding box goes outside the polygon:
+  Thus the following rope-select polygon would not select the strand, even though the strand appears to be contained in the rope select polygon, because the corners of the strand's bounding box go outside the rope select polygon:
 
   ![](images/rope-select-fail-select-entire-bounding-box.png)
   
