@@ -1023,6 +1023,42 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         group_builders_map[group_name].pitch += pitch;
         group_builders_map[group_name].yaw += yaw;
       }
+    } else {
+      // Add new helix groups for helices that had individual pitch and yaw set
+      Map<String, HelixGroupBuilder> new_groups = {};
+
+      assert(group_builders_map.length == 1);
+      // The only group
+      HelixGroupBuilder group = group_builders_map.values.first;
+
+      // Loop through all HelixPitchYaw and create new groups and rewrite relevant helices' group to be new group
+      for (MapEntry<HelixPitchYaw, List<HelixBuilder>> m in pitch_yaw_to_helices.entries) {
+        double helix_pitch = m.key.pitch;
+        double helix_yaw = m.key.yaw;
+        List<HelixBuilder> helix_list = m.value;
+
+        // Only make new groups if helix's pitch/yaw is non-zero
+        bool helix_pitch_yaw_is_zero = util.are_close(0, helix_pitch) && util.are_close(0, helix_yaw);
+        if (!helix_pitch_yaw_is_zero) {
+          double new_pitch = group.pitch + helix_pitch;
+          double new_yaw = group.yaw + helix_yaw;
+          String new_group_name = 'pitch_${new_pitch}_yaw_${new_yaw}';
+          Map<String, dynamic> group_json = {};
+          group_json[constants.pitch_key] = new_pitch;
+          group_json[constants.yaw_key] = new_yaw;
+          group_json[constants.position_key] = group.position.build().to_json_serializable();
+          group_json[constants.grid_key] = group.grid.to_json();
+          new_groups[new_group_name] =
+              HelixGroup.from_json(group_json, helix_idxs: helix_list.map((e) => e.idx)).toBuilder();
+
+          // Move helices into new group
+          for (HelixBuilder helix in helix_list) {
+            helix.group = new_group_name;
+          }
+        }
+      }
+
+      group_builders_map.addEntries(new_groups.entries);
     }
 
     ///////////////////////////////////////////////////////////////////////////

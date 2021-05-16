@@ -7393,7 +7393,7 @@ main() {
       Helix helix1 = d.helices[1];
 
       // Helix 0 should have been moved to a new helix group
-      String pitch_25_yaw_19_group_name = 'pitch_25.0_yaw_19.0';
+      String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
       HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
       expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
       expect(pitch_25_yaw_19_group.pitch, 25);
@@ -7402,7 +7402,7 @@ main() {
       expect(helix0.group, pitch_25_yaw_19_group_name);
 
       // Helix 1 should have been moved to a new helix group
-      String pitch_21_yaw_13_group_name = 'pitch_21.0_yaw_13.0';
+      String pitch_21_yaw_13_group_name = 'pitch_21_yaw_13';
       HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name];
       expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
       expect(pitch_21_yaw_13_group.pitch, 21);
