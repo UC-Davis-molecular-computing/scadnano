@@ -964,6 +964,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return Tuple3(helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
   }
 
+  /// Returns map of helix group names to group as well as the grid.
+  ///
+  /// If multiple helix groups are used, then groups pitch and yaw will be the
+  /// pitch and yaw given in the json map plus the pitch and yaw values
+  /// provided in group_to_pitch_yaw.
+  ///
+  /// If a single helix group is used, then new helix groups will be created using
+  /// the provided group_to_pitch_yaw map. Because new helix groups are created,
+  /// helices will be modfied so that each helix's group field is set to the new
+  /// group it has been assigned to.
+  ///
+  /// In most cases, grid will simply be what is given in the json_map.
+  /// There is a special case where if the default helix group is used,
+  /// then the grid may be initially set to some value. If individual helix
+  /// pitch and rolls were set, then new helix groups are created, meaning
+  /// the grid field is no longer valid.
   static Map<String, HelixGroupBuilder> _groups_from_json(
       Map<String, dynamic> json_map,
       Map<int, HelixBuilder> helix_builders_map,
@@ -991,13 +1007,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
 
-    // if helices_view_order not already specified in group or top-level of design, give each a default
-    if (json_map.containsKey(constants.helices_view_order_key)) {
-      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
-      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
-    }
-    assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
-
     return group_builders_map;
   }
 
@@ -1015,6 +1024,13 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     Map<String, HelixGroupBuilder> group_builders_map =
         _groups_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+
+    // if helices_view_order not already specified in group or top-level of design, give each a default
+    if (json_map.containsKey(constants.helices_view_order_key)) {
+      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
+      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
+    }
+    assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
 
     // Swap x and z coordinates if needed
     if (position_x_z_should_swap) {
