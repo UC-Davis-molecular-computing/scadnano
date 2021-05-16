@@ -845,32 +845,113 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  /// Returns the number of helix groups in json_map
+  static int _num_helix_groups(Map<String, dynamic> json_map) {
+    int num_groups_used = 0;
+    if (json_map.containsKey(constants.groups_key)) {
+      num_groups_used = json_map[constants.groups_key].length;
+    }
+    return num_groups_used;
+  }
+
+  /// Returns list of helices as well as two maps, group_to_pitch_yaw, and pitch_yaw_to_helices
+  ///
+  /// group_to_pitch_yaw is filled if multiple helix groups are used
+  /// - maps group name to pitch, yaw, and helix idx of a helix in that group (the first one found)
+  ///
+  /// pitch_yaw_to_helices is filled if a single helix group is used
+  /// - maps pitch and yaw pairs to list of helix with those pitch and yaw
+  ///
+  /// These maps are used to convert designs that have helices with individual pitches and yaws
+  /// into designs where helices do not have individual pitches and yaws.
+  ///
+  /// Pass these two maps into _groups_from_json so that groups can be assigned appropriate pitch, yaw values.
   static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
       _helices_from_json(Map<String, dynamic> json_map, bool invert_xy, Geometry geometry) {
+    // Initialize containers
+    List<HelixBuilder> helix_builders_list = [];
+    Map<String, HelixPitchYaw> group_to_pitch_yaw = {};
+    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = {};
+
+    // Useful booleans
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
     bool grid_is_none = grid == Grid.none;
     bool using_groups = json_map.containsKey(constants.groups_key);
-    List<HelixBuilder> helix_builders_list = [];
-    List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
+    bool multiple_groups_used = Design._num_helix_groups(json_map) > 1;
+
     // create HelixBuilders
-    int idx = 0;
+    List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
+    int idx_default = 0;
     for (Map<String, dynamic> helix_json in deserialized_helices_list) {
       HelixBuilder helix_builder = Helix.from_json(helix_json);
       if (helix_builder.idx == null) {
-        helix_builder.idx = idx;
+        helix_builder.idx = idx_default;
       }
+      int helix_idx = helix_builder.idx;
+
+      /////////////////////////////////////////////////////////////////////////////
+      /// BEGIN Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+      /////////////////////////////////////////////////////////////////////////////
+
+      num pitch = helix_json.containsKey(constants.pitch_key) ? helix_json[constants.pitch_key] : 0;
+      num yaw = helix_json.containsKey(constants.yaw_key) ? helix_json[constants.yaw_key] : 0;
+      String group = helix_builder.group;
+      if (multiple_groups_used) {
+        if (group_to_pitch_yaw.containsKey(group)) {
+          // Another helix in this group also had a non-zero pitch/yaw, so check if they match
+          HelixPitchYaw helix_pitch_yaw = group_to_pitch_yaw[group];
+          double expected_pitch = helix_pitch_yaw.pitch;
+          double expected_yaw = helix_pitch_yaw.yaw;
+          int idx_of_helix_with_expected_pitch_yaw = helix_pitch_yaw.helix_idx;
+          bool pitch_yaw_match_expectation =
+              util.are_close(pitch, expected_pitch) && util.are_close(yaw, expected_yaw);
+          if (!pitch_yaw_match_expectation) {
+            throw IllegalDesignError(
+                """In HelixGroup ${group}, Helix ${helix_idx} has pitch ${pitch} and yaw ${yaw} but Helix ${helix_idx}
+                has pitch ${expected_pitch} and yaw ${expected_yaw}. Please seperate Helix ${helix_idx} and Helix
+                ${idx_of_helix_with_expected_pitch_yaw} into seperate HelixGroups.""");
+          }
+        } else {
+          // Log pitch and yaw for a helix in group so that other helices in the group can be compared
+          group_to_pitch_yaw[group] = HelixPitchYaw(pitch, yaw, helix_idx);
+        }
+      } else {
+        // Single helix group used
+
+        bool is_new_pitch_yaw = true;
+        // Search for a pitch yaw pair that is close to pitch yaw of helix
+        for (MapEntry<HelixPitchYaw, List<HelixBuilder>> m in pitch_yaw_to_helices.entries) {
+          double p = m.key.pitch;
+          double y = m.key.yaw;
+          if (util.are_close(p, pitch) && util.are_close(y, yaw)) {
+            pitch_yaw_to_helices[m.key].add(helix_builder);
+            is_new_pitch_yaw = false;
+            break;
+          }
+        }
+        // If no pitch yaw pair found, then create a new one and add to dictionary
+        if (is_new_pitch_yaw) {
+          // helix_idx is passed in to HelixPitchYaw constructor, but not actually used in single helix group case
+          pitch_yaw_to_helices[HelixPitchYaw(pitch, yaw, helix_idx)] = [helix_builder];
+        }
+      }
+
+      ///////////////////////////////////////////////////////////////////////////
+      /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+      ///////////////////////////////////////////////////////////////////////////
+
       helix_builder.invert_xy = invert_xy;
       helix_builder.geometry = geometry.toBuilder();
       if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
         throw IllegalDesignError(
-            'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
+            'grid is none, but Helix $helix_idx has grid_position = ${helix_json[constants.grid_position_key]}');
       } else if (!grid_is_none && !using_groups && helix_json.containsKey(constants.position_key)) {
         throw IllegalDesignError(
-            'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
+            'grid is not none, but Helix $helix_idx has position = ${helix_json[constants.position_key]}');
       }
       helix_builders_list.add(helix_builder);
-      idx++;
+      idx_default++;
     }
     // ensure no two helices have same idx
     var helix_indices = [for (var helix_builder in helix_builders_list) helix_builder.idx];
@@ -880,7 +961,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
     };
 
-    return Tuple3(helix_builders_map, null, null);
+    return Tuple3(helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
   }
 
   static Map<String, HelixGroupBuilder> _groups_from_json(
