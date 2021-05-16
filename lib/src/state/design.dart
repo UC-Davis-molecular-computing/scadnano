@@ -987,7 +987,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices) {
     var grid =
         util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
-    // TODO: Delete this variable and replace with using multiple_groups_used and single_group_used
     bool using_groups = json_map.containsKey(constants.groups_key);
 
     // helix groups; populate with grids, but not helices_view_order yet
