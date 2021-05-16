@@ -1007,6 +1007,28 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
     ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
 
+    /////////////////////////////////////////////////////////////////////////////
+    /// BEGIN Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+    /////////////////////////////////////////////////////////////////////////////
+
+    bool multiple_groups_used = Design._num_helix_groups(json_map) > 1;
+
+    if (multiple_groups_used) {
+      // Add individual helix pitch and yaw to group pitch and yaw
+      for (MapEntry<String, HelixPitchYaw> m in group_to_pitch_yaw.entries) {
+        String group_name = m.key;
+        double pitch = m.value.pitch;
+        double yaw = m.value.yaw;
+
+        group_builders_map[group_name].pitch += pitch;
+        group_builders_map[group_name].yaw += yaw;
+      }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+    ///////////////////////////////////////////////////////////////////////////
+
     return group_builders_map;
   }
 
