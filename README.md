@@ -310,17 +310,17 @@ none grid:
 ## Relation of grid_position and position to side and main view display
 The main view and side views are 2D representations of a 3D object.
 The views display helices in the following way.
-First, each helix in a group is translated by its group's `position.x` and `position.y` values, and rotated clockwise by the group's `pitch` angle.
+First, each helix in a group is translated by its group's `position.z` and `position.y` values, and rotated clockwise by the group's `pitch` angle.
 The description below is relative to this translation and rotation.
 
 Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
-The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
+The *x* and *y* coordinates are shown in the side view, with *x* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
 
-In the main view, the horizontal direction is the *x* coordinate.
+In the main view, the horizontal direction is the *z* coordinate.
 The vertical direction, however, is not exactly the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
 Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
-The vertical distance between adjacent helices is supposed to approximate the Euclidean *z-y* distance between the helices (i.e., the side view distance; the *x* distance is ignored in this calculation).
-If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *z* coordinate, or they all have the same *y* coordinate),
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices (i.e., the side view distance; the *z* distance is ignored in this calculation).
+If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *x* coordinate, or they all have the same *y* coordinate),
 then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
 Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
 
