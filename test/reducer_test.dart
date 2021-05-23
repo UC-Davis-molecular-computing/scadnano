@@ -7303,6 +7303,332 @@ main() {
     // Slice bar offset should be set to null if displayed group has no helices
     expect(null, final_state.ui_state.slice_bar_offset);
   });
+
+  group('Designs_with_helix_pitch_and_helix_yaw_before_version_0.16.0', () {
+    test('single_helix_group_and_helices_specify_pitch_and_yaw', () {
+      String json_str = r'''
+        {
+          "helices": [
+            {
+              "group": "north",
+              "position": {"x": 1, "y": 2, "z": 3},
+              "pitch": 4,
+              "roll": 5,
+              "yaw": 6
+            },
+            {
+              "group": "north",
+              "position": {"x": 3, "y": 2, "z": 3},
+              "roll": 15
+            }
+          ],
+          "groups": {
+            "north": {
+              "position": {"x": 0, "y": -200, "z": 0},
+              "pitch": 21,
+              "yaw": 13,
+              "grid": "none"
+            }
+          },
+          "strands": [
+            {
+              "color": "#0066cc",
+              "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+            }
+          ]
+        }
+      ''';
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      // Helix 0 should have been moved to a new helix group
+      String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      expect(pitch_25_yaw_19_group.pitch, 25);
+      expect(pitch_25_yaw_19_group.yaw, 19);
+      expect(helix0.group, pitch_25_yaw_19_group_name);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(helix1.group, "north");
+      expect(d.groups.length, 2);
+    });
+
+    test('only_individual_helices_specify_pitch_and_yaw', () {
+      String json_str = r"""
+      {
+        "helices": [
+          {
+            "group": "north",
+            "position": {"x": 1, "y": 2, "z": 3},
+            "pitch": 25,
+            "yaw": 19,
+            "roll": 5
+          },
+          {
+            "group": "north",
+            "position": {"x": 3, "y": 2, "z": 3},
+            "pitch": 21,
+            "yaw": 13,
+            "roll": 15
+          }
+        ],
+        "groups": {
+          "north": {
+            "position": {"x": 0, "y": -200, "z": 0},
+            "grid": "none"
+          }
+        },
+        "strands": [
+          {
+            "color": "#0066cc",
+            "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+          }
+        ]
+      }
+      """;
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+
+      // Helix 0 should have been moved to a new helix group
+      String pitch_25_yaw_19_group_name = 'pitch_25_yaw_19';
+      HelixGroup pitch_25_yaw_19_group = d.groups[pitch_25_yaw_19_group_name];
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(pitch_25_yaw_19_group.pitch, 25);
+      expect(pitch_25_yaw_19_group.yaw, 19);
+      expect(helix0.roll, 5);
+      expect(helix0.group, pitch_25_yaw_19_group_name);
+
+      // Helix 1 should have been moved to a new helix group
+      String pitch_21_yaw_13_group_name = 'pitch_21_yaw_13';
+      HelixGroup pitch_21_yaw_13_group = d.groups[pitch_21_yaw_13_group_name];
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(pitch_21_yaw_13_group.pitch, 21);
+      expect(pitch_21_yaw_13_group.yaw, 13);
+      expect(helix1.roll, 15);
+      expect(helix1.group, pitch_21_yaw_13_group_name);
+
+      expect(d.groups.length, 3);
+    });
+    test('only_helix_groups_specify_pitch_and_yaw', () {
+      String json_str = r'''
+      {
+        "helices": [
+          {
+            "group": "north",
+            "position": {"x": 1, "y": 2, "z": 3},
+            "roll": 5
+          },
+          {
+            "group": "south",
+            "position": {"x": 3, "y": 2, "z": 3},
+            "roll": 15
+          }
+        ],
+        "groups": {
+          "north": {
+            "position": {"x": 0, "y": -200, "z": 0},
+            "pitch": 21,
+            "yaw": 13,
+            "grid": "none"
+          },
+          "south": {
+            "position": {"x": 0, "y": -400, "z": 0},
+            "pitch": 23,
+            "yaw": 98,
+            "grid": "none"
+          }
+        },
+        "strands": [
+          {
+            "color": "#0066cc",
+            "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+          }
+        ]
+      }
+      ''';
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+
+      String north_str = 'north';
+      String south_str = 'south';
+      HelixGroup north_group = d.groups[north_str];
+      HelixGroup south_group = d.groups[south_str];
+      expect(d.groups.length, 2);
+
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 21);
+      expect(north_group.yaw, 13);
+      expect(helix0.group, north_str);
+
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 23);
+      expect(south_group.yaw, 98);
+      expect(helix1.group, south_str);
+    });
+
+    test('both_helix_groups_and_helices_do_not_specify_pitch_nor_yaw', () {
+      String json_str = r"""
+      {
+        "helices": [
+          {
+            "group": "north",
+            "position": {"x": 1, "y": 2, "z": 3},
+            "roll": 5
+          },
+          {
+            "group": "south",
+            "position": {"x": 3, "y": 2, "z": 3},
+            "roll": 15
+          }
+        ],
+        "groups": {
+          "north": {
+            "position": {"x": 0, "y": -200, "z": 0},
+            "grid": "none"
+          },
+          "south": {
+            "position": {"x": 0, "y": -400, "z": 0},
+            "grid": "none"
+          }
+        },
+        "strands": [
+          {
+            "color": "#0066cc",
+            "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+          }
+        ]
+      }
+      """;
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+
+      String north_str = 'north';
+      String south_str = 'south';
+      HelixGroup north_group = d.groups[north_str];
+      HelixGroup south_group = d.groups[south_str];
+      expect(d.groups.length, 2);
+
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 0);
+      expect(north_group.yaw, 0);
+      expect(helix0.group, north_str);
+
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 0);
+      expect(south_group.yaw, 0);
+      expect(helix1.group, south_str);
+    });
+
+    test('multiple_helix_groups_helices_specify_pitch_and_yaw', () {
+      String json_str = r"""
+      {
+        "helices": [
+          {
+            "group": "north",
+            "position": {"x": 1, "y": 2, "z": 3},
+            "pitch": 4,
+            "roll": 5,
+            "yaw": 6            },
+          {
+            "group": "south",
+            "position": {"x": 3, "y": 2, "z": 3},
+            "roll": 15
+          }
+        ],
+        "groups": {
+          "north": {
+            "position": {"x": 0, "y": -200, "z": 0},
+            "pitch": 21,
+            "yaw": 13,
+            "grid": "none"
+          },
+          "south": {
+            "position": {"x": 0, "y": -400, "z": 0},
+            "pitch": 23,
+            "yaw": 98,
+            "grid": "none"
+          }
+        },
+        "strands": [
+          {
+            "color": "#0066cc",
+            "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+          }
+        ]
+      }
+      """;
+      Design d = Design.from_json_str(json_str);
+      Helix helix0 = d.helices[0];
+      Helix helix1 = d.helices[1];
+
+      String north_str = 'north';
+      String south_str = 'south';
+      HelixGroup north_group = d.groups[north_str];
+      HelixGroup south_group = d.groups[south_str];
+      expect(d.groups.length, 2);
+      expect(helix0.position, Position3D(x: 1, y: 2, z: 3));
+      expect(helix0.roll, 5);
+      expect(north_group.pitch, 25);
+      expect(north_group.yaw, 19);
+      expect(helix0.group, north_str);
+      expect(helix1.position, Position3D(x: 3, y: 2, z: 3));
+      expect(helix1.roll, 15);
+      expect(south_group.pitch, 23);
+      expect(south_group.yaw, 98);
+      expect(helix1.group, south_str);
+    });
+
+    test('multiple_helix_groups_helices_specify_pitch_and_yaw_invalid', () {
+      String json_str = r"""
+    {
+      "helices": [
+        {
+          "group": "north",
+          "position": {"x": 1, "y": 2, "z": 3},
+          "pitch": 4,
+          "roll": 5,
+          "yaw": 6
+        },
+        {
+          "group": "north",
+          "position": {"x": 3, "y": 2, "z": 3},
+          "pitch": 10,
+          "roll": 5,
+          "yaw": 84
+        }
+      ],
+      "groups": {
+        "north": {
+          "position": {"x": 0, "y": -200, "z": 0},
+          "grid": "none"
+        },
+        "east": {
+          "position": {"x": 0, "y": 0, "z": 100},
+          "pitch": 45,
+          "grid": "square"
+        }
+      },
+      "strands": [
+        {
+          "color": "#0066cc",
+          "domains": [ {"helix": 0, "forward": true, "start": 0, "end": 32} ]
+        }
+      ]
+    }
+    """;
+      // should fail because multiple helices in same helix group are non-parallel
+      expect(() => Design.from_json_str(json_str), throwsA(TypeMatcher<IllegalDesignError>()));
+    });
+  });
 }
 
 AppState make_ends_selectable(AppState actual_state) {
