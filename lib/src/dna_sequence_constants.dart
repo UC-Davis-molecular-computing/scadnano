@@ -11,6 +11,22 @@ class DNASequencePredefined extends EnumClass {
   static const DNASequencePredefined M13p7650 = _$M13p7650;
   static const DNASequencePredefined M13p8064 = _$M13p8064;
 
+  //XXX: change this if we change the variants
+  static BuiltList<String> get display_names => [
+        'M13 (p7429, standard variant)',
+        'M13 (p7650)',
+        'M13 (p8064)',
+      ].toBuiltList();
+
+  static display_name_to_variant(String display_name) {
+    int idx = DNASequencePredefined.display_names.indexOf(display_name);
+    if (idx < 0) {
+      throw ArgumentError('${display_name} is not the display name of any predefined DNA sequence variant');
+    }
+    var name = DNASequencePredefined.names[idx];
+    return DNASequencePredefined.valueOf(name);
+  }
+
   static BuiltSet<DNASequencePredefined> get values => _$values;
 
   static DNASequencePredefined valueOf(String name) => _$valueOf(name);
@@ -37,8 +53,13 @@ class DNASequencePredefined extends EnumClass {
     }
   }
 
-  static String dna_sequence_by_name(String name, [int rotation = null]) {
-    var dna_sequence_predefined = DNASequencePredefined.valueOf(name);
+  static String dna_sequence_by_name(String name, bool display_name, [int rotation = null]) {
+    DNASequencePredefined dna_sequence_predefined;
+    if (display_name) {
+      dna_sequence_predefined= DNASequencePredefined.display_name_to_variant(name);
+    } else {
+      dna_sequence_predefined= DNASequencePredefined.valueOf(name);
+    }
     if (rotation == null) {
       rotation = dna_sequence_predefined.default_rotation;
     }

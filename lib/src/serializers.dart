@@ -258,6 +258,7 @@ part 'serializers.g.dart';
   DialogRadio,
   DialogShow,
   DialogHide,
+  DialogLink,
   StrandOrder,
   StrandColorSet,
   StrandColorPickerShow,
