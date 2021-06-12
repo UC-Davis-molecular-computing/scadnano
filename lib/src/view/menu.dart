@@ -904,34 +904,46 @@ However, it may be less stable than the main site.'''
   Future<void> export_dna() async {
     List<String> export_options = ExportDNAFormat.values.map((v) => v.toString()).toList();
     List<String> sort_options = StrandOrder.values.map((v) => v.toString()).toList();
-    var dialog = Dialog(title: 'export DNA sequences', items: [
-      DialogCheckbox(label: 'include scaffold', value: false), // 0
-      DialogRadio(label: 'designs', options: export_options), // 1
-      DialogCheckbox(label: 'sort strands', value: false), // 2
-      DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true), // 3
-      DialogRadio(label: 'strand part to sort by', options: sort_options), // 4
-    ], disable_when_any_checkboxes_off: {
-      3: [2],
-      4: [2]
+
+    int idx_include_scaffold = 0;
+    int idx_include_only_selected_strands = 1;
+    int idx_format_str = 2;
+    int idx_sort = 3;
+    int idx_column_major = 4;
+    int idx_strand_order_str = 5;
+
+    List<DialogItem> items = [null, null, null, null, null, null];
+    items[idx_include_scaffold] =DialogCheckbox(label: 'include scaffold', value: false);
+    items[idx_include_only_selected_strands] = DialogCheckbox(label: 'include only selected strands', value: false);
+    items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
+    items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
+    items[idx_column_major] = DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
+    items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
+
+    var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {
+      idx_column_major: [idx_sort],
+      idx_strand_order_str: [idx_sort]
     });
 
     List<DialogItem> results = await util.dialog(dialog);
     if (results == null) return;
 
-    bool include_scaffold = (results[0] as DialogCheckbox).value;
-    String format_str = (results[1] as DialogRadio).value;
-    bool sort = (results[2] as DialogCheckbox).value;
+    bool include_scaffold = (results[idx_include_scaffold] as DialogCheckbox).value;
+    bool include_only_selected_strands = (results[idx_include_only_selected_strands] as DialogCheckbox).value;
+    String format_str = (results[idx_format_str] as DialogRadio).value;
+    bool sort = (results[idx_sort] as DialogCheckbox).value;
     StrandOrder strand_order = null;
     bool column_major = true;
     if (sort) {
-      column_major = (results[3] as DialogCheckbox).value;
-      String strand_order_str = (results[4] as DialogRadio).value;
+      column_major = (results[idx_column_major] as DialogCheckbox).value;
+      String strand_order_str = (results[idx_strand_order_str] as DialogRadio).value;
       strand_order = StrandOrder.fromString(strand_order_str);
     }
     ExportDNAFormat format = ExportDNAFormat.fromString(format_str);
 
     props.dispatch(actions.ExportDNA(
         include_scaffold: include_scaffold,
+        include_only_selected_strands: include_only_selected_strands,
         export_dna_format: format,
         strand_order: strand_order,
         column_major: column_major));
