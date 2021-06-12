@@ -28,7 +28,6 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
       Map<int, Iterable<int>> disable_when_any_checkboxes_on = const {},
       Map<int, Map<int, Iterable<String>>> disable_when_any_radio_button_selected = const {},
       Map<int, Iterable<int>> disable_when_any_checkboxes_off = const {}}) {
-
     List<BuiltList<int>> mutually_exclusive_checkbox_groups_half_built = [
       for (var group in mutually_exclusive_checkbox_groups) BuiltList<int>(group)
     ];
@@ -41,7 +40,6 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
         idx: BuiltList<int>(disable_when_any_checkboxes_off[idx])
     };
 
-
     Map<int, Map<int, BuiltList<String>>> disable_when_any_radio_button_selected_quarter_built = {};
     for (int idx in disable_when_any_radio_button_selected.keys) {
       disable_when_any_radio_button_selected_quarter_built[idx] = {};
@@ -49,7 +47,8 @@ abstract class Dialog with BuiltJsonSerializable implements Built<Dialog, Dialog
         disable_when_any_radio_button_selected_quarter_built[idx][radio_idx] =
             disable_when_any_radio_button_selected[idx][radio_idx].toBuiltList();
       }
-    };
+    }
+    ;
 
     Map<int, BuiltMap<int, BuiltList<String>>> disable_when_any_radio_button_selected_half_built = {
       for (int idx in disable_when_any_radio_button_selected_quarter_built.keys)
@@ -116,6 +115,9 @@ abstract class DialogInteger
       ..value = value);
   }
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
@@ -164,6 +166,9 @@ abstract class DialogText
       ..value = value);
   }
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
@@ -193,6 +198,9 @@ abstract class DialogTextArea
       ..value = value);
   }
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
@@ -219,6 +227,9 @@ abstract class DialogCheckbox
       ..value = value);
   }
 
+  @memoized
+  int get hashCode;
+
   /************************ end BuiltValue boilerplate ************************/
 
   String get label;
@@ -234,6 +245,9 @@ abstract class DialogRadio
   DialogRadio._();
 
   static Serializer<DialogRadio> get serializer => _$dialogRadioSerializer;
+
+  @memoized
+  int get hashCode;
 
   /************************ end BuiltValue boilerplate ************************/
 
@@ -256,3 +270,59 @@ abstract class DialogRadio
 
   String get value => options[selected_idx];
 }
+
+abstract class DialogLink
+    with BuiltJsonSerializable
+    implements DialogItem, Built<DialogLink, DialogLinkBuilder> {
+  DialogLink._();
+
+  factory DialogLink.from([void Function(DialogLinkBuilder) updates]) = _$DialogLink;
+
+  static Serializer<DialogLink> get serializer => _$dialogLinkSerializer;
+
+  @memoized
+  int get hashCode;
+
+  factory DialogLink({String label, String link}) {
+    return DialogLink.from((b) => b
+      ..label = label
+      ..link = link
+      ..value = "");
+  }
+
+  /************************ end BuiltValue boilerplate ************************/
+
+  String get label;
+
+  String get link;
+
+  String get value;
+}
+
+// abstract class DialogLink
+//     with BuiltJsonSerializable
+//     implements DialogItem, Built<DialogLink, DialogLinkBuilder> {
+//   factory DialogLink.from([void Function(DialogLinkBuilder) updates]) = _$DialogLink;
+//
+//   DialogLink._();
+//
+//   static Serializer<DialogLink> get serializer => _$dialogLinkSerializer;
+//
+//   @memoized
+//   int get hashCode;
+//
+//   /************************ end BuiltValue boilerplate ************************/
+//
+//   factory DialogLink({String label, String link}) = _$DialogLink._;
+//   // {
+//   //   return DialogLink.from((b) => b
+//   //     ..label = label
+//   //     ..link = link);
+//   // }
+//
+//   String get label;
+//
+//   String get link;
+//
+//   String get value;
+// }
