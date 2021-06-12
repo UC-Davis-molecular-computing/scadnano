@@ -154,8 +154,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
         HelixGroup group = app.state.design.group_of_strand(props.strand);
         var helices_view_order_inverse = group.helices_view_order_inverse;
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false,
-            original_helices_view_order_inverse: helices_view_order_inverse));
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(
+            address: address, copy: false, original_helices_view_order_inverse: helices_view_order_inverse));
       }
     }
   }
@@ -626,37 +626,53 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
 
 Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
-  var dialog = Dialog(title: 'assign DNA sequence', items: [
-    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
-    DialogCheckbox(label: 'use predefined DNA sequence'),
-    DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.names),
-    DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587),
-    DialogCheckbox(
-        label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
-    DialogCheckbox(
-        label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
-  ], disable_when_any_checkboxes_on: {
-    0: [1]
+  int idx_sequence = 0;
+  int idx_use_predefined_dna_sequence = 1;
+  int idx_predefine_sequence_link = 2;
+  int idx_predefined_sequence_name = 3;
+  int idx_rotation = 4;
+  int idx_assign_complements = 5;
+  int idx_warn_on_change = 6;
+
+  List<DialogItem> items = [null, null, null, null, null, null, null];
+
+  items[idx_sequence] =
+      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80);
+  items[idx_use_predefined_dna_sequence] = DialogCheckbox(label: 'use predefined DNA sequence');
+  items[idx_predefined_sequence_name] =
+      DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
+  items[idx_rotation] = DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587);
+  items[idx_assign_complements] = DialogCheckbox(
+      label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default);
+  items[idx_warn_on_change] = DialogCheckbox(
+      label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default);
+  items[idx_predefine_sequence_link] = DialogLink(
+      label: 'Information about sequence variants',
+      link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
+
+  var dialog = Dialog(title: 'assign DNA sequence', items: items, disable_when_any_checkboxes_on: {
+    idx_sequence: [idx_use_predefined_dna_sequence]
   }, disable_when_any_checkboxes_off: {
-    2: [1],
-    3: [1],
+    idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
+    idx_rotation: [idx_use_predefined_dna_sequence],
   });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
   String dna_sequence;
 
-  bool use_predefined_dna_sequence = (results[1] as DialogCheckbox).value;
+  bool use_predefined_dna_sequence = (results[idx_use_predefined_dna_sequence] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
-    String predefined_sequence_name = (results[2] as DialogRadio).value;
-    int rotation = (results[3] as DialogInteger).value;
-    dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_name, rotation);
+    String predefined_sequence_display_name = (results[idx_predefined_sequence_name] as DialogRadio).value;
+    int rotation = (results[idx_rotation] as DialogInteger).value;
+    dna_sequence =
+        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, rotation);
   } else {
-    dna_sequence = (results[0] as DialogTextArea).value;
+    dna_sequence = (results[idx_sequence] as DialogTextArea).value;
   }
 
-  bool assign_complements = (results[4] as DialogCheckbox).value;
-  bool warn_on_change = (results[5] as DialogCheckbox).value;
+  bool assign_complements = (results[idx_assign_complements] as DialogCheckbox).value;
+  bool warn_on_change = (results[idx_warn_on_change] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);

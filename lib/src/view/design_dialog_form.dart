@@ -290,6 +290,10 @@ class DesignDialogFormComponent extends UiStatefulComponent2<DesignDialogFormPro
         radio_idx++;
       }
       return (Dom.select()..className = 'radio-left')('${item.label}: ', components);
+    } else if (item is DialogLink) {
+      return (Dom.a()
+        ..href = item.link
+        ..target = '_blank')(item.label);
     }
     return null;
   }
