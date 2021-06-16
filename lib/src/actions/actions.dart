@@ -1655,6 +1655,8 @@ abstract class ShowMouseoverRectToggle
 abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<ExportDNA, ExportDNABuilder> {
   bool get include_scaffold;
 
+  bool get include_only_selected_strands;
+
   ExportDNAFormat get export_dna_format;
 
   @nullable
@@ -1665,11 +1667,13 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportDNA(
       {bool include_scaffold,
+      bool include_only_selected_strands,
       ExportDNAFormat export_dna_format,
       StrandOrder strand_order = null,
       bool column_major = true}) {
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
+      ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
       ..strand_order = strand_order
       ..column_major = column_major);
