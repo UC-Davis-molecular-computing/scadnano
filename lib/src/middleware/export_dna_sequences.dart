@@ -13,8 +13,7 @@ export_dna_sequences_middleware(Store<AppState> store, action, NextDispatcher ne
   if (action is actions.ExportDNA) {
     List<Strand> strands;
     if (action.include_only_selected_strands) {
-      strands = [];
-      throw UnsupportedError('TODO: pull out selected strands to export');
+      strands = state.ui_state.selectables_store.selected_strands.toList();
     } else {
       strands = state.design.strands.toList();
     }
