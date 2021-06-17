@@ -304,6 +304,7 @@ part 'serializers.g.dart';
   Autobreak,
   NewDesignSet,
   Design,
+  AssignDomainNameComplementFromBoundStrands,
   // BrowserClipboard,
   // CLIClipboard,
 ])

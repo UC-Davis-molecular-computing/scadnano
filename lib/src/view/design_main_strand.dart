@@ -189,6 +189,16 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
+  assign_domain_name_complement_from_bound_strands(){
+    List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+
+    if (!strands_selected.contains(props.strand)) {
+      strands_selected.add(props.strand);
+    }
+
+    var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
+    app.dispatch(action);
+  }
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
@@ -304,6 +314,14 @@ If other strands bound to this strand (or the selected strands) have DNA already
 assigned, assign the complementary DNA sequence to this strand.
 ''',
           on_click: assign_dna_complement_from_bound_strands,
+        ),
+        ContextMenuItem(
+          title: 'assign domain name complement from bound strands',
+          tooltip: '''\
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand.
+''',
+          on_click: assign_domain_name_complement_from_bound_strands,
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(

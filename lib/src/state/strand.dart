@@ -424,6 +424,7 @@ abstract class Strand
     throw AssertionError("should be unreachable");
   }
 
+
   @memoized
   BuiltMap<int, BuiltList<Domain>> get domains_on_helix {
     var domains_map = Map<int, List<Domain>>();

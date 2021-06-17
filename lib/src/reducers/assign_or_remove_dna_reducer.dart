@@ -148,12 +148,12 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
       int helix_idx = substrand_to.helix;
-      List<Domain> substrands_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
+      List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
       List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
-      for (var substrand_from in substrands_on_helix_from) {
-        if (substrand_to != substrand_from && substrand_to.overlaps(substrand_from)) {
-          Tuple2<int, int> overlap = substrand_to.compute_overlap(substrand_from);
-          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, substrand_from));
+      for (var domain_from in domains_on_helix_from) {
+        if (substrand_to != domain_from && substrand_to.overlaps(domain_from)) {
+          Tuple2<int, int> overlap = substrand_to.compute_overlap(domain_from);
+          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, domain_from));
         }
       }
       overlaps.sort(compare_overlap);
