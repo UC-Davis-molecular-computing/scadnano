@@ -19,7 +19,6 @@ class StrandMaker {
   bool circular = false;
   String name = null;
   Object label = null;
-  Object domain_label = null;
   Modification5Prime modification_5p = null;
   Modification3Prime modification_3p = null;
   int current_helix, current_offset, loopout_length;
@@ -49,7 +48,9 @@ class StrandMaker {
         modification_3p: this.modification_3p,
         modification_5p: this.modification_5p,
         modifications_int: this.modifications_int);
-    this.design = this.design.add_strand(strand); //error-checking automatically done by this method
+    this.design = this
+        .design
+        .add_strand(strand); //error-checking automatically done by this method
     return this.design;
   }
 
@@ -83,13 +84,19 @@ class StrandMaker {
     }
     this.current_offset = offset;
     Domain new_domain = new Domain(
-        helix: this.current_helix,
-        forward: forward,
-        start: start,
-        end: end,
-        is_scaffold: this.is_scaffold,
-        dna_sequence: this.domain_dna_sequence,
-        label: this.domain_label);
+      helix: this.current_helix,
+      forward: forward,
+      start: start,
+      end: end,
+      is_scaffold: this.is_scaffold,
+      dna_sequence: this.domain_dna_sequence,
+
+      /*label: this.domain_label,
+        name: this.domain_name,*/
+    );
+    //Fix for domain_label and domain_name repeating bug:
+    //this.domain_label = this.domain_name = null;
+
     this.substrands.add(new_domain);
     return this;
   }
@@ -137,11 +144,13 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker with_idt({String scale = constants.default_idt_scale,
+  StrandMaker with_idt(
+      {String scale = constants.default_idt_scale,
       String purification = constants.default_idt_purification,
       String plate = null,
       String well = null}) {
-    this.idt = IDTFields(scale: scale, purification: purification, plate: plate, well: well);
+    this.idt = IDTFields(
+        scale: scale, purification: purification, plate: plate, well: well);
     return this;
   }
 
@@ -171,7 +180,28 @@ class StrandMaker {
   }
 
   StrandMaker with_domain_label(Object label) {
-    this.domain_label = label;
+    int idx_last = this.substrands.length - 1;
+    Substrand substrand = this.substrands[idx_last];
+    Substrand new_substrand;
+    if (substrand is Domain) {
+      new_substrand = substrand.rebuild((b) => b..label = label);
+    } else if (substrand is Loopout) {
+      new_substrand = substrand.rebuild((b) => b..label = label);
+    }
+    substrands[idx_last] = new_substrand;
+    return this;
+  }
+
+  StrandMaker with_domain_name(String name) {
+    int idx_last = this.substrands.length - 1;
+    Substrand substrand = this.substrands[idx_last];
+    Substrand new_substrand;
+    if (substrand is Domain) {
+      new_substrand = substrand.rebuild((b) => b..name = name);
+    } else if (substrand is Loopout) {
+      new_substrand = substrand.rebuild((b) => b..name = name);
+    }
+    substrands[idx_last] = new_substrand;
     return this;
   }
 }
