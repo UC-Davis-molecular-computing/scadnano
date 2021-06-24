@@ -307,10 +307,23 @@ All built_value classes should use the mixin `BuiltJsonSerializable`, which is d
 
 For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
 
-1. **create new state data types if necessary**: 
+Most of the steps below are about how to change the code. Before and after are steps that involve making changes to the GitHub repository, which are explained in more detail in the next section.
+
+
+1. **Follow GitHub steps**:
+    Make an issue describing the feature/bug fix, then make a new branch based off of dev named after the issue. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details.
+
+2. **add unit tests reproducing bug**:
+    If this is a bug fix, *first* add unit tests reproducing it. Depending on the exact sort of input/behavior that causes the bug, this may not be straightforward. However, if it is due to faulty logic in a reducer or middleware, then generally one can add a unit test that just calls the reducer/middleware to reproduce the bug. Bugs in view code are less straightforward to unit test.
+
+    Consider even adding unit tests for new features. As with bugs, this may or may not be possible. If the new feature involves complex logic that will happen in a reducer or middleware, then it may be possible to write unit tests that test the reducer/middleware even before it exists, as a sort of documentation of the expected behavior. (This is known as [test-driven development](https://en.wikipedia.org/wiki/Test-driven_development).) Although it is not necessary to add unit tests before implementing the feature, if it makes sense to have unit tests, make sure they are written before closing the issue and merging the new branch back into dev.
+
+    Unit tests are generally not necessary when the reducer/middleware logic is very simple. For example, the menu item "Show DNA sequences" simple toggles a Boolean value in the AppUIState. The reducer for it is very simple. *Displaying* the DNA sequence is more complex, but most of that logic is contained in View code, which is not as straightforward to test. As an example of more easily unit test-able code, the strand right-click context menu option "assign DNA sequence", if the option "assign complement to bound strands" is checked, involves much more complex logic of determining where strands overlap in order to assign DNA sequences. Thus there are extensive unit tests for the reducer that does this computation.
+
+3. **create new state data types if necessary**: 
     Most of the time, existing data types can be used, so this is rarely needed. But sometimes you will need a new data type to describe some part of the state. For "modification font size", this is unnecessary (it is represented by the builtin type `num`), but examples of custom data types that capture state information are `Design`, `Strand`, and other parts of the design, as well as `AppUIState` and things under it such as `EditModeChoice` and `LocalStorageDesignChoice`.
 
-2. **create Action class**: 
+4. **create Action class**: 
     In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together, even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart for more examples.)
 
     **WARNING about serialization of built types:** (Note this applies not only to Actions, but any built_value type you create.) Although one of the advantages of the built_value library is that it "automatically" creates a JSON serialization mechanism, it's not fully automatic. You must add the name of the new Action to the large list of classes at the top of the file /lib/src/serializers.dart, in the annotation `@SerializersFor(`. For some reason this cannot be automated (see https://github.com/google/built_value.dart/issues/758). If you don't add this, then using [Redux DevTools](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#using-redux-devtools) won't work, which uses the built_value and built_collection serialization to display Redux state when debugging in the browser. You must also remember to add a line like this in the class definition (the name on the right side of the `=>` must be exactly the class name, with first letter lowercase, with `Serializer` appended):
@@ -329,7 +342,7 @@ For many typical features one would want to add that involve changing some aspec
 
     Actions that change a single strand (but leave it in place in the list of strands) should implement `SingleStrandAction`. This gives a simplified method for implementing the reducer that saves some of the work of reaching into the immutable list of strands in the design; see examples (e.g., `StrandNameSet`) of how to implement the reducer for these. Similarly, actions that change a part of a strand should implement `StrandPartAction`, see examples such as `SubstrandNameSet` or `ConvertCrossoverToLoopout`.
 
-3. **if necessary, add new data fields the app state**: 
+5. **if necessary, add new data fields the app state**: 
     Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`. Particularly for "UI state" (aspects of the state that control how things look, but are not stored in the `Design`), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. 
 
     If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.design` is persisted in localStorage, but that is handled separately.
@@ -374,10 +387,10 @@ For many typical features one would want to add that involve changing some aspec
     If you are not sure what is causing this issue in DevTools, you can use "pause on caught exceptions" to pinpoint which part of your state/action is not able to be converted to json.
     ```
 
-4. **create view component for interaction**: 
+6. **create view component for interaction**: 
     The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`. This is because `ConnectedMenu` is a "connected component" (connected directly to the Redux store), so it has a `dispatch` prop. But in general, despite recommended practice, we don't pass this dispatch method down as a prop to lower components, but instead allow their event handlers to directly call `app.dispatch`. (Made available when importing the file app.dart.)
 
-5. **create reducer for updating state in response to Action**: 
+7. **create reducer for updating state in response to Action**: 
     This is the code that takes as input the old state and the Action and produces the new state. The top-level reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally this top-level reducer is not modified directly. Through a series of composition, all reducers are called indirectly when `app_state_reducer` is called. The main ones called by `app_state_reducer` are `design_reducer`, `design_global_reducer`, `ui_state_local_reducer`, and `ui_state_global_reducer`. See below, and the source code comments in app_state_reducer.dart, for an explanation of the different between a "local" and "global" reducer.
 
     The most straightforward way to add a new reducer to this composition is to find a "sibling" reducer to imitate, i.e., a reducer modifying a field that is another field in the same class where you just added a field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`, so for guidance we can look and see what is the reducer for any other field in `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer` in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
@@ -391,7 +404,7 @@ For many typical features one would want to add that involve changing some aspec
     **CAUTION when writing reducers that change strands:**
     The way the scadnano data is stored, it is necessary to called `strand = strand.initialize();` whenever creating a new strand. Any reducer listed in `strand_part_reducer` in reducers/strands_reducer.dart will have this done automatically, but in general, be conservative and, before putting a new strand in a design (including one that is the result of modifying an existing strand), replace it with `strand.initialize()`.
 
-6. **if necessary, add view code to display the new state**: 
+8. **if necessary, add view code to display the new state**: 
     If this involved adding a new piece of state, then it may influence the view in some way. (Not always; some features/new actions influence only side-effects, such as saving to localStorage, implemented by middleware, so in such cases you could skip this step.) Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
 
     In our example, the components (starting from the bottom) that need the `modification_font_size` property are
@@ -409,7 +422,7 @@ For many typical features one would want to add that involve changing some aspec
 
     Note that this is a rule about code that **renders** the view (i.e., anything called by the `render` method of a component). But it does not apply to *event handling code* that the rendering code declares (but does not call directly). Event handlers are functions that execute in response to (typically) user interaction with the view *after* it has already been rendered. For example, you'll see lines like this `..onClick = on_mouse_click` where `on_mouse_click` is a function taking an event type as input and indicating how to respond. It is fine for event handling code to access the global app state variable `app.state`. In fact, this is preferred over passing the information it needs as props. The reason is that if only event-handling code needs that information, but not the view code, then whenever the information changes, the view will re-render, causing slowdown, even though the appearance of the component didn't change. (All that changed was what will happen eventually when the event happens that triggers the event handler.) Read more about this issue here: https://github.com/UC-Davis-molecular-computing/scadnano/issues/191#issuecomment-659729707
 
-7. **if necessary, add middleware:** 
+9. **if necessary, add middleware:** 
     The above description of state, view, and reducers in React/Redux describes an ideal situation in which every reducer and every view is a pure function, dependent only on the state (and also action for reducers), taking no other data as input and affecting no other part of the memory (i.e., having no *side-effects*). Of course, sometimes programs need to break this, having side-effects such as saving files, or taking other inputs not available in the React props at the time the Action was created (for example, some parts of the view may not have enough data to check whether an action is legal to dispatch). 
 
     This is where middleware comes in. It takes care of essentially those parts of the logic that don't fit cleanly into the state &rarr; view &rarr; reducer &rarr; state loop. Examples include storing data to localStorage, saving a file to disk, loading a file from disk, checking whether an action is legal (for example, `strand_create_middleware_middleware` doesn't create a new strand if the position is occupied).
@@ -422,6 +435,21 @@ For many typical features one would want to add that involve changing some aspec
 
     *Note:* You need to remember to add the middleware function to the list in the file lib/src/middleware/all_middleware.dart, or it won't be called. Remember also to call `next(action)` (unless you actually want to stop the Action from going through).
 
+10. **Add unit tests**:
+    If you did not already add unit tests to test the bug or new feature in an earlier step, and if it makes sense to do so, do that now. Generally this will be possible if the feature/bug fix involves complex logic in a reducer or middleware, and the unit test will call the reducer/middleware.
+
+11. **Update repository**:
+    Commit changes, 
+    push the commit(s) to the repo,
+    create a pull request (PR) from the branch into dev
+    (**NOTE**: the default is the main branch, remember to change this),
+    and request a code review of the PR.
+    Once the PR is approved, merge the changes into dev,
+    which closes the PR, 
+    delete the branch you created,
+    and in your local repo, switch back to the dev branch.
+    See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) for more details.
+
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
@@ -433,17 +461,17 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description, and that it describes the change we would like to make to the software. For example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
 
 3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
 
 4. If it is about implementing a feature, first add tests to test the feature. For instance, if you are adding a new method, this involves writing code that calls the method and tests various combinations of example inputs and expected output.
 
-5. Work entirely in that branch to fix the issue.
+5. Work entirely in that branch to fix the issue, following the [recipe described above](#general-recipe-for-adding-features).
 
 6. Run unit tests and ensure they pass.
 
-7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" or "closes #123" (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
+7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" (for bug fixes) or "closes #123" (for new features) (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
 
 8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
 
