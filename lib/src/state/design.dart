@@ -57,7 +57,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     geometry ??= constants.default_geometry;
     if (helices == null) {
       if (num_helices == null) {
-        helices = List<Helix>();
+        helices = List<Helix>.empty();
       } else {
         helices = [
           for (int idx in Iterable<int>.generate(num_helices))
