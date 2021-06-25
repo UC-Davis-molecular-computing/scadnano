@@ -21,7 +21,6 @@ main() {
   group('DomainNameBoundComplements_LinearStrands', () {
     List<Helix> helices;
     Design design;
-    int num_strands;
 
     /* 0              16               32      40       50  
        |---------------|---------------|-------|---------|
@@ -142,7 +141,7 @@ main() {
               ABC*            DEF*
     */
 
-    test('assign_domain_name_complement_on_complement_on_selected_strands', () {
+    test('assign_domain_name_complement_on_complement_of_ABC_and_JKL', () {
       // assign complements for ABC and JKL
       var action = actions.AssignDomainNameComplementFromBoundStrands(
           [design.strands[0], design.strands[3]]);
@@ -168,7 +167,90 @@ main() {
 
       expect(all_strands[4].substrands[0].name, "JKL");
     });
+
+    /* 0              16               32      40       50  
+       |---------------|---------------|-------|---------|
+
+    0  /------------------------------\        [-------->
+      |<--------------++--------------])       <--------]
+      |               ||       GHI      )          JKL
+      |               ||                )
+      |       ABC     ||      DEF       )
+    1 |[--------------++-------------->)
+       \--------------]<--------------/  
+                              DEF*
+    */
+    test('assign_domain_name_complement_on_complement_of_ABC_and_DEF', () {
+      // assign complements for ABC and JKL
+      var action = actions.AssignDomainNameComplementFromBoundStrands(
+          [design.strands[0], design.strands[2]]);
+
+      var state = app_state_from_design(design);
+      var all_strands =
+          assign_domain_name_reducer_complement_from_bound_strands(
+              design.strands, state, action);
+
+      expect(all_strands.length, 5);
+
+      expect(all_strands[0].substrands[0].name, "ABC*");
+      expect(all_strands[0].substrands[1].name, null);
+      expect(all_strands[0].substrands[2].name, null);
+      expect(all_strands[0].substrands[3].name, "DEF*");
+
+      expect(all_strands[1].substrands[0].name, "ABC");
+      expect(all_strands[1].substrands[1].name, null);
+
+      expect(all_strands[2].substrands[0].name, "GHI");
+      expect(all_strands[2].substrands[1].name, "DEF");
+
+      expect(all_strands[3].substrands[0].name, null);
+
+      expect(all_strands[4].substrands[0].name, "JKL");
+    });
   });
 
-  // group('DomainNameBoundComplements_LinearStrands', () {});
+  group('DomainNameBoundComplements_CircularStrands', () {
+    List<Helix> helices;
+    Design design;
+
+    /* 0       8       16      24     
+       |-------|-------|-------|
+         ABC
+    0  /------\[------\/------>
+       \------/<------/\------]
+                 DEF     GHI
+    */
+    setUp(() {
+      helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      design = Design(helices: helices, grid: Grid.square);
+
+      design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).cross(0).as_circular().commit();
+      design = design.strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
+      design = design.strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
+      
+    });
+
+    /* 0       8       16      24     
+       |-------|-------|-------|
+         ABC     DEF*    GHI*
+    0  /------\[------\/------>
+       \------/<------/\------]
+         ABC*     DEF     GHI
+    */
+    test('assign_domain_name_complement_on_all_strands_with_circular', () {
+
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      expect(all_strands[0].substrands[0].name, "ABC");
+      expect(all_strands[0].substrands[1].name, "ABC*");
+
+      expect(all_strands[1].substrands[0].name, "DEF*");
+      expect(all_strands[1].substrands[1].name, "DEF");
+
+      expect(all_strands[2].substrands[0].name, "GHI");
+      expect(all_strands[2].substrands[1].name, "GHI*");
+    });
+  });
 }
