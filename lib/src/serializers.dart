@@ -302,6 +302,7 @@ part 'serializers.g.dart';
   ShowMouseoverDataSet,
   Autostaple,
   Autobreak,
+  ZoomSpeedSet,
   NewDesignSet,
   Design,
   // BrowserClipboard,

@@ -56,6 +56,8 @@ abstract class AppUIStateStorables
 
   num get major_tick_width_font_size;
 
+  num get zoom_speed;
+
   bool get modification_display_connector;
 
   bool get strand_paste_keep_color;
@@ -112,6 +114,7 @@ abstract class AppUIStateStorables
     b.show_domain_name_mismatches = false;
     b.show_editor = false;
     b.only_display_selected_helices = false;
+    b.zoom_speed = 0.3;
     b.modification_font_size = constants.default_modification_font_size;
     b.major_tick_offset_font_size = constants.default_major_tick_offset_font_size;
     b.major_tick_width_font_size = constants.default_major_tick_width_font_size;

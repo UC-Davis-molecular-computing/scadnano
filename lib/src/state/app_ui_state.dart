@@ -169,6 +169,8 @@ abstract class AppUIState with BuiltJsonSerializable implements Built<AppUIState
 
   bool get strand_paste_keep_color => storables.strand_paste_keep_color;
 
+  num get zoom_speed => storables.zoom_speed;
+
   num get major_tick_offset_font_size => storables.major_tick_offset_font_size;
 
   num get major_tick_width_font_size => storables.major_tick_width_font_size;

@@ -32,8 +32,8 @@
     <script src="external-libs/simpledrag.js"></script>
     <script src="splitpane.js"></script>
 
-<!--    polyfill to make Edge work (needs "EventSource")-->
-<!--    <script src="external-libs/eventsource.js"></script>-->
+    <!--    polyfill to make Edge work (needs "EventSource")-->
+    <!--    <script src="external-libs/eventsource.js"></script>-->
 
 
     <script src="packages/codemirror/codemirror.js"></script>
@@ -80,7 +80,11 @@
             window['ga-disable-UA-156000688-1'] = true; // enter your tracking ID
         }
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
         gtag('js', new Date());
 
         gtag('config', 'UA-156000688-1');
@@ -263,7 +267,9 @@
         // Firefox 1.0+
         var isFirefox = typeof InstallTrigger !== 'undefined';
         // Safari 3.0+ "[object HTMLElementConstructor]"
-        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+        var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) {
+            return p.toString() === "[object SafariRemoteNotification]";
+        })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
         // Internet Explorer 6-11
         var isIE = /*@cc_on!@*/false || !!document.documentMode;
         // Edge 20+
@@ -311,11 +317,12 @@
             }
             return allow;
         }
+
         // svg-pan-zoom library: https://github.com/ariutta/svg-pan-zoom
         side_view_svg_pan_zoom = svgPanZoom('#side-view-svg', {
             viewportSelector: "#side-view-svg-viewport",
             zoomScaleSensitivity: zoom_speed,
-            minZoom: 0.05,
+            minZoom: 0.01,
             maxZoom: 20,
             beforePan: before_pan,
             beforeZoom: before_zoom,
@@ -327,7 +334,7 @@
         main_view_svg_pan_zoom = svgPanZoom('#main-view-svg', {
             viewportSelector: "#main-view-svg-viewport",
             zoomScaleSensitivity: zoom_speed,
-            minZoom: 0.05,
+            minZoom: 0.01,
             maxZoom: 20,
             beforePan: before_pan,
             beforeZoom: before_zoom,
@@ -337,9 +344,10 @@
             fit: false, //XXX: must be false or mouse coordinates are not properly converted to SVG in util.dart functions
         });
 
+
         // main_view_svg_pan_zoom.onpointerup = function() {
         var main_view_svg = document.getElementById('main-view-svg');
-        main_view_svg.onpointerup = function(ev) {
+        main_view_svg.onpointerup = function (ev) {
             dart_main_view_pointer_up(ev);
         };
 
@@ -371,6 +379,12 @@
         main_view_svg_pan_zoom.moveTo(0,0);
         */
 
+    }
+
+    function set_zoom_speed(speed) {
+        zoom_speed = speed;
+        side_view_svg_pan_zoom.setZoomScaleSensitivity(speed);
+        main_view_svg_pan_zoom.setZoomScaleSensitivity(speed);
     }
 
     //XXX: doesn't work like I had hoped; not using it for now
@@ -479,16 +493,16 @@
 <script src="external-libs/react-bootstrap.js"></script>
 
 <script>
-// Add components to global namespace.
-// React interop cannot access nested components (components that are fields of another React component)
-// Thus, any nested components needs to be added to the global namespace
-// by assigning it as a member to ReactBoostrap.
-// In general the line will look something like
-//
-// ```
-// ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
-// ```
-ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
+    // Add components to global namespace.
+    // React interop cannot access nested components (components that are fields of another React component)
+    // Thus, any nested components needs to be added to the global namespace
+    // by assigning it as a member to ReactBoostrap.
+    // In general the line will look something like
+    //
+    // ```
+    // ReactBootstrap.NestedComponent = ReactBootstrap.Path.To.NextedComponent
+    // ```
+    ReactBootstrap.DropdownDivider = ReactBootstrap.Dropdown.Divider
 </script>
 
 <script src="external-libs/react-color.min.js"></script>

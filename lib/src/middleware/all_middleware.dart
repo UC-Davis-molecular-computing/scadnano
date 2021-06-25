@@ -1,6 +1,7 @@
 import 'package:redux/redux.dart';
 import 'package:scadnano/src/middleware/system_clipboard.dart';
 
+import '../state/app_state.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
@@ -32,7 +33,7 @@ import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
 import 'autostaple_and_autobreak.dart';
-import '../state/app_state.dart';
+import 'zoom_speed.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
@@ -67,4 +68,5 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   periodic_design_save_local_storage_middleware,
   autostaple_and_autobreak_middleware,
   system_clipboard_middleware,
+  zoom_speed_middleware,
 ]);
