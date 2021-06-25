@@ -383,8 +383,9 @@
 
     function set_zoom_speed(speed) {
         zoom_speed = speed;
-        side_view_svg_pan_zoom.setZoomScaleSensitivity(speed);
-        main_view_svg_pan_zoom.setZoomScaleSensitivity(speed);
+        for (let svg of [side_view_svg_pan_zoom, main_view_svg_pan_zoom]) {
+            svg.setZoomScaleSensitivity(speed);
+        }
     }
 
     //XXX: doesn't work like I had hoped; not using it for now
