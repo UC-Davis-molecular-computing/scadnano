@@ -213,12 +213,12 @@ main() {
     List<Helix> helices;
     Design design;
 
-    /* 0       8       16      24     
-       |-------|-------|-------|
+    /* 0       8       16      24      32
+       |-------|-------|-------|-------|
          ABC
-    0  /------\[------\/------>
-       \------/<------/\------]
-                 DEF     GHI
+    0  /------\[------\/------> /------\
+       \------/<------/\------] \---/
+                 DEF     GHI     JKL*
     */
     setUp(() {
       helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
@@ -227,17 +227,17 @@ main() {
       design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).cross(0).as_circular().commit();
       design = design.strand(0, 8).move(8).cross(0).move(-8).with_domain_name("DEF").commit();
       design = design.strand(0, 24).move(-8).with_domain_name("GHI").cross(0).move(8).commit();
-      
+      design = design.strand(0, 25).move(8).cross(0, 29).move(-3).with_domain_name("JKL*").cross(0,25).as_circular().commit();
     });
 
-    /* 0       8       16      24     
-       |-------|-------|-------|
+    /* 0       8       16      24      32
+       |-------|-------|-------|-------|
          ABC     DEF*    GHI*
-    0  /------\[------\/------>
-       \------/<------/\------]
-         ABC*     DEF     GHI
+    0  /------\[------\/------> /------\
+       \------/<------/\------] \---/
+         ABC*     DEF     GHI    JKL*
     */
-    test('assign_domain_name_complement_on_all_strands_with_circular', () {
+    test('assign_domain_name_complement_on_all_strands_circular', () {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
@@ -251,6 +251,54 @@ main() {
 
       expect(all_strands[2].substrands[0].name, "GHI");
       expect(all_strands[2].substrands[1].name, "GHI*");
+
+      expect(all_strands[3].substrands[0].name, null);
+      expect(all_strands[3].substrands[1].name, "JKL*");
+    });
+
+    /* 0       8       16      24      32
+       |-------|-------|-------|-------|
+         ABC        
+    0  /------\[------\/------> /------\
+       \------/<------/\------] \---/
+         ABC*     DEF     GHI    JKL*
+    */
+    test('assign_domain_name_complement_on_ABC_circular', () {
+
+      var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      expect(all_strands[0].substrands[0].name, "ABC");
+      expect(all_strands[0].substrands[1].name, "ABC*");
+
+      expect(all_strands[1].substrands[0].name, null);
+      expect(all_strands[1].substrands[1].name, "DEF");
+
+      expect(all_strands[2].substrands[0].name, "GHI");
+      expect(all_strands[2].substrands[1].name, null);
+
+      expect(all_strands[3].substrands[0].name, null);
+      expect(all_strands[3].substrands[1].name, "JKL*");
+    });
+
+    test('assign_domain_name_complement_on_ABC_and_GHI_circular', () {
+
+      var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0], design.strands[2]]);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+
+      expect(all_strands[0].substrands[0].name, "ABC");
+      expect(all_strands[0].substrands[1].name, "ABC*");
+
+      expect(all_strands[1].substrands[0].name, null);
+      expect(all_strands[1].substrands[1].name, "DEF");
+
+      expect(all_strands[2].substrands[0].name, "GHI");
+      expect(all_strands[2].substrands[1].name, "GHI*");
+
+      expect(all_strands[3].substrands[0].name, null);
+      expect(all_strands[3].substrands[1].name, "JKL*");
     });
   });
 }

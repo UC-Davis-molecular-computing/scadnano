@@ -51,6 +51,7 @@ BuiltList<Strand> assign_domain_name_reducer_complement_from_bound_strands(
       strand_to_assign =
           compute_domain_name_complements(strand_to_assign, other_strand);
     }
+    strand_to_assign = compute_domain_name_complements(strand_to_assign, strand_to_assign);
     all_strands[strand_to_assign_idx] = strand_to_assign;
   }
   return all_strands.build();
