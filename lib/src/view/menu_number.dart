@@ -17,6 +17,7 @@ mixin MenuNumberPropsMixin on UiProps {
   bool hide; // whether to show (good for hiding if dependent on another value)
   String tooltip; // what to display on mouse hover (long description)
   String input_elt_id; // customize id (otherwise default chosen based on display)
+  num step; // amount by which to step when pressing up or down arrows
 }
 
 class MenuNumberProps = UiProps with MenuNumberPropsMixin;
@@ -26,7 +27,8 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
   get defaultProps => (newProps()
     ..hide = false
     ..tooltip = ''
-    ..min_value = 1);
+    ..min_value = 1.0
+    ..step = 1.0);
 
   @override
   render() {
@@ -53,6 +55,7 @@ class MenuNumberComponent extends UiComponent2<MenuNumberProps> {
             ..style = {'marginRight': '1em', 'width': '4em'}
             ..type = 'number'
             ..min = '${props.min_value}'
+            ..step = '${props.step}'
             ..id = input_elt_id
             ..onChange = (_) {
               InputElement inputElement = document.getElementById(input_elt_id);
