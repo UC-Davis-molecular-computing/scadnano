@@ -329,7 +329,7 @@ Otherwise, the distances between pairs of helices with *adjacent indices* will b
 
 ## Navigation and control
 
-**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
+**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. The zoom speed can be controlled under the View menu. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
 
 **Undo/redo:**
 Pressing Ctrl+Z will undo the last action that changed the design.
@@ -456,6 +456,9 @@ This refers to the menu at the top of the whole app. At the top of the side view
   
   * **Display major tick widths:**
   If checked, integer distances between adjacent major tick marks are displayed just above the center point between them. Since major tick marks are often used to indicate interesting domains/sub-domains of DNA strands, this can be used to quickly see the length of those domains. (But major tick marks are not explicitly tied to the Domains on Strands defined in the DNADesign.) This can be on only the top helix, or on all helices.
+
+  * **Zoom speed:**
+  This controls the speed at which the mouse wheel or two-finger scroll zooms in and out of the main view and side view.
 
   * **auto-fit on loading new design:**
     When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
