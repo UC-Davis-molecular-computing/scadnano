@@ -1,3 +1,5 @@
+// @dart=2.9
+
 @TestOn('browser')
 // import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';

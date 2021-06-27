@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react_test/jacket.dart';
 import 'package:over_react_test/over_react_test.dart';
