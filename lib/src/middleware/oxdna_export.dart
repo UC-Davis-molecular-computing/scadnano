@@ -12,7 +12,6 @@ import '../actions/actions.dart' as actions;
 import '../state/helix.dart';
 import '../util.dart' as util;
 
-/// Disallows setting grid_position of Helix to overlap with existing helix.
 oxdna_export_middleware(Store<AppState> store, dynamic action, NextDispatcher next) {
   if (action is actions.OxdnaExport) {
     AppState state = store.state;
