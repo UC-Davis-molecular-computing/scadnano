@@ -1,3 +1,4 @@
+import 'package:scadnano/src/actions/actions.dart';
 import 'package:scadnano/src/state/design.dart';
 import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/loopout.dart';
@@ -7,6 +8,7 @@ import 'package:color/color.dart';
 import 'package:scadnano/src/state/substrand.dart';
 
 import '../constants.dart' as constants;
+import 'helix.dart';
 import 'idt_fields.dart';
 
 class StrandMaker {
@@ -137,7 +139,8 @@ class StrandMaker {
     return this;
   }
 
-  StrandMaker with_idt({String scale = constants.default_idt_scale,
+  StrandMaker with_idt(
+      {String scale = constants.default_idt_scale,
       String purification = constants.default_idt_purification,
       String plate = null,
       String well = null}) {
@@ -172,6 +175,36 @@ class StrandMaker {
 
   StrandMaker with_domain_label(Object label) {
     this.domain_label = label;
+    return this;
+  }
+
+  StrandMaker add_deletion(num helix, num offset) {
+    for (int i = 0; i < this.substrands.length; i++) {
+      Substrand substrand = this.substrands[i];
+      if (substrand is Domain) {
+        if (substrand.contains_offset(offset) && substrand.helix == helix) {
+          List<int> new_deletions = substrand.deletions.toList();
+          new_deletions.add(offset);
+          Substrand new_substrand = substrand.rebuild((b) => b..deletions.replace(new_deletions));
+          this.substrands[i] = new_substrand;
+        }
+      }
+    }
+    return this;
+  }
+
+  StrandMaker add_insertion(num helix, num offset, num length) {
+    for (int i = 0; i < this.substrands.length; i++) {
+      Substrand substrand = this.substrands[i];
+      if (substrand is Domain) {
+        if (substrand.contains_offset(offset) && substrand.helix == helix) {
+          List<Insertion> new_insertions = substrand.insertions.toList();
+          new_insertions.add(Insertion(offset, length));
+          Substrand new_substrand = substrand.rebuild((b) => b..insertions.replace(new_insertions));
+          this.substrands[i] = new_substrand;
+        }
+      }
+    }
     return this;
   }
 }
