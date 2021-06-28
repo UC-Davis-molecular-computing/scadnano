@@ -227,19 +227,15 @@ Tuple3<OxdnaVector, OxdnaVector, OxdnaVector> oxdna_get_helix_vectors(Design des
     // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L799
     // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L664
     // https://github.com/UC-Davis-molecular-computing/scadnano/blob/master/lib/src/util.dart#L706
+    int h = helix.grid_position.h;
+    int v = helix.grid_position.v;
     if (grid == Grid.square) {
-      int h = helix.grid_position.h;
-      int v = helix.grid_position.v;
       x = h * geometry.distance_between_helices;
       y = v * geometry.distance_between_helices;
     } else if (grid == Grid.hex) {
-      int h = helix.grid_position.h;
-      int v = helix.grid_position.v;
       x = (h + (v % 2) / 2) * geometry.distance_between_helices;
       y = v * sqrt(3) / 2 * geometry.distance_between_helices;
     } else if (grid == Grid.honeycomb) {
-      int h = helix.grid_position.h;
-      int v = helix.grid_position.v;
       x = h * sqrt(3) / 2 * geometry.distance_between_helices;
       if (h % 2 == 0) {
         y = (v * 3 + (v % 2)) / 2 * geometry.distance_between_helices;
