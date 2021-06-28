@@ -2,7 +2,6 @@
 
 import 'dart:math';
 
-import 'package:scadnano/src/state/grid_position.dart';
 import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
