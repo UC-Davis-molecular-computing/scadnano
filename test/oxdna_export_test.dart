@@ -128,6 +128,7 @@ main() {
             strand2_idxs.add(strand2_start);
           }
         }
+        nuc_idx++;
       }
 
       expect(strand1_start, isNotNull);

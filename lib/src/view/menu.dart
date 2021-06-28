@@ -216,15 +216,7 @@ really want to exit without saving.'''
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
-        ..display = 'Export cadnano v2'
-        ..key = 'export-cadnano')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'Export codenano'
-        ..key = 'export-codenano')(),
-      DropdownDivider({'key': 'divider-export'}),
+      DropdownDivider({'key': 'divider-import-cadnano'}),
       ...file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
@@ -784,6 +776,19 @@ In a large design, this can slow down the performance, so uncheck it when not in
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..display = 'DNA sequences')(),
+      DropdownDivider({'key': 'divider-not-full-design'}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..display = 'Export cadnano v2'
+        ..key = 'export-cadnano')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
+        ..display = 'Export codenano'
+        ..key = 'export-codenano')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
+        ..display = 'Export oxDNA'
+        ..key = 'export-oxdna')(),
     );
   }
 

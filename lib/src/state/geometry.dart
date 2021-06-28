@@ -80,6 +80,9 @@ abstract class Geometry with BuiltJsonSerializable, UnusedFields implements Buil
   double get base_height_svg => rise_per_base_pair * 30.12;
 
   @memoized
+  double get distance_between_helices => 2 * helix_radius + inter_helix_gap;
+
+  @memoized
   double get nm_to_svg_pixels => base_width_svg / rise_per_base_pair;
 
   @memoized

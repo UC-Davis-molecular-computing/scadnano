@@ -705,6 +705,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return group;
   }
 
+  @memoized
+  Grid get grid => default_group().grid;
+
   /// Throw exception if default group is not being used; otherwise set the grid of the default group.
   set_grid(Grid grid) {
     var group = default_group();
@@ -1780,6 +1783,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             '${groups.keys.join(", ")}');
       }
     }
+  }
+
+  num yaw_of_helix(Helix helix) {
+    return groups[helix.group].yaw;
+  }
+
+  num pitch_of_helix(Helix helix) {
+    return groups[helix.group].pitch;
   }
 }
 

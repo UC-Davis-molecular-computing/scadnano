@@ -304,6 +304,7 @@ part 'serializers.g.dart';
   Autobreak,
   ZoomSpeedSet,
   NewDesignSet,
+  OxdnaExport,
   Design,
   // BrowserClipboard,
   // CLIClipboard,
