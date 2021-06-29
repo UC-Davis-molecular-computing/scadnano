@@ -264,8 +264,10 @@ Future<List<int>> idt_plates_export(Iterable<Strand> strands, PlateType plate_ty
     decoder.updateCell(plate_name, 2, excel_row, idt_sequence_null_aware(strand));
     num_strands_remaining--;
 
-    // IDT will not make a plate with < 24 strands for 96-well plate or < 96 strands for 384-well plate.
-    // So if we would have fewer than that many on the last plate, shift some from the penultimate plate.
+    // IDT charges extra for a plate with < 24 strands for 96-well plate
+    // or < 96 strands for 384-well plate.
+    // So if we would have fewer than that many on the last plate,
+    // shift some from the penultimate plate.
     if (!on_final_plate &&
         final_plate_less_than_min_required &&
         num_strands_remaining == min_strands_per_plate) {
