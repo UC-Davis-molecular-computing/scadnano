@@ -427,7 +427,7 @@ abstract class Strand
   @memoized
   BuiltMap<int, BuiltList<Domain>> get domains_on_helix {
     var domains_map = Map<int, List<Domain>>();
-    for (var substrand in domains()) {
+    for (var substrand in domains) {
       if (domains_map.containsKey(substrand.helix)) {
         domains_map[substrand.helix].add(substrand);
       } else {
@@ -474,7 +474,8 @@ abstract class Strand
 //    return 'Strand(helix=${first_ss.helix}, start=${first_ss.offset_5p}, ${first_ss.forward ? 'forward' : 'reverse'})';
 //  }
 
-  List<Domain> domains() => [
+  @memoized
+  List<Domain> get domains => [
         for (var ss in this.substrands)
           if (ss.is_domain()) ss as Domain
       ];
