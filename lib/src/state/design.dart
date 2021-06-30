@@ -442,7 +442,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand.
+  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};

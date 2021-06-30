@@ -68,7 +68,7 @@ main() {
           actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
       var all_strands =
-          assign_domain_name_reducer_complement_from_bound_strands(
+          assign_domain_name_complement_from_bound_strands_reducer(
               design.strands, state, action);
 
       expect(all_strands.length, 5);
@@ -107,7 +107,7 @@ main() {
           [design.strands[3]]);
       var state = app_state_from_design(design);
       var all_strands =
-          assign_domain_name_reducer_complement_from_bound_strands(
+          assign_domain_name_complement_from_bound_strands_reducer(
               design.strands, state, action);
 
       expect(all_strands.length, 5);
@@ -147,7 +147,7 @@ main() {
           [design.strands[0], design.strands[3]]);
       var state = app_state_from_design(design);
       var all_strands =
-          assign_domain_name_reducer_complement_from_bound_strands(
+          assign_domain_name_complement_from_bound_strands_reducer(
               design.strands, state, action);
 
       expect(all_strands.length, 5);
@@ -187,7 +187,7 @@ main() {
 
       var state = app_state_from_design(design);
       var all_strands =
-          assign_domain_name_reducer_complement_from_bound_strands(
+          assign_domain_name_complement_from_bound_strands_reducer(
               design.strands, state, action);
 
       expect(all_strands.length, 5);
@@ -241,7 +241,7 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
       var state = app_state_from_design(design);
-      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -267,7 +267,7 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0]]);
       var state = app_state_from_design(design);
-      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -286,7 +286,7 @@ main() {
 
       var action = actions.AssignDomainNameComplementFromBoundStrands([design.strands[0], design.strands[2]]);
       var state = app_state_from_design(design);
-      var all_strands = assign_domain_name_reducer_complement_from_bound_strands(design.strands, state, action);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
 
       expect(all_strands[0].substrands[0].name, "ABC");
       expect(all_strands[0].substrands[1].name, "ABC*");
@@ -299,6 +299,28 @@ main() {
 
       expect(all_strands[3].substrands[0].name, null);
       expect(all_strands[3].substrands[1].name, "JKL*");
+    });
+  });
+  
+  group('DomainNameBoundComplements_DifferentCombinationOfExistingDomainNames', () {
+    /* 0       8
+       |-------|
+         ABC        
+    0  [------\
+       <------/
+          XYZ      
+    */
+    test('self_complementary_strand__both_domains_named__noncomplementary', () {
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+      
+      design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+
+      expect(design.strands.length, 1);
+
+      var strand = design.strands[0];
+      var names = [strand.domains[0].name, strand.domains[1].name];
+      expect(names, anyOf([equals(["ABC", "ABC*"]), equals(["XYZ*", "XYZ"])]));
     });
   });
 }
