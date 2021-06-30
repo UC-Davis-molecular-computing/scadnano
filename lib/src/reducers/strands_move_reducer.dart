@@ -121,7 +121,7 @@ bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix
 Set<int> populate_original_helices_idxs_set(StrandsMove strands_move) {
   Set<int> original_helix_idxs_set = {};
   for (var strand in strands_move.strands_moving) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       original_helix_idxs_set.add(domain.helix);
     }
   }
@@ -131,7 +131,7 @@ Set<int> populate_original_helices_idxs_set(StrandsMove strands_move) {
 Set<int> view_order_moving(StrandsMove strands_move) {
   Set<int> ret = {};
   for (var strand in strands_move.strands_moving) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       ret.add(strands_move.original_helices_view_order_inverse[domain.helix]);
     }
   }

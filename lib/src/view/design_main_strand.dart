@@ -198,7 +198,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
@@ -231,7 +231,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _deletions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_deletion in domain.selectable_deletions) {

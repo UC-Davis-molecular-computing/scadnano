@@ -90,7 +90,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
   }
 
   ReactElement _draw_strand_lines_single_path(Strand strand_moved) {
-    Domain domain_first = strand_moved.domains().first;
+    Domain domain_first = strand_moved.domains.first;
 
     var helix = props.helices[domain_first.helix];
     var start_svg = helix.svg_base_pos(domain_first.offset_5p, domain_first.forward);

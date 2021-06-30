@@ -138,7 +138,7 @@ CopyInfo strands_copy_info_from_strand_list(
   int min_offset;
   bool min_forward;
   for (Strand strand in selected_strands) {
-    for (Domain domain in strand.domains()) {
+    for (Domain domain in strand.domains) {
       // HelixGroup group = state.design.group_of_domain(domain);
       // int helix_view_order = group.helices_view_order_inverse[domain.helix];
       int helix_view_order = helices_view_order_inverse[domain.helix];
