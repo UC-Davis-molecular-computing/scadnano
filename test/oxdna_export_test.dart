@@ -55,6 +55,7 @@ main() {
       design = design.strand(0, 0).to(7).cross(1).move(-7).commit();
       design = design.strand(0, 7).move(-7).cross(1).move(7).commit();
 
+
       // expected values for verification
       int expected_num_nucleotides = 7 * 4;
       int expected_strand_length = 7 * 2;
