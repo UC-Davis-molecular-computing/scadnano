@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'package:scadnano/src/reducers/change_loopout_length.dart';
 import 'package:scadnano/src/reducers/delete_reducer.dart';
 import 'package:scadnano/src/reducers/design_reducer.dart';

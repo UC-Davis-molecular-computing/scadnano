@@ -3305,3 +3305,17 @@ abstract class ZoomSpeedSet
   @memoized
   int get hashCode;
 }
+
+abstract class OxdnaExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxdnaExport, OxdnaExportBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxdnaExport() = _$OxdnaExport;
+
+  OxdnaExport._();
+
+  static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
+}
