@@ -141,7 +141,7 @@ main() {
 
       expect(strand.circular, true);
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
       Domain d0 = strand.substrands[0] as Domain;
       Loopout loopout = strand.substrands[1] as Loopout;
@@ -185,7 +185,7 @@ main() {
 
       expect(strand.circular, true);
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
       // implementation detail: the domains will be rotated to ensure that the strand doesn't begin
       // with a loopout; so domain 0 is now the BOTTOM one
@@ -234,7 +234,7 @@ main() {
 
       expect(strand.circular, true);
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       Domain d0 = strand.substrands[0] as Domain;
       Domain d1 = strand.substrands[1] as Domain;
@@ -287,17 +287,17 @@ main() {
       strand = strands[5];
       expect(strand.circular, false);
       expect(strand.substrands.length, 2);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
-      expect(strand.domains()[0].helix, 0);
-      expect(strand.domains()[0].forward, true);
-      expect(strand.domains()[0].start, 40);
-      expect(strand.domains()[0].end, 50);
+      expect(strand.domains[0].helix, 0);
+      expect(strand.domains[0].forward, true);
+      expect(strand.domains[0].start, 40);
+      expect(strand.domains[0].end, 50);
 
-      expect(strand.domains()[1].helix, 1);
-      expect(strand.domains()[1].forward, false);
-      expect(strand.domains()[1].start, 40);
-      expect(strand.domains()[1].end, 50);
+      expect(strand.domains[1].helix, 1);
+      expect(strand.domains[1].forward, false);
+      expect(strand.domains[1].start, 40);
+      expect(strand.domains[1].end, 50);
     });
 
     test('remove_crossover_from_circular_strand_makes_it_linear_right_crossover', () {
@@ -331,17 +331,17 @@ main() {
       strand = strands[5];
       expect(strand.circular, false);
       expect(strand.substrands.length, 2);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
-      expect(strand.domains()[0].helix, 1);
-      expect(strand.domains()[0].forward, false);
-      expect(strand.domains()[0].start, 40);
-      expect(strand.domains()[0].end, 50);
+      expect(strand.domains[0].helix, 1);
+      expect(strand.domains[0].forward, false);
+      expect(strand.domains[0].start, 40);
+      expect(strand.domains[0].end, 50);
 
-      expect(strand.domains()[1].helix, 0);
-      expect(strand.domains()[1].forward, true);
-      expect(strand.domains()[1].start, 40);
-      expect(strand.domains()[1].end, 50);
+      expect(strand.domains[1].helix, 0);
+      expect(strand.domains[1].forward, true);
+      expect(strand.domains[1].start, 40);
+      expect(strand.domains[1].end, 50);
     });
 
     test('remove_domain_from_circular_strand_makes_it_linear_first_domain', () {
@@ -362,7 +362,7 @@ main() {
       expect(strand.circular, true);
       expect(strand.substrands.length, 2);
 
-      var domain = strand.domains()[0];
+      var domain = strand.domains[0];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
@@ -375,9 +375,9 @@ main() {
       strand = strands[5];
       expect(strand.circular, false);
       expect(strand.substrands.length, 1);
-      expect(strand.domains().length, 1);
+      expect(strand.domains.length, 1);
 
-      var d0 = strand.domains()[0];
+      var d0 = strand.domains[0];
       expect(d0.helix, 1);
       expect(d0.forward, false);
       expect(d0.start, 40);
@@ -402,7 +402,7 @@ main() {
       expect(strand.circular, true);
       expect(strand.substrands.length, 2);
 
-      var domain = strand.domains()[1];
+      var domain = strand.domains[1];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
@@ -415,9 +415,9 @@ main() {
       strand = strands[5];
       expect(strand.circular, false);
       expect(strand.substrands.length, 1);
-      expect(strand.domains().length, 1);
+      expect(strand.domains.length, 1);
 
-      var d0 = strand.domains()[0];
+      var d0 = strand.domains[0];
       expect(d0.helix, 0);
       expect(d0.forward, true);
       expect(d0.start, 40);
@@ -445,9 +445,9 @@ main() {
       var strand = design.strands[4];
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
-      var domain = strand.domains()[0];
+      var domain = strand.domains[0];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
@@ -460,7 +460,7 @@ main() {
       strand = strands[4];
       expect(strand.circular, false);
       expect(strand.substrands.length, 2);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
       var d0 = strand.substrands[0] as Domain;
       var d1 = strand.substrands[1] as Domain;
@@ -497,9 +497,9 @@ main() {
       var strand = design.strands[4];
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
-      var domain = strand.domains()[1];
+      var domain = strand.domains[1];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
@@ -512,7 +512,7 @@ main() {
       strand = strands[4];
       expect(strand.circular, false);
       expect(strand.substrands.length, 2);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
       var d0 = strand.substrands[0] as Domain;
       var d1 = strand.substrands[1] as Domain;
@@ -549,9 +549,9 @@ main() {
       var strand = design.strands[4];
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
-      var domain = strand.domains()[2];
+      var domain = strand.domains[2];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
@@ -564,7 +564,7 @@ main() {
       strand = strands[4];
       expect(strand.circular, false);
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 2);
+      expect(strand.domains.length, 2);
 
       var d0 = strand.substrands[0] as Domain;
       var loopout = strand.substrands[1] as Loopout;
@@ -604,7 +604,7 @@ main() {
       var strand = design.strands[4];
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       var loopout = strand.loopouts()[0];
       var action = actions.DeleteAllSelected();
@@ -619,7 +619,7 @@ main() {
       strand = strands[4];
       expect(strand.circular, false);
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       var d0 = strand.substrands[0] as Domain;
       var d1 = strand.substrands[1] as Domain;
@@ -662,7 +662,7 @@ main() {
       var strand = design.strands[4];
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       var crossover = strand.crossovers[0];
       var action = actions.DeleteAllSelected();
@@ -677,7 +677,7 @@ main() {
       strand = strands[4];
       expect(strand.circular, false);
       expect(strand.substrands.length, 4);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       var d0 = strand.substrands[0] as Domain;
       var d1 = strand.substrands[1] as Domain;
@@ -728,7 +728,7 @@ main() {
       expect(strands.length, num_strands);
 
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       Domain d0 = strand.substrands[0];
       Domain d1 = strand.substrands[1];
@@ -775,7 +775,7 @@ main() {
       expect(strands.length, num_strands);
 
       expect(strand.substrands.length, 3);
-      expect(strand.domains().length, 3);
+      expect(strand.domains.length, 3);
 
       Domain d0 = strand.substrands[0];
       Domain d1 = strand.substrands[1];
@@ -816,9 +816,9 @@ main() {
        */
       expect(design.strands[4].circular, true);
       expect(design.strands[4].substrands.length, 4);
-      expect(design.strands[4].domains().length, 3);
+      expect(design.strands[4].domains.length, 3);
 
-      var action = actions.Nick(domain: design.strands[4].domains()[0], offset: 35);
+      var action = actions.Nick(domain: design.strands[4].domains[0], offset: 35);
       var state = app_state_from_design(design);
       var strands = nick_reducer(design.strands, state, action);
 
@@ -827,7 +827,7 @@ main() {
       expect(strands.length, num_strands);
 
       expect(strand.substrands.length, 5);
-      expect(strand.domains().length, 4);
+      expect(strand.domains.length, 4);
 
       Domain d0 = strand.substrands[0];
       Loopout loopout = strand.substrands[1];
@@ -878,9 +878,9 @@ main() {
        */
       expect(design.strands[4].circular, true);
       expect(design.strands[4].substrands.length, 4);
-      expect(design.strands[4].domains().length, 3);
+      expect(design.strands[4].domains.length, 3);
 
-      var action = actions.Nick(domain: design.strands[4].domains()[1], offset: 35);
+      var action = actions.Nick(domain: design.strands[4].domains[1], offset: 35);
       var state = app_state_from_design(design);
       var strands = nick_reducer(design.strands, state, action);
 
@@ -889,7 +889,7 @@ main() {
       expect(strands.length, num_strands);
 
       expect(strand.substrands.length, 5);
-      expect(strand.domains().length, 4);
+      expect(strand.domains.length, 4);
 
       Domain d0 = strand.substrands[0];
       Domain d1 = strand.substrands[1];
@@ -940,9 +940,9 @@ main() {
        */
       expect(design.strands[4].circular, true);
       expect(design.strands[4].substrands.length, 4);
-      expect(design.strands[4].domains().length, 3);
+      expect(design.strands[4].domains.length, 3);
 
-      var action = actions.Nick(domain: design.strands[4].domains()[2], offset: 35);
+      var action = actions.Nick(domain: design.strands[4].domains[2], offset: 35);
       var state = app_state_from_design(design);
       var strands = nick_reducer(design.strands, state, action);
 
@@ -951,7 +951,7 @@ main() {
       expect(strands.length, num_strands);
 
       expect(strand.substrands.length, 5);
-      expect(strand.domains().length, 4);
+      expect(strand.domains.length, 4);
 
       Domain d0 = strand.substrands[0];
       Domain d1 = strand.substrands[1];
@@ -1004,13 +1004,13 @@ main() {
       expect(strands[1].circular, true);
       expect(strands[1].substrands.length, 2);
 
-      var d0 = strands[1].domains()[0];
+      var d0 = strands[1].domains[0];
       expect(d0.helix, 0);
       expect(d0.forward, true);
       expect(d0.start, 10);
       expect(d0.end, 20);
 
-      var d1 = strands[1].domains()[1];
+      var d1 = strands[1].domains[1];
       expect(d1.helix, 1);
       expect(d1.forward, false);
       expect(d1.start, 10);
@@ -1040,7 +1040,7 @@ main() {
       expect(design.strands.length, 1);
       expect(design.strands[0].circular, false);
       expect(design.strands[0].substrands.length, 4);
-      expect(design.strands[0].domains().length, 3);
+      expect(design.strands[0].domains.length, 3);
 
       // change
       var action = actions.Ligate(dna_end: design.strands[0].first_domain.dnaend_5p);
@@ -1093,7 +1093,7 @@ main() {
       expect(design.strands.length, 1);
       expect(design.strands[0].circular, false);
       expect(design.strands[0].substrands.length, 4);
-      expect(design.strands[0].domains().length, 3);
+      expect(design.strands[0].domains.length, 3);
 
       // change
       var action = actions.Ligate(dna_end: design.strands[0].first_domain.dnaend_5p);

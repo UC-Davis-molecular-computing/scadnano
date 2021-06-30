@@ -316,7 +316,7 @@ BuiltList<Strand> strands_dna_ends_move_commit_reducer(
     int ss_idx = record.substrand_idx;
     Strand strand = strands_builder[strand_idx];
     StrandBuilder strand_builder = strand.toBuilder();
-    Domain substrand = strand.domains()[ss_idx];
+    Domain substrand = strand.domains[ss_idx];
     DomainBuilder substrand_builder = substrand.toBuilder();
     if (substrand.deletions.contains(offset)) {
       substrand_builder.deletions.remove(offset);

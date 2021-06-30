@@ -61,7 +61,7 @@ main() {
 ''';
     var json_map = jsonDecode(json_str);
     var design = Design.from_json(json_map);
-    var deletions = design.strands[0].domains()[0].deletions;
+    var deletions = design.strands[0].domains[0].deletions;
     expect(2, deletions.length);
     expect(5, deletions[0]);
     expect(7, deletions[1]);
@@ -88,7 +88,7 @@ main() {
 ''';
     var json_map = jsonDecode(json_str);
     var design = Design.from_json(json_map);
-    var insertions = design.strands[0].domains()[0].insertions;
+    var insertions = design.strands[0].domains[0].insertions;
     expect(2, insertions.length);
     expect(5, insertions[0].offset);
     expect(2, insertions[0].length);

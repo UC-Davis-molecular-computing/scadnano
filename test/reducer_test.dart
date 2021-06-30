@@ -3403,7 +3403,7 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      Domain domain = two_helices_design.strands[2].domains()[0];
+      Domain domain = two_helices_design.strands[2].domains[0];
 
       expect(state.ui_state.mouseover_datas[0].helix, helix);
       expect(state.ui_state.mouseover_datas[0].offset, offset);
@@ -3429,7 +3429,7 @@ main() {
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
       Helix helix = two_helices_design.helices[1];
-      Domain domain = two_helices_design.strands[2].domains()[0];
+      Domain domain = two_helices_design.strands[2].domains[0];
 
       mouseoverParams = MouseoverParams(1, 13, true);
       state =
@@ -3465,13 +3465,13 @@ main() {
 
       Helix helix = two_helices_design.helices[1];
       int offset = 12;
-      Domain domain = two_helices_design.strands[2].domains()[0];
+      Domain domain = two_helices_design.strands[2].domains[0];
 
       mouseoverParams = MouseoverParams(1, 12, false);
       state =
           app_state_reducer(state, MouseoverDataUpdate(mouseover_params: [mouseoverParams].toBuiltList()));
 
-      domain = two_helices_design.strands[3].domains()[0];
+      domain = two_helices_design.strands[3].domains[0];
       expect(state.ui_state.mouseover_datas[0].helix, helix);
       expect(state.ui_state.mouseover_datas[0].offset, offset);
       expect(state.ui_state.mouseover_datas[0].domain, domain);
@@ -5217,9 +5217,9 @@ main() {
       AppState state = app_state_from_design(simple_helix_no_seq_design);
 
       int offset = 8;
-      Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
+      Domain domain0 = simple_helix_no_seq_design.strands.first.domains.first;
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain0, all_helices: false));
-      Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
+      Domain domain1 = simple_helix_no_seq_design.strands.last.domains.first;
       state = app_state_reducer(state, InsertionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
@@ -5252,7 +5252,7 @@ main() {
       //    <-------------I: 3----------------]
       AppState state = app_state_from_design(simple_helix_with_insertion_design);
 
-      Domain domain = simple_helix_with_insertion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_insertion_design.strands.first.domains.first;
       Insertion insertion = domain.insertions.first;
       int length = 5;
       state = app_state_reducer(
@@ -5300,9 +5300,9 @@ main() {
       AppState state = app_state_from_design(simple_helix_no_seq_design);
 
       int offset = 8;
-      Domain domain0 = simple_helix_no_seq_design.strands.first.domains().first;
+      Domain domain0 = simple_helix_no_seq_design.strands.first.domains.first;
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain0, all_helices: false));
-      Domain domain1 = simple_helix_no_seq_design.strands.last.domains().first;
+      Domain domain1 = simple_helix_no_seq_design.strands.last.domains.first;
       state = app_state_reducer(state, DeletionAdd(offset: offset, domain: domain1, all_helices: false));
       String expected_json = r'''
       {
@@ -5334,7 +5334,7 @@ main() {
       // 0  [-------------I: 3--------------->
       //    <-------------I: 3----------------]
       AppState state = app_state_from_design(simple_helix_with_insertion_design);
-      Domain domain = simple_helix_with_insertion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_insertion_design.strands.first.domains.first;
       Insertion insertion = domain.insertions.first;
       //   simple_helix_with_insertion_design
       //
@@ -5377,7 +5377,7 @@ main() {
       // 0  [-------------X--------------->
       //    <-------------X----------------]
       AppState state = app_state_from_design(simple_helix_with_deletion_design);
-      Domain domain = simple_helix_with_deletion_design.strands.first.domains().first;
+      Domain domain = simple_helix_with_deletion_design.strands.first.domains.first;
       //   simple_helix_with_insertion_design
       //     0            16               32
       // 0  [----------------------------->

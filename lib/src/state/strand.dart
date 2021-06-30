@@ -260,13 +260,13 @@ abstract class Strand
 
   @memoized
   BuiltList<SelectableDeletion> get selectable_deletions => [
-        for (var domain in domains())
+        for (var domain in domains)
           for (var deletion in domain.selectable_deletions) deletion
       ].build();
 
   @memoized
   BuiltList<SelectableInsertion> get selectable_insertions => [
-        for (var domain in domains())
+        for (var domain in domains)
           for (var insertion in domain.selectable_insertions) insertion
       ].build();
 
@@ -731,8 +731,8 @@ abstract class Strand
   /// Indicates whether `self` overlaps `other_strand`, meaning that the set of offsets occupied
   /// by `self` has nonempty intersection with those occupied by `other_strand`.
   bool overlaps(Strand other) {
-    for (var substrand_self in domains()) {
-      for (var substrand_other in other.domains()) {
+    for (var substrand_self in domains) {
+      for (var substrand_other in other.domains) {
         if (substrand_self.overlaps(substrand_other)) {
           return true;
         }
