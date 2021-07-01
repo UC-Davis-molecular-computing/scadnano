@@ -361,8 +361,8 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Save:**
   Saves the current design in a `.sc` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-  * **Import/Export cadnano v2:**
-  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+  * **Import cadnano v2:**
+  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. The import function is under the File menu and the export is under the Export menu. 
 
   * **Save design in localStorage on every edit:**
   On every edit, save current design in localStorage (in your web browser). Disabling this minimizes the time needed to render large designs.
@@ -473,11 +473,14 @@ This refers to the menu at the top of the whole app. At the top of the side view
     If checked, then use Cartesian coordinates where increasing y moves up.
     Also invert the x-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
-  * **Show main view Helix circles/idx:**
+  * **Show main view helix circles/idx:**
     Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.
 
   * **Show grid coordinates in side view:**
     Shows grid coordinates in the side view under the helix index.
+
+  * **Show loopout lengths:**
+    Draws the length (number of bases) in each loopout.
 
   * **Show slice bar:**
     Shows a slicebar, which you can drag and move to
@@ -518,6 +521,12 @@ This refers to the menu at the top of the whole app. At the top of the side view
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
     By default the DNA sequences will be output in the same order strands appear in the `.sc` file. A few defaults are available to output them in another order based on their 5' or 3' ends' helix index and case offset.
+
+  * **Export cadnano v2:**
+    Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+
+  * **Export oxDNA:**
+    [oxDNA](https://oxdna.org/) is a program for visualizing 3D structures and doing course-grained kinetic modeling. It represents DNA strands by specifying individual positions of each base. The oxDNA export function calculates these assuming each DNA helix perfectly matches the geometric parameters specified in the scadnano design, e.g., defaults of 0.332 nm / base pair, helix radius 1 nm, etc.
 
 * Help
 
