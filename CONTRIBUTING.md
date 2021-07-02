@@ -112,6 +112,8 @@ Another disadvantage of built_value is that it (as well as OverReact) uses *code
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about errors. Prior to the code generation running, the analyzer will report many errors, because the code written refers to types that don't exist yet, but that will be generated when the compilation is successful. This can make it difficult to track down compilation errors, because some are "real" (i.e., you made a mistake), and some are artifacts of this process that will go away once the compilation is successful. Even worse, OverReact's code generation retains the errors until the analyzer is refreshed; so even after successfully compiling, the analyzer will warn about errors. In WebStorm, this can be refreshed by clicking "Dart Analysis" at the bottom of the screen, and then clicking the "Restart Dart Analysis Server" button (circular red arrow).
 
+See the discussion of the `clean.sh` script below for advice if you are having trouble with mysterious compliation errors.
+
 ### unidirectional data flow architecture of scadnano
 The high-level overview of the way we use the React, Redux, and built libraries is as follows. Graphical user interfaces (GUIs) with lots of user interaction are notoriously difficult to reason about. It's very easy to write a small GUI application with a couple of buttons and a couple of text fields, and to convince yourself that scaling it up to a large application will be as straightforward as scaling up a large non-GUI program. But it's not, for a variety of reasons. It's a bit difficult to describe in one sentence why, but anyone who has written a large GUI application, without some sort of guiding principle beyond "just write more code to make it work" will know exactly what is meant by this.
 
@@ -240,6 +242,8 @@ The webdev program will tell you which URL to enter in your browser; it will be 
 ```
 [INFO] Serving `web` on http://127.0.0.1:8080
 ```
+
+Sometimes you may see an unexpected compilation error even if you haven't changed the code from a state where it was compiling okay. If you've really tried to fix an error and it doesn't seem to be due to a mistake in the code, then as a last resort, try running `./clean.sh`. This will clear out cached files and `.g.dart` files, which can sometimes become stale and need to be regenerated. If you run `./clean.sh`, and the project still does not compile, then it is a genuine syntax error that needs to be fixed.
 
 There are a couple benefits of using `webdev serve`:
 1. Unlike the [dart2js](https://dart.dev/tools/dart2js)
