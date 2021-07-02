@@ -310,17 +310,130 @@ main() {
        <------/
           XYZ      
     */
-    test('self_complementary_strand__both_domains_named__noncomplementary', () {
+    test('self_complementary_strand__both_domains_named__complementary', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
       design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
 
-      expect(design.strands.length, 1);
+      expect(all_strands.length, 1);
 
-      var strand = design.strands[0];
-      var names = [strand.domains[0].name, strand.domains[1].name];
+      var names = [all_strands.domains[0].name, all_strands.domains[1].name];
       expect(names, anyOf([equals(["ABC", "ABC*"]), equals(["XYZ*", "XYZ"])]));
     });
+    /* 0       8
+       |-------|
+         ABC        
+    0  [------\
+       <------/
+          XYZ      
+    */
+    test('self_complementary_strand__both_domains_named__complementary', () {
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+      
+      design = design.strand(0, 0).move(8).with_domain_name("ABC").cross(0).move(-8).with_domain_name("XYZ").commit();
+      
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+
+      expect(all_strands.length, 1);
+
+      var names = [all_strands.domains[0].name, all_strands.domains[1].name];
+      expect(names, anyOf([equals(["ABC", "ABC*"]), equals(["XYZ*", "XYZ"])]));
+    });
+
+    /* 0       8
+       |-------|
+         ABC        
+    0  [------>
+       <------]
+          XYZ      
+    */
+    test('separate_strands__both_domains_named__complementary', () {
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+      
+      design = design.strand(0, 0).move(8).with_domain_name("ABC").commit();
+      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+
+      expect(all_strands.length, 2);
+
+      var names = [all_strands[0].domains[0].name, all_strands[1].domains[0].name];
+      expect(names, anyOf([equals(["ABC", "ABC*"]), equals(["XYZ*", "XYZ"])]));
+    });
+
+    /* 0       8
+       |-------|-
+         ABC        
+    0  [------->
+       <------]
+          XYZ      
+    */
+    test('separate_strands__both_domains_named__noncomplementary', () {
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+      
+      design = design.strand(0, 0).move(9).with_domain_name("ABC").commit();
+      design = design.strand(0, 8).move(-8).with_domain_name("XYZ").commit();
+      
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+
+      expect(all_strands.length, 2);
+
+      expect(all_strands[0].domains[0].name, 'ABC');
+      expect(all_strands[1].domains[0].name, 'ABC');
+    });
+
+    /* 0       8
+       |-------|
+    0  [------>
+       <------]
+    */
+    test('separate_strands__both_domains_not_named__complementary', () {
+      var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+      var design = Design(helices: helices, grid: Grid.square);
+      
+      design = design.strand(0, 0).move(8).commit();
+      design = design.strand(0, 8).move(-8).commit();
+      
+      var action = actions.AssignDomainNameComplementFromBoundStrands(design.strands);
+      var state = app_state_from_design(design);
+      var all_strands = assign_domain_name_complement_from_bound_strands_reducer(design.strands, state, action);
+
+      expect(all_strands.length, 2);
+
+      expect(all_strands[0].domains[0].name, null);
+      expect(all_strands[1].domains[0].name, null);
+    });
+
+    // /* 0       8
+    //    |-------|
+    // 0  [------>
+    //    <------]
+    // */
+    // test('separate_strands__both_domains_not_named__complementary', () {
+    //   var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
+    //   var design = Design(helices: helices, grid: Grid.square);
+      
+    //   design = design.strand(0, 0).move(8).commit();
+    //   design = design.strand(0, 8).move(-8).commit();
+
+    //   expect(design.strands.length, 2);
+
+    //   var names = [design.strands[0].domains[0].name, design.strands[1].domains[0].name];
+    //   expect(names, [null, null]);
+    // });
   });
 }
