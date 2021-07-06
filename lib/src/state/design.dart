@@ -451,9 +451,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var strand1 = strands[i];
       map[strand1] = [];
       for (int j = 0; j < strands.length; j++) {
-        if (i == j) {
-          continue;
-        }
         var strand2 = strands[j];
         if (strand1.overlaps(strand2)) {
           map[strand1].add(strand2);
