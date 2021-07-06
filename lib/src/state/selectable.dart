@@ -131,7 +131,7 @@ abstract class SelectablesStore
       }.build();
 
   BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
-        for (var loopout in strand.loopouts())
+        for (var loopout in strand.loopouts)
           if (selected_loopouts.contains(loopout)) loopout
       }.build();
 

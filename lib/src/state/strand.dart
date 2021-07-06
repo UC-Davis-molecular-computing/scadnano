@@ -167,7 +167,7 @@ abstract class Strand
   }
 
   check_loopouts_length() {
-    for (var loopout in loopouts()) {
+    for (var loopout in loopouts) {
       if (loopout.loopout_length <= 0) {
         throw StrandError(this, 'loopout length must be positive but is ${loopout.loopout_length}');
       }
@@ -409,9 +409,9 @@ abstract class Strand
     if (dna_idx < 0) {
       throw ArgumentError('dna_idx cannot be negative but is ${dna_idx}');
     }
-    if (dna_idx >= dna_length()) {
+    if (dna_idx >= dna_length) {
       throw ArgumentError('dna_idx cannot be greater than dna_length() but dna_idx = ${dna_idx} '
-          'and dna_length() = ${dna_length()}');
+          'and dna_length() = ${dna_length}');
     }
     int dna_idx_cur_ss_start = 0;
     for (var ss in substrands) {
@@ -481,17 +481,21 @@ abstract class Strand
           if (ss.is_domain()) ss as Domain
       ];
 
-  List<Loopout> loopouts() => [
+  @memoized
+  List<Loopout> get loopouts => [
         for (var ss in this.substrands)
           if (ss.is_loopout()) ss
       ];
 
-  List<DNAEnd> ends_5p_not_first() => [for (var ss in domains.sublist(1)) ss.dnaend_5p];
+  @memoized
+  List<DNAEnd> get ends_5p_not_first => [for (var ss in domains.sublist(1)) ss.dnaend_5p];
 
-  List<DNAEnd> ends_3p_not_last() =>
+  @memoized
+  List<DNAEnd> get ends_3p_not_last =>
       [for (var ss in domains.sublist(0, domains.length - 1)) ss.dnaend_3p];
 
-  int dna_length() {
+  @memoized
+  int get dna_length {
     int num = 0;
     for (var substrand in substrands) {
       num += substrand.dna_length();
@@ -575,7 +579,7 @@ abstract class Strand
   Strand set_dna_sequence(String dna_sequence_new) {
     // truncate dna_sequence_new if too long; pad with ?'s if to short
     int seq_len = dna_sequence_new.length;
-    int dna_len_strand = this.dna_length();
+    int dna_len_strand = this.dna_length;
     if (seq_len > dna_len_strand) {
       dna_sequence_new = dna_sequence_new.substring(0, dna_len_strand);
     } else if (seq_len < dna_len_strand) {

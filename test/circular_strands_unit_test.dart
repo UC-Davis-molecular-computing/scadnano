@@ -228,7 +228,7 @@ main() {
       expect(strand.circular, true);
       expect(strand.substrands.length, 4);
 
-      var loopout = strand.loopouts()[0];
+      var loopout = strand.loopouts[0];
       var action = actions.LoopoutLengthChange(loopout, 0);
       strand = loopout_length_change_reducer(strand, action);
 
@@ -606,7 +606,7 @@ main() {
       expect(strand.substrands.length, 4);
       expect(strand.domains.length, 3);
 
-      var loopout = strand.loopouts()[0];
+      var loopout = strand.loopouts[0];
       var action = actions.DeleteAllSelected();
       var state = app_state_from_design(design);
       state = state.rebuild((b) => b
