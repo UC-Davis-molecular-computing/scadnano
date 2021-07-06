@@ -306,7 +306,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Loopout> get loopouts_by_id {
     var builder = MapBuilder<String, Loopout>();
     for (var strand in strands) {
-      for (var loopout in strand.loopouts()) {
+      for (var loopout in strand.loopouts) {
         builder[loopout.id] = loopout;
       }
     }
@@ -2037,7 +2037,7 @@ class StrandError extends IllegalDesignError {
         "  strand 5' end offset =  ${first_substrand.offset_5p}\n"
         "  strand 3' helix      =  ${last_substrand.helix}\n"
         "  strand 3' end offset =  ${last_substrand.offset_3p}\n"
-        '  strand length        =  ${strand.dna_length()}\n'
+        '  strand length        =  ${strand.dna_length}\n'
         '  DNA sequence length  =  ${strand.dna_sequence?.length}\n'
         '  DNA sequence         =  ${strand.dna_sequence}\n'
         "  strand 5' helix      =  ${first_substrand.helix}\n";

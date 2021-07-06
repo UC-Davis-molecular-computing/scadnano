@@ -50,7 +50,7 @@ class DesignFooterComponent extends UiComponent2<DesignFooterProps> {
         var strand = props.strand_first_mouseover_data;
         text += (', ' +
             'domain length: ${domain_length}, ' +
-            'strand length: ${strand.dna_length()}, ' +
+            'strand length: ${strand.dna_length}, ' +
             (strand.name != null ? 'strand name: ${strand.name} ' : ''));
         ;
       }

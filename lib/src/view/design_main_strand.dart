@@ -586,7 +586,7 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
     (strand.name == null ? "" : "    name=${strand.name}\n") +
-    "    length=${strand.dna_length()}\n" +
+    "    length=${strand.dna_length}\n" +
     (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +

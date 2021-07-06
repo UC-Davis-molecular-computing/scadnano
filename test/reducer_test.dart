@@ -3923,7 +3923,7 @@ main() {
       //   TCAGTCAGTCAGTCAG  \_/  T
       AppState state = app_state_from_design(simple_loopout_design);
 
-      Loopout loopout = simple_loopout_design.strands.first.loopouts().first;
+      Loopout loopout = simple_loopout_design.strands.first.loopouts.first;
 
       state = app_state_reducer(state, SelectModesSet([SelectModeChoice.loopout]));
       state = app_state_reducer(state, Select(loopout, only: false, toggle: false));
@@ -4235,7 +4235,7 @@ main() {
       AppState state = app_state_from_design(simple_loopout_design);
 
       // test changing loopout length to 5
-      Loopout loopout = simple_loopout_design.strands.first.loopouts().first;
+      Loopout loopout = simple_loopout_design.strands.first.loopouts.first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 5));
       String expected_json = r'''
       {
@@ -4258,7 +4258,7 @@ main() {
       expect_design_equal(state.design, expected_design);
 
       // test changing loopout length to 3
-      loopout = state.design.strands.first.loopouts().first;
+      loopout = state.design.strands.first.loopouts.first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 3));
       expected_json = r'''
       {
@@ -4292,7 +4292,7 @@ main() {
       AppState state = app_state_from_design(simple_loopout_design);
 
       // test changing loopout length to 0
-      Loopout loopout = simple_loopout_design.strands.first.loopouts().first;
+      Loopout loopout = simple_loopout_design.strands.first.loopouts.first;
       state = app_state_reducer(state, LoopoutLengthChange(loopout, 0));
       String expected_json = r'''
       {

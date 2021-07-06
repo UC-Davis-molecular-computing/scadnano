@@ -512,9 +512,9 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
   } else if (strand_5p.dna_sequence != null && strand_3p.dna_sequence != null) {
     dna = strand_5p.dna_sequence + strand_3p.dna_sequence;
   } else if (strand_5p.dna_sequence == null) {
-    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length() + strand_3p.dna_sequence;
+    dna = constants.DNA_BASE_WILDCARD * strand_5p.dna_length + strand_3p.dna_sequence;
   } else if (strand_3p.dna_sequence == null) {
-    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length();
+    dna = strand_5p.dna_sequence + constants.DNA_BASE_WILDCARD * strand_3p.dna_length;
   }
 
   // include 5' mod from 5' strand and 3' mod from 3' strand.
@@ -525,7 +525,7 @@ Strand join_two_strands_with_substrands(Strand strand1, Strand strand2, List<Sub
   var mods_int = strand_5p.modifications_int.toMap();
   for (int idx in strand_3p.modifications_int.keys) {
     var mod_3p = strand_3p.modifications_int[idx];
-    int new_idx = strand_5p.dna_length() + idx;
+    int new_idx = strand_5p.dna_length + idx;
     mods_int[new_idx] = mod_3p;
   }
 
