@@ -6,6 +6,21 @@ import '../state/strand.dart';
 import '../state/app_state.dart';
 import '../actions/actions.dart' as actions;
 
+BuiltList<Strand> assign_domain_name_complement_from_bound_strands_reducer(
+    BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundStrands action) {
+  List<Domain> computed_domains = [];
+  List<Strand> all_strands = strands.toList();
+  for (var strand_to_assign in action.strands) {
+    int strand_to_assign_idx = strands.indexOf(strand_to_assign);
+    // TODO add unit test for strands_overlapping containing itself if self-overlapping
+    for (var other_strand in state.design.strands_overlapping[strand_to_assign]) {
+      strand_to_assign = compute_domain_name_complements(strand_to_assign, other_strand, computed_domains);
+    }
+    all_strands[strand_to_assign_idx] = strand_to_assign;
+  }
+  return all_strands.build();
+}
+
 Strand compute_domain_name_complements(Strand strand_to, Strand strand_from, List<Domain> computed_domains) {
   List<Substrand> substrands = strand_to.substrands.toList();
   for (int ss_idx = 0; ss_idx < strand_to.substrands.length; ss_idx++) {
@@ -36,18 +51,3 @@ Strand compute_domain_name_complements(Strand strand_to, Strand strand_from, Lis
 
 String complement_domain_name(String name) =>
     name[name.length - 1] == "*" ? name.substring(0, name.length - 1) : name + "*";
-
-BuiltList<Strand> assign_domain_name_complement_from_bound_strands_reducer(
-    BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundStrands action) {
-  List<Domain> computed_domains = [];
-  List<Strand> all_strands = strands.toList();
-  for (var strand_to_assign in action.strands) {
-    int strand_to_assign_idx = strands.indexOf(strand_to_assign);
-    // TODO add unit test for strands_overlapping containing itself if self-overlapping
-    for (var other_strand in state.design.strands_overlapping[strand_to_assign]) {
-      strand_to_assign = compute_domain_name_complements(strand_to_assign, other_strand, computed_domains);
-    }
-    all_strands[strand_to_assign_idx] = strand_to_assign;
-  }
-  return all_strands.build();
-}
