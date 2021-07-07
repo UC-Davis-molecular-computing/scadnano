@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'dart:convert';
 
 import 'package:scadnano/src/json_serializable.dart';
@@ -325,6 +327,7 @@ main() {
       var names = [all_strands[0].domains[0].name, all_strands[0].domains[1].name];
       expect(names, anyOf([equals(["ABC", "ABC*"]), equals(["XYZ*", "XYZ"])]));
     });
+
     /* 0       8
        |-------|
           ABC        
@@ -347,6 +350,7 @@ main() {
       var names = [all_strands[0].domains[0].name, all_strands[0].domains[1].name];
       expect(names, equals(["ABC", "XYZ"]));
     });
+
     /* 0       8
        |-------|
                   
@@ -377,7 +381,7 @@ main() {
        <------]
           XYZ      
     */
-    test('separate_strands__both_domains_named__complementary', () {
+    test('separate_strands__both_domains_named__complementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -401,7 +405,7 @@ main() {
        <------]
           XYZ      
     */
-    test('separate_strands__both_domains_named__noncomplementary', () {
+    test('separate_strands__both_domains_named__noncomplementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -420,10 +424,11 @@ main() {
 
     /* 0       8
        |-------|
+
     0  [------>
        <------]
     */
-    test('separate_strands__both_domains_not_named__complementary', () {
+    test('separate_strands__both_domains_not_named__complementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -442,10 +447,11 @@ main() {
 
     /* 0       8
        |-------|
+
     0  [------>
        <------]
     */
-    test('separate_strands__both_domains_not_named__complementary', () {
+    test('separate_strands__both_domains_not_named__complementary__both_strands_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -462,7 +468,9 @@ main() {
       expect(all_strands[1].domains[0].name, null);
     });
 
-    //Only 1 domain Selected
+    /////////////////////////
+    // Only 1 strand Selected
+
       /* 0       8
        |-------|
           ABC        
@@ -470,7 +478,7 @@ main() {
        <------]
           XYZ      
     */
-    test('separate_strands__both_domains_named__complementary__one_selected', () {
+    test('separate_strands__both_domains_named__complementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -486,6 +494,7 @@ main() {
       expect(all_strands[0].domains[0].name, "XYZ*");
       expect(all_strands[1].domains[0].name, "XYZ");
     });
+
       /* 0     8
        |-------|-
           ABC        
@@ -493,7 +502,7 @@ main() {
        <------]
           XYZ      
     */
-    test('separate_strands__both_domains_named__noncomplementary__one_selected', () {
+    test('separate_strands__both_domains_named__noncomplementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -509,6 +518,7 @@ main() {
       expect(all_strands[0].domains[0].name, "ABC");
       expect(all_strands[1].domains[0].name, "XYZ");
     });
+
       /* 0       8
        |-------|
                   
@@ -516,7 +526,7 @@ main() {
        <------]
                 
     */
-    test('separate_strands__both_domains_not_named__complementary__one_selected', () {
+    test('separate_strands__both_domains_not_named__complementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -532,6 +542,7 @@ main() {
       expect(all_strands[0].domains[0].name, null);
       expect(all_strands[1].domains[0].name, null);
     });
+
       /* 0      8
        |-------|-
                   
@@ -539,7 +550,7 @@ main() {
        <------]
                 
     */
-    test('separate_strands__both_domains_not_named__noncomplementary__one_selected', () {
+    test('separate_strands__both_domains_not_named__noncomplementary__one_strand_selected', () {
       var helices = [Helix(idx: 0, max_offset: 100, grid: Grid.square)];
       var design = Design(helices: helices, grid: Grid.square);
       
@@ -556,6 +567,7 @@ main() {
       expect(all_strands[1].domains[0].name, null);
     });
   });
+
   group('strands_overlapping_unit_test', () {
     List<Helix> helices;
     Design design;
@@ -640,7 +652,7 @@ main() {
 
     /* 0       8
        |-------|
-    0  [------/
+    0  /------/
        \-/<---]
     */
     test('strands_overlapping__multiple_not_perfect_overlap__circular', () {
