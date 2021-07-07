@@ -189,7 +189,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  assign_domain_name_complement_from_bound_strands(){
+  assign_domain_name_complement_from_bound_strands() {
     List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
 
     if (!strands_selected.contains(props.strand)) {
@@ -199,6 +199,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
     app.dispatch(action);
   }
+
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
