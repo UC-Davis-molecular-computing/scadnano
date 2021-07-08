@@ -264,7 +264,7 @@ OxdnaSystem convert_design_to_oxdna_system(Design design) {
   // insert each insertion / deletion as a postive / negative number
   // TODO: report error if there is an insertion/deletion on one Domain and not the other
   for (var strand in design.strands) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       if (domain is Domain) {
         var helix = design.helices[domain.helix];
         for (var insertion in domain.insertions) {
