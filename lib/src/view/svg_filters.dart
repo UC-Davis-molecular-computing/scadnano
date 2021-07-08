@@ -33,6 +33,7 @@ add_shadow_filter(svg.SvgSvgElement elt) {
       'y': '-100%',
       'width': '300%',
       'height': '300%',
+      'filterUnits': 'userSpaceOnUse',
     };
   // not sure why there's no setter provided for this
 //  filter_element.setAttribute('filterUnits', 'userSpaceOnUse');
