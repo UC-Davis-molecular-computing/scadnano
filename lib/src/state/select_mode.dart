@@ -31,7 +31,8 @@ class SelectModeChoice extends EnumClass {
 
   String to_json() => name;
 
-  String display_name() {
+  @memoized
+  String get display_name {
     if (this == end_5p_strand) {
       return "5' strand";
     } else if (this == end_3p_strand) {
@@ -46,7 +47,7 @@ class SelectModeChoice extends EnumClass {
   }
 
   @override
-  String toString() => display_name();
+  String toString() => display_name;
 
   String css_selector() {
     switch (this) {

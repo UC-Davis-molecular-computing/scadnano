@@ -618,7 +618,7 @@ class DesignViewComponent {
   }
 
   render(AppState state) {
-    if (state.has_error()) {
+    if (state.has_error) {
       if (!root_element.children.contains(this.error_message_pane)) {
         this.root_element.children.clear();
         this.root_element.children.add(this.error_message_pane);
