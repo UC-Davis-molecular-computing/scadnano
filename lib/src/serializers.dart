@@ -305,6 +305,7 @@ part 'serializers.g.dart';
   NewDesignSet,
   Design,
   AssignDomainNameComplementFromBoundStrands,
+  AssignDomainNameComplementFromBoundDomains,
   // BrowserClipboard,
   // CLIClipboard,
 ])

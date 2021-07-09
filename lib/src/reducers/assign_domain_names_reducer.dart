@@ -51,3 +51,10 @@ Strand compute_domain_name_complements(Strand strand_to, Strand strand_from, Lis
 
 String complement_domain_name(String name) =>
     name[name.length - 1] == "*" ? name.substring(0, name.length - 1) : name + "*";
+
+/////////////////////////////
+
+BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
+    BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundDomains action) {
+      
+}

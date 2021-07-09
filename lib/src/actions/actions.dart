@@ -2438,6 +2438,29 @@ abstract class AssignDomainNameComplementFromBoundStrands
   int get hashCode;
 }
 
+abstract class AssignDomainNameComplementFromBoundDomains
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundDomains, AssignDomainNameComplementFromBoundDomainsBuilder> {
+  BuiltList<Domain> get domains;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundDomains(Iterable<Domain> domains) {
+    return AssignDomainNameComplementFromBoundDomains.from((b) => b..domains.replace(domains));
+  }
+
+  factory AssignDomainNameComplementFromBoundDomains.from(
+          [void Function(AssignDomainNameComplementFromBoundDomainsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundDomains;
+
+  AssignDomainNameComplementFromBoundDomains._();
+
+  static Serializer<AssignDomainNameComplementFromBoundDomains> get serializer =>
+      _$assignDomainNameComplementFromBoundDomainsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {
