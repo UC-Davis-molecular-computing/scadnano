@@ -520,7 +520,7 @@ abstract class Domain
     return num;
   }
 
-  bool overlaps(Domain other) {
+  bool  overlaps(Domain other) {
     return (this.helix == other.helix &&
         this.forward == (!other.forward) &&
         this.compute_overlap(other) != null);

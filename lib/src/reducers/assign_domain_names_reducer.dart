@@ -52,44 +52,40 @@ String complement_domain_name(String name) =>
     name[name.length - 1] == "*" ? name.substring(0, name.length - 1) : name + "*";
 
 /////////////////////////////
-
 BuiltList<Strand> assign_domain_name_complement_from_bound_domains_reducer(
     BuiltList<Strand> strands, AppState state, actions.AssignDomainNameComplementFromBoundDomains action) {
   List<Domain> computed_domains = [];
-  List<Domain> all_domains = action.domains.toList();
+  var all_strands = strands.toList();
   for (var domain_to_assign in action.domains) {
-    Strand strand_to = state.design.substrand_to_strand[domain_to_assign];
-    for (var other_domain in state.design.domains_on_helix_overlapping(domain_to_assign)) {
-      strand_to = compute_domain_name_complements_for_bound_names(
-          strand_to, domain_to_assign, other_domain, computed_domains);
+    if (!computed_domains.contains(domain_to_assign)) {
+      Strand strand_to = state.design.substrand_to_strand[domain_to_assign];
+      var strand_idx = strands.indexOf(strand_to);
+      for (var other_domain in state.design.domains_on_helix_overlapping(domain_to_assign)) {
+        strand_to = compute_domain_name_complements_for_bound_domains(
+            strand_to, domain_to_assign, other_domain, computed_domains);
+      }
+      all_strands[strand_idx] = strand_to;
     }
   }
-  print(action.domains);
+  return all_strands.build();
 }
 
-Strand compute_domain_name_complements_for_bound_names(
+Strand compute_domain_name_complements_for_bound_domains(
     Strand strand_to, Domain domain_to_assign, Domain other_domain, List<Domain> computed_domains) {
   var substrands = strand_to.substrands.toList();
-  for (int ss_idx = 0; ss_idx < strand_to.substrands.length; ss_idx++) {
-    if (domain_to_assign == substrands[ss_idx]) {
-      int helix_idx = domain_to_assign.helix;
-      List<Domain> domains_on_helix_from = strand_to.domains_on_helix[helix_idx]?.toList() ?? [];
-      for (var domain_from in domains_on_helix_from) {
-        if (domain_to_assign != domain_from &&
-            domain_to_assign.overlaps(domain_from) &&
-            domain_to_assign.start == domain_from.start &&
-            domain_to_assign.end == domain_from.end &&
-            domain_from.name != null &&
-            !computed_domains.contains(domain_to_assign)) {
-          var domain_name_to = complement_domain_name(domain_from.name);
-          domain_to_assign = domain_to_assign.rebuild((b) => b..name = domain_name_to);
-          substrands[ss_idx] = domain_to_assign;
-          computed_domains.add(domain_from);
-          break;
-        }
-      }
-      break;
+  var ss_idx = substrands.indexOf(domain_to_assign); //may have to cast to Substrand
+  if (ss_idx != -1) {
+    if (domain_to_assign != other_domain &&
+        domain_to_assign.start == other_domain.start &&
+        domain_to_assign.end == other_domain.end &&
+        other_domain.name != null &&
+        !computed_domains.contains(domain_to_assign)) {
+      var domain_name_to = complement_domain_name(other_domain.name);
+      domain_to_assign = domain_to_assign.rebuild((b) => b..name = domain_name_to);
+      substrands[ss_idx] = domain_to_assign;
+      computed_domains.add(other_domain);
     }
   }
-  return strand_to.rebuild((b) => b..substrands.replace(substrands));
+  strand_to = strand_to.rebuild((b) => b..substrands.replace(substrands));
+  return strand_to;
 }
