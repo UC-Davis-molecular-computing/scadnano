@@ -330,7 +330,7 @@ assigned, assign the complementary DNA sequence to this strand.
   ''',
           on_click: assign_domain_name_complement_from_bound_strands,
         ),
-        if (domain.id != null)
+        if (app.state.ui_state.select_mode_state.domains_selectable())
           ContextMenuItem(
             title: 'assign domain name complement from bound domains',
             tooltip: '''\
