@@ -94,6 +94,8 @@ class App {
       DivElement app_root_element = querySelector('#top-container');
       this.view = View(app_root_element);
       this.view.render(state);
+      // do next after view renders so that JS SVG pan zoom containers are defined
+      util.set_zoom_speed(store.state.ui_state.zoom_speed);
     }
   }
 

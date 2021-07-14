@@ -54,6 +54,22 @@ import 'actions/actions.dart' as actions;
 const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
     '  ${constants.BUG_REPORT_URL}';
 
+/////////////////////////////////////////////////////////////////////////////
+// interop between Dart and JS
+
+make_dart_function_available_to_js(String js_function_name, Function dart_func) {
+  setProperty(window, js_function_name, allowInterop(dart_func));
+}
+
+@JS()
+external void set_allow_pan(bool allow);
+
+@JS()
+external void set_zoom_speed(double speed);
+
+// END interop between Dart and JS
+/////////////////////////////////////////////////////////////////////////////
+
 final ColorCycler color_cycler = ColorCycler();
 
 class ColorCycler {
@@ -202,13 +218,6 @@ List<int> deltas(Iterable<int> nums) {
   }
   return deltas;
 }
-
-make_dart_function_available_to_js(String js_function_name, Function dart_func) {
-  setProperty(window, js_function_name, allowInterop(dart_func));
-}
-
-@JS()
-external void set_allow_pan(bool allow);
 
 Future<String> get_text_file_content(String url) async =>
     await HttpRequest.getString(url).then((content) => content);
@@ -508,9 +517,11 @@ Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
 }
 
 /// Return closest offset in a helix group where click event occured.
-int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+int find_closest_offset(
+    MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
-  var svg_clicked_point_untransformed = group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+  var svg_clicked_point_untransformed =
+      group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
 
   var range = find_helix_group_min_max(helices_in_group);
   var min_offset = range.x;
@@ -523,7 +534,8 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
 }
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
-BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, Design design, String group_name) {
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
+    int offset, Design design, String group_name) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]) {
@@ -536,7 +548,6 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, 
   }
   return DesignSideRotationData.from_params(design, rotation_params_list).toBuiltList();
 }
-
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address(
@@ -1544,8 +1555,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
           'y = ${event.offset.y},   '
           'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
           'zoom = ${zoom.toStringAsFixed(2)},   '
-  //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
-  //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+          //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+          //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
           'helix = ${helix.idx},   '
           'offset = ${offset},   '
           'forward = ${forward}');
@@ -1556,11 +1567,11 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
     BuiltList<MouseoverData> mouseover_datas = app.state.ui_state.mouseover_datas;
 
     if (needs_update(mouseover_params, mouseover_datas)) {
-  //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
       app.dispatch(
           actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
     } else {
-  //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     }
   }
 }
@@ -1594,7 +1605,6 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
   }
   return needs;
 }
-
 
 Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
   var view_order_inverse = Map<int, int>();

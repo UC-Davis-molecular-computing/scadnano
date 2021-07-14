@@ -57,7 +57,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     geometry ??= constants.default_geometry;
     if (helices == null) {
       if (num_helices == null) {
-        helices = List<Helix>();
+        helices = List<Helix>.empty();
       } else {
         helices = [
           for (int idx in Iterable<int>.generate(num_helices))
@@ -701,6 +701,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var group = all_groups.first;
     return group;
   }
+
+  @memoized
+  Grid get grid => default_group().grid;
 
   /// Throw exception if default group is not being used; otherwise set the grid of the default group.
   set_grid(Grid grid) {
@@ -1777,6 +1780,14 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
             '${groups.keys.join(", ")}');
       }
     }
+  }
+
+  num yaw_of_helix(Helix helix) {
+    return groups[helix.group].yaw;
+  }
+
+  num pitch_of_helix(Helix helix) {
+    return groups[helix.group].pitch;
   }
 }
 
