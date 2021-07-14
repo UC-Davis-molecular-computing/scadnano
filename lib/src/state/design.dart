@@ -140,7 +140,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
     var helix_idxs_of_selected_strands = {
       for (var strand in selected_strands)
-        for (var domain in strand.domains()) domain.helix
+        for (var domain in strand.domains) domain.helix
     };
 
     Set<String> groups_of_selected_strands = {};
@@ -159,7 +159,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Domain, Color> get color_of_domain {
     Map<Domain, Color> map = {};
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         map[domain] = strand.color;
       }
     }
@@ -295,7 +295,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Domain> get domains_by_id {
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         builder[domain.id] = domain;
       }
     }
@@ -306,7 +306,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Loopout> get loopouts_by_id {
     var builder = MapBuilder<String, Loopout>();
     for (var strand in strands) {
-      for (var loopout in strand.loopouts()) {
+      for (var loopout in strand.loopouts) {
         builder[loopout.id] = loopout;
       }
     }
@@ -328,7 +328,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, SelectableDeletion> get deletions_by_id {
     var builder = MapBuilder<String, SelectableDeletion>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         for (var deletion in domain.selectable_deletions) {
           builder[deletion.id] = deletion;
         }
@@ -341,7 +341,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, SelectableInsertion> get insertions_by_id {
     var builder = MapBuilder<String, SelectableInsertion>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         for (var insertion in domain.selectable_insertions) {
           builder[insertion.id] = insertion;
         }
@@ -365,7 +365,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         builder[domain.dnaend_start.id] = domain.dnaend_start;
         builder[domain.dnaend_end.id] = domain.dnaend_end;
       }
@@ -397,7 +397,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         var end = domain.dnaend_5p;
         if (!domain.is_first) {
           builder[end.id] = end;
@@ -411,7 +411,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         var end = domain.dnaend_3p;
         if (!domain.is_last) {
           builder[end.id] = end;
@@ -442,7 +442,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand.
+  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};
@@ -451,9 +451,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var strand1 = strands[i];
       map[strand1] = [];
       for (int j = 0; j < strands.length; j++) {
-        if (i == j) {
-          continue;
-        }
         var strand2 = strands[j];
         if (strand1.overlaps(strand2)) {
           map[strand1].add(strand2);
@@ -469,7 +466,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var domain_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
-        for (Domain domain in strand.domains()) {
+        for (Domain domain in strand.domains) {
           domain_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
         }
       }
@@ -485,7 +482,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         end_to_substrand_builder[domain.dnaend_3p] = domain;
         end_to_substrand_builder[domain.dnaend_5p] = domain;
       }
@@ -551,7 +548,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Address, DNAEnd> get address_to_end {
     var map = Map<Address, DNAEnd>();
     for (var strand in strands) {
-      for (var ss in strand.domains()) {
+      for (var ss in strand.domains) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
           var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
           map[address] = end;
@@ -567,7 +564,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<DNAEnd, Address> get end_to_address {
     var map = Map<DNAEnd, Address>();
     for (var strand in strands) {
-      for (var ss in strand.domains()) {
+      for (var ss in strand.domains) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
           var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
           map[end] = address;
@@ -1263,7 +1260,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_strand_references_legal_helices(Strand strand) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       if (!helices.containsKey(domain.helix)) {
         var err_msg = "domain ${domain} refers to nonexistent Helix index ${domain.helix}; "
             "here is the list of valid helices: ${helices.keys.join(', ')}";
@@ -1273,7 +1270,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_strand_has_legal_offsets_in_helices(Strand strand) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       var helix = helices[domain.helix];
       if (domain.start < helix.min_offset) {
         var err_msg = "domain ${domain} has start offset ${domain.start}, "
@@ -1566,7 +1563,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltList<Domain> get all_domains => [
         for (var strand in strands)
-          for (var domain in strand.domains()) domain
+          for (var domain in strand.domains) domain
       ].build();
 
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
@@ -1749,7 +1746,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   bool get has_insertions_or_deletions {
     for (var strand in strands) {
-      for (var substrand in strand.domains()) {
+      for (var substrand in strand.domains) {
         if (substrand.deletions.isNotEmpty || substrand.insertions.isNotEmpty) {
           return true;
         }
@@ -1980,7 +1977,7 @@ int calculate_default_max_offset(Iterable<Strand> strands) {
   } else {
     greatest_max_offset = strands.first.first_domain.end;
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         if (domain.end > greatest_max_offset) {
           greatest_max_offset = domain.end;
         }
@@ -2037,7 +2034,7 @@ class StrandError extends IllegalDesignError {
         "  strand 5' end offset =  ${first_substrand.offset_5p}\n"
         "  strand 3' helix      =  ${last_substrand.helix}\n"
         "  strand 3' end offset =  ${last_substrand.offset_3p}\n"
-        '  strand length        =  ${strand.dna_length()}\n'
+        '  strand length        =  ${strand.dna_length}\n'
         '  DNA sequence length  =  ${strand.dna_sequence?.length}\n'
         '  DNA sequence         =  ${strand.dna_sequence}\n'
         "  strand 5' helix      =  ${first_substrand.helix}\n";

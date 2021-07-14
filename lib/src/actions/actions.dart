@@ -2415,6 +2415,29 @@ abstract class AssignDNAComplementFromBoundStrands
   int get hashCode;
 }
 
+abstract class AssignDomainNameComplementFromBoundStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundStrands(Iterable<Strand> strands) {
+    return AssignDomainNameComplementFromBoundStrands.from((b) => b..strands.replace(strands));
+  }
+
+  factory AssignDomainNameComplementFromBoundStrands.from(
+          [void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundStrands;
+
+  AssignDomainNameComplementFromBoundStrands._();
+
+  static Serializer<AssignDomainNameComplementFromBoundStrands> get serializer =>
+      _$assignDomainNameComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
 abstract class RemoveDNA
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<RemoveDNA, RemoveDNABuilder> {

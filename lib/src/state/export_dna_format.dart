@@ -50,7 +50,7 @@ Tuple2<int, int> strand_helix_offset_key(Strand strand, StrandOrder strand_order
   } else if (strand_order == StrandOrder.top_left_domain_start) {
     helix_idx = strand.first_domain.helix;
     offset = strand.first_domain.start;
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       if (helix_idx > domain.helix || (helix_idx == domain.helix && offset > domain.start)) {
         helix_idx = domain.helix;
         offset = domain.start;

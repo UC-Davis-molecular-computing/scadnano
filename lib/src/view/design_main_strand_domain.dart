@@ -30,7 +30,7 @@ UiFactory<DesignMainDomainProps> DesignMainDomain = _$DesignMainDomain;
 mixin DesignMainDomainPropsMixin on UiProps {
   Domain domain;
   Color color;
-  String dna_sequence;
+  String dna_sequence; 
 
   Helix helix;
   String strand_tooltip;

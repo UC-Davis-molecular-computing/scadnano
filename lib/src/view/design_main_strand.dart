@@ -189,6 +189,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
+  assign_domain_name_complement_from_bound_strands() {
+    List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+
+    if (!strands_selected.contains(props.strand)) {
+      strands_selected.add(props.strand);
+    }
+
+    var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
+    app.dispatch(action);
+  }
+
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
@@ -198,7 +209,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
@@ -231,7 +242,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _deletions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_deletion in domain.selectable_deletions) {
@@ -304,6 +315,14 @@ If other strands bound to this strand (or the selected strands) have DNA already
 assigned, assign the complementary DNA sequence to this strand.
 ''',
           on_click: assign_dna_complement_from_bound_strands,
+        ),
+        ContextMenuItem(
+          title: 'assign domain name complement from bound strands',
+          tooltip: '''\
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand.
+''',
+          on_click: assign_domain_name_complement_from_bound_strands,
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
@@ -586,7 +605,7 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
     (strand.name == null ? "" : "    name=${strand.name}\n") +
-    "    length=${strand.dna_length()}\n" +
+    "    length=${strand.dna_length}\n" +
     (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
