@@ -344,7 +344,7 @@ Map<int, Helix> helices_assign_svg(
       num y = main_view_svg_y_of_helix(geometry, helix);
       if (prev_helix != null) {
         num delta_y;
-        if (helix.grid.is_none()) {
+        if (helix.grid.is_none) {
           var prev_pos = prev_helix.position_;
           var pos = helix.position_;
           delta_y = pos.distance_xy(prev_pos) * geometry.nm_to_svg_pixels;
@@ -371,12 +371,12 @@ Map<int, Helix> helices_assign_svg(
 }
 
 num main_view_svg_x_of_helix(Geometry geometry, Helix helix) {
-  num x = helix.position3d().z * geometry.nm_to_svg_pixels;
+  num x = helix.position3d.z * geometry.nm_to_svg_pixels;
   return x;
 }
 
 num main_view_svg_y_of_helix(Geometry geometry, Helix helix) {
-  num y = helix.position3d().y * geometry.nm_to_svg_pixels;
+  num y = helix.position3d.y * geometry.nm_to_svg_pixels;
   return y;
 }
 
@@ -471,7 +471,7 @@ Helix find_closest_helix(
     var group = groups[helix.group];
     var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
     var dist = distance_to_rectangle(
-        svg_clicked_point, helix_upper_left_corner, helix.svg_width(), helix.svg_height(), group.pitch);
+        svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
     if (min_dist == null || min_dist > dist) {
       min_dist = dist;
       closest_helix = helix;
@@ -559,7 +559,7 @@ Address find_closest_address(
   var group = groups[helix.group];
   var helix_upper_left_corner = group.transform_point_main_view(helix.svg_position, geometry);
   var closest_point_in_helix = closest_point_in_rectangle(
-      svg_clicked_point, helix_upper_left_corner, helix.svg_width(), helix.svg_height(), group.pitch);
+      svg_clicked_point, helix_upper_left_corner, helix.svg_width, helix.svg_height, group.pitch);
 
   var closest_point_in_helix_untransformed =
       group.transform_point_main_view(closest_point_in_helix, geometry, inverse: true);

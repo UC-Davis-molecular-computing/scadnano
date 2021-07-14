@@ -183,12 +183,12 @@ main() {
     // ensure x and z are swapped after reading in
     //TODO: test for swapping x and z positions in versions < 0.9.0 temporarily disabled until
     // codenano/scadnano versions are aligned
-   expect(design.helices[0].position3d().x, 30);
-   expect(design.helices[0].position3d().y, 60);
-   expect(design.helices[0].position3d().z, 10);
-   expect(design.helices[1].position3d().x, 50);
-   expect(design.helices[1].position3d().y, 80);
-   expect(design.helices[1].position3d().z, 20);
+   expect(design.helices[0].position3d.x, 30);
+   expect(design.helices[0].position3d.y, 60);
+   expect(design.helices[0].position3d.z, 10);
+   expect(design.helices[1].position3d.x, 50);
+   expect(design.helices[1].position3d.y, 80);
+   expect(design.helices[1].position3d.z, 20);
   });
 
   group('strand_maker_tests', () {

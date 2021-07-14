@@ -462,12 +462,12 @@ BuiltMap<int, Helix> helix_grid_change_reducer(
     var helix = helices[idx];
     HelixBuilder helix_builder = helix.toBuilder();
     helix_builder.grid = action.grid;
-    if (!action.grid.is_none() && helix.grid_position == null) {
+    if (!action.grid.is_none && helix.grid_position == null) {
       helix_builder.grid_position =
           util.position3d_to_grid_position(helix.position, action.grid, geometry).toBuilder();
       helix_builder.position_ = null;
     }
-    if (action.grid.is_none() && helix.position_ == null) {
+    if (action.grid.is_none && helix.position_ == null) {
       helix_builder.grid_position = null;
       //NOTE: it's important to use helix.grid (i.e., the OLD grid, since util.grid_to_position3d will crash
       // if given the none grid)

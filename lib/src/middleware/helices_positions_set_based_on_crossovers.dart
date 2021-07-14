@@ -283,8 +283,8 @@ List<RollXY> _calculate_rolls_and_positions(
 
   Geometry geometry = design.geometry;
 
-  double z = helices[0].position3d().z;
-  double y = helices[0].position3d().y;
+  double z = helices[0].position3d.z;
+  double y = helices[0].position3d.y;
   List<RollXY> rollxys = [RollXY(roll: first_roll, x: z, y: y)];
 
   for (int i = 0; i < addresses.length; i++) {
@@ -329,7 +329,7 @@ List<actions.UndoableAction> set_rolls_and_positions(List<Helix> helices, List<R
     var helix = helices[i];
     var rollxy = rolls_and_positions[i];
     var roll_action = actions.HelixRollSet(helix_idx: helix.idx, roll: rollxy.roll);
-    var position = Position3D(x: rollxy.x, y: rollxy.y, z: helix.position3d().z);
+    var position = Position3D(x: rollxy.x, y: rollxy.y, z: helix.position3d.z);
     var pos_action = actions.HelixPositionSet(helix_idx: helix.idx, position: position);
     all_actions.add(roll_action);
     all_actions.add(pos_action);
