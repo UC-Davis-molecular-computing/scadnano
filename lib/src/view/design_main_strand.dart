@@ -210,7 +210,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     var action = actions.AssignDomainNameComplementFromBoundDomains(domains_selected);
     app.dispatch(action);
   }
-
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
@@ -330,18 +329,18 @@ assigned, assign the complementary DNA sequence to this strand.
         ContextMenuItem(
           title: 'assign domain name complement from bound strands',
           tooltip: '''\
-  If other strands bound to this strand (or the selected strands) have domain names already 
-  assigned, assign the complementary domain names sequence to this strand.
-  ''',
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand.
+''',
           on_click: assign_domain_name_complement_from_bound_strands,
         ),
         if (app.state.ui_state.select_mode_state.domains_selectable())
           ContextMenuItem(
             title: 'assign domain name complement from bound domains',
             tooltip: '''\
-  If other domains bound to this domain (or the selected domains) have domain names already 
-  assigned, assign the complementary domain names sequence to this domain.
-  ''',
+If other domains bound to this domain (or the selected domains) have domain names already 
+assigned, assign the complementary domain names sequence to this domain.
+''',
             on_click: () => assign_domain_name_complement_from_bound_domains(domain),
           ),
         if (strand.dna_sequence != null)
