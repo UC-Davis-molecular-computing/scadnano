@@ -145,6 +145,8 @@ bool modification_display_connector_reducer(bool _, actions.SetModificationDispl
 
 num modification_font_size_reducer(num _, actions.ModificationFontSizeSet action) => action.font_size;
 
+num zoom_speed_reducer(num _, actions.ZoomSpeedSet action) => action.speed;
+
 num domain_name_font_size_reducer(num _, actions.DomainNameFontSizeSet action) => action.font_size;
 
 num strand_name_font_size_reducer(num _, actions.StrandNameFontSizeSet action) => action.font_size;
@@ -376,6 +378,9 @@ AppUIStateStorables app_ui_state_storable_local_reducer(AppUIStateStorables stor
     ..modification_font_size = TypedReducer<num, actions.ModificationFontSizeSet>(
         modification_font_size_reducer)(
         storables.modification_font_size, action)
+    ..zoom_speed = TypedReducer<num, actions.ZoomSpeedSet>(
+        zoom_speed_reducer)(
+        storables.zoom_speed, action)
     ..major_tick_offset_font_size =
     TypedReducer<num, actions.MajorTickOffsetFontSizeSet>(major_tick_offset_font_size_reducer)(
         storables.major_tick_offset_font_size, action)

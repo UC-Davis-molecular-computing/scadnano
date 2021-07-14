@@ -3336,19 +3336,32 @@ abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Aut
   static Serializer<Autobreak> get serializer => _$autobreakSerializer;
 }
 
-// // copy selected object details
-// abstract class CopySelectedObjectTextToSystemClipboard
-//     with BuiltJsonSerializable
-//     implements
-//         Action,
-//         Built<CopySelectedObjectTextToSystemClipboard, CopySelectedObjectTextToSystemClipboardBuilder> {
-//   /************************ begin BuiltValue boilerplate ************************/
-//   factory CopySelectedObjectTextToSystemClipboard(
-//           [void Function(CopySelectedObjectTextToSystemClipboardBuilder) updates]) =
-//       _$CopySelectedObjectTextToSystemClipboard;
-//
-//   CopySelectedObjectTextToSystemClipboard._();
-//
-//   static Serializer<CopySelectedObjectTextToSystemClipboard> get serializer =>
-//       _$copySelectedObjectTextToSystemClipboardSerializer;
-// }
+abstract class ZoomSpeedSet
+    with BuiltJsonSerializable
+    implements Action, Built<ZoomSpeedSet, ZoomSpeedSetBuilder> {
+  num get speed;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ZoomSpeedSet({num speed}) = _$ZoomSpeedSet._;
+
+  ZoomSpeedSet._();
+
+  static Serializer<ZoomSpeedSet> get serializer => _$zoomSpeedSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxdnaExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxdnaExport, OxdnaExportBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxdnaExport() = _$OxdnaExport;
+
+  OxdnaExport._();
+
+  static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
+}

@@ -7,17 +7,13 @@ import 'package:path/path.dart' as path;
 import 'package:over_react/over_react.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:scadnano/src/state/dna_end.dart';
-import 'package:scadnano/src/state/domain.dart';
 import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
-import 'package:tuple/tuple.dart';
 import '../state/dialog.dart';
-import '../state/edit_mode.dart';
 import '../state/example_designs.dart';
 import '../state/export_dna_format.dart';
 import '../state/grid.dart';
 import '../state/local_storage_design_choice.dart';
-import '../state/select_mode.dart';
 import '../view/menu_number.dart';
 import '../view/redraw_counter_component_mixin.dart';
 import '../view/react_bootstrap.dart';
@@ -50,6 +46,7 @@ UiFactory<MenuProps> ConnectedMenu = connect<AppState, MenuProps>(
       ..show_mismatches = state.ui_state.show_mismatches
       ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
       ..strand_paste_keep_color = state.ui_state.strand_paste_keep_color
+      ..zoom_speed = state.ui_state.zoom_speed
       ..autofit = state.ui_state.autofit
       ..only_display_selected_helices = state.ui_state.only_display_selected_helices
 //    ..grid = state.design?.grid
@@ -96,6 +93,7 @@ mixin MenuPropsMixin on UiProps {
   bool show_strand_names;
   num domain_name_font_size;
   num strand_name_font_size;
+  num zoom_speed;
   bool show_modifications;
   num modification_font_size;
   num major_tick_offset_font_size;
@@ -218,15 +216,7 @@ really want to exit without saving.'''
         ..onChange = ((e) => request_load_file_from_file_chooser(e.target, cadnano_file_loaded))
         ..display = 'Import cadnano v2'
         ..key = 'import-cadnano')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
-        ..display = 'Export cadnano v2'
-        ..key = 'export-cadnano')(),
-      (MenuDropdownItem()
-        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
-        ..display = 'Export codenano'
-        ..key = 'export-codenano')(),
-      DropdownDivider({'key': 'divider-export'}),
+      DropdownDivider({'key': 'divider-import-cadnano'}),
       ...file_menu_save_design_local_storage_options(),
       DropdownDivider({'key': 'divide-clear-helix-selection-when-loading-new-design'}),
       (MenuBoolean()
@@ -497,6 +487,8 @@ It uses cadnano code that crashes on many designs, so it is not guaranteed to wo
       DropdownDivider({'key': 'divider-major-tick-offsets'}),
       ...view_menu_display_major_tick_widths(),
       DropdownDivider({'key': 'divider-major-tick-widths'}),
+      ...view_menu_zoom_speed(),
+      DropdownDivider({'key': 'divider-zoom_speed'}),
       ...view_menu_misc()
     ];
     return NavDropdown({
@@ -625,7 +617,7 @@ helix with the opposite orientation.'''
     ];
   }
 
-  List view_menu_display_major_tick_widths() {
+  List<ReactElement> view_menu_display_major_tick_widths() {
     return [
       (MenuBoolean()
         ..value = props.display_major_tick_widths
@@ -650,6 +642,19 @@ helix with the opposite orientation.'''
         ..tooltip = 'Adjust to change the font size of major tick offsets.'
         ..on_new_value = ((num font_size) => props.dispatch(actions.MajorTickWidthFontSizeSet(font_size)))
         ..key = 'major-tick-width-font-size')(),
+    ];
+  }
+
+  List<ReactElement> view_menu_zoom_speed() {
+    return [
+      (MenuNumber()
+        ..display = 'Zoom speed'
+        ..default_value = props.zoom_speed
+        ..min_value = 0
+        ..step = 0.05
+        ..tooltip = 'The speed at which the mouse wheel or two-finger scroll zooms the view in and out.'
+        ..on_new_value = ((num new_zoom_speed) => props.dispatch(actions.ZoomSpeedSet(speed: new_zoom_speed)))
+        ..key = 'zoom-speed')(),
     ];
   }
 
@@ -771,6 +776,19 @@ In a large design, this can slow down the performance, so uncheck it when not in
       (MenuDropdownItem()
         ..on_click = ((_) => app.disable_keyboard_shortcuts_while(export_dna))
         ..display = 'DNA sequences')(),
+      DropdownDivider({'key': 'divider-not-full-design'}),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCadnanoFile()))
+        ..display = 'Export cadnano v2'
+        ..key = 'export-cadnano')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.ExportCodenanoFile()))
+        ..display = 'Export codenano'
+        ..key = 'export-codenano')(),
+      (MenuDropdownItem()
+        ..on_click = ((_) => props.dispatch(actions.OxdnaExport()))
+        ..display = 'Export oxDNA'
+        ..key = 'export-oxdna')(),
     );
   }
 
@@ -913,11 +931,13 @@ However, it may be less stable than the main site.'''
     int idx_strand_order_str = 5;
 
     List<DialogItem> items = [null, null, null, null, null, null];
-    items[idx_include_scaffold] =DialogCheckbox(label: 'include scaffold', value: false);
-    items[idx_include_only_selected_strands] = DialogCheckbox(label: 'include only selected strands', value: false);
+    items[idx_include_scaffold] = DialogCheckbox(label: 'include scaffold', value: false);
+    items[idx_include_only_selected_strands] =
+        DialogCheckbox(label: 'include only selected strands', value: false);
     items[idx_format_str] = DialogRadio(label: 'designs', options: export_options);
     items[idx_sort] = DialogCheckbox(label: 'sort strands', value: false);
-    items[idx_column_major] = DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
+    items[idx_column_major] =
+        DialogCheckbox(label: 'column-major order (uncheck for row-major order)', value: true);
     items[idx_strand_order_str] = DialogRadio(label: 'strand part to sort by', options: sort_options);
 
     var dialog = Dialog(title: 'export DNA sequences', items: items, disable_when_any_checkboxes_off: {

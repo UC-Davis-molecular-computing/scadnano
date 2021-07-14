@@ -329,7 +329,7 @@ Otherwise, the distances between pairs of helices with *adjacent indices* will b
 
 ## Navigation and control
 
-**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
+**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. The zoom speed can be controlled under the View menu. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
 
 **Undo/redo:**
 Pressing Ctrl+Z will undo the last action that changed the design.
@@ -361,8 +361,8 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Save:**
   Saves the current design in a `.sc` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-  * **Import/Export cadnano v2:**
-  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+  * **Import cadnano v2:**
+  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. The import function is under the File menu and the export is under the Export menu. 
 
   * **Save design in localStorage on every edit:**
   On every edit, save current design in localStorage (in your web browser). Disabling this minimizes the time needed to render large designs.
@@ -457,6 +457,9 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Display major tick widths:**
   If checked, integer distances between adjacent major tick marks are displayed just above the center point between them. Since major tick marks are often used to indicate interesting domains/sub-domains of DNA strands, this can be used to quickly see the length of those domains. (But major tick marks are not explicitly tied to the Domains on Strands defined in the DNADesign.) This can be on only the top helix, or on all helices.
 
+  * **Zoom speed:**
+  This controls the speed at which the mouse wheel or two-finger scroll zooms in and out of the main view and side view.
+
   * **auto-fit on loading new design:**
     When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
 
@@ -470,11 +473,14 @@ This refers to the menu at the top of the whole app. At the top of the side view
     If checked, then use Cartesian coordinates where increasing y moves up.
     Also invert the x-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
-  * **Show main view Helix circles/idx:**
+  * **Show main view helix circles/idx:**
     Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.
 
   * **Show grid coordinates in side view:**
     Shows grid coordinates in the side view under the helix index.
+
+  * **Show loopout lengths:**
+    Draws the length (number of bases) in each loopout.
 
   * **Show slice bar:**
     Shows a slicebar, which you can drag and move to
@@ -515,6 +521,12 @@ This refers to the menu at the top of the whole app. At the top of the side view
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
     By default the DNA sequences will be output in the same order strands appear in the `.sc` file. A few defaults are available to output them in another order based on their 5' or 3' ends' helix index and case offset.
+
+  * **Export cadnano v2:**
+    Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+
+  * **Export oxDNA:**
+    [oxDNA](https://oxdna.org/) is a program for visualizing 3D structures and doing course-grained kinetic modeling. It represents DNA strands by specifying individual positions of each base. The oxDNA export function calculates these assuming each DNA helix perfectly matches the geometric parameters specified in the scadnano design, e.g., defaults of 0.332 nm / base pair, helix radius 1 nm, etc.
 
 * Help
 
