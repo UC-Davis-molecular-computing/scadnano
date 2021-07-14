@@ -199,8 +199,13 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
     app.dispatch(action);
   }
-  assign_domain_name_complement_from_bound_domains() {
+
+  assign_domain_name_complement_from_bound_domains(Domain domain) {
     List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
+
+    if (!domains_selected.contains(domain)) {
+      domains_selected.add(domain);
+    }
 
     var action = actions.AssignDomainNameComplementFromBoundDomains(domains_selected);
     app.dispatch(action);
@@ -337,7 +342,7 @@ assigned, assign the complementary DNA sequence to this strand.
   If other domains bound to this domain (or the selected domains) have domain names already 
   assigned, assign the complementary domain names sequence to this domain.
   ''',
-            on_click: assign_domain_name_complement_from_bound_domains,
+            on_click: () => assign_domain_name_complement_from_bound_domains(domain),
           ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
