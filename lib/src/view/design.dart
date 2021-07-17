@@ -54,6 +54,7 @@ const SIDE_VIEW_SVG_ID = 'side-view-svg';
 const MAIN_VIEW_SVG_ID = 'main-view-svg';
 
 const PANZOOMABLE_CLASS = 'panzoomable';
+const DRAGGING_CLASS = 'dragging';
 const SELECTION_BOX_DRAWABLE_CLASS = 'selection-box-drawable';
 
 enum DraggableComponent { main, side }
@@ -215,7 +216,7 @@ class DesignViewComponent {
 
     main_view_svg.onMouseMove.listen((MouseEvent event) {
       // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
-      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
+      bool left_mouse_button_is_down = util.left_mouse_button_pressed_during_mouse_event(event);
 
       // move potential crossover
       main_view_mouse_position = event.client;
@@ -234,7 +235,7 @@ class DesignViewComponent {
       }
 
       // move slice bar
-      if (left_click_down && app.state.ui_state.slice_bar_is_moving) {
+      if (left_mouse_button_is_down && app.state.ui_state.slice_bar_is_moving) {
         String displayed_group_name = app.state.ui_state.displayed_group_name;
         var group = app.state.design.groups[displayed_group_name];
         var helices_in_group = app.state.design.helices_in_group(displayed_group_name).values;
@@ -247,7 +248,7 @@ class DesignViewComponent {
       }
 
       // DNAEnds, Strands, and HelixGroup move only should happen while left click is enabled
-      if (left_click_down) {
+      if (left_mouse_button_is_down) {
         // move selected DNA ends
         DNAEndsMove moves_store = app.store_dna_ends_move.state;
         if (moves_store != null) {
@@ -278,7 +279,7 @@ class DesignViewComponent {
         // if strands were on many groups, so it's safe to execute this, IF copy is true.
         // If moving, then we rely on the error-checking code next to warn the user
         // about strands being in multiple groups.
-        if (strands_move.copy || left_click_down) {
+        if (strands_move.copy || left_mouse_button_is_down) {
           var group_names = group_names_of_strands(strands_move);
           if (group_names != null && group_names.length != 1) {
             var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
@@ -304,7 +305,7 @@ class DesignViewComponent {
       // move selected Domains
       DomainsMove domains_move = app.state.ui_state.domains_move;
       if (domains_move != null) {
-        if (left_click_down) {
+        if (left_mouse_button_is_down) {
           var group_names = group_names_of_domains(domains_move);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
@@ -409,27 +410,34 @@ class DesignViewComponent {
     });
 
     // listen for clicks in rope select view to add points
-    main_view_svg.onMouseDown.listen((MouseEvent event) {
-      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
-      if (app.state.ui_state.selection_rope != null && left_click_down && edit_mode_is_rope_select()) {
-        bool is_main_view = true;
-        var view_svg = main_view_svg;
-        Point<num> point =
-            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
-        app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
-      }
-    });
+    for (var svg_elt in [main_view_svg, side_view_svg]) {
+      bool is_main_view = (svg_elt == main_view_svg);
+      svg_elt.onMouseDown.listen((MouseEvent event) {
+        bool left_click = util.left_mouse_button_pressed_during_mouse_event(event);
+        if (app.state.ui_state.selection_rope != null && left_click && edit_mode_is_rope_select()) {
+          Point<num> point =
+              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
+          app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
+        }
+      });
+    }
 
-    side_view_svg.onMouseDown.listen((MouseEvent event) {
-      bool left_click_down = util.left_mouse_button_pressed_during_mouse_event(event);
-      if (app.state.ui_state.selection_rope != null && left_click_down && edit_mode_is_rope_select()) {
-        bool is_main_view = false;
-        var view_svg = side_view_svg;
-        Point<num> point =
-            util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, view_svg);
-        app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
-      }
-    });
+    // open/close grabbing hand
+    for (var svg_elt in [main_view_svg, side_view_svg]) {
+      // close grabbing hand if mouse key is going down
+      svg_elt.onMouseDown.listen((MouseEvent event) {
+        if (util.left_mouse_button_caused_mouse_event(event)) {
+          svg_elt.classes.add(DRAGGING_CLASS);
+        }
+      });
+
+      // open grabbing hand if mouse key is going up
+      svg_elt.onMouseUp.listen((MouseEvent event) {
+        if (util.left_mouse_button_caused_mouse_event(event)) {
+          svg_elt.classes.remove(DRAGGING_CLASS);
+        }
+      });
+    }
 
 //XXX: this does NOT get fired when Draggable is running things, in particular when the user
 // did Ctrl+mouse or Shift+mouse to drag a selection box over items and raised the mouse button to
