@@ -49,15 +49,6 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
     }
   }
 
-  // @override
-  // void componentDidMount() {
-  //   print(state.container);
-  //     setState(newState()
-  //       ..width = state.container.current.offsetWidth
-  //       ..height = state.container.current.offsetHeight
-  //     );
-  //   }
-
   @override
   render() {
     if (props.context_menu == null) {
@@ -79,31 +70,82 @@ class DesignContextMenuComponent extends UiStatefulComponent2<DesignContextMenuP
         ..className = 'context-menu-list'
         )(props.context_menu.items.map(menuItemToLi)));
   }
+}
 
-  ReactElement menuItemToLi(ContextMenuItem item)
-  {
-    List<ReactElement> children = [];
+UiFactory<DesignContextSubmenuProps> DesignContextSubmenu = _$DesignContextSubmenu;
 
-    for (var nested in item.nested ?? [])
-      children.add(menuItemToLi(nested));
-    
-    return (Dom.li()
-        ..key = item.title
-        ..className = children.isEmpty ? '' : 'has-submenu'
-        )(
-          (Dom.span()
-            ..title = item.tooltip ?? ""
-            ..onClick = item.on_click != null ? (_) {
-              app.dispatch(actions.ContextMenuHide());
-              item.on_click();
-            } : null
-            ..className = 'context-menu-item'
-            )(item.title),
-          children.isEmpty ? null : (Dom.div()
-            ..className = 'context-menu'
-            )((Dom.ul()
-              ..className = 'context-menu-list'
-              )(children)),
-        );
+mixin DesignContextSubmenuProps on UiProps {
+  ContextMenu context_menu;
+}
+
+mixin DesignContextSubmenuState on UiState {
+  num width;
+  num height;
+  num left;
+  num top;
+  Ref<DivElement> container;
+}
+
+class DesignContextSubmenuComponent extends UiStatefulComponent2<DesignContextSubmenuProps, DesignContextSubmenuState> with PureComponent {
+
+  @override
+  Map get initialState => (newState()
+    ..width = 0
+    ..height = 0
+    ..left = 0
+    ..top = 0
+    ..container = createRef()
+  );
+
+  @override
+  void componentDidMount() {
+      setState(newState()
+        ..width = state.container.current.offsetWidth
+        ..height = state.container.current.offsetHeight
+        ..left = state.container.current.getBoundingClientRect().left
+        ..top = state.container.current.getBoundingClientRect().top
+      );
   }
+
+  @override
+  render() {
+    // this shouldn't fire, submenus should never have null ContextMenus
+    if (props.context_menu == null) {
+      return null;
+    }
+
+    var classList = [
+      'context-menu',
+      state.left + state.width > window.innerWidth ? 'left' : 'right',
+      state.top + state.height > window.innerHeight ? 'top' : 'bottom',
+    ];
+
+    return (Dom.div()
+      ..ref = state.container
+      ..className = classList.join(' ')
+      ..id = 'context-menu'
+      )((Dom.ul()
+        ..className = 'context-menu-list'
+        )(props.context_menu.items.map(menuItemToLi)));
+  }
+}
+
+ReactElement menuItemToLi(ContextMenuItem item)
+{
+  var hasChildren = item.nested != null;
+  
+  return (Dom.li()
+      ..key = item.title
+      ..className = hasChildren ? 'has-submenu' : ''
+      )(
+        (Dom.span()
+          ..title = item.tooltip ?? ""
+          ..onClick = item.on_click != null ? (_) {
+            app.dispatch(actions.ContextMenuHide());
+            item.on_click();
+          } : null
+          ..className = 'context-menu-item'
+          )(item.title),
+        hasChildren ? (DesignContextSubmenu()..context_menu = ContextMenu(items: item.nested))() : null
+      );
 }

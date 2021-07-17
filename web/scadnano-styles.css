@@ -193,13 +193,27 @@ html, body {
 }
 
 .has-submenu .context-menu {
-    top: 0 !important;
-    left: 100% !important;
-    display: none;
+    visibility: hidden;
+}
+
+.context-menu.right {
+    left: 100%;
+}
+
+.context-menu.left {
+    right: 100%;
+}
+
+.context-menu.top {
+    bottom: 0;
+}
+
+.context-menu.bottom {
+    top: 0;
 }
 
 .has-submenu:hover .context-menu {
-    display: block;
+    visibility: visible;
 }
 
 .context-menu-item {
