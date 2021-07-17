@@ -375,6 +375,12 @@ class DesignViewComponent {
         uninstall_draggable(true, DraggableComponent.main);
         uninstall_draggable(false, DraggableComponent.side);
 
+        // restore panzoomable class to change CSS cursor
+        for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+          svg_elt.classes.add(PANZOOMABLE_CLASS);
+          svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
+        }
+
         // if rope-selecting, send actions to select items and remove displayed rope
         if (edit_mode_is_rope_select()) {
           // print('key up: ${key}');
@@ -409,24 +415,20 @@ class DesignViewComponent {
       }
     });
 
-    // listen for clicks in rope select view to add points
+    // listen for clicks in rope select mode, and also open/close grabbing hand through CSS classes
     for (var svg_elt in [main_view_svg, side_view_svg]) {
       bool is_main_view = (svg_elt == main_view_svg);
       svg_elt.onMouseDown.listen((MouseEvent event) {
-        bool left_click = util.left_mouse_button_pressed_during_mouse_event(event);
-        if (app.state.ui_state.selection_rope != null && left_click && edit_mode_is_rope_select()) {
-          Point<num> point =
-              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
+        // listen for clicks in rope select view to add points
+        bool left_click = util.left_mouse_button_caused_mouse_event(event);
+        bool selection_rope_exists = app.state.ui_state.selection_rope != null;
+        if (selection_rope_exists && left_click && edit_mode_is_rope_select()) {
+          Point<num> point = util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, is_main_view, svg_elt);
           app.dispatch(actions.SelectionRopeAddPoint(point: point, is_main_view: is_main_view));
         }
-      });
-    }
 
-    // open/close grabbing hand
-    for (var svg_elt in [main_view_svg, side_view_svg]) {
-      // close grabbing hand if mouse key is going down
-      svg_elt.onMouseDown.listen((MouseEvent event) {
-        if (util.left_mouse_button_caused_mouse_event(event)) {
+        // close grabbing hand if mouse key is going down
+        if (left_click) {
           svg_elt.classes.add(DRAGGING_CLASS);
         }
       });
@@ -490,13 +492,25 @@ class DesignViewComponent {
   }
 
   handle_keyboard_shortcuts(int key, KeyboardEvent ev) {
+    // if ((edit_mode_is_select_or_rope_select() || edit_mode_is_move_group()) &&
     if ((edit_mode_is_select() || edit_mode_is_move_group()) &&
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
+      //NOTE: we don't want to install_draggable in rope select mode, because that disrupts the
+      // event handlers for mouse clicks needed to detect when clicking to add a point.
+      // So we repeat the logic for adding SELECTION_BOX_DRAWABLE_CLASS and removing PANZOOMABLE_CLASS
+      // in an else if clause below
+
       // start drag mode to either draw selection box or translate helix group
       install_draggable(true, DraggableComponent.main, main_view_svg);
       install_draggable(false, DraggableComponent.side, side_view_svg);
+
+      // remove panzoomable class to change CSS cursor
+      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+        svg_elt.classes.remove(PANZOOMABLE_CLASS);
+        svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
+      }
     } else if (!ev.ctrlKey &&
         !ev.metaKey &&
         !ev.shiftKey &&
@@ -516,10 +530,20 @@ class DesignViewComponent {
         (key == constants.KEY_CODE_TOGGLE_SELECT ||
             key == constants.KEY_CODE_TOGGLE_SELECT_MAC ||
             key == constants.KEY_CODE_SELECT)) {
+      // Below repeats some logic from above just after calling install_draggable,
+      // but we don't want the draggable installed in rope select mode.
+      // remove panzoomable class to change CSS cursor
+      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
+        svg_elt.classes.remove(PANZOOMABLE_CLASS);
+        svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
+      }
+
+      // We do want to turn off panning in rope select mode.
+      util.set_allow_pan(false);
+
       // start drawing selection rope, or continue it
       bool toggle = key != constants.KEY_CODE_SELECT;
       app.dispatch(actions.SelectionRopeCreate(toggle: toggle));
-      // print('key pressed: ${key}');
     }
 
     // Ctrl+C/Ctrl+V for copy/paste
@@ -559,12 +583,6 @@ class DesignViewComponent {
       if (app.store_selection_box.state != null) {
         app.dispatch(actions.SelectionBoxRemove(is_main_view));
       }
-
-      // restore panzoomable class to change CSS cursor
-      for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-        svg_elt.classes.add(PANZOOMABLE_CLASS);
-        svg_elt.classes.remove(SELECTION_BOX_DRAWABLE_CLASS);
-      }
     }
   }
 
@@ -576,12 +594,6 @@ class DesignViewComponent {
     draggable.onDragStart.listen((ev) => drag_start(ev, view_svg, is_main_view));
     draggable.onDrag.listen((ev) => drag(ev, view_svg, is_main_view));
     draggable.onDragEnd.listen((ev) => drag_end(ev, view_svg, is_main_view));
-
-    // remove panzoomable class to change CSS cursor
-    for (var svg_elt in [this.main_view_svg, this.side_view_svg]) {
-      svg_elt.classes.remove(PANZOOMABLE_CLASS);
-      svg_elt.classes.add(SELECTION_BOX_DRAWABLE_CLASS);
-    }
   }
 
   drag_start(DraggableEvent draggable_event, svg.SvgSvgElement view_svg, bool is_main_view) {
