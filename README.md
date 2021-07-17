@@ -32,6 +32,7 @@ If you find scadnano useful in a scientific project, please cite its associated 
 * [Assigning DNA](#assigning-dna)
 * [Exporting to cadnano](#exporting-to-cadnano)
 * [How to design structures manually using scadnano](#how-to-design-structures-manually-using-scadnano)
+* [Running offline](#running-offline)
 * [Performance tips](#performance-tips)
 * [Contributing](#contributing)
 
@@ -104,7 +105,7 @@ it is not possible to save your file automatically without further interaction;
 after pressing "Save", you will always be prompted to specify a filename to which to save.
 
 Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
-so repeatedly saving the file will change its name every time. 
+so repeatedly saving the file will change its name on your local filesystem every time. 
 To disable this so that it uses the same filename every time you save, you can install the extension 
 [Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
@@ -309,17 +310,17 @@ none grid:
 ## Relation of grid_position and position to side and main view display
 The main view and side views are 2D representations of a 3D object.
 The views display helices in the following way.
-First, each helix in a group is translated by its group's `position.x` and `position.y` values, and rotated clockwise by the group's `pitch` angle.
+First, each helix in a group is translated by its group's `position.z` and `position.y` values, and rotated clockwise by the group's `pitch` angle.
 The description below is relative to this translation and rotation.
 
 Each helix has a 3D *(x,y,z)* position (grid_position is simply a special type of position, and a position is calculated from the grid_position if a grid is used.)
-The *z* and *y* coordinates are shown in the side view, with *z* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
+The *x* and *y* coordinates are shown in the side view, with *x* increasing to the right and *y* increasing to the bottom (so-called "screen coordinates", which invert *y* compared to Cartesian coordinates).
 
-In the main view, the horizontal direction is the *x* coordinate.
+In the main view, the horizontal direction is the *z* coordinate.
 The vertical direction, however, is not exactly the *y* coordinate, since this would simply pile helices on top of each other if their *y* coordinates were close or equal (which is common in a 3D design).
 Instead, the helices are displayed in order from top to bottom (by their index, or if specified, by the value *helices_view_order* in the DNA design, which can specify an alternate permutation).
-The vertical distance between adjacent helices is supposed to approximate the Euclidean *z-y* distance between the helices (i.e., the side view distance; the *x* distance is ignored in this calculation).
-If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *z* coordinate, or they all have the same *y* coordinate),
+The vertical distance between adjacent helices is supposed to approximate the Euclidean *x-y* distance between the helices (i.e., the side view distance; the *z* distance is ignored in this calculation).
+If the helices are co-planar (such as a flat origami in the square grid, where all helices have the same *x* coordinate, or they all have the same *y* coordinate),
 then this will display the entire design to scale, with each helix appearing the correct relative distance from all others.
 Otherwise, the distances between pairs of helices with *adjacent indices* will be to scale. 
 
@@ -328,7 +329,7 @@ Otherwise, the distances between pairs of helices with *adjacent indices* will b
 
 ## Navigation and control
 
-**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
+**Navigation:** The side view and main view can both be navigated by using the mouse wheel/two-finger scroll gesture to zoom in and out, and clicking and dragging the background to pan. The zoom speed can be controlled under the View menu. It is currently unsupported to [navigate entirely by keyboard](https://github.com/UC-Davis-molecular-computing/scadnano/issues/42) or to [navigate only by clicking](https://github.com/UC-Davis-molecular-computing/scadnano/issues/91).
 
 **Undo/redo:**
 Pressing Ctrl+Z will undo the last action that changed the design.
@@ -360,8 +361,8 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Save:**
   Saves the current design in a `.sc` file on your local computer. This is the same format output by (and readable by) the [Python scripting package](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-  * **Import/Export cadnano v2:**
-  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+  * **Import cadnano v2:**
+  Files in the format recognized by [cadnano v2](https://github.com/douglaslab/cadnano2) can be imported and exported. The import function is under the File menu and the export is under the Export menu. 
 
   * **Save design in localStorage on every edit:**
   On every edit, save current design in localStorage (in your web browser). Disabling this minimizes the time needed to render large designs.
@@ -383,6 +384,14 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Copy/paste:**
     Strands can be copied and pasted. If they are pasted to the opposite direction (e.g., if you copy a strand that is forward on a helix and paste it to the reverse part of a helix),
     then the "polarity" of each strand is reversed: 5' and 3' ends swap.
+
+    In addition, strand details are copied to clipboard in a human-readable text format.
+    (the same format used in `.sc` files)
+    This means that strands can be pasted between different open instances of scadnano (e.g., between two different browser tabs),
+    see https://github.com/UC-Davis-molecular-computing/scadnano/issues/590.
+
+    Finally, pressing Ctrl+Shift+V will *autopaste*, which automatically pastes a strand in the same "direction" as the last paste, which can be used to quickly paste many strands. 
+    See https://github.com/UC-Davis-molecular-computing/scadnano/issues/580.
 
   * **Undo/Redo:** 
     Undo or redo the last edit that was made to the design.
@@ -448,6 +457,9 @@ This refers to the menu at the top of the whole app. At the top of the side view
   * **Display major tick widths:**
   If checked, integer distances between adjacent major tick marks are displayed just above the center point between them. Since major tick marks are often used to indicate interesting domains/sub-domains of DNA strands, this can be used to quickly see the length of those domains. (But major tick marks are not explicitly tied to the Domains on Strands defined in the DNADesign.) This can be on only the top helix, or on all helices.
 
+  * **Zoom speed:**
+  This controls the speed at which the mouse wheel or two-finger scroll zooms in and out of the main view and side view.
+
   * **auto-fit on loading new design:**
     When a new design is loaded, scales the zoom window to fit the design. This is useful when loaded a brand new design, to ensure that the design is visible. If it is offset too much, it will not be visible, and it will be difficult to "find" by panning. However, when frequently re-loading a design, for example a design being updated by running a local Python script, it is preferable to uncheck this option, so that the same part of the design will remain visible after loading.
 
@@ -461,11 +473,14 @@ This refers to the menu at the top of the whole app. At the top of the side view
     If checked, then use Cartesian coordinates where increasing y moves up.
     Also invert the x-axis to maintain chirality, so this has the net effect of rotating the side view by 180 degrees.
 
-  * **Show main view Helix circles/idx:**
+  * **Show main view helix circles/idx:**
     Shows helix circles and idx's in main view. You may want to hide them for designs that have overlapping non-parallel helices.
 
   * **Show grid coordinates in side view:**
     Shows grid coordinates in the side view under the helix index.
+
+  * **Show loopout lengths:**
+    Draws the length (number of bases) in each loopout.
 
   * **Show slice bar:**
     Shows a slicebar, which you can drag and move to
@@ -506,6 +521,12 @@ This refers to the menu at the top of the whole app. At the top of the side view
     Exports a file containing DNA sequences. A few defaults are available, but it is not very configurable. For more advanced control, the Python scripting package can be used to customize how DNA sequences are exported.
 
     By default the DNA sequences will be output in the same order strands appear in the `.sc` file. A few defaults are available to output them in another order based on their 5' or 3' ends' helix index and case offset.
+
+  * **Export cadnano v2:**
+    Since cadnano's file format is less expressive, certain features may be lost in an export. See below for details.
+
+  * **Export oxDNA:**
+    [oxDNA](https://oxdna.org/) is a program for visualizing 3D structures and doing course-grained kinetic modeling. It represents DNA strands by specifying individual positions of each base. The oxDNA export function calculates these assuming each DNA helix perfectly matches the geometric parameters specified in the scadnano design, e.g., defaults of 0.332 nm / base pair, helix radius 1 nm, etc.
 
 * Help
 
@@ -548,7 +569,7 @@ There are different edit modes available, shown on the right side of the screen.
 * **(s)elect:**
   This is similar to the Select edit mode in cadnano. It allows one to select one or more items and delete, move, or copy/paste them. Which are allowed to be selected depends on the "Select Mode", shown when in select edit mode or rope select edit mode. Some of the select modes are mutually exclusive as well.
 
-  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular box. See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
+  A single item can be selected by clicking. Multiple items can be selected by pressing Shift (to add to the selection) or Ctrl (to toggle whether an item is selected) and clicking multiple items. Ctrl+A will select all selectable items in the design. If Shift or Ctrl is pressed while in select mode, one can use the mouse/touchpad to click+drag to select multiple items by drawing a rectangular "selection box". See also "rope select" mode, described below, for a more flexible way to select many items by drawing an arbitrary polygon (useful for selecting many items lined up diagonally, for instance).
 
   Unlike other drawing programs, clicking on the background will not unselect the objects.
   (This is a deliberate design choice, since we have found it is frequently useful to be able to click for other purposes, e.g., panning the view, while keeping all items selected.) 
@@ -605,6 +626,15 @@ There are different edit modes available, shown on the right side of the screen.
   Lifting up on the Shift or Ctrl key will select items within the *n*-gon consisting of the points clicked so far (the darker polygon).
 
   You can also select individual objects by clicking them while in rope select mode. Shift/Ctrl+clicking multiple items is more awkward in rope select mode than in select mode, since in rope select mode it will start drawing a polygon if you keep the Shift or Ctrl key pressed. If you don't want to switch to select mode, a workaround is, after each mouse click, to lift the Shift/Ctrl key before pressing it again, to prevent the polygon from being drawn.
+
+  
+  Both rope select and the selection box require the entire bounding box of the item to be contained in the box/polygon drawn to be selected. This can be counterintuitive. For example, here is the bounding box for a strand with loopouts:
+
+  ![](images/bounding-box-loopouts.png)
+
+  Thus the following rope-select polygon would not select the strand, even though the strand appears to be contained in the rope select polygon, because the corners of the strand's bounding box go outside the rope select polygon:
+
+  ![](images/rope-select-fail-select-entire-bounding-box.png)
   
 * **(p)encil:**
   This is similar to the Pencil edit mode in cadnano. It allows one to add new Strands (with a single domain) by clicking and dragging. 
@@ -712,6 +742,18 @@ One downside is that a complete novice, who has no idea where staples ought to g
 However, numerous example designs are provided to learn what good staple design looks like. 
 
 See the [tutorial](tutorial/tutorial.md) for detailed instructions on creating a 24-helix DNA origami rectangle using the scadnano web interface.
+
+
+## Running offline
+It is possible to run scadnano offline, so that no internet connection is needed.
+To do this, follow the [instructions](CONTRIBUTING.md#making-contributions) for running a local server in the CONTRIBUTING document, which involves three steps:
+
+- [Cloning](CONTRIBUTING.md#cloning) the scadnano repository from GitHub.
+
+- [Installing](CONTRIBUTING.md#installing-dart) the Dart SDK.
+
+- [Running](CONTRIBUTING.md#running-a-local-server) a local server.
+
 
 
 ## Performance tips

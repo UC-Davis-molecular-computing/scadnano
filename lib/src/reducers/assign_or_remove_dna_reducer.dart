@@ -67,7 +67,7 @@ BuiltList<Strand> assign_dna_reducer(BuiltList<Strand> strands, actions.AssignDN
 
   String seq = action.dna_sequence;
   seq = util.remove_whitespace_and_uppercase(seq);
-  seq = util.pad_dna(seq, strand.dna_length());
+  seq = util.pad_dna(seq, strand.dna_length);
   seq = merge_sequences_if_necessary(strand, seq);
 
   // first overwrite this strand in the builder list
@@ -148,12 +148,12 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
       substrand_to_dna_sequence = constants.DNA_BASE_WILDCARD * substrand_to.dna_length();
     } else if (substrand_to is Domain) {
       int helix_idx = substrand_to.helix;
-      List<Domain> substrands_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
+      List<Domain> domains_on_helix_from = strand_from.domains_on_helix[helix_idx]?.toList() ?? [];
       List<Tuple2<Tuple2<int, int>, Domain>> overlaps = [];
-      for (var substrand_from in substrands_on_helix_from) {
-        if (substrand_to != substrand_from && substrand_to.overlaps(substrand_from)) {
-          Tuple2<int, int> overlap = substrand_to.compute_overlap(substrand_from);
-          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, substrand_from));
+      for (var domain_from in domains_on_helix_from) {
+        if (substrand_to != domain_from && substrand_to.overlaps(domain_from)) {
+          Tuple2<int, int> overlap = substrand_to.compute_overlap(domain_from);
+          overlaps.add(Tuple2<Tuple2<int, int>, Domain>(overlap, domain_from));
         }
       }
       overlaps.sort(compare_overlap);
@@ -217,7 +217,7 @@ String compute_dna_complement_from(Strand strand_to, Strand strand_from, bool er
         Domain ss_from = strand_from.first_domain;
         var msg = 'strand starting at helix ${ss_to.helix}, offset ${ss_to.offset_5p} has '
             'length '
-            '${strand_to.dna_length()} and already has a partial DNA sequence assignment of length '
+            '${strand_to.dna_length} and already has a partial DNA sequence assignment of length '
             '${strand_to.dna_sequence.length}, which is \n'
             '${strand_to.dna_sequence}, '
             'but you tried to assign sequence of length ${new_dna_sequence.length} to it, which '
@@ -240,7 +240,7 @@ String merge_sequences_if_necessary(Strand strand, String seq) {
       var first_ss = strand.first_domain;
       var msg = 'strand starting at helix ${first_ss.helix}, offset ${first_ss.offset_5p} has '
           'length '
-          '${strand.dna_length()} and already has a DNA sequence assignment of length '
+          '${strand.dna_length} and already has a DNA sequence assignment of length '
           '${strand.dna_sequence.length}, which is \n'
           '${strand.dna_sequence}, '
           'but you tried to assign a different sequence of length ${seq.length} to '

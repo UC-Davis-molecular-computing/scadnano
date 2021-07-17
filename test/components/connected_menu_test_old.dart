@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'dart:convert';
 import 'dart:html';
 
@@ -61,7 +63,7 @@ main() {
     MenuComponent component;
 
     setUp(() {
-      utils.initializeTestStore(initializeTestState());
+      utils.initialize_test_store(initializeTestState());
       menuRef = createRef();
       mount((ReduxProvider()..store = app.store)(
         (ConnectedMenu()

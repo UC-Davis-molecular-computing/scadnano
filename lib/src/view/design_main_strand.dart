@@ -6,8 +6,9 @@ import 'package:built_collection/built_collection.dart';
 import 'package:react/react.dart' as react;
 import 'package:scadnano/src/state/modification.dart';
 
-import 'design_main_strand_names.dart';
+import 'design_main_strand_and_domain_names.dart';
 import 'transform_by_helix_group.dart';
+import '../state/address.dart';
 import '../state/geometry.dart';
 import '../state/group.dart';
 import '../state/dialog.dart';
@@ -62,9 +63,11 @@ mixin DesignMainStrandPropsMixin on UiProps {
   bool modification_display_connector;
   bool show_dna;
   bool show_modifications;
-  bool show_domain_labels;
+  bool show_domain_names;
+  bool show_strand_names;
+  num domain_name_font_size;
+  num strand_name_font_size;
   num modification_font_size;
-  num domain_label_font_size;
   bool invert_y;
 }
 
@@ -96,7 +99,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
       (DesignMainStrandPaths()
         ..strand = props.strand
         ..key = 'strand-paths'
-        ..show_domain_labels = props.show_domain_labels
+        ..show_domain_names = props.show_domain_names
         ..helices = props.helices
         ..groups = props.groups
         ..selected_ends_in_strand = props.selected_ends_in_strand
@@ -112,8 +115,8 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         ..only_display_selected_helices = props.only_display_selected_helices)(),
       _insertions(),
       _deletions(),
-      if (props.show_domain_labels)
-        (DesignMainStrandNames()
+      if (props.show_domain_names || props.show_strand_names)
+        (DesignMainStrandAndDomainNames() // shows both domain and strand names
           ..strand = props.strand
           ..helices = props.helices
           ..groups = props.groups
@@ -121,8 +124,11 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
           ..show_dna = props.show_dna
           ..side_selected_helix_idxs = props.side_selected_helix_idxs
           ..only_display_selected_helices = props.only_display_selected_helices
-          ..font_size = props.domain_label_font_size
-          ..key = 'domain-labels')(),
+          ..show_domain_names = props.show_domain_names
+          ..show_strand_names = props.show_strand_names
+          ..domain_name_font_size = props.domain_name_font_size
+          ..strand_name_font_size = props.strand_name_font_size
+          ..key = 'domain-names')(),
       if (props.show_modifications)
         (DesignMainStrandModifications()
           ..strand = props.strand
@@ -146,7 +152,10 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
         props.strand.handle_selection_mouse_down(event);
         // set up drag detection for moving DNA ends
         var address = util.find_closest_address(event, props.helices.values, props.groups, props.geometry);
-        app.dispatch(actions.StrandsMoveStartSelectedStrands(address: address, copy: false));
+        HelixGroup group = app.state.design.group_of_strand(props.strand);
+        var helices_view_order_inverse = group.helices_view_order_inverse;
+        app.dispatch(actions.StrandsMoveStartSelectedStrands(
+            address: address, copy: false, original_helices_view_order_inverse: helices_view_order_inverse));
       }
     }
   }
@@ -180,6 +189,17 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
+  assign_domain_name_complement_from_bound_strands() {
+    List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+
+    if (!strands_selected.contains(props.strand)) {
+      strands_selected.add(props.strand);
+    }
+
+    var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
+    app.dispatch(action);
+  }
+
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
@@ -189,7 +209,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _insertions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_insertion in domain.selectable_insertions) {
@@ -222,7 +242,7 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
 
   ReactElement _deletions() {
     List<ReactElement> paths = [];
-    for (Domain domain in props.strand.domains()) {
+    for (Domain domain in props.strand.domains) {
       Helix helix = props.helices[domain.helix];
       if (should_draw_domain(domain, props.side_selected_helix_idxs, props.only_display_selected_helices)) {
         for (var selectable_deletion in domain.selectable_deletions) {
@@ -295,6 +315,14 @@ If other strands bound to this strand (or the selected strands) have DNA already
 assigned, assign the complementary DNA sequence to this strand.
 ''',
           on_click: assign_dna_complement_from_bound_strands,
+        ),
+        ContextMenuItem(
+          title: 'assign domain name complement from bound strands',
+          tooltip: '''\
+If other strands bound to this strand (or the selected strands) have domain names already 
+assigned, assign the complementary domain names sequence to this strand.
+''',
+          on_click: assign_domain_name_complement_from_bound_strands,
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
@@ -577,7 +605,7 @@ ActionCreator color_set_strand_action_creator(String color_hex) =>
 String tooltip_text(Strand strand) =>
     "Strand:\n" +
     (strand.name == null ? "" : "    name=${strand.name}\n") +
-    "    length=${strand.dna_length()}\n" +
+    "    length=${strand.dna_length}\n" +
     (!strand.circular ? "" : "    circular\n") +
     "    5' end=${tooltip_end(strand.first_domain, strand.dnaend_5p)}\n" +
     "    3' end=${tooltip_end(strand.last_domain, strand.dnaend_3p)}\n" +
@@ -617,37 +645,53 @@ int clicked_strand_dna_idx(Domain domain, Address address, Strand strand) {
 
 Future<void> ask_for_assign_dna_sequence(
     Strand strand, bool assign_complement_to_bound_strands_default, bool warn_on_change_default) async {
-  var dialog = Dialog(title: 'assign DNA sequence', items: [
-    DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80),
-    DialogCheckbox(label: 'use predefined DNA sequence'),
-    DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.names),
-    DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587),
-    DialogCheckbox(
-        label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default),
-    DialogCheckbox(
-        label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default),
-  ], disable_when_any_checkboxes_on: {
-    0: [1]
+  int idx_sequence = 0;
+  int idx_use_predefined_dna_sequence = 1;
+  int idx_predefine_sequence_link = 2;
+  int idx_predefined_sequence_name = 3;
+  int idx_rotation = 4;
+  int idx_assign_complements = 5;
+  int idx_warn_on_change = 6;
+
+  List<DialogItem> items = [null, null, null, null, null, null, null];
+
+  items[idx_sequence] =
+      DialogTextArea(label: 'sequence', value: strand.dna_sequence ?? '', rows: 10, cols: 80);
+  items[idx_use_predefined_dna_sequence] = DialogCheckbox(label: 'use predefined DNA sequence');
+  items[idx_predefined_sequence_name] =
+      DialogRadio(label: 'predefined DNA sequence', options: DNASequencePredefined.display_names);
+  items[idx_rotation] = DialogInteger(label: 'rotation of predefined DNA sequence', value: 5587);
+  items[idx_assign_complements] = DialogCheckbox(
+      label: 'assign complement to bound strands', value: assign_complement_to_bound_strands_default);
+  items[idx_warn_on_change] = DialogCheckbox(
+      label: 'warn if assigning different sequence to bound strand', value: warn_on_change_default);
+  items[idx_predefine_sequence_link] = DialogLink(
+      label: 'Information about sequence variants',
+      link: 'https://scadnano-python-package.readthedocs.io/en/latest/#scadnano.M13Variant');
+
+  var dialog = Dialog(title: 'assign DNA sequence', items: items, disable_when_any_checkboxes_on: {
+    idx_sequence: [idx_use_predefined_dna_sequence]
   }, disable_when_any_checkboxes_off: {
-    2: [1],
-    3: [1],
+    idx_predefined_sequence_name: [idx_use_predefined_dna_sequence],
+    idx_rotation: [idx_use_predefined_dna_sequence],
   });
   List<DialogItem> results = await util.dialog(dialog);
   if (results == null) return;
 
   String dna_sequence;
 
-  bool use_predefined_dna_sequence = (results[1] as DialogCheckbox).value;
+  bool use_predefined_dna_sequence = (results[idx_use_predefined_dna_sequence] as DialogCheckbox).value;
   if (use_predefined_dna_sequence) {
-    String predefined_sequence_name = (results[2] as DialogRadio).value;
-    int rotation = (results[3] as DialogInteger).value;
-    dna_sequence = DNASequencePredefined.dna_sequence_by_name(predefined_sequence_name, rotation);
+    String predefined_sequence_display_name = (results[idx_predefined_sequence_name] as DialogRadio).value;
+    int rotation = (results[idx_rotation] as DialogInteger).value;
+    dna_sequence =
+        DNASequencePredefined.dna_sequence_by_name(predefined_sequence_display_name, true, rotation);
   } else {
-    dna_sequence = (results[0] as DialogTextArea).value;
+    dna_sequence = (results[idx_sequence] as DialogTextArea).value;
   }
 
-  bool assign_complements = (results[4] as DialogCheckbox).value;
-  bool warn_on_change = (results[5] as DialogCheckbox).value;
+  bool assign_complements = (results[idx_assign_complements] as DialogCheckbox).value;
+  bool warn_on_change = (results[idx_warn_on_change] as DialogCheckbox).value;
 
   try {
     util.check_dna_sequence(dna_sequence);

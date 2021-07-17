@@ -13,8 +13,9 @@ import 'package:scadnano/src/state/export_dna_format_strand_order.dart';
 import 'package:scadnano/src/state/geometry.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/substrand.dart';
-import 'package:tuple/tuple.dart';
 
+import '../state/copy_info.dart';
+import '../state/address.dart';
 import '../state/app_ui_state_storables.dart';
 import '../state/domain.dart';
 import '../state/design.dart';
@@ -343,7 +344,6 @@ abstract class SelectModesSet
 abstract class StrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements SingleStrandAction, Built<StrandNameSet, StrandNameSetBuilder> {
-
   @nullable
   String get name;
 
@@ -365,7 +365,6 @@ abstract class StrandNameSet
 abstract class SubstrandNameSet
     with BuiltJsonSerializable, UndoableAction
     implements StrandPartAction, Built<SubstrandNameSet, SubstrandNameSetBuilder> {
-
   @nullable
   String get name;
 
@@ -431,6 +430,21 @@ abstract class ShowDomainNamesSet
   static Serializer<ShowDomainNamesSet> get serializer => _$showDomainNamesSetSerializer;
 }
 
+abstract class ShowStrandNamesSet
+    with BuiltJsonSerializable
+    implements Action, Built<ShowStrandNamesSet, ShowStrandNamesSetBuilder> {
+  bool get show;
+
+  factory ShowStrandNamesSet(bool show) => ShowStrandNamesSet.from((b) => b..show = show);
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ShowStrandNamesSet.from([void Function(ShowStrandNamesSetBuilder) updates]) = _$ShowStrandNamesSet;
+
+  ShowStrandNamesSet._();
+
+  static Serializer<ShowStrandNamesSet> get serializer => _$showStrandNamesSetSerializer;
+}
+
 abstract class ShowModificationsSet
     with BuiltJsonSerializable
     implements Action, Built<ShowModificationsSet, ShowModificationsSetBuilder> {
@@ -458,6 +472,19 @@ abstract class DomainNameFontSizeSet
   DomainNameFontSizeSet._();
 
   static Serializer<DomainNameFontSizeSet> get serializer => _$domainNameFontSizeSetSerializer;
+}
+
+abstract class StrandNameFontSizeSet
+    with BuiltJsonSerializable
+    implements Action, Built<StrandNameFontSizeSet, StrandNameFontSizeSetBuilder> {
+  num get font_size;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory StrandNameFontSizeSet({num font_size}) = _$StrandNameFontSizeSet._;
+
+  StrandNameFontSizeSet._();
+
+  static Serializer<StrandNameFontSizeSet> get serializer => _$strandNameFontSizeSetSerializer;
 }
 
 abstract class ModificationFontSizeSet
@@ -727,16 +754,20 @@ abstract class LoadDNAFile
 
   bool get write_local_storage;
 
+  bool get unit_testing;
+
   // set to null when getting file from another source such as localStorage
   @nullable
   String get filename;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory LoadDNAFile({String content, String filename, bool write_local_storage = true}) {
+  factory LoadDNAFile(
+      {String content, String filename, bool write_local_storage = true, bool unit_testing = false}) {
     return LoadDNAFile.from((b) => b
       ..content = content
       ..filename = filename
-      ..write_local_storage = write_local_storage);
+      ..write_local_storage = write_local_storage
+      ..unit_testing = unit_testing);
   }
 
   factory LoadDNAFile.from([void Function(LoadDNAFileBuilder) updates]) = _$LoadDNAFile;
@@ -1624,6 +1655,8 @@ abstract class ShowMouseoverRectToggle
 abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<ExportDNA, ExportDNABuilder> {
   bool get include_scaffold;
 
+  bool get include_only_selected_strands;
+
   ExportDNAFormat get export_dna_format;
 
   @nullable
@@ -1634,11 +1667,13 @@ abstract class ExportDNA with BuiltJsonSerializable implements Action, Built<Exp
   /************************ begin BuiltValue boilerplate ************************/
   factory ExportDNA(
       {bool include_scaffold,
+      bool include_only_selected_strands,
       ExportDNAFormat export_dna_format,
       StrandOrder strand_order = null,
       bool column_major = true}) {
     return ExportDNA.from((b) => b
       ..include_scaffold = include_scaffold
+      ..include_only_selected_strands = include_only_selected_strands
       ..export_dna_format = export_dna_format
       ..strand_order = strand_order
       ..column_major = column_major);
@@ -1811,8 +1846,24 @@ abstract class JoinStrandsByCrossover
   static Serializer<JoinStrandsByCrossover> get serializer => _$joinStrandsByCrossoverSerializer;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// reflect (mirror image) Strands
+// JoinStrandsByCrossover cannot be in a BatchAction since the reducer for it looks up strands
+// from the Design, which are invalidated as the Design is modified.
+// Also, to keep the complex logic in the reducer and out of the view code,
+// we don't pass any information into the action; the global reducer looks up the selected ends.
+abstract class JoinStrandsByMultipleCrossovers
+    with BuiltJsonSerializable, UndoableAction
+    implements Action, Built<JoinStrandsByMultipleCrossovers, JoinStrandsByMultipleCrossoversBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory JoinStrandsByMultipleCrossovers() = _$JoinStrandsByMultipleCrossovers;
+
+  JoinStrandsByMultipleCrossovers._();
+
+  static Serializer<JoinStrandsByMultipleCrossovers> get serializer =>
+      _$joinStrandsByMultipleCrossoversSerializer;
+
+  @memoized
+  int get hashCode;
+}
 
 abstract class StrandsReflect
     with BuiltJsonSerializable
@@ -1951,7 +2002,71 @@ abstract class PotentialCrossoverRemove
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// strands move
+// strands move/copy
+
+// This triggers to request the strands info from the clipboard.
+// Because that can only be done asynchronously, we intercept the action in middleware, and on
+// completion of reading the strands info, we then dispatch a second action, StrandsMoveStart,
+// to begin the pasting.
+abstract class ManualPasteInitiate
+    with BuiltJsonSerializable
+    implements Action, Built<ManualPasteInitiate, ManualPasteInitiateBuilder> {
+  String get clipboard_content;
+
+  bool get in_browser;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ManualPasteInitiate({String clipboard_content, bool in_browser = true}) =>
+      ManualPasteInitiate.from((b) => b
+        ..clipboard_content = clipboard_content
+        ..in_browser = in_browser);
+
+  ManualPasteInitiate._();
+
+  factory ManualPasteInitiate.from([void Function(ManualPasteInitiateBuilder) updates]) =
+      _$ManualPasteInitiate;
+
+  static Serializer<ManualPasteInitiate> get serializer => _$manualPasteInitiateSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AutoPasteInitiate
+    with BuiltJsonSerializable
+    implements Action, Built<AutoPasteInitiate, AutoPasteInitiateBuilder> {
+  String get clipboard_content;
+
+  bool get in_browser;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AutoPasteInitiate({String clipboard_content, bool in_browser = true}) =>
+      AutoPasteInitiate.from((b) => b
+        ..clipboard_content = clipboard_content
+        ..in_browser = in_browser);
+
+  AutoPasteInitiate._();
+
+  factory AutoPasteInitiate.from([void Function(AutoPasteInitiateBuilder) updates]) = _$AutoPasteInitiate;
+
+  static Serializer<AutoPasteInitiate> get serializer => _$autoPasteInitiateSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+// This is dispatched on Ctrl+C to copy the strands. What is done with it depends on what
+// type of paste we use (manual or auto)
+abstract class CopySelectedStrands
+    with BuiltJsonSerializable
+    implements Action, Built<CopySelectedStrands, CopySelectedStrandsBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory CopySelectedStrands() = _$CopySelectedStrands;
+
+  CopySelectedStrands._();
+
+  static Serializer<CopySelectedStrands> get serializer => _$copySelectedStrandsSerializer;
+}
 
 // This is a poor name for the action; it is used when we want to copy strands
 // (used similarly to StrandsMoveStartSelectedStrands, but the latter is when we want to move strands)
@@ -1964,8 +2079,14 @@ abstract class StrandsMoveStart
 
   bool get copy;
 
+  BuiltMap<int, int> get original_helices_view_order_inverse;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStart({BuiltList<Strand> strands, Address address, bool copy}) = _$StrandsMoveStart._;
+  factory StrandsMoveStart(
+      {BuiltList<Strand> strands,
+      Address address,
+      bool copy,
+      BuiltMap<int, int> original_helices_view_order_inverse}) = _$StrandsMoveStart._;
 
   StrandsMoveStart._();
 
@@ -1979,8 +2100,13 @@ abstract class StrandsMoveStartSelectedStrands
 
   bool get copy;
 
+  BuiltMap<int, int> get original_helices_view_order_inverse;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveStartSelectedStrands({Address address, bool copy}) = _$StrandsMoveStartSelectedStrands._;
+  factory StrandsMoveStartSelectedStrands(
+      {Address address,
+      bool copy,
+      BuiltMap<int, int> original_helices_view_order_inverse}) = _$StrandsMoveStartSelectedStrands._;
 
   StrandsMoveStartSelectedStrands._();
 
@@ -2012,13 +2138,16 @@ abstract class StrandsMoveAdjustAddress
   static Serializer<StrandsMoveAdjustAddress> get serializer => _$strandsMoveAdjustAddressSerializer;
 }
 
+// Used for both moving strands and pasting them (in both manual and autopaste)
 abstract class StrandsMoveCommit
     with BuiltJsonSerializable, UndoableAction
     implements Built<StrandsMoveCommit, StrandsMoveCommitBuilder> {
   StrandsMove get strands_move;
 
+  bool get autopaste;
+
   /************************ begin BuiltValue boilerplate ************************/
-  factory StrandsMoveCommit({StrandsMove strands_move}) = _$StrandsMoveCommit._;
+  factory StrandsMoveCommit({StrandsMove strands_move, bool autopaste}) = _$StrandsMoveCommit._;
 
   StrandsMoveCommit._();
 
@@ -2082,6 +2211,12 @@ abstract class DomainsMoveCommit
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // dna ends move
 
+/// Interpreted in main store to just set state.ui_state.dna_ends_are_moving to true.
+/// An optimized store specifically for moving [DNAEnd]s handles updating as the mouse is moved
+/// by dispatching [DNAEndsMoveAdjustOffset].
+/// Also triggers middleware to look up set of selected ends, which then dispatches
+/// [DNAEndsMoveSetSelectedEnds] (since the DNAEnd itself that is clicked to dispatch [DNAEndsMoveStart]
+/// doesn't know what are all the other selected DNAEnds).
 abstract class DNAEndsMoveStart
     with BuiltJsonSerializable
     implements Action, Built<DNAEndsMoveStart, DNAEndsMoveStartBuilder> {
@@ -2275,6 +2410,29 @@ abstract class AssignDNAComplementFromBoundStrands
 
   static Serializer<AssignDNAComplementFromBoundStrands> get serializer =>
       _$assignDNAComplementFromBoundStrandsSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class AssignDomainNameComplementFromBoundStrands
+    with BuiltJsonSerializable, UndoableAction
+    implements Built<AssignDomainNameComplementFromBoundStrands, AssignDomainNameComplementFromBoundStrandsBuilder> {
+  BuiltList<Strand> get strands;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory AssignDomainNameComplementFromBoundStrands(Iterable<Strand> strands) {
+    return AssignDomainNameComplementFromBoundStrands.from((b) => b..strands.replace(strands));
+  }
+
+  factory AssignDomainNameComplementFromBoundStrands.from(
+          [void Function(AssignDomainNameComplementFromBoundStrandsBuilder) updates]) =
+      _$AssignDomainNameComplementFromBoundStrands;
+
+  AssignDomainNameComplementFromBoundStrands._();
+
+  static Serializer<AssignDomainNameComplementFromBoundStrands> get serializer =>
+      _$assignDomainNameComplementFromBoundStrandsSerializer;
 
   @memoized
   int get hashCode;
@@ -2881,7 +3039,7 @@ abstract class HelixGridPositionSet
 }
 
 // NOTE: not an undoable action because it merely triggers middleware to gather data to send actions
-// that actually change the DNADesign, but it causes no change itself
+// that actually change the Design, but it causes no change itself
 abstract class HelicesPositionsSetBasedOnCrossovers
     with BuiltJsonSerializable
     implements Built<HelicesPositionsSetBasedOnCrossovers, HelicesPositionsSetBasedOnCrossoversBuilder> {
@@ -3074,11 +3232,9 @@ abstract class ShowSliceBarSet
   bool get show;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory ShowSliceBarSet(bool show) =>
-      ShowSliceBarSet.from((b) => b..show = show);
+  factory ShowSliceBarSet(bool show) => ShowSliceBarSet.from((b) => b..show = show);
 
-  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) =
-      _$ShowSliceBarSet;
+  factory ShowSliceBarSet.from([void Function(ShowSliceBarSetBuilder) updates]) = _$ShowSliceBarSet;
 
   ShowSliceBarSet._();
 
@@ -3092,11 +3248,9 @@ abstract class SliceBarOffsetSet
   int get offset;
 
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarOffsetSet(int offset) =>
-      SliceBarOffsetSet.from((b) => b..offset = offset);
+  factory SliceBarOffsetSet(int offset) => SliceBarOffsetSet.from((b) => b..offset = offset);
 
-  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) =
-      _$SliceBarOffsetSet;
+  factory SliceBarOffsetSet.from([void Function(SliceBarOffsetSetBuilder) updates]) = _$SliceBarOffsetSet;
 
   SliceBarOffsetSet._();
 
@@ -3106,10 +3260,8 @@ abstract class SliceBarOffsetSet
 abstract class SliceBarMoveStart
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStart, SliceBarMoveStartBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) =
-      _$SliceBarMoveStart;
+  factory SliceBarMoveStart([void Function(SliceBarMoveStartBuilder) updates]) = _$SliceBarMoveStart;
 
   SliceBarMoveStart._();
 
@@ -3119,10 +3271,8 @@ abstract class SliceBarMoveStart
 abstract class SliceBarMoveStop
     with BuiltJsonSerializable
     implements Action, Built<SliceBarMoveStop, SliceBarMoveStopBuilder> {
-
   /************************ begin BuiltValue boilerplate ************************/
-  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) =
-      _$SliceBarMoveStop;
+  factory SliceBarMoveStop([void Function(SliceBarMoveStopBuilder) updates]) = _$SliceBarMoveStop;
 
   SliceBarMoveStop._();
 
@@ -3130,9 +3280,7 @@ abstract class SliceBarMoveStop
 }
 // autostaple
 
-abstract class Autostaple
-    with BuiltJsonSerializable
-    implements Action, Built<Autostaple, AutostapleBuilder> {
+abstract class Autostaple with BuiltJsonSerializable implements Action, Built<Autostaple, AutostapleBuilder> {
   /************************ begin BuiltValue boilerplate ************************/
   factory Autostaple([void Function(AutostapleBuilder) updates]) = _$Autostaple;
 
@@ -3141,31 +3289,56 @@ abstract class Autostaple
   static Serializer<Autostaple> get serializer => _$autostapleSerializer;
 }
 
-abstract class Autobreak
-    with BuiltJsonSerializable
-    implements
-        Action,
-        Built<Autobreak, AutobreakBuilder> {
+abstract class Autobreak with BuiltJsonSerializable implements Action, Built<Autobreak, AutobreakBuilder> {
   int get target_length;
+
   int get min_length;
+
   int get max_length;
+
   int get min_distance_to_xover;
 
   /************************ begin BuiltValue boilerplate ************************/
   factory Autobreak({int target_length, int min_length, int max_length, int min_distance_to_xover}) =>
-      Autobreak.from(
-        (b) => b
-          ..target_length = target_length
-          ..min_length = min_length
-          ..max_length = max_length
-          ..min_distance_to_xover = min_distance_to_xover);
+      Autobreak.from((b) => b
+        ..target_length = target_length
+        ..min_length = min_length
+        ..max_length = max_length
+        ..min_distance_to_xover = min_distance_to_xover);
 
-  factory Autobreak.from(
-          [void Function(AutobreakBuilder) updates]) =
-      _$Autobreak;
+  factory Autobreak.from([void Function(AutobreakBuilder) updates]) = _$Autobreak;
 
   Autobreak._();
 
-  static Serializer<Autobreak> get serializer =>
-      _$autobreakSerializer;
+  static Serializer<Autobreak> get serializer => _$autobreakSerializer;
+}
+
+abstract class ZoomSpeedSet
+    with BuiltJsonSerializable
+    implements Action, Built<ZoomSpeedSet, ZoomSpeedSetBuilder> {
+  num get speed;
+
+  /************************ begin BuiltValue boilerplate ************************/
+  factory ZoomSpeedSet({num speed}) = _$ZoomSpeedSet._;
+
+  ZoomSpeedSet._();
+
+  static Serializer<ZoomSpeedSet> get serializer => _$zoomSpeedSetSerializer;
+
+  @memoized
+  int get hashCode;
+}
+
+abstract class OxdnaExport
+    with BuiltJsonSerializable
+    implements Action, Built<OxdnaExport, OxdnaExportBuilder> {
+  /************************ begin BuiltValue boilerplate ************************/
+  factory OxdnaExport() = _$OxdnaExport;
+
+  OxdnaExport._();
+
+  static Serializer<OxdnaExport> get serializer => _$oxdnaExportSerializer;
+
+  @memoized
+  int get hashCode;
 }

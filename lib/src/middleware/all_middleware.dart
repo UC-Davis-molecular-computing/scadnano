@@ -1,5 +1,7 @@
 import 'package:redux/redux.dart';
+import 'package:scadnano/src/middleware/system_clipboard.dart';
 
+import '../state/app_state.dart';
 import 'forbid_create_circular_strand_no_crossovers_middleware.dart';
 import 'helix_group_move_start.dart';
 import 'adjust_grid_position.dart';
@@ -17,9 +19,10 @@ import 'helix_idxs_change.dart';
 import 'helix_offsets_change.dart';
 import 'insertion_deletion_batching.dart';
 import 'load_file.dart';
+import 'oxdna_export.dart';
 import 'periodic_save_design_local_storage.dart';
 import 'reselect_moved_dna_ends.dart';
-import 'reselect_moved_strands.dart';
+import 'reselect_moved_copied_strands.dart';
 import 'save_file.dart';
 import 'export_svg.dart';
 import 'local_storage.dart';
@@ -31,7 +34,7 @@ import 'helix_remove.dart';
 import 'helices_positions_set_based_on_crossovers.dart';
 import 'invalidate_png.dart';
 import 'autostaple_and_autobreak.dart';
-import '../state/app_state.dart';
+import 'zoom_speed.dart';
 
 final all_middleware = List<Middleware<AppState>>.unmodifiable([
   local_storage_middleware,
@@ -56,7 +59,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   dna_ends_move_start_middleware,
   export_dna_sequences_middleware,
   reselect_moved_dna_ends_middleware,
-  reselect_moved_strands_middleware,
+  reselect_moved_copied_strands_middleware,
   selections_intersect_box_compute_middleware,
   insertion_deletion_batching_middleware,
   adjust_grid_position_middleware,
@@ -65,4 +68,7 @@ final all_middleware = List<Middleware<AppState>>.unmodifiable([
   edit_select_mode_change_middleware,
   periodic_design_save_local_storage_middleware,
   autostaple_and_autobreak_middleware,
+  system_clipboard_middleware,
+  zoom_speed_middleware,
+  oxdna_export_middleware,
 ]);

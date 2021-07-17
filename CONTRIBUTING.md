@@ -5,6 +5,16 @@ The following is a set of guidelines for contributing to scadnano.
 Feel free to propose changes to this document in a pull request, 
 or post questions as issues on the [issues page](https://github.com/UC-Davis-molecular-computing/scadnano/issues).
 
+## Table of contents
+
+* [What should I know before I get started?](#what-should-i-know-before-i-get-started)
+* [Required reading and intro to scadnano architecture](#required-reading-and-intro-to-scadnano-architecture)
+* [Making contributions](#making-contributions)
+* [General recipe for adding features](#general-recipe-for-adding-features)
+* [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates)
+* [Pushing to the repository master branch and documenting changes (done less frequently)](#pushing-to-the-repository-master-branch-and-documenting-changes-done-less-frequently)
+* [Styleguide](#styleguide)
+
 ## What should I know before I get started?
 
 ### Dart
@@ -98,9 +108,11 @@ abstract class StrandPasteKeepColorSet
 
 As you can see, there's quite a bit of boilerplate code, not only below the comment line, but also in the lines declaring the class.
 
-Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 10-15 seconds minimum, and often more like 30-60 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
+Another disadvantage of built_value is that it (as well as OverReact) uses *code generation* (on compiling, first some extra code is generated that implement many of the features), and there are so many built_value and OverReact classes that the compilation time for the project, at the time of this writing, is 20 seconds minimum, and often more like 30-70 seconds, depending on your system. So although Dart's dartdevc incremental compiler is nice in allowing you to make one change to code, save it, and have dartdevc (run through `webdev serve` when developing locally) re-run and show the changed code in the browser (after a browser refresh), it does take a bit of time.
 
 Another thing to note is that many IDEs and editors come with a static analysis tool that will warn about errors. Prior to the code generation running, the analyzer will report many errors, because the code written refers to types that don't exist yet, but that will be generated when the compilation is successful. This can make it difficult to track down compilation errors, because some are "real" (i.e., you made a mistake), and some are artifacts of this process that will go away once the compilation is successful. Even worse, OverReact's code generation retains the errors until the analyzer is refreshed; so even after successfully compiling, the analyzer will warn about errors. In WebStorm, this can be refreshed by clicking "Dart Analysis" at the bottom of the screen, and then clicking the "Restart Dart Analysis Server" button (circular red arrow).
+
+See the discussion of the `clean.sh` script below for advice if you are having trouble with mysterious compliation errors.
 
 ### unidirectional data flow architecture of scadnano
 The high-level overview of the way we use the React, Redux, and built libraries is as follows. Graphical user interfaces (GUIs) with lots of user interaction are notoriously difficult to reason about. It's very easy to write a small GUI application with a couple of buttons and a couple of text fields, and to convince yourself that scaling it up to a large application will be as straightforward as scaling up a large non-GUI program. But it's not, for a variety of reasons. It's a bit difficult to describe in one sentence why, but anyone who has written a large GUI application, without some sort of guiding principle beyond "just write more code to make it work" will know exactly what is meant by this.
@@ -111,11 +123,11 @@ One idea that has developed recently gives a powerful conceptual framework for i
 or
 [unidirectional data flow](https://redux.js.org/basics/data-flow). React and Redux together give an implementation of this idea, though they use slightly different terminology: Redux uses "state" to refer to what others would call "model", and it uses the term "reducer" for code that implements the "update" in Elm and Model-View-Update.
 
-Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea.
+Confusingly, React has its own notion of "state", which is separate from the Redux notion of state. Below, all references to "state" refer to the Redux idea. (Almost no scadnano React components use [React state](https://reactjs.org/docs/state-and-lifecycle.html); they use only [React props](https://reactjs.org/docs/components-and-props.html) instead.)
 
 The basic idea is that the entire application can be thought of as consisting of three parts:
 
-1. **State**, an immutable object representing all the information the application needs to remember.
+1. **State**, an immutable object representing all the information the application needs to remember. (Often called the *Model*.)
 
 2. **View**, a function that takes the state as input and produces HTML code (i.e., a view that the user can see on the screen) as output.
 
@@ -145,16 +157,16 @@ We get into more detail below.
 2. **View:** 
     This can be thought of as a *function* that takes the state as input and outputs an HTML tree to display in the browser. It is a "pure" function, meaning that the displayed HTML is a deterministic function of the state, and should consult no other side information.
     
-    In some languages such as Elm, the view is literally implemented as a function that is called. The OverReact library handles the view, but it is not implemented as a Dart function. Instead, there are several *React components*, which are Dart objects. These objects have "props", which represent the input, and they have a `render()` method, which outputs the appropriate HTML. The props are made available as fields in the object, which can be accessed from within the `render()` method or any other methods it calls. The view components form a tree, but the tree does not mimic exactly the tree structure of the state.
+    In some languages such as Elm, the view is literally implemented as a function that is called. The OverReact library handles the view, but it is not implemented as a Dart function. Instead, there are several *React components*, which are Dart objects. These objects have "props", which represent the input, and they have a `render()` method, which outputs the appropriate HTML. The props are made available as fields in the object, which can be accessed from within the `render()` method or any other methods it calls. (The `render()` method should be a pure function of the props.) The view components form a tree, but the tree does not mimic exactly the tree structure of the state.
 
     If the app were pure React/Redux, the entire view itself would be a single React component, which contains only other React components. Because of the current use of libraries such as [svg-pan-zoom](https://github.com/ariutta/svg-pan-zoom) that are not React, the top-level view is implemented manually in Dart (using the `dart:html` package), but some nodes in the view tree are React components, and those subtrees implement the pure React/Redux ideas.
 
 3. **Reducers (a.k.a. update):**
-    Reducers are how the state updates in response user interaction, or more generally, "the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
+    Reducers are how the state updates in response to user interaction, or more generally, to "events in the environment", e.g., files loading or HTTP requests arriving. Most typically, this is initiated by some user interaction with the view. For example, the user may click a strand to drag it, or they may right-click on a helix to change its roll.
 
     The key idea is that the code that detects the user interaction, or other asynchronous event, does not simply reach into the state and change it. (Indeed, this is not possible, since the state is immutable.) Instead, this is where Redux comes in. 
     
-    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated.
+    Redux uses the [Command pattern](https://en.wikipedia.org/wiki/Command_pattern) to make changes to the state. The event handling code, rather than modifying the state, creates an *Action* object describing the change that is supposed to happen. This object is given to Redux, by calling a method called `dispatch` on the Redux store, which stores the state. The method `dispatch` in turn calls the *reducer* implementing the update logic. The reducer is a function that takes as input the old state and the action, and returns the new state. Redux then substitutes this new state object for the old one, and then the Redux (through the React/Redux bindings, primarily through a function called [connect](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect)) goes about conferring with React about which parts of the view now need to be updated. This part is the most difficult to implement correctly in a GUI program, and the fact that it is handled automatically by the React/Redux bindings is our main motivation for using React and Redux.
 
     Actions, like the objects of the state, are themselves immutable instances of built_value.
 
@@ -168,42 +180,70 @@ We get into more detail below.
     
     So although the top-level reducer is called every time, which seems as though it might be inefficient, most of the reducers do not actually run (and many that do run simply return the same state object without changing it). So it is actually quite efficient.
 
-## Making Contributions
+## Making contributions
 
-scadnano can be developed locally.
+scadnano can be developed locally. 
+You can also use the instructions in this section to run scadnano offline even if you are not doing development for the project.
+
+
 
 ### Cloning
 
-The first step is cloning the repository so you have it available locally.
+The first step is cloning the repository so you have it available locally. This requires you to have [git](https://git-scm.com/) installed.
 
 ```
 git clone https://github.com/UC-Davis-molecular-computing/scadnano.git
 ```
 
+Then change into the newly created directory:
+
+```
+cd scadnano
+```
+
 Changes to scadnano should be pushed to the
 [`dev`](https://github.com/UC-Davis-molecular-computing/scadnano/tree/dev)
-branch. So switch to the `dev` branch:
+branch. (This step is unnecessary if you simply wish to run scadnano locally.) So switch to the `dev` branch:
 
 ```
 git checkout dev
 ```
 
-Next install all the dependencies (make sure you have [installed Dart](#dart)):
+### Installing Dart
+
+First, install the [Dart SDK](https://dart.dev/get-dart).
+
+Next install all the Dart dependencies (from the same directory `scadnano` into which the project was cloned by git):
 
 ```
 pub get
 ```
 
 
-### Running a Development Server
+### Running a Local Server
 
-To run a development server to test the application, use the
+To run a local server to test the application, use the
 [`webdev`](https://dart.dev/tools/webdev) tool. This tool can
 be installed by following instructions [here](https://dart.dev/tools/webdev#setupv).
-Run `webdev serve` in the command line to compile your code
+Run 
+
+```
+webdev serve
+``` 
+
+in the `scadnano` directory to compile your code
 with the [Dart dev compiler](https://dart.dev/tools/dartdevc)
-(dartdevc) and spin up a [development
+(dartdevc) and start up a [local
 server](https://dart.dev/tools/webdev#serve).
+Running `webdev serve --release` will compile the project in production mode (instead of development mode), which is claimed to be faster in principle if you are not doing development and just want to run scadnano offline.
+However, in scadnano, it doesn't appear to make a big difference whether development or production mode is used.
+The webdev program will tell you which URL to enter in your browser; it will be something like 
+
+```
+[INFO] Serving `web` on http://127.0.0.1:8080
+```
+
+Sometimes you may see an unexpected compilation error even if you haven't changed the code from a state where it was compiling okay. If you've really tried to fix an error and it doesn't seem to be due to a mistake in the code, then as a last resort, try running `./clean.sh`. This will clear out cached files and `.g.dart` files, which can sometimes become stale and need to be regenerated. If you run `./clean.sh`, and the project still does not compile, then it is a genuine syntax error that needs to be fixed.
 
 There are a couple benefits of using `webdev serve`:
 1. Unlike the [dart2js](https://dart.dev/tools/dart2js)
@@ -265,16 +305,29 @@ As described above, the use of React and Redux is intended to reduce the number 
 
 - **view:** What does the visual interface look like, as a function of the model. This is represented by React components in the directory lib/src/view.
 
-- **update:** How should the model change in response to something, most typically the user interfacing with the view. This is implemented by the function `app_state_reducer` in lib/src/reducers/app_state_reducer.dart.
+- **update:** How should the state change in response to something, most typically the user interfacing with the view. This is implemented by the function `app_state_reducer` in lib/src/reducers/app_state_reducer.dart.
 
 All built_value classes should use the mixin `BuiltJsonSerializable`, which is done by adding `with BuiltJsonSerializable`. Read more about [mixins](https://dart.dev/guides/language/language-tour#adding-features-to-a-class-mixins).
 
 For many typical features one would want to add that involve changing some aspect of the model though interacting with the view, there is a recipe to follow for adding features. The general steps are as follows. (These steps can more or less be done in any order, but the following order will keep intermediate compilation errors to a minimum.) We explain them by example for modifying the "modification font size", which is a type `num` (which can represent either `int` or `double`).
 
-1. **create new state data types if necessary**: 
+Most of the steps below are about how to change the code. Before and after are steps that involve making changes to the GitHub repository, which are explained in more detail in the next section.
+
+
+1. **Follow GitHub steps**:
+    Make an issue describing the feature/bug fix, then make a new branch based off of dev named after the issue. See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) below for more details. 
+
+2. **add unit tests reproducing bug**:
+    If this is a bug fix, *first* add unit tests reproducing it. Depending on the exact sort of input/behavior that causes the bug, this may not be straightforward. However, if it is due to faulty logic in a reducer or middleware, then generally one can add a unit test that just calls the reducer/middleware to reproduce the bug. Bugs in view code are less straightforward to unit test.
+
+    Consider even adding unit tests for new features. As with bugs, this may or may not be possible. If the new feature involves complex logic that will happen in a reducer or middleware, then it may be possible to write unit tests that test the reducer/middleware even before it exists, as a sort of documentation of the expected behavior. (This is known as [test-driven development](https://en.wikipedia.org/wiki/Test-driven_development).) Although it is not necessary to add unit tests before implementing the feature, if it makes sense to have unit tests, make sure they are written before closing the issue and merging the new branch back into dev.
+
+    Unit tests are generally not necessary when the reducer/middleware logic is very simple. For example, the menu item "Show DNA sequences" simple toggles a Boolean value in the AppUIState. The reducer for it is very simple. *Displaying* the DNA sequence is more complex, but most of that logic is contained in View code, which is not as straightforward to test. As an example of more easily unit test-able code, the strand right-click context menu option "assign DNA sequence", if the option "assign complement to bound strands" is checked, involves much more complex logic of determining where strands overlap in order to assign DNA sequences. Thus there are extensive unit tests for the reducer that does this computation.
+
+3. **create new state data types if necessary**: 
     Most of the time, existing data types can be used, so this is rarely needed. But sometimes you will need a new data type to describe some part of the state. For "modification font size", this is unnecessary (it is represented by the builtin type `num`), but examples of custom data types that capture state information are `Design`, `Strand`, and other parts of the design, as well as `AppUIState` and things under it such as `EditModeChoice` and `LocalStorageDesignChoice`.
 
-2. **create Action class**: 
+4. **create Action class**: 
     In lib/src/actions.dart, create a new Action class representing the new information needed to update the state. In our example, this is `ModificationFontSizeSet`, and the information needed is the new font size, which is a field of this class. It's a strange naming convention, where the verb goes at the end, but it's nice when viewing an alphabetized list of all actions (e.g., in an IDE) to see the actions grouped by the object they modify. Otherwise, if the action were called `SetModificationFontSize`, and so were others like it (i.e., they all begin with the word `Set`), then everything "setting" a field would be grouped together, even though the fields are unrelated. So please following this naming convention (see lib/src/actions.dart for more examples.)
 
     **WARNING about serialization of built types:** (Note this applies not only to Actions, but any built_value type you create.) Although one of the advantages of the built_value library is that it "automatically" creates a JSON serialization mechanism, it's not fully automatic. You must add the name of the new Action to the large list of classes at the top of the file /lib/src/serializers.dart, in the annotation `@SerializersFor(`. For some reason this cannot be automated (see https://github.com/google/built_value.dart/issues/758). If you don't add this, then using [Redux DevTools](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#using-redux-devtools) won't work, which uses the built_value and built_collection serialization to display Redux state when debugging in the browser. You must also remember to add a line like this in the class definition (the name on the right side of the `=>` must be exactly the class name, with first letter lowercase, with `Serializer` appended):
@@ -285,15 +338,13 @@ For many typical features one would want to add that involve changing some aspec
 
     Some other rules to follow when creating Actions:
 
-    If this is data that will be stored in localStorage (this is the case for most view options, such as checkboxes to control whether DNA/modifications/etc. are visible, font sizes, etc.), then this Action must implement `AppUIStateStorableAction`. (We can make this requirement go away by closing [issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386).)
-
     Any action that will result in the DNA sequences being drawn in a different place (e.g., inverting the y-axis or removing a helix), should implement `SvgPngCacheInvalidatingAction`.
 
-    Any Action modifying the `Design` should implement `UndoableAction`. ([Issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386) is intended to handle this also.) This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new `Design` is loaded from a file, which changes the `Design`, but is not an undo-able action.)
+    Any Action modifying the `Design` should implement `UndoableAction`. ([Issue #386](https://github.com/UC-Davis-molecular-computing/scadnano/issues/386) is intended to handle this also.) This allows Ctrl+Z and Ctrl+Shift+Z for undo/redo. (Note there is something called `DesignChangingAction`, but that is more general. For instance, it is called when a new `Design` is loaded from a file, which changes the `Design`, but is not an undo-able action.) scadnano actually checks to see if the design changed on each action. If an action changes the design but does not implement `UndoableAction`, it will emit a warning to the browser console.
 
     Actions that change a single strand (but leave it in place in the list of strands) should implement `SingleStrandAction`. This gives a simplified method for implementing the reducer that saves some of the work of reaching into the immutable list of strands in the design; see examples (e.g., `StrandNameSet`) of how to implement the reducer for these. Similarly, actions that change a part of a strand should implement `StrandPartAction`, see examples such as `SubstrandNameSet` or `ConvertCrossoverToLoopout`.
 
-3. **if necessary, add new data fields the app state**: 
+5. **if necessary, add new data fields the app state**: 
     Most of the time these fields won't be directly in `AppState`, but instead are in some class contained in the object tree whose root is `app.state`. Particularly for "UI state" (aspects of the state that control how things look, but are not stored in the `Design`), we are introducing new data to keep track of the data that changed. In this example, the data is `app.state.ui_state.storables.modification_font_size`. 
 
     If this is data that will be stored in localStorage, then this should be stored under `app.state.ui_state.storables`. If not (for example, more transient UI state such as the current coordinates of the dragging selection box, or Boolean indicating whether the design has changed since the last time it was saved), but it is still UI state, then it is stored in `app.state.ui_state`. Of course, `app.state.design` is persisted in localStorage, but that is handled separately.
@@ -338,10 +389,10 @@ For many typical features one would want to add that involve changing some aspec
     If you are not sure what is causing this issue in DevTools, you can use "pause on caught exceptions" to pinpoint which part of your state/action is not able to be converted to json.
     ```
 
-4. **create view component for interaction**: 
+6. **create view component for interaction**: 
     The user indicates that they want to perform the action by interacting with the view component. In our example, the view component is found in lib/src/view/menu.dart, and is one of the components returned from the method `view_menu_mods`. It is the instance of `MenuNumber` (see lib/src/view/MenuNumber.dart) in the list returned. Components of type `MenuNumber` have a callback `on_new_value` that are called whenever the HTML input element (of type `"number"`, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number) changes its value. In this example, this number is given to a newly created instance of the action `ModificationFontSizeSet`. This action is the *dispatched* by calling `props.dispatch`. This is because `ConnectedMenu` is a "connected component" (connected directly to the Redux store), so it has a `dispatch` prop. But in general, despite recommended practice, we don't pass this dispatch method down as a prop to lower components, but instead allow their event handlers to directly call `app.dispatch`. (Made available when importing the file app.dart.)
 
-5. **create reducer for updating state in response to Action**: 
+7. **create reducer for updating state in response to Action**: 
     This is the code that takes as input the old state and the Action and produces the new state. The top-level reducer is a function called `app_state_reducer` in lib/src/reducers/app_state_reducer.dart. But generally this top-level reducer is not modified directly. Through a series of composition, all reducers are called indirectly when `app_state_reducer` is called. The main ones called by `app_state_reducer` are `design_reducer`, `design_global_reducer`, `ui_state_local_reducer`, and `ui_state_global_reducer`. See below, and the source code comments in app_state_reducer.dart, for an explanation of the different between a "local" and "global" reducer.
 
     The most straightforward way to add a new reducer to this composition is to find a "sibling" reducer to imitate, i.e., a reducer modifying a field that is another field in the same class where you just added a field. In this example, we are adding a reducer for `app.state.ui_state.storables.modification_font_size`, so for guidance we can look and see what is the reducer for any other field in `app.state.ui_state.storables`. Most of them are listed under the function `app_ui_state_storable_reducer` in the file lib/src/reducers/app_ui_state_storable_reducer.dart.
@@ -355,7 +406,7 @@ For many typical features one would want to add that involve changing some aspec
     **CAUTION when writing reducers that change strands:**
     The way the scadnano data is stored, it is necessary to called `strand = strand.initialize();` whenever creating a new strand. Any reducer listed in `strand_part_reducer` in reducers/strands_reducer.dart will have this done automatically, but in general, be conservative and, before putting a new strand in a design (including one that is the result of modifying an existing strand), replace it with `strand.initialize()`.
 
-6. **if necessary, add view code to display the new state**: 
+8. **if necessary, add view code to display the new state**: 
     If this involved adding a new piece of state, then it may influence the view in some way. (Not always; some features/new actions influence only side-effects, such as saving to localStorage, implemented by middleware, so in such cases you could skip this step.) Pass the information through the React component hierarchy, starting at the [connected component](https://github.com/Workiva/over_react/blob/master/doc/over_react_redux_documentation.md#connect) above the view component(s) that need to be altered to display it properly. Be sure to follow React rules about passing the [minimal amount of state necessary](https://reactjs.org/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) to draw the view. For instance, if you need only a single `Strand`, don't pass the list of all strands in. If you only need the DNA sequence of the `Strand`, don't pass the whole `Strand`, just pass its DNA sequence.
 
     In our example, the components (starting from the bottom) that need the `modification_font_size` property are
@@ -364,16 +415,16 @@ For many typical features one would want to add that involve changing some aspec
 
     Since DesignMain is a connected component, at the top of the file we can see how `DesignMainStrandsProps.modification_font_size` is set to equal `state.ui_state.modification_font_size` from the State. From there it propagates down to the component that needs it.
 
-    The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly.
+    The React-Redux bindings suggest using many connected components, putting them farther down in the View tree, to avoid the need to pass so many props through intermediate React components that don't need them. For example, note that none of `DesignMain`, `DesignMainStrands`, `DesignMainStrand`, or `DesignMainStrandModifications` need the font size; they only have it for the purpose of getting it from the connected `DesignMain` (which gets it directly from the state through the function `mapStateToProps`) down to `DesignMainStrandModificationDomain`, which needs it directly. This is known as [prop drilling](https://medium.com/@jeromefranco/how-to-avoid-prop-drilling-in-react-7e3a9f3c8674) in React, and using many connected components further down in the view tree is advised as a way to avoid it.
   
-    However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass props down through the view tree, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
+    However, in our experience, the way OverReact and OverReactRedux are currently implemented, and the way built_value is currently implemented, when using many connected components further down in the view tree, this was *much* slower and caused excessive jank with frequent state updates. (See [here](https://github.com/Workiva/over_react/issues/434) for more details.) It is much faster in scadnano to have only a few connected components near the top of the View tree, and to pass props down through the view tree using prop drilling, even though this is annoying and requires modifying every component between the relevant component and its connected ancestor.
 
     **Note about when to use global variables in view code:**
     In general, you should not access global variables in view code, e.g., don't do this: `var helix = app.state.design.helices[0]`. The whole idea that makes React work is that each component produces its HTML as a pure function of its props (and its React state, which is used in only a few rare instances in scadnano). The algorithm used to update the view efficiently makes this assumption. Thus, if you are tempted to access a global variable, most likely what needs to happen is that more props need to be added to the component, getting that information from the the ancestor components, which ultimately get them from a Redux connected component that can access the global state directly.
 
     Note that this is a rule about code that **renders** the view (i.e., anything called by the `render` method of a component). But it does not apply to *event handling code* that the rendering code declares (but does not call directly). Event handlers are functions that execute in response to (typically) user interaction with the view *after* it has already been rendered. For example, you'll see lines like this `..onClick = on_mouse_click` where `on_mouse_click` is a function taking an event type as input and indicating how to respond. It is fine for event handling code to access the global app state variable `app.state`. In fact, this is preferred over passing the information it needs as props. The reason is that if only event-handling code needs that information, but not the view code, then whenever the information changes, the view will re-render, causing slowdown, even though the appearance of the component didn't change. (All that changed was what will happen eventually when the event happens that triggers the event handler.) Read more about this issue here: https://github.com/UC-Davis-molecular-computing/scadnano/issues/191#issuecomment-659729707
 
-7. **if necessary, add middleware:** 
+9. **if necessary, add middleware:** 
     The above description of state, view, and reducers in React/Redux describes an ideal situation in which every reducer and every view is a pure function, dependent only on the state (and also action for reducers), taking no other data as input and affecting no other part of the memory (i.e., having no *side-effects*). Of course, sometimes programs need to break this, having side-effects such as saving files, or taking other inputs not available in the React props at the time the Action was created (for example, some parts of the view may not have enough data to check whether an action is legal to dispatch). 
 
     This is where middleware comes in. It takes care of essentially those parts of the logic that don't fit cleanly into the state &rarr; view &rarr; reducer &rarr; state loop. Examples include storing data to localStorage, saving a file to disk, loading a file from disk, checking whether an action is legal (for example, `strand_create_middleware_middleware` doesn't create a new strand if the position is occupied).
@@ -386,6 +437,21 @@ For many typical features one would want to add that involve changing some aspec
 
     *Note:* You need to remember to add the middleware function to the list in the file lib/src/middleware/all_middleware.dart, or it won't be called. Remember also to call `next(action)` (unless you actually want to stop the Action from going through).
 
+10. **Add unit tests**:
+    If you did not already add unit tests to test the bug or new feature in an earlier step, and if it makes sense to do so, do that now. Generally this will be possible if the feature/bug fix involves complex logic in a reducer or middleware, and the unit test will call the reducer/middleware.
+
+11. **Update repository**:
+    Commit changes, 
+    push the commit(s) to the repo,
+    create a pull request (PR) from the branch into dev
+    (**NOTE**: the default is the main branch, remember to change this),
+    and request a code review of the PR.
+    Once the PR is approved, merge the changes into dev,
+    which closes the PR, 
+    delete the branch you created,
+    and in your local repo, switch back to the dev branch.
+    See [Pushing to the repository dev branch and documenting changes (done on all updates)](#pushing-to-the-repository-dev-branch-and-documenting-changes-done-on-all-updates) for more details.
+
 TODO: add link to a more detailed tutorial walking through the steps above showing actual code that gets added at each step.
 
 
@@ -397,17 +463,17 @@ For any more significant change that is made (e.g., closing an issue, adding a n
 
 1. If there is not already a GitHub issue describing the desired change, make one. Make sure that its title is a self-contained description, and that it describes the change we would like to make to the software. For example, *"problem with loading gridless design"* is a bad title. A better title is *"fix problem where loading gridless design with negative x coordinates throws exception"*.
 
-2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.)
+2. Make a new branch specifically for the issue. Base this branch off of `dev` (**WARNING**: in GitHub desktop, the default is to base it off of `master`, so switch that). The title of the issue (with appropriate hyphenation) is a good name for the branch. (In GitHub Desktop, if you paste the title of the issue, it automatically adds the hyphens.) A good branch name is simply the issue title, preceded by the issue number, e.g., "issue-101-fix-problem-where-loading-gridless-design-with-negative-x-coordinates-throws-exception", although abbreviating the issue title is good if it is long, e.g., "issue-101-gridless-design-negative-x-coordinates".
 
 3. If it is about fixing a bug, *first* add tests to reproduce the bug before working on fixing it. (This is so-called [test-driven development](https://www.google.com/search?q=test-driven+development))
 
 4. If it is about implementing a feature, first add tests to test the feature. For instance, if you are adding a new method, this involves writing code that calls the method and tests various combinations of example inputs and expected output.
 
-5. Work entirely in that branch to fix the issue.
+5. Work entirely in that branch to fix the issue, following the [recipe described above](#general-recipe-for-adding-features).
 
 6. Run unit tests and ensure they pass.
 
-7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" or "closes #123" (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
+7. Commit the changes. In the commit message, reference the issue using the phrase "fixes #123" (for bug fixes) or "closes #123" (for new features) (see [here](https://docs.github.com/en/enterprise/2.16/user/github/managing-your-work-on-github/closing-issues-using-keywords)). Also, in the commit message, describe the issue that was fixed (one easy way is to copy the title of the issue); this message will show up in automatically generated release notes, so this is part of the official documentation of what changed.
 
 8. Create a pull request (PR). **WARNING:** by default, it will want to merge into the `master` branch. Change the destination branch to `dev`.
 

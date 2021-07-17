@@ -28,6 +28,7 @@ import '../constants.dart' as constants;
 import 'substrand.dart';
 import 'unused_fields.dart';
 import 'domain_name_mismatch.dart';
+import 'address.dart';
 import '../extension_methods.dart';
 
 part 'design.g.dart';
@@ -42,7 +43,12 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   /// If [num_helices] is specified, helices are automatically populated with reasonable defaults based
   /// on the grid.
-  factory Design({Iterable<Helix> helices, Grid grid = Grid.none, int num_helices, Geometry geometry}) {
+  factory Design(
+      {Iterable<Helix> helices,
+      Grid grid = Grid.none,
+      int num_helices,
+      Geometry geometry,
+      Map<String, HelixGroup> groups = null}) {
     if (helices != null && num_helices != null) {
       throw IllegalDesignError('cannot specify both helices and num_helices:\n'
           'num_helices = ${num_helices}\n'
@@ -51,7 +57,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     geometry ??= constants.default_geometry;
     if (helices == null) {
       if (num_helices == null) {
-        helices = List<Helix>();
+        helices = List<Helix>.empty();
       } else {
         helices = [
           for (int idx in Iterable<int>.generate(num_helices))
@@ -66,12 +72,23 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
     var helices_map = {for (var helix in helices) helix.idx: helix};
-    return Design.from((b) => b
-      ..geometry.replace(geometry)
-      ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
-        ..grid = grid
-        ..helices_view_order.replace(helices_map.keys))
-      ..helices.replace(helices_map));
+    if (_uses_default_group(helices)) {
+      if (groups != null) {
+        throw ArgumentError('groups must be null if all helices use default group');
+      }
+      return Design.from((b) => b
+        ..geometry.replace(geometry)
+        ..groups[constants.default_group_name] = b.groups[constants.default_group_name].rebuild((g) => g
+          ..grid = grid
+          ..helices_view_order.replace(helices_map.keys))
+        ..helices.replace(helices_map));
+    } else {
+      if (groups == null) {
+        groups = _calculate_groups_from_helices(helices, grid);
+      }
+      return Design.from(
+          (b) => b..geometry.replace(geometry)..groups.replace(groups)..helices.replace(helices_map));
+    }
   }
 
   factory Design.from([void Function(DesignBuilder) updates]) = _$Design;
@@ -119,14 +136,22 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return false;
   }
 
+  // returns null if any Strand has a helix not in this Design
   BuiltSet<String> group_names_of_strands(Iterable<Strand> selected_strands) {
     var helix_idxs_of_selected_strands = {
       for (var strand in selected_strands)
-        for (var domain in strand.domains()) domain.helix
+        for (var domain in strand.domains) domain.helix
     };
-    var groups_of_selected_strands = {
-      for (int helix_idx in helix_idxs_of_selected_strands) helices[helix_idx].group
-    };
+
+    Set<String> groups_of_selected_strands = {};
+    for (int helix_idx in helix_idxs_of_selected_strands) {
+      if (helices[helix_idx] == null) {
+        return null;
+      }
+      var name = helices[helix_idx].group;
+      groups_of_selected_strands.add(name);
+    }
+
     return groups_of_selected_strands.build();
   }
 
@@ -134,7 +159,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Domain, Color> get color_of_domain {
     Map<Domain, Color> map = {};
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         map[domain] = strand.color;
       }
     }
@@ -154,7 +179,11 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
   HelixGroup group_of_domain(Domain domain) => group_of_helix_idx(domain.helix);
 
+  HelixGroup group_of_strand(Strand strand) => group_of_domain(strand.first_domain);
+
   String group_name_of_domain(Domain domain) => group_name_of_helix_idx(domain.helix);
+
+  String group_name_of_strand(Strand strand) => group_name_of_domain(strand.first_domain);
 
   BuiltSet<String> group_names_of_domains(Iterable<Domain> domains) {
     var helix_idxs_of_domains = {for (var domain in domains) domain.helix};
@@ -266,7 +295,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Domain> get domains_by_id {
     var builder = MapBuilder<String, Domain>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         builder[domain.id] = domain;
       }
     }
@@ -277,7 +306,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, Loopout> get loopouts_by_id {
     var builder = MapBuilder<String, Loopout>();
     for (var strand in strands) {
-      for (var loopout in strand.loopouts()) {
+      for (var loopout in strand.loopouts) {
         builder[loopout.id] = loopout;
       }
     }
@@ -299,7 +328,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, SelectableDeletion> get deletions_by_id {
     var builder = MapBuilder<String, SelectableDeletion>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         for (var deletion in domain.selectable_deletions) {
           builder[deletion.id] = deletion;
         }
@@ -312,7 +341,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, SelectableInsertion> get insertions_by_id {
     var builder = MapBuilder<String, SelectableInsertion>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         for (var insertion in domain.selectable_insertions) {
           builder[insertion.id] = insertion;
         }
@@ -336,7 +365,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         builder[domain.dnaend_start.id] = domain.dnaend_start;
         builder[domain.dnaend_end.id] = domain.dnaend_end;
       }
@@ -368,7 +397,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_5p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         var end = domain.dnaend_5p;
         if (!domain.is_first) {
           builder[end.id] = end;
@@ -382,7 +411,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<String, DNAEnd> get ends_3p_other_by_id {
     var builder = MapBuilder<String, DNAEnd>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         var end = domain.dnaend_3p;
         if (!domain.is_last) {
           builder[end.id] = end;
@@ -413,7 +442,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     return map.build();
   }
 
-  /// design.strands_overlapping[strand] is a list of all strands that overlap strand.
+  /// design.strands_overlapping[strand] is a list of all strands that overlap strand, including possibly itself.
   @memoized
   BuiltMap<Strand, BuiltList<Strand>> get strands_overlapping {
     Map<Strand, List<Strand>> map = {};
@@ -422,9 +451,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       var strand1 = strands[i];
       map[strand1] = [];
       for (int j = 0; j < strands.length; j++) {
-        if (i == j) {
-          continue;
-        }
         var strand2 = strands[j];
         if (strand1.overlaps(strand2)) {
           map[strand1].add(strand2);
@@ -440,7 +466,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var domain_mismatches_map_builder = MapBuilder<Domain, ListBuilder<Mismatch>>();
     for (Strand strand in this.strands) {
       if (strand.dna_sequence != null) {
-        for (Domain domain in strand.domains()) {
+        for (Domain domain in strand.domains) {
           domain_mismatches_map_builder[domain] = this._find_mismatches_on_substrand(domain);
         }
       }
@@ -456,7 +482,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<DNAEnd, Domain> get end_to_domain {
     var end_to_substrand_builder = MapBuilder<DNAEnd, Domain>();
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         end_to_substrand_builder[domain.dnaend_3p] = domain;
         end_to_substrand_builder[domain.dnaend_5p] = domain;
       }
@@ -522,10 +548,26 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   BuiltMap<Address, DNAEnd> get address_to_end {
     var map = Map<Address, DNAEnd>();
     for (var strand in strands) {
-      for (var ss in strand.domains()) {
+      for (var ss in strand.domains) {
         for (var end in [ss.dnaend_start, ss.dnaend_end]) {
-          var key = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
-          map[key] = end;
+          var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
+          map[address] = end;
+        }
+      }
+    }
+    return map.build();
+  }
+
+  /// Gets Address (helix,offset,forward) of given DNAEnd
+  /// Offset is inclusive, i.e., dna_end.offset_inclusive
+  @memoized
+  BuiltMap<DNAEnd, Address> get end_to_address {
+    var map = Map<DNAEnd, Address>();
+    for (var strand in strands) {
+      for (var ss in strand.domains) {
+        for (var end in [ss.dnaend_start, ss.dnaend_end]) {
+          var address = Address(helix_idx: ss.helix, offset: end.offset_inclusive, forward: ss.forward);
+          map[end] = address;
         }
       }
     }
@@ -659,6 +701,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     var group = all_groups.first;
     return group;
   }
+
+  @memoized
+  Grid get grid => default_group().grid;
 
   /// Throw exception if default group is not being used; otherwise set the grid of the default group.
   set_grid(Grid grid) {
@@ -800,6 +845,270 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     }
   }
 
+  /// Returns the number of helix groups in json_map
+  static int _num_helix_groups(Map<String, dynamic> json_map) {
+    int num_groups_used = 0;
+    if (json_map.containsKey(constants.groups_key)) {
+      num_groups_used = json_map[constants.groups_key].length;
+    }
+    return num_groups_used;
+  }
+
+  /// Returns list of helices as well as two maps, group_to_pitch_yaw, and pitch_yaw_to_helices
+  ///
+  /// group_to_pitch_yaw is filled if multiple helix groups are used
+  /// - maps group name to pitch, yaw, and helix idx of a helix in that group (the first one found)
+  ///
+  /// pitch_yaw_to_helices is filled if a single helix group is used
+  /// - maps pitch and yaw pairs to list of helix with those pitch and yaw
+  ///
+  /// These maps are used to convert designs that have helices with individual pitches and yaws
+  /// into designs where helices do not have individual pitches and yaws.
+  ///
+  /// Pass these two maps into _groups_from_json so that groups can be assigned appropriate pitch, yaw values.
+  static Tuple3<Map<int, HelixBuilder>, Map<String, HelixPitchYaw>, Map<HelixPitchYaw, List<HelixBuilder>>>
+      _helices_from_json(Map<String, dynamic> json_map, bool invert_xy, Geometry geometry) {
+    // Initialize containers
+    List<HelixBuilder> helix_builders_list = [];
+    Map<String, HelixPitchYaw> group_to_pitch_yaw = {};
+    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = {};
+
+    // Useful booleans
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
+    bool grid_is_none = grid == Grid.none;
+    bool using_groups = json_map.containsKey(constants.groups_key);
+    bool multiple_groups_used = Design._num_helix_groups(json_map) > 1;
+
+    // create HelixBuilders
+    List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
+    int idx_default = 0;
+    for (Map<String, dynamic> helix_json in deserialized_helices_list) {
+      HelixBuilder helix_builder = Helix.from_json(helix_json);
+      if (helix_builder.idx == null) {
+        helix_builder.idx = idx_default;
+      }
+      int helix_idx = helix_builder.idx;
+
+      /////////////////////////////////////////////////////////////////////////////
+      /// BEGIN Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+      /////////////////////////////////////////////////////////////////////////////
+
+      num pitch = helix_json.containsKey(constants.pitch_key) ? helix_json[constants.pitch_key] : 0;
+      num yaw = helix_json.containsKey(constants.yaw_key) ? helix_json[constants.yaw_key] : 0;
+      String group = helix_builder.group;
+      if (multiple_groups_used) {
+        if (group_to_pitch_yaw.containsKey(group)) {
+          // Another helix in this group also had a non-zero pitch/yaw, so check if they match
+          HelixPitchYaw helix_pitch_yaw = group_to_pitch_yaw[group];
+          double expected_pitch = helix_pitch_yaw.pitch;
+          double expected_yaw = helix_pitch_yaw.yaw;
+          int idx_of_helix_with_expected_pitch_yaw = helix_pitch_yaw.helix_idx;
+          bool pitch_yaw_match_expectation =
+              util.are_close(pitch, expected_pitch) && util.are_close(yaw, expected_yaw);
+          if (!pitch_yaw_match_expectation) {
+            throw IllegalDesignError(
+                """In HelixGroup ${group}, Helix ${helix_idx} has pitch ${pitch} and yaw ${yaw} but Helix ${helix_idx}
+                has pitch ${expected_pitch} and yaw ${expected_yaw}. Please seperate Helix ${helix_idx} and Helix
+                ${idx_of_helix_with_expected_pitch_yaw} into seperate HelixGroups.""");
+          }
+        } else {
+          // Log pitch and yaw for a helix in group so that other helices in the group can be compared
+          group_to_pitch_yaw[group] = HelixPitchYaw(pitch, yaw, helix_idx);
+        }
+      } else {
+        // Single helix group used
+
+        bool is_new_pitch_yaw = true;
+        // Search for a pitch yaw pair that is close to pitch yaw of helix
+        for (MapEntry<HelixPitchYaw, List<HelixBuilder>> m in pitch_yaw_to_helices.entries) {
+          double p = m.key.pitch;
+          double y = m.key.yaw;
+          if (util.are_close(p, pitch) && util.are_close(y, yaw)) {
+            pitch_yaw_to_helices[m.key].add(helix_builder);
+            is_new_pitch_yaw = false;
+            break;
+          }
+        }
+        // If no pitch yaw pair found, then create a new one and add to dictionary
+        if (is_new_pitch_yaw) {
+          // helix_idx is passed in to HelixPitchYaw constructor, but not actually used in single helix group case
+          pitch_yaw_to_helices[HelixPitchYaw(pitch, yaw, helix_idx)] = [helix_builder];
+        }
+      }
+
+      ///////////////////////////////////////////////////////////////////////////
+      /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+      ///////////////////////////////////////////////////////////////////////////
+
+      helix_builder.invert_xy = invert_xy;
+      helix_builder.geometry = geometry.toBuilder();
+      if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
+        throw IllegalDesignError(
+            'grid is none, but Helix $helix_idx has grid_position = ${helix_json[constants.grid_position_key]}');
+      } else if (!grid_is_none && !using_groups && helix_json.containsKey(constants.position_key)) {
+        throw IllegalDesignError(
+            'grid is not none, but Helix $helix_idx has position = ${helix_json[constants.position_key]}');
+      }
+      helix_builders_list.add(helix_builder);
+      idx_default++;
+    }
+    // ensure no two helices have same idx
+    var helix_indices = [for (var helix_builder in helix_builders_list) helix_builder.idx];
+    _ensure_helix_idxs_unique(helix_indices, helix_builders_list);
+    // now that we know idx's are unique, assign from list into map with idx keys
+    Map<int, HelixBuilder> helix_builders_map = {
+      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
+    };
+
+    return Tuple3(helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+  }
+
+  /// Returns map of helix group names to group as well as the grid.
+  ///
+  /// If multiple helix groups are used, then groups pitch and yaw will be the
+  /// pitch and yaw given in the json map plus the pitch and yaw values
+  /// provided in group_to_pitch_yaw.
+  ///
+  /// If a single helix group is used, then new helix groups will be created using
+  /// the provided group_to_pitch_yaw map. Because new helix groups are created,
+  /// helices will be modfied so that each helix's group field is set to the new
+  /// group it has been assigned to.
+  ///
+  /// In most cases, grid will simply be what is given in the json_map.
+  /// There is a special case where if the default helix group is used,
+  /// then the grid may be initially set to some value. If individual helix
+  /// pitch and rolls were set, then new helix groups are created, meaning
+  /// the grid field is no longer valid.
+  static Map<String, HelixGroupBuilder> _groups_from_json(
+      Map<String, dynamic> json_map,
+      Map<int, HelixBuilder> helix_builders_map,
+      Map<String, HelixPitchYaw> group_to_pitch_yaw,
+      Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices) {
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
+    bool using_groups = json_map.containsKey(constants.groups_key);
+
+    // helix groups; populate with grids, but not helices_view_order yet
+    Map<String, HelixGroupBuilder> group_builders_map = null;
+    if (!using_groups) {
+      group_builders_map = {constants.default_group_name: DEFAULT_HelixGroup.toBuilder()..grid = grid};
+    } else {
+      Map<String, dynamic> groups_json = json_map[constants.groups_key];
+      group_builders_map = {};
+      for (var name in groups_json.keys) {
+        var group_json = groups_json[name];
+        var helix_idxs_in_group =
+            helix_builders_map.keys.where((idx) => helix_builders_map[idx].group == name);
+        group_builders_map[name] =
+            HelixGroup.from_json(group_json, helix_idxs: helix_idxs_in_group).toBuilder();
+      }
+    }
+    ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
+
+    /////////////////////////////////////////////////////////////////////////////
+    /// BEGIN Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+    /////////////////////////////////////////////////////////////////////////////
+
+    bool multiple_groups_used = Design._num_helix_groups(json_map) > 1;
+
+    if (multiple_groups_used) {
+      // Add individual helix pitch and yaw to group pitch and yaw
+      for (MapEntry<String, HelixPitchYaw> m in group_to_pitch_yaw.entries) {
+        String group_name = m.key;
+        double pitch = m.value.pitch;
+        double yaw = m.value.yaw;
+
+        group_builders_map[group_name].pitch += pitch;
+        group_builders_map[group_name].yaw += yaw;
+      }
+    } else {
+      // Add new helix groups for helices that had individual pitch and yaw set
+      Map<String, HelixGroupBuilder> new_groups = {};
+
+      assert(group_builders_map.length == 1);
+      // The only group
+      HelixGroupBuilder group = group_builders_map.values.first;
+
+      // Loop through all HelixPitchYaw and create new groups and rewrite relevant helices' group to be new group
+      for (MapEntry<HelixPitchYaw, List<HelixBuilder>> m in pitch_yaw_to_helices.entries) {
+        double helix_pitch = m.key.pitch;
+        double helix_yaw = m.key.yaw;
+        List<HelixBuilder> helix_list = m.value;
+
+        // Only make new groups if helix's pitch/yaw is non-zero
+        bool helix_pitch_yaw_is_zero = util.are_close(0, helix_pitch) && util.are_close(0, helix_yaw);
+        if (!helix_pitch_yaw_is_zero) {
+          double new_pitch = group.pitch + helix_pitch;
+          double new_yaw = group.yaw + helix_yaw;
+          String new_group_name = 'pitch_${new_pitch}_yaw_${new_yaw}';
+          Map<String, dynamic> group_json = {};
+          group_json[constants.pitch_key] = new_pitch;
+          group_json[constants.yaw_key] = new_yaw;
+          group_json[constants.position_key] = group.position.build().to_json_serializable();
+          group_json[constants.grid_key] = group.grid.to_json();
+          new_groups[new_group_name] =
+              HelixGroup.from_json(group_json, helix_idxs: helix_list.map((e) => e.idx)).toBuilder();
+
+          // Move helices into new group
+          for (HelixBuilder helix in helix_list) {
+            helix.group = new_group_name;
+          }
+        }
+      }
+
+      group_builders_map.addEntries(new_groups.entries);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// END Backward Compatibility Code for Helix With Individual Pitch/Yaw ///
+    ///////////////////////////////////////////////////////////////////////////
+
+    return group_builders_map;
+  }
+
+  static Tuple2<Map<int, HelixBuilder>, Map<String, HelixGroupBuilder>> _helices_and_groups_from_json(
+      Map<String, dynamic> json_map, bool invert_xy, bool position_x_z_should_swap, Geometry geometry) {
+    var grid =
+        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
+    bool grid_is_none = grid == Grid.none;
+    bool using_groups = json_map.containsKey(constants.groups_key);
+
+    var r = _helices_from_json(json_map, invert_xy, geometry);
+    Map<int, HelixBuilder> helix_builders_map = r.item1;
+    Map<String, HelixPitchYaw> group_to_pitch_yaw = r.item2;
+    Map<HelixPitchYaw, List<HelixBuilder>> pitch_yaw_to_helices = r.item3;
+
+    Map<String, HelixGroupBuilder> group_builders_map =
+        _groups_from_json(json_map, helix_builders_map, group_to_pitch_yaw, pitch_yaw_to_helices);
+
+    // if helices_view_order not already specified in group or top-level of design, give each a default
+    if (json_map.containsKey(constants.helices_view_order_key)) {
+      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
+      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
+    }
+    assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
+
+    // Swap x and z coordinates if needed
+    if (position_x_z_should_swap) {
+      for (var helix_builder in helix_builders_map.values) {
+        if (grid_is_none && !using_groups ||
+            using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
+          // prior to version 0.13.0, x and z had the opposite role
+          num swap = helix_builder.position_.x;
+          helix_builder.position_.x = helix_builder.position_.z;
+          helix_builder.position_.z = swap;
+        }
+      }
+      for (var group_builder in group_builders_map.values) {
+        num swap = group_builder.position.x;
+        group_builder.position.x = group_builder.position.z;
+        group_builder.position.z = swap;
+      }
+    }
+    return Tuple2(helix_builders_map, group_builders_map);
+  }
+
   static Design from_json_str(String json_str, [bool invert_xy = false]) {
     var json_map = jsonDecode(json_str);
     return Design.from_json(json_map, invert_xy);
@@ -817,12 +1126,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
     // prior to version 0.13.0, x and z had the opposite role
     bool position_x_z_should_swap = util.version_precedes(design_builder.version, '0.13.0');
 
-    var grid =
-        util.optional_field(json_map, constants.grid_key, constants.default_grid, transformer: Grid.valueOf);
-
-    bool grid_is_none = grid == Grid.none;
-    bool using_groups = json_map.containsKey(constants.groups_key);
-
     design_builder.unused_fields = util.unused_fields_map(json_map, constants.design_keys);
 
     Geometry geometry = util.optional_field(json_map, constants.geometry_key, Geometry(),
@@ -830,37 +1133,9 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
         legacy_keys: constants.legacy_geometry_keys);
     design_builder.geometry.replace(geometry);
 
-    List<HelixBuilder> helix_builders_list = [];
-    List<dynamic> deserialized_helices_list = json_map[constants.helices_key];
-
-    // create HelixBuilders
-    int idx = 0;
-    for (Map<String, dynamic> helix_json in deserialized_helices_list) {
-      HelixBuilder helix_builder = Helix.from_json(helix_json);
-      if (helix_builder.idx == null) {
-        helix_builder.idx = idx;
-      }
-      helix_builder.invert_xy = invert_xy;
-      helix_builder.geometry = geometry.toBuilder();
-      if (grid_is_none && !using_groups && helix_json.containsKey(constants.grid_position_key)) {
-        throw IllegalDesignError(
-            'grid is none, but Helix $idx has grid_position = ${helix_json[constants.grid_position_key]}');
-      } else if (!grid_is_none && !using_groups && helix_json.containsKey(constants.position_key)) {
-        throw IllegalDesignError(
-            'grid is not none, but Helix $idx has position = ${helix_json[constants.position_key]}');
-      }
-      helix_builders_list.add(helix_builder);
-      idx++;
-    }
-
-    // ensure no two helices have same idx
-    var helix_indices = [for (var helix_builder in helix_builders_list) helix_builder.idx];
-    _ensure_helix_idxs_unique(helix_indices, helix_builders_list);
-
-    // now that we know idx's are unique, assign from list into map with idx keys
-    Map<int, HelixBuilder> helix_builders_map = {
-      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder
-    };
+    var t = Design._helices_and_groups_from_json(json_map, invert_xy, position_x_z_should_swap, geometry);
+    var helix_builders_map = t.item1;
+    var group_builders_map = t.item2;
 
     // strands
     List<Strand> strands = [];
@@ -873,49 +1148,6 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     set_helices_min_max_offsets(helix_builders_map, design_builder.strands.build());
 
-    // helix groups; populate with grids, but not helices_view_order yet
-    Map<String, HelixGroupBuilder> group_builders_map = null;
-    if (!using_groups) {
-      group_builders_map = {constants.default_group_name: DEFAULT_HelixGroup.toBuilder()..grid = grid};
-    } else {
-      Map<String, dynamic> groups_json = json_map[constants.groups_key];
-      group_builders_map = {};
-      for (var name in groups_json.keys) {
-        var group_json = groups_json[name];
-        var helix_idxs_in_group =
-            helix_builders_map.keys.where((idx) => helix_builders_map[idx].group == name);
-        group_builders_map[name] =
-            HelixGroup.from_json(group_json, helix_idxs: helix_idxs_in_group).toBuilder();
-      }
-    }
-
-    ensure_helix_groups_in_groups_map(helix_builders_map, group_builders_map);
-
-    // if helices_view_order not already specified in group or top-level of design, give each a default
-    if (json_map.containsKey(constants.helices_view_order_key)) {
-      var helices_view_order = List<int>.from(json_map[constants.helices_view_order_key]);
-      group_builders_map[constants.default_group_name].helices_view_order.replace(helices_view_order);
-    }
-    assign_default_helices_view_orders_to_groups(group_builders_map, helix_builders_map);
-
-    // Swap x and z coordinates if needed
-    if (position_x_z_should_swap) {
-      for (var helix_builder in helix_builders_list) {
-        if (grid_is_none && !using_groups ||
-            using_groups && group_builders_map[helix_builder.group].grid.is_none()) {
-          // prior to version 0.13.0, x and z had the opposite role
-          num swap = helix_builder.position_.x;
-          helix_builder.position_.x = helix_builder.position_.z;
-          helix_builder.position_.z = swap;
-        }
-      }
-      for (var group_builder in group_builders_map.values) {
-        num swap = group_builder.position.x;
-        group_builder.position.x = group_builder.position.z;
-        group_builder.position.z = swap;
-      }
-    }
-
     // build groups
     Map<String, HelixGroup> groups_map =
         group_builders_map.map((key, value) => MapEntry<String, HelixGroup>(key, value.build()));
@@ -925,7 +1157,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
 
     // build Helices
     Map<int, Helix> helices = {
-      for (var helix_builder in helix_builders_list) helix_builder.idx: helix_builder.build()
+      for (var helix_builder in helix_builders_map.values) helix_builder.idx: helix_builder.build()
     };
     helices = util.helices_assign_svg(geometry, invert_xy, helices, groups_map.build());
     design_builder.helices.replace(helices);
@@ -1028,7 +1260,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_strand_references_legal_helices(Strand strand) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       if (!helices.containsKey(domain.helix)) {
         var err_msg = "domain ${domain} refers to nonexistent Helix index ${domain.helix}; "
             "here is the list of valid helices: ${helices.keys.join(', ')}";
@@ -1038,7 +1270,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   }
 
   _check_strand_has_legal_offsets_in_helices(Strand strand) {
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       var helix = helices[domain.helix];
       if (domain.start < helix.min_offset) {
         var err_msg = "domain ${domain} has start offset ${domain.start}, "
@@ -1331,7 +1563,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   BuiltList<Domain> get all_domains => [
         for (var strand in strands)
-          for (var domain in strand.domains()) domain
+          for (var domain in strand.domains) domain
       ].build();
 
 //  Set<Domain> substrands_on_helix_at(int helix_idx, int offset) => helix_idx_to_substrands[helix_idx];
@@ -1514,7 +1746,7 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
   @memoized
   bool get has_insertions_or_deletions {
     for (var strand in strands) {
-      for (var substrand in strand.domains()) {
+      for (var substrand in strand.domains) {
         if (substrand.deletions.isNotEmpty || substrand.insertions.isNotEmpty) {
           return true;
         }
@@ -1549,6 +1781,45 @@ abstract class Design with UnusedFields implements Built<Design, DesignBuilder>,
       }
     }
   }
+
+  num yaw_of_helix(Helix helix) {
+    return groups[helix.group].yaw;
+  }
+
+  num pitch_of_helix(Helix helix) {
+    return groups[helix.group].pitch;
+  }
+}
+
+Map<String, HelixGroup> _calculate_groups_from_helices(Iterable<Helix> helices, Grid grid) {
+  // gather up helix-idxs in each group
+  Map<String, List<int>> group_to_helix_idxs = {};
+  for (var helix in helices) {
+    var name = helix.group;
+    if (!group_to_helix_idxs.containsKey(name)) {
+      group_to_helix_idxs[name] = [];
+    }
+    group_to_helix_idxs[name].add(helix.idx);
+  }
+
+  // sort helix idxs within each group
+  group_to_helix_idxs.values.map((idxs) => idxs.sort());
+
+  Map<String, HelixGroup> groups = {
+    for (var name in group_to_helix_idxs.keys)
+      name: HelixGroup(grid: grid, helices_view_order: group_to_helix_idxs[name])
+  };
+
+  return groups;
+}
+
+bool _uses_default_group(Iterable<Helix> helices) {
+  for (var helix in helices) {
+    if (helix.group != constants.default_group_name) {
+      return false;
+    }
+  }
+  return true;
 }
 
 ensure_helix_groups_in_groups_map(
@@ -1706,7 +1977,7 @@ int calculate_default_max_offset(Iterable<Strand> strands) {
   } else {
     greatest_max_offset = strands.first.first_domain.end;
     for (var strand in strands) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         if (domain.end > greatest_max_offset) {
           greatest_max_offset = domain.end;
         }
@@ -1763,11 +2034,20 @@ class StrandError extends IllegalDesignError {
         "  strand 5' end offset =  ${first_substrand.offset_5p}\n"
         "  strand 3' helix      =  ${last_substrand.helix}\n"
         "  strand 3' end offset =  ${last_substrand.offset_3p}\n"
-        '  strand length        =  ${strand.dna_length()}\n'
+        '  strand length        =  ${strand.dna_length}\n'
         '  DNA sequence length  =  ${strand.dna_sequence?.length}\n'
         '  DNA sequence         =  ${strand.dna_sequence}\n'
         "  strand 5' helix      =  ${first_substrand.helix}\n";
 
     this.cause += msg;
   }
+}
+
+class HelixPitchYaw {
+  double pitch;
+  double yaw;
+  // Helix idx of the first helix found with this pitch and yaw value
+  int helix_idx;
+
+  HelixPitchYaw(this.pitch, this.yaw, this.helix_idx);
 }

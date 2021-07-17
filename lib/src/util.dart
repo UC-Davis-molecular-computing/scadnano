@@ -16,8 +16,10 @@ import 'package:color/color.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 import 'package:platform_detect/platform_detect.dart';
-import 'package:scadnano/src/state/design_side_rotation_data.dart';
-import 'package:scadnano/src/state/modification.dart';
+
+import 'state/design_side_rotation_data.dart';
+import 'state/modification.dart';
+import 'state/address.dart';
 import 'middleware/export_svg.dart';
 import 'state/app_state.dart';
 import 'state/app_ui_state.dart';
@@ -51,6 +53,22 @@ import 'actions/actions.dart' as actions;
 
 const ASSERTION_ERROR_MESSAGE = 'You have discovered a bug. Please send this entire error message to\n'
     '  ${constants.BUG_REPORT_URL}';
+
+/////////////////////////////////////////////////////////////////////////////
+// interop between Dart and JS
+
+make_dart_function_available_to_js(String js_function_name, Function dart_func) {
+  setProperty(window, js_function_name, allowInterop(dart_func));
+}
+
+@JS()
+external void set_allow_pan(bool allow);
+
+@JS()
+external void set_zoom_speed(double speed);
+
+// END interop between Dart and JS
+/////////////////////////////////////////////////////////////////////////////
 
 final ColorCycler color_cycler = ColorCycler();
 
@@ -105,17 +123,6 @@ int color_hex_to_decimal_int(String hex) {
   return d;
 }
 
-HelixGroup original_group_from_strands_move(Design design, StrandsMove strands_move) {
-  var group_name = original_group_name_from_strands_move(design, strands_move);
-  return design.groups[group_name];
-}
-
-String original_group_name_from_strands_move(Design design, StrandsMove strands_move) {
-  var helix_idx = strands_move.original_address.helix_idx;
-  var helix = design.helices[helix_idx];
-  return helix.group;
-}
-
 HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_move) {
   var group_name = current_group_name_from_strands_move(design, strands_move);
   return design.groups[group_name];
@@ -124,7 +131,7 @@ HelixGroup current_group_from_strands_move(Design design, StrandsMove strands_mo
 String current_group_name_from_strands_move(Design design, StrandsMove strands_move) {
   var helix_idx = strands_move.current_address.helix_idx;
   var helix = design.helices[helix_idx];
-  return helix.group;
+  return helix?.group;
 }
 
 HelixGroup original_group_from_domains_move(Design design, DomainsMove domains_move) {
@@ -211,13 +218,6 @@ List<int> deltas(Iterable<int> nums) {
   }
   return deltas;
 }
-
-make_dart_function_available_to_js(String js_function_name, Function dart_func) {
-  setProperty(window, js_function_name, allowInterop(dart_func));
-}
-
-@JS()
-external void set_allow_pan(bool allow);
 
 Future<String> get_text_file_content(String url) async =>
     await HttpRequest.getString(url).then((content) => content);
@@ -484,8 +484,13 @@ Helix find_closest_helix(
 /// If `offset` is too high, returns the upper bound offset.
 /// If `offset` is too low, returns the lower bound offset.
 /// If `offset` is null, returns the lower bound offset.
+/// If no helices in `helices_in_group` returns null.
 int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group) {
   var range = find_helix_group_min_max(helices_in_group);
+  if (range == null) {
+    return null;
+  }
+
   var min_offset = range.x;
   var max_offset = range.y;
 
@@ -497,7 +502,11 @@ int bounded_offset_in_helices_group(int offset, Iterable<Helix> helices_in_group
 }
 
 /// Find min_offset and max_offset range of list of of helices.
+/// If list is empty, return null
 Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
+  if (helices_in_group.isEmpty) {
+    return null;
+  }
   int min_offset = helices_in_group.first.min_offset;
   int max_offset = helices_in_group.first.max_offset;
   for (var helix in helices_in_group) {
@@ -508,9 +517,11 @@ Point<int> find_helix_group_min_max(Iterable<Helix> helices_in_group) {
 }
 
 /// Return closest offset in a helix group where click event occured.
-int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
+int find_closest_offset(
+    MouseEvent event, Iterable<Helix> helices_in_group, HelixGroup group, Geometry geometry) {
   var svg_clicked_point = svg_position_of_mouse_click(event);
-  var svg_clicked_point_untransformed = group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
+  var svg_clicked_point_untransformed =
+      group.transform_point_main_view(svg_clicked_point, geometry, inverse: true);
 
   var range = find_helix_group_min_max(helices_in_group);
   var min_offset = range.x;
@@ -523,7 +534,8 @@ int find_closest_offset(MouseEvent event, Iterable<Helix> helices_in_group, Heli
 }
 
 /// Return list of mouseover data about helix group `group_name` at `offset`.
-BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, Design design, String group_name) {
+BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(
+    int offset, Design design, String group_name) {
   List<DesignSideRotationParams> rotation_params_list = [];
   if (offset != null) {
     for (var helix_idx in design.helix_idxs_in_group[group_name]) {
@@ -536,7 +548,6 @@ BuiltList<DesignSideRotationData> rotation_datas_at_offset_in_group(int offset, 
   }
   return DesignSideRotationData.from_params(design, rotation_params_list).toBuiltList();
 }
-
 
 /// Return (closest) helix, offset and direction where click event occurred.
 Address find_closest_address(
@@ -1544,8 +1555,8 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
           'y = ${event.offset.y},   '
           'pan = (${pan.x.toStringAsFixed(2)}, ${pan.y.toStringAsFixed(2)}),   '
           'zoom = ${zoom.toStringAsFixed(2)},   '
-  //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
-  //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
+          //        'svg_x = ${svg_x.toStringAsFixed(2)},   '
+          //        'svg_y = ${svg_y.toStringAsFixed(2)},   '
           'helix = ${helix.idx},   '
           'offset = ${offset},   '
           'forward = ${forward}');
@@ -1556,11 +1567,11 @@ update_mouseover(SyntheticMouseEvent event_syn, Helix helix) {
     BuiltList<MouseoverData> mouseover_datas = app.state.ui_state.mouseover_datas;
 
     if (needs_update(mouseover_params, mouseover_datas)) {
-  //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      //    print('dispatching MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
       app.dispatch(
           actions.MouseoverDataUpdate(mouseover_params: BuiltList<MouseoverParams>([mouseover_params])));
     } else {
-  //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
+      //    print('skipping MouseoverDataUpdate from DesignMainMouseoverRectHelix for helix ${helix.idx}');
     }
   }
 }
@@ -1593,4 +1604,13 @@ bool needs_update(MouseoverParams mouseover_params, BuiltList<MouseoverData> mou
 //    }
   }
   return needs;
+}
+
+Map<int, int> invert_helices_view_order(Iterable<int> helices_view_order) {
+  var view_order_inverse = Map<int, int>();
+  int order = 0;
+  for (var idx in helices_view_order) {
+    view_order_inverse[idx] = order++;
+  }
+  return view_order_inverse;
 }

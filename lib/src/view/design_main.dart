@@ -45,7 +45,7 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..helix_change_apply_to_all = state.ui_state.helix_change_apply_to_all
         ..potential_vertical_crossovers = state.design.potential_vertical_crossovers
         ..drawing_potential_crossover = state.ui_state.potential_crossover_is_drawing
-        ..domain_label_font_size = state.ui_state.domain_label_font_size
+        ..domain_label_font_size = state.ui_state.domain_name_font_size
         ..major_tick_offset_font_size = state.ui_state.major_tick_offset_font_size
         ..major_tick_width_font_size = state.ui_state.major_tick_width_font_size
         ..has_error = state.has_error()
@@ -59,7 +59,8 @@ UiFactory<DesignMainProps> ConnectedDesignMain = connect<AppState, DesignMainPro
         ..displayed_group_name = state.ui_state.displayed_group_name
         ..show_domain_name_mismatches = state.ui_state.show_domain_name_mismatches
         ..show_dna = state.ui_state.show_dna
-        ..show_domain_labels = state.ui_state.show_domain_labels
+        ..show_domain_names = state.ui_state.show_domain_names
+        ..show_strand_names = state.ui_state.show_strand_names
         ..show_helix_circles = state.ui_state.show_helix_circles_main_view
         ..dna_sequence_png_uri = state.ui_state.dna_sequence_png_uri
         ..dna_sequence_png_horizontal_offset = state.ui_state.dna_sequence_png_horizontal_offset
@@ -94,7 +95,8 @@ mixin DesignMainPropsMixin on UiProps {
   bool show_mismatches;
   bool show_domain_name_mismatches;
   bool show_dna;
-  bool show_domain_labels;
+  bool show_domain_names;
+  bool show_strand_names;
   num domain_label_font_size;
   num major_tick_offset_font_size;
   num major_tick_width_font_size;
@@ -145,7 +147,7 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
         ..side_selected_helix_idxs = props.side_selected_helix_idxs
         ..only_display_selected_helices = props.only_display_selected_helices
         ..show_dna = props.show_dna
-        ..show_domain_labels = props.show_domain_labels
+        ..show_domain_labels = props.show_domain_names
         ..show_helix_circles = props.show_helix_circles
         ..display_base_offsets_of_major_ticks = props.display_base_offsets_of_major_ticks
         ..display_base_offsets_of_major_ticks_only_first_helix =
@@ -211,7 +213,8 @@ class DesignMainComponent extends UiComponent2<DesignMainProps> {
           ..strands = props.design.strands
           ..show_loopout_length = props.show_loopout_length
           ..key = 'loopout-length')(),
-      if (props.show_slice_bar)
+      // slice_bar_offset null means displayed helix group has no helices, so omit slice bar
+      if (props.show_slice_bar && props.slice_bar_offset != null)
         (DesignMainSliceBar()
           ..helices = props.design.helices
           ..groups = props.design.groups

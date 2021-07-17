@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:react/react.dart';
 import 'package:redux/redux.dart';
 
 import '../state/group.dart';
@@ -24,13 +25,13 @@ Reducer<StrandsMove> strands_move_local_reducer = combineReducers([
   TypedReducer<StrandsMove, actions.StrandsMoveStop>(strands_move_stop_reducer),
 ]);
 
-StrandsMove strands_move_start_reducer(
-    StrandsMove strands_move, AppState state, actions.StrandsMoveStart action) {
+StrandsMove strands_move_start_reducer(StrandsMove _, AppState state, actions.StrandsMoveStart action) {
   return StrandsMove(
       strands_moving: action.strands,
       all_strands: state.design.strands,
       helices: state.design.helices,
       groups: state.design.groups,
+      original_helices_view_order_inverse: action.original_helices_view_order_inverse,
       original_address: action.address,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
@@ -45,6 +46,7 @@ StrandsMove strands_move_start_selected_strands_reducer(
       all_strands: state.design.strands,
       helices: state.design.helices,
       groups: state.design.groups,
+      original_helices_view_order_inverse: action.original_helices_view_order_inverse,
       original_address: action.address,
       copy: action.copy,
       keep_color: state.ui_state.strand_paste_keep_color);
@@ -55,6 +57,8 @@ StrandsMove strands_move_stop_reducer(StrandsMove strands_move, actions.StrandsM
 StrandsMove strands_adjust_address_reducer(
     StrandsMove strands_move, AppState state, actions.StrandsMoveAdjustAddress action) {
   StrandsMove new_strands_move = strands_move.rebuild((b) => b..current_address.replace(action.address));
+  // if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
+  // where the strands would go if it were allowable. That's why we want both Boolean values separately.
   if (in_bounds(state.design, new_strands_move)) {
     bool allowable = is_allowable(state.design, new_strands_move);
     return new_strands_move.rebuild((b) => b..allowable = allowable);
@@ -63,60 +67,84 @@ StrandsMove strands_adjust_address_reducer(
   }
 }
 
-// if out of bounds, don't even bother displaying; but if in bounds but still not allowable, we display
-// where the strands would go if it were allowable.
-bool in_bounds(Design design, StrandsMove strands_move) {
+bool in_bounds_and_allowable(Design design, StrandsMove strands_move) {
+  // only calculate original_helix_idxs_set once for both in_bounds and is_allowable
+  Set<int> original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
+  return in_bounds(design, strands_move, original_helix_idxs_set: original_helix_idxs_set) &&
+      is_allowable(design, strands_move, original_helix_idxs_set: original_helix_idxs_set);
+}
+
+bool in_bounds(Design design, StrandsMove strands_move, {Set<int> original_helix_idxs_set = null}) {
+  // collect helix idxs on moving strands (if new design, may be different from design.helices.keys
+  if (original_helix_idxs_set == null) {
+    original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
+  }
+
   var current_address_helix_idx = strands_move.current_address.helix_idx;
+  if (!design.helices.containsKey(current_address_helix_idx)) {
+    return false; // helix is not in design, so cannot be in bounds
+  }
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
   var num_helices_in_group = design.helices_in_group(current_helix.group).length;
-
-  //XXX: not sure why I had the commented out one first
-//  int original_helix_idx = strands_move.strands_moving.first.domains().first.helix;
-  int original_helix_idx = strands_move.original_address.helix_idx;
-  var original_helix = design.helices[original_helix_idx];
-  var original_group = design.groups[original_helix.group];
 
   int delta_view_order = strands_move.delta_view_order;
   int delta_offset = strands_move.delta_offset;
 
   // look for helix out of bounds
-  Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move, original_group);
+  Set<int> view_orders_of_helices_of_moving_strands = view_order_moving(strands_move);
   int min_view_order = view_orders_of_helices_of_moving_strands.min;
   int max_view_order = view_orders_of_helices_of_moving_strands.max;
   if (min_view_order + delta_view_order < 0) return false;
   if (max_view_order + delta_view_order >= num_helices_in_group) return false;
 
   // look for offset out of bounds
-  for (int original_helix_idx in design.helices.keys) {
-    var domains_moving = construct_helix_idx_to_domains_map(
-        strands_move.strands_moving, design.helices.keys)[original_helix_idx];
+  for (int original_helix_idx in original_helix_idxs_set) {
+    var helix_idx_to_domains_map =
+        construct_helix_idx_to_domains_map(strands_move.strands_moving, original_helix_idxs_set);
+    var domains_moving = helix_idx_to_domains_map[original_helix_idx];
     if (domains_moving.isEmpty) continue;
 
-    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    int view_order_orig = strands_move.original_helices_view_order_inverse[original_helix_idx];
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
     Helix helix = design.helices[new_helix_idx];
-    for (var ss in domains_moving) {
-      if (ss.start + delta_offset < helix.min_offset) return false;
-      if (ss.end + delta_offset > helix.max_offset) return false;
+    for (var domain in domains_moving) {
+      if (domain.start + delta_offset < helix.min_offset) return false;
+      if (domain.end + delta_offset > helix.max_offset) return false;
     }
   }
 
   return true;
 }
 
-Set<int> view_order_moving(StrandsMove strands_move, HelixGroup original_group) {
+// collect helix idxs on moving strands (if new design, may be different from design.helices.keys
+Set<int> populate_original_helices_idxs_set(StrandsMove strands_move) {
+  Set<int> original_helix_idxs_set = {};
+  for (var strand in strands_move.strands_moving) {
+    for (var domain in strand.domains) {
+      original_helix_idxs_set.add(domain.helix);
+    }
+  }
+  return original_helix_idxs_set;
+}
+
+Set<int> view_order_moving(StrandsMove strands_move) {
   Set<int> ret = {};
   for (var strand in strands_move.strands_moving) {
-    for (var domain in strand.domains()) {
-      ret.add(original_group.helices_view_order_inverse[domain.helix]);
+    for (var domain in strand.domains) {
+      ret.add(strands_move.original_helices_view_order_inverse[domain.helix]);
     }
   }
   return ret;
 }
 
 // XXX: assumes in_bounds check has already passed
-bool is_allowable(Design design, StrandsMove strands_move) {
+bool is_allowable(Design design, StrandsMove strands_move, {Set<int> original_helix_idxs_set = null}) {
+  // collect helix idxs on moving strands (if new design, may be different from design.helices.keys
+  if (original_helix_idxs_set == null) {
+    original_helix_idxs_set = populate_original_helices_idxs_set(strands_move);
+  }
+
   var current_address_helix_idx = strands_move.current_address.helix_idx;
   var current_helix = design.helices[current_address_helix_idx];
   var current_group = design.groups[current_helix.group];
@@ -126,19 +154,20 @@ bool is_allowable(Design design, StrandsMove strands_move) {
   bool delta_forward = strands_move.delta_forward;
 
   var helix_idx_to_substrands_moving =
-      construct_helix_idx_to_domains_map(strands_move.strands_moving, design.helices.keys);
+      construct_helix_idx_to_domains_map(strands_move.strands_moving, original_helix_idxs_set);
   var helix_idx_to_substrands_fixed =
       construct_helix_idx_to_domains_map(strands_move.strands_fixed, design.helices.keys);
 
-  for (int original_helix_idx in design.helices.keys) {
+  for (int original_helix_idx in original_helix_idxs_set) {
     var domains_moving = helix_idx_to_substrands_moving[original_helix_idx];
     if (domains_moving.isEmpty) continue;
 
     // if we made it here then there are substrands actually moving, so if the reducer that processed
     // the move events did its job, original_helix_idx + delta_helix_idx should be in bounds
-    Helix original_helix = design.helices[original_helix_idx];
-    HelixGroup original_group = design.groups[original_helix.group];
-    int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    // Helix original_helix = design.helices[original_helix_idx];
+    // HelixGroup original_group = design.groups[original_helix.group];
+    // int view_order_orig = original_group.helices_view_order_inverse[original_helix_idx];
+    int view_order_orig = strands_move.original_helices_view_order_inverse[original_helix_idx];
     int new_helix_idx = current_group.helices_view_order[view_order_orig + delta_view_order];
 
     Helix new_helix = design.helices[new_helix_idx];
@@ -169,7 +198,7 @@ bool is_allowable(Design design, StrandsMove strands_move) {
 
 /// Indicate if any of the intervals in ints1 intersect any of the intervals in ints2. Assume each
 /// is disjoint within itself (i.e., no two intervals in ints1 intersection, and no two intervals
-/// within ints2 intersect). and that each is sorted by start point
+/// within ints2 intersect) and that each is sorted by start point
 /// (thus also by end point by disjointness.)
 /// These intervals are INCLUSIVE on both sides.
 bool intersection(List<Point<int>> ints1, List<Point<int>> ints2) {

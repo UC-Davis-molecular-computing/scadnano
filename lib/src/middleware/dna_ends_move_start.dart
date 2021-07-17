@@ -37,6 +37,8 @@ dna_ends_move_start_middleware(Store<AppState> store, action, NextDispatcher nex
     }
     next(action);
 
+    // important that we dispatch to app, not to store, because the app dispatch will know to route this
+    // to the appropriate optimized store for moving DNAEnds
     app.dispatch(actions.DNAEndsMoveSetSelectedEnds(
         original_offset: action.offset,
         moves: moves.toBuiltList(),

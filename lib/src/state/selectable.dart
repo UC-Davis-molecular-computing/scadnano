@@ -8,7 +8,7 @@ import '../serializers.dart';
 import '../actions/actions.dart' as actions;
 import 'crossover.dart';
 import 'domain.dart';
-import 'helix.dart';
+import 'address.dart';
 import 'loopout.dart';
 import 'dna_end.dart';
 import 'modification.dart';
@@ -120,7 +120,7 @@ abstract class SelectablesStore
   }
 
   BuiltSet<DNAEnd> selected_ends_in_strand(Strand strand) => {
-        for (var domain in strand.domains())
+        for (var domain in strand.domains)
           for (var end in [domain.dnaend_5p, domain.dnaend_3p])
             if (selected_dna_ends.contains(end)) end
       }.build();
@@ -131,18 +131,18 @@ abstract class SelectablesStore
       }.build();
 
   BuiltSet<Loopout> selected_loopouts_in_strand(Strand strand) => {
-        for (var loopout in strand.loopouts())
+        for (var loopout in strand.loopouts)
           if (selected_loopouts.contains(loopout)) loopout
       }.build();
 
   BuiltSet<Domain> selected_domains_in_strand(Strand strand) => {
-        for (var domain in strand.domains())
+        for (var domain in strand.domains)
           if (selected_domains.contains(domain)) domain
       }.build();
 
   BuiltSet<SelectableDeletion> selected_deletions_in_strand(Strand strand) {
     Set<SelectableDeletion> deletions = {};
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       for (int offset in domain.deletions) {
         for (var deletion in selected_deletions) {
           if (deletion.offset == offset && deletion.domain == domain) {
@@ -156,7 +156,7 @@ abstract class SelectablesStore
 
   BuiltSet<SelectableInsertion> selected_insertions_in_strand(Strand strand) {
     Set<SelectableInsertion> insertions = {};
-    for (var domain in strand.domains()) {
+    for (var domain in strand.domains) {
       for (Insertion insertion in domain.insertions) {
         for (var selectable_insertion in selected_insertions) {
           if (selectable_insertion.insertion == insertion && selectable_insertion.domain == domain) {

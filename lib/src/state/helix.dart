@@ -12,33 +12,13 @@ import 'geometry.dart';
 import 'grid.dart';
 import 'strand.dart';
 import 'grid_position.dart';
+import 'address.dart';
 import '../constants.dart' as constants;
 import '../util.dart' as util;
 
 import 'package:built_value/built_value.dart';
 
 part 'helix.g.dart';
-
-// "Address" of a base; (helix, offset, direction)
-abstract class Address with BuiltJsonSerializable implements Built<Address, AddressBuilder> {
-  factory Address({int helix_idx, int offset, bool forward}) = _$Address._;
-
-  factory Address.from([void Function(AddressBuilder) updates]) = _$Address;
-
-  Address._();
-
-  static Serializer<Address> get serializer => _$addressSerializer;
-
-  /************************ end BuiltValue boilerplate ************************/
-
-  int get helix_idx;
-
-  int get offset;
-
-  bool get forward;
-
-  String toString() => 'H${helix_idx}-${forward ? "F" : "R"}-${offset}';
-}
 
 /// Represents a double helix. However, a [Helix] doesn't have to have any [Strand]s on it.
 abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<Helix, HelixBuilder> {
@@ -78,6 +58,9 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     Point<num> svg_position = null,
     String group = constants.default_group_name,
   }) {
+    if (grid == null) {
+      grid = Grid.none;
+    }
     if (major_tick_start == null) {
       major_tick_start = min_offset;
     }
@@ -96,8 +79,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
       ..position_ = position?.toBuilder()
       ..svg_position_ = svg_position
       ..roll = roll
-      ..pitch = pitch
-      ..yaw = yaw
       ..invert_xy = invert_xy
       ..min_offset = min_offset
       ..max_offset = max_offset
@@ -109,8 +90,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
     b.group = constants.default_group_name;
     b.min_offset = 0;
     b.roll = constants.default_roll;
-    b.pitch = constants.default_pitch;
-    b.yaw = constants.default_yaw;
     b.invert_xy = false;
   }
 
@@ -146,12 +125,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   /// Helix rotation of the backbone of the forward strand at the helix's minimum base offset. (y-z)
   double get roll;
-
-  /// rotation in plane of main view (x-y)
-  double get pitch;
-
-  /// rotation in and out of main view screen (x-z)
-  double get yaw;
 
   /// 1 plus the maximum allowed offset of Substrand that can be drawn on this Helix. i.e. EXCLUSIVE.
   int get max_offset;
@@ -222,10 +195,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
   bool has_default_roll() => util.are_close(roll, constants.default_roll);
 
-  bool has_default_pitch() => util.are_close(pitch, constants.default_pitch);
-
-  bool has_default_yaw() => util.are_close(yaw, constants.default_yaw);
-
   bool has_default_major_tick_distance() => major_tick_distance == null;
 
   bool has_default_major_tick_periodic_distances() => major_tick_periodic_distances.isEmpty;
@@ -250,14 +219,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
 
     if (!has_default_roll()) {
       json_map[constants.roll_key] = util.to_int_if_close(roll);
-    }
-
-    if (!has_default_pitch()) {
-      json_map[constants.pitch_key] = util.to_int_if_close(pitch);
-    }
-
-    if (!has_default_yaw()) {
-      json_map[constants.yaw_key] = util.to_int_if_close(yaw);
     }
 
     if (has_grid_position()) {
@@ -377,8 +338,6 @@ abstract class Helix with BuiltJsonSerializable, UnusedFields implements Built<H
         util.optional_field_with_null_default(json_map, constants.major_tick_start_key);
     helix_builder.idx = util.optional_field_with_null_default(json_map, constants.idx_on_helix_key);
     helix_builder.roll = util.optional_field(json_map, constants.roll_key, constants.default_roll);
-    helix_builder.pitch = util.optional_field(json_map, constants.pitch_key, constants.default_pitch);
-    helix_builder.yaw = util.optional_field(json_map, constants.yaw_key, constants.default_yaw);
 
     if (json_map.containsKey(constants.major_tick_distance_key) &&
         json_map.containsKey(constants.major_tick_periodic_distances_key)) {

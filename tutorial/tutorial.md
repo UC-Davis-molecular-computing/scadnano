@@ -4,12 +4,36 @@ The goal of this tutorial is to create a design for a 24-helix DNA origami recta
 
 See the [scripting tutorial](https://github.com/UC-Davis-molecular-computing/scadnano-python-package/blob/master/tutorial/tutorial.md) to see how to create this design programmatically using scadnano's [Python scripting library](https://github.com/UC-Davis-molecular-computing/scadnano-python-package).
 
-The design will look like this when we are done:
+## Table of contents
 
-![](images/complete_design_no_DNA.png)
+- [Start](#start)
+- [Load completed design to see what it looks like](#load-completed-design-to-see-what-it-looks-like)
+- [Load empty design](#load-empty-design)
+  - [Browser filename tricks](#browser-filename-tricks)
+- [Create helices](#create-helices)
+- [Create first domain of scaffold](#create-first-domain-of-scaffold)
+- [Create other domains of scaffold](#create-other-domains-of-scaffold)
+- [Nick domains to split them in two](#nick-domains-to-split-them-in-two)
+- [Note on circular strands](#note-on-circular-strands)
+- [Link domains into one long scaffold strand](#link-domains-into-one-long-scaffold-strand)
+- [Autopaste and automatic crossover joining](#autopaste-and-automatic-crossover-joining)
+- [Recursive copy/paste to complete the domains of the scaffold](#recursive-copypaste-to-complete-the-domains-of-the-scaffold)
+- [Create staples](#create-staples)
+  - [edge staples](#edge-staples)
+  - [Autopaste to create staples](#autopaste-to-create-staples)
+  - [strand reflections](#strand-reflections)
+  - [seam staples](#seam-staples)
+  - [inner staples](#inner-staples)
+- [Twist correction using deletions](#twist-correction-using-deletions)
+- [Assign DNA sequence to scaffold](#assign-dna-sequence-to-scaffold)
+- [Export DNA sequences](#export-dna-sequences)
 
 
 ## Start
+
+The design will look like this when we are done:
+
+![](images/complete_design_no_DNA.png)
 
 Open scadnano in your browser:
 https://scadnano.org.
@@ -55,7 +79,14 @@ The left part is called the "side view" and the middle part is called the "main 
 
 First, save this design into a file by clicking *File&rarr;Save* or pressing Ctrl+S. Name the file `24_helix_rectangle.sc`. Although the design is saved in your browser's local storage, be sure to save the file to disk periodically.
 
-Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
+### Browser filename tricks
+
+1. Unfortunately, due to browser security restrictions, there's no way for scadnano to figure out what filename you chose when saving, so the displayed filename in the browser tab will remain as empty.sc. If you want to have that displayed filename updated (for instance, to keep track of it with multiple tabs open), after saving, reload the file from disk. Then scadnano will know its name.
+
+2. Chrome automatically appends (1), (2), ... to the filename if it already exists in the directory, 
+so repeatedly saving the file will change its name on your local filesystem every time. 
+To disable this so that it uses the same filename every time you save, you can install the extension 
+[Downloads Overwrite Already Existing Files](https://chrome.google.com/webstore/detail/downloads-overwrite-alrea/lddjgfpjnifpeondafidennlcfagekbp).
 
 
 
@@ -117,6 +148,8 @@ Using all 288 offsets on each of the 24 helices means the scaffold will be lengt
 
 ## Create first domain of scaffold
 
+**NOTE**: Since this tutorial was written, there is a faster way to rapidly create the scaffold and staples of 
+
 Now we show how to create DNA strands. As in cadnano, there's a distinction between a strand and a DNA sequence. Although scadnano allows you to assign DNA sequences to strands at any time, it is best to wait until the strand design is finalized to assign a DNA sequence to any strand. Many operations attempt to preserve the DNA that has been assigned so far, but many will be undefined (for example, lengthening a strand) and others may not be what you want (for example, copying an existing strand with DNA assigned and pasting it elsewhere, where it may require a different sequence).
 
 Many DNA origami designs are quite repetitive. Thus, it is helpful to look at a mockup of the design you want and notice which strands are similar. Generally the fastest way to make a design is to identify a few repetitive strands and copy/paste them.
@@ -175,7 +208,7 @@ You can also Shift-click (or Shift + drag selection box) on items to add them to
 
 
 
-## Add other domains of scaffold
+## Create other domains of scaffold
 
 First, we copy and paste the strand we just made. To do this, remain in select edit mode, but choose "strand" under "Selectable":
 
@@ -188,6 +221,7 @@ Now click the strand and press Ctrl+C (the Ctrl key on Windows or Linux behaves 
 Pressing Ctrl+V and moving the cursor gives you options where to paste the copy. Paste it to start at the same offset on helix 22 (the one above), but to be a forward strand, i.e., in the top row of the helix:
 
 ![](images/scaffold_domain_first_copy.png)
+
 
 
 
@@ -273,6 +307,14 @@ Finally, add crossovers connected the ends at offsets in the middle of helices 2
 
 
 
+## Autopaste and automatic crossover joining
+
+Since this tutorial was written, there is now a slightly faster way to create the rest of the domains of the scaffold than the recursive copy/paste described below, which is to use two new features: autopaste and automatic joining of ends by crossovers. The [issue page for autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) shows how to copy scaffold domains and press Ctrl+Shift+V repeatedly to paste to reasonable default locations, without having to use the mouse to manually point to where the paste should occur.
+
+The [issue page for joining many selected ends by crossovers](https://github.com/UC-Davis-molecular-computing/scadnano/issues/581) shows how to set up the scaffold so that, if all domain 5' and 3' ends are selected, the menu option Edit&rarr;Join selected ends by crossovers will automatically draw all the crossovers.
+
+Eventually this tutorial will be rewritten to officially use these features as part of the process of creating the origami. Until then, the issue pages above show the general idea on a small origami rectangle.
+
 
 
 
@@ -327,7 +369,7 @@ Now the scaffold is complete!
 
 
 
-## add staples
+## Create staples
 
 
 ### edge staples
@@ -346,6 +388,7 @@ In select mode, copy and paste it to make a second edge staple:
 
 ![](images/two_left_edge_staples.png)
 
+
 By default, copy-pasted strands keep the color of the original. To generate a new color for each pasted strand, uncheck *Edit&rarr;Pasted strands keep original color*
 
 ![](images/pasted_strands_new_color_menu_option.png)
@@ -361,6 +404,12 @@ Then copy/paste those 4 to make 8:
 Then paste the same 4 again to make 12:
 
 ![](images/twelve_edge_staples.png)
+
+
+
+
+### Autopaste to create staples
+The rest of the instructions for creating the other left edge staples are slightly more time-consuming than using the new [autopaste](https://github.com/UC-Davis-molecular-computing/scadnano/issues/580) feature. With autopaste, one need only copy the top staple, then press Ctrl+Shift+V repeatedly to create all the other left edge staples. Eventually this tutorial will be updated to officially suggest autopaste, rather than recursive manual copy/pasting, to create most of the staples.
 
 
 
@@ -506,7 +555,7 @@ And there we have it, the completed design:
 
 ![](images/complete_design.png)
 
-## Exporting DNA sequences
+## Export DNA sequences
 
 Finally, to create a text file or Excel spreadsheet containing the staple sequences, click *Export&rarr;DNA sequences*: 
 

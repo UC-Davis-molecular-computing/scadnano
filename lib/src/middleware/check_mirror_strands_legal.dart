@@ -21,7 +21,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     var group_names = design.group_names_of_strands(strands_to_reflect);
     if (group_names.length != 1) {
       var msg = 'Cannot reflect selected strands unless they are all on the same helix group.\n'
-          'These strands occupy the following helix groups: ${group_names.join(", ")}';
+          '3 These strands occupy the following helix groups: ${group_names.join(", ")}';
       window.alert(msg);
       return;
     }
@@ -54,7 +54,7 @@ check_reflect_strands_legal_middleware(Store<AppState> store, action, NextDispat
     }
 
     var edit_action = actions.ReplaceStrands(new_strands: new_strands.build());
-    app.dispatch_async(edit_action);
+    store.dispatch(edit_action);
   } else {
     next(action);
   }
@@ -66,11 +66,11 @@ List<Strand> horizontal_reflection_of_strands(
     Design design, List<Strand> strands_to_mirror, bool reverse_polarity) {
   int min_offset = [
     for (var strand in strands_to_mirror)
-      for (var domain in strand.domains()) domain.start
+      for (var domain in strand.domains) domain.start
   ].min;
   int max_offset = [
     for (var strand in strands_to_mirror)
-      for (var domain in strand.domains()) domain.end
+      for (var domain in strand.domains) domain.end
   ].max;
 
   List<Strand> mirrored_strands = [];
@@ -138,7 +138,7 @@ List<Strand> vertical_reflection_of_strands(
   // helix idxs occupied by strands
   var helix_idxs_involved = {
     for (var strand in strands_to_reflect)
-      for (var domain in strand.domains()) domain.helix
+      for (var domain in strand.domains) domain.helix
   };
   // vertical display order of those helices, sorted
   var helix_orders_involved = [for (int idx in helix_idxs_involved) group.helices_view_order_inverse[idx]];

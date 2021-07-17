@@ -7,6 +7,7 @@ import 'domain.dart';
 import 'group.dart';
 import 'helix.dart';
 import 'strand.dart';
+import 'address.dart';
 
 part 'domains_move.g.dart';
 
@@ -105,7 +106,7 @@ abstract class DomainsMove with BuiltJsonSerializable implements Built<DomainsMo
     Set<Domain> domains_moving_set = domains_moving.toSet();
     Map<Strand, List<Domain>> map = {for (var strand in strands_with_domains_moving) strand: []};
     for (var strand in map.keys) {
-      for (var domain in strand.domains()) {
+      for (var domain in strand.domains) {
         if (domains_moving_set.contains(domain)) {
           map[strand].add(domain);
         }

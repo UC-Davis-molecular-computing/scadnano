@@ -23,7 +23,7 @@ UiFactory<DesignMainStrandMovingProps> DesignMainStrandMoving = _$DesignMainStra
 
 mixin DesignMainStrandMovingPropsMixin on UiProps {
   Strand strand;
-  HelixGroup original_group;
+  BuiltMap<int, int> original_helices_view_order_inverse;
   HelixGroup current_group;
   BuiltSet<int> side_selected_helix_idxs;
   int delta_view_order;
@@ -49,7 +49,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
 
     Strand strand_moved = move_strand(
         strand: props.strand,
-        original_group: props.original_group,
+        original_helices_view_order_inverse: props.original_helices_view_order_inverse,
         current_group: props.current_group,
         delta_view_order: props.delta_view_order,
         delta_offset: props.delta_offset,
@@ -90,7 +90,7 @@ class DesignMainStrandMovingComponent extends UiComponent2<DesignMainStrandMovin
   }
 
   ReactElement _draw_strand_lines_single_path(Strand strand_moved) {
-    Domain domain_first = strand_moved.domains().first;
+    Domain domain_first = strand_moved.domains.first;
 
     var helix = props.helices[domain_first.helix];
     var start_svg = helix.svg_base_pos(domain_first.offset_5p, domain_first.forward);

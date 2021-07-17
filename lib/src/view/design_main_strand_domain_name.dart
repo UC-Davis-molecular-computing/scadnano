@@ -28,13 +28,16 @@ class DesignMainStrandDomainNameComponent extends UiComponent2<DesignMainStrandD
     with PureComponent {
   @override
   render() {
+
     Point<num> start_svg = props.helix.svg_base_pos(props.domain.start, props.domain.forward);
     Point<num> end_svg = props.helix.svg_base_pos(props.domain.end - 1, props.domain.forward);
     Point<num> mid_svg = (start_svg + end_svg) * 0.5;
 
     String baseline = props.domain.forward ? 'baseline' : 'hanging';
 
+    // offset depends on whether we are showing DNA, so they don't overlap
     num offset_of_dna = props.show_dna ? props.helix.geometry.base_height_svg : 0;
+
     var dy = props.geometry.base_height_svg * 0.7 + offset_of_dna;
     if (props.domain.forward) {
       dy = -dy;

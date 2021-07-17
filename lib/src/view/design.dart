@@ -4,27 +4,24 @@ library view_design;
 import 'dart:html';
 import 'dart:svg' as svg;
 
-import 'package:built_collection/built_collection.dart';
 import 'package:dnd/dnd.dart';
 import 'package:js/js.dart';
 import 'package:over_react/over_react_redux.dart';
 import 'package:over_react/react_dom.dart' as react_dom;
 import 'package:over_react/components.dart' as over_react_components;
 import 'package:platform_detect/platform_detect.dart';
+import 'package:scadnano/src/middleware/system_clipboard.dart';
 import 'package:scadnano/src/state/domains_move.dart';
 import 'package:scadnano/src/state/geometry.dart';
-import 'package:scadnano/src/state/group.dart';
 import 'package:scadnano/src/state/helix_group_move.dart';
 import 'package:scadnano/src/state/selectable.dart';
 import 'package:scadnano/src/state/selection_rope.dart';
 import 'package:scadnano/src/view/strand_color_picker.dart';
 
-import '../state/domain.dart';
+import '../state/address.dart';
 import '../state/dna_ends_move.dart';
 import '../state/edit_mode.dart';
 import '../state/helix.dart';
-import '../state/select_mode.dart';
-import '../state/strand.dart';
 import '../state/strand_creation.dart';
 import '../state/strands_move.dart';
 
@@ -257,7 +254,7 @@ class DesignViewComponent {
           var group_names = group_names_of_ends(moves_store);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+                '1 These strands occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
             Helix helix = moves_store.helix;
@@ -270,16 +267,6 @@ class DesignViewComponent {
             }
           }
         }
-
-//        print('mouse moved');
-//        HelixGroupMove helix_group_move = app.store_helix_group_move.state;
-//        print('helix_group_move = $helix_group_move');
-//        if (helix_group_move != null) {
-//          Point<num> point =
-//              util.transform_mouse_coord_to_svg_current_panzoom_correct_firefox(event, true, main_view_svg);
-//          var action = actions.HelixGroupMoveAdjustTranslation(mouse_point: point);
-//          app.dispatch(actions.ThrottledActionFast(action, 1 / 60.0));
-//        }
       }
 
       // move selected Strands
@@ -293,9 +280,9 @@ class DesignViewComponent {
         // about strands being in multiple groups.
         if (strands_move.copy || left_click_down) {
           var group_names = group_names_of_strands(strands_move);
-          if (group_names.length != 1) {
+          if (group_names != null && group_names.length != 1) {
             var msg = 'Cannot move or copy strands unless they are all on the same helix group.\n'
-                'These strands occupy the following helix groups: ${group_names.join(", ")}';
+                '2 These strands occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
             var old_address = strands_move.current_address;
@@ -321,7 +308,7 @@ class DesignViewComponent {
           var group_names = group_names_of_domains(domains_move);
           if (group_names.length != 1) {
             var msg = 'Cannot move or copy domains unless they are all on the same helix group.\n'
-                'These domains occupy the following helix groups: ${group_names.join(", ")}';
+                'These domains occupy the following helix groups: ${group_names?.join(", ")}';
             window.alert(msg);
           } else {
             var old_address = domains_move.current_address;
@@ -464,7 +451,6 @@ class DesignViewComponent {
   }
 
   handle_esc_keyboard_shortcuts() {
-    clear_copy_buffer();
     if (app.state.ui_state.selectables_store.isNotEmpty) {
       app.dispatch(actions.SelectionsClear());
     }
@@ -529,16 +515,19 @@ class DesignViewComponent {
     }
 
     // Ctrl+C/Ctrl+V for copy/paste
-    if (app.state.ui_state.edit_modes.contains(EditModeChoice.select) &&
-        app.state.ui_state.select_mode_state.modes.contains(SelectModeChoice.strand) &&
-        app.state.ui_state.selectables_store.selected_items.isNotEmpty &&
+    if (app.state.ui_state.selectables_store.selected_strands.isNotEmpty &&
         (ev.ctrlKey || ev.metaKey) &&
         key == KeyCode.C) {
       copy_selected_strands();
     }
+
     // can paste even if nothing selected or not in select mode, if something is in copy buffer
-    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V) {
-      paste_selected_strands();
+    if ((ev.ctrlKey || ev.metaKey) && key == KeyCode.V && !ev.shiftKey) {
+      // Ctrl+V
+      paste_strands_manually();
+    } else if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && key == KeyCode.V) {
+      // Ctrl+Shift+V
+      paste_strands_auto();
     }
 
     // Ctrl+A for select all
@@ -816,51 +805,28 @@ class DesignViewComponent {
     }
   }
 
-  actions.StrandsMoveStart copy_action;
-
   copy_selected_strands() {
-    // find minimum helix of any selected strand, then minimum starting offset of that strand
-    var selected_strands = app.state.ui_state.selectables_store.selected_strands.toBuiltList();
-
-    int extreme_helix_view_order; // max if invert_yz; min if not
-    int extreme_helix_idx;
-    int min_offset;
-    bool min_forward;
-    for (Strand strand in selected_strands) {
-      for (Domain domain in strand.domains()) {
-        HelixGroup group = app.state.design.group_of_domain(domain);
-        int helix_view_order = group.helices_view_order_inverse[domain.helix];
-        bool helix_is_more_extreme = extreme_helix_view_order == null ||
-            (app.state.ui_state.invert_xy
-                ? extreme_helix_view_order < helix_view_order
-                : extreme_helix_view_order > helix_view_order);
-        if (helix_is_more_extreme) {
-          extreme_helix_view_order = helix_view_order;
-          extreme_helix_idx = domain.helix;
-          min_offset = domain.start; // reset this absolutely since helix got smaller
-          min_forward = domain.forward; //
-        } else if (min_offset == null ||
-            (extreme_helix_view_order == helix_view_order && min_offset > domain.start)) {
-          min_offset = domain.start;
-          min_forward = domain.forward;
-        }
-      }
-    }
-
-    copy_action = actions.StrandsMoveStart(
-        strands: selected_strands,
-        address: Address(helix_idx: extreme_helix_idx, offset: min_offset, forward: min_forward),
-        copy: true);
+    // do nothing if no strands are selected
+    if (app.state.ui_state.selectables_store.selected_strands.isEmpty) return;
+    app.dispatch(actions.CopySelectedStrands());
   }
 
-  clear_copy_buffer() {
-    copy_action = null;
+  paste_strands_manually() {
+    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+    // here than to handle it in middleware;
+    // unit testing especially seemed to be very difficult with all the asynchronous calls
+    clipboard.read().then((String content) {
+      app.dispatch(actions.ManualPasteInitiate(clipboard_content: content));
+    });
   }
 
-  paste_selected_strands() {
-    if (copy_action != null) {
-      app.dispatch(copy_action);
-    }
+  paste_strands_auto() {
+    // it was much easier to handle the asynchronous read (seems to be the only way to read the clipboard)
+    // here than to handle it in middleware;
+    // unit testing especially seemed to be very difficult with all the asynchronous calls
+    clipboard.read().then((String content) {
+      app.dispatch(actions.AutoPasteInitiate(clipboard_content: content));
+    });
   }
 
   side_view_mouse_leave_update_mouseover() {
@@ -935,8 +901,14 @@ main_view_pointer_up(MouseEvent event) {
   StrandsMove strands_move = app.state.ui_state.strands_move;
   if (strands_move != null) {
     app.dispatch(actions.StrandsMoveStop());
-    if (strands_move.allowable && strands_move.is_nontrivial) {
-      app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move));
+    // XXX: strands_move.allowable may or may not be meaningful in general
+    // (e.g., if middlware or unit tests directly dispatch a StrandsMoveCommit action),
+    // but in this case, we are detecting mouse up, so it should have been checked and set properly by
+    // strands_move_reducer
+    if (strands_move.allowable && (strands_move.is_nontrivial || strands_move.copy)) {
+      // even a trivial move can be wanted if we are copying, i.e., user copied strands, deleted them,
+      // and wants to paste them back in same position
+      app.dispatch(actions.StrandsMoveCommit(strands_move: strands_move, autopaste: false));
     }
   }
 

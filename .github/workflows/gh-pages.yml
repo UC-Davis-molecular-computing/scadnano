@@ -3,7 +3,7 @@ name: github pages
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -44,7 +44,7 @@ jobs:
       - name: Build into gh-pages-repo/VERSION
         run: |
          if [ "$VERSION" != "" ]; then
-            PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/$VERSION
+            PATH="$PATH:/usr/lib/dart/bin" pub global run webdev build -o web:gh-pages-repo/v$VERSION
          else
             echo "::warning deploying VERSION skipped because VERSION number could not be found"
          fi
