@@ -341,25 +341,33 @@ assigned, assign the complementary domain names sequence to this strand.
             title: 'set color',
             on_click: () => app.dispatch(actions.StrandColorPickerShow(strand: props.strand))),
         ContextMenuItem(
-          title: 'set strand name',
-          on_click: set_strand_name,
+          title: 'edit name',
+          nested: [
+            ContextMenuItem(
+              title: 'set strand name',
+              on_click: set_strand_name,
+            ),
+            if (props.strand.name != null)
+              ContextMenuItem(
+                  title: 'remove strand name',
+                  on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
+            ContextMenuItem(
+              title: 'set domain name',
+              on_click: () => set_domain_name(domain),
+            ),
+            if (domain.name != null)
+              ContextMenuItem(
+                  title: 'remove domain name',
+                  on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
+          ].build()
         ),
-        if (props.strand.name != null)
-          ContextMenuItem(
-              title: 'remove strand name',
-              on_click: () => app.dispatch(actions.StrandNameSet(name: null, strand: props.strand))),
         ContextMenuItem(
-          title: 'set domain name',
-          on_click: () => set_domain_name(domain),
-        ),
-        if (domain.name != null)
+          title: 'reflect',
+          nested: [
           ContextMenuItem(
-              title: 'remove domain name',
-              on_click: () => app.dispatch(actions.SubstrandNameSet(name: null, substrand: domain))),
-        ContextMenuItem(
-          title: 'reflect horizontally',
-          on_click: () => reflect(true, false),
-          tooltip: '''\
+            title: 'reflect horizontally',
+            on_click: () => reflect(true, false),
+            tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 without reversing polarity "vertically"
 
@@ -371,11 +379,11 @@ after:
   strand's 5' end on helix 0
   strand's 3' end on helix 1\
 ''',
-        ),
-        ContextMenuItem(
-          title: 'reflect horizontally (reverse vertical polarity)',
-          on_click: () => reflect(true, true),
-          tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect horizontally (reverse vertical polarity)',
+            on_click: () => reflect(true, true),
+            tooltip: '''\
 replace strand(s) with horizontal mirror image, 
 with polarity reversed "vertically"
 
@@ -387,11 +395,11 @@ after:
   strand's 5' end on helix 1
   strand's 3' end on helix 0\
 ''',
-        ),
-        ContextMenuItem(
-          title: 'reflect vertically',
-          on_click: () => reflect(false, false),
-          tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect vertically',
+            on_click: () => reflect(false, false),
+            tooltip: '''\
 replace strand(s) with vertical mirror image, 
 without reversing polarity "vertically"
 
@@ -401,11 +409,11 @@ before:
 after:
   strand's 5' end is still on a helix below that of the strand's 3' end\
 ''',
-        ),
-        ContextMenuItem(
-          title: 'reflect vertically (reverse vertical polarity)',
-          on_click: () => reflect(false, true),
-          tooltip: '''\
+          ),
+          ContextMenuItem(
+            title: 'reflect vertically (reverse vertical polarity)',
+            on_click: () => reflect(false, true),
+            tooltip: '''\
 replace strand(s) with vertical mirror image, 
 with polarity reversed "vertically"
 
@@ -415,6 +423,8 @@ before:
 after:
   strand's 5' end is now on a helix above that of the strand's 3' end\
 ''',
+          ),
+          ].build()
         ),
       ];
 
