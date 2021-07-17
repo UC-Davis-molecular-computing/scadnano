@@ -209,17 +209,6 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     }
   }
 
-  assign_domain_name_complement_from_bound_domains(Domain domain) {
-    List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
-
-    if (!domains_selected.contains(domain)) {
-      domains_selected.add(domain);
-    }
-
-    var action = actions.AssignDomainNameComplementFromBoundDomains(domains_selected);
-    app.dispatch(action);
-  }
-
   add_modification(Domain domain, Address address, bool is_5p) =>
       app.disable_keyboard_shortcuts_while(() => ask_for_add_modification(domain, address, is_5p));
 
