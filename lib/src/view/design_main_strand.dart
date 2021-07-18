@@ -189,15 +189,24 @@ class DesignMainStrandComponent extends UiComponent2<DesignMainStrandProps>
     app.dispatch(action);
   }
 
-  assign_domain_name_complement_from_bound_strands() {
-    List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+  assign_domain_name_complement_from_bound_strands({Domain domain}) {
+    if (app.state.ui_state.select_mode_state.domains_selectable()) {
+      List<Domain> domains_selected = app.state.ui_state.selectables_store.selected_domains.toList();
 
-    if (!strands_selected.contains(props.strand)) {
-      strands_selected.add(props.strand);
+      if (!domains_selected.contains(domain)) {
+        domains_selected.add(domain);
+      }
+
+      var action = actions.AssignDomainNameComplementFromBoundDomains(domains_selected);
+      app.dispatch(action);
+    } else {
+      List<Strand> strands_selected = app.state.ui_state.selectables_store.selected_strands.toList();
+      if (!strands_selected.contains(props.strand)) {
+        strands_selected.add(props.strand);
+      }
+      var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
+      app.dispatch(action);
     }
-
-    var action = actions.AssignDomainNameComplementFromBoundStrands(strands_selected);
-    app.dispatch(action);
   }
 
   add_modification(Domain domain, Address address, bool is_5p) =>
@@ -320,9 +329,9 @@ assigned, assign the complementary DNA sequence to this strand.
           title: 'assign domain name complement from bound strands',
           tooltip: '''\
 If other strands bound to this strand (or the selected strands) have domain names already 
-assigned, assign the complementary domain names sequence to this strand.
+assigned, assign the complementary domain names sequence to this strand. To use this feature for individual domains, set select mode to domain.
 ''',
-          on_click: assign_domain_name_complement_from_bound_strands,
+          on_click: () => assign_domain_name_complement_from_bound_strands(domain: domain),
         ),
         if (strand.dna_sequence != null)
           ContextMenuItem(
